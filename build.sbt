@@ -4,7 +4,7 @@ import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
-lazy val appName: String = "homepage-frontend-example"
+lazy val appName: String = "manage-transit-movements-frontend"
 
 resolvers += "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/"
 

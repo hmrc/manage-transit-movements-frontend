@@ -10,9 +10,9 @@ site.edit.hidden = Change {0}
 site.no = No
 site.yes = Yes
 site.continue = Continue
-site.service_name = homepage-frontend-example
+site.service_name = Manage Transit Movements
 site.textarea.char_limit = (Limit is {0} characters)
-site.title.suffix = - homepage-frontend-example - GOV.UK
+site.title.suffix = - Manage Transit Movements - GOV.UK
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
@@ -37,9 +37,10 @@ phaseBanner.3 = will help us to improve it.
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 
-index.title = homepage-frontend-example
-index.heading = homepage-frontend-example
-index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
+index.title = Manage transit movements
+index.heading = Manage transit movements
+
+index.subHeading.arrival = Arrivals
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
