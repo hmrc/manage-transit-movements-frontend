@@ -20,6 +20,7 @@ import base.SpecBase
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.mockito.Matchers.any
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -44,10 +45,18 @@ class IndexControllerSpec extends SpecBase {
       status(result) mustEqual OK
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      val expectedJson = Json.obj(
+        "submitArrivalNotificationUrl" -> frontendAppConfig.submitArrivalNotificationUrl
+      )
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "index.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson
 
       application.stop()
     }

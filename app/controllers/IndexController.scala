@@ -16,22 +16,30 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
 import scala.concurrent.ExecutionContext
 
 class IndexController @Inject()(
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 appConfig: FrontendAppConfig,
+                                 val controllerComponents: MessagesControllerComponents,
+                                 renderer: Renderer)
+                               (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
 
-      renderer.render("index.njk").map(Ok(_))
+      renderer.render("index.njk",
+        Json.obj(
+          "submitArrivalNotificationUrl" -> appConfig.submitArrivalNotificationUrl
+        )
+
+      ).map(Ok(_))
   }
 }
