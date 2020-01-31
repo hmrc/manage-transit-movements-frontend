@@ -29,16 +29,16 @@ import scala.concurrent.ExecutionContext
 class IndexController @Inject()(
                                  appConfig: FrontendAppConfig,
                                  val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 renderer: Renderer)
+                               (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
 
-        renderer.render("index.njk",
-          Json.obj(
-            "submitArrivalNotificationUrl" -> appConfig.submitArrivalNotificationUrl
-          )
+      renderer.render("index.njk",
+        Json.obj(
+          "submitArrivalNotificationUrl" -> appConfig.submitArrivalNotificationUrl
+        )
 
       ).map(Ok(_))
   }

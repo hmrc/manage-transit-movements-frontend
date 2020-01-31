@@ -39,8 +39,8 @@ checkYourAnswers.heading = Check your answers
 
 index.title = Manage transit movements
 index.heading = Manage transit movements
-
 index.subHeading.arrival = Arrivals
+index.link.arrival.makeArrival = Make an arrival notification
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
