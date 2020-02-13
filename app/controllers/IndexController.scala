@@ -35,9 +35,12 @@ class IndexController @Inject()(
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
 
+      val viewArrivalNotifications = controllers.routes.ViewArrivalNotificationsController.onPageLoad().url
+
       renderer.render("index.njk",
         Json.obj(
-          "submitArrivalNotificationUrl" -> appConfig.submitArrivalNotificationUrl
+          "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+          "viewArrivalNotificationUrl" -> viewArrivalNotifications
         )
 
       ).map(Ok(_))
