@@ -130,3 +130,6 @@ compliant.nine.p2.1=The service was built using parts that were tested by the
 compliant.nine.p2.2=Digital Accessibility Centre
 compliant.nine.p2.3=The full service was tested by HMRC and included disabled users.
 compliant.nine.p3=This page was prepared on [date when it was first published]. It was last updated on [date when it was last updated].
+
+viewArrivalNotifications.title = viewArrivalNotifications
+viewArrivalNotifications.heading = viewArrivalNotifications
