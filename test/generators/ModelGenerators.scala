@@ -20,5 +20,22 @@ import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
-trait ModelGenerators {
+trait ModelGenerators extends Generators {
+
+  implicit val arbitraryMovement: Arbitrary[Movement] = {
+    Arbitrary {
+      for {
+        update <- arbitrary[String]
+        mrn <- arbitrary[String]
+        traderName <- arbitrary[String]
+        office <- arbitrary[String]
+        procedure <- arbitrary[String]
+        status <- arbitrary[String]
+        action <- arbitrary[String]
+      } yield Movement(
+        update, mrn, traderName, office, procedure, status, action
+      )
+    }
+  }
+
 }
