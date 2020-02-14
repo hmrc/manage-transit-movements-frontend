@@ -16,17 +16,32 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.i18n.Messages
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{OWrites, _}
+import uk.gov.hmrc.viewmodels.SummaryList.Action
 
 case class Movement(
-                     update: String,
+                     updated: String,
                      mrn: String,
                      traderName: String,
                      office: String,
                      procedure: String,
                      status: String,
-                     action: String)
+                     actions: Seq[Action])
 
 object Movement{
- implicit val format: OFormat[Movement] = Json.format[Movement]
+
+ implicit def writes(implicit messages: Messages): OWrites[Movement] = (
+   (__ \ "updated").write[String] and
+     (__ \ "mrn").write[String] and
+     (__ \ "traderName").write[String] and
+     (__ \ "office").write[String] and
+     (__ \ "procedure").write[String] and
+     (__ \ "status").write[String] and
+     (__ \ "actions" \ "items").writeNullable[Seq[Action]]
+   ){ movement =>
+  val actions = Some(movement.actions).filter(_.nonEmpty)
+  (movement.updated, movement.mrn, movement.traderName, movement.office, movement.procedure, movement.status,  actions)
+ }
 }

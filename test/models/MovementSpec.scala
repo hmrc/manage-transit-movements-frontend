@@ -16,18 +16,30 @@
 
 package models
 
+import base.SpecBase
 import generators.ModelGenerators
 import org.scalatest.{FreeSpec, MustMatchers}
 import play.api.libs.json.Json
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.SummaryList.Action
 
 
-class MovementSpec extends FreeSpec with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks {
+class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport{
 
-  val model = Movement("updated", "mrn", "traderName", "office", "procedure", "status", "action")
+  val actions =  List(
+    Action(
+      content            = msg"site.edit",
+      href               = "#",
+      visuallyHiddenText = Some(msg"placeOfNotification.change.hidden"),
+      attributes         = Map("id" -> s"""change-place-of-notification""")
+    )
+  )
 
-  val json = Json.obj(
+  private val model = Movement("updated", "mrn", "traderName", "office", "procedure", "status", actions)
+
+  private val json = Json.obj(
     "update" -> "updated",
     "mrn"->"mrn",
     "traderName"->"traderName",
@@ -39,19 +51,6 @@ class MovementSpec extends FreeSpec with MustMatchers with ModelGenerators with 
   "Movement" - {
     "Serialise to Json" in {
       Json.toJson(model) mustBe json
-    }
-
-    "Deserialise to Model" in {
-      json.as[Movement] mustBe model
-    }
-
-    "Serialise and deserialise" in {
-
-      forAll(arbitrary[Movement]) {
-        movement =>
-          val json = Json.toJson(movement)
-          json.as[Movement] mustBe movement
-      }
     }
   }
 }
