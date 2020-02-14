@@ -19,10 +19,11 @@ package generators
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
+import uk.gov.hmrc.viewmodels.SummaryList.Action
 
-trait ModelGenerators extends Generators {
+trait ModelGenerators {
 
-  implicit val arbitraryMovement: Arbitrary[Movement] = {
+/*  implicit val arbitraryMovement: Arbitrary[Movement] = {
     Arbitrary {
       for {
         update <- arbitrary[String]
@@ -31,11 +32,11 @@ trait ModelGenerators extends Generators {
         office <- arbitrary[String]
         procedure <- arbitrary[String]
         status <- arbitrary[String]
-        action <- arbitrary[String]
+        action <- arbitrary[Seq[Action]]
       } yield Movement(
         update, mrn, traderName, office, procedure, status, action
       )
     }
-  }
+  }*/
 
 }

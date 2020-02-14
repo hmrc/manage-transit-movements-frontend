@@ -17,7 +17,9 @@
 package controllers
 
 import base.SpecBase
+import generators.ModelGenerators
 import matchers.JsonMatchers
+import models.Movement
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -26,12 +28,26 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.SummaryList.Action
 
 import scala.concurrent.Future
 
-class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with ModelGenerators with NunjucksSupport {
 
   "ViewArrivalNotifications Controller" - {
+
+    val actions =  List(
+      Action(
+        content            = msg"site.edit",
+        href               = "#",
+        visuallyHiddenText = Some(msg"placeOfNotification.change.hidden"),
+        attributes         = Map("id" -> s"""change-place-of-notification""")
+      )
+    )
+
+
+    val movement = Movement("Updated", "Movement reference number",  "Trader name", "Office", "Procedure", "Status", actions)
 
     "return OK and the correct view for a GET" in {
 
@@ -42,21 +58,21 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
       val request = FakeRequest(GET, routes.ViewArrivalNotificationsController.onPageLoad().url)
       val result = route(application, request).value
       val expectedJson = Json.obj(
-        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl
+        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
+        "dataRows" -> Json.toJson(movement)
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivalNotifications.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson
+      jsonCaptorWithoutConfig  mustBe expectedJson
 
       application.stop()
     }
