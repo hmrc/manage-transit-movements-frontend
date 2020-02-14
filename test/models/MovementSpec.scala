@@ -19,38 +19,36 @@ package models
 import base.SpecBase
 import generators.ModelGenerators
 import org.scalatest.{FreeSpec, MustMatchers}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import uk.gov.hmrc.viewmodels.SummaryList.Action
 
 
-class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport{
+class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
-  val actions =  List(
-    Action(
-      content            = msg"site.edit",
-      href               = "#",
-      visuallyHiddenText = Some(msg"placeOfNotification.change.hidden"),
-      attributes         = Map("id" -> s"""change-place-of-notification""")
-    )
-  )
+  private val model = Movement("updated", "mrn", "traderName", "office", "procedure", "status", Seq("action"))
 
-  private val model = Movement("updated", "mrn", "traderName", "office", "procedure", "status", actions)
-
-  private val json = Json.obj(
-    "update" -> "updated",
-    "mrn"->"mrn",
-    "traderName"->"traderName",
-    "office"->"office",
-    "procedure"->"procedure",
-    "status"->"status",
-    "action"->"action")
+  private def json(movement: Movement): JsObject = Json.obj(
+    "updated" -> movement.updated,
+    "mrn" -> movement.mrn,
+    "traderName" -> movement.traderName,
+    "office" -> movement.office,
+    "procedure" -> movement.procedure,
+    "status" -> movement.status,
+    "actions" -> movement.actions)
 
   "Movement" - {
     "Serialise to Json" in {
-      Json.toJson(model) mustBe json
+      Json.writes.writes(model) mustBe json(model)
+    }
+
+    "Serialise and deserialise" in {
+
+      forAll(arbitrary[Movement]) {
+        movement =>
+          Json.toJson(movement) mustBe json(movement)
+      }
     }
   }
 }
