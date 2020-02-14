@@ -39,17 +39,24 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.ViewArrivalNotificationsController.onPageLoad.url)
+      val request = FakeRequest(GET, routes.ViewArrivalNotificationsController.onPageLoad().url)
+      val result = route(application, request).value
+      val expectedJson = Json.obj(
+        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl
+      )
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
+
       templateCaptor.getValue mustEqual "viewArrivalNotifications.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson
 
       application.stop()
     }

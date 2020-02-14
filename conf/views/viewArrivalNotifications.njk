@@ -8,16 +8,48 @@
 
 {% block mainContent %}
 
-  <div class="govuk-main-wrapper">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
+<div class="govuk-width-container ">
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
 
-        <h1 class="govuk-heading-xl">
-          {{ messages("viewArrivalNotifications.heading") }}
-        </h1>
+                <h1 class="govuk-heading-xl">{{ messages("viewArrivalNotifications.heading") }}</h1>
 
-      </div>
-    </div>
-  </div>
+                 <p class="govuk-body">
+                    <a href={{declareArrivalNotificationUrl}}>
+                        {{ messages("viewArrivalNotifications.makeArrivalNotification") }}
+                    </a>
+                 </p>
+
+                <h2 class="govuk-heading-m">13 February 2020</h2>
+
+                <div class="govuk-summary-list govuk-!-margin-bottom-2">
+                  <div class="govuk-summary-list__row">
+                    <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">Updated</span>
+                    <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">Movement reference number</span>
+                    <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">Trader name</span>
+                    <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">Office</span>
+                    <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">Procedure</span>
+                    <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">Status</span>
+                    <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">Action</span>
+                  </div>
+                  <div class="govuk-summary-list__row">
+                    <span class="govuk-summary-list__value govuk-!-width-full">12:34am</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full">20NL5631291B1A3361</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full">BMW (UK) Limited</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full">Birmingham Airport (GB000011)</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full">Simplified</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full">You can unload</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full"><a href="../../unloading-remarks/version-4/seals-included/all-goods-unloaded">Make unloading remarks <span class="govuk-visually-hidden">for 20GB000060100C06E0</span> </a></span>
+                  </div>
+                </div>
+
+                <p class="govuk-body" style="padding-top: 15px; "><a href="homepage">Go to manage transit movements</a></p>
+
+            </div>
+        </div>
+    </main>
+</div>
+
 
 {% endblock %}

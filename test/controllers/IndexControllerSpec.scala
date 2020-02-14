@@ -29,6 +29,9 @@ import scala.concurrent.Future
 
 class IndexControllerSpec extends SpecBase {
 
+  val manageTransitMovementRoute = "manage-transit-movements"
+  val viewArrivalNotificationUrl = s"/$manageTransitMovementRoute/view-arrival-notifications"
+
   "Index Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -48,7 +51,8 @@ class IndexControllerSpec extends SpecBase {
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
-        "submitArrivalNotificationUrl" -> frontendAppConfig.submitArrivalNotificationUrl
+        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
+        "viewArrivalNotificationUrl" -> viewArrivalNotificationUrl
       )
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
