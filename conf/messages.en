@@ -135,3 +135,11 @@ compliant.nine.p3=This page was prepared on [date when it was first published]. 
 viewArrivalNotifications.title                      = Arrival notifications
 viewArrivalNotifications.heading                    = Arrival notifications
 viewArrivalNotifications.makeArrivalNotification    = Make an arrival notification
+viewArrivalNotifications.table.updated     = Updated
+viewArrivalNotifications.table.mrn         = Movement reference number
+viewArrivalNotifications.table.trader.name = Trader name
+viewArrivalNotifications.table.office      = Office
+viewArrivalNotifications.table.procedure   = Procedure
+viewArrivalNotifications.table.status      = Status
+viewArrivalNotifications.table.action      = Action
+

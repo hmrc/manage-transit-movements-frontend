@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import uk.gov.hmrc.viewmodels.SummaryList.Action
+import viewModels.ViewArrivalMovement
 
 import scala.concurrent.Future
 
@@ -37,17 +37,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
 
   "ViewArrivalNotifications Controller" - {
 
-    val actions =  List(
-      Action(
-        content            = msg"site.edit",
-        href               = "#",
-        visuallyHiddenText = Some(msg"placeOfNotification.change.hidden"),
-        attributes         = Map("id" -> s"""change-place-of-notification""")
-      )
-    )
-
-
-    val movement = Movement("Updated", "Movement reference number",  "Trader name", "Office", "Procedure", "Status", actions)
+    val movement = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("history"))
 
     "return OK and the correct view for a GET" in {
 
@@ -59,7 +49,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
       val result = route(application, request).value
       val expectedJson = Json.obj(
         "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
-        "dataRows" -> Json.toJson(movement)
+        "dataRows" -> Json.toJson(ViewArrivalMovement("12 February 2020", Seq(movement)))
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
