@@ -17,10 +17,18 @@
 package viewModels
 
 import models.Movement
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{JsValue, Json, Writes}
 
-case class ViewArrivalMovement(date: String, rows: Seq[Movement])
+case class ViewArrivalMovement(table: Map[String, Seq[Movement]])
 
-object ViewArrivalMovement{
-  implicit val writes: OFormat[ViewArrivalMovement] = Json.format[ViewArrivalMovement]
+object ViewArrivalMovement {
+
+  implicit val writes: Writes[ViewArrivalMovement] =
+    new Writes[ViewArrivalMovement] {
+      override def writes(o: ViewArrivalMovement): JsValue = {
+        Json.toJson(o.table.map {
+          case (date, movements) => date -> movements
+        })
+      }
+    }
 }

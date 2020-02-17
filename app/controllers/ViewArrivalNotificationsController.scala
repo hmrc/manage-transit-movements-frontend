@@ -39,12 +39,20 @@ class ViewArrivalNotificationsController @Inject()(renderer: Renderer,
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
 
-      val movement: Movement  = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("history"))
-      val date                = LocalDate.now().toString
+      val movement1  = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("history"))
+      val movement2  = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("unloading"))
+      val movement3  = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("errors"))
+      val mockDataSet =
+        ViewArrivalMovement(
+          Map(
+            "11 May 2019" -> Seq(movement1, movement2),
+            "12 May 2019" -> Seq(movement2, movement3)
+          )
+      )
 
       val json = Json.obj(
         "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-        "dataRows" -> Json.toJson(ViewArrivalMovement(date, Seq(movement)))
+        "dataRows" -> Json.toJson(mockDataSet)
       )
 
       renderer.render("viewArrivalNotifications.njk", json).map(Ok(_))
