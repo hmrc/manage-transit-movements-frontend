@@ -17,31 +17,24 @@
         {% for notice in dataRows.rows %}
           <tr role="row">
             <td class="govuk-table__cell" role="cell">
-            <span class="hmrc-responsive-table__heading" aria-hidden="true">{{ messages("viewArrivalNotifications.table.updated") }}</span>
             {{ notice.updated }}
             </td>
             <td class="govuk-table__cell u--w-15" role="cell">
-                <span class="hmrc-responsive-table__heading" aria-hidden="true">{{ messages("viewArrivalNotifications.table.mrn") }}</span>
                 <span class="hmrc-responsive-table__value">{{ notice.mrn }}</span>
             </td>
             <td class="govuk-table__cell" role="cell">
-                <span class="hmrc-responsive-table__heading" aria-hidden="true">{{ messages("viewArrivalNotifications.table.trader.name") }}</span>
                 {{ notice.traderName | safe }}
             </td>
             <td class="govuk-table__cell" role="cell">
-                <span class="hmrc-responsive-table__heading" aria-hidden="true">{{ messages("viewArrivalNotifications.table.office") }}</span>
                 <span class="hmrc-responsive-table__value">{{ notice.office }}</span>
             </td>
             <td class="govuk-table__cell" role="cell">
-                <span class="hmrc-responsive-table__heading" aria-hidden="true">{{ messages("viewArrivalNotifications.table.procedure") }}</span>
                 {{ notice.procedure }}
             </td>
             <td class="govuk-table__cell" role="cell">
-                <span class="hmrc-responsive-table__heading" aria-hidden="true">{{ messages("viewArrivalNotifications.table.status") }}</span>
                 {{ notice.status }}
             </td>
             <td class="govuk-table__cell u--w-10" role="cell">
-              <span class="hmrc-responsive-table__heading" aria-hidden="true">Action</span>
               {% if notice.actions.length > 0 %}
                 <ul class="govuk-list">
               {% else %}

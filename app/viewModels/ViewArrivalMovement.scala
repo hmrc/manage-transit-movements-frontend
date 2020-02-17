@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package viewModels
 
+import java.time.LocalDate
+
+import models.Movement
 import play.api.libs.json.{Json, OFormat}
 
-case class Movement(updated: String,
-                    mrn: String,
-                    traderName: String,
-                    office: String,
-                    procedure: String,
-                    status: String,
-                    actions: Seq[String])
+case class ViewArrivalMovement(date: LocalDate, rows: Seq[Movement])
 
-object Movement{
- implicit val writes: OFormat[Movement] = Json.format[Movement]
+object ViewArrivalMovement{
+  implicit val writes: OFormat[ViewArrivalMovement] = Json.format[ViewArrivalMovement]
 }

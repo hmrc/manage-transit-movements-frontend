@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.Movement
@@ -38,10 +40,11 @@ class ViewArrivalNotificationsController @Inject()(renderer: Renderer,
     implicit request =>
 
       val movement = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("history"))
+      val date = LocalDate.now()
 
       val json = Json.obj(
         "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-        "dataRows" -> Json.toJson(ViewArrivalMovement(Seq(movement)))
+        "dataRows" -> Json.toJson(ViewArrivalMovement(date, Seq(movement)))
       )
 
       renderer.render("viewArrivalNotifications.njk", json).map(Ok(_))
