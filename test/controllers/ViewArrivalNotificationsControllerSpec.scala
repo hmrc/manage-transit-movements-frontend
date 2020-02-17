@@ -50,8 +50,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
       val request = FakeRequest(GET, routes.ViewArrivalNotificationsController.onPageLoad().url)
       val result = route(application, request).value
       val expectedJson = Json.obj(
-        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
-        "dataRows" -> Json.toJson(ViewArrivalMovement(Map("11 May 2019" -> Seq(movement))))
+        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

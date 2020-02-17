@@ -16,17 +16,13 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.Movement
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import viewModels.ViewArrivalMovement
 
 import scala.concurrent.ExecutionContext
 
@@ -39,20 +35,8 @@ class ViewArrivalNotificationsController @Inject()(renderer: Renderer,
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
 
-      val movement1  = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("history"))
-      val movement2  = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("unloading"))
-      val movement3  = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("errors"))
-      val mockDataSet =
-        ViewArrivalMovement(
-          Map(
-            "11 May 2019" -> Seq(movement1, movement2),
-            "12 May 2019" -> Seq(movement2, movement3)
-          )
-      )
-
       val json = Json.obj(
-        "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-        "dataRows" -> Json.toJson(mockDataSet)
+        "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl
       )
 
       renderer.render("viewArrivalNotifications.njk", json).map(Ok(_))

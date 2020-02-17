@@ -26,9 +26,7 @@ object ViewArrivalMovement {
   implicit val writes: Writes[ViewArrivalMovement] =
     new Writes[ViewArrivalMovement] {
       override def writes(o: ViewArrivalMovement): JsValue = {
-        Json.toJson(o.table.map {
-          case (date, movements) => date -> movements
-        })
+        Json.toJson(o.table)
       }
     }
 }
