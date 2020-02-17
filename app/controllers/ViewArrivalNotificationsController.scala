@@ -39,8 +39,8 @@ class ViewArrivalNotificationsController @Inject()(renderer: Renderer,
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
 
-      val movement = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("history"))
-      val date = LocalDate.now()
+      val movement: Movement  = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("history"))
+      val date                = LocalDate.now().toString
 
       val json = Json.obj(
         "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,

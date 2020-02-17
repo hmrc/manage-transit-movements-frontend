@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import base.SpecBase
 import generators.ModelGenerators
 import matchers.JsonMatchers
@@ -49,7 +51,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
       val result = route(application, request).value
       val expectedJson = Json.obj(
         "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
-        "dataRows" -> Json.toJson(ViewArrivalMovement("12 February 2020", Seq(movement)))
+        "dataRows" -> Json.toJson(ViewArrivalMovement("Test date", Seq(movement)))
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

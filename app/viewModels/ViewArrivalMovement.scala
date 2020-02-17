@@ -16,12 +16,10 @@
 
 package viewModels
 
-import java.time.LocalDate
-
 import models.Movement
 import play.api.libs.json.{Json, OFormat}
 
-case class ViewArrivalMovement(date: LocalDate, rows: Seq[Movement])
+case class ViewArrivalMovement(date: String, rows: Seq[Movement])
 
 object ViewArrivalMovement{
   implicit val writes: OFormat[ViewArrivalMovement] = Json.format[ViewArrivalMovement]
