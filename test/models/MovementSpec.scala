@@ -27,8 +27,6 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
-  private val model = Movement("updated", "mrn", "traderName", "office", "procedure", "status", Seq("action"))
-
   private def json(movement: Movement): JsObject = Json.obj(
     "updated" -> movement.updated,
     "mrn" -> movement.mrn,
@@ -39,9 +37,6 @@ class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with 
     "actions" -> movement.actions)
 
   "Movement" - {
-    "Serialise to Json" in {
-      Json.writes.writes(model) mustBe json(model)
-    }
 
     "Serialise and deserialise" in {
 
@@ -50,5 +45,6 @@ class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with 
           Json.toJson(movement) mustBe json(movement)
       }
     }
+
   }
 }

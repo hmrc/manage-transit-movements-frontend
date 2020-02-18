@@ -19,22 +19,31 @@ package generators
 import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
+import viewModels.ViewArrivalMovement
 
 trait ModelGenerators {
 
   implicit val arbitraryMovement: Arbitrary[Movement] = {
     Arbitrary {
       for {
-        update <- arbitrary[String]
-        mrn <- arbitrary[String]
-        traderName <- arbitrary[String]
-        office <- arbitrary[String]
-        procedure <- arbitrary[String]
-        status <- arbitrary[String]
-        action <- arbitrary[Seq[String]]
+        update      <- arbitrary[String]
+        mrn         <- arbitrary[String]
+        traderName  <- arbitrary[String]
+        office      <- arbitrary[String]
+        procedure   <- arbitrary[String]
+        status      <- arbitrary[String]
+        action      <- arbitrary[Seq[String]]
       } yield Movement(
         update, mrn, traderName, office, procedure, status, action
       )
+    }
+  }
+
+  implicit val arbitraryViewArrivalModel: Arbitrary[ViewArrivalMovement] = {
+    Arbitrary {
+      for {
+        dateAndMovement <- arbitrary[Map[String, Seq[Movement]]]
+      } yield ViewArrivalMovement(dateAndMovement)
     }
   }
 
