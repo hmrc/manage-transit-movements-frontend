@@ -19,6 +19,7 @@ package controllers
 import java.time.LocalDate
 
 import base.SpecBase
+import connectors.DestinationConnector
 import generators.ModelGenerators
 import matchers.JsonMatchers
 import models.Movement
@@ -41,8 +42,12 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
 
     val movement = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("history"))
 
-    "return OK and the correct view for a GET" in {
+    val mockDestinationConnector = mock[DestinationConnector]
 
+
+    "return OK and the correct view for a GET" in {
+      when(mockDestinationConnector.getArrivalMovements()(any(), any()))
+          .thenReturn(Future.successful(ViewArrivalMovement))
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
@@ -67,5 +72,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
 
       application.stop()
     }
+
+
   }
 }

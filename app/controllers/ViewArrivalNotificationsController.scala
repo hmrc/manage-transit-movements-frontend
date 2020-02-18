@@ -35,6 +35,8 @@ class ViewArrivalNotificationsController @Inject()(renderer: Renderer,
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
 
+
+
       val json = Json.obj(
         "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl
       )
