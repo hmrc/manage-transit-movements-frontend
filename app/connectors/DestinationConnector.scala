@@ -25,12 +25,11 @@ import viewModels.ViewArrivalMovement
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class ArrivalNotificationConnector  @Inject()(config: FrontendAppConfig, http: HttpClient) {
+class DestinationConnector  @Inject()(config: FrontendAppConfig, http: HttpClient) {
 
   def getArrivalMovements()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ViewArrivalMovement] = {
 
     val serviceUrl: String = s"${config.destinationUrl}/messages"
     http.GET[ViewArrivalMovement](serviceUrl)
   }
-
 }
