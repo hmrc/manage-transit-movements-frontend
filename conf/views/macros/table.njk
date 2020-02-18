@@ -1,0 +1,82 @@
+{% macro arrivalNotification(dataRows) %}
+
+  {% for date, rows in dataRows %}
+
+        <h2 class="govuk-heading-m">{{date}}</h2>
+        <table class="govuk-table hmrc-responsive-table" role="table">
+          <caption class="govuk-visually-hidden">{{date}}</caption>
+          <thead role="rowgroup">
+            <tr role="row">
+              <th class="govuk-table__header" scope="col" role="columnheader">{{ messages("viewArrivalNotifications.table.updated") }}</th>
+              <th class="govuk-table__header u--w-15" scope="col" role="columnheader">{{ messages("viewArrivalNotifications.table.mrn") }}</th>
+              <th class="govuk-table__header" scope="col" role="columnheader">{{ messages("viewArrivalNotifications.table.trader.name") }}</th>
+              <th class="govuk-table__header" scope="col" role="columnheader">{{ messages("viewArrivalNotifications.table.office") }}</th>
+              <th class="govuk-table__header" scope="col" role="columnheader">{{ messages("viewArrivalNotifications.table.procedure") }}</th>
+              <th class="govuk-table__header" scope="col" role="columnheader">{{ messages("viewArrivalNotifications.table.status") }}</th>
+              <th class="govuk-table__header u--w-10" scope="col" role="columnheader">{{ messages("viewArrivalNotifications.table.action") }}</th>
+            </tr>
+          </thead>
+          <tbody>
+              {% for row in rows %}
+                  <tr role="row">
+                      <td class="govuk-table__cell" role="cell">
+                      {{ row.updated }}
+                      </td>
+                      <td class="govuk-table__cell u--w-15" role="cell">
+                          <span class="hmrc-responsive-table__value">{{ row.mrn }}</span>
+                      </td>
+                      <td class="govuk-table__cell" role="cell">
+                          {{ row.traderName | safe }}
+                      </td>
+                      <td class="govuk-table__cell" role="cell">
+                          <span class="hmrc-responsive-table__value">{{ row.office }}</span>
+                      </td>
+                      <td class="govuk-table__cell" role="cell">
+                          {{ row.procedure }}
+                      </td>
+                      <td class="govuk-table__cell" role="cell">
+                          {{ row.status }}
+                      </td>
+                      <td class="govuk-table__cell u--w-10" role="cell">
+                        {% if row.actions.length > 0 %}
+                          <ul class="govuk-list">
+                        {% else %}
+                          <div>
+                        {% endif %}
+
+                        {% for action in row.actions %}
+
+                          {% if row.actions.length > 0 %}<li>{% endif %}
+                          {% if action == "errors" %}
+                            <a href="">
+                                {{ messages("viewArrivalNotifications.table.action.viewErrors") }}
+                                <span class="govuk-visually-hidden"> for {{ row.mrn }}</span>
+                            </a>
+                          {% endif %}
+                          {% if action == "history" %}
+                            <a href="">
+                                {{ messages("viewArrivalNotifications.table.action.viewHistory") }}
+                                <span class="govuk-visually-hidden"> for {{ row.mrn }}</span>
+                            </a>
+                          {% endif %}
+                          {% if action == "unloading" %}
+                            <a href="">
+                                {{ messages("viewArrivalNotifications.table.action.unloadingRemarks") }}
+                                <span class="govuk-visually-hidden"> for {{ row.mrn }}</span>
+                            </a>
+                          {% endif %}
+                          {% if row.actions.length > 0 %}</li>{% endif %}
+                        {% endfor %}
+
+                        {% if row.actions | length > 0 %}
+                          </ul>
+                        {% else %}
+                          </div>
+                        {% endif %}
+                      </td>
+                    </tr>
+              {% endfor %}
+          </tbody>
+          </table>
+  {% endfor %}
+{% endmacro %}

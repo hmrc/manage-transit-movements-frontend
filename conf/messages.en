@@ -41,6 +41,7 @@ index.title = Manage transit movements
 index.heading = Manage transit movements
 index.subHeading.arrival = Arrivals
 index.link.arrival.makeArrival = Make an arrival notification
+index.link.arrival.viewArrival = View arrival notifications
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
@@ -48,6 +49,20 @@ session_expired.guidance = The details you have given have been deleted because 
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+viewArrivalNotifications.title                      = Arrival notifications
+viewArrivalNotifications.heading                    = Arrival notifications
+viewArrivalNotifications.makeArrivalNotification    = Make an arrival notification
+viewArrivalNotifications.table.updated     = Updated
+viewArrivalNotifications.table.mrn         = Movement reference number
+viewArrivalNotifications.table.trader.name = Trader name
+viewArrivalNotifications.table.office      = Office
+viewArrivalNotifications.table.procedure   = Procedure
+viewArrivalNotifications.table.status      = Status
+viewArrivalNotifications.table.action      = Action
+viewArrivalNotifications.table.action.viewErrors       = View and fix errors
+viewArrivalNotifications.table.action.unloadingRemarks    = Make unloading remarks
+viewArrivalNotifications.table.action.viewHistory      = View history
 
 #### Compliance statement
 
@@ -131,5 +146,5 @@ compliant.nine.p2.2=Digital Accessibility Centre
 compliant.nine.p2.3=The full service was tested by HMRC and included disabled users.
 compliant.nine.p3=This page was prepared on [date when it was first published]. It was last updated on [date when it was last updated].
 
-viewArrivalNotifications.title = viewArrivalNotifications
-viewArrivalNotifications.heading = viewArrivalNotifications
+
+
