@@ -18,33 +18,16 @@ package viewModels
 
 import base.SpecBase
 import generators.ModelGenerators
-import models.Movement
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 class ViewArrivalMovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
 
   "viewArrivalMovement" - {
-    "must serialise" in {
-
-      forAll(arbitrary[ViewArrivalMovement]) {
-        viewArrivalMovement =>
-          Json.toJson(viewArrivalMovement) mustEqual buildJson(viewArrivalMovement)
-      }
-    }
-
-    "must deserialise" in {
-
-      forAll(arbitrary[ViewArrivalMovement]) {
-        viewArrivalMovement =>
-          buildJson(viewArrivalMovement).as[ViewArrivalMovement] mustBe viewArrivalMovement
-      }
-    }
-
     "must serialise and deserialise" in {
       forAll(arbitrary[ViewArrivalMovement]){
         viewArrivalMovement =>
@@ -53,28 +36,4 @@ class ViewArrivalMovementSpec extends SpecBase with MustMatchers with ModelGener
     }
   }
 
-  private def buildJson(viewArrivalMovement: ViewArrivalMovement): JsObject = {
-
-    viewArrivalMovement.tables.map {
-      case (date, rows) =>
-        Json.obj(
-          date -> buildRows(rows)
-        )
-    }.fold(JsObject.empty)(_ ++ _)
-  }
-
-  private def buildRows(rows: Seq[Movement]): Seq[JsObject] = {
-    rows.map {
-      row =>
-        Json.obj(
-          "updated" -> row.updated,
-          "mrn" -> row.mrn,
-          "traderName" -> row.traderName,
-          "office" -> row.office,
-          "procedure" -> row.procedure,
-          "status" -> row.status,
-          "actions" -> row.actions
-        )
-    }
-  }
 }

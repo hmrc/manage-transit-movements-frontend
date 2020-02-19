@@ -17,6 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.DestinationConnector
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -28,19 +29,23 @@ import scala.concurrent.ExecutionContext
 
 class ViewArrivalNotificationsController @Inject()(renderer: Renderer,
                                                    val controllerComponents: MessagesControllerComponents,
-                                                   appConfig: FrontendAppConfig)
+                                                   appConfig: FrontendAppConfig,
+                                                   destinationConnector: DestinationConnector)
                                                   (implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
 
+      destinationConnector.getArrivalMovements.flatMap {
+        dataRows =>
 
+          val json = Json.obj(
+            "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+            "dataRows" -> dataRows
+          )
 
-      val json = Json.obj(
-        "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl
-      )
-
-      renderer.render("viewArrivalNotifications.njk", json).map(Ok(_))
+          renderer.render("viewArrivalNotifications.njk", json).map(Ok(_))
+      }
   }
 }

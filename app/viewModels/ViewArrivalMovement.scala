@@ -34,9 +34,7 @@ object ViewArrivalMovement {
     new Reads[ViewArrivalMovement] {
       override def reads(json: JsValue): JsResult[ViewArrivalMovement] = {
         val createMap = json.as[JsObject].value.map {
-          case (date, messages) => {
-            (date, messages.as[Seq[Movement]])
-          }
+          case (date, messages) => (date, messages.as[Seq[Movement]])
         }.toMap
 
        JsSuccess(ViewArrivalMovement(createMap))

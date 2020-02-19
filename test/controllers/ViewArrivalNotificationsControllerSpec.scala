@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import base.SpecBase
 import connectors.DestinationConnector
 import generators.ModelGenerators
@@ -27,6 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -38,24 +37,42 @@ import scala.concurrent.Future
 
 class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with ModelGenerators with NunjucksSupport {
 
+  private val mockDestinationConnector = mock[DestinationConnector]
+
+  private val expectedResult = {
+    ViewArrivalMovement(
+      Map(
+        "01-01-2020" -> {
+          Seq(Movement("test updated", "test mrn", "test name", "test office", "test procedure", "test status", Seq("test actions")))
+        },
+        "02-01-2020" -> {
+          Seq(Movement("test updated", "test mrn", "test name", "test office", "test procedure", "test status", Seq("test actions")))
+        }
+      )
+    )
+  }
+
   "ViewArrivalNotifications Controller" - {
-
-    val movement = Movement("12:15", "19bg327457893",  "Tesco", "Dover", "Normal", "Application sent", Seq("history"))
-
-    val mockDestinationConnector = mock[DestinationConnector]
-
-
     "return OK and the correct view for a GET" in {
-      when(mockDestinationConnector.getArrivalMovements()(any(), any()))
-          .thenReturn(Future.successful(ViewArrivalMovement))
+
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      when(mockDestinationConnector.getArrivalMovements()(any(), any()))
+        .thenReturn(Future.successful(expectedResult))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides {
+          bind[DestinationConnector].toInstance(mockDestinationConnector)
+        }
+        .build()
+
       val request = FakeRequest(GET, routes.ViewArrivalNotificationsController.onPageLoad().url)
       val result = route(application, request).value
+
       val expectedJson = Json.obj(
-        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl
+        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
+        "dataRows" -> Json.toJson(expectedResult)
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -68,11 +85,9 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivalNotifications.njk"
-      jsonCaptorWithoutConfig  mustBe expectedJson
+      jsonCaptorWithoutConfig mustBe expectedJson
 
       application.stop()
     }
-
-
   }
 }
