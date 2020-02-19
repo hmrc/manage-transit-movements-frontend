@@ -17,7 +17,7 @@
 package viewModels
 
 import models.Movement
-import play.api.libs.json.{JsObject, JsResult, JsSuccess, JsValue, Json, Reads, Writes}
+import play.api.libs.json._
 
 case class ViewArrivalMovement(tables: Map[String, Seq[Movement]])
 
@@ -33,11 +33,7 @@ object ViewArrivalMovement {
   implicit val reads: Reads[ViewArrivalMovement] = {
     new Reads[ViewArrivalMovement] {
       override def reads(json: JsValue): JsResult[ViewArrivalMovement] = {
-        val createMap = json.as[JsObject].value.map {
-          case (date, messages) => (date, messages.as[Seq[Movement]])
-        }.toMap
-
-       JsSuccess(ViewArrivalMovement(createMap))
+        json.validate[Map[String, Seq[Movement]]].map(ViewArrivalMovement(_))
       }
     }
   }
