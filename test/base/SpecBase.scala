@@ -30,6 +30,7 @@ import play.api.inject.{Injector, bind}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
 trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with OptionValues with TryValues
@@ -56,6 +57,8 @@ trait SpecBase extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with 
   val mockRenderer: NunjucksRenderer = mock[NunjucksRenderer]
 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()

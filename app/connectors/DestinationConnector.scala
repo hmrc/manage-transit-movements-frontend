@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package connectors
 
-import play.api.libs.json.{Json, OFormat}
+import config.FrontendAppConfig
+import javax.inject.Inject
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import viewModels.ViewArrivalMovement
 
-case class Movement(updated: String,
-                    mrn: String,
-                    traderName: String,
-                    office: String,
-                    procedure: String,
-                    status: String,
-                    actions: Seq[String])
+import scala.concurrent.{ExecutionContext, Future}
 
-object Movement{
- implicit val format : OFormat[Movement] = Json.format[Movement]
+
+class DestinationConnector  @Inject()(config: FrontendAppConfig, http: HttpClient) {
+
+  def getArrivalMovements()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ViewArrivalMovement] = {
+
+    val serviceUrl: String = s"${config.destinationUrl}/messages"
+    http.GET[ViewArrivalMovement](serviceUrl)
+  }
 }
