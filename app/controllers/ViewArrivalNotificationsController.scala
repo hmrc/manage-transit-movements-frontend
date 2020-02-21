@@ -24,27 +24,23 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import viewModels.ViewArrivalMovements
 
 import scala.concurrent.ExecutionContext
 
-class ViewArrivalNotificationsController @Inject()(renderer: Renderer,
-                                                   val controllerComponents: MessagesControllerComponents,
-                                                   appConfig: FrontendAppConfig,
-                                                   destinationConnector: DestinationConnector)
-                                                  (implicit ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+class ViewArrivalNotificationsController @Inject()(
+  renderer: Renderer,
+  val controllerComponents: MessagesControllerComponents,
+  destinationConnector: DestinationConnector
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
-    implicit request =>
-
-      destinationConnector.getArrivalMovements.flatMap {
-        dataRows =>
-          val json = Json.obj(
-            "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-            "dataRows" -> dataRows
-          )
-
-          renderer.render("viewArrivalNotifications.njk", json).map(Ok(_))
-      }
+  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
+    destinationConnector.getArrivalMovements
+      .map(ViewArrivalMovements.apply)
+      .map(Json.toJsObject[ViewArrivalMovements])
+      .flatMap(renderer.render("viewArrivalNotifications.njk", _).map(Ok(_)))
   }
+
 }

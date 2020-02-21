@@ -16,22 +16,37 @@
 
 package models
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, Reads, Writes, __}
+import java.time.{LocalDate, LocalTime}
 
-case class Movement(movementReferenceNumber: String,
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsObject, Json, OWrites, Reads, __}
+
+case class Movement(date: LocalDate,
+                    time: LocalTime,
+                    movementReferenceNumber: String,
                     traderName: String,
                     presentationOffice: String,
                     procedure: String)
 
-object Movement{
+object Movement {
 
- implicit val writes: Writes[Movement] = Json.writes[Movement]
+  implicit val writes: OWrites[Movement] = new OWrites[Movement] {
+    override def writes(o: Movement): JsObject = Json.obj(
+      "updated"     -> o.date,
+      "mrn"        -> o.movementReferenceNumber,
+      "traderName" -> o.traderName,
+      "office"     -> o.presentationOffice,
+      "procedure"  -> o.procedure,
+      "status"     -> "Arrival notification sent" // TODO: In future we will pull this status from the backend
+    )
+  }
 
- implicit val reads: Reads[Movement] = (
-   (__ \ "movementReferenceNumber").read[String] and
-     (__ \ "trader" \ "name").read[String] and
-     (__ \ "presentationOffice").read[String] and
-     (__ \ "procedure").read[String]
-   )(Movement.apply _)
+  implicit val reads: Reads[Movement] = (
+    (__ \ "date").read[LocalDate] and
+      (__ \ "time").read[LocalTime] and
+      (__ \ "message" \ "movementReferenceNumber").read[String] and
+      (__ \ "message" \ "trader" \ "name").read[String] and
+      (__ \ "message" \ "presentationOffice").read[String] and
+      (__ \ "message" \ "procedure").read[String]
+  )(Movement.apply _)
 }

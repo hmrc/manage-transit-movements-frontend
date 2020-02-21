@@ -16,32 +16,45 @@
 
 package generators
 
+import java.time.{LocalDate, LocalTime, Year}
+
 import models._
-import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
-import viewModels.ViewArrivalMovement
+import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit val arbitrarylocalDate: Arbitrary[LocalDate] = {
+    Arbitrary {
+      for {
+        day <- Gen.choose(1, 28)
+        month <- Gen.chooseNum(
+          LocalDate.MIN.getMonthValue,
+          LocalDate.MAX.getMonthValue
+        )
+        year <- Gen.chooseNum(Year.MIN_VALUE, Year.MAX_VALUE)
+      } yield LocalDate.of(year, month, day)
+    }
+  }
+
+  implicit val arbitraryLocalTime: Arbitrary[LocalTime] = Arbitrary {
+    for {
+      hours <- Gen.chooseNum(0, 23)
+      minutes <- Gen.chooseNum(0, 59)
+      seconds <- Gen.chooseNum(0, 59)
+    } yield LocalTime.of(hours, minutes, seconds)
+  }
 
   implicit val arbitraryMovement: Arbitrary[Movement] = {
     Arbitrary {
       for {
-        mrn         <- arbitrary[String]
-        traderName  <- arbitrary[String]
-        office      <- arbitrary[String]
-        procedure   <- arbitrary[String]
-      } yield Movement(mrn, traderName, office, procedure)
+        date <- arbitrary[LocalDate]
+        time <- arbitrary[LocalTime]
+        mrn <- arbitrary[String]
+        traderName <- arbitrary[String]
+        office <- arbitrary[String]
+        procedure <- arbitrary[String]
+      } yield Movement(date, time, mrn, traderName, office, procedure)
     }
   }
-
-  implicit val arbitraryViewArrivalModel: Arbitrary[ViewArrivalMovement] = {
-    Arbitrary {
-      for {
-        date            <- arbitrary[String]
-        time            <- arbitrary[String]
-        movement        <- arbitrary[Movement]
-      } yield ViewArrivalMovement(date, time, movement)
-    }
-  }
-
 }
