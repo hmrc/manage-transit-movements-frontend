@@ -39,7 +39,6 @@ class ViewArrivalNotificationsController @Inject()(renderer: Renderer,
 
       destinationConnector.getArrivalMovements.flatMap {
         dataRows =>
-
           val json = Json.obj(
             "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
             "dataRows" -> dataRows

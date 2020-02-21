@@ -26,24 +26,21 @@ trait ModelGenerators {
   implicit val arbitraryMovement: Arbitrary[Movement] = {
     Arbitrary {
       for {
-        update      <- arbitrary[String]
         mrn         <- arbitrary[String]
         traderName  <- arbitrary[String]
         office      <- arbitrary[String]
         procedure   <- arbitrary[String]
-        status      <- arbitrary[String]
-        action      <- arbitrary[Seq[String]]
-      } yield Movement(
-        update, mrn, traderName, office, procedure, status, action
-      )
+      } yield Movement(mrn, traderName, office, procedure)
     }
   }
 
   implicit val arbitraryViewArrivalModel: Arbitrary[ViewArrivalMovement] = {
     Arbitrary {
       for {
-        dateAndMovement <- arbitrary[Map[String, Seq[Movement]]]
-      } yield ViewArrivalMovement(dateAndMovement)
+        date            <- arbitrary[String]
+        time            <- arbitrary[String]
+        movement        <- arbitrary[Movement]
+      } yield ViewArrivalMovement(date, time, movement)
     }
   }
 

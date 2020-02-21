@@ -39,15 +39,17 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
 
   private val mockDestinationConnector = mock[DestinationConnector]
 
-  private val expectedResult = {
-    ViewArrivalMovement(
-      Map(
-        "01-01-2020" -> {
-          Seq(Movement("test updated", "test mrn", "test name", "test office", "test procedure", "test status", Seq("test actions")))
-        },
-        "02-01-2020" -> {
-          Seq(Movement("test updated", "test mrn", "test name", "test office", "test procedure", "test status", Seq("test actions")))
-        }
+  val expectedResult = {
+    Seq(
+      ViewArrivalMovement(
+        "2020-02-20",
+        "07:30:08.759",
+        Movement("test mrn", "test name", "test presentation office", "normal")
+      ),
+      ViewArrivalMovement(
+        "2020-02-20",
+        "07:30:08.759",
+        Movement("test mrn", "test name", "test presentation office", "normal")
       )
     )
   }

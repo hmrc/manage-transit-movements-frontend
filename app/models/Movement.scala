@@ -16,16 +16,22 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{Json, Reads, Writes, __}
 
-case class Movement(updated: String,
-                    mrn: String,
+case class Movement(movementReferenceNumber: String,
                     traderName: String,
-                    office: String,
-                    procedure: String,
-                    status: String,
-                    actions: Seq[String])
+                    presentationOffice: String,
+                    procedure: String)
 
 object Movement{
- implicit val format : OFormat[Movement] = Json.format[Movement]
+
+ implicit val writes: Writes[Movement] = Json.writes[Movement]
+
+ implicit val reads: Reads[Movement] = (
+   (__ \ "movementReferenceNumber").read[String] and
+     (__ \ "trader" \ "name").read[String] and
+     (__ \ "presentationOffice").read[String] and
+     (__ \ "procedure").read[String]
+   )(Movement.apply _)
 }

@@ -28,13 +28,11 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
   private def json(movement: Movement): JsObject = Json.obj(
-    "updated" -> movement.updated,
-    "mrn" -> movement.mrn,
+    "movementReferenceNumber" -> movement.movementReferenceNumber,
     "traderName" -> movement.traderName,
-    "office" -> movement.office,
-    "procedure" -> movement.procedure,
-    "status" -> movement.status,
-    "actions" -> movement.actions)
+    "presentationOffice" -> movement.presentationOffice,
+    "procedure" -> movement.procedure
+  )
 
   "Movement" - {
 

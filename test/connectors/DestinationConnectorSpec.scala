@@ -45,30 +45,74 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
   private val responseJson  = {
     """
+      |[
       | {
-      |     "01-01-2020":[
+      |   "date":"2020-02-20",
+      |   "time":"07:30:08.759",
+      |   "message": {
+      |     "procedure":"normal",
+      |     "movementReferenceNumber":"test mrn",
+      |     "notificationPlace":"test place",
+      |     "notificationDate":"2020-02-20",
+      |     "customsSubPlace":"test sub place",
+      |     "trader": {
+      |       "eori":"test eori",
+      |       "name":"test name",
+      |       "streetAndNumber":"test street",
+      |       "postCode":"test postcode",
+      |       "city":"test city",
+      |       "countryCode":"GB"
+      |    },
+      |    "presentationOffice":"test presentation office",
+      |    "enRouteEvents":[
       |     {
-      |       "updated":"test updated",
-      |       "mrn":"test mrn",
-      |       "traderName":"test name",
-      |       "office":"test office",
-      |       "procedure":"test procedure",
-      |       "status":"test status",
-      |       "actions":["test actions"]
-      |      }
-      |     ],
-      |    "02-01-2020":[
+      |       "place":"test place",
+      |       "countryCode":"test country code",
+      |       "alreadyInNcts":true,
+      |       "eventDetails":
+      |         {
+      |           "transportIdentity":"test transport identity",
+      |           "transportCountry":"test transport countru",
+      |           "containers":[{"containerNumber":"test container"}]
+      |           }
+      |         }
+      |       ]
+      |     }
+      |  },
+      |  {
+      |   "date":"2020-02-20",
+      |   "time":"07:30:08.759",
+      |   "message": {
+      |     "procedure":"normal",
+      |     "movementReferenceNumber":"test mrn",
+      |     "notificationPlace":"test place",
+      |     "notificationDate":"2020-02-20",
+      |     "customsSubPlace":"test sub place",
+      |     "trader": {
+      |       "eori":"test eori",
+      |       "name":"test name",
+      |       "streetAndNumber":"test street",
+      |       "postCode":"test postcode",
+      |       "city":"test city",
+      |       "countryCode":"GB"
+      |    },
+      |    "presentationOffice":"test presentation office",
+      |    "enRouteEvents":[
       |     {
-      |       "updated":"test updated",
-      |       "mrn":"test mrn",
-      |       "traderName":"test name",
-      |       "office":"test office",
-      |       "procedure":"test procedure",
-      |       "status":"test status",
-      |       "actions":["test actions"]
-      |      }
-      |    ]
-      | }
+      |       "place":"test place",
+      |       "countryCode":"test country code",
+      |       "alreadyInNcts":true,
+      |       "eventDetails":
+      |         {
+      |           "transportIdentity":"test transport identity",
+      |           "transportCountry":"test transport countru",
+      |           "containers":[{"containerNumber":"test container"}]
+      |           }
+      |         }
+      |       ]
+      |     }
+      |   }
+      |]
       |""".stripMargin
   }
 
@@ -79,20 +123,23 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     "must return a successful future response with a view arrival movement" in {
 
       val expectedResult = {
-        ViewArrivalMovement(
-          Map(
-            "01-01-2020" -> {
-              Seq(Movement("test updated", "test mrn", "test name", "test office", "test procedure", "test status", Seq("test actions")))
-            },
-            "02-01-2020" -> {
-              Seq(Movement("test updated", "test mrn", "test name", "test office", "test procedure", "test status", Seq("test actions")))
-            }
+        Seq(
+          ViewArrivalMovement(
+            "2020-02-20",
+            "07:30:08.759",
+            Movement("test mrn", "test name", "test presentation office", "normal")
+          ),
+          ViewArrivalMovement(
+            "2020-02-20",
+            "07:30:08.759",
+            Movement("test mrn", "test name", "test presentation office", "normal")
           )
         )
       }
 
+
       server.stubFor(
-        get(urlEqualTo(s"/$startUrl/messages"))
+        get(urlEqualTo(s"/$startUrl/arrivals-history"))
           .willReturn(okJson(responseJson)
         )
       )
@@ -102,7 +149,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
     "must return an exception when an error response is returned from getCountryList" in {
 
-      checkErrorResponse(s"/$startUrl/messages", connector.getArrivalMovements)
+      checkErrorResponse(s"/$startUrl/arrivals-history", connector.getArrivalMovements)
     }
   }
 

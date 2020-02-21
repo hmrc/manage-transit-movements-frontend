@@ -19,23 +19,8 @@ package viewModels
 import models.Movement
 import play.api.libs.json._
 
-case class ViewArrivalMovement(tables: Map[String, Seq[Movement]])
+case class ViewArrivalMovement(date: String, time: String, message: Movement)
 
 object ViewArrivalMovement {
-
-  implicit val writes: Writes[ViewArrivalMovement] =
-    new Writes[ViewArrivalMovement] {
-      override def writes(o: ViewArrivalMovement): JsValue = {
-        Json.toJson(o.tables)
-      }
-   }
-
-  implicit val reads: Reads[ViewArrivalMovement] = {
-    new Reads[ViewArrivalMovement] {
-      override def reads(json: JsValue): JsResult[ViewArrivalMovement] = {
-        json.validate[Map[String, Seq[Movement]]].map(ViewArrivalMovement(_))
-      }
-    }
-  }
-
+  implicit val formats: OFormat[ViewArrivalMovement] = Json.format[ViewArrivalMovement]
 }

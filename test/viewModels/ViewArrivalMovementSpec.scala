@@ -26,12 +26,25 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 class ViewArrivalMovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
-
   "viewArrivalMovement" - {
-    "must serialise and deserialise" in {
-      forAll(arbitrary[ViewArrivalMovement]){
+
+    "must serialise" in {
+
+      forAll(arbitrary[ViewArrivalMovement]) {
         viewArrivalMovement =>
-          Json.toJson(viewArrivalMovement).as[ViewArrivalMovement] mustBe viewArrivalMovement
+
+          val json = Json.obj(
+            "date" -> viewArrivalMovement.date,
+            "time" -> viewArrivalMovement.time,
+            "message" -> Json.obj(
+              "movementReferenceNumber" -> viewArrivalMovement.message.movementReferenceNumber,
+              "traderName" -> viewArrivalMovement.message.traderName,
+              "presentationOffice" -> viewArrivalMovement.message.presentationOffice,
+              "procedure" -> viewArrivalMovement.message.procedure
+            )
+          )
+
+          Json.toJson(viewArrivalMovement) mustBe json
       }
     }
   }

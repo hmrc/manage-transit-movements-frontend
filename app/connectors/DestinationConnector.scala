@@ -27,9 +27,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DestinationConnector  @Inject()(config: FrontendAppConfig, http: HttpClient) {
 
-  def getArrivalMovements()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ViewArrivalMovement] = {
+  def getArrivalMovements()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[ViewArrivalMovement]] = {
 
-    val serviceUrl: String = s"${config.destinationUrl}/messages"
-    http.GET[ViewArrivalMovement](serviceUrl)
+    val serviceUrl: String = s"${config.destinationUrl}/arrivals-history"
+    http.GET[Seq[ViewArrivalMovement]](serviceUrl)
   }
 }
