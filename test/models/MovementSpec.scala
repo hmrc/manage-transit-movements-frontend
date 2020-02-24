@@ -16,12 +16,14 @@
 
 package models
 
+import java.time.format.DateTimeFormatter
+
 import base.SpecBase
 import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 class MovementSpec
@@ -36,12 +38,14 @@ class MovementSpec
     "must serialise to Json" in {
 
       forAll(arbitrary[Movement]) { movement =>
+        val time  = movement.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
         val expectedJson = Json.obj(
-          "updated" -> movement.date,
+          "updated" -> time,
           "mrn" -> movement.movementReferenceNumber,
           "traderName" -> movement.traderName,
           "office" -> movement.presentationOffice,
           "procedure" -> movement.procedure,
+          "actions" -> Seq("history"),
           "status" -> "Arrival notification sent"
         )
 

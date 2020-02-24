@@ -16,19 +16,35 @@
 
 package viewModels
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
+import java.time.chrono.ChronoLocalDate
+import java.time.format.DateTimeFormatter
 
-import com.google.inject.Inject
 import config.FrontendAppConfig
 import models.Movement
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsObject, Json, OWrites, __}
+import play.api.libs.json.{JsObject, Json, OWrites}
 
-case class ViewArrivalMovements(dataRows: Map[LocalDate, Seq[Movement]])
+case class ViewArrivalMovements(dataRows: Map[String, Seq[Movement]])
 
 object ViewArrivalMovements {
-  def apply(movements: Seq[Movement]): ViewArrivalMovements =
-    ViewArrivalMovements(movements.groupBy(_.date))
+
+  implicit val localDateOrdering: Ordering[LocalDate] =
+    Ordering.by(identity[ChronoLocalDate])
+
+  def apply(movements: Seq[Movement]): ViewArrivalMovements = {
+    ViewArrivalMovements(format(movements))
+  }
+
+  private def format(movements: Seq[Movement]): Map[String, Seq[Movement]] = {
+    val groupMovements: Map[LocalDate, Seq[Movement]] = movements.groupBy(_.date)
+    val sortByDate: Seq[(LocalDate, Seq[Movement])] = groupMovements.toSeq.sortBy(_._1).reverse
+
+   sortByDate.map {
+      result =>
+        val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+        (result._1.format(dateFormatter), result._2.sortBy(_.time))
+    }.toMap
+  }
 
   implicit def writes(
     implicit frontendAppConfig: FrontendAppConfig

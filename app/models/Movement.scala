@@ -16,10 +16,11 @@
 
 package models
 
+import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsObject, Json, OWrites, Reads, __}
+import play.api.libs.json._
 
 case class Movement(date: LocalDate,
                     time: LocalTime,
@@ -32,11 +33,12 @@ object Movement {
 
   implicit val writes: OWrites[Movement] = new OWrites[Movement] {
     override def writes(o: Movement): JsObject = Json.obj(
-      "updated"     -> o.date,
+      "updated"     -> o.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
       "mrn"        -> o.movementReferenceNumber,
       "traderName" -> o.traderName,
       "office"     -> o.presentationOffice,
       "procedure"  -> o.procedure,
+      "actions"    -> Seq("history"),             // TODO: This will be decided based on the message type
       "status"     -> "Arrival notification sent" // TODO: In future we will pull this status from the backend
     )
   }
