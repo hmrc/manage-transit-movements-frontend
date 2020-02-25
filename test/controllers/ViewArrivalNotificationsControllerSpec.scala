@@ -72,6 +72,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
 
       val expectedJson = Json.obj(
         "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
+        "homePageUrl" -> routes.IndexController.onPageLoad().url,
         "dataRows" -> Json.toJson(expectedResult)
       )
 

@@ -42,6 +42,7 @@ class ViewArrivalNotificationsController @Inject()(renderer: Renderer,
 
           val json = Json.obj(
             "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+            "homePageUrl" -> routes.IndexController.onPageLoad().url,
             "dataRows" -> dataRows
           )
 
