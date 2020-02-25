@@ -52,9 +52,10 @@ trait ModelGenerators {
         time <- arbitrary[LocalTime]
         mrn <- arbitrary[String]
         traderName <- arbitrary[String]
-        office <- arbitrary[String]
+        officeId <- arbitrary[String]
+        officeName <- arbitrary[String]
         procedure <- arbitrary[String]
-      } yield Movement(date, time, mrn, traderName, office, procedure)
+      } yield Movement(date, time, mrn, traderName, officeId, officeName, procedure)
     }
   }
 }

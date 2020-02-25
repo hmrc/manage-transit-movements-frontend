@@ -43,7 +43,7 @@ class MovementSpec
           "updated" -> time,
           "mrn" -> movement.movementReferenceNumber,
           "traderName" -> movement.traderName,
-          "office" -> movement.presentationOffice,
+          "office" -> s"${movement.presentationOfficeName} (${movement.presentationOfficeId})",
           "procedure" -> movement.procedure,
           "actions" -> Seq("history"),
           "status" -> "Arrival notification sent"
@@ -60,7 +60,8 @@ class MovementSpec
               time,
               movementReferenceNumber,
               traderName,
-              presentationOffice,
+              presentationOfficeId,
+              presentationOfficeName,
               procedure
             ) => {
 
@@ -70,7 +71,8 @@ class MovementSpec
             "message" -> Json.obj(
               "movementReferenceNumber" -> movementReferenceNumber,
               "trader" -> Json.obj("name" -> traderName),
-              "presentationOffice" -> presentationOffice,
+              "presentationOfficeId" -> presentationOfficeId,
+              "presentationOfficeName" -> presentationOfficeName,
               "procedure" -> procedure
             )
           )

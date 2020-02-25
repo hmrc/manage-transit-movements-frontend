@@ -72,7 +72,8 @@ class DestinationConnectorSpec
             "city" -> "test city",
             "countryCode" -> "GB"
           ),
-          "presentationOffice" -> "test presentation office",
+          "presentationOfficeId" -> "test presentation office id",
+          "presentationOfficeName" -> "test presentation office name",
           "enRouteEvents" -> Json.arr(
             Json.obj(
               "place" -> "test place",
@@ -106,7 +107,8 @@ class DestinationConnectorSpec
             "city" -> "test city",
             "countryCode" -> "GB"
           ),
-          "presentationOffice" -> "test presentation office",
+          "presentationOfficeId" -> "test presentation office id",
+          "presentationOfficeName" -> "test presentation office name",
           "enRouteEvents" -> Json.arr(
             Json.obj(
               "place" -> "test place",
@@ -137,7 +139,8 @@ class DestinationConnectorSpec
             localTime,
             "test mrn",
             "test name",
-            "test presentation office",
+            "test presentation office id",
+            "test presentation office name",
             "normal"
           ),
           Movement(
@@ -145,7 +148,8 @@ class DestinationConnectorSpec
             localTime,
             "test mrn",
             "test name",
-            "test presentation office",
+            "test presentation office id",
+            "test presentation office name",
             "normal"
           )
         )

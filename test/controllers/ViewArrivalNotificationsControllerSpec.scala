@@ -57,7 +57,8 @@ class ViewArrivalNotificationsControllerSpec
         localTime,
         "test mrn",
         "test name",
-        "test presentation office",
+        "test presentation office id",
+        "test presentation office name",
         "normal"
       ),
       Movement(
@@ -65,7 +66,8 @@ class ViewArrivalNotificationsControllerSpec
         localTime,
         "test mrn",
         "test name",
-        "test presentation office",
+        "test presentation office id",
+        "test presentation office name",
         "normal"
       )
     )

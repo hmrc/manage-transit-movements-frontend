@@ -26,7 +26,8 @@ case class Movement(date: LocalDate,
                     time: LocalTime,
                     movementReferenceNumber: String,
                     traderName: String,
-                    presentationOffice: String,
+                    presentationOfficeId: String,
+                    presentationOfficeName: String,
                     procedure: String)
 
 object Movement {
@@ -36,7 +37,7 @@ object Movement {
       "updated"     -> o.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
       "mrn"        -> o.movementReferenceNumber,
       "traderName" -> o.traderName,
-      "office"     -> o.presentationOffice,
+      "office"     -> s"${o.presentationOfficeName} (${o.presentationOfficeId})",
       "procedure"  -> o.procedure,
       "actions"    -> Seq("history"),             // TODO: This will be decided based on the message type
       "status"     -> "Arrival notification sent" // TODO: In future we will pull this status from the backend
@@ -48,7 +49,8 @@ object Movement {
       (__ \ "time").read[LocalTime] and
       (__ \ "message" \ "movementReferenceNumber").read[String] and
       (__ \ "message" \ "trader" \ "name").read[String] and
-      (__ \ "message" \ "presentationOffice").read[String] and
+      (__ \ "message" \ "presentationOfficeId").read[String] and
+      (__ \ "message" \ "presentationOfficeName").read[String] and
       (__ \ "message" \ "procedure").read[String]
   )(Movement.apply _)
 }
