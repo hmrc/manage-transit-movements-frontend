@@ -47,7 +47,8 @@ lazy val root = (project in file("."))
       "javascripts/application.js" -> group(Seq("lib/govuk-frontend/govuk/all.js"))
     ),
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
-    pipelineStages in Assets := Seq(concat,uglify)
+    pipelineStages in Assets := Seq(concat,uglify),
+    useSuperShell in ThisBuild:= false
   )
 
 lazy val testSettings: Seq[Def.Setting[_]] = Seq(
