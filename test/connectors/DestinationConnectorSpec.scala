@@ -165,26 +165,6 @@ class DestinationConnectorSpec
         )
       }
     }
-
-    "getArrivalMovement" - {
-
-      val expectedResult = Movement(
-        localDate,
-        localTime,
-        "test mrn",
-        "test name",
-        "test presentation office",
-        "normal"
-      )
-
-      server.stubFor(
-        get(urlEqualTo(s"/$startUrl/arrivals-history"))
-          .willReturn(okJson(responseJson.toString()))
-      )
-
-      connector.getArrivalMovements.futureValue mustBe expectedResult
-
-    }
   }
 
   private def checkErrorResponse(url: String, result: Future[_]): Assertion =

@@ -21,6 +21,7 @@ import java.time.{LocalDate, LocalTime, Year}
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
+import viewModels.ViewMovement
 
 trait ModelGenerators {
 
@@ -55,6 +56,20 @@ trait ModelGenerators {
         office <- arbitrary[String]
         procedure <- arbitrary[String]
       } yield Movement(date, time, mrn, traderName, office, procedure)
+    }
+  }
+
+  implicit val arbitraryViewMovement: Arbitrary[ViewMovement] = {
+    Arbitrary {
+      for {
+        date <- arbitrary[LocalDate]
+        time <- arbitrary[LocalTime]
+        mrn <- arbitrary[String]
+        traderName <- arbitrary[String]
+        office <- arbitrary[String]
+        officeName <- arbitrary[String]
+        procedure <- arbitrary[String]
+      } yield ViewMovement(date, time, mrn, traderName, office, officeName, procedure)
     }
   }
 }

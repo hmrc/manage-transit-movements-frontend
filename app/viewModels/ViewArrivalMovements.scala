@@ -21,23 +21,22 @@ import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 
 import config.FrontendAppConfig
-import models.Movement
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-case class ViewArrivalMovements(dataRows: Map[String, Seq[Movement]])
+case class ViewArrivalMovements(dataRows: Map[String, Seq[ViewMovement]])
 
 object ViewArrivalMovements {
 
   implicit val localDateOrdering: Ordering[LocalDate] =
     Ordering.by(identity[ChronoLocalDate])
 
-  def apply(movements: Seq[Movement]): ViewArrivalMovements = {
+  def apply(movements: Seq[ViewMovement]): ViewArrivalMovements = {
     ViewArrivalMovements(format(movements))
   }
 
-  private def format(movements: Seq[Movement]): Map[String, Seq[Movement]] = {
-    val groupMovements: Map[LocalDate, Seq[Movement]] = movements.groupBy(_.date)
-    val sortByDate: Seq[(LocalDate, Seq[Movement])] = groupMovements.toSeq.sortBy(_._1).reverse
+  private def format(movements: Seq[ViewMovement]): Map[String, Seq[ViewMovement]] = {
+    val groupMovements: Map[LocalDate, Seq[ViewMovement]] = movements.groupBy(_.date)
+    val sortByDate: Seq[(LocalDate, Seq[ViewMovement])] = groupMovements.toSeq.sortBy(_._1).reverse
 
    sortByDate.map {
       result =>

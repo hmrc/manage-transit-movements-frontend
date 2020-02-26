@@ -17,30 +17,48 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.DestinationConnector
+import connectors.{DestinationConnector, ReferenceDataConnector}
 import javax.inject.Inject
+import models.Movement
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import viewModels.ViewArrivalMovements
+import viewModels.{ViewArrivalMovements, ViewMovement}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewArrivalNotificationsController @Inject()(
   renderer: Renderer,
   val controllerComponents: MessagesControllerComponents,
-  destinationConnector: DestinationConnector
+  destinationConnector: DestinationConnector,
+  referenceDataConnector: ReferenceDataConnector
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    destinationConnector.getArrivalMovements
-      .map(ViewArrivalMovements.apply)
-      .map(Json.toJsObject[ViewArrivalMovements])
-      .flatMap(renderer.render("viewArrivalNotifications.njk", _).map(Ok(_)))
+    destinationConnector.getArrivalMovements().flatMap {
+      movements =>
+        Future.sequence(movements.map(convertToViewMovements)).map(ViewArrivalMovements.apply)
+          .map(Json.toJsObject[ViewArrivalMovements])
+          .flatMap(renderer.render("viewArrivalNotifications.njk", _).map(Ok(_)))
+    }
   }
 
+  private def convertToViewMovements(movement: Movement)(implicit hc: HeaderCarrier): Future[ViewMovement] = {
+    referenceDataConnector.getCustomsOffice(movement.presentationOfficeId) map {
+      presentationOffice =>
+        ViewMovement(movement.date,
+          movement.time,
+          movement.movementReferenceNumber,
+          movement.traderName,
+          movement.presentationOfficeId,
+          presentationOffice.name,
+          movement.procedure
+        )
+    }
+  }
 }

@@ -20,10 +20,10 @@ import java.time.{LocalDate, LocalTime}
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.DestinationConnector
+import connectors.{DestinationConnector, ReferenceDataConnector}
 import generators.ModelGenerators
 import matchers.JsonMatchers
-import models.Movement
+import models.{CustomsOffice, Movement}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -34,7 +34,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import viewModels.ViewArrivalMovements
+import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.Future
 
@@ -46,18 +46,20 @@ class ViewArrivalNotificationsControllerSpec
     with NunjucksSupport {
 
   private val mockDestinationConnector = mock[DestinationConnector]
+  private val mockReferenceDataConnector = mock[ReferenceDataConnector]
 
-  val localDate = LocalDate.now()
-  val localTime = LocalTime.now()
+  val localDate: LocalDate = LocalDate.now()
+  val localTime: LocalTime = LocalTime.now()
+  val mockCustomsOfficeResponse: CustomsOffice = CustomsOffice("officeId", "office name", Seq("role1", "role2"), Some("testPhoneNumber"))
 
-  val mockConnectorResponse = {
+  val mockConnectorResponse: Seq[Movement] = {
     Seq(
       Movement(
         localDate,
         localTime,
         "test mrn",
         "test name",
-        "test presentation office",
+        "officeId",
         "normal"
       ),
       Movement(
@@ -65,12 +67,28 @@ class ViewArrivalNotificationsControllerSpec
         localTime,
         "test mrn",
         "test name",
-        "test presentation office",
+        "officeId",
         "normal"
       )
     )
   }
 
+  private val viewMovements: Seq[ViewMovement] = Seq(
+    ViewMovement(localDate,
+      localTime,
+      "test mrn",
+      "test name",
+      "officeId",
+      "office name",
+      "normal"),
+    ViewMovement(localDate,
+      localTime,
+      "test mrn",
+      "test name",
+      "officeId",
+      "office name",
+      "normal")
+  )
 
   "ViewArrivalNotifications Controller" - {
     "return OK and the correct view for a GET" in {
@@ -81,20 +99,23 @@ class ViewArrivalNotificationsControllerSpec
       when(mockDestinationConnector.getArrivalMovements()(any(), any()))
         .thenReturn(Future.successful(mockConnectorResponse))
 
+      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(mockCustomsOfficeResponse))
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides {
-          bind[DestinationConnector].toInstance(mockDestinationConnector)
-        }
+        .overrides (
+          bind[DestinationConnector].toInstance(mockDestinationConnector),
+          bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
+        )
         .build()
 
-      implicit val feAppConfig = application.injector.instanceOf[FrontendAppConfig]
+      implicit val feAppConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
       val request = FakeRequest(
         GET,
         routes.ViewArrivalNotificationsController.onPageLoad().url
       )
 
-      val expectedJson = Json.toJsObject(ViewArrivalMovements(mockConnectorResponse))
+      val expectedJson = Json.toJson(ViewArrivalMovements(viewMovements))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
