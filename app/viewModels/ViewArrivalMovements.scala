@@ -16,7 +16,7 @@
 
 package viewModels
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 

@@ -38,15 +38,13 @@ class MovementSpec
     "must serialise to Json" in {
 
       forAll(arbitrary[Movement]) { movement =>
-        val time  = movement.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
+
         val expectedJson = Json.obj(
-          "updated" -> time,
+          "updated" -> movement.time,
           "mrn" -> movement.movementReferenceNumber,
           "traderName" -> movement.traderName,
-          "office" -> movement.presentationOffice,
-          "procedure" -> movement.procedure,
-          "actions" -> Seq("history"),
-          "status" -> "Arrival notification sent"
+          "office" -> movement.presentationOfficeId,
+          "procedure" -> movement.procedure
         )
 
         Json.toJson(movement) mustBe expectedJson
