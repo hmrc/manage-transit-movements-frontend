@@ -40,7 +40,7 @@ class ViewArrivalNotificationsController @Inject()(
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    destinationConnector.getArrivalMovements().flatMap {
+    destinationConnector.getMovements().flatMap {
       movements =>
         Future.sequence(movements.map(convertToViewMovements)).map(ViewArrivalMovements.apply)
           .map(Json.toJsObject[ViewArrivalMovements])
