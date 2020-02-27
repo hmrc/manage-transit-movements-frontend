@@ -30,7 +30,7 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -90,7 +90,12 @@ class ViewArrivalNotificationsControllerSpec
 
   implicit val appConfig: FrontendAppConfig = frontendAppConfig
 
-  private val expectedJson = Json.toJson(
+
+  private val urls = Json.obj(
+    "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+    "homePageUrl" -> routes.IndexController.onPageLoad().url)
+
+  private val expectedJson: JsValue = Json.toJson(
     ViewArrivalMovements(
       Seq(
         ViewMovement(
@@ -111,7 +116,8 @@ class ViewArrivalNotificationsControllerSpec
           "normal")
       )
     )
-  )
+  ).as[JsObject] ++ urls
+
 
   "ViewArrivalNotifications Controller" - {
     "return OK and the correct view for a GET" in {

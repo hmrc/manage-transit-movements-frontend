@@ -31,22 +31,25 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ViewArrivalNotificationsController @Inject()(
-  renderer: Renderer,
-  val controllerComponents: MessagesControllerComponents,
-  destinationConnector: DestinationConnector,
-  referenceDataConnector: ReferenceDataConnector
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-    extends FrontendBaseController
+                                                    renderer: Renderer,
+                                                    val controllerComponents: MessagesControllerComponents,
+                                                    destinationConnector: DestinationConnector,
+                                                    referenceDataConnector: ReferenceDataConnector
+                                                  )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
     destinationConnector.getMovements().flatMap {
       movements =>
+        val urls = Json.obj(
+          "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+          "homePageUrl" -> routes.IndexController.onPageLoad().url)
+
         Future.sequence(movements.map(convertToViewMovements)).map(ViewArrivalMovements.apply)
           .map(Json.toJsObject[ViewArrivalMovements])
           .flatMap(json =>
-            renderer.render("viewArrivalNotifications.njk",
-            json.++ (Json.obj("declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl))).map(Ok(_)))
+            renderer.render("viewArrivalNotifications.njk", json ++ urls).map(Ok(_)))
     }
   }
 
