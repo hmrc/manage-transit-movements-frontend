@@ -128,7 +128,7 @@ class ViewArrivalNotificationsControllerSpec
         GET,
         routes.ViewArrivalNotificationsController.onPageLoad().url
       )
-      
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
