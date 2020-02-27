@@ -44,7 +44,9 @@ class ViewArrivalNotificationsController @Inject()(
       movements =>
         Future.sequence(movements.map(convertToViewMovements)).map(ViewArrivalMovements.apply)
           .map(Json.toJsObject[ViewArrivalMovements])
-          .flatMap(renderer.render("viewArrivalNotifications.njk", _).map(Ok(_)))
+          .flatMap(json =>
+            renderer.render("viewArrivalNotifications.njk",
+            json.++ (Json.obj("declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl))).map(Ok(_)))
     }
   }
 
