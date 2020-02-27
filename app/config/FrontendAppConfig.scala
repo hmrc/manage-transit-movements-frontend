@@ -36,7 +36,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
 
   private val declareArrivalNotificationRoute = configuration.get[String]("declare-transit-movement-arrival-frontend.host")
-  val declareArrivalNotificationUrl = s"$declareArrivalNotificationRoute/common-transit-convention-trader-arrival/"
+  private val declareArrivalNotificationStartUrl = configuration.get[String]("declare-transit-movement-arrival-frontend.startUrl")
+  val declareArrivalNotificationUrl = s"$declareArrivalNotificationRoute/$declareArrivalNotificationStartUrl"
 
   lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String = configuration.get[String]("urls.login")

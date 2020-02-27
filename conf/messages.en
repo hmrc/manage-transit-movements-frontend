@@ -63,6 +63,7 @@ viewArrivalNotifications.table.action      = Action
 viewArrivalNotifications.table.action.viewErrors       = View and fix errors
 viewArrivalNotifications.table.action.unloadingRemarks    = Make unloading remarks
 viewArrivalNotifications.table.action.viewHistory      = View history
+viewArrivalNotifications.goToManageTransitMovements = Go to manage transit movements
 
 #### Compliance statement
 

@@ -14,11 +14,11 @@
             <h1 class="govuk-heading-xl">
               {{ messages("viewArrivalNotifications.heading") }}
             </h1>
-             <p class="govuk-body"><a href= {{ declareArrivalNotificationUrl }} >{{ messages("viewArrivalNotifications.makeArrivalNotification") }}</a></p>
+             <p class="govuk-body"><a id = "make-arrival-notification" href={{ declareArrivalNotificationUrl }} > {{ messages("viewArrivalNotifications.makeArrivalNotification") }}</a></p>
 
             {{ arrivalNotification(dataRows) }}
 
-             <p class="govuk-body govuk-!-margin-top-3"><a href="homepage">Go to manage transit movements</a></p>
+             <p class="govuk-body govuk-!-margin-top-3"><a id = "go-to-manage-transit-movements" href="{{ homePageUrl }}"> {{ messages("viewArrivalNotifications.goToManageTransitMovements") }} </a></p>
         </div>
     </div>
 
