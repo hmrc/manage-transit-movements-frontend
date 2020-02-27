@@ -124,7 +124,7 @@ class DestinationConnectorSpec
 
   "DestinationConnector" - {
 
-    "getArrivalMovements" - {
+    "getMovements" - {
 
       "must return a successful future response with a view arrival movement" in {
 
@@ -150,18 +150,18 @@ class DestinationConnectorSpec
         }
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/arrivals-history"))
+          get(urlEqualTo(s"/$startUrl/movements"))
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getArrivalMovements.futureValue mustBe expectedResult
+        connector.getMovements.futureValue mustBe expectedResult
       }
 
       "must return an exception when an error response is returned from getCountryList" in {
 
         checkErrorResponse(
-          s"/$startUrl/arrivals-history",
-          connector.getArrivalMovements
+          s"/$startUrl/movements",
+          connector.getMovements
         )
       }
     }

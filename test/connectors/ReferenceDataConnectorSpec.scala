@@ -48,7 +48,7 @@ class ReferenceDataConnectorSpec extends SpecBase
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
-      conf = "microservice.services.referenceData.port" -> server.port()
+      conf = "microservice.services.reference-data.port" -> server.port()
     )
     .build()
 
@@ -69,7 +69,7 @@ class ReferenceDataConnectorSpec extends SpecBase
         connector.getCustomsOffice(customsOfficeId).futureValue mustBe expectedResult
       }
 
-      "must return Not Found when a CustomsOffice cannot be found" in {
+      "must return an Exception when a CustomsOffice cannot be found" in {
         forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
