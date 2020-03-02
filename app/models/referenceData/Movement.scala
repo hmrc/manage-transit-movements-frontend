@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.referenceData
 
 import java.time.{LocalDate, LocalTime}
 

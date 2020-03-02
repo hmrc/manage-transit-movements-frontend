@@ -19,6 +19,7 @@ package generators
 import java.time.{LocalDate, LocalTime, Year}
 
 import models._
+import models.referenceData.Movement
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import viewModels.ViewMovement

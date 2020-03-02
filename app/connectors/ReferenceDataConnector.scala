@@ -18,17 +18,18 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.CustomsOffice
+import models.referenceData.CustomsOffice
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataConnector @Inject()(config: FrontendAppConfig,
-                                        http: HttpClient) {
+                                       http: HttpClient)
+                                      (implicit ec: ExecutionContext) {
 
 
-  def getCustomsOffice(customsOfficeId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CustomsOffice] = {
+  def getCustomsOffice(customsOfficeId: String)(implicit hc: HeaderCarrier): Future[CustomsOffice] = {
     val serviceUrl =s"${config.referenceDataUrl}/customs-office/$customsOfficeId"
     http.GET[CustomsOffice](serviceUrl)
   }

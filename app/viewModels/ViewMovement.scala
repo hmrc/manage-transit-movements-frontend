@@ -19,7 +19,7 @@ package viewModels
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
-import models.Movement
+import models.referenceData.Movement
 import play.api.libs.json.{JsObject, Json, OWrites}
 
 case class ViewMovement(

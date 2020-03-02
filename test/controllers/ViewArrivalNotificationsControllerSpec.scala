@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import connectors.{DestinationConnector, ReferenceDataConnector}
 import generators.ModelGenerators
 import matchers.JsonMatchers
-import models.{CustomsOffice, Movement}
+import models.referenceData.{CustomsOffice, Movement}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -95,7 +95,7 @@ class ViewArrivalNotificationsControllerSpec
     "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
     "homePageUrl" -> routes.IndexController.onPageLoad().url)
 
-  private val expectedJson: JsValue = Json.toJson(
+  private val expectedJson: JsValue = Json.toJsObject(
     ViewArrivalMovements(
       Seq(
         ViewMovement(
@@ -116,7 +116,7 @@ class ViewArrivalNotificationsControllerSpec
           "normal")
       )
     )
-  ).as[JsObject] ++ urls
+  ) ++ urls
 
 
   "ViewArrivalNotifications Controller" - {
@@ -125,10 +125,10 @@ class ViewArrivalNotificationsControllerSpec
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDestinationConnector.getMovements()(any(), any()))
+      when(mockDestinationConnector.getMovements()(any()))
         .thenReturn(Future.successful(mockDestinationResponse))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(mockReferenceDataResponse))
+      when(mockReferenceDataConnector.getCustomsOffice(any())(any())).thenReturn(Future.successful(mockReferenceDataResponse))
 
       val request = FakeRequest(
         GET,

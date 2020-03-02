@@ -18,11 +18,11 @@ package connectors
 
 import base.SpecBase
 import helper.WireMockServerHandler
-import models.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.referenceData.CustomsOffice
 import org.scalacheck.Gen
 
 import scala.concurrent.ExecutionContext.Implicits.global

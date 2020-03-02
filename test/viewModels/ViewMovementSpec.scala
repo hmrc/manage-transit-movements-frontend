@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter
 
 import base.SpecBase
 import generators.{Generators, ModelGenerators}
-import models.Movement
+import models.referenceData.Movement
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

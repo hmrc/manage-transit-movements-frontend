@@ -21,7 +21,7 @@ import java.time.{LocalDate, LocalTime}
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
-import models.Movement
+import models.referenceData.Movement
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

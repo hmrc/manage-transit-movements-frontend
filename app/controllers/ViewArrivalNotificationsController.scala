@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.{DestinationConnector, ReferenceDataConnector}
 import javax.inject.Inject
-import models.Movement
+import models.referenceData.Movement
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
