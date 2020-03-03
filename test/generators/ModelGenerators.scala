@@ -41,7 +41,7 @@ trait ModelGenerators {
 
   implicit val arbitraryLocalTime: Arbitrary[LocalTime] = Arbitrary {
     for {
-      hours <- Gen.chooseNum(0, 23)
+      hours   <- Gen.chooseNum(0, 23)
       minutes <- Gen.chooseNum(0, 59)
       seconds <- Gen.chooseNum(0, 59)
     } yield LocalTime.of(hours, minutes, seconds)
@@ -50,12 +50,12 @@ trait ModelGenerators {
   implicit val arbitraryMovement: Arbitrary[Movement] = {
     Arbitrary {
       for {
-        date <- arbitrary[LocalDate]
-        time <- arbitrary[LocalTime]
-        mrn <- arbitrary[String]
+        date       <- arbitrary[LocalDate]
+        time       <- arbitrary[LocalTime]
+        mrn        <- arbitrary[String]
         traderName <- arbitrary[String]
-        office <- arbitrary[String]
-        procedure <- arbitrary[String]
+        office     <- arbitrary[String]
+        procedure  <- arbitrary[String]
       } yield Movement(date, time, mrn, traderName, office, procedure)
     }
   }
@@ -63,14 +63,23 @@ trait ModelGenerators {
   implicit val arbitraryViewMovement: Arbitrary[ViewMovement] = {
     Arbitrary {
       for {
-        date <- arbitrary[LocalDate]
-        time <- arbitrary[LocalTime]
-        mrn <- arbitrary[String]
+        date       <- arbitrary[LocalDate]
+        time       <- arbitrary[LocalTime]
+        mrn        <- arbitrary[String]
         traderName <- arbitrary[String]
-        office <- arbitrary[String]
+        office     <- arbitrary[String]
         officeName <- arbitrary[String]
-        procedure <- arbitrary[String]
-      } yield ViewMovement(date, time, mrn, traderName, office, officeName, procedure)
+        procedure  <- arbitrary[String]
+      } yield
+        ViewMovement(
+          date,
+          time,
+          mrn,
+          traderName,
+          office,
+          officeName,
+          procedure
+        )
     }
   }
 }

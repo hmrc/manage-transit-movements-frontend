@@ -31,9 +31,9 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*Routes.*;.*GuiceInjector;" +
       ".*ControllerConfiguration;.*LanguageSwitchController",
-    ScoverageKeys.coverageMinimum := 70,
+    ScoverageKeys.coverageMinimum       := 70,
     ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true,
+    ScoverageKeys.coverageHighlighting  := true,
     scalacOptions ++= Seq("-feature"),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
@@ -46,13 +46,14 @@ lazy val root = (project in file("."))
     Concat.groups := Seq(
       "javascripts/application.js" -> group(Seq("lib/govuk-frontend/govuk/all.js"))
     ),
-    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
-    pipelineStages in Assets := Seq(concat,uglify),
-    useSuperShell in ThisBuild:= false
+    uglifyCompressOptions          := Seq("unused=false", "dead_code=false"),
+    pipelineStages in Assets       := Seq(concat, uglify),
+    useSuperShell in ThisBuild     := false,
+    scalafmtOnCompile in ThisBuild := true
   )
 
 lazy val testSettings: Seq[Def.Setting[_]] = Seq(
-  fork        := true,
+  fork := true,
   javaOptions ++= Seq(
     "-Dconfig.resource=test.application.conf"
   )

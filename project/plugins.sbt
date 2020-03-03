@@ -4,7 +4,6 @@ resolvers += "HMRC Releases" at "https://dl.bintray.com/hmrc/releases"
 
 resolvers += ("Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/")
 
-
 addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "2.5.0")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-git-versioning" % "2.1.0")
@@ -26,3 +25,5 @@ addSbtPlugin("net.ground5hark.sbt" % "sbt-concat" % "0.2.0")
 addSbtPlugin("com.typesafe.sbt" % "sbt-uglify" % "2.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.4")
+
+addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.16")

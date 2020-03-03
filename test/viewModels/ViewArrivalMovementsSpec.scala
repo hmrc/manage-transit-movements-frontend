@@ -27,32 +27,28 @@ import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-class ViewArrivalMovementsSpec
-  extends SpecBase
-    with MustMatchers
-    with ModelGenerators
-    with Generators
-    with ScalaCheckPropertyChecks
-    with NunjucksSupport {
+class ViewArrivalMovementsSpec extends SpecBase with MustMatchers with ModelGenerators with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
-    val localDateToday = LocalDate.now()
+    val localDateToday     = LocalDate.now()
     val localDateYesterday = LocalDate.now().minusDays(1)
-    val localTime = LocalTime.now()
+    val localTime          = LocalTime.now()
 
     val movementsGen: LocalDate => Gen[Seq[ViewMovement]] =
       date =>
         seqWithMaxLength(10) {
           Arbitrary {
-            arbitrary[ViewMovement].map(_.copy(date = date, time = localTime))
+            arbitrary[ViewMovement].map(
+              _.copy(date = date, time = localTime)
+            )
           }
-        }
+      }
 
     forAll(movementsGen(localDateToday), movementsGen(localDateYesterday)) {
       (todayMovements: Seq[ViewMovement], yesterdayMovements: Seq[ViewMovement]) =>
-
-        val result: ViewArrivalMovements = ViewArrivalMovements(todayMovements ++ yesterdayMovements)
+        val result: ViewArrivalMovements =
+          ViewArrivalMovements(todayMovements ++ yesterdayMovements)
 
         result.dataRows(formatter(localDateToday)) mustEqual todayMovements
         result.dataRows(formatter(localDateYesterday)) mustEqual yesterdayMovements
@@ -62,24 +58,32 @@ class ViewArrivalMovementsSpec
   "apply ordering to Movements by descending time in the same date" in {
     val localDateToday = LocalDate.now
 
-    val localTime = LocalTime.now
+    val localTime       = LocalTime.now
     val localTimeMinus1 = LocalTime.now.minusHours(1)
     val localTimeMinus2 = LocalTime.now.minusHours(2)
 
     val movementsGen: LocalTime => Arbitrary[ViewMovement] = {
       time =>
         Arbitrary {
-          arbitrary[ViewMovement].map(_.copy(date = localDateToday, time = time))
+          arbitrary[ViewMovement].map(
+            _.copy(date = localDateToday, time = time)
+          )
         }
     }
 
-    forAll(movementsGen(localTime).arbitrary, movementsGen(localTimeMinus1).arbitrary, movementsGen(localTimeMinus2).arbitrary) {
+    forAll(
+      movementsGen(localTime).arbitrary,
+      movementsGen(localTimeMinus1).arbitrary,
+      movementsGen(localTimeMinus2).arbitrary
+    ) {
       (movement, movementMinus1, movementMinus2) =>
+        val movementsInWrongOrder: Seq[ViewMovement] =
+          Seq(movementMinus1, movementMinus2, movement)
+        val result: ViewArrivalMovements =
+          ViewArrivalMovements(movementsInWrongOrder)
 
-        val movementsInWrongOrder: Seq[ViewMovement] = Seq(movementMinus1, movementMinus2, movement)
-        val result: ViewArrivalMovements = ViewArrivalMovements(movementsInWrongOrder)
-
-        val expectedResult: Seq[ViewMovement] = Seq(movementMinus2, movementMinus1, movement)
+        val expectedResult: Seq[ViewMovement] =
+          Seq(movementMinus2, movementMinus1, movement)
 
         result.dataRows(formatter(localDateToday)) mustEqual expectedResult
     }

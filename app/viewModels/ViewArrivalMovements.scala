@@ -23,24 +23,32 @@ import java.time.format.DateTimeFormatter
 import config.FrontendAppConfig
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-case class ViewArrivalMovements(dataRows: Map[String, Seq[ViewMovement]])
+case class ViewArrivalMovements(
+  dataRows: Map[String, Seq[ViewMovement]]
+)
 
 object ViewArrivalMovements {
 
   implicit val localDateOrdering: Ordering[LocalDate] =
     Ordering.by(identity[ChronoLocalDate])
 
-  def apply(movements: Seq[ViewMovement]): ViewArrivalMovements = {
+  def apply(
+    movements: Seq[ViewMovement]
+  ): ViewArrivalMovements =
     ViewArrivalMovements(format(movements))
-  }
 
-  private def format(movements: Seq[ViewMovement]): Map[String, Seq[ViewMovement]] = {
-    val groupMovements: Map[LocalDate, Seq[ViewMovement]] = movements.groupBy(_.date)
-    val sortByDate: Seq[(LocalDate, Seq[ViewMovement])] = groupMovements.toSeq.sortBy(_._1).reverse
+  private def format(
+    movements: Seq[ViewMovement]
+  ): Map[String, Seq[ViewMovement]] = {
+    val groupMovements: Map[LocalDate, Seq[ViewMovement]] =
+      movements.groupBy(_.date)
+    val sortByDate: Seq[(LocalDate, Seq[ViewMovement])] =
+      groupMovements.toSeq.sortBy(_._1).reverse
 
-   sortByDate.map {
+    sortByDate.map {
       result =>
-        val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+        val dateFormatter: DateTimeFormatter =
+          DateTimeFormatter.ofPattern("d MMMM yyyy")
         (result._1.format(dateFormatter), result._2.sortBy(_.time))
     }.toMap
   }
@@ -49,11 +57,10 @@ object ViewArrivalMovements {
     implicit frontendAppConfig: FrontendAppConfig
   ): OWrites[ViewArrivalMovements] =
     new OWrites[ViewArrivalMovements] {
-      override def writes(o: ViewArrivalMovements): JsObject = {
+      override def writes(o: ViewArrivalMovements): JsObject =
         Json.obj(
-          "dataRows" -> o.dataRows,
+          "dataRows"                      -> o.dataRows,
           "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl
         )
-      }
     }
 }
