@@ -24,9 +24,7 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DestinationConnector @Inject()(config: FrontendAppConfig,
-                                     http: HttpClient)
-                                    (implicit ec: ExecutionContext) {
+class DestinationConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
 
   def getMovements()(implicit hc: HeaderCarrier): Future[Seq[Movement]] = {
 

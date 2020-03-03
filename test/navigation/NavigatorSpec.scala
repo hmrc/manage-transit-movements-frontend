@@ -24,10 +24,7 @@ import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class NavigatorSpec
-    extends SpecBase
-    with ScalaCheckPropertyChecks
-    with Generators {
+class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator = new Navigator
 
@@ -39,10 +36,11 @@ class NavigatorSpec
 
         case object UnknownPage extends Page
 
-        forAll(arbitrary[UserAnswers]) { answers =>
-          navigator
-            .nextPage(UnknownPage, NormalMode, answers)
-            .mustBe(routes.IndexController.onPageLoad())
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(UnknownPage, NormalMode, answers)
+              .mustBe(routes.IndexController.onPageLoad())
         }
       }
     }
@@ -53,10 +51,11 @@ class NavigatorSpec
 
         case object UnknownPage extends Page
 
-        forAll(arbitrary[UserAnswers]) { answers =>
-          navigator
-            .nextPage(UnknownPage, CheckMode, answers)
-            .mustBe(routes.IndexController.onPageLoad())
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(UnknownPage, CheckMode, answers)
+              .mustBe(routes.IndexController.onPageLoad())
         }
       }
     }

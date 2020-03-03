@@ -48,11 +48,11 @@ class IndexControllerSpec extends SpecBase {
       status(result) mustEqual OK
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
         "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
-        "viewArrivalNotificationUrl" -> viewArrivalNotificationUrl
+        "viewArrivalNotificationUrl"    -> viewArrivalNotificationUrl
       )
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())

@@ -27,28 +27,23 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-class MovementSpec
-    extends SpecBase
-    with MustMatchers
-    with ModelGenerators
-    with ScalaCheckPropertyChecks
-    with NunjucksSupport {
+class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
   "Movement" - {
 
     "must serialise to Json" in {
 
-      forAll(arbitrary[Movement]) { movement =>
+      forAll(arbitrary[Movement]) {
+        movement =>
+          val expectedJson = Json.obj(
+            "updated"    -> movement.time,
+            "mrn"        -> movement.movementReferenceNumber,
+            "traderName" -> movement.traderName,
+            "office"     -> movement.presentationOfficeId,
+            "procedure"  -> movement.procedure
+          )
 
-        val expectedJson = Json.obj(
-          "updated" -> movement.time,
-          "mrn" -> movement.movementReferenceNumber,
-          "traderName" -> movement.traderName,
-          "office" -> movement.presentationOfficeId,
-          "procedure" -> movement.procedure
-        )
-
-        Json.toJson(movement) mustBe expectedJson
+          Json.toJson(movement) mustBe expectedJson
       }
     }
 
@@ -68,9 +63,9 @@ class MovementSpec
             "time" -> time,
             "message" -> Json.obj(
               "movementReferenceNumber" -> movementReferenceNumber,
-              "trader" -> Json.obj("name" -> traderName),
-              "presentationOffice" -> presentationOffice,
-              "procedure" -> procedure
+              "trader"                  -> Json.obj("name" -> traderName),
+              "presentationOffice"      -> presentationOffice,
+              "procedure"               -> procedure
             )
           )
 
