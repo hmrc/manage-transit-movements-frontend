@@ -18,19 +18,19 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.referenceData.Movement
+import models.referenceData.CustomsOffice
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DestinationConnector @Inject()(config: FrontendAppConfig,
-                                     http: HttpClient)
-                                    (implicit ec: ExecutionContext) {
+class ReferenceDataConnector @Inject()(config: FrontendAppConfig,
+                                       http: HttpClient)
+                                      (implicit ec: ExecutionContext) {
 
-  def getMovements()(implicit hc: HeaderCarrier): Future[Seq[Movement]] = {
 
-    val serviceUrl: String = s"${config.destinationUrl}/movements"
-    http.GET[Seq[Movement]](serviceUrl)
+  def getCustomsOffice(customsOfficeId: String)(implicit hc: HeaderCarrier): Future[CustomsOffice] = {
+    val serviceUrl =s"${config.referenceDataUrl}/customs-office/$customsOfficeId"
+    http.GET[CustomsOffice](serviceUrl)
   }
 }

@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.referenceData
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Movement(updated: String,
-                    mrn: String,
-                    traderName: String,
-                    office: String,
-                    procedure: String,
-                    status: String,
-                    actions: Seq[String])
+case class CustomsOffice(id: String, name: String, roles: Seq[String], phoneNumber: Option[String])
 
-object Movement{
- implicit val format : OFormat[Movement] = Json.format[Movement]
+object CustomsOffice {
+  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
 }

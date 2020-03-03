@@ -16,35 +16,67 @@
 
 package models
 
+import java.time.format.DateTimeFormatter
+
 import base.SpecBase
 import generators.ModelGenerators
-import org.scalatest.{FreeSpec, MustMatchers}
-import play.api.libs.json.{JsObject, Json}
+import models.referenceData.Movement
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-
-class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
-
-  private def json(movement: Movement): JsObject = Json.obj(
-    "updated" -> movement.updated,
-    "mrn" -> movement.mrn,
-    "traderName" -> movement.traderName,
-    "office" -> movement.office,
-    "procedure" -> movement.procedure,
-    "status" -> movement.status,
-    "actions" -> movement.actions)
+class MovementSpec
+    extends SpecBase
+    with MustMatchers
+    with ModelGenerators
+    with ScalaCheckPropertyChecks
+    with NunjucksSupport {
 
   "Movement" - {
 
-    "Serialise and deserialise" in {
+    "must serialise to Json" in {
 
-      forAll(arbitrary[Movement]) {
-        movement =>
-          Json.toJson(movement) mustBe json(movement)
+      forAll(arbitrary[Movement]) { movement =>
+
+        val expectedJson = Json.obj(
+          "updated" -> movement.time,
+          "mrn" -> movement.movementReferenceNumber,
+          "traderName" -> movement.traderName,
+          "office" -> movement.presentationOfficeId,
+          "procedure" -> movement.procedure
+        )
+
+        Json.toJson(movement) mustBe expectedJson
       }
     }
 
+    "must deserialize from Json" in {
+      forAll(arbitrary[Movement]) {
+        case movement @ Movement(
+              date,
+              time,
+              movementReferenceNumber,
+              traderName,
+              presentationOffice,
+              procedure
+            ) => {
+
+          val json = Json.obj(
+            "date" -> date,
+            "time" -> time,
+            "message" -> Json.obj(
+              "movementReferenceNumber" -> movementReferenceNumber,
+              "trader" -> Json.obj("name" -> traderName),
+              "presentationOffice" -> presentationOffice,
+              "procedure" -> procedure
+            )
+          )
+
+          json.asOpt[Movement].value mustEqual movement
+        }
+      }
+    }
   }
 }
