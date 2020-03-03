@@ -21,6 +21,7 @@ import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 
 import config.FrontendAppConfig
+import controllers.routes
 import play.api.libs.json.{JsObject, Json, OWrites}
 
 case class ViewArrivalMovements(
@@ -60,7 +61,8 @@ object ViewArrivalMovements {
       override def writes(o: ViewArrivalMovements): JsObject =
         Json.obj(
           "dataRows"                      -> o.dataRows,
-          "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl
+          "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
+          "homePageUrl"                   -> routes.IndexController.onPageLoad().url
         )
     }
 }

@@ -43,11 +43,6 @@ class ViewArrivalNotificationsController @Inject()(
     implicit request =>
       destinationConnector.getMovements().flatMap {
         movements =>
-          val urls = Json.obj(
-            "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-            "homePageUrl"                   -> routes.IndexController.onPageLoad().url
-          )
-
           Future
             .sequence(movements.map(convertToViewMovements))
             .map(ViewArrivalMovements.apply)
@@ -55,7 +50,7 @@ class ViewArrivalNotificationsController @Inject()(
             .flatMap(
               json =>
                 renderer
-                  .render("viewArrivalNotifications.njk", json ++ urls)
+                  .render("viewArrivalNotifications.njk", json)
                   .map(Ok(_))
             )
       }

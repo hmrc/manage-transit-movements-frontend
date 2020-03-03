@@ -21,8 +21,9 @@ import java.time.{LocalDate, LocalTime, Year}
 import models._
 import models.referenceData.Movement
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen.listOfN
 import org.scalacheck.{Arbitrary, Gen}
-import viewModels.ViewMovement
+import viewModels.{ViewArrivalMovements, ViewMovement}
 
 trait ModelGenerators {
 
@@ -82,4 +83,11 @@ trait ModelGenerators {
         )
     }
   }
+
+  implicit val arbitraryViewArrivalMovements: Arbitrary[ViewArrivalMovements] =
+    Arbitrary {
+      for {
+        seqOfViewMovements <- listOfN(10, arbitrary[ViewMovement])
+      } yield ViewArrivalMovements(seqOfViewMovements)
+    }
 }
