@@ -27,13 +27,10 @@ import org.scalacheck.Gen
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
+class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
 
-class ReferenceDataConnectorSpec extends SpecBase
-  with WireMockServerHandler
-  with ScalaCheckPropertyChecks {
-
-  private val startUrl = "transit-movements-trader-reference-data"
-  private val customsOfficeId = "123"
+  private val startUrl                               = "transit-movements-trader-reference-data"
+  private val customsOfficeId                        = "123"
   private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
 
   private val customsOfficeResponseJson: String =

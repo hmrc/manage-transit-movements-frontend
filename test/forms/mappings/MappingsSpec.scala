@@ -62,7 +62,7 @@ class MappingsSpec extends FreeSpec with MustMatchers with OptionValues with Map
     }
 
     "must return a custom error message" in {
-      val form = Form("value" -> text("custom.error"))
+      val form   = Form("value" -> text("custom.error"))
       val result = form.bind(Map("value" -> ""))
       result.errors must contain(FormError("value", "custom.error"))
     }

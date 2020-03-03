@@ -32,10 +32,7 @@ import play.api.libs.json.{JsArray, Json}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DestinationConnectorSpec
-    extends SpecBase
-    with WireMockServerHandler
-    with ScalaCheckPropertyChecks {
+class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
 
   private lazy val connector: DestinationConnector =
     app.injector.instanceOf[DestinationConnector]
@@ -54,29 +51,29 @@ class DestinationConnectorSpec
         "date" -> localDate,
         "time" -> localTime,
         "message" -> Json.obj(
-          "procedure" -> "normal",
+          "procedure"               -> "normal",
           "movementReferenceNumber" -> "test mrn",
-          "notificationPlace" -> "test place",
-          "notificationDate" -> "2020-02-20",
-          "customsSubPlace" -> "test sub place",
+          "notificationPlace"       -> "test place",
+          "notificationDate"        -> "2020-02-20",
+          "customsSubPlace"         -> "test sub place",
           "trader" -> Json.obj(
-            "eori" -> "test eori",
-            "name" -> "test name",
+            "eori"            -> "test eori",
+            "name"            -> "test name",
             "streetAndNumber" -> "test street",
-            "postCode" -> "test postcode",
-            "city" -> "test city",
-            "countryCode" -> "GB"
+            "postCode"        -> "test postcode",
+            "city"            -> "test city",
+            "countryCode"     -> "GB"
           ),
           "presentationOffice" -> "test presentation office",
           "enRouteEvents" -> Json.arr(
             Json.obj(
-              "place" -> "test place",
-              "countryCode" -> "test country code",
+              "place"         -> "test place",
+              "countryCode"   -> "test country code",
               "alreadyInNcts" -> true,
               "eventDetails" ->
                 Json.obj(
                   "transportIdentity" -> "test transport identity",
-                  "transportCountry" -> "test transport countru",
+                  "transportCountry"  -> "test transport countru",
                   "containers" -> Json
                     .arr(Json.obj("containerNumber" -> "test container"))
                 )
@@ -88,29 +85,29 @@ class DestinationConnectorSpec
         "date" -> localDate,
         "time" -> localTime,
         "message" -> Json.obj(
-          "procedure" -> "normal",
+          "procedure"               -> "normal",
           "movementReferenceNumber" -> "test mrn",
-          "notificationPlace" -> "test place",
-          "notificationDate" -> "2020-02-20",
-          "customsSubPlace" -> "test sub place",
+          "notificationPlace"       -> "test place",
+          "notificationDate"        -> "2020-02-20",
+          "customsSubPlace"         -> "test sub place",
           "trader" -> Json.obj(
-            "eori" -> "test eori",
-            "name" -> "test name",
+            "eori"            -> "test eori",
+            "name"            -> "test name",
             "streetAndNumber" -> "test street",
-            "postCode" -> "test postcode",
-            "city" -> "test city",
-            "countryCode" -> "GB"
+            "postCode"        -> "test postcode",
+            "city"            -> "test city",
+            "countryCode"     -> "GB"
           ),
           "presentationOffice" -> "test presentation office",
           "enRouteEvents" -> Json.arr(
             Json.obj(
-              "place" -> "test place",
-              "countryCode" -> "test country code",
+              "place"         -> "test place",
+              "countryCode"   -> "test country code",
               "alreadyInNcts" -> true,
               "eventDetails" ->
                 Json.obj(
                   "transportIdentity" -> "test transport identity",
-                  "transportCountry" -> "test transport countru",
+                  "transportCountry"  -> "test transport countru",
                   "containers" -> Json
                     .arr(Json.obj("containerNumber" -> "test container"))
                 )
@@ -168,17 +165,18 @@ class DestinationConnectorSpec
   }
 
   private def checkErrorResponse(url: String, result: Future[_]): Assertion =
-    forAll(errorResponses) { errorResponse =>
-      server.stubFor(
-        get(urlEqualTo(url))
-          .willReturn(
-            aResponse()
-              .withStatus(errorResponse)
-          )
-      )
+    forAll(errorResponses) {
+      errorResponse =>
+        server.stubFor(
+          get(urlEqualTo(url))
+            .willReturn(
+              aResponse()
+                .withStatus(errorResponse)
+            )
+        )
 
-      whenReady(result.failed) {
-        _ mustBe an[Exception]
-      }
+        whenReady(result.failed) {
+          _ mustBe an[Exception]
+        }
     }
 }

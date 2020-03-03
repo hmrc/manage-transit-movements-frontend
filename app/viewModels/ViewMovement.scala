@@ -22,27 +22,28 @@ import java.time.{LocalDate, LocalTime}
 import models.referenceData.Movement
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-case class ViewMovement(
-                        date: LocalDate,
-                        time: LocalTime,
-                        movementReferenceNumber: String,
-                        traderName: String,
-                        presentationOfficeId: String,
-                        presentationOfficeName: String,
-                        procedure: String
-                       )
+final case class ViewMovement(date: LocalDate,
+                              time: LocalTime,
+                              movementReferenceNumber: String,
+                              traderName: String,
+                              presentationOfficeId: String,
+                              presentationOfficeName: String,
+                              procedure: String)
 
 object ViewMovement {
-  implicit val writes: OWrites[ViewMovement] = new OWrites[ViewMovement] {
+  implicit val writes: OWrites[ViewMovement] =
+    new OWrites[ViewMovement] {
 
-    override def writes(o: ViewMovement): JsObject = Json.obj(
-      "updated"     -> o.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
-      "mrn"        -> o.movementReferenceNumber,
-      "traderName" -> o.traderName,
-      "office"     -> s"${o.presentationOfficeName} (${o.presentationOfficeId})",
-      "procedure"  -> o.procedure,
-      "actions"    -> Seq("history"),             // TODO: This will be decided based on the message type
-      "status"     -> "Arrival notification sent" // TODO: In future we will pull this status from the backend
-    )
-  }
+      override def writes(o: ViewMovement): JsObject = Json.obj(
+        "updated" -> o.time
+          .format(DateTimeFormatter.ofPattern("h:mma"))
+          .toLowerCase,
+        "mrn"        -> o.movementReferenceNumber,
+        "traderName" -> o.traderName,
+        "office"     -> s"${o.presentationOfficeName} (${o.presentationOfficeId})",
+        "procedure"  -> o.procedure,
+        "actions"    -> Seq("history"), // TODO: This will be decided based on the message type
+        "status"     -> "Arrival notification sent" // TODO: In future we will pull this status from the backend
+      )
+    }
 }

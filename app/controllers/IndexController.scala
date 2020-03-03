@@ -26,23 +26,21 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
 import scala.concurrent.ExecutionContext
 
-class IndexController @Inject()(
-                                 appConfig: FrontendAppConfig,
-                                 val controllerComponents: MessagesControllerComponents,
-                                 renderer: Renderer)
-                               (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class IndexController @Inject()(appConfig: FrontendAppConfig, val controllerComponents: MessagesControllerComponents, renderer: Renderer)(
+  implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
-
       val viewArrivalNotifications = controllers.routes.ViewArrivalNotificationsController.onPageLoad().url
 
-      renderer.render("index.njk",
-        Json.obj(
-          "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-          "viewArrivalNotificationUrl" -> viewArrivalNotifications
-        )
-
-      ).map(Ok(_))
+      renderer
+        .render("index.njk",
+                Json.obj(
+                  "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+                  "viewArrivalNotificationUrl"    -> viewArrivalNotifications
+                ))
+        .map(Ok(_))
   }
 }

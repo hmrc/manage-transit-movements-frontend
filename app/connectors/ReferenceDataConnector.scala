@@ -24,13 +24,10 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReferenceDataConnector @Inject()(config: FrontendAppConfig,
-                                       http: HttpClient)
-                                      (implicit ec: ExecutionContext) {
-
+class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
 
   def getCustomsOffice(customsOfficeId: String)(implicit hc: HeaderCarrier): Future[CustomsOffice] = {
-    val serviceUrl =s"${config.referenceDataUrl}/customs-office/$customsOfficeId"
+    val serviceUrl = s"${config.referenceDataUrl}/customs-office/$customsOfficeId"
     http.GET[CustomsOffice](serviceUrl)
   }
 }

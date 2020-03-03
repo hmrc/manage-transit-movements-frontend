@@ -27,31 +27,43 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-class ViewMovementSpec extends SpecBase
-  with MustMatchers
-  with ModelGenerators
-  with Generators
-  with ScalaCheckPropertyChecks
-  with NunjucksSupport {
-
+class ViewMovementSpec extends SpecBase with MustMatchers with ModelGenerators with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
 
   "must serialise to Json" in {
 
     forAll(arbitrary[Movement], arbitrary[String]) {
-      case (Movement(date, time, movementReferenceNumber, traderName, officeId, procedure), officeName) =>
+      case (
+          Movement(
+            date,
+            time,
+            movementReferenceNumber,
+            traderName,
+            officeId,
+            procedure
+          ),
+          officeName
+          ) =>
+        val sut = ViewMovement(
+          date,
+          time,
+          movementReferenceNumber,
+          traderName,
+          officeId,
+          officeName,
+          procedure
+        )
 
-        val sut = ViewMovement(date, time, movementReferenceNumber, traderName, officeId, officeName, procedure)
-
-        val formatTime = sut.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
+        val formatTime =
+          sut.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
 
         val expectedJson = Json.obj(
-          "updated" -> formatTime,
-          "mrn" -> sut.movementReferenceNumber,
+          "updated"    -> formatTime,
+          "mrn"        -> sut.movementReferenceNumber,
           "traderName" -> sut.traderName,
-          "office" -> s"$officeName ($officeId)",
-          "procedure" -> sut.procedure,
-          "actions" -> Seq("history"),
-          "status" -> "Arrival notification sent"
+          "office"     -> s"$officeName ($officeId)",
+          "procedure"  -> sut.procedure,
+          "actions"    -> Seq("history"),
+          "status"     -> "Arrival notification sent"
         )
 
         Json.toJson(sut) mustBe expectedJson

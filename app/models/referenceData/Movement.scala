@@ -21,18 +21,13 @@ import java.time.{LocalDate, LocalTime}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class Movement(date: LocalDate,
-                    time: LocalTime,
-                    movementReferenceNumber: String,
-                    traderName: String,
-                    presentationOfficeId: String,
-                    procedure: String)
+case class Movement(date: LocalDate, time: LocalTime, movementReferenceNumber: String, traderName: String, presentationOfficeId: String, procedure: String)
 
 object Movement {
 
   implicit val writes: OWrites[Movement] = new OWrites[Movement] {
     override def writes(o: Movement): JsObject = Json.obj(
-      "updated"     -> o.time,
+      "updated"    -> o.time,
       "mrn"        -> o.movementReferenceNumber,
       "traderName" -> o.traderName,
       "office"     -> o.presentationOfficeId,
