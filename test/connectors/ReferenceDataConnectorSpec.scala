@@ -24,10 +24,21 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.referenceData.CustomsOffice
 import org.scalacheck.Gen
+import org.scalatest.exceptions.TestFailedException
+import play.api.libs.json.JsResult
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.test.Helpers._
+
+import scala.concurrent.Future
 
 class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
+
+  override lazy val app: Application = new GuiceApplicationBuilder()
+    .configure(
+      conf = "microservice.services.reference-data.port" -> server.port()
+    )
+    .build()
 
   private val startUrl                               = "transit-movements-trader-reference-data"
   private val customsOfficeId                        = "123"
@@ -43,19 +54,11 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
       | }
       |""".stripMargin
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(
-      conf = "microservice.services.reference-data.port" -> server.port()
-    )
-    .build()
-
-  val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
-
   "ReferenceDataConnector" - {
 
     "getCustomsOffice" - {
 
-      "must return Ok and a CustomsOffice" in {
+      "must return CustomsOffice wrapped in a Some for an Ok" in {
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/customs-office/$customsOfficeId"))
             .willReturn(okJson(customsOfficeResponseJson))
@@ -63,10 +66,29 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
         val expectedResult = CustomsOffice("testId1", "testName1", Seq("role1", "role2"), Some("testPhoneNumber"))
 
-        connector.getCustomsOffice(customsOfficeId).futureValue mustBe expectedResult
+        val result = connector.getCustomsOffice(customsOfficeId).futureValue.value.asOpt.value
+
+        result mustBe expectedResult
+      }
+
+      "must return a None for a Not_Found Status" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/customs-office/$customsOfficeId"))
+            .willReturn(
+              aResponse()
+                .withStatus(NOT_FOUND)
+            )
+        )
+
+        val result = connector.getCustomsOffice(customsOfficeId)
+
+        result.futureValue must not be (defined)
+
       }
 
       "must return an Exception when a CustomsOffice cannot be found" in {
+        val errorResponses = Gen.chooseNum(400, 599).suchThat(_ != NOT_FOUND)
+
         forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
@@ -79,9 +101,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
             val result = connector.getCustomsOffice(customsOfficeId)
 
-            whenReady(result.failed) {
-              _ mustBe an[Exception]
-            }
+            result.futureValue must not be (defined)
         }
       }
     }

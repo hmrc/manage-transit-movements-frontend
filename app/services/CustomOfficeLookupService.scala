@@ -37,7 +37,7 @@ class CustomOfficeLookupService @Inject()(referenceDataConnector: ReferenceDataC
           movement.movementReferenceNumber,
           movement.traderName,
           movement.presentationOfficeId,
-          presentationOffice.name,
+          presentationOffice.flatMap(_.asOpt).map(_.name), // TODO: Alerting - We are dropping this json parse failure
           movement.procedure
         )
     }

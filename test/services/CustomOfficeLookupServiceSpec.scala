@@ -29,19 +29,20 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.{bind, Binding}
+import play.api.libs.json.JsSuccess
 
 import scala.concurrent.Future
 
 class CustomOfficeLookupServiceSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
 
-  private val movementGen = arbitrary[Movement].map(_.copy(presentationOfficeId = "officeId"))
-
   private val mockReferenceDataConnector = mock[ReferenceDataConnector]
 
   private val appWithMockReferenceDataConnector = applicationBindingOverride(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
 
-  "testConvertToViewMovements" - {
+  "convertToViewMovements" - {
     "when the customs office data is returned from the reference data" in {
+      val movementGen = arbitrary[Movement].map(_.copy(presentationOfficeId = "officeId"))
+
       val application = appWithMockReferenceDataConnector(applicationBuilder()).build()
       val service     = application.injector.instanceOf[CustomOfficeLookupService]
 
@@ -53,7 +54,7 @@ class CustomOfficeLookupServiceSpec extends SpecBase with ModelGenerators with S
           Some("testPhoneNumber")
         )
       when(mockReferenceDataConnector.getCustomsOffice(any())(any()))
-        .thenReturn(Future.successful(mockReferenceDataResponse))
+        .thenReturn(Future.successful(Some(JsSuccess(mockReferenceDataResponse))))
 
       forAll(movementGen) {
         case movement @ Movement(date, time, movementReferenceNumber, traderName, presentationOfficeId, procedure) =>
@@ -63,7 +64,7 @@ class CustomOfficeLookupServiceSpec extends SpecBase with ModelGenerators with S
             movementReferenceNumber,
             traderName,
             presentationOfficeId,
-            mockReferenceDataResponse.name,
+            Some(mockReferenceDataResponse.name),
             procedure
           )
 
@@ -74,5 +75,33 @@ class CustomOfficeLookupServiceSpec extends SpecBase with ModelGenerators with S
 
       app.stop()
     }
+
+    "when the customs office data is not available from the reference data" in {
+      val application = appWithMockReferenceDataConnector(applicationBuilder()).build()
+      val service     = application.injector.instanceOf[CustomOfficeLookupService]
+
+      when(mockReferenceDataConnector.getCustomsOffice(any())(any()))
+        .thenReturn(Future.successful(None))
+
+      forAll(arbitrary[Movement]) {
+        case movement @ Movement(date, time, movementReferenceNumber, traderName, presentationOfficeId, procedure) =>
+          val expectedResult = ViewMovement(
+            date,
+            time,
+            movementReferenceNumber,
+            traderName,
+            presentationOfficeId,
+            None,
+            procedure
+          )
+
+          val result = service.convertToViewMovements(movement).futureValue
+
+          result mustEqual expectedResult
+      }
+
+      app.stop()
+    }
+
   }
 }

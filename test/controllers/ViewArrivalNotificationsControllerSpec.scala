@@ -30,7 +30,7 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, JsSuccess, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -100,7 +100,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
           "test mrn",
           "test name",
           "officeId",
-          "office name",
+          Some("office name"),
           "normal"
         ),
         ViewMovement(
@@ -109,7 +109,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
           "test mrn",
           "test name",
           "officeId",
-          "office name",
+          Some("office name"),
           "normal"
         )
       )
@@ -126,7 +126,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
         .thenReturn(Future.successful(mockDestinationResponse))
 
       when(mockReferenceDataConnector.getCustomsOffice(any())(any()))
-        .thenReturn(Future.successful(mockReferenceDataResponse))
+        .thenReturn(Future.successful(Some(JsSuccess(mockReferenceDataResponse))))
 
       val request = FakeRequest(
         GET,

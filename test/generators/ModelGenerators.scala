@@ -69,7 +69,7 @@ trait ModelGenerators {
         mrn        <- arbitrary[String]
         traderName <- arbitrary[String]
         office     <- arbitrary[String]
-        officeName <- arbitrary[String]
+        officeName <- Gen.option(arbitrary[String])
         procedure  <- arbitrary[String]
       } yield
         ViewMovement(

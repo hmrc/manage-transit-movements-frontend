@@ -22,6 +22,7 @@ import base.SpecBase
 import generators.{Generators, ModelGenerators}
 import models.referenceData.Movement
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
@@ -29,45 +30,71 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 class ViewMovementSpec extends SpecBase with MustMatchers with ModelGenerators with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
 
-  "must serialise to Json" in {
+  "must serialise to Json" - {
+    "when the presentation office is defined" in {
+      val viewMovementGen = for {
+        vm                     <- arbitrary[ViewMovement]
+        presentationOfficeName <- arbitrary[String]
+      } yield vm.copy(presentationOfficeName = Some(presentationOfficeName))
 
-    forAll(arbitrary[Movement], arbitrary[String]) {
-      case (
-          Movement(
-            date,
-            time,
-            movementReferenceNumber,
-            traderName,
-            officeId,
-            procedure
-          ),
-          officeName
-          ) =>
-        val sut = ViewMovement(
-          date,
-          time,
-          movementReferenceNumber,
-          traderName,
-          officeId,
-          officeName,
-          procedure
-        )
+      forAll(viewMovementGen) {
+        case sut @ ViewMovement(
+              date,
+              time,
+              movementReferenceNumber,
+              traderName,
+              officeId,
+              Some(officeName),
+              procedure
+            ) =>
+          val formatTime =
+            time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
 
-        val formatTime =
-          sut.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
+          val expectedJson = Json.obj(
+            "updated"    -> formatTime,
+            "mrn"        -> movementReferenceNumber,
+            "traderName" -> traderName,
+            "office"     -> s"$officeName ($officeId)",
+            "procedure"  -> procedure,
+            "actions"    -> Seq("history"),
+            "status"     -> "Arrival notification sent"
+          )
 
-        val expectedJson = Json.obj(
-          "updated"    -> formatTime,
-          "mrn"        -> sut.movementReferenceNumber,
-          "traderName" -> sut.traderName,
-          "office"     -> s"$officeName ($officeId)",
-          "procedure"  -> sut.procedure,
-          "actions"    -> Seq("history"),
-          "status"     -> "Arrival notification sent"
-        )
+          Json.toJson(sut) mustBe expectedJson
+      }
 
-        Json.toJson(sut) mustBe expectedJson
     }
-  }
 
+    "when the presentation office is not defined" in {
+      val viewMovementNoName = arbitrary[ViewMovement].map(_.copy(presentationOfficeName = None))
+
+      forAll(viewMovementNoName) {
+        case sut @ ViewMovement(
+              date,
+              time,
+              movementReferenceNumber,
+              traderName,
+              officeId,
+              _,
+              procedure
+            ) =>
+          val formatTime =
+            time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
+
+          val expectedJson = Json.obj(
+            "updated"    -> formatTime,
+            "mrn"        -> movementReferenceNumber,
+            "traderName" -> traderName,
+            "office"     -> officeId,
+            "procedure"  -> procedure,
+            "actions"    -> Seq("history"),
+            "status"     -> "Arrival notification sent"
+          )
+
+          Json.toJson(sut) mustBe expectedJson
+      }
+
+    }
+
+  }
 }
