@@ -20,12 +20,16 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
 import base.SpecBase
+import config.FrontendAppConfig
 import generators.{Generators, ModelGenerators}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen.listOfN
 import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.{JsLookupResult, JsResult, JsValue, Json}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import org.mockito.Mockito.when
 
 class ViewArrivalMovementsSpec extends SpecBase with MustMatchers with ModelGenerators with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
 
@@ -92,6 +96,41 @@ class ViewArrivalMovementsSpec extends SpecBase with MustMatchers with ModelGene
   def formatter(date: LocalDate): String = {
     val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
     date.format(formatter)
+  }
+
+  "Json writes" - {
+
+    "adds the declareArrivalNotificationUrl from FrontendAppConfig" in {
+      val testUrl = "declareArrivalNotificationUrl"
+
+      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+      when(mockFrontendAppConfig.declareArrivalNotificationUrl).thenReturn(testUrl)
+
+      forAll(arbitrary[ViewArrivalMovements]) {
+        viewArrivalMovements =>
+          val testJson: JsValue = Json.toJson(viewArrivalMovements)
+
+          val result = (testJson \ "declareArrivalNotificationUrl").validate[String].asOpt.value
+
+          result mustBe testUrl
+      }
+    }
+
+    "adds the homePageUrl" in {
+
+      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+      when(mockFrontendAppConfig.declareArrivalNotificationUrl).thenReturn("")
+
+      forAll(arbitrary[ViewArrivalMovements]) {
+        viewArrivalMovements =>
+          val testJson: JsValue = Json.toJson(viewArrivalMovements)
+
+          val result = (testJson \ "homePageUrl").validate[String].asOpt.value
+
+          result mustBe controllers.routes.IndexController.onPageLoad().url
+      }
+    }
+
   }
 
 }
