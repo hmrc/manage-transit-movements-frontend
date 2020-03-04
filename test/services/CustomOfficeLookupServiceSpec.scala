@@ -27,7 +27,8 @@ import org.mockito.Mockito.when
 import viewModels.{ViewArrivalMovements, ViewMovement}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.{bind, Binding}
 
 import scala.concurrent.Future
 
@@ -35,15 +36,13 @@ class CustomOfficeLookupServiceSpec extends SpecBase with ModelGenerators with S
 
   private val movementGen = arbitrary[Movement].map(_.copy(presentationOfficeId = "officeId"))
 
-  val mockReferenceDataConnector = mock[ReferenceDataConnector]
+  private val mockReferenceDataConnector = mock[ReferenceDataConnector]
 
-  val appBuilder = applicationBuilder().overrides(
-    bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
-  )
+  private val appWithMockReferenceDataConnector = applicationBindingOverride(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
 
   "testConvertToViewMovements" - {
     "when the customs office data is returned from the reference data" in {
-      val application = appBuilder.build()
+      val application = appWithMockReferenceDataConnector(applicationBuilder()).build()
       val service     = application.injector.instanceOf[CustomOfficeLookupService]
 
       val mockReferenceDataResponse =
