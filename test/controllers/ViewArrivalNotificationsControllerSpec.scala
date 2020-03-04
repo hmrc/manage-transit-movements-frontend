@@ -145,7 +145,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivalNotifications.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson // TODO: To discuss. Should we check this here? The unit tests for ViewArrivalMovements cover the json serialization
+      jsonCaptorWithoutConfig mustBe expectedJson
 
       application.stop()
     }
