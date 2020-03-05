@@ -32,7 +32,7 @@ class CustomOfficeConversionServiceSpec extends SpecBase with ModelGenerators wi
 
   private val mockReferenceDataConnector = mock[ReferenceDataConnector]
 
-  private val appWithMockReferenceDataConnector = applicationBindingOverride(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+  private val appWithMockReferenceDataConnector = bindingOverride(mockReferenceDataConnector)
 
   "convertToViewMovements" - {
     "when the customs office data is returned from the reference data" in {

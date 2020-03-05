@@ -33,6 +33,8 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
+import scala.reflect.ClassTag
+
 trait SpecBase
     extends FreeSpec
     with MustMatchers
@@ -69,8 +71,8 @@ trait SpecBase
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  def applicationBindingOverride[A](binding: Binding[A]): GuiceApplicationBuilder => GuiceApplicationBuilder =
-    guiceApplicationBuilder => guiceApplicationBuilder.overrides(binding)
+  def bindingOverride[A: ClassTag](module: A): GuiceApplicationBuilder => GuiceApplicationBuilder =
+    guiceApplicationBuilder => guiceApplicationBuilder.overrides(bind[A].toInstance(module))
 
   protected def applicationBuilder(
     userAnswers: Option[UserAnswers] = None
