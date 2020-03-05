@@ -20,29 +20,37 @@ import java.time.{LocalDate, LocalTime}
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.{DestinationConnector, ReferenceDataConnector}
+import connectors.DestinationConnector
 import generators.ModelGenerators
 import matchers.JsonMatchers
 import models.referenceData.{CustomsOffice, Movement}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.BeforeAndAfter
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsSuccess, JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.CustomOfficeConversionService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.Future
 
-class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with ModelGenerators with NunjucksSupport {
+class ViewArrivalNotificationsControllerSpec
+    extends SpecBase
+    with MockitoSugar
+    with JsonMatchers
+    with ModelGenerators
+    with NunjucksSupport
+    with BeforeAndAfter {
 
-  private val mockDestinationConnector   = mock[DestinationConnector]
-  private val mockReferenceDataConnector = mock[ReferenceDataConnector]
+  private val mockDestinationConnector          = mock[DestinationConnector]
+  private val mockCustomOfficeConversionService = mock[CustomOfficeConversionService]
 
   val localDate: LocalDate = LocalDate.now()
   val localTime: LocalTime = LocalTime.now()
@@ -51,28 +59,12 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
     applicationBuilder(userAnswers = Some(emptyUserAnswers))
       .overrides(
         bind[DestinationConnector].toInstance(mockDestinationConnector),
-        bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector)
+        bind[CustomOfficeConversionService].toInstance(mockCustomOfficeConversionService)
       )
       .build()
 
-  val mockReferenceDataResponse: CustomsOffice =
-    CustomsOffice(
-      "officeId",
-      "office name",
-      Seq("role1", "role2"),
-      Some("testPhoneNumber")
-    )
-
-  val mockDestinationResponse: Seq[Movement] = {
+  private val mockDestinationResponse: Seq[Movement] = {
     Seq(
-      Movement(
-        localDate,
-        localTime,
-        "test mrn",
-        "test name",
-        "officeId",
-        "normal"
-      ),
       Movement(
         localDate,
         localTime,
@@ -86,35 +78,23 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
 
   implicit val appConfig: FrontendAppConfig = frontendAppConfig
 
-  private val urls = Json.obj(
-    "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-    "homePageUrl"                   -> routes.IndexController.onPageLoad().url
+  private val mockViewMovement = ViewMovement(
+    localDate,
+    localTime,
+    "test mrn",
+    "test name",
+    "officeId",
+    Some("office name"),
+    "normal"
   )
 
-  private val expectedJson: JsValue = Json.toJsObject(
-    ViewArrivalMovements(
-      Seq(
-        ViewMovement(
-          localDate,
-          localTime,
-          "test mrn",
-          "test name",
-          "officeId",
-          Some("office name"),
-          "normal"
-        ),
-        ViewMovement(
-          localDate,
-          localTime,
-          "test mrn",
-          "test name",
-          "officeId",
-          Some("office name"),
-          "normal"
-        )
-      )
+  private val expectedJson: JsValue =
+    Json.toJsObject(
+      ViewArrivalMovements(Seq(mockViewMovement))
+    ) ++ Json.obj(
+      "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+      "homePageUrl"                   -> routes.IndexController.onPageLoad().url
     )
-  ) ++ urls
 
   "ViewArrivalNotifications Controller" - {
     "return OK and the correct view for a GET" in {
@@ -125,8 +105,7 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
       when(mockDestinationConnector.getMovements()(any()))
         .thenReturn(Future.successful(mockDestinationResponse))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any()))
-        .thenReturn(Future.successful(Some(JsSuccess(mockReferenceDataResponse))))
+      when(mockCustomOfficeConversionService.convertToViewMovements(any())(any())).thenReturn(Future.successful(mockViewMovement))
 
       val request = FakeRequest(
         GET,
@@ -149,5 +128,10 @@ class ViewArrivalNotificationsControllerSpec extends SpecBase with MockitoSugar 
 
       application.stop()
     }
+  }
+
+  override def beforeEach: Unit = {
+    reset(mockDestinationConnector, mockCustomOfficeConversionService)
+    super.beforeEach
   }
 }

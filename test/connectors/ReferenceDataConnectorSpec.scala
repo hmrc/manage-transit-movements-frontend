@@ -40,9 +40,9 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
     )
     .build()
 
-  private val startUrl                               = "transit-movements-trader-reference-data"
-  private val customsOfficeId                        = "123"
-  private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
+  private val customsOfficeId  = "123"
+  private val customsOfficeUrl = s"/transit-movements-trader-reference-data/customs-office/$customsOfficeId"
+  private lazy val connector   = app.injector.instanceOf[ReferenceDataConnector]
 
   private val customsOfficeResponseJson: String =
     """
@@ -60,20 +60,20 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
       "must return CustomsOffice wrapped in a Some for an Ok" in {
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/customs-office/$customsOfficeId"))
+          get(urlEqualTo(customsOfficeUrl))
             .willReturn(okJson(customsOfficeResponseJson))
         )
 
         val expectedResult = CustomsOffice("testId1", "testName1", Seq("role1", "role2"), Some("testPhoneNumber"))
 
-        val result = connector.getCustomsOffice(customsOfficeId).futureValue.value.asOpt.value
+        val result = connector.getCustomsOffice(customsOfficeId).futureValue.value
 
         result mustBe expectedResult
       }
 
       "must return a None for a Not_Found Status" in {
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/customs-office/$customsOfficeId"))
+          get(urlEqualTo(customsOfficeUrl))
             .willReturn(
               aResponse()
                 .withStatus(NOT_FOUND)
@@ -86,13 +86,13 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
       }
 
-      "must return an Exception when a CustomsOffice cannot be found" in {
+      "must return a None when there is an unexpected response" in {
         val errorResponses = Gen.chooseNum(400, 599).suchThat(_ != NOT_FOUND)
 
         forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
-              get(urlEqualTo(s"/$startUrl/customs-office/$customsOfficeId"))
+              get(urlEqualTo(customsOfficeUrl))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)

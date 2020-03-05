@@ -37,7 +37,7 @@ class CustomOfficeConversionService @Inject()(referenceDataConnector: ReferenceD
           movement.movementReferenceNumber,
           movement.traderName,
           movement.presentationOfficeId,
-          presentationOffice.flatMap(_.asOpt).map(_.name), // TODO: Alerting - We are dropping this json parse failure
+          presentationOffice.map(_.name),
           movement.procedure
         )
     }

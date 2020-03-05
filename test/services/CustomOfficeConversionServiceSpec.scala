@@ -16,20 +16,15 @@
 
 package services
 
-import java.time.{LocalDate, LocalTime}
-
 import base.SpecBase
 import connectors.ReferenceDataConnector
 import generators.ModelGenerators
 import models.referenceData.{CustomsOffice, Movement}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
-import viewModels.{ViewArrivalMovements, ViewMovement}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.inject.{bind, Binding}
-import play.api.libs.json.JsSuccess
+import viewModels.ViewMovement
 
 import scala.concurrent.Future
 
@@ -54,7 +49,7 @@ class CustomOfficeConversionServiceSpec extends SpecBase with ModelGenerators wi
           Some("testPhoneNumber")
         )
       when(mockReferenceDataConnector.getCustomsOffice(any())(any()))
-        .thenReturn(Future.successful(Some(JsSuccess(mockReferenceDataResponse))))
+        .thenReturn(Future.successful(Some(mockReferenceDataResponse)))
 
       forAll(movementGen) {
         case movement @ Movement(date, time, movementReferenceNumber, traderName, presentationOfficeId, procedure) =>

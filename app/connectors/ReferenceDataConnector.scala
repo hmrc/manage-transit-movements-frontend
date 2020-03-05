@@ -29,12 +29,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Status {
 
-  def getCustomsOffice(customsOfficeId: String)(implicit hc: HeaderCarrier): Future[Option[JsResult[CustomsOffice]]] = {
+  def getCustomsOffice(customsOfficeId: String)(implicit hc: HeaderCarrier): Future[Option[CustomsOffice]] = {
     val serviceUrl = s"${config.referenceDataUrl}/customs-office/$customsOfficeId"
+
+    /*
+      TODO: Alerting - We need to clarify the logging and alerting for the failures below
+     */
     http.GET[HttpResponse](serviceUrl).map {
-      case response if response.status == OK        => Some(response.json.validate[CustomsOffice])
+      case response if response.status == OK        => response.json.validate[CustomsOffice].asOpt // TODO: Alerting - we cannot parse the response
       case response if response.status == NOT_FOUND => None
-      case _                                        => None // TODO: Alerting - We need to clarify the logging and alerting for these sorts of failures
+      case _                                        => None // TODO: Alerting - we got a response we didn't expect
     }
   }
 }
