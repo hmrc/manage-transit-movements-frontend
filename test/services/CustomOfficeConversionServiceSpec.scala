@@ -33,7 +33,7 @@ import play.api.libs.json.JsSuccess
 
 import scala.concurrent.Future
 
-class CustomOfficeLookupServiceSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
+class CustomOfficeConversionServiceSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
 
   private val mockReferenceDataConnector = mock[ReferenceDataConnector]
 
@@ -44,7 +44,7 @@ class CustomOfficeLookupServiceSpec extends SpecBase with ModelGenerators with S
       val movementGen = arbitrary[Movement].map(_.copy(presentationOfficeId = "officeId"))
 
       val application = appWithMockReferenceDataConnector(applicationBuilder()).build()
-      val service     = application.injector.instanceOf[CustomOfficeLookupService]
+      val service     = application.injector.instanceOf[CustomOfficeConversionService]
 
       val mockReferenceDataResponse =
         CustomsOffice(
@@ -78,7 +78,7 @@ class CustomOfficeLookupServiceSpec extends SpecBase with ModelGenerators with S
 
     "when the customs office data is not available from the reference data" in {
       val application = appWithMockReferenceDataConnector(applicationBuilder()).build()
-      val service     = application.injector.instanceOf[CustomOfficeLookupService]
+      val service     = application.injector.instanceOf[CustomOfficeConversionService]
 
       when(mockReferenceDataConnector.getCustomsOffice(any())(any()))
         .thenReturn(Future.successful(None))

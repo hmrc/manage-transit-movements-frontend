@@ -26,7 +26,7 @@ import viewModels.ViewMovement
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomOfficeLookupService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
+class CustomOfficeConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
   def convertToViewMovements(movement: Movement)(implicit hc: HeaderCarrier): Future[ViewMovement] =
     referenceDataConnector.getCustomsOffice(movement.presentationOfficeId) map {
