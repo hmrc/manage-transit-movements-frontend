@@ -24,7 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.CustomOfficeConversionService
+import services.ViewMovementConversionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewModels.{ViewArrivalMovements, ViewMovement}
@@ -35,7 +35,7 @@ class ViewArrivalNotificationsController @Inject()(
   renderer: Renderer,
   val controllerComponents: MessagesControllerComponents,
   destinationConnector: DestinationConnector,
-  customOfficeLookupService: CustomOfficeConversionService
+  customOfficeLookupService: ViewMovementConversionService
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

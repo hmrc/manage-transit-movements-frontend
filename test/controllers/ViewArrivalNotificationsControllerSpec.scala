@@ -35,7 +35,7 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.CustomOfficeConversionService
+import services.ViewMovementConversionService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
@@ -50,7 +50,7 @@ class ViewArrivalNotificationsControllerSpec
     with BeforeAndAfter {
 
   private val mockDestinationConnector          = mock[DestinationConnector]
-  private val mockCustomOfficeConversionService = mock[CustomOfficeConversionService]
+  private val mockCustomOfficeConversionService = mock[ViewMovementConversionService]
 
   val localDate: LocalDate = LocalDate.now()
   val localTime: LocalTime = LocalTime.now()
@@ -59,7 +59,7 @@ class ViewArrivalNotificationsControllerSpec
     applicationBuilder(userAnswers = Some(emptyUserAnswers))
       .overrides(
         bind[DestinationConnector].toInstance(mockDestinationConnector),
-        bind[CustomOfficeConversionService].toInstance(mockCustomOfficeConversionService)
+        bind[ViewMovementConversionService].toInstance(mockCustomOfficeConversionService)
       )
       .build()
 

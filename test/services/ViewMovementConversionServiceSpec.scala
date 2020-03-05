@@ -28,7 +28,7 @@ import viewModels.ViewMovement
 
 import scala.concurrent.Future
 
-class CustomOfficeConversionServiceSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
+class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
 
   private val mockReferenceDataConnector = mock[ReferenceDataConnector]
 
@@ -39,7 +39,7 @@ class CustomOfficeConversionServiceSpec extends SpecBase with ModelGenerators wi
       val movementGen = arbitrary[Movement].map(_.copy(presentationOfficeId = "officeId"))
 
       val application = appWithMockReferenceDataConnector(applicationBuilder()).build()
-      val service     = application.injector.instanceOf[CustomOfficeConversionService]
+      val service     = application.injector.instanceOf[ViewMovementConversionService]
 
       val mockReferenceDataResponse =
         CustomsOffice(
@@ -73,7 +73,7 @@ class CustomOfficeConversionServiceSpec extends SpecBase with ModelGenerators wi
 
     "when the customs office data is not available from the reference data" in {
       val application = appWithMockReferenceDataConnector(applicationBuilder()).build()
-      val service     = application.injector.instanceOf[CustomOfficeConversionService]
+      val service     = application.injector.instanceOf[ViewMovementConversionService]
 
       when(mockReferenceDataConnector.getCustomsOffice(any())(any()))
         .thenReturn(Future.successful(None))
