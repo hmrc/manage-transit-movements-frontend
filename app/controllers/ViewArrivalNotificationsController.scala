@@ -24,6 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.ViewMovementConversionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewModels.{ViewArrivalMovements, ViewMovement}
@@ -34,7 +35,7 @@ class ViewArrivalNotificationsController @Inject()(
   renderer: Renderer,
   val controllerComponents: MessagesControllerComponents,
   destinationConnector: DestinationConnector,
-  referenceDataConnector: ReferenceDataConnector
+  customOfficeLookupService: ViewMovementConversionService
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -44,7 +45,7 @@ class ViewArrivalNotificationsController @Inject()(
       destinationConnector.getMovements().flatMap {
         movements =>
           Future
-            .sequence(movements.map(convertToViewMovements))
+            .sequence(movements.map(customOfficeLookupService.convertToViewMovements))
             .map(ViewArrivalMovements.apply)
             .map(Json.toJsObject[ViewArrivalMovements])
             .flatMap(
@@ -55,20 +56,4 @@ class ViewArrivalNotificationsController @Inject()(
             )
       }
   }
-
-  private def convertToViewMovements(
-    movement: Movement
-  )(implicit hc: HeaderCarrier): Future[ViewMovement] =
-    referenceDataConnector.getCustomsOffice(movement.presentationOfficeId) map {
-      presentationOffice =>
-        ViewMovement(
-          movement.date,
-          movement.time,
-          movement.movementReferenceNumber,
-          movement.traderName,
-          movement.presentationOfficeId,
-          presentationOffice.name,
-          movement.procedure
-        )
-    }
 }

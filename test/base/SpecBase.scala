@@ -26,12 +26,14 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.inject.{bind, Injector}
+import play.api.inject.{bind, Binding, Injector}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
+
+import scala.reflect.ClassTag
 
 trait SpecBase
     extends FreeSpec
@@ -68,6 +70,9 @@ trait SpecBase
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  def bindingOverride[A: ClassTag](module: A): GuiceApplicationBuilder => GuiceApplicationBuilder =
+    guiceApplicationBuilder => guiceApplicationBuilder.overrides(bind[A].toInstance(module))
 
   protected def applicationBuilder(
     userAnswers: Option[UserAnswers] = None

@@ -27,7 +27,7 @@ final case class ViewMovement(date: LocalDate,
                               movementReferenceNumber: String,
                               traderName: String,
                               presentationOfficeId: String,
-                              presentationOfficeName: String,
+                              presentationOfficeName: Option[String],
                               procedure: String)
 
 object ViewMovement {
@@ -40,9 +40,9 @@ object ViewMovement {
           .toLowerCase,
         "mrn"        -> o.movementReferenceNumber,
         "traderName" -> o.traderName,
-        "office"     -> s"${o.presentationOfficeName} (${o.presentationOfficeId})",
+        "office"     -> o.presentationOfficeName.fold(o.presentationOfficeId)(name => s"$name (${o.presentationOfficeId})"),
         "procedure"  -> o.procedure,
-        "actions"    -> Seq("history"), // TODO: This will be decided based on the message type
+        "actions"    -> Seq("history"), // TODO: Move this from the view to here. This will be decided based on the message type
         "status"     -> "Arrival notification sent" // TODO: In future we will pull this status from the backend
       )
     }
