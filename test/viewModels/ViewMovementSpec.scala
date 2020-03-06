@@ -66,7 +66,8 @@ class ViewMovementSpec extends SpecBase with MustMatchers with ModelGenerators w
     }
 
     "when the presentation office is not defined" in {
-      val viewMovementNoName = arbitrary[ViewMovement].map(_.copy(presentationOfficeName = None))
+      val viewMovementNoName =
+        arbitrary[ViewMovement].map(_.copy(presentationOfficeName = None))
 
       forAll(viewMovementNoName) {
         case sut @ ViewMovement(

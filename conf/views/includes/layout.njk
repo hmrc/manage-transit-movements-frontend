@@ -1,32 +1,47 @@
 {% extends "govuk/template.njk" %}
+{% from "macros/hmrc-header/macro.njk"            import hmrcHeader %}
 {%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
 {%- set htmlLang = request.language -%}
 
 {% block head %}
+  {% block pageHead %}{% endblock %}
   {% include "includes/head.njk" %}
 {% endblock %}
 
 {% block header %}
-  {{ govukHeader({
-    homepageUrl: "/manage-transit-movements",
+  {% macro phaseBanner() %}
+      {{ messages("phaseBanner.1") }} <a class="govuk-link" href="{{ config.betaFeedbackUnauthenticatedUrl }}">{{ messages("phaseBanner.2") }}</a> {{ messages("phaseBanner.3") }}
+  {% endmacro %}
+
+  {{ hmrcHeader({
+    homepageUrl: "https://www.gov.uk",
     serviceName: messages("site.service_name"),
     serviceUrl: "/manage-transit-movements",
     containerClasses: "govuk-width-container",
-    assetsPath: "/assets"
+    assetsPath: "/assets",
+    phaseBanner: {
+      show: true,
+      text: 'alpha',
+      html: phaseBanner()
+    },
+    languageToggle: {
+      inBody: true
+    },
+    signOutHref: config.signOutUrl
   }) }}
+
 {% endblock %}
 
 {% block beforeContent %}
-  {% include "includes/phase-banner.njk" %}
 {% endblock %}
 
 {% block content %}
-  {% include "includes/language-toggles.njk" %}
   {% block mainContent %}{% endblock %}
 {% endblock %}
 
 {% block bodyEnd %}
   {% block scripts %}
+    {% block pageScripts %}{% endblock %}
     {% include "includes/scripts.njk" %}
   {% endblock %}
 {% endblock %}

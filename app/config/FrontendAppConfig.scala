@@ -34,6 +34,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val reportAProblemNonJSUrl         = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   val betaFeedbackUrl                = s"$contactHost/contact/beta-feedback"
   val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
+  val signOutUrl: String             = configuration.get[String]("urls.logout")
 
   private val declareArrivalNotificationRoute    = configuration.get[String]("declare-transit-movement-arrival-frontend.host")
   private val declareArrivalNotificationStartUrl = configuration.get[String]("declare-transit-movement-arrival-frontend.startUrl")
@@ -44,6 +45,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   lazy val destinationUrl: String   = configuration.get[Service]("microservice.services.destination").baseUrl
   lazy val referenceDataUrl: String = configuration.get[Service]("microservice.services.reference-data").baseUrl
+  lazy val enrolmentKey: String     = configuration.get[String]("urls.enrolmentKey")
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
