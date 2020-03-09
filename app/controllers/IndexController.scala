@@ -17,6 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
+import controllers.actions.IdentifierAction
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,14 +27,17 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
 import scala.concurrent.ExecutionContext
 
-class IndexController @Inject()(appConfig: FrontendAppConfig, val controllerComponents: MessagesControllerComponents, renderer: Renderer)(
-  implicit ec: ExecutionContext)
+class IndexController @Inject()(appConfig: FrontendAppConfig,
+                                identify: IdentifierAction,
+                                val controllerComponents: MessagesControllerComponents,
+                                renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
+  def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
-      val viewArrivalNotifications = controllers.routes.ViewArrivalNotificationsController.onPageLoad().url
+      val viewArrivalNotifications =
+        controllers.routes.ViewArrivalNotificationsController.onPageLoad().url
 
       renderer
         .render("index.njk",

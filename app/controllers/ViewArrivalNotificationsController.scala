@@ -17,22 +17,22 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{DestinationConnector, ReferenceDataConnector}
+import connectors.DestinationConnector
+import controllers.actions.IdentifierAction
 import javax.inject.Inject
-import models.referenceData.Movement
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.ViewMovementConversionService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import viewModels.{ViewArrivalMovements, ViewMovement}
+import viewModels.ViewArrivalMovements
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ViewArrivalNotificationsController @Inject()(
   renderer: Renderer,
+  identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   destinationConnector: DestinationConnector,
   customOfficeLookupService: ViewMovementConversionService
@@ -40,7 +40,7 @@ class ViewArrivalNotificationsController @Inject()(
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
+  def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
       destinationConnector.getMovements().flatMap {
         movements =>
