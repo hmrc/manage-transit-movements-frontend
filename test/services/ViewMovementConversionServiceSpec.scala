@@ -36,7 +36,6 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
 
   "convertToViewMovements" - {
     "when the customs office data is returned from the reference data" in {
-      val movementGen = arbitrary[Movement].map(_.copy(presentationOfficeId = "officeId"))
 
       val application = appWithMockReferenceDataConnector(applicationBuilder()).build()
       val service     = application.injector.instanceOf[ViewMovementConversionService]
@@ -51,19 +50,15 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
       when(mockReferenceDataConnector.getCustomsOffice(any())(any()))
         .thenReturn(Future.successful(Some(mockReferenceDataResponse)))
 
-      forAll(movementGen) {
-        case movement @ Movement(date, time, movementReferenceNumber, traderName, presentationOfficeId, procedure) =>
+      forAll(arbitrary[Movement]) {
+        movement =>
           val expectedResult = ViewMovement(
-            date,
-            time,
-            movementReferenceNumber,
-            traderName,
-            presentationOfficeId,
-            Some(mockReferenceDataResponse.name),
-            procedure
+            movement.date,
+            movement.time,
+            movement.movementReferenceNumber
           )
 
-          val result = service.convertToViewMovements(movement).futureValue
+          val result = service.convertToViewMovements(movement)
 
           result mustEqual expectedResult
       }
@@ -79,18 +74,14 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
         .thenReturn(Future.successful(None))
 
       forAll(arbitrary[Movement]) {
-        case movement @ Movement(date, time, movementReferenceNumber, traderName, presentationOfficeId, procedure) =>
+        movement =>
           val expectedResult = ViewMovement(
-            date,
-            time,
-            movementReferenceNumber,
-            traderName,
-            presentationOfficeId,
-            None,
-            procedure
+            movement.date,
+            movement.time,
+            movement.movementReferenceNumber
           )
 
-          val result = service.convertToViewMovements(movement).futureValue
+          val result = service.convertToViewMovements(movement)
 
           result mustEqual expectedResult
       }

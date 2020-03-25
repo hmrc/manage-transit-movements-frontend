@@ -48,72 +48,14 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
   private val responseJson: JsArray =
     Json.arr(
       Json.obj(
-        "date" -> localDate,
-        "time" -> localTime,
-        "message" -> Json.obj(
-          "procedure"               -> "normal",
-          "movementReferenceNumber" -> "test mrn",
-          "notificationPlace"       -> "test place",
-          "notificationDate"        -> "2020-02-20",
-          "customsSubPlace"         -> "test sub place",
-          "trader" -> Json.obj(
-            "eori"            -> "test eori",
-            "name"            -> "test name",
-            "streetAndNumber" -> "test street",
-            "postCode"        -> "test postcode",
-            "city"            -> "test city",
-            "countryCode"     -> "GB"
-          ),
-          "presentationOffice" -> "test presentation office",
-          "enRouteEvents" -> Json.arr(
-            Json.obj(
-              "place"         -> "test place",
-              "countryCode"   -> "test country code",
-              "alreadyInNcts" -> true,
-              "eventDetails" ->
-                Json.obj(
-                  "transportIdentity" -> "test transport identity",
-                  "transportCountry"  -> "test transport countru",
-                  "containers" -> Json
-                    .arr(Json.obj("containerNumber" -> "test container"))
-                )
-            )
-          )
-        )
+        "date"                    -> localDate,
+        "time"                    -> localTime,
+        "movementReferenceNumber" -> "test mrn"
       ),
       Json.obj(
-        "date" -> localDate,
-        "time" -> localTime,
-        "message" -> Json.obj(
-          "procedure"               -> "normal",
-          "movementReferenceNumber" -> "test mrn",
-          "notificationPlace"       -> "test place",
-          "notificationDate"        -> "2020-02-20",
-          "customsSubPlace"         -> "test sub place",
-          "trader" -> Json.obj(
-            "eori"            -> "test eori",
-            "name"            -> "test name",
-            "streetAndNumber" -> "test street",
-            "postCode"        -> "test postcode",
-            "city"            -> "test city",
-            "countryCode"     -> "GB"
-          ),
-          "presentationOffice" -> "test presentation office",
-          "enRouteEvents" -> Json.arr(
-            Json.obj(
-              "place"         -> "test place",
-              "countryCode"   -> "test country code",
-              "alreadyInNcts" -> true,
-              "eventDetails" ->
-                Json.obj(
-                  "transportIdentity" -> "test transport identity",
-                  "transportCountry"  -> "test transport countru",
-                  "containers" -> Json
-                    .arr(Json.obj("containerNumber" -> "test container"))
-                )
-            )
-          )
-        )
+        "date"                    -> localDate,
+        "time"                    -> localTime,
+        "movementReferenceNumber" -> "test mrn"
       )
     )
 
@@ -130,18 +72,12 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
             Movement(
               localDate,
               localTime,
-              "test mrn",
-              "test name",
-              "test presentation office",
-              "normal"
+              "test mrn"
             ),
             Movement(
               localDate,
               localTime,
-              "test mrn",
-              "test name",
-              "test presentation office",
-              "normal"
+              "test mrn"
             )
           )
         }

@@ -19,16 +19,9 @@ package viewModels
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
-import models.referenceData.Movement
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-final case class ViewMovement(date: LocalDate,
-                              time: LocalTime,
-                              movementReferenceNumber: String,
-                              traderName: String,
-                              presentationOfficeId: String,
-                              presentationOfficeName: Option[String],
-                              procedure: String)
+final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenceNumber: String)
 
 object ViewMovement {
   implicit val writes: OWrites[ViewMovement] =
@@ -38,12 +31,9 @@ object ViewMovement {
         "updated" -> o.time
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
-        "mrn"        -> o.movementReferenceNumber,
-        "traderName" -> o.traderName,
-        "office"     -> o.presentationOfficeName.fold(o.presentationOfficeId)(name => s"$name (${o.presentationOfficeId})"),
-        "procedure"  -> o.procedure,
-        "actions"    -> Seq("history"), // TODO: Move this from the view to here. This will be decided based on the message type
-        "status"     -> "Arrival notification sent" // TODO: In future we will pull this status from the backend
+        "mrn"     -> o.movementReferenceNumber,
+        "status"  -> "Arrival notification sent", // TODO: In future we will pull this status from the backend
+        "actions" -> Seq("history") // TODO: Move this from the view to here. This will be decided based on the message type
       )
     }
 }

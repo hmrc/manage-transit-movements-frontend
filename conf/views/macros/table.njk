@@ -4,13 +4,10 @@
 
       <h2 class="govuk-heading-m">{{date}}</h2>
 
-      <div class="govuk-summary-list govuk-!-margin-bottom-2">
+      <div class="govuk-summary-list">
             <div class="govuk-summary-list__row">
               <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.updated") }}</span>
               <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.mrn") }}</span>
-              <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.trader.name") }}</span>
-              <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.office") }}</span>
-              <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.procedure") }}</span>
               <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.status") }}</span>
               <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.action") }}</span>
             </div>
@@ -20,9 +17,6 @@
                 <div class="govuk-summary-list__row">
                   <span class="govuk-summary-list__value govuk-!-width-full">{{ row.updated }}</span>
                   <span class="govuk-summary-list__value govuk-!-width-full">{{ row.mrn }}</span>
-                  <span class="govuk-summary-list__value govuk-!-width-full">{{ row.traderName | safe }}</span>
-                  <span class="govuk-summary-list__value govuk-!-width-full">{{ row.office }}</span>
-                  <span class="govuk-summary-list__value govuk-!-width-full">{{ row.procedure }}</span>
                   <span class="govuk-summary-list__value govuk-!-width-full">{{ row.status  }}</span>
                   <span class="govuk-summary-list__value govuk-!-width-full">
 

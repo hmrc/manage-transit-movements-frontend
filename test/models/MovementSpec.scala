@@ -31,42 +31,14 @@ class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with 
 
   "Movement" - {
 
-    "must serialise to Json" in {
-
-      forAll(arbitrary[Movement]) {
-        movement =>
-          val expectedJson = Json.obj(
-            "updated"    -> movement.time,
-            "mrn"        -> movement.movementReferenceNumber,
-            "traderName" -> movement.traderName,
-            "office"     -> movement.presentationOfficeId,
-            "procedure"  -> movement.procedure
-          )
-
-          Json.toJson(movement) mustBe expectedJson
-      }
-    }
-
     "must deserialize from Json" in {
       forAll(arbitrary[Movement]) {
-        case movement @ Movement(
-              date,
-              time,
-              movementReferenceNumber,
-              traderName,
-              presentationOffice,
-              procedure
-            ) => {
+        case movement @ Movement(date, time, movementReferenceNumber) => {
 
           val json = Json.obj(
-            "date" -> date,
-            "time" -> time,
-            "message" -> Json.obj(
-              "movementReferenceNumber" -> movementReferenceNumber,
-              "trader"                  -> Json.obj("name" -> traderName),
-              "presentationOffice"      -> presentationOffice,
-              "procedure"               -> procedure
-            )
+            "date"                    -> date,
+            "time"                    -> time,
+            "movementReferenceNumber" -> movementReferenceNumber
           )
 
           json.asOpt[Movement].value mustEqual movement
