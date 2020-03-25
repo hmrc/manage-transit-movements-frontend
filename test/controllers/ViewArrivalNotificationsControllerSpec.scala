@@ -68,10 +68,7 @@ class ViewArrivalNotificationsControllerSpec
       Movement(
         localDate,
         localTime,
-        "test mrn",
-        "test name",
-        "officeId",
-        "normal"
+        "test mrn"
       )
     )
   }
