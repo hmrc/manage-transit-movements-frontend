@@ -81,11 +81,7 @@ class ViewArrivalNotificationsControllerSpec
   private val mockViewMovement = ViewMovement(
     localDate,
     localTime,
-    "test mrn",
-    "test name",
-    "officeId",
-    Some("office name"),
-    "normal"
+    "test mrn"
   )
 
   private val expectedJson: JsValue =
@@ -105,7 +101,7 @@ class ViewArrivalNotificationsControllerSpec
       when(mockDestinationConnector.getMovements()(any()))
         .thenReturn(Future.successful(mockDestinationResponse))
 
-      when(mockCustomOfficeConversionService.convertToViewMovements(any())(any())).thenReturn(Future.successful(mockViewMovement))
+      when(mockCustomOfficeConversionService.convertToViewMovements(any())(any())).thenReturn(mockViewMovement)
 
       val request = FakeRequest(
         GET,

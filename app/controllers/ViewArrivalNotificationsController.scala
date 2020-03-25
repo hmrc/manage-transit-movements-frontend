@@ -21,12 +21,12 @@ import connectors.DestinationConnector
 import controllers.actions.IdentifierAction
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.ViewMovementConversionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import viewModels.ViewArrivalMovements
+import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,16 +44,12 @@ class ViewArrivalNotificationsController @Inject()(
     implicit request =>
       destinationConnector.getMovements().flatMap {
         movements =>
-          Future
-            .sequence(movements.map(customOfficeLookupService.convertToViewMovements))
-            .map(ViewArrivalMovements.apply)
-            .map(Json.toJsObject[ViewArrivalMovements])
-            .flatMap(
-              json =>
-                renderer
-                  .render("viewArrivalNotifications.njk", json)
-                  .map(Ok(_))
-            )
+          val viewMovements: Seq[ViewMovement] = movements.map(customOfficeLookupService.convertToViewMovements)
+          val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
+
+          renderer
+            .render("viewArrivalNotifications.njk", formatToJson)
+            .map(Ok(_))
       }
   }
 }

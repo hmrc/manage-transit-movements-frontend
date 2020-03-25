@@ -28,18 +28,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
-  def convertToViewMovements(movement: Movement)(implicit hc: HeaderCarrier): Future[ViewMovement] =
-    referenceDataConnector.getCustomsOffice(movement.presentationOfficeId) map {
-      presentationOffice =>
-        ViewMovement(
-          movement.date,
-          movement.time,
-          movement.movementReferenceNumber,
-          movement.traderName,
-          movement.presentationOfficeId,
-          presentationOffice.map(_.name),
-          movement.procedure
-        )
-    }
-
+  def convertToViewMovements(movement: Movement)(implicit hc: HeaderCarrier): ViewMovement =
+    ViewMovement(
+      movement.date,
+      movement.time,
+      movement.movementReferenceNumber
+    )
 }
