@@ -16,8 +16,7 @@
 
 package models.referenceData
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime, LocalTime, OffsetDateTime}
+import java.time.{LocalDate, LocalTime}
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -42,8 +41,8 @@ object Movement {
   }
 
   implicit val reads: Reads[Movement] = (
-    (__ \ "date").read[LocalDate] and
-      (__ \ "time").read[LocalTime] and
+    (__ \ "messages" \ 0 \ "date").read[LocalDate] and
+      (__ \ "messages" \ 0 \ "time").read[LocalTime] and
       (__ \ "movementReferenceNumber").read[String]
   )(Movement.apply _)
 }

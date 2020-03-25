@@ -49,13 +49,21 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
   private val responseJson: JsArray =
     Json.arr(
       Json.obj(
-        "date"                    -> Format.dateFormatted(localDate),
-        "time"                    -> Format.timeFormatted(localTime),
+        "messages" -> Json.arr(
+          Json.obj(
+            "date" -> Format.dateFormatted(localDate),
+            "time" -> Format.timeFormatted(localTime)
+          )
+        ),
         "movementReferenceNumber" -> "test mrn"
       ),
       Json.obj(
-        "date"                    -> Format.dateFormatted(localDate),
-        "time"                    -> Format.timeFormatted(localTime),
+        "messages" -> Json.arr(
+          Json.obj(
+            "date" -> Format.dateFormatted(localDate),
+            "time" -> Format.timeFormatted(localTime)
+          )
+        ),
         "movementReferenceNumber" -> "test mrn"
       )
     )

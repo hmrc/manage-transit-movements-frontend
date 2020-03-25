@@ -37,12 +37,15 @@ class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with 
         case movement @ Movement(date, time, movementReferenceNumber) => {
 
           val json = Json.obj(
-            "date"                    -> Format.dateFormatted(date),
-            "time"                    -> Format.timeFormatted(time),
+            "messages" -> Json.arr(
+              Json.obj(
+                "date" -> Format.dateFormatted(date),
+                "time" -> Format.timeFormatted(time)
+              )),
             "movementReferenceNumber" -> movementReferenceNumber
           )
 
-          json.asOpt[Movement].value mustEqual movement
+          json.as[Movement] mustEqual movement
         }
       }
     }
