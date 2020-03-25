@@ -35,7 +35,7 @@ trait ModelGenerators {
           LocalDate.MIN.getMonthValue,
           LocalDate.MAX.getMonthValue
         )
-        year <- Gen.chooseNum(Year.MIN_VALUE, Year.MAX_VALUE)
+        year <- Gen.chooseNum(1111, 3000)
       } yield LocalDate.of(year, month, day)
     }
   }
@@ -44,8 +44,7 @@ trait ModelGenerators {
     for {
       hours   <- Gen.chooseNum(0, 23)
       minutes <- Gen.chooseNum(0, 59)
-      seconds <- Gen.chooseNum(0, 59)
-    } yield LocalTime.of(hours, minutes, seconds)
+    } yield LocalTime.of(hours, minutes)
   }
 
   implicit val arbitraryMovement: Arbitrary[Movement] = {

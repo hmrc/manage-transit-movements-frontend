@@ -26,6 +26,7 @@ import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.Format
 
 class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
@@ -36,12 +37,15 @@ class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with 
         case movement @ Movement(date, time, movementReferenceNumber) => {
 
           val json = Json.obj(
-            "date"                    -> date,
-            "time"                    -> time,
+            "messages" -> Json.arr(
+              Json.obj(
+                "date" -> Format.dateFormatted(date),
+                "time" -> Format.timeFormatted(time)
+              )),
             "movementReferenceNumber" -> movementReferenceNumber
           )
 
-          json.asOpt[Movement].value mustEqual movement
+          json.as[Movement] mustEqual movement
         }
       }
     }

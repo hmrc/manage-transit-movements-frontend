@@ -20,14 +20,29 @@ import java.time.{LocalDate, LocalTime}
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import utils.Format
 
 case class Movement(date: LocalDate, time: LocalTime, movementReferenceNumber: String)
 
 object Movement {
 
+  implicit val localTimeReads: Reads[LocalTime] = new Reads[LocalTime] {
+    override def reads(json: JsValue): JsResult[LocalTime] = json match {
+      case JsString(value) => JsSuccess(LocalTime.parse(value, Format.timeFormatter))
+      case _               => JsError()
+    }
+  }
+
+  implicit val localDateReads: Reads[LocalDate] = new Reads[LocalDate] {
+    override def reads(json: JsValue): JsResult[LocalDate] = json match {
+      case JsString(value) => JsSuccess(LocalDate.parse(value, Format.dateFormatter))
+      case _               => JsError()
+    }
+  }
+
   implicit val reads: Reads[Movement] = (
-    (__ \ "date").read[LocalDate] and
-      (__ \ "time").read[LocalTime] and
+    (__ \ "messages" \ 0 \ "date").read[LocalDate] and
+      (__ \ "messages" \ 0 \ "time").read[LocalTime] and
       (__ \ "movementReferenceNumber").read[String]
   )(Movement.apply _)
 }
