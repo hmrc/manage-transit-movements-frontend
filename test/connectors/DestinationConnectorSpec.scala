@@ -21,15 +21,14 @@ import java.time.{LocalDate, LocalTime}
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
-import models.{Arrival, ArrivalDateTime, ArrivalMeta}
 import models.referenceData.Movement
+import models.{Arrival, ArrivalDateTime, ArrivalMeta}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, Json}
-import utils.Format
 
 import scala.concurrent.Future
 
@@ -66,10 +65,10 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
         "meta" -> {
           Json.obj(
             "created" -> {
-               Json.obj(
-                 "date" -> localDate,
-                 "time" -> localTime
-               )
+              Json.obj(
+                "date" -> localDate,
+                "time" -> localTime
+              )
             },
             "updated" -> {
               Json.obj(
@@ -79,7 +78,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
             }
           )
         },
-        "movementReferenceNumber" -> "mrn"
+        "movementReferenceNumber" -> "test mrn"
       )
     )
 
@@ -124,25 +123,23 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     }
 
     "getArrivals" - {
-      val expectedResult = {
-        Seq(
-          Arrival(
-            ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
-            "test mrn"
-          ),
-          Arrival(
-            ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
-            "test mrn"
+      "must return a successful future response" in {
+        val expectedResult = {
+          Seq(
+            Arrival(
+              ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
+              "test mrn"
+            )
           )
+        }
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals"))
+            .willReturn(okJson(arrivalsResponseJson.toString()))
         )
+
+        connector.getArrivals.futureValue mustBe expectedResult
       }
-
-      server.stubFor(
-        get(urlEqualTo(s"/$startUrl/movements/arrivals"))
-          .willReturn(okJson(arrivalsResponseJson.toString()))
-      )
-
-      connector.getArrivals.futureValue mustBe expectedResult
     }
   }
 

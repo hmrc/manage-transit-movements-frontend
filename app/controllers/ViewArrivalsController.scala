@@ -30,7 +30,7 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.ExecutionContext
 
-class ViewArrivalNotificationsController @Inject()(
+class ViewArrivalsController @Inject()(
   renderer: Renderer,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
@@ -42,13 +42,13 @@ class ViewArrivalNotificationsController @Inject()(
 
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
-      destinationConnector.getMovements().flatMap {
-        movements =>
-          val viewMovements: Seq[ViewMovement] = movements.map(customOfficeLookupService.convertToViewMovements)
+      destinationConnector.getArrivals().flatMap {
+        arrivals =>
+          val viewMovements: Seq[ViewMovement] = arrivals.map(customOfficeLookupService.convertToViewArrival)
           val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
           renderer
-            .render("viewArrivalNotifications.njk", formatToJson)
+            .render("viewArrivals.njk", formatToJson)
             .map(Ok(_))
       }
   }

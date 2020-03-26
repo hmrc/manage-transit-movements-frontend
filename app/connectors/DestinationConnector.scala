@@ -33,5 +33,8 @@ class DestinationConnector @Inject()(config: FrontendAppConfig, http: HttpClient
     http.GET[Seq[Movement]](serviceUrl)
   }
 
-  def getArrivals()(implicit hc: HeaderCarrier): Future[Seq[Arrival]] = ???
+  def getArrivals()(implicit hc: HeaderCarrier): Future[Seq[Arrival]] = {
+    val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
+    http.GET[Seq[Arrival]](serviceUrl)
+  }
 }

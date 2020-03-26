@@ -16,15 +16,14 @@
 
 package services
 
-import connectors.{DestinationConnector, ReferenceDataConnector}
+import connectors.ReferenceDataConnector
 import javax.inject.Inject
+import models.Arrival
 import models.referenceData.Movement
-import play.api.mvc.MessagesControllerComponents
-import renderer.Renderer
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.ViewMovement
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
@@ -33,5 +32,12 @@ class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceD
       movement.date,
       movement.time,
       movement.movementReferenceNumber
+    )
+
+  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement =
+    ViewMovement(
+      arrival.meta.updated.date,
+      arrival.meta.updated.time,
+      arrival.movementReferenceNumber
     )
 }
