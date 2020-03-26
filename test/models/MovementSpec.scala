@@ -16,8 +16,6 @@
 
 package models
 
-import java.time.format.DateTimeFormatter
-
 import base.SpecBase
 import generators.ModelGenerators
 import models.referenceData.Movement
@@ -26,7 +24,6 @@ import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.Format
 
 class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
@@ -37,12 +34,9 @@ class MovementSpec extends SpecBase with MustMatchers with ModelGenerators with 
         case movement @ Movement(date, time, movementReferenceNumber) => {
 
           val json = Json.obj(
-            "messages" -> Json.arr(
-              Json.obj(
-                "date" -> Format.dateFormatted(date),
-                "time" -> Format.timeFormatted(time)
-              )),
-            "movementReferenceNumber" -> movementReferenceNumber
+            "message" -> Json.obj("movementReferenceNumber" -> movementReferenceNumber),
+            "date"    -> date,
+            "time"    -> time
           )
 
           json.as[Movement] mustEqual movement

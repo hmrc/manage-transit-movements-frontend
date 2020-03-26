@@ -30,7 +30,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, Json}
 import utils.Format
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
@@ -43,28 +42,20 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     .configure(conf = "microservice.services.destination.port" -> server.port())
     .build()
 
-  private val localDate = LocalDate.of(2020, 4, 20)
-  private val localTime = LocalTime.of(4, 20)
+  private val localDate = LocalDate.now()
+  private val localTime = LocalTime.now()
 
   private val responseJson: JsArray =
     Json.arr(
       Json.obj(
-        "messages" -> Json.arr(
-          Json.obj(
-            "date" -> Format.dateFormatted(localDate),
-            "time" -> Format.timeFormatted(localTime)
-          )
-        ),
-        "movementReferenceNumber" -> "test mrn"
+        "date"    -> localDate,
+        "time"    -> localTime,
+        "message" -> Json.obj("movementReferenceNumber" -> "test mrn")
       ),
       Json.obj(
-        "messages" -> Json.arr(
-          Json.obj(
-            "date" -> Format.dateFormatted(localDate),
-            "time" -> Format.timeFormatted(localTime)
-          )
-        ),
-        "movementReferenceNumber" -> "test mrn"
+        "date"    -> localDate,
+        "time"    -> localTime,
+        "message" -> Json.obj("movementReferenceNumber" -> "test mrn")
       )
     )
 
