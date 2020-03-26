@@ -21,6 +21,7 @@ import java.time.{LocalDate, LocalTime}
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
+import models.{Arrival, ArrivalDateTime, ArrivalMeta}
 import models.referenceData.Movement
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -56,6 +57,29 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
         "date"    -> localDate,
         "time"    -> localTime,
         "message" -> Json.obj("movementReferenceNumber" -> "test mrn")
+      )
+    )
+
+  private val arrivalsResponseJson =
+    Json.arr(
+      Json.obj(
+        "meta" -> {
+          Json.obj(
+            "created" -> {
+               Json.obj(
+                 "date" -> localDate,
+                 "time" -> localTime
+               )
+            },
+            "updated" -> {
+              Json.obj(
+                "date" -> localDate,
+                "time" -> localTime
+              )
+            }
+          )
+        },
+        "movementReferenceNumber" -> "mrn"
       )
     )
 
@@ -97,6 +121,28 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
           connector.getMovements
         )
       }
+    }
+
+    "getArrivals" - {
+      val expectedResult = {
+        Seq(
+          Arrival(
+            ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
+            "test mrn"
+          ),
+          Arrival(
+            ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
+            "test mrn"
+          )
+        )
+      }
+
+      server.stubFor(
+        get(urlEqualTo(s"/$startUrl/movements/arrivals"))
+          .willReturn(okJson(arrivalsResponseJson.toString()))
+      )
+
+      connector.getArrivals.futureValue mustBe expectedResult
     }
   }
 
