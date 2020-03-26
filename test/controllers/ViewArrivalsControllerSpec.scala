@@ -24,6 +24,7 @@ import connectors.DestinationConnector
 import generators.ModelGenerators
 import matchers.JsonMatchers
 import models.{Arrival, ArrivalDateTime, ArrivalMeta}
+import models.referenceData.Movement
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -44,7 +45,7 @@ import scala.concurrent.Future
 class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with ModelGenerators with NunjucksSupport with BeforeAndAfter {
 
   private val mockDestinationConnector          = mock[DestinationConnector]
-  private val viewMovementConversionService = mock[ViewMovementConversionService]
+  private val mockCustomOfficeConversionService = mock[ViewMovementConversionService]
 
   val localDate: LocalDate = LocalDate.now()
   val localTime: LocalTime = LocalTime.now()
@@ -53,7 +54,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
     applicationBuilder(userAnswers = Some(emptyUserAnswers))
       .overrides(
         bind[DestinationConnector].toInstance(mockDestinationConnector),
-        bind[ViewMovementConversionService].toInstance(viewMovementConversionService)
+        bind[ViewMovementConversionService].toInstance(mockCustomOfficeConversionService)
       )
       .build()
 
@@ -91,7 +92,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
       when(mockDestinationConnector.getArrivals()(any()))
         .thenReturn(Future.successful(mockDestinationResponse))
 
-      when(viewMovementConversionService.convertToViewMovements(any())(any())).thenReturn(mockViewMovement)
+      when(mockCustomOfficeConversionService.convertToViewArrival(any())(any())).thenReturn(mockViewMovement)
 
       val request = FakeRequest(
         GET,
@@ -109,7 +110,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-      templateCaptor.getValue mustEqual "viewArrivalss.njk"
+      templateCaptor.getValue mustEqual "viewArrivals.njk"
       jsonCaptorWithoutConfig mustBe expectedJson
 
       application.stop()
@@ -117,7 +118,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
   }
 
   override def beforeEach: Unit = {
-    reset(mockDestinationConnector, viewMovementConversionService)
+    reset(mockDestinationConnector, mockCustomOfficeConversionService)
     super.beforeEach
   }
 }
