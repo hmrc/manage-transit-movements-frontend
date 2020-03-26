@@ -78,11 +78,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
             }
           )
         },
-        "message" -> {
-          Json.obj(
-            "movementReferenceNumber" -> "test mrn"
-          )
-        }
+        "movementReferenceNumber" -> "test mrn"
       )
     )
 

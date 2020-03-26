@@ -27,6 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DestinationConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
 
+  @deprecated("Do not use this method instead use method getArrivals", "")
   def getMovements()(implicit hc: HeaderCarrier): Future[Seq[Movement]] = {
 
     val serviceUrl: String = s"${config.destinationUrl}/movements"

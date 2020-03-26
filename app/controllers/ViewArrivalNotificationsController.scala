@@ -30,6 +30,7 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.ExecutionContext
 
+@deprecated("Do not use this class instead use ViewArrivalsController", "")
 class ViewArrivalNotificationsController @Inject()(
   renderer: Renderer,
   identify: IdentifierAction,

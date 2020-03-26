@@ -27,6 +27,7 @@ import scala.concurrent.ExecutionContext
 
 class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
+  @deprecated("Do not use this method instead use convertToViewArrival", "")
   def convertToViewMovements(movement: Movement)(implicit hc: HeaderCarrier): ViewMovement =
     ViewMovement(
       movement.date,

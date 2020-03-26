@@ -24,6 +24,6 @@ case class Arrival(meta: ArrivalMeta, movementReferenceNumber: String)
 object Arrival {
   implicit val reads: Reads[Arrival] = (
     (__ \ "meta").read[ArrivalMeta] and
-      (__ \ "message" \ "movementReferenceNumber").read[String]
+      (__ \ "movementReferenceNumber").read[String]
   )(Arrival.apply _)
 }
