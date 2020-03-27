@@ -16,22 +16,31 @@
 
 package services
 
-import connectors.{DestinationConnector, ReferenceDataConnector}
+import connectors.ReferenceDataConnector
 import javax.inject.Inject
+import models.Arrival
 import models.referenceData.Movement
-import play.api.mvc.MessagesControllerComponents
-import renderer.Renderer
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.ViewMovement
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
+  @deprecated("Do not use this method instead use convertToViewArrival", "")
   def convertToViewMovements(movement: Movement)(implicit hc: HeaderCarrier): ViewMovement =
     ViewMovement(
       movement.date,
       movement.time,
-      movement.movementReferenceNumber
+      movement.movementReferenceNumber,
+      "Arrival notification sent"
+    )
+
+  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement =
+    ViewMovement(
+      arrival.updated.date,
+      arrival.updated.time,
+      arrival.movementReferenceNumber,
+      arrival.state
     )
 }

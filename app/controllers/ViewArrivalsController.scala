@@ -30,26 +30,23 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.ExecutionContext
 
-@deprecated("Do not use this class instead use ViewArrivalsController", "")
-class ViewArrivalNotificationsController @Inject()(
-  renderer: Renderer,
-  identify: IdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
-  destinationConnector: DestinationConnector,
-  customOfficeLookupService: ViewMovementConversionService
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+class ViewArrivalsController @Inject()(renderer: Renderer,
+                                       identify: IdentifierAction,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       destinationConnector: DestinationConnector,
+                                       customOfficeLookupService: ViewMovementConversionService)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
-      destinationConnector.getMovements().flatMap {
-        movements =>
-          val viewMovements: Seq[ViewMovement] = movements.map(customOfficeLookupService.convertToViewMovements)
+      destinationConnector.getArrivals().flatMap {
+        allArrivals =>
+          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(customOfficeLookupService.convertToViewArrival)
           val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
           renderer
-            .render("viewArrivalNotifications.njk", formatToJson)
+            .render("viewArrivals.njk", formatToJson)
             .map(Ok(_))
       }
   }

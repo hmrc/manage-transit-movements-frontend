@@ -22,13 +22,13 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
 import models.referenceData.Movement
+import models.{Arrival, ArrivalDateTime, Arrivals}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, Json}
-import utils.Format
 
 import scala.concurrent.Future
 
@@ -57,6 +57,29 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
         "time"    -> localTime,
         "message" -> Json.obj("movementReferenceNumber" -> "test mrn")
       )
+    )
+
+  private val arrivalsResponseJson =
+    Json.obj(
+      "arrivals" ->
+        Json.arr(
+          Json.obj(
+            "created" -> {
+              Json.obj(
+                "date" -> localDate,
+                "time" -> localTime
+              )
+            },
+            "updated" -> {
+              Json.obj(
+                "date" -> localDate,
+                "time" -> localTime
+              )
+            },
+            "state"                   -> "Submitted",
+            "movementReferenceNumber" -> "test mrn"
+          )
+        )
     )
 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
@@ -96,6 +119,30 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
           s"/$startUrl/movements",
           connector.getMovements
         )
+      }
+    }
+
+    "getArrivals" - {
+      "must return a successful future response" in {
+        val expectedResult = {
+          Arrivals(
+            Seq(
+              Arrival(
+                ArrivalDateTime(localDate, localTime),
+                ArrivalDateTime(localDate, localTime),
+                "Submitted",
+                "test mrn"
+              )
+            )
+          )
+        }
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals"))
+            .willReturn(okJson(arrivalsResponseJson.toString()))
+        )
+
+        connector.getArrivals.futureValue mustBe expectedResult
       }
     }
   }

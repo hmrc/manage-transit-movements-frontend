@@ -40,7 +40,7 @@ class ViewMovementSpec extends SpecBase with MustMatchers with ModelGenerators w
         val expectedJson = Json.obj(
           "updated" -> formatTime,
           "mrn"     -> viewMovement.movementReferenceNumber,
-          "status"  -> "Arrival notification sent",
+          "status"  -> viewMovement.status,
           "actions" -> Seq("history")
         )
 

@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import connectors.DestinationConnector
 import generators.ModelGenerators
 import matchers.JsonMatchers
-import models.referenceData.{CustomsOffice, Movement}
+import models.{Arrival, ArrivalDateTime, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -41,13 +41,7 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.Future
 
-class ViewArrivalNotificationsControllerSpec
-    extends SpecBase
-    with MockitoSugar
-    with JsonMatchers
-    with ModelGenerators
-    with NunjucksSupport
-    with BeforeAndAfter {
+class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with ModelGenerators with NunjucksSupport with BeforeAndAfter {
 
   private val mockDestinationConnector          = mock[DestinationConnector]
   private val mockCustomOfficeConversionService = mock[ViewMovementConversionService]
@@ -63,12 +57,15 @@ class ViewArrivalNotificationsControllerSpec
       )
       .build()
 
-  private val mockDestinationResponse: Seq[Movement] = {
-    Seq(
-      Movement(
-        localDate,
-        localTime,
-        "test mrn"
+  private val mockDestinationResponse: Arrivals = {
+    Arrivals(
+      Seq(
+        Arrival(
+          ArrivalDateTime(localDate, localTime),
+          ArrivalDateTime(localDate, localTime),
+          "Submitted",
+          "test mrn"
+        )
       )
     )
   }
@@ -78,8 +75,8 @@ class ViewArrivalNotificationsControllerSpec
   private val mockViewMovement = ViewMovement(
     localDate,
     localTime,
-    "test mrn",
-    ""
+    "Submitted",
+    "test mrn"
   )
 
   private val expectedJson: JsValue =
@@ -96,14 +93,14 @@ class ViewArrivalNotificationsControllerSpec
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDestinationConnector.getMovements()(any()))
+      when(mockDestinationConnector.getArrivals()(any()))
         .thenReturn(Future.successful(mockDestinationResponse))
 
-      when(mockCustomOfficeConversionService.convertToViewMovements(any())(any())).thenReturn(mockViewMovement)
+      when(mockCustomOfficeConversionService.convertToViewArrival(any())(any())).thenReturn(mockViewMovement)
 
       val request = FakeRequest(
         GET,
-        routes.ViewArrivalNotificationsController.onPageLoad().url
+        routes.ViewArrivalsController.onPageLoad().url
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -117,7 +114,7 @@ class ViewArrivalNotificationsControllerSpec
 
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-      templateCaptor.getValue mustEqual "viewArrivalNotifications.njk"
+      templateCaptor.getValue mustEqual "viewArrivals.njk"
       jsonCaptorWithoutConfig mustBe expectedJson
 
       application.stop()

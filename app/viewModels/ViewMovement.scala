@@ -21,7 +21,7 @@ import java.time.{LocalDate, LocalTime}
 
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenceNumber: String)
+final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String)
 
 object ViewMovement {
   implicit val writes: OWrites[ViewMovement] =
@@ -32,7 +32,7 @@ object ViewMovement {
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
         "mrn"     -> o.movementReferenceNumber,
-        "status"  -> "Arrival notification sent", // TODO: In future we will pull this status from the backend
+        "status"  -> o.status,
         "actions" -> Seq("history") // TODO: Move this from the view to here. This will be decided based on the message type
       )
     }

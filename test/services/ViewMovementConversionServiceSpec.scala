@@ -55,7 +55,8 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
           val expectedResult = ViewMovement(
             movement.date,
             movement.time,
-            movement.movementReferenceNumber
+            movement.movementReferenceNumber,
+            "Arrival notification sent"
           )
 
           val result = service.convertToViewMovements(movement)
@@ -78,7 +79,8 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
           val expectedResult = ViewMovement(
             movement.date,
             movement.time,
-            movement.movementReferenceNumber
+            movement.movementReferenceNumber,
+            "Arrival notification sent"
           )
 
           val result = service.convertToViewMovements(movement)
