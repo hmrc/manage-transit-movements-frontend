@@ -21,7 +21,6 @@ import java.time.{LocalDate, LocalTime}
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
-import models.referenceData.Movement
 import models.{Arrival, ArrivalDateTime, Arrivals}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -85,42 +84,6 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
   "DestinationConnector" - {
-
-    "getMovements" - {
-
-      "must return a successful future response with a view arrival movement" in {
-
-        val expectedResult = {
-          Seq(
-            Movement(
-              localDate,
-              localTime,
-              "test mrn"
-            ),
-            Movement(
-              localDate,
-              localTime,
-              "test mrn"
-            )
-          )
-        }
-
-        server.stubFor(
-          get(urlEqualTo(s"/$startUrl/movements"))
-            .willReturn(okJson(responseJson.toString()))
-        )
-
-        connector.getMovements.futureValue mustBe expectedResult
-      }
-
-      "must return an exception when an error response is returned from getCountryList" in {
-
-        checkErrorResponse(
-          s"/$startUrl/movements",
-          connector.getMovements
-        )
-      }
-    }
 
     "getArrivals" - {
       "must return a successful future response" in {

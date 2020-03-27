@@ -30,7 +30,7 @@ import scala.concurrent.Future
 class IndexControllerSpec extends SpecBase {
 
   val manageTransitMovementRoute = "manage-transit-movements"
-  val viewArrivalNotificationUrl = s"/$manageTransitMovementRoute/view-arrival-notifications"
+  val viewArrivalNotificationUrl = s"/$manageTransitMovementRoute/view-arrivals"
 
   "Index Controller" - {
 

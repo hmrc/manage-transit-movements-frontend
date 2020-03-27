@@ -16,10 +16,9 @@
 
 package generators
 
-import java.time.{LocalDate, LocalTime, Year}
+import java.time.{LocalDate, LocalTime}
 
 import models._
-import models.referenceData.Movement
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.listOfN
 import org.scalacheck.{Arbitrary, Gen}
@@ -47,13 +46,23 @@ trait ModelGenerators {
     } yield LocalTime.of(hours, minutes)
   }
 
-  implicit val arbitraryMovement: Arbitrary[Movement] = {
+  implicit val arbitraryArrival: Arbitrary[Arrival] = {
+    Arbitrary {
+      for {
+        date   <- arbitrary[ArrivalDateTime]
+        time   <- arbitrary[ArrivalDateTime]
+        status <- arbitrary[String]
+        mrn    <- arbitrary[String]
+      } yield Arrival(date, time, status, mrn)
+    }
+  }
+
+  implicit val arbitraryArrivalDateTime: Arbitrary[ArrivalDateTime] = {
     Arbitrary {
       for {
         date <- arbitrary[LocalDate]
         time <- arbitrary[LocalTime]
-        mrn  <- arbitrary[String]
-      } yield Movement(date, time, mrn)
+      } yield ArrivalDateTime(date, time)
     }
   }
 

@@ -19,16 +19,13 @@ package viewModels
 import java.time.format.DateTimeFormatter
 
 import base.SpecBase
-import generators.{Generators, ModelGenerators}
-import models.referenceData.Movement
+import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
-import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-class ViewMovementSpec extends SpecBase with MustMatchers with ModelGenerators with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
+class ViewMovementSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
   "must serialise to Json" - {
 

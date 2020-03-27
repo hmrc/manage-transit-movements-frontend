@@ -36,14 +36,14 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
-      val viewArrivalNotifications =
-        controllers.routes.ViewArrivalNotificationsController.onPageLoad().url
+      val viewArrivals =
+        controllers.routes.ViewArrivalsController.onPageLoad().url
 
       renderer
         .render("index.njk",
                 Json.obj(
                   "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-                  "viewArrivalNotificationUrl"    -> viewArrivalNotifications
+                  "viewArrivalNotificationUrl"    -> viewArrivals
                 ))
         .map(Ok(_))
   }
