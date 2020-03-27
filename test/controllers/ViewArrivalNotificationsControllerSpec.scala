@@ -78,7 +78,8 @@ class ViewArrivalNotificationsControllerSpec
   private val mockViewMovement = ViewMovement(
     localDate,
     localTime,
-    "test mrn"
+    "test mrn",
+    ""
   )
 
   private val expectedJson: JsValue =

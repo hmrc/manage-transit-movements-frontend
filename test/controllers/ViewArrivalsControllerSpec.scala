@@ -62,6 +62,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
       Seq(
         Arrival(
           ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
+          "Submitted",
           "test mrn"
         )
       )
@@ -73,6 +74,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
   private val mockViewMovement = ViewMovement(
     localDate,
     localTime,
+    "Submitted",
     "test mrn"
   )
 

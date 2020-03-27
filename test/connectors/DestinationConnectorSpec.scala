@@ -80,6 +80,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
                 }
               )
             },
+            "state"                   -> "Submitted",
             "movementReferenceNumber" -> "test mrn"
           )
         )
@@ -132,11 +133,12 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
             Seq(
               Arrival(
                 ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
+                "Submitted",
                 "test mrn"
               )
             )
           )
-        } 
+        }
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/arrivals"))

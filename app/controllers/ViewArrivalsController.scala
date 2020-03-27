@@ -30,13 +30,11 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.ExecutionContext
 
-class ViewArrivalsController @Inject()(
-  renderer: Renderer,
-  identify: IdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
-  destinationConnector: DestinationConnector,
-  customOfficeLookupService: ViewMovementConversionService
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+class ViewArrivalsController @Inject()(renderer: Renderer,
+                                       identify: IdentifierAction,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       destinationConnector: DestinationConnector,
+                                       customOfficeLookupService: ViewMovementConversionService)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

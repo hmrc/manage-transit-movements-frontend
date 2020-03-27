@@ -32,13 +32,15 @@ class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceD
     ViewMovement(
       movement.date,
       movement.time,
-      movement.movementReferenceNumber
+      movement.movementReferenceNumber,
+      "Arrival notification sent"
     )
 
   def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement =
     ViewMovement(
       arrival.meta.updated.date,
       arrival.meta.updated.time,
-      arrival.movementReferenceNumber
+      arrival.movementReferenceNumber,
+      arrival.state
     )
 }

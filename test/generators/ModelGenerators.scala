@@ -60,10 +60,11 @@ trait ModelGenerators {
   implicit val arbitraryViewMovement: Arbitrary[ViewMovement] = {
     Arbitrary {
       for {
-        date <- arbitrary[LocalDate]
-        time <- arbitrary[LocalTime]
-        mrn  <- arbitrary[String]
-      } yield ViewMovement(date, time, mrn)
+        date   <- arbitrary[LocalDate]
+        time   <- arbitrary[LocalTime]
+        status <- arbitrary[String]
+        mrn    <- arbitrary[String]
+      } yield ViewMovement(date, time, status, mrn)
     }
   }
 
