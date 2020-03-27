@@ -21,17 +21,15 @@ import java.time.{LocalDate, LocalTime}
 
 import base.SpecBase
 import config.FrontendAppConfig
-import generators.{Generators, ModelGenerators}
-import org.scalacheck.{Arbitrary, Gen}
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.listOfN
-import org.scalatest.MustMatchers
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsLookupResult, JsResult, JsValue, Json}
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import generators.Generators
 import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.{Arbitrary, Gen}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-class ViewArrivalMovementsSpec extends SpecBase with MustMatchers with ModelGenerators with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
+class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 

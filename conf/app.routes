@@ -12,6 +12,4 @@ GET        /unauthorised                                controllers.Unauthorised
 
 GET        /accessibility-statement                     controllers.AccessibilityController.onPageLoad
 
-GET        /view-arrival-notifications                  controllers.ViewArrivalNotificationsController.onPageLoad
-
 GET        /view-arrivals                               controllers.ViewArrivalsController.onPageLoad
