@@ -43,8 +43,8 @@ class ViewArrivalsController @Inject()(
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
       destinationConnector.getArrivals().flatMap {
-        arrivals =>
-          val viewMovements: Seq[ViewMovement] = arrivals.map(customOfficeLookupService.convertToViewArrival)
+        allArrivals =>
+          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(customOfficeLookupService.convertToViewArrival)
           val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
           renderer

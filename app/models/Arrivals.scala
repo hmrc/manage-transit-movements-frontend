@@ -16,19 +16,10 @@
 
 package models
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads, Writes}
+import play.api.libs.json.{Json, OFormat}
 
-case class Arrival(meta: ArrivalMeta, movementReferenceNumber: String)
+case class Arrivals(arrivals: Seq[Arrival])
 
-object Arrival {
-  implicit val reads: Reads[Arrival] = (
-    (__ \ "meta").read[ArrivalMeta] and
-      (__ \ "movementReferenceNumber").read[String]
-  )(Arrival.apply _)
-
-  implicit val writes: Writes[Arrival] = (
-    (__ \ "meta").write[ArrivalMeta] and
-      (__ \ "movementReferenceNumber").write[String]
-  )(unlift(Arrival.unapply))
+object Arrivals {
+  implicit val format: OFormat[Arrivals] = Json.format[Arrivals]
 }

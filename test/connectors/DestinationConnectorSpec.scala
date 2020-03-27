@@ -22,7 +22,7 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
 import models.referenceData.Movement
-import models.{Arrival, ArrivalDateTime, ArrivalMeta}
+import models.{Arrival, ArrivalDateTime, ArrivalMeta, Arrivals}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -60,26 +60,29 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     )
 
   private val arrivalsResponseJson =
-    Json.arr(
-      Json.obj(
-        "meta" -> {
+    Json.obj(
+      "arrivals" ->
+        Json.arr(
           Json.obj(
-            "created" -> {
+            "meta" -> {
               Json.obj(
-                "date" -> localDate,
-                "time" -> localTime
+                "created" -> {
+                  Json.obj(
+                    "date" -> localDate,
+                    "time" -> localTime
+                  )
+                },
+                "updated" -> {
+                  Json.obj(
+                    "date" -> localDate,
+                    "time" -> localTime
+                  )
+                }
               )
             },
-            "updated" -> {
-              Json.obj(
-                "date" -> localDate,
-                "time" -> localTime
-              )
-            }
+            "movementReferenceNumber" -> "test mrn"
           )
-        },
-        "movementReferenceNumber" -> "test mrn"
-      )
+        )
     )
 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
@@ -125,13 +128,15 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     "getArrivals" - {
       "must return a successful future response" in {
         val expectedResult = {
-          Seq(
-            Arrival(
-              ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
-              "test mrn"
+          Arrivals(
+            Seq(
+              Arrival(
+                ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
+                "test mrn"
+              )
             )
           )
-        }
+        } 
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/arrivals"))

@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.Arrival
+import models.{Arrival, Arrivals}
 import models.referenceData.Movement
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -34,8 +34,8 @@ class DestinationConnector @Inject()(config: FrontendAppConfig, http: HttpClient
     http.GET[Seq[Movement]](serviceUrl)
   }
 
-  def getArrivals()(implicit hc: HeaderCarrier): Future[Seq[Arrival]] = {
+  def getArrivals()(implicit hc: HeaderCarrier): Future[Arrivals] = {
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
-    http.GET[Seq[Arrival]](serviceUrl)
+    http.GET[Arrivals](serviceUrl)
   }
 }

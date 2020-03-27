@@ -23,8 +23,7 @@ import config.FrontendAppConfig
 import connectors.DestinationConnector
 import generators.ModelGenerators
 import matchers.JsonMatchers
-import models.{Arrival, ArrivalDateTime, ArrivalMeta}
-import models.referenceData.Movement
+import models.{Arrival, ArrivalDateTime, ArrivalMeta, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -58,11 +57,13 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
       )
       .build()
 
-  private val mockDestinationResponse: Seq[Arrival] = {
-    Seq(
-      Arrival(
-        ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
-        "test mrn"
+  private val mockDestinationResponse: Arrivals = {
+    Arrivals(
+      Seq(
+        Arrival(
+          ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
+          "test mrn"
+        )
       )
     )
   }
