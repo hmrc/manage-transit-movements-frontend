@@ -19,17 +19,19 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads, Writes}
 
-case class Arrival(meta: ArrivalMeta, state: String, movementReferenceNumber: String)
+case class Arrival(created: ArrivalDateTime, updated: ArrivalDateTime, state: String, movementReferenceNumber: String)
 
 object Arrival {
   implicit val reads: Reads[Arrival] = (
-    (__ \ "meta").read[ArrivalMeta] and
+    (__ \ "created").read[ArrivalDateTime] and
+      (__ \ "updated").read[ArrivalDateTime] and
       (__ \ "state").read[String] and
       (__ \ "movementReferenceNumber").read[String]
   )(Arrival.apply _)
 
   implicit val writes: Writes[Arrival] = (
-    (__ \ "meta").write[ArrivalMeta] and
+    (__ \ "created").write[ArrivalDateTime] and
+      (__ \ "updated").write[ArrivalDateTime] and
       (__ \ "state").write[String] and
       (__ \ "movementReferenceNumber").write[String]
   )(unlift(Arrival.unapply))

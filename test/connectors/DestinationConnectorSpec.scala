@@ -22,7 +22,7 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
 import models.referenceData.Movement
-import models.{Arrival, ArrivalDateTime, ArrivalMeta, Arrivals}
+import models.{Arrival, ArrivalDateTime, Arrivals}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -64,20 +64,16 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
       "arrivals" ->
         Json.arr(
           Json.obj(
-            "meta" -> {
+            "created" -> {
               Json.obj(
-                "created" -> {
-                  Json.obj(
-                    "date" -> localDate,
-                    "time" -> localTime
-                  )
-                },
-                "updated" -> {
-                  Json.obj(
-                    "date" -> localDate,
-                    "time" -> localTime
-                  )
-                }
+                "date" -> localDate,
+                "time" -> localTime
+              )
+            },
+            "updated" -> {
+              Json.obj(
+                "date" -> localDate,
+                "time" -> localTime
               )
             },
             "state"                   -> "Submitted",
@@ -132,7 +128,8 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
           Arrivals(
             Seq(
               Arrival(
-                ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
+                ArrivalDateTime(localDate, localTime),
+                ArrivalDateTime(localDate, localTime),
                 "Submitted",
                 "test mrn"
               )

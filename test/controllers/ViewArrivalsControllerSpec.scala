@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import connectors.DestinationConnector
 import generators.ModelGenerators
 import matchers.JsonMatchers
-import models.{Arrival, ArrivalDateTime, ArrivalMeta, Arrivals}
+import models.{Arrival, ArrivalDateTime, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -61,7 +61,8 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
     Arrivals(
       Seq(
         Arrival(
-          ArrivalMeta(ArrivalDateTime(localDate, localTime), ArrivalDateTime(localDate, localTime)),
+          ArrivalDateTime(localDate, localTime),
+          ArrivalDateTime(localDate, localTime),
           "Submitted",
           "test mrn"
         )
