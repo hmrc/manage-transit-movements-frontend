@@ -35,8 +35,8 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
       forAll(arbitrary[Arrival]) {
         arrival =>
           val expectedResult = ViewMovement(
-            arrival.updated.date,
-            arrival.updated.time,
+            arrival.updated.dateTime.toLocalDate,
+            arrival.updated.dateTime.toLocalTime,
             arrival.movementReferenceNumber,
             arrival.state
           )
@@ -56,8 +56,8 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
       forAll(arbitrary[Arrival]) {
         arrival =>
           val expectedResult = ViewMovement(
-            arrival.updated.date,
-            arrival.updated.time,
+            arrival.updated.dateTime.toLocalDate,
+            arrival.updated.dateTime.toLocalTime,
             arrival.movementReferenceNumber,
             arrival.state
           )

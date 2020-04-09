@@ -28,8 +28,8 @@ class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceD
 
   def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement =
     ViewMovement(
-      arrival.updated.date,
-      arrival.updated.time,
+      arrival.updated.dateTime.toLocalDate,
+      arrival.updated.dateTime.toLocalTime,
       arrival.movementReferenceNumber,
       arrival.state
     )

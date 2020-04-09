@@ -16,7 +16,7 @@
 
 package connectors
 
-import java.time.{LocalDate, LocalTime}
+import java.time.LocalDateTime
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -27,7 +27,7 @@ import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsArray, Json}
+import play.api.libs.json.Json
 
 import scala.concurrent.Future
 
@@ -41,22 +41,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     .configure(conf = "microservice.services.destination.port" -> server.port())
     .build()
 
-  private val localDate = LocalDate.now()
-  private val localTime = LocalTime.now()
-
-  private val responseJson: JsArray =
-    Json.arr(
-      Json.obj(
-        "date"    -> localDate,
-        "time"    -> localTime,
-        "message" -> Json.obj("movementReferenceNumber" -> "test mrn")
-      ),
-      Json.obj(
-        "date"    -> localDate,
-        "time"    -> localTime,
-        "message" -> Json.obj("movementReferenceNumber" -> "test mrn")
-      )
-    )
+  private val localDateTime = LocalDateTime.now()
 
   private val arrivalsResponseJson =
     Json.obj(
@@ -65,14 +50,12 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
           Json.obj(
             "created" -> {
               Json.obj(
-                "date" -> localDate,
-                "time" -> localTime
+                "dateTime" -> localDateTime
               )
             },
             "updated" -> {
               Json.obj(
-                "date" -> localDate,
-                "time" -> localTime
+                "dateTime" -> localDateTime
               )
             },
             "state"                   -> "Submitted",
@@ -91,8 +74,8 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
           Arrivals(
             Seq(
               Arrival(
-                ArrivalDateTime(localDate, localTime),
-                ArrivalDateTime(localDate, localTime),
+                ArrivalDateTime(localDateTime),
+                ArrivalDateTime(localDateTime),
                 "Submitted",
                 "test mrn"
               )
