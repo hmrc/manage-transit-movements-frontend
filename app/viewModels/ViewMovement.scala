@@ -33,7 +33,7 @@ object ViewMovement {
           .toLowerCase,
         "mrn"     -> o.movementReferenceNumber,
         "status"  -> o.status,
-        "actions" -> Seq("history") // TODO: Move this from the view to here. This will be decided based on the message type
+        "actions" -> Seq.empty[String] // TODO: Move this from the view to here. This will be decided based on the message type. Create these as objects too.
       )
     }
 }
