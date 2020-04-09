@@ -27,7 +27,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 class ViewMovementSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
 
-  "must serialise to Json" - {
+  "must serialise to Json" in {
 
     forAll(arbitrary[ViewMovement]) {
       viewMovement =>
@@ -37,8 +37,7 @@ class ViewMovementSpec extends SpecBase with ModelGenerators with ScalaCheckProp
         val expectedJson = Json.obj(
           "updated" -> formatTime,
           "mrn"     -> viewMovement.movementReferenceNumber,
-          "status"  -> viewMovement.status,
-          "actions" -> Seq("history")
+          "status"  -> viewMovement.status
         )
 
         Json.toJson(viewMovement) mustBe expectedJson
