@@ -65,19 +65,11 @@ trait ModelGenerators {
   implicit val arbitraryArrival: Arbitrary[Arrival] = {
     Arbitrary {
       for {
-        date   <- arbitrary[ArrivalDateTime]
-        time   <- arbitrary[ArrivalDateTime]
+        date   <- arbitrary[LocalDateTime]
+        time   <- arbitrary[LocalDateTime]
         status <- arbitrary[String]
         mrn    <- arbitrary[String]
       } yield Arrival(date, time, status, mrn)
-    }
-  }
-
-  implicit val arbitraryArrivalDateTime: Arbitrary[ArrivalDateTime] = {
-    Arbitrary {
-      for {
-        dateTime <- arbitrary[LocalDateTime]
-      } yield ArrivalDateTime(dateTime)
     }
   }
 

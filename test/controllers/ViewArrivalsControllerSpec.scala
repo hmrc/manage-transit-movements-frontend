@@ -16,14 +16,14 @@
 
 package controllers
 
-import java.time.{LocalDate, LocalDateTime, LocalTime}
+import java.time.LocalDateTime
 
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.DestinationConnector
 import generators.ModelGenerators
 import matchers.JsonMatchers
-import models.{Arrival, ArrivalDateTime, Arrivals}
+import models.{Arrival, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -60,8 +60,8 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
     Arrivals(
       Seq(
         Arrival(
-          ArrivalDateTime(localDateTime),
-          ArrivalDateTime(localDateTime),
+          localDateTime,
+          localDateTime,
           "Submitted",
           "test mrn"
         )

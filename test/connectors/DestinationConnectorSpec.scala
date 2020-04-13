@@ -16,12 +16,12 @@
 
 package connectors
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZoneOffset}
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
-import models.{Arrival, ArrivalDateTime, Arrivals}
+import models.{Arrival, Arrivals}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -41,23 +41,20 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     .configure(conf = "microservice.services.destination.port" -> server.port())
     .build()
 
-  private val localDateTime = LocalDateTime.now()
+  private val localDateTime: LocalDateTime = LocalDateTime.now()
+  private val localDateAsLong                   = localDateTime.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
 
   private val arrivalsResponseJson =
     Json.obj(
       "arrivals" ->
         Json.arr(
           Json.obj(
-            "created" -> {
-              Json.obj(
-                "dateTime" -> localDateTime
-              )
-            },
-            "updated" -> {
-              Json.obj(
-                "dateTime" -> localDateTime
-              )
-            },
+            "created" -> Json.obj(
+              "$date" -> localDateAsLong
+            ),
+            "updated" -> Json.obj(
+              "$date" -> localDateAsLong
+            ),
             "state"                   -> "Submitted",
             "movementReferenceNumber" -> "test mrn"
           )
@@ -74,8 +71,8 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
           Arrivals(
             Seq(
               Arrival(
-                ArrivalDateTime(localDateTime),
-                ArrivalDateTime(localDateTime),
+                localDateTime,
+                localDateTime,
                 "Submitted",
                 "test mrn"
               )
@@ -89,6 +86,14 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
         )
 
         connector.getArrivals.futureValue mustBe expectedResult
+      }
+
+      "must return an exception when an error response is returned from getCountryList" in {
+
+        checkErrorResponse(
+          s"/$startUrl/movements/arrivals",
+          connector.getArrivals()
+        )
       }
     }
   }
