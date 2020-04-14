@@ -25,16 +25,9 @@ case class Arrival(created: LocalDateTime, updated: LocalDateTime, state: String
 
 object Arrival {
   implicit val reads: Reads[Arrival] = (
-    (__ \ "created").read(MongoDateTimeFormats.localDateTimeRead) and
-      (__ \ "updated").read(MongoDateTimeFormats.localDateTimeRead) and
+    (__ \ "created").read[LocalDateTime] and
+      (__ \ "updated").read[LocalDateTime] and
       (__ \ "state").read[String] and
       (__ \ "movementReferenceNumber").read[String]
   )(Arrival.apply _)
-
-  implicit val writes: Writes[Arrival] = (
-    (__ \ "created").write(MongoDateTimeFormats.localDateTimeWrite) and
-      (__ \ "updated").write(MongoDateTimeFormats.localDateTimeWrite) and
-      (__ \ "state").write[String] and
-      (__ \ "movementReferenceNumber").write[String]
-  )(unlift(Arrival.unapply))
 }

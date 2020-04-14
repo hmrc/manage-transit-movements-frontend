@@ -16,10 +16,10 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, Reads}
 
 case class Arrivals(arrivals: Seq[Arrival])
 
 object Arrivals {
-  implicit val format: OFormat[Arrivals] = Json.format[Arrivals]
+  implicit val format: Reads[Arrivals] = Json.reads[Arrivals]
 }

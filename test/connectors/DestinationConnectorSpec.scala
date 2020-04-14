@@ -42,19 +42,15 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     .build()
 
   private val localDateTime: LocalDateTime = LocalDateTime.now()
-  private val localDateAsLong                   = localDateTime.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
+  private val localDateAsLong              = localDateTime.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
 
   private val arrivalsResponseJson =
     Json.obj(
       "arrivals" ->
         Json.arr(
           Json.obj(
-            "created" -> Json.obj(
-              "$date" -> localDateAsLong
-            ),
-            "updated" -> Json.obj(
-              "$date" -> localDateAsLong
-            ),
+            "created"                 -> localDateAsLong,
+            "updated"                 -> localDateAsLong,
             "state"                   -> "Submitted",
             "movementReferenceNumber" -> "test mrn"
           )
@@ -88,7 +84,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
         connector.getArrivals.futureValue mustBe expectedResult
       }
 
-      "must return an exception when an error response is returned from getCountryList" in {
+      "must return an exception when an error response is returned from getArrivals" in {
 
         checkErrorResponse(
           s"/$startUrl/movements/arrivals",
