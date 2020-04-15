@@ -16,14 +16,14 @@
 
 package controllers
 
-import java.time.{LocalDate, LocalTime}
+import java.time.LocalDateTime
 
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.DestinationConnector
 import generators.ModelGenerators
 import matchers.JsonMatchers
-import models.{Arrival, ArrivalDateTime, Arrivals}
+import models.{Arrival, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -46,8 +46,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
   private val mockDestinationConnector          = mock[DestinationConnector]
   private val mockCustomOfficeConversionService = mock[ViewMovementConversionService]
 
-  val localDate: LocalDate = LocalDate.now()
-  val localTime: LocalTime = LocalTime.now()
+  val localDateTime: LocalDateTime = LocalDateTime.now()
 
   private val application: Application =
     applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -61,8 +60,8 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
     Arrivals(
       Seq(
         Arrival(
-          ArrivalDateTime(localDate, localTime),
-          ArrivalDateTime(localDate, localTime),
+          localDateTime,
+          localDateTime,
           "Submitted",
           "test mrn"
         )
@@ -73,8 +72,8 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
   implicit val appConfig: FrontendAppConfig = frontendAppConfig
 
   private val mockViewMovement = ViewMovement(
-    localDate,
-    localTime,
+    localDateTime.toLocalDate,
+    localDateTime.toLocalTime,
     "Submitted",
     "test mrn"
   )

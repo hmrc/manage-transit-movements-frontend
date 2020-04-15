@@ -17,7 +17,6 @@
 package services
 
 import base.SpecBase
-import connectors.ReferenceDataConnector
 import generators.ModelGenerators
 import models.Arrival
 import org.scalacheck.Arbitrary.arbitrary
@@ -35,8 +34,8 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
       forAll(arbitrary[Arrival]) {
         arrival =>
           val expectedResult = ViewMovement(
-            arrival.updated.date,
-            arrival.updated.time,
+            arrival.updated.toLocalDate,
+            arrival.updated.toLocalTime,
             arrival.movementReferenceNumber,
             arrival.state
           )
@@ -56,8 +55,8 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
       forAll(arbitrary[Arrival]) {
         arrival =>
           val expectedResult = ViewMovement(
-            arrival.updated.date,
-            arrival.updated.time,
+            arrival.updated.toLocalDate,
+            arrival.updated.toLocalTime,
             arrival.movementReferenceNumber,
             arrival.state
           )

@@ -16,23 +16,18 @@
 
 package models
 
+import java.time.LocalDateTime
+
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads, Writes}
 
-case class Arrival(created: ArrivalDateTime, updated: ArrivalDateTime, state: String, movementReferenceNumber: String)
+case class Arrival(created: LocalDateTime, updated: LocalDateTime, state: String, movementReferenceNumber: String)
 
 object Arrival {
   implicit val reads: Reads[Arrival] = (
-    (__ \ "created").read[ArrivalDateTime] and
-      (__ \ "updated").read[ArrivalDateTime] and
+    (__ \ "created").read[LocalDateTime] and
+      (__ \ "updated").read[LocalDateTime] and
       (__ \ "state").read[String] and
       (__ \ "movementReferenceNumber").read[String]
   )(Arrival.apply _)
-
-  implicit val writes: Writes[Arrival] = (
-    (__ \ "created").write[ArrivalDateTime] and
-      (__ \ "updated").write[ArrivalDateTime] and
-      (__ \ "state").write[String] and
-      (__ \ "movementReferenceNumber").write[String]
-  )(unlift(Arrival.unapply))
 }

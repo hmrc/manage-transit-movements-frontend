@@ -16,18 +16,18 @@
 
 package connectors
 
-import java.time.{LocalDate, LocalTime}
+import java.time.{LocalDateTime, ZoneOffset}
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
-import models.{Arrival, ArrivalDateTime, Arrivals}
+import models.{Arrival, Arrivals}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsArray, Json}
+import play.api.libs.json.Json
 
 import scala.concurrent.Future
 
@@ -41,40 +41,15 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
     .configure(conf = "microservice.services.destination.port" -> server.port())
     .build()
 
-  private val localDate = LocalDate.now()
-  private val localTime = LocalTime.now()
-
-  private val responseJson: JsArray =
-    Json.arr(
-      Json.obj(
-        "date"    -> localDate,
-        "time"    -> localTime,
-        "message" -> Json.obj("movementReferenceNumber" -> "test mrn")
-      ),
-      Json.obj(
-        "date"    -> localDate,
-        "time"    -> localTime,
-        "message" -> Json.obj("movementReferenceNumber" -> "test mrn")
-      )
-    )
+  private val localDateTime: LocalDateTime = LocalDateTime.now()
 
   private val arrivalsResponseJson =
     Json.obj(
       "arrivals" ->
         Json.arr(
           Json.obj(
-            "created" -> {
-              Json.obj(
-                "date" -> localDate,
-                "time" -> localTime
-              )
-            },
-            "updated" -> {
-              Json.obj(
-                "date" -> localDate,
-                "time" -> localTime
-              )
-            },
+            "created"                 -> localDateTime,
+            "updated"                 -> localDateTime,
             "state"                   -> "Submitted",
             "movementReferenceNumber" -> "test mrn"
           )
@@ -91,8 +66,8 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
           Arrivals(
             Seq(
               Arrival(
-                ArrivalDateTime(localDate, localTime),
-                ArrivalDateTime(localDate, localTime),
+                localDateTime,
+                localDateTime,
                 "Submitted",
                 "test mrn"
               )
@@ -106,6 +81,14 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
         )
 
         connector.getArrivals.futureValue mustBe expectedResult
+      }
+
+      "must return an exception when an error response is returned from getArrivals" in {
+
+        checkErrorResponse(
+          s"/$startUrl/movements/arrivals",
+          connector.getArrivals()
+        )
       }
     }
   }

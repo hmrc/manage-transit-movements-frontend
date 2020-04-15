@@ -16,7 +16,7 @@
 
 package generators
 
-import java.time.{LocalDate, LocalTime}
+import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 
 import models._
 import org.scalacheck.Arbitrary.arbitrary
@@ -46,23 +46,30 @@ trait ModelGenerators {
     } yield LocalTime.of(hours, minutes)
   }
 
-  implicit val arbitraryArrival: Arbitrary[Arrival] = {
-    Arbitrary {
-      for {
-        date   <- arbitrary[ArrivalDateTime]
-        time   <- arbitrary[ArrivalDateTime]
-        status <- arbitrary[String]
-        mrn    <- arbitrary[String]
-      } yield Arrival(date, time, status, mrn)
+  def dateTimesBetween(min: LocalDateTime, max: LocalDateTime): Gen[LocalDateTime] = {
+    def toMillis(date: LocalDateTime): Long =
+      date.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
+    Gen.choose(toMillis(min), toMillis(max)).map {
+      millis =>
+        Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDateTime
     }
   }
 
-  implicit val arbitraryArrivalDateTime: Arbitrary[ArrivalDateTime] = {
+  implicit lazy val arbitraryLocalDateTime: Arbitrary[LocalDateTime] = Arbitrary {
+    dateTimesBetween(
+      LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+      LocalDateTime.of(2100, 1, 1, 0, 0, 0)
+    )
+  }
+
+  implicit val arbitraryArrival: Arbitrary[Arrival] = {
     Arbitrary {
       for {
-        date <- arbitrary[LocalDate]
-        time <- arbitrary[LocalTime]
-      } yield ArrivalDateTime(date, time)
+        date   <- arbitrary[LocalDateTime]
+        time   <- arbitrary[LocalDateTime]
+        status <- arbitrary[String]
+        mrn    <- arbitrary[String]
+      } yield Arrival(date, time, status, mrn)
     }
   }
 
