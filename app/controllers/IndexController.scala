@@ -17,6 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.DestinationConnector
 import controllers.actions.IdentifierAction
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
@@ -30,21 +31,28 @@ import scala.concurrent.ExecutionContext
 class IndexController @Inject()(appConfig: FrontendAppConfig,
                                 identify: IdentifierAction,
                                 val controllerComponents: MessagesControllerComponents,
+                                val destinationConnector: DestinationConnector,
                                 renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
-      val viewArrivals =
-        controllers.routes.ViewArrivalsController.onPageLoad().url
+      destinationConnector.getArrivals() flatMap {
+        arrivals =>
+          val viewArrivals =
+            controllers.routes.ViewArrivalsController.onPageLoad().url
 
-      renderer
-        .render("index.njk",
-                Json.obj(
-                  "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-                  "viewArrivalNotificationUrl"    -> viewArrivals
-                ))
-        .map(Ok(_))
+          renderer
+            .render(
+              "index.njk",
+              Json.obj(
+                "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+                "viewArrivalNotificationUrl"    -> viewArrivals,
+                "hasArrivals"                   -> arrivals.arrivals.nonEmpty
+              )
+            )
+            .map(Ok(_))
+      }
   }
 }

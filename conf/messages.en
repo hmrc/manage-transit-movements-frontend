@@ -42,6 +42,7 @@ index.heading = Manage transit movements
 index.subHeading.arrival = Arrivals
 index.link.arrival.makeArrival = Make an arrival notification
 index.link.arrival.viewArrival = View arrival notifications
+index.arrival.noArrivals = There are no arrival notifications.
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
