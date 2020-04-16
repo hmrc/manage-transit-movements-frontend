@@ -2,7 +2,6 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.MovementReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -14,17 +13,13 @@ import scala.concurrent.ExecutionContext
 class $className$Controller @Inject()(
                                        override val messagesApi: MessagesApi,
                                        identify: IdentifierAction,
-                                       getData: DataRetrievalActionProvider,
-                                       requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
                                        renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mrn: MovementReferenceNumber): Action[AnyContent] = (identify andThen getData(mrn) andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
 
-      val json = Json.obj("mrn" -> mrn)
-
-      renderer.render("$className;format="decap"$.njk", json).map(Ok(_))
+      renderer.render("$className;format="decap"$.njk").map(Ok(_))
   }
 }
