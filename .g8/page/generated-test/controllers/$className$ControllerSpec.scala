@@ -23,7 +23,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with JsonMatc
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.$className$Controller.onPageLoad(mrn).url)
+      val request = FakeRequest(GET, routes.$className$Controller.onPageLoad.url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -33,7 +33,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar with JsonMatc
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj("mrn" -> mrn)
+      val expectedJson = Json.obj()
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
       jsonCaptor.getValue must containJson(expectedJson)
