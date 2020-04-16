@@ -47,6 +47,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val referenceDataUrl: String = configuration.get[Service]("microservice.services.reference-data").baseUrl
   lazy val enrolmentKey: String     = configuration.get[String]("keys.enrolmentKey")
 
+  lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
+
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 

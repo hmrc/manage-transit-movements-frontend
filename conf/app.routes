@@ -14,4 +14,4 @@ GET        /accessibility-statement                     controllers.Accessibilit
 
 GET        /view-arrivals                               controllers.ViewArrivalsController.onPageLoad
 
-GET        /technicalDifficulties                       controllers.TechnicalDifficultiesController.onPageLoad
+GET        /technical-difficulties                       controllers.TechnicalDifficultiesController.onPageLoad

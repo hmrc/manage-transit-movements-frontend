@@ -66,6 +66,12 @@ viewArrivalNotifications.table.action.unloadingRemarks    = Make unloading remar
 viewArrivalNotifications.table.action.viewHistory      = View history
 viewArrivalNotifications.goToManageTransitMovements = Go to manage transit movements
 
+technicalDifficulties.title = Sorry, there is a problem with the service
+technicalDifficulties.heading = Sorry, there is a problem with the service
+technicalDifficulties.tryAgain = Try again later.
+technicalDifficulties.contact = You can
+technicalDifficulties.contact.link = contact the New Computerised Transit System helpdesk if you need to speak to someone about transit movements (opens in a new window or tab)
+
 #### Compliance statement
 
 ## section one
@@ -151,5 +157,3 @@ compliant.nine.p3=This page was prepared on [date when it was first published]. 
 
 
 
-technicalDifficulties.title = technicalDifficulties
-technicalDifficulties.heading = technicalDifficulties
