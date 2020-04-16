@@ -25,9 +25,13 @@
             </a>
         </p>
         <p class="govuk-body">
+        {% if hasArrivals %}
             <a id= "view-arrival-notifications" href={{viewArrivalNotificationUrl}}>
                 {{ messages("index.link.arrival.viewArrival") }}
             </a>
+        {% else %}
+            {{ messages("index.arrival.noArrivals") }}
+        {% endif %}
         </p>
       </div>
     </div>
