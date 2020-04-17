@@ -26,7 +26,7 @@ import renderer.Renderer
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject()(appConfig: FrontendAppConfig,
                                 identify: IdentifierAction,
@@ -38,21 +38,26 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
-      destinationConnector.getArrivals() flatMap {
-        arrivals =>
-          val viewArrivals =
-            controllers.routes.ViewArrivalsController.onPageLoad().url
+      destinationConnector
+        .getArrivals()
+        .flatMap {
+          arrivals =>
+            val viewArrivals = controllers.routes.ViewArrivalsController.onPageLoad().url
 
-          renderer
-            .render(
-              "index.njk",
-              Json.obj(
-                "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
-                "viewArrivalNotificationUrl"    -> viewArrivals,
-                "hasArrivals"                   -> arrivals.arrivals.nonEmpty
+            renderer
+              .render(
+                "index.njk",
+                Json.obj(
+                  "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+                  "viewArrivalNotificationUrl"    -> viewArrivals,
+                  "hasArrivals"                   -> arrivals.arrivals.nonEmpty
+                )
               )
-            )
-            .map(Ok(_))
-      }
+              .map(Ok(_))
+        }
+        .recover {
+          case _ =>
+            Redirect(controllers.routes.TechnicalDifficultiesController.onPageLoad())
+        }
   }
 }
