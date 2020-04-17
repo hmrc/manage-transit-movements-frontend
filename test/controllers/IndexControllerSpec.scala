@@ -136,5 +136,28 @@ class IndexControllerSpec extends SpecBase {
 
       application.stop()
     }
+
+    "must redirect to technical difficulties when call to getArrivals fails" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("foo")))
+
+      when(mockDestinationConnector.getArrivals()(any()))
+        .thenReturn(Future.failed(new Exception))
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          bind[DestinationConnector].toInstance(mockDestinationConnector)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      application.stop()
+    }
   }
 }
