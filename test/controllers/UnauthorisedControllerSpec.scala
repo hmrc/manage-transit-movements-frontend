@@ -17,16 +17,18 @@
 package controllers
 
 import base.SpecBase
+import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class UnauthorisedControllerSpec extends SpecBase {
+class UnauthorisedControllerSpec extends SpecBase with JsonMatchers {
 
   "Unauthorised Controller" - {
 
@@ -45,9 +47,14 @@ class UnauthorisedControllerSpec extends SpecBase {
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val expectedJson = Json.obj("loginHmrcService" -> frontendAppConfig.loginHmrcService)
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "unauthorised.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }

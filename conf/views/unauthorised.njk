@@ -16,6 +16,15 @@
           {{ messages("unauthorised.heading") }}
         </h1>
 
+        <p class="govuk-body">
+          {{ messages("unauthorised.if.you.are.waiting.for.an.eori.number") }}
+        </p>
+
+        <p class="govuk-body"> {{ messages("unauthorised.you.must.have.an.account") }}
+          <a class="govuk-link" href={{ loginHmrcService }} target=_blank> {{ messages("unauthorised.sign.in.to.HMRC.services") }}</a>
+          {{ messages("unauthorised.again.later") }}
+        </p>
+
       </div>
     </div>
   </div>
