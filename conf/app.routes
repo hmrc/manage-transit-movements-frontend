@@ -8,10 +8,10 @@ GET        /language/:lang                              controllers.LanguageSwit
 
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
-GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
+GET        /cannot-use-service-no-eori                  controllers.UnauthorisedController.onPageLoad
 
 GET        /accessibility-statement                     controllers.AccessibilityController.onPageLoad
 
 GET        /view-arrivals                               controllers.ViewArrivalsController.onPageLoad
 
-GET        /technical-difficulties                       controllers.TechnicalDifficultiesController.onPageLoad
+GET        /technical-difficulties                      controllers.TechnicalDifficultiesController.onPageLoad
