@@ -47,14 +47,9 @@ class UnauthorisedControllerSpec extends SpecBase with JsonMatchers {
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val expectedJson = Json.obj("loginHmrcService" -> frontendAppConfig.loginHmrcService)
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "unauthorised.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
