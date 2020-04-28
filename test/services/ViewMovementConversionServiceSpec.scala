@@ -37,7 +37,7 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
             arrival.updated.toLocalDate,
             arrival.updated.toLocalTime,
             arrival.movementReferenceNumber,
-            arrival.state
+            arrival.status
           )
 
           val result = service.convertToViewArrival(arrival)
@@ -58,7 +58,7 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
             arrival.updated.toLocalDate,
             arrival.updated.toLocalTime,
             arrival.movementReferenceNumber,
-            arrival.state
+            arrival.status
           )
 
           val result = service.convertToViewArrival(arrival)
