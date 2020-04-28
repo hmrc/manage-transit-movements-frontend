@@ -16,7 +16,7 @@
 
 package connectors
 
-import java.time.{LocalDateTime, ZoneOffset}
+import java.time.LocalDateTime
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -50,7 +50,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
           Json.obj(
             "created"                 -> localDateTime,
             "updated"                 -> localDateTime,
-            "state"                   -> "Submitted",
+            "status"                  -> "Submitted",
             "movementReferenceNumber" -> "test mrn"
           )
         )

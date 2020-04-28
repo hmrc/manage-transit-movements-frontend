@@ -31,6 +31,6 @@ class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceD
       arrival.updated.toLocalDate,
       arrival.updated.toLocalTime,
       arrival.movementReferenceNumber,
-      arrival.state
+      arrival.status
     )
 }
