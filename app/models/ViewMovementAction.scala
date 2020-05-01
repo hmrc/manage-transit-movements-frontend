@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package viewModels
+package models
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalTime}
-
-import models.ViewMovementAction
 import play.api.libs.json.{JsObject, Json, OWrites}
+import viewModels.ViewMovement
 
-final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, action: Seq[ViewMovementAction])
+case class ViewMovementAction(href: String, key: String)
 
-object ViewMovement {
-  implicit val writes: OWrites[ViewMovement] =
-    new OWrites[ViewMovement] {
-
-      override def writes(o: ViewMovement): JsObject = Json.obj(
-        "updated" -> o.time
-          .format(DateTimeFormatter.ofPattern("h:mma"))
-          .toLowerCase,
-        "mrn"     -> o.movementReferenceNumber,
-        "status"  -> o.status,
-        "actions" -> o.action
+object ViewMovementAction {
+  implicit val writes: OWrites[ViewMovementAction] =
+    new OWrites[ViewMovementAction] {
+      override def writes(o: ViewMovementAction): JsObject = Json.obj(
+        "href" -> o.href,
+        "key"  -> o.key
       )
     }
 }

@@ -9,6 +9,7 @@
               <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.updated") }}</span>
               <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.mrn") }}</span>
               <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.status") }}</span>
+              <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.action") }}</span>
             </div>
 
             {% for row in rows %}
@@ -17,6 +18,16 @@
                   <span class="govuk-summary-list__value govuk-!-width-full">{{ row.updated }}</span>
                   <span class="govuk-summary-list__value govuk-!-width-full">{{ row.mrn }}</span>
                   <span class="govuk-summary-list__value govuk-!-width-full">{{ row.status  }}</span>
+                  <span class="govuk-summary-list__value govuk-!-width-full">
+
+                                      {% for action in row.actions %}
+                                          <a href= action.href >
+                                              {{ messages(action.key) }}
+                                              <span class="govuk-visually-hidden"> for {{ row.mrn }}</span>
+                                          </a>
+
+                                      {% endfor %}
+                 </span>
                 </div>
            {% endfor %}
            </div>

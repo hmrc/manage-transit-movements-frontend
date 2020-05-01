@@ -18,7 +18,7 @@ package services
 
 import connectors.ReferenceDataConnector
 import javax.inject.Inject
-import models.Arrival
+import models.{Arrival, ViewMovementAction}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.ViewMovement
 
@@ -26,11 +26,18 @@ import scala.concurrent.ExecutionContext
 
 class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
-  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement =
+  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement = {
+    val viewMovementAction = arrival.status match {
+      case _ => Seq(ViewMovementAction("history", "history"))
+    }
     ViewMovement(
       arrival.updated.toLocalDate,
       arrival.updated.toLocalTime,
       arrival.movementReferenceNumber,
-      arrival.status
+      arrival.status,
+      viewMovementAction
     )
+
+  }
+
 }
