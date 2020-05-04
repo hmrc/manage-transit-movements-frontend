@@ -28,7 +28,11 @@ class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceD
 
   def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement = {
     val viewMovementAction = arrival.status match {
-      case _ => Seq(ViewMovementAction("history", "history"))
+      case "GoodsReleased"       => Seq(ViewMovementAction("history", "GoodsReleasedLink"))
+      case "UnloadingPermission" => Seq(ViewMovementAction("history", "UnloadingPermissionLink"))
+      case "ArrivalSubmitted"    => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
+      case "Rejection"           => Seq(ViewMovementAction("history", "RejectionLink"))
+      case _                     => ???
     }
     ViewMovement(
       arrival.updated.toLocalDate,
