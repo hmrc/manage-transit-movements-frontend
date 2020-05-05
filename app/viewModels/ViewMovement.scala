@@ -19,12 +19,39 @@ package viewModels
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
-import models.ViewMovementAction
+import models.{Arrival, ViewMovementAction}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
 
 final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, action: Seq[ViewMovementAction])
 
 object ViewMovement {
+
+  def apply(arrival: Arrival)(implicit messages: Messages): ViewMovement = {
+
+    val status = arrival.status match {
+      case "UnloadingPermission" => Messages("viewArrivalNotifications.table.status.unloadingPermission")
+        //TODO: Add other statements here
+        //TODO: Add/update ViewMovement spec
+    }
+
+    ViewMovement(
+      arrival.updated.toLocalDate,
+      arrival.updated.toLocalTime,
+      arrival.movementReferenceNumber,
+      status,
+      actions(arrival.status)
+    )
+  }
+
+  private def actions(status: String): Seq[ViewMovementAction] = status match {
+    case "GoodsReleased"       => Seq(ViewMovementAction("history", "GoodsReleasedLink"))
+    case "UnloadingPermission" => Seq(ViewMovementAction("history", "UnloadingPermissionLink"))
+    case "ArrivalSubmitted"    => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
+    case "Rejection"           => Seq(ViewMovementAction("history", "RejectionLink"))
+    case _                     => Nil
+  }
+
   implicit val writes: OWrites[ViewMovement] =
     new OWrites[ViewMovement] {
 

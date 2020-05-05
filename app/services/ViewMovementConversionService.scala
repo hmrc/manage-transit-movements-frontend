@@ -23,14 +23,13 @@ import viewModels.ViewMovement
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels._
 
-
 import scala.concurrent.ExecutionContext
 
-class ViewMovementConversionService @Inject()(implicit ec: ExecutionContext)  {
 
-  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement = {
+//TODO: Is this needed? Don't think it's being used so we can remove
+class ViewMovementConversionService @Inject()(implicit ec: ExecutionContext) {
 
-
+  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement =
     ViewMovement(
       arrival.updated.toLocalDate,
       arrival.updated.toLocalTime,
@@ -38,7 +37,6 @@ class ViewMovementConversionService @Inject()(implicit ec: ExecutionContext)  {
       arrival.status,
       actions(arrival.status)
     )
-  }
 
   private[services] def actions(status: String): Seq[ViewMovementAction] = status match {
     case "GoodsReleased"       => Seq(ViewMovementAction("history", "GoodsReleasedLink"))

@@ -42,7 +42,7 @@ class ViewArrivalsController @Inject()(renderer: Renderer,
     implicit request =>
       destinationConnector.getArrivals().flatMap {
         allArrivals =>
-          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(customOfficeLookupService.convertToViewArrival)
+          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(arrival => ViewMovement(arrival))
           val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
           renderer
