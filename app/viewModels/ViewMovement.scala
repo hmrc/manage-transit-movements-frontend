@@ -42,17 +42,20 @@ object ViewMovement {
       arrival.updated.toLocalTime,
       arrival.movementReferenceNumber,
       status,
-      actions(arrival.status)
+      actions(arrival.movementReferenceNumber, arrival.status)
     )
 
   }
 
-  private def actions(status: String)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[ViewMovementAction] = status match {
-    case "GoodsReleased"       => Seq(ViewMovementAction("history", "GoodsReleasedLink"))
-    case "UnloadingPermission" => Seq(ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl, Messages("unloadingPermission.link.title")))
-    case "ArrivalSubmitted"    => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
-    case "Rejection"           => Seq(ViewMovementAction("history", "RejectionLink"))
-    case _                     => Nil
+  private def actions(mrn: String, status: String)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[ViewMovementAction] = status match {
+    case "GoodsReleased" => Seq(ViewMovementAction("history", "GoodsReleasedLink"))
+    case "UnloadingPermission" =>
+      Seq(
+        ViewMovementAction(frontendAppConfig.linkBuilder(mrn, "declare-transit-movement-unloading-frontend"), Messages("unloadingPermission.link.title"))
+      )
+    case "ArrivalSubmitted" => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
+    case "Rejection"        => Seq(ViewMovementAction("history", "RejectionLink"))
+    case _                  => Nil
   }
 
   implicit val writes: OWrites[ViewMovement] =

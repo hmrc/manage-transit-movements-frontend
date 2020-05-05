@@ -57,6 +57,13 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 
+  def linkBuilder(mrn: String, linkId: String) = {
+    val baseUrl = configuration.get[Service](s"microservice.services.$linkId").baseUrl
+    val urlTail = configuration.get[Service](s"microservice.services.$linkId").tailUrl.getOrElse("")
+    val url     = s"$baseUrl/$mrn/$urlTail"
+    url
+  }
+
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy")
