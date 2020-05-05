@@ -21,7 +21,7 @@
                   <span class="govuk-summary-list__value govuk-!-width-full">
 
                                       {% for action in row.actions %}
-                                          <a href= action.href >
+                                          <a href=" {{ action.href }} ">
                                               {{ messages(action.key) }}
                                               <span class="govuk-visually-hidden"> for {{ row.mrn }}</span>
                                           </a>

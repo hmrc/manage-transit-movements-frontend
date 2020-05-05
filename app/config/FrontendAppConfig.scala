@@ -40,6 +40,10 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   private val declareArrivalNotificationStartUrl = configuration.get[String]("declare-transit-movement-arrival-frontend.startUrl")
   val declareArrivalNotificationUrl              = s"$declareArrivalNotificationRoute/$declareArrivalNotificationStartUrl"
 
+  private val declareUnloadingRemarksRoute    = configuration.get[String]("declare-transit-movement-unloading-frontend.host")
+  private val declareUnloadingRemarksStartUrl = configuration.get[String]("declare-transit-movement-unloading-frontend.startUrl")
+  val declareUnloadingRemarksUrl              = s"$declareUnloadingRemarksRoute/$declareUnloadingRemarksStartUrl"
+
   lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")

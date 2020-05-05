@@ -25,7 +25,6 @@ import uk.gov.hmrc.viewmodels._
 
 import scala.concurrent.ExecutionContext
 
-
 //TODO: Is this needed? Don't think it's being used so we can remove
 class ViewMovementConversionService @Inject()(implicit ec: ExecutionContext) {
 

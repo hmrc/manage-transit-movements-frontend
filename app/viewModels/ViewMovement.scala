@@ -19,6 +19,7 @@ package viewModels
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
+import config.FrontendAppConfig
 import models.{Arrival, ViewMovementAction}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
@@ -27,12 +28,13 @@ final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenc
 
 object ViewMovement {
 
-  def apply(arrival: Arrival)(implicit messages: Messages): ViewMovement = {
+  def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewMovement = {
 
     val status = arrival.status match {
       case "UnloadingPermission" => Messages("viewArrivalNotifications.table.status.unloadingPermission")
-        //TODO: Add other statements here
-        //TODO: Add/update ViewMovement spec
+      case _                     => arrival.status
+      //TODO: Add other statements here
+      //TODO: Add/update ViewMovement spec
     }
 
     ViewMovement(
@@ -42,11 +44,12 @@ object ViewMovement {
       status,
       actions(arrival.status)
     )
+
   }
 
-  private def actions(status: String): Seq[ViewMovementAction] = status match {
+  private def actions(status: String)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[ViewMovementAction] = status match {
     case "GoodsReleased"       => Seq(ViewMovementAction("history", "GoodsReleasedLink"))
-    case "UnloadingPermission" => Seq(ViewMovementAction("history", "UnloadingPermissionLink"))
+    case "UnloadingPermission" => Seq(ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl, Messages("unloadingPermission.link.title")))
     case "ArrivalSubmitted"    => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
     case "Rejection"           => Seq(ViewMovementAction("history", "RejectionLink"))
     case _                     => Nil

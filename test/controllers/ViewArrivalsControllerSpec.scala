@@ -74,8 +74,8 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
   private val mockViewMovement = ViewMovement(
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
-    "Submitted",
     "test mrn",
+    "Submitted",
     Nil
   )
 
