@@ -26,22 +26,21 @@ import scala.concurrent.ExecutionContext
 
 class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
 
-  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement = {
-    val viewMovementAction = arrival.status match {
-      case "GoodsReleased"       => Seq(ViewMovementAction("history", "GoodsReleasedLink"))
-      case "UnloadingPermission" => Seq(ViewMovementAction("history", "UnloadingPermissionLink"))
-      case "ArrivalSubmitted"    => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
-      case "Rejection"           => Seq(ViewMovementAction("history", "RejectionLink"))
-      case _                     => Nil
-    }
+  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement =
     ViewMovement(
       arrival.updated.toLocalDate,
       arrival.updated.toLocalTime,
       arrival.movementReferenceNumber,
       arrival.status,
-      viewMovementAction
+      actions(arrival.status)
     )
 
+  private[services] def actions(status: String): Seq[ViewMovementAction] = status match {
+    case "GoodsReleased"       => Seq(ViewMovementAction("history", "GoodsReleasedLink"))
+    case "UnloadingPermission" => Seq(ViewMovementAction("history", "UnloadingPermissionLink"))
+    case "ArrivalSubmitted"    => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
+    case "Rejection"           => Seq(ViewMovementAction("history", "RejectionLink"))
+    case _                     => Nil
   }
 
 }

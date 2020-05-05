@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import generators.ModelGenerators
-import models.Arrival
+import models.{Arrival, ViewMovementAction}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.ViewMovement
@@ -33,12 +33,14 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
 
       forAll(arbitrary[Arrival]) {
         arrival =>
+          val actions = service.actions(arrival.status)
+
           val expectedResult = ViewMovement(
             arrival.updated.toLocalDate,
             arrival.updated.toLocalTime,
             arrival.movementReferenceNumber,
             arrival.status,
-            Nil
+            actions
           )
 
           val result = service.convertToViewArrival(arrival)
@@ -55,12 +57,14 @@ class ViewMovementConversionServiceSpec extends SpecBase with ModelGenerators wi
 
       forAll(arbitrary[Arrival]) {
         arrival =>
+          val actions = service.actions(arrival.status)
+
           val expectedResult = ViewMovement(
             arrival.updated.toLocalDate,
             arrival.updated.toLocalTime,
             arrival.movementReferenceNumber,
             arrival.status,
-            Nil
+            actions
           )
 
           val result = service.convertToViewArrival(arrival)
