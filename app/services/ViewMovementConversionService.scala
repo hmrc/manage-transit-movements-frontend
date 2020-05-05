@@ -32,7 +32,7 @@ class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceD
       case "UnloadingPermission" => Seq(ViewMovementAction("history", "UnloadingPermissionLink"))
       case "ArrivalSubmitted"    => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
       case "Rejection"           => Seq(ViewMovementAction("history", "RejectionLink"))
-      case _                     => ???
+      case _                     => Nil
     }
     ViewMovement(
       arrival.updated.toLocalDate,

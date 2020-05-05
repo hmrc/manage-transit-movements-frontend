@@ -73,14 +73,24 @@ trait ModelGenerators {
     }
   }
 
+  implicit val arbitraryViewMovementAction: Arbitrary[ViewMovementAction] = {
+    Arbitrary {
+      for {
+        href <- arbitrary[String]
+        key  <- arbitrary[String]
+      } yield ViewMovementAction(href, key)
+    }
+  }
+
   implicit val arbitraryViewMovement: Arbitrary[ViewMovement] = {
     Arbitrary {
       for {
-        date   <- arbitrary[LocalDate]
-        time   <- arbitrary[LocalTime]
-        status <- arbitrary[String]
-        mrn    <- arbitrary[String]
-      } yield ViewMovement(date, time, status, mrn)
+        date    <- arbitrary[LocalDate]
+        time    <- arbitrary[LocalTime]
+        status  <- arbitrary[String]
+        mrn     <- arbitrary[String]
+        actions <- listOfN(4, arbitrary[ViewMovementAction])
+      } yield ViewMovement(date, time, status, mrn, actions)
     }
   }
 

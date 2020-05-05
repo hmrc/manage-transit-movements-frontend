@@ -75,7 +75,8 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
     "Submitted",
-    "test mrn"
+    "test mrn",
+    Nil
   )
 
   private val expectedJson: JsValue =

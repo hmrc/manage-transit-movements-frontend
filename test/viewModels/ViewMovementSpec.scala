@@ -37,7 +37,8 @@ class ViewMovementSpec extends SpecBase with ModelGenerators with ScalaCheckProp
         val expectedJson = Json.obj(
           "updated" -> formatTime,
           "mrn"     -> viewMovement.movementReferenceNumber,
-          "status"  -> viewMovement.status
+          "status"  -> viewMovement.status,
+          "actions" -> viewMovement.action
         )
 
         Json.toJson(viewMovement) mustBe expectedJson
