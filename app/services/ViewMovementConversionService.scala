@@ -16,17 +16,21 @@
 
 package services
 
-import connectors.ReferenceDataConnector
 import javax.inject.Inject
 import models.{Arrival, ViewMovementAction}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.ViewMovement
+import play.api.i18n.Messages
+import uk.gov.hmrc.viewmodels._
+
 
 import scala.concurrent.ExecutionContext
 
-class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
+class ViewMovementConversionService @Inject()(implicit ec: ExecutionContext)  {
 
-  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement =
+  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement = {
+
+
     ViewMovement(
       arrival.updated.toLocalDate,
       arrival.updated.toLocalTime,
@@ -34,6 +38,7 @@ class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceD
       arrival.status,
       actions(arrival.status)
     )
+  }
 
   private[services] def actions(status: String): Seq[ViewMovementAction] = status match {
     case "GoodsReleased"       => Seq(ViewMovementAction("history", "GoodsReleasedLink"))

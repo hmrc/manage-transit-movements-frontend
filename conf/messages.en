@@ -64,6 +64,7 @@ viewArrivalNotifications.table.trader.name = Trader name
 viewArrivalNotifications.table.office      = Office
 viewArrivalNotifications.table.procedure   = Procedure
 viewArrivalNotifications.table.status      = Status
+viewArrivalNotifications.table.status.unloadingPermission = You can unload
 viewArrivalNotifications.table.action      = Action
 viewArrivalNotifications.table.action.viewErrors       = View and fix errors
 viewArrivalNotifications.table.action.unloadingRemarks    = Make unloading remarks
