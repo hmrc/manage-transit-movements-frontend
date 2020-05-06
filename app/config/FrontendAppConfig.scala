@@ -18,6 +18,7 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import controllers.routes
+import models.UserAnswers
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
@@ -40,9 +41,9 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   private val declareArrivalNotificationStartUrl = configuration.get[String]("declare-transit-movement-arrival-frontend.startUrl")
   val declareArrivalNotificationUrl              = s"$declareArrivalNotificationRoute/$declareArrivalNotificationStartUrl"
 
-  private val declareUnloadingRemarksRoute    = configuration.get[String]("declare-transit-movement-unloading-frontend.host")
-  private val declareUnloadingRemarksStartUrl = configuration.get[String]("declare-transit-movement-unloading-frontend.startUrl")
-  val declareUnloadingRemarksUrl              = s"$declareUnloadingRemarksRoute/$declareUnloadingRemarksStartUrl"
+  private val declareUnloadingRemarksRoute         = configuration.get[String]("declare-transit-movement-unloading-frontend.host")
+  private val declareUnloadingRemarksStartUrl      = configuration.get[String]("declare-transit-movement-unloading-frontend.startUrl")
+  val declareUnloadingRemarksUrl: String => String = (mrn => s"$declareUnloadingRemarksRoute/$declareUnloadingRemarksStartUrl/$mrn/unloading-guidance")
 
   lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
@@ -56,13 +57,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
-
-  def linkBuilder(mrn: String, linkId: String) = {
-    val baseUrl = configuration.get[Service](s"microservice.services.$linkId").baseUrl
-    val urlTail = configuration.get[Service](s"microservice.services.$linkId").tailUrl.getOrElse("")
-    val url     = s"$baseUrl/$mrn/$urlTail"
-    url
-  }
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

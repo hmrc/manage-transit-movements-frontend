@@ -51,7 +51,7 @@ object ViewMovement {
     case "GoodsReleased" => Seq(ViewMovementAction("history", "GoodsReleasedLink"))
     case "UnloadingPermission" =>
       Seq(
-        ViewMovementAction(frontendAppConfig.linkBuilder(mrn, "declare-transit-movement-unloading-frontend"), Messages("unloadingPermission.link.title"))
+        ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(mrn), Messages("unloadingPermission.link.title"))
       )
     case "ArrivalSubmitted" => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
     case "Rejection"        => Seq(ViewMovementAction("history", "RejectionLink"))
