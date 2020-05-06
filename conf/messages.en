@@ -65,6 +65,7 @@ viewArrivalNotifications.table.office      = Office
 viewArrivalNotifications.table.procedure   = Procedure
 viewArrivalNotifications.table.status      = Status
 viewArrivalNotifications.table.status.unloadingPermission = You can unload
+viewArrivalNotifications.table.status.arrivalSubmitted = Arrival notification sent
 unloadingPermission.link.title = Make unloading remarks
 viewArrivalNotifications.table.action      = Action
 viewArrivalNotifications.table.action.viewErrors       = View and fix errors

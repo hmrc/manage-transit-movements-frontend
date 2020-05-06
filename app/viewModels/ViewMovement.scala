@@ -32,6 +32,7 @@ object ViewMovement {
 
     val status = arrival.status match {
       case "UnloadingPermission" => Messages("viewArrivalNotifications.table.status.unloadingPermission")
+      case "ArrivalSubmitted"    => Messages("viewArrivalNotifications.table.status.arrivalSubmitted")
       case _                     => arrival.status
       //TODO: Add other statements here
       //TODO: Add/update ViewMovement spec
@@ -53,9 +54,8 @@ object ViewMovement {
       Seq(
         ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(mrn), Messages("unloadingPermission.link.title"))
       )
-    case "ArrivalSubmitted" => Seq(ViewMovementAction("history", "ArrivalSubmittedLink"))
-    case "Rejection"        => Seq(ViewMovementAction("history", "RejectionLink"))
-    case _                  => Nil
+    case "Rejection" => Seq(ViewMovementAction("history", "RejectionLink"))
+    case _           => Nil
   }
 
   implicit val writes: OWrites[ViewMovement] =
