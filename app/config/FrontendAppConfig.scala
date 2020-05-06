@@ -18,7 +18,6 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import controllers.routes
-import models.UserAnswers
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
@@ -43,7 +42,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
 
   private val declareUnloadingRemarksRoute         = configuration.get[String]("declare-transit-movement-unloading-frontend.host")
   private val declareUnloadingRemarksStartUrl      = configuration.get[String]("declare-transit-movement-unloading-frontend.startUrl")
-  val declareUnloadingRemarksUrl: String => String = (mrn => s"$declareUnloadingRemarksRoute/$declareUnloadingRemarksStartUrl/$mrn/unloading-guidance")
+  val declareUnloadingRemarksUrl: String => String = mrn => s"$declareUnloadingRemarksRoute/$declareUnloadingRemarksStartUrl/$mrn/unloading-guidance"
 
   lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")

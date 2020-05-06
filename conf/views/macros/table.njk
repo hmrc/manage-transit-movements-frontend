@@ -14,21 +14,22 @@
 
             {% for row in rows %}
 
-                <div class="govuk-summary-list__row">
-                  <span class="govuk-summary-list__value govuk-!-width-full">{{ row.updated }}</span>
-                  <span class="govuk-summary-list__value govuk-!-width-full">{{ row.mrn }}</span>
-                  <span class="govuk-summary-list__value govuk-!-width-full">{{ row.status  }}</span>
-                  <span class="govuk-summary-list__value govuk-!-width-full">
+            <div class="govuk-summary-list__row">
+              <span class="govuk-summary-list__value govuk-!-width-full">{{ row.updated }}</span>
+              <span class="govuk-summary-list__value govuk-!-width-full">{{ row.mrn }}</span
+              <span class="govuk-summary-list__value govuk-!-width-full">{{ row.status  }}</span>
+              <span class="govuk-summary-list__value govuk-!-width-full">
 
-                                      {% for action in row.actions %}
-                                          <a href=" {{ action.href }} ">
-                                              {{ messages(action.key) }}
-                                              <span class="govuk-visually-hidden"> for {{ row.mrn }}</span>
-                                          </a>
+              {% for action in row.actions %}
+                <a href=" {{ action.href }} ">
+                  {{ messages(action.key) }}
+                   < span class="govuk-visually-hidden"> for {{ row.mrn }}</span>
+                 </a>
+                      {% endfor %}
+               </span>
 
-                                      {% endfor %}
-                 </span>
-                </div>
+            </div>
+                       
            {% endfor %}
            </div>
     {% endfor %}

@@ -31,11 +31,9 @@ object ViewMovement {
   def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewMovement = {
 
     val status = arrival.status match {
-      case "UnloadingPermission" => Messages("viewArrivalNotifications.table.status.unloadingPermission")
-      case "ArrivalSubmitted"    => Messages("viewArrivalNotifications.table.status.arrivalSubmitted")
+      case "UnloadingPermission" => Messages("movement.status.unloadingPermission")
+      case "ArrivalSubmitted"    => Messages("movement.status.arrivalSubmitted")
       case _                     => arrival.status
-      //TODO: Add other statements here
-      //TODO: Add/update ViewMovement spec
     }
 
     ViewMovement(
@@ -49,13 +47,11 @@ object ViewMovement {
   }
 
   private def actions(mrn: String, status: String)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[ViewMovementAction] = status match {
-    case "GoodsReleased" => Seq(ViewMovementAction("history", "GoodsReleasedLink"))
     case "UnloadingPermission" =>
       Seq(
         ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(mrn), Messages("unloadingPermission.link.title"))
       )
-    case "Rejection" => Seq(ViewMovementAction("history", "RejectionLink"))
-    case _           => Nil
+    case _ => Nil
   }
 
   implicit val writes: OWrites[ViewMovement] =
