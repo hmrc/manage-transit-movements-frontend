@@ -16,16 +16,13 @@
 
 package models
 
-import java.time.format.DateTimeFormatter
-
 import base.SpecBase
-import generators.ModelGenerators
+import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
-import viewModels.ViewMovement
 
-class ViewMovementActionSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
+class ViewMovementActionSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "must serialise to Json" in {
 

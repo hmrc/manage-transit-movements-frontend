@@ -25,6 +25,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
 trait ModelGenerators {
+  self: Generators =>
 
   implicit val arbitrarylocalDate: Arbitrary[LocalDate] = {
     Arbitrary {
@@ -88,7 +89,7 @@ trait ModelGenerators {
         date    <- arbitrary[LocalDate]
         time    <- arbitrary[LocalTime]
         status  <- arbitrary[String]
-        mrn     <- arbitrary[String]
+        mrn     <- stringsWithMaxLength(17)
         actions <- listOfN(4, arbitrary[ViewMovementAction])
       } yield ViewMovement(date, time, status, mrn, actions)
     }

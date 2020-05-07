@@ -19,14 +19,14 @@ package viewModels
 import java.time.format.DateTimeFormatter
 
 import base.SpecBase
-import generators.ModelGenerators
+import generators.{Generators, ModelGenerators}
 import models.Arrival
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-class ViewMovementSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
+class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
 
   "must serialise to Json" in {
 
@@ -49,17 +49,14 @@ class ViewMovementSpec extends SpecBase with ModelGenerators with ScalaCheckProp
   "must display unloading permission status" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        arrival.copy(status = "UnloadingPermission")
+        val unloadingArrival = arrival.copy(status = "UnloadingPermission", movementReferenceNumber = "herbert")
 
-        val viewMovement = ViewMovement(arrival)(messages,frontendAppConfig)
+        val viewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
 
-      val expectedResult = ViewMovement(arrival.created, )
-
-
-
+        println(s"\nMrn: ${viewMovement.movementReferenceNumber}")
+        viewMovement.action.head.href mustBe ""
 
     }
-    }
-
+  }
 
 }
