@@ -19,10 +19,11 @@ package viewModels
 import java.time.format.DateTimeFormatter
 
 import base.SpecBase
-import generators.{Generators, ModelGenerators}
+import generators.Generators
 import models.Arrival
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -49,13 +50,40 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
   "must display unloading permission status" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival = arrival.copy(status = "UnloadingPermission", movementReferenceNumber = "herbert")
+        val unloadingArrival: Arrival  = arrival.copy(status = "UnloadingPermission")
+        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
 
-        val viewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+        viewMovement.status mustBe Messages("movement.status.unloadingPermission")
+    }
+  }
 
-        println(s"\nMrn: ${viewMovement.movementReferenceNumber}")
-        viewMovement.action.head.href mustBe ""
+  "must display unloading permission action" in {
+    forAll(arbitrary[Arrival]) {
+      arrival =>
+        val unloadingArrival: Arrival  = arrival.copy(status = "UnloadingPermission")
+        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
 
+        viewMovement.action.head.href mustBe s"http://localhost:9488/common-transit-convention-unloading-arrival/${viewMovement.movementReferenceNumber}/unloading-guidance"
+    }
+  }
+
+  "must display correct status" in {
+    forAll(arbitrary[Arrival]) {
+      arrival =>
+        val unloadingArrival: Arrival  = arrival.copy(status = "")
+        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+
+        viewMovement.status mustBe unloadingArrival.status
+    }
+  }
+
+  "must not display action when status is not unloading permission" in {
+    forAll(arbitrary[Arrival]) {
+      arrival =>
+        val unloadingArrival: Arrival  = arrival.copy(status = "")
+        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+
+        viewMovement.action mustBe Nil
     }
   }
 

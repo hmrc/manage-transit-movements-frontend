@@ -69,7 +69,7 @@ trait ModelGenerators {
         date   <- arbitrary[LocalDateTime]
         time   <- arbitrary[LocalDateTime]
         status <- Gen.oneOf(Seq("GoodsReleased", "UnloadingPermission", "ArrivalSubmitted", "Rejection"))
-        mrn    <- arbitrary[String]
+        mrn    <- stringsWithMaxLength(17)
       } yield Arrival(date, time, status, mrn)
     }
   }
