@@ -31,13 +31,12 @@ class TestOnlyRouterConnector @Inject()(
 )(implicit ec: ExecutionContext) {
 
   def sendMessage(
-    xMessageSender: String,
     requestData: NodeSeq,
     headers: Headers
   )(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl =
-      s"${config.destinationUrl}/movements/arrivals/$xMessageSender/messages/eis"
+      s"${config.routerUrl}/messages"
 
     // TODO: Determine which headers need to be sent on
     http.POSTString[HttpResponse](
