@@ -20,7 +20,7 @@ import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneOffset}
 
 import models._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.listOfN
+import org.scalacheck.Gen.{choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
@@ -62,14 +62,24 @@ trait ModelGenerators {
     )
   }
 
+  implicit lazy val arbitraryArrivalId: Arbitrary[ArrivalId] = {
+    Arbitrary {
+      for {
+        length        <- choose(1, 9)
+        listOfCharNum <- listOfN(length, numChar)
+      } yield ArrivalId(listOfCharNum.mkString.toInt)
+    }
+  }
+
   implicit val arbitraryArrival: Arbitrary[Arrival] = {
     Arbitrary {
       for {
-        date   <- arbitrary[LocalDateTime]
-        time   <- arbitrary[LocalDateTime]
-        status <- arbitrary[String]
-        mrn    <- arbitrary[String]
-      } yield Arrival(date, time, status, mrn)
+        arrivalId <- arbitrary[ArrivalId]
+        date      <- arbitrary[LocalDateTime]
+        time      <- arbitrary[LocalDateTime]
+        status    <- arbitrary[String]
+        mrn       <- arbitrary[String]
+      } yield Arrival(arrivalId, date, time, status, mrn)
     }
   }
 

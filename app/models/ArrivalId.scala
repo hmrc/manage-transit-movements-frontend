@@ -16,19 +16,11 @@
 
 package models
 
-import java.time.LocalDateTime
+import play.api.libs.json.{Reads, _}
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+case class ArrivalId(index: Int)
 
-case class Arrival(arrivalId: ArrivalId, created: LocalDateTime, updated: LocalDateTime, status: String, movementReferenceNumber: String)
-
-object Arrival {
-  implicit val reads: Reads[Arrival] = (
-    (__ \ "_id").read[ArrivalId] and
-      (__ \ "created").read[LocalDateTime] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "status").read[String] and
-      (__ \ "movementReferenceNumber").read[String]
-  )(Arrival.apply _)
+object ArrivalId {
+  implicit def arrivalIdReads: Reads[ArrivalId]       = __.read[Int] map ArrivalId.apply
+  implicit def writes(arrivalId: ArrivalId): JsNumber = JsNumber(arrivalId.index)
 }

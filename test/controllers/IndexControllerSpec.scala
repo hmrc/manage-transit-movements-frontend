@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import connectors.DestinationConnector
-import models.{Arrival, Arrivals}
+import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.mockito.Matchers.any
@@ -44,6 +44,7 @@ class IndexControllerSpec extends SpecBase {
     Arrivals(
       Seq(
         Arrival(
+          ArrivalId(1),
           localDateTime,
           localDateTime,
           "Submitted",
