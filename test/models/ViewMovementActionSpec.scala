@@ -14,52 +14,30 @@
  * limitations under the License.
  */
 
-package viewModels
+package models
 
 import java.time.format.DateTimeFormatter
 
 import base.SpecBase
 import generators.ModelGenerators
-import models.Arrival
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import viewModels.ViewMovement
 
-class ViewMovementSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks with NunjucksSupport {
+class ViewMovementActionSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
 
   "must serialise to Json" in {
 
-    forAll(arbitrary[ViewMovement]) {
-      viewMovement =>
-        val formatTime =
-          viewMovement.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
-
+    forAll(arbitrary[ViewMovementAction]) {
+      viewMovementAction =>
         val expectedJson = Json.obj(
-          "updated" -> formatTime,
-          "mrn"     -> viewMovement.movementReferenceNumber,
-          "status"  -> viewMovement.status,
-          "actions" -> viewMovement.action
+          "href" -> viewMovementAction.href,
+          "key"  -> viewMovementAction.key
         )
 
-        Json.toJson(viewMovement) mustBe expectedJson
+        Json.toJson(viewMovementAction) mustBe expectedJson
     }
   }
-
-  "must display unloading permission status" in {
-    forAll(arbitrary[Arrival]) {
-      arrival =>
-        arrival.copy(status = "UnloadingPermission")
-
-        val viewMovement = ViewMovement(arrival)(messages,frontendAppConfig)
-
-      val expectedResult = ViewMovement(arrival.created, )
-
-
-
-
-    }
-    }
-
 
 }

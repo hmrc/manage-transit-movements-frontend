@@ -17,7 +17,6 @@
 package models
 
 import play.api.libs.json.{JsObject, Json, OWrites}
-import viewModels.ViewMovement
 
 case class ViewMovementAction(href: String, key: String)
 

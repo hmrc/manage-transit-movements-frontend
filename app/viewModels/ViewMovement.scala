@@ -29,22 +29,18 @@ final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenc
 object ViewMovement {
 
   def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewMovement =
-    status(arrival)
-
-  private def status(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig) = {
-    val status = arrival.status match {
-      case "UnloadingPermission" => Messages("movement.status.unloadingPermission")
-      case "ArrivalSubmitted"    => Messages("movement.status.arrivalSubmitted")
-      case _                     => arrival.status
-    }
-
     ViewMovement(
       arrival.updated.toLocalDate,
       arrival.updated.toLocalTime,
       arrival.movementReferenceNumber,
-      status,
+      status(arrival),
       actions(arrival.movementReferenceNumber, arrival.status)
     )
+
+  private def status(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig) = arrival.status match {
+    case "UnloadingPermission" => Messages("movement.status.unloadingPermission")
+    case "ArrivalSubmitted"    => Messages("movement.status.arrivalSubmitted")
+    case _                     => arrival.status
   }
 
   private def actions(mrn: String, status: String)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[ViewMovementAction] = status match {
