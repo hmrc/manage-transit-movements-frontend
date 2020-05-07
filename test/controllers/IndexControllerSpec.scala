@@ -19,7 +19,7 @@ package controllers
 import java.time.LocalDateTime
 
 import base.SpecBase
-import connectors.DestinationConnector
+import connectors.ArrivalMovementConnector
 import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
@@ -34,9 +34,9 @@ import scala.concurrent.Future
 
 class IndexControllerSpec extends SpecBase {
 
-  val manageTransitMovementRoute = "manage-transit-movements"
-  val viewArrivalNotificationUrl = s"/$manageTransitMovementRoute/view-arrivals"
-  val mockDestinationConnector   = mock[DestinationConnector]
+  val manageTransitMovementRoute   = "manage-transit-movements"
+  val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
+  val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -61,12 +61,12 @@ class IndexControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("foo")))
 
-      when(mockDestinationConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getArrivals()(any()))
         .thenReturn(Future.successful(mockDestinationResponse))
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
-          bind[DestinationConnector].toInstance(mockDestinationConnector)
+          bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
         )
         .build()
 
@@ -100,7 +100,7 @@ class IndexControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("foo")))
 
-      when(mockDestinationConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getArrivals()(any()))
         .thenReturn(
           Future.successful(
             Arrivals(
@@ -109,7 +109,7 @@ class IndexControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
-          bind[DestinationConnector].toInstance(mockDestinationConnector)
+          bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
         )
         .build()
 
@@ -143,12 +143,12 @@ class IndexControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("foo")))
 
-      when(mockDestinationConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getArrivals()(any()))
         .thenReturn(Future.failed(new Exception))
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
-          bind[DestinationConnector].toInstance(mockDestinationConnector)
+          bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
         )
         .build()
 

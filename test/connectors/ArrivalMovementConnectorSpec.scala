@@ -31,10 +31,10 @@ import play.api.libs.json.Json
 
 import scala.concurrent.Future
 
-class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
+class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
 
-  private lazy val connector: DestinationConnector =
-    app.injector.instanceOf[DestinationConnector]
+  private lazy val connector: ArrivalMovementConnector =
+    app.injector.instanceOf[ArrivalMovementConnector]
   private val startUrl = "transit-movements-trader-at-destination"
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -59,7 +59,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
-  "DestinationConnector" - {
+  "arrivalMovementConnector" - {
 
     "getArrivals" - {
       "must return a successful future response" in {
