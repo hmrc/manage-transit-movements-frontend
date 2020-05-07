@@ -32,7 +32,7 @@ class TestOnlyRouterConnector @Inject()(
 
   def sendMessage(
     xMessageSender: String,
-    resquestData: NodeSeq,
+    requestData: NodeSeq,
     headers: Headers
   )(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
@@ -42,7 +42,7 @@ class TestOnlyRouterConnector @Inject()(
     // TODO: Determine which headers need to be sent on
     http.POSTString[HttpResponse](
       serviceUrl,
-      resquestData.toString,
+      requestData.toString,
       headers.headers
     )
   }
