@@ -21,6 +21,6 @@ import play.api.libs.json.{Reads, _}
 case class ArrivalId(index: Int)
 
 object ArrivalId {
-  implicit def arrivalIdReads: Reads[ArrivalId]       = __.read[Int] map ArrivalId.apply
+  implicit def reads: Reads[ArrivalId]       = __.read[Int] map ArrivalId.apply
   implicit def writes(arrivalId: ArrivalId): JsNumber = JsNumber(arrivalId.index)
 }
