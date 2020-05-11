@@ -35,10 +35,8 @@ class TestOnlyRouterConnector @Inject()(
     headers: Headers
   )(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
-    val serviceUrl =
-      s"${config.routerUrl}/messages"
+    val serviceUrl = s"${config.routerUrl}/messages"
 
-    // TODO: Determine which headers need to be sent on
     http.POSTString[HttpResponse](
       serviceUrl,
       requestData.toString,
