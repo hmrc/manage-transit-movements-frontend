@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-package generators
+package models
 
-import models._
-import org.scalacheck.Arbitrary
+import base.SpecBase
+import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
-import pages._
-import play.api.libs.json.{JsValue, Json}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.Json
 
-trait UserAnswersEntryGenerators extends PageGenerators {}
+class ViewMovementActionSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+
+  "must serialise to Json" in {
+
+    forAll(arbitrary[ViewMovementAction]) {
+      viewMovementAction =>
+        val expectedJson = Json.obj(
+          "href" -> viewMovementAction.href,
+          "key"  -> viewMovementAction.key
+        )
+
+        Json.toJson(viewMovementAction) mustBe expectedJson
+    }
+  }
+
+}

@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package services
+package models
 
-import connectors.ReferenceDataConnector
-import javax.inject.Inject
-import models.Arrival
-import uk.gov.hmrc.http.HeaderCarrier
-import viewModels.ViewMovement
+import play.api.libs.json.{JsObject, Json, OWrites}
 
-import scala.concurrent.ExecutionContext
+case class ViewMovementAction(href: String, key: String)
 
-class ViewMovementConversionService @Inject()(referenceDataConnector: ReferenceDataConnector)(implicit ec: ExecutionContext) {
-
-  def convertToViewArrival(arrival: Arrival)(implicit hc: HeaderCarrier): ViewMovement =
-    ViewMovement(
-      arrival.updated.toLocalDate,
-      arrival.updated.toLocalTime,
-      arrival.movementReferenceNumber,
-      arrival.status
-    )
+object ViewMovementAction {
+  implicit val writes: OWrites[ViewMovementAction] =
+    new OWrites[ViewMovementAction] {
+      override def writes(o: ViewMovementAction): JsObject = Json.obj(
+        "href" -> o.href,
+        "key"  -> o.key
+      )
+    }
 }

@@ -38,7 +38,6 @@ object Service {
       val port     = service.get[String]("port")
       val protocol = service.get[String]("protocol")
       val startUrl = service.get[String]("startUrl")
-
       Service(host, port, protocol, startUrl)
   }
 
