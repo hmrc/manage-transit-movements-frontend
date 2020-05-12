@@ -18,21 +18,30 @@ package controllers.testOnly
 
 import connectors.testOnly.TestOnlyRouterConnector
 import javax.inject.Inject
-import play.api.Logger
-import play.api.mvc.{Action, ControllerComponents}
+import play.api.mvc.{Action, ControllerComponents, DefaultActionBuilder}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
 class TestOnlyRouterController @Inject()(
   cc: ControllerComponents,
-  connector: TestOnlyRouterConnector
+  connector: TestOnlyRouterConnector,
+  action: DefaultActionBuilder
 )(implicit val ec: ExecutionContext)
     extends BackendController(cc) {
 
-  def handleMessage(): Action[NodeSeq] = Action.async(parse.xml) {
+  def fromCoreMessage: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      connector.sendMessage(request.body, request.headers).map(response => Status(response.status))
+      connector
+        .submitInboundMessage(request.body, request.headers)
+        .map(response => Status(response.status))
+  }
+
+  def toCoreMessage: Action[NodeSeq] = action.async(parse.xml) {
+    implicit request =>
+      connector
+        .submitOutboundMessage(request.body, request.headers)
+        .map(response => Status(response.status))
   }
 }
