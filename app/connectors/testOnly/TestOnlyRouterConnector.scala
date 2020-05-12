@@ -36,6 +36,6 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
   def submitOutboundMessage(requestData: NodeSeq, headers: Headers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString, headers.headers)
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)
   }
 }
