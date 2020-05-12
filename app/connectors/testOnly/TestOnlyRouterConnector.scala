@@ -25,22 +25,17 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyRouterConnector @Inject()(
-  val http: HttpClient,
-  config: FrontendAppConfig
-)(implicit ec: ExecutionContext) {
+class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
-  def sendMessage(
-    requestData: NodeSeq,
-    headers: Headers
-  )(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
-    val serviceUrl = s"${config.routerUrl}/messages"
+    val routerUrl = s"${config.routerUrl}/messages"
+    http.POSTString[HttpResponse](routerUrl, requestData.toString, headers.headers)
+  }
 
-    http.POSTString[HttpResponse](
-      serviceUrl,
-      requestData.toString,
-      headers.headers
-    )
+  def submitOutboundMessage(requestData: NodeSeq, headers: Headers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+
+    val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString, headers.headers)
   }
 }

@@ -31,8 +31,17 @@ class TestOnlyRouterController @Inject()(
 )(implicit val ec: ExecutionContext)
     extends BackendController(cc) {
 
-  def handleMessage(): Action[NodeSeq] = Action.async(parse.xml) {
+  def fromCoreMessage: Action[NodeSeq] = Action.async(parse.xml) {
     implicit request =>
-      connector.sendMessage(request.body, request.headers).map(response => Status(response.status))
+      connector
+        .submitInboundMessage(request.body, request.headers)
+        .map(response => Status(response.status))
+  }
+
+  def toCoreMessage: Action[NodeSeq] = Action.async(parse.xml) {
+    implicit request =>
+      connector
+        .submitOutboundMessage(request.body, request.headers)
+        .map(response => Status(response.status))
   }
 }
