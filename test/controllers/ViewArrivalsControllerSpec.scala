@@ -21,6 +21,7 @@ import java.time.LocalDateTime
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
+import generators.Generators
 import generators.ModelGenerators
 import matchers.JsonMatchers
 import models.{Arrival, ArrivalId, Arrivals}
@@ -35,16 +36,14 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.ViewMovementConversionService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.Future
 
-class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with ModelGenerators with NunjucksSupport with BeforeAndAfter {
+class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with NunjucksSupport with BeforeAndAfter {
 
   private val mockArrivalMovementConnector      = mock[ArrivalMovementConnector]
-  private val mockCustomOfficeConversionService = mock[ViewMovementConversionService]
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -52,7 +51,6 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
     applicationBuilder(userAnswers = Some(emptyUserAnswers))
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
-        bind[ViewMovementConversionService].toInstance(mockCustomOfficeConversionService)
       )
       .build()
 
@@ -75,8 +73,9 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
   private val mockViewMovement = ViewMovement(
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
+    "test mrn",
     "Submitted",
-    "test mrn"
+    Nil
   )
 
   private val expectedJson: JsValue =
@@ -95,8 +94,6 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       when(mockArrivalMovementConnector.getArrivals()(any()))
         .thenReturn(Future.successful(mockArrivalResponse))
-
-      when(mockCustomOfficeConversionService.convertToViewArrival(any())(any())).thenReturn(mockViewMovement)
 
       val request = FakeRequest(
         GET,
@@ -122,7 +119,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
   }
 
   override def beforeEach: Unit = {
-    reset(mockArrivalMovementConnector, mockCustomOfficeConversionService)
+    reset(mockArrivalMovementConnector)
     super.beforeEach
   }
 }

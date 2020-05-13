@@ -24,7 +24,6 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.ViewMovementConversionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
@@ -33,8 +32,7 @@ import scala.concurrent.ExecutionContext
 class ViewArrivalsController @Inject()(renderer: Renderer,
                                        identify: IdentifierAction,
                                        val controllerComponents: MessagesControllerComponents,
-                                       arrivalMovementConnector: ArrivalMovementConnector,
-                                       customOfficeLookupService: ViewMovementConversionService)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+                                       arrivalMovementConnector: ArrivalMovementConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -42,7 +40,7 @@ class ViewArrivalsController @Inject()(renderer: Renderer,
     implicit request =>
       arrivalMovementConnector.getArrivals().flatMap {
         allArrivals =>
-          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(customOfficeLookupService.convertToViewArrival)
+          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(arrival => ViewMovement(arrival))
           val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
           renderer

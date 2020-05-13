@@ -19,11 +19,38 @@ package viewModels
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
+import config.FrontendAppConfig
+import models.{Arrival, ViewMovementAction}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String)
+final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, action: Seq[ViewMovementAction])
 
 object ViewMovement {
+
+  def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewMovement =
+    ViewMovement(
+      arrival.updated.toLocalDate,
+      arrival.updated.toLocalTime,
+      arrival.movementReferenceNumber,
+      status(arrival),
+      actions(arrival.movementReferenceNumber, arrival.status)
+    )
+
+  private def status(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig) = arrival.status match {
+    case "UnloadingPermission" => Messages("movement.status.unloadingPermission")
+    case "ArrivalSubmitted"    => Messages("movement.status.arrivalSubmitted")
+    case _                     => arrival.status
+  }
+
+  private def actions(mrn: String, status: String)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[ViewMovementAction] = status match {
+    case "UnloadingPermission" =>
+      Seq(
+        ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(mrn), Messages("viewArrivalNotifications.table.action.unloadingRemarks"))
+      )
+    case _ => Nil
+  }
+
   implicit val writes: OWrites[ViewMovement] =
     new OWrites[ViewMovement] {
 
@@ -31,8 +58,9 @@ object ViewMovement {
         "updated" -> o.time
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
-        "mrn"    -> o.movementReferenceNumber,
-        "status" -> o.status
+        "mrn"     -> o.movementReferenceNumber,
+        "status"  -> o.status,
+        "actions" -> o.action
       )
     }
 }

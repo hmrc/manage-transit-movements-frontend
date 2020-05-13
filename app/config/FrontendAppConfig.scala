@@ -36,15 +36,16 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
   val signOutUrl: String             = configuration.get[String]("urls.logout")
 
-  private val declareArrivalNotificationRoute    = configuration.get[String]("declare-transit-movement-arrival-frontend.host")
-  private val declareArrivalNotificationStartUrl = configuration.get[String]("declare-transit-movement-arrival-frontend.startUrl")
-  val declareArrivalNotificationUrl              = s"$declareArrivalNotificationRoute/$declareArrivalNotificationStartUrl"
+  private val declareUnloadingRemarksUrlBase       = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
+  val declareUnloadingRemarksUrl: String => String = mrn => s"$declareUnloadingRemarksUrlBase/$mrn/unloading-guidance"
+  val declareArrivalNotificationUrl: String        = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
 
   lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   lazy val destinationUrl: String   = configuration.get[Service]("microservice.services.destination").baseUrl
   lazy val referenceDataUrl: String = configuration.get[Service]("microservice.services.reference-data").baseUrl
+  lazy val routerUrl: String        = configuration.get[Service]("microservice.services.testOnly-router").baseUrl
   lazy val enrolmentKey: String     = configuration.get[String]("keys.enrolmentKey")
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
