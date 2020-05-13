@@ -102,7 +102,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
       val testUrl = "declareArrivalNotificationUrl"
 
       implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationUrl).thenReturn(testUrl)
+      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn(testUrl)
 
       forAll(arbitrary[ViewArrivalMovements]) {
         viewArrivalMovements =>
@@ -117,7 +117,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
     "adds the homePageUrl" in {
 
       implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationUrl).thenReturn("")
+      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
 
       forAll(arbitrary[ViewArrivalMovements]) {
         viewArrivalMovements =>

@@ -81,7 +81,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
-      "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+      "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationStartUrl,
       "homePageUrl"                   -> routes.IndexController.onPageLoad().url
     )
 

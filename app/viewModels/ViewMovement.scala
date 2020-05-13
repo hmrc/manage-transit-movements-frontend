@@ -34,7 +34,7 @@ object ViewMovement {
       arrival.updated.toLocalTime,
       arrival.movementReferenceNumber,
       status(arrival),
-      actions(arrival.movementReferenceNumber, arrival.status)
+      actions(arrival, arrival.status)
     )
 
   private def status(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig) = arrival.status match {
@@ -45,20 +45,24 @@ object ViewMovement {
     case _                     => arrival.status
   }
 
-  private def actions(mrn: String, status: String)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[ViewMovementAction] = status match {
-    case "UnloadingPermission" =>
-      Seq(
-        ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(mrn), Messages("viewArrivalNotifications.table.action.unloadingRemarks"))
-      )
-    case "ArrivalRejected" =>
-      if (frontendAppConfig.arrivalRejectedLinkToggle) {
-        //TODO Add correct arrival and message id
-        Seq(ViewMovementAction(frontendAppConfig.arrivalFrontendRejectedUrl("1", "1"), Messages("viewArrivalNotifications.table.action.viewErrors")))
-      } else {
-        Nil
-      }
-    case _ => Nil
-  }
+  private def actions(arrival: Arrival, status: String)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[ViewMovementAction] =
+    status match {
+      case "UnloadingPermission" =>
+        Seq(
+          ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(arrival.movementReferenceNumber),
+                             Messages("viewArrivalNotifications.table.action.unloadingRemarks"))
+        )
+      case "ArrivalRejected" =>
+        if (frontendAppConfig.arrivalRejectedLinkToggle) {
+          //TODO Add correct message id
+          Seq(
+            ViewMovementAction(frontendAppConfig.arrivalFrontendRejectedUrl(arrival.arrivalId, "1"),
+                               Messages("viewArrivalNotifications.table.action.viewErrors")))
+        } else {
+          Nil
+        }
+      case _ => Nil
+    }
 
   implicit val writes: OWrites[ViewMovement] =
     new OWrites[ViewMovement] {

@@ -18,6 +18,7 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import controllers.routes
+import models.ArrivalId
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
@@ -41,8 +42,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   private val declareArrivalNotificationUrl: String = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
   val declareArrivalNotificationStartUrl: String    = s"$declareArrivalNotificationUrl/movement-reference-number"
 
-  def arrivalFrontendRejectedUrl(arrivalId: String, messageId: String) = s"$declareArrivalNotificationUrl/$arrivalId/$messageId/arrival-rejection"
-  val arrivalRejectedLinkToggle                                        = configuration.get[Boolean]("feature-toggle.arrivalRejectedLink")
+  def arrivalFrontendRejectedUrl(arrivalId: ArrivalId, messageId: String) = s"$declareArrivalNotificationUrl/$arrivalId/$messageId/arrival-rejection"
+  val arrivalRejectedLinkToggle                                           = configuration.get[Boolean]("feature-toggle.arrivalRejectedLink")
 
   lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
