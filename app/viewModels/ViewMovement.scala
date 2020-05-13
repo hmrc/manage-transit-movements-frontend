@@ -51,7 +51,12 @@ object ViewMovement {
         ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(mrn), Messages("viewArrivalNotifications.table.action.unloadingRemarks"))
       )
     case "ArrivalRejected" =>
-      Seq(ViewMovementAction(frontendAppConfig.arrivalFrontendRejectedUrl(mrn), Messages("viewArrivalNotifications.table.action.viewErrors")))
+      if (frontendAppConfig.arrivalRejectedLinkToggle) {
+        //TODO Add correct arrival and message id
+        Seq(ViewMovementAction(frontendAppConfig.arrivalFrontendRejectedUrl("1", "1"), Messages("viewArrivalNotifications.table.action.viewErrors")))
+      } else {
+        Nil
+      }
     case _ => Nil
   }
 

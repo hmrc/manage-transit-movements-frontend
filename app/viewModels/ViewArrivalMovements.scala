@@ -61,7 +61,7 @@ object ViewArrivalMovements {
       override def writes(o: ViewArrivalMovements): JsObject =
         Json.obj(
           "dataRows"                      -> o.dataRows,
-          "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
+          "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
           "homePageUrl"                   -> routes.IndexController.onPageLoad().url
         )
     }

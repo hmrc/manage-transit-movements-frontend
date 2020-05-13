@@ -36,11 +36,13 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
   val signOutUrl: String             = configuration.get[String]("urls.logout")
 
-  private val declareUnloadingRemarksUrlBase       = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
-  val declareUnloadingRemarksUrl: String => String = mrn => s"$declareUnloadingRemarksUrlBase/$mrn/unloading-guidance"
-  val declareArrivalNotificationUrl: String        = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
+  private val declareUnloadingRemarksUrlBase        = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
+  val declareUnloadingRemarksUrl: String => String  = mrn => s"$declareUnloadingRemarksUrlBase/$mrn/unloading-guidance"
+  private val declareArrivalNotificationUrl: String = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
+  val declareArrivalNotificationStartUrl: String    = s"$declareArrivalNotificationUrl/movement-reference-number"
 
-  val arrivalFrontendRejectedUrl:String = 
+  def arrivalFrontendRejectedUrl(arrivalId: String, messageId: String) = s"$declareArrivalNotificationUrl/$arrivalId/$messageId/arrival-rejection"
+  val arrivalRejectedLinkToggle                                        = configuration.get[Boolean]("feature-toggle.arrivalRejectedLink")
 
   lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")

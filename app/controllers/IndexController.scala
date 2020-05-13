@@ -48,7 +48,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
               .render(
                 "index.njk",
                 Json.obj(
-                  "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationUrl,
+                  "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationStartUrl,
                   "viewArrivalNotificationUrl"    -> viewArrivals,
                   "hasArrivals"                   -> arrivals.arrivals.nonEmpty
                 )
