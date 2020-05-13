@@ -39,6 +39,7 @@ object ViewMovement {
 
   private def status(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig) = arrival.status match {
     case "UnloadingPermission" => Messages("movement.status.unloadingPermission")
+    case "ArrivalRejected"     => Messages("movement.status.arrivalRejected")
     case "ArrivalSubmitted"    => Messages("movement.status.arrivalSubmitted")
     case _                     => arrival.status
   }
@@ -47,6 +48,10 @@ object ViewMovement {
     case "UnloadingPermission" =>
       Seq(
         ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(mrn), Messages("viewArrivalNotifications.table.action.unloadingRemarks"))
+      )
+    case "ArrivalRejected" =>
+      Seq(//TODO need correct url
+        ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(mrn), Messages("viewArrivalNotifications.table.action.viewErrors"))
       )
     case _ => Nil
   }
