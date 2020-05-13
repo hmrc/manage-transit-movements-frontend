@@ -22,7 +22,6 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
-import generators.ModelGenerators
 import matchers.JsonMatchers
 import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
@@ -43,14 +42,14 @@ import scala.concurrent.Future
 
 class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with NunjucksSupport with BeforeAndAfter {
 
-  private val mockArrivalMovementConnector      = mock[ArrivalMovementConnector]
+  private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
   private val application: Application =
     applicationBuilder(userAnswers = Some(emptyUserAnswers))
       .overrides(
-        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
+        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
       .build()
 

@@ -17,6 +17,7 @@
 package models
 
 import play.api.libs.json.{Reads, _}
+import scala.language.implicitConversions
 
 case class ArrivalId(index: Int)
 
