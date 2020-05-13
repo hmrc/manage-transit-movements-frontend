@@ -40,6 +40,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val declareUnloadingRemarksUrl: String => String = mrn => s"$declareUnloadingRemarksUrlBase/$mrn/unloading-guidance"
   val declareArrivalNotificationUrl: String        = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
 
+  val arrivalFrontendRejectedUrl:String = 
+
   lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
