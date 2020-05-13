@@ -18,6 +18,7 @@ package connectors.testOnly
 
 import config.FrontendAppConfig
 import javax.inject.Inject
+import play.api.Logger
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -36,6 +37,6 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
   def submitOutboundMessage(requestData: NodeSeq, headers: Headers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString, headers.headers)
   }
 }

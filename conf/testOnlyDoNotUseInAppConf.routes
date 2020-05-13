@@ -11,6 +11,7 @@
 
 + nocsrf
 POST        /test-only/manage-transit-movements/to-core-message        controllers.testOnly.TestOnlyRouterController.toCoreMessage()
+
 + nocsrf
 POST        /test-only/manage-transit-movements/from-core-message      controllers.testOnly.TestOnlyRouterController.fromCoreMessage()
 
