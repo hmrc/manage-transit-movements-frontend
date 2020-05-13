@@ -20,13 +20,13 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.DestinationConnector
+import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
-import models.{Arrival, Arrivals}
+import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfter
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
@@ -42,21 +42,22 @@ import scala.concurrent.Future
 
 class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with NunjucksSupport with BeforeAndAfter {
 
-  private val mockDestinationConnector = mock[DestinationConnector]
+  private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
   private val application: Application =
     applicationBuilder(userAnswers = Some(emptyUserAnswers))
       .overrides(
-        bind[DestinationConnector].toInstance(mockDestinationConnector)
+        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
       .build()
 
-  private val mockDestinationResponse: Arrivals = {
+  private val mockArrivalResponse: Arrivals = {
     Arrivals(
       Seq(
         Arrival(
+          ArrivalId(1),
           localDateTime,
           localDateTime,
           "Submitted",
@@ -90,8 +91,8 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDestinationConnector.getArrivals()(any()))
-        .thenReturn(Future.successful(mockDestinationResponse))
+      when(mockArrivalMovementConnector.getArrivals()(any()))
+        .thenReturn(Future.successful(mockArrivalResponse))
 
       val request = FakeRequest(
         GET,
@@ -116,6 +117,8 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
     }
   }
 
-  override def beforeEach: Unit =
+  override def beforeEach: Unit = {
+    reset(mockArrivalMovementConnector)
     super.beforeEach
+  }
 }
