@@ -57,6 +57,16 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
     }
   }
 
+  "must display rejection status" in {
+    forAll(arbitrary[Arrival]) {
+      arrival =>
+        val unloadingArrival: Arrival  = arrival.copy(status = "ArrivalRejected")
+        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+
+        viewMovement.status mustBe Messages("movement.status.arrivalRejected")
+    }
+  }
+
   "must display unloading permission action" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
@@ -67,6 +77,17 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
     }
   }
 
+  "must display rejection action" in {
+    if (frontendAppConfig.arrivalRejectedLinkToggle) {
+      forAll(arbitrary[Arrival]) {
+        arrival =>
+          val unloadingArrival: Arrival  = arrival.copy(status = "ArrivalRejected")
+          val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+
+          viewMovement.action.head.href mustBe s"http://localhost:9483/common-transit-convention-trader-arrival/${arrival.arrivalId.index}/arrival-rejection"
+      }
+    }
+  }
   "must display correct status" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
