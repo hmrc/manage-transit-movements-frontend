@@ -77,7 +77,7 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
     }
   }
 
-  "must not display action when status is not unloading permission" in {
+  "must not display action when status is not unloading permission or rejection" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
         val unloadingArrival: Arrival  = arrival.copy(status = "")
