@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package connectors
+package models
 
-import config.FrontendAppConfig
-import javax.inject.Inject
-import models.Arrivals
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import play.api.libs.json.{Reads, _}
+import scala.language.implicitConversions
 
-import scala.concurrent.{ExecutionContext, Future}
+case class ArrivalId(index: Int)
 
-class DestinationConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
-
-  def getArrivals()(implicit hc: HeaderCarrier): Future[Arrivals] = {
-    val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
-    http.GET[Arrivals](serviceUrl)
-  }
+object ArrivalId {
+  implicit def reads: Reads[ArrivalId]                = __.read[Int] map ArrivalId.apply
+  implicit def writes(arrivalId: ArrivalId): JsNumber = JsNumber(arrivalId.index)
 }

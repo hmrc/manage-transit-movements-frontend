@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.DestinationConnector
+import connectors.ArrivalMovementConnector
 import controllers.actions.IdentifierAction
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
@@ -32,13 +32,13 @@ import scala.concurrent.ExecutionContext
 class ViewArrivalsController @Inject()(renderer: Renderer,
                                        identify: IdentifierAction,
                                        val controllerComponents: MessagesControllerComponents,
-                                       destinationConnector: DestinationConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+                                       arrivalMovementConnector: ArrivalMovementConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
-      destinationConnector.getArrivals().flatMap {
+      arrivalMovementConnector.getArrivals().flatMap {
         allArrivals =>
           val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(arrival => ViewMovement(arrival))
           val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))

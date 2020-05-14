@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
-import models.{Arrival, Arrivals}
+import models.{Arrival, ArrivalId, Arrivals}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -31,10 +31,10 @@ import play.api.libs.json.Json
 
 import scala.concurrent.Future
 
-class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
+class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
 
-  private lazy val connector: DestinationConnector =
-    app.injector.instanceOf[DestinationConnector]
+  private lazy val connector: ArrivalMovementConnector =
+    app.injector.instanceOf[ArrivalMovementConnector]
   private val startUrl = "transit-movements-trader-at-destination"
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -48,6 +48,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
       "arrivals" ->
         Json.arr(
           Json.obj(
+            "_id"                     -> 22,
             "created"                 -> localDateTime,
             "updated"                 -> localDateTime,
             "status"                  -> "Submitted",
@@ -58,7 +59,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
-  "DestinationConnector" - {
+  "arrivalMovementConnector" - {
 
     "getArrivals" - {
       "must return a successful future response" in {
@@ -66,6 +67,7 @@ class DestinationConnectorSpec extends SpecBase with WireMockServerHandler with 
           Arrivals(
             Seq(
               Arrival(
+                ArrivalId(22),
                 localDateTime,
                 localDateTime,
                 "Submitted",

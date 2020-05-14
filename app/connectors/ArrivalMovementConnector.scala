@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package connectors
 
-import java.time.LocalDateTime
+import config.FrontendAppConfig
+import javax.inject.Inject
+import models.Arrivals
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+import scala.concurrent.{ExecutionContext, Future}
 
-case class Arrival(arrivalId: ArrivalId, created: LocalDateTime, updated: LocalDateTime, status: String, movementReferenceNumber: String)
+class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
 
-object Arrival {
-  implicit val reads: Reads[Arrival] = (
-    (__ \ "_id").read[ArrivalId] and
-      (__ \ "created").read[LocalDateTime] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "status").read[String] and
-      (__ \ "movementReferenceNumber").read[String]
-  )(Arrival.apply _)
+  def getArrivals()(implicit hc: HeaderCarrier): Future[Arrivals] = {
+    val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
+    http.GET[Arrivals](serviceUrl)
+  }
 }
