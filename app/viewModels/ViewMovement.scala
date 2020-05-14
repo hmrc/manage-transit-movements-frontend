@@ -54,7 +54,6 @@ object ViewMovement {
         )
       case "ArrivalRejected" =>
         if (frontendAppConfig.arrivalRejectedLinkToggle) {
-          //TODO Add correct message id
           Seq(ViewMovementAction(frontendAppConfig.arrivalFrontendRejectedUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.viewErrors")))
         } else {
           Nil
