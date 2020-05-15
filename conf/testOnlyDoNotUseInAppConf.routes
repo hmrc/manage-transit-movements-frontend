@@ -10,9 +10,10 @@
 # Failing to follow this rule may result in test routes deployed in production.
 
 + nocsrf
-POST        /test-only/manage-transit-movements/to-core-message        controllers.testOnly.TestOnlyRouterController.toCoreMessage()
+POST        /manage-transit-movements/test-only/manage-transit-movements/to-core-message        controllers.testOnly.TestOnlyRouterController.toCoreMessage()
+
 + nocsrf
-POST        /test-only/manage-transit-movements/from-core-message      controllers.testOnly.TestOnlyRouterController.fromCoreMessage()
+POST        /manage-transit-movements/test-only/manage-transit-movements/from-core-message      controllers.testOnly.TestOnlyRouterController.fromCoreMessage()
 
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
