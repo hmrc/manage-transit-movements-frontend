@@ -37,11 +37,13 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
     Log.debug(s"Implicit Headers From Core (Connector): ${headerCarrier.headers.toString()}")
     Log.debug(s"Explicit Headers From Core (Connector): ${headers.headers.toString()}")
 
-    val newHeaders = headerCarrier
-      .copy(sessionId = None)
-      .withExtraHeaders(addHeaders(): _*)
+//    val newHeaders = headerCarrier
+//      .copy(sessionId = None)
+//      .withExtraHeaders(addHeaders(): _*)
 
-    http.POSTString[HttpResponse](routerUrl, requestData.toString, headers.headers)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
+    val header = headers.headers.filter(x => x._1 == "X-Message-Sender" || x._1 == "X-Message-Type" || x._1 == "Content-Type")
+    Log.debug(s"updated header : $header")
+    http.POSTString[HttpResponse](routerUrl, requestData.toString, header)
   }
 
   private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml")
