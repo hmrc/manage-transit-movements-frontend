@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc.Headers
-import uk.gov.hmrc.http.logging.Authorization
+import uk.gov.hmrc.http.logging.{Authorization, SessionId}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -31,13 +31,17 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
 
   val Log = Logger(getClass)
 
-  def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val routerUrl = s"${config.routerUrl}/messages"
-    Log.debug(s"Implicit Headers From Core (Connector): ${hc.headers.toString()}")
+    Log.debug(s"Implicit Headers From Core (Connector): ${headerCarrier.headers.toString()}")
     Log.debug(s"Explicit Headers From Core (Connector): ${headers.headers.toString()}")
 
-    http.POSTString[HttpResponse](routerUrl, requestData.toString, headers.headers)
+    val newHeaders = headerCarrier
+      .copy(sessionId = None)
+      .withExtraHeaders(addHeaders(): _*)
+
+    http.POSTString[HttpResponse](routerUrl, requestData.toString, headers.headers)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
   }
 
   private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml")
