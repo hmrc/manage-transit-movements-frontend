@@ -23,11 +23,12 @@ import generators.Generators
 import models.Arrival
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.Application
 import play.api.i18n.Messages
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
+class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "must serialise to Json" in {
 
@@ -47,48 +48,30 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
     }
   }
 
-  "must display unloading permission status" in {
+  "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
         val unloadingArrival: Arrival  = arrival.copy(status = "UnloadingPermission")
         val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
+        viewMovement.action.head.href mustBe s"http://localhost:9488/common-transit-convention-unloading-arrival/${viewMovement.movementReferenceNumber}/unloading-guidance"
     }
   }
 
-  "must display rejection status" in {
+  "must display rejection" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
         val unloadingArrival: Arrival  = arrival.copy(status = "ArrivalRejected")
         val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
+        viewMovement.action.head.href mustBe s"http://localhost:9483/common-transit-convention-trader-arrival/${arrival.arrivalId.index}/arrival-rejection"
     }
   }
 
-  "must display unloading permission action" in {
-    forAll(arbitrary[Arrival]) {
-      arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "UnloadingPermission")
-        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
-
-        viewMovement.action.head.href mustBe s"http://localhost:9488/common-transit-convention-unloading-arrival/${viewMovement.movementReferenceNumber}/unloading-guidance"
-    }
-  }
-
-  "must display rejection action" in {
-    if (frontendAppConfig.arrivalRejectedLinkToggle) {
-      forAll(arbitrary[Arrival]) {
-        arrival =>
-          val unloadingArrival: Arrival  = arrival.copy(status = "ArrivalRejected")
-          val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
-
-          viewMovement.action.head.href mustBe s"http://localhost:9483/common-transit-convention-trader-arrival/${arrival.arrivalId.index}/arrival-rejection"
-      }
-    }
-  }
   "must display correct status" in {
+
     forAll(arbitrary[Arrival]) {
       arrival =>
         val unloadingArrival: Arrival  = arrival.copy(status = "")
@@ -96,9 +79,11 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         viewMovement.status mustBe unloadingArrival.status
     }
+
   }
 
   "must not display action when status is not unloading permission or rejection" in {
+
     forAll(arbitrary[Arrival]) {
       arrival =>
         val unloadingArrival: Arrival  = arrival.copy(status = "")
@@ -106,6 +91,26 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         viewMovement.action mustBe Nil
     }
+
+  }
+
+}
+
+class ViewMovementFeatureFalseSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+
+  override lazy val app: Application = GuiceApplicationBuilder().configure(Map("microservice.services.features.arrivalRejectedLink" -> false)).build()
+
+  "must not display rejection action when toggle set to false" in {
+
+    forAll(arbitrary[Arrival]) {
+      arrival =>
+        val unloadingArrival: Arrival  = arrival.copy(status = "ArrivalRejected")
+        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+
+        viewMovement.status mustBe Messages("movement.status.arrivalRejected")
+        viewMovement.action.headOption mustBe None
+    }
+
   }
 
 }
