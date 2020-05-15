@@ -31,27 +31,27 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
 
   val Log = Logger(getClass)
 
-  def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+  def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val routerUrl = s"${config.routerUrl}/messages"
-    Log.debug(s"Implicit Headers From Core (Connector): ${headerCarrier.headers.toString()}")
+    Log.debug(s"Implicit Headers From Core (Connector): ${hc.headers.toString()}")
     Log.debug(s"Explicit Headers From Core (Connector): ${headers.headers.toString()}")
 
-    val newHeaders = headerCarrier
-      .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(throw RuntimeException))))
-      .withExtraHeaders(addHeaders(): _*)
-
-    http.POSTString[HttpResponse](routerUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
+    http.POSTString[HttpResponse](routerUrl, requestData.toString, headers.headers)
   }
 
-  private def addHeaders()(
-    implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Nil
+  private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml")
 
-  def submitOutboundMessage(requestData: NodeSeq, headers: Headers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def submitOutboundMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
-    Log.debug(s"Implicit Headers To Core (Connector): ${hc.headers.toString()}")
+    Log.debug(s"Implicit Headers To Core (Connector): ${headerCarrier.headers.toString()}")
     Log.debug(s"Explicit Headers To Core (Connector): ${headers.headers.toString()}")
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString, headers.headers)
+
+    val newHeaders = headerCarrier
+      .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
+      .withExtraHeaders(addHeaders(): _*)
+
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
   }
 }
