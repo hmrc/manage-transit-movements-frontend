@@ -29,17 +29,20 @@ import scala.xml.NodeSeq
 class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
   val Log = Logger(getClass)
+
   def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val routerUrl = s"${config.routerUrl}/messages"
+    Log.debug(s"Implicit Headers To Core (Connector): ${hc.headers.toString()}")
+    Log.debug(s"Explicit Headers To Core (Connector): ${headers.headers.toString()}")
     http.POSTString[HttpResponse](routerUrl, requestData.toString, headers.headers)
   }
 
   def submitOutboundMessage(requestData: NodeSeq, headers: Headers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
-    Log.debug(s"Implicit Headers: ${hc.headers.toString()}")
-    Log.debug(s"Explicit Headers: ${headers.headers.toString()}")
+    Log.debug(s"Implicit Headers From Core (Connector): ${hc.headers.toString()}")
+    Log.debug(s"Explicit Headers From Core (Connector): ${headers.headers.toString()}")
     http.POSTString[HttpResponse](serviceUrl, requestData.toString, headers.headers)
   }
 }
