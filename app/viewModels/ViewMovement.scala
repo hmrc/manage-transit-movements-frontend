@@ -28,38 +28,18 @@ final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenc
 
 object ViewMovement {
 
-  def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewMovement =
+  def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewMovement = {
+
+    val movementStatus: MovementStatus = MovementStatus(arrival)
+
     ViewMovement(
       arrival.updated.toLocalDate,
       arrival.updated.toLocalTime,
       arrival.movementReferenceNumber,
-      status(arrival),
-      actions(arrival, arrival.status)
+      movementStatus.status,
+      movementStatus.actions
     )
-
-  private def status(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig) = arrival.status match {
-    case "UnloadingPermission" => Messages("movement.status.unloadingPermission")
-    case "ArrivalRejected"     => Messages("movement.status.arrivalRejected")
-    case "ArrivalSubmitted"    => Messages("movement.status.arrivalSubmitted")
-    case "GoodsReleased"       => Messages("movement.status.goodsReleased")
-    case _                     => arrival.status
   }
-
-  private def actions(arrival: Arrival, status: String)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[ViewMovementAction] =
-    status match {
-      case "UnloadingPermission" =>
-        Seq(
-          ViewMovementAction(frontendAppConfig.declareUnloadingRemarksUrl(arrival.movementReferenceNumber),
-                             Messages("viewArrivalNotifications.table.action.unloadingRemarks"))
-        )
-      case "ArrivalRejected" =>
-        if (frontendAppConfig.arrivalRejectedLinkToggle) {
-          Seq(ViewMovementAction(frontendAppConfig.arrivalFrontendRejectedUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.viewErrors")))
-        } else {
-          Nil
-        }
-      case _ => Nil
-    }
 
   implicit val writes: OWrites[ViewMovement] =
     new OWrites[ViewMovement] {
