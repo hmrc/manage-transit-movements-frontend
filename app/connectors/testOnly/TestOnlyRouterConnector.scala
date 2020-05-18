@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc.Headers
-import uk.gov.hmrc.http.logging.{Authorization, SessionId}
+import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -29,7 +29,7 @@ import scala.xml.NodeSeq
 
 class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
-  val Log = Logger(getClass)
+  val Log: Logger = Logger(getClass)
 
   def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
@@ -50,7 +50,11 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
 
   def submitOutboundMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
-    val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
+    val serviceUrl = headers.get("arrivalId") match {
+      case Some(arrivalId) if requestData.head.label == "CC044A" => s"${config.destinationUrl}/movements/arrivals/$arrivalId/messages"
+      case _                                                     => s"${config.destinationUrl}/movements/arrivals"
+    }
+
     Log.debug(s"Implicit Headers To Core (Connector): ${headerCarrier.headers.toString()}")
     Log.debug(s"Explicit Headers To Core (Connector): ${headers.headers.toString()}")
 
