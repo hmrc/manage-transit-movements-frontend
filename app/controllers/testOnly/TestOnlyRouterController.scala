@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.mvc.{Action, ControllerComponents, DefaultActionBuilder}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
 class TestOnlyRouterController @Inject()(
@@ -32,7 +32,7 @@ class TestOnlyRouterController @Inject()(
 )(implicit val ec: ExecutionContext)
     extends BackendController(cc) {
 
-  val Log = Logger(getClass)
+  val Log: Logger = Logger(getClass)
 
   def fromCoreMessage: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
@@ -43,12 +43,27 @@ class TestOnlyRouterController @Inject()(
         .map(response => Status(response.status))
   }
 
-  def toCoreMessage: Action[NodeSeq] = action.async(parse.xml) {
+  def arrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
+    implicit request =>
+      Log.debug(s"Arrival Notification To Core Request Body (Controller): ${request.body}")
+      Log.debug(s"Arrival Notification To Core Request Headers (Controller): ${request.headers}")
+      connector
+        .createArrivalNotificationMessage(request.body, request.headers)
+        .map(response => Status(response.status))
+  }
+
+  def messageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       Log.debug(s"To Core Request Body (Controller): ${request.body}")
       Log.debug(s"To Core Request Headers (Controller): ${request.headers}")
-      connector
-        .submitOutboundMessage(request.body, request.headers)
-        .map(response => Status(response.status))
+
+      request.headers.get("arrivalId") match {
+        case Some(arrivalId) =>
+          connector
+            .submitMessageToCore(request.body, arrivalId, request.headers)
+            .map(response => Status(response.status))
+
+        case _ => Future.successful(BadRequest("ArrivalId is missing"))
+      }
   }
 }
