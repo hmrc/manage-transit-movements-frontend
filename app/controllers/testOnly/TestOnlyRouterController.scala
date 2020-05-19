@@ -52,15 +52,15 @@ class TestOnlyRouterController @Inject()(
         .map(response => Status(response.status))
   }
 
-  def unloadingRemarksMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
+  def messageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      Log.debug(s"Unloading Remark To Core Request Body (Controller): ${request.body}")
-      Log.debug(s"Unloading Remark To Core Request Headers (Controller): ${request.headers}")
+      Log.debug(s"To Core Request Body (Controller): ${request.body}")
+      Log.debug(s"To Core Request Headers (Controller): ${request.headers}")
 
       request.headers.get("arrivalId") match {
         case Some(arrivalId) =>
           connector
-            .submitUnloadingRemarkMessage(request.body, arrivalId, request.headers)
+            .submitMessageToCore(request.body, arrivalId, request.headers)
             .map(response => Status(response.status))
 
         case _ => Future.successful(BadRequest("ArrivalId is missing"))
