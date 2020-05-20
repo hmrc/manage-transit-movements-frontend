@@ -49,7 +49,15 @@ class TestOnlyRouterController @Inject()(
       Log.debug(s"Arrival Notification To Core Request Headers (Controller): ${request.headers}")
       connector
         .createArrivalNotificationMessage(request.body, request.headers)
-        .map(response => Status(response.status))
+        .map {
+          response =>
+            val location = response.header("Location").getOrElse("Location is missing")
+            Status(response.status)
+              .withHeaders(
+                "Location"  -> location,
+                "arrivalId" -> location.split("/").last
+              )
+        }
   }
 
   def messageToCore: Action[NodeSeq] = action.async(parse.xml) {
