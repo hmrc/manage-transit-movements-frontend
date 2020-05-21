@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Json, Reads}
 
-case class Arrivals(responseArrivals: Seq[Arrival])
+case class Arrivals(arrivals: Seq[Arrival])
 
 object Arrivals {
   implicit val format: Reads[Arrivals] = Json.reads[Arrivals]

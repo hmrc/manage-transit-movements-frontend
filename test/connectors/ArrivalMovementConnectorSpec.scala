@@ -45,7 +45,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
   private val arrivalsResponseJson =
     Json.obj(
-      "responseArrivals" ->
+      "arrivals" ->
         Json.arr(
           Json.obj(
             "arrivalId"               -> 22,

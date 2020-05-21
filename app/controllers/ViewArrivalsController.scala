@@ -40,7 +40,7 @@ class ViewArrivalsController @Inject()(renderer: Renderer,
     implicit request =>
       arrivalMovementConnector.getArrivals().flatMap {
         allArrivals =>
-          val viewMovements: Seq[ViewMovement] = allArrivals.responseArrivals.map(arrival => ViewMovement(arrival))
+          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(arrival => ViewMovement(arrival))
           val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
           renderer
