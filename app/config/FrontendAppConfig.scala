@@ -18,6 +18,7 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import controllers.routes
+import models.ArrivalId
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
@@ -36,9 +37,12 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
   val signOutUrl: String             = configuration.get[String]("urls.logout")
 
-  private val declareUnloadingRemarksUrlBase       = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
-  val declareUnloadingRemarksUrl: String => String = mrn => s"$declareUnloadingRemarksUrlBase/$mrn/unloading-guidance"
-  val declareArrivalNotificationUrl: String        = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
+  private val declareUnloadingRemarksUrlBase            = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
+  val declareUnloadingRemarksUrl: String => String      = mrn => s"$declareUnloadingRemarksUrlBase/$mrn/unloading-guidance"
+  private val declareArrivalNotificationUrlBase: String = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
+  val declareArrivalNotificationStartUrl: String        = s"$declareArrivalNotificationUrlBase/movement-reference-number"
+
+  def arrivalFrontendRejectedUrl(arrivalId: ArrivalId) = s"$declareArrivalNotificationUrlBase/${arrivalId.index}/arrival-rejection"
 
   lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
@@ -50,6 +54,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")
+
+  val arrivalRejectedLinkToggle = configuration.get[Boolean]("microservice.services.features.arrivalRejectedLink")
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")

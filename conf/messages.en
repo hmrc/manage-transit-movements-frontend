@@ -71,7 +71,9 @@ viewArrivalNotifications.table.action.viewHistory      = View history
 viewArrivalNotifications.goToManageTransitMovements = Go to manage transit movements
 
 movement.status.unloadingPermission = You can unload
+movement.status.arrivalRejected = Arrival notification rejected
 movement.status.arrivalSubmitted = Arrival notification sent
+movement.status.goodsReleased = Goods Released
 
 technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service

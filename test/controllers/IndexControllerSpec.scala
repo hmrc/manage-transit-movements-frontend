@@ -80,7 +80,7 @@ class IndexControllerSpec extends SpecBase {
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
-        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
+        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
         "viewArrivalNotificationUrl"    -> viewArrivalNotificationUrl,
         "hasArrivals"                   -> true
       )
@@ -123,7 +123,7 @@ class IndexControllerSpec extends SpecBase {
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
-        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationUrl,
+        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
         "viewArrivalNotificationUrl"    -> viewArrivalNotificationUrl,
         "hasArrivals"                   -> false
       )
