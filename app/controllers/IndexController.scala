@@ -50,7 +50,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
                 Json.obj(
                   "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationStartUrl,
                   "viewArrivalNotificationUrl"    -> viewArrivals,
-                  "hasArrivals"                   -> arrivals.arrivals.nonEmpty
+                  "hasArrivals"                   -> arrivals.responseArrivals.nonEmpty
                 )
               )
               .map(Ok(_))
