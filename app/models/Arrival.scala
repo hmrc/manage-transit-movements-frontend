@@ -25,7 +25,7 @@ case class Arrival(arrivalId: ArrivalId, created: LocalDateTime, updated: LocalD
 
 object Arrival {
   implicit val reads: Reads[Arrival] = (
-    (__ \ "_id").read[ArrivalId] and
+    (__ \ "arrivalId").read[ArrivalId] and
       (__ \ "created").read[LocalDateTime] and
       (__ \ "updated").read[LocalDateTime] and
       (__ \ "status").read[String] and
