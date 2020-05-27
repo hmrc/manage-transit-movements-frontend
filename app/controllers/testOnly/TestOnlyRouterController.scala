@@ -40,7 +40,13 @@ class TestOnlyRouterController @Inject()(
       Log.debug(s"From Core Request Headers (Controller): ${request.headers}")
       connector
         .submitInboundMessage(request.body, request.headers)
-        .map(response => Status(response.status))
+        .map(
+          response => {
+            Log.debug(s"Got this JSON: ${response.json}")
+            Log.debug(s"Got this body: ${response.body}")
+            Status(response.status)
+          }
+        )
   }
 
   def arrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
