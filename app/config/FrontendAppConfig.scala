@@ -38,7 +38,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val signOutUrl: String             = configuration.get[String]("urls.logout")
 
   private val declareUnloadingRemarksUrlBase            = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
-  val declareUnloadingRemarksUrl: String => String      = mrn => s"$declareUnloadingRemarksUrlBase/$mrn/unloading-guidance"
+  def declareUnloadingRemarksUrl(arrivalId: ArrivalId)  = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}"
   private val declareArrivalNotificationUrlBase: String = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
   val declareArrivalNotificationStartUrl: String        = s"$declareArrivalNotificationUrlBase/movement-reference-number"
 

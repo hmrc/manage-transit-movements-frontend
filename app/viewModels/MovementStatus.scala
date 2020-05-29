@@ -34,9 +34,7 @@ object MovementStatus {
     case arrival if arrival.status == "UnloadingPermission" =>
       MovementStatus(
         Messages("movement.status.unloadingPermission"),
-        Seq(
-          ViewMovementAction(config.declareUnloadingRemarksUrl(arrival.movementReferenceNumber),
-                             Messages("viewArrivalNotifications.table.action.unloadingRemarks")))
+        Seq(ViewMovementAction(config.declareUnloadingRemarksUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.unloadingRemarks")))
       )
   }
 
