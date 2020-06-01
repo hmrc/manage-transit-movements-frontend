@@ -55,7 +55,7 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
         val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
-        viewMovement.action.head.href mustBe s"http://localhost:9488/common-transit-convention-unloading-arrival/${viewMovement.movementReferenceNumber}/unloading-guidance"
+        viewMovement.action.head.href mustBe s"http://localhost:9488/common-transit-convention-unloading-arrival/${arrival.arrivalId.index}"
     }
   }
 
