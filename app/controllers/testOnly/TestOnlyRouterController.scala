@@ -60,6 +60,30 @@ class TestOnlyRouterController @Inject()(
         }
   }
 
+  def resubmitArrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
+    implicit request =>
+      Log.debug(s"Arrival Notification To Core Request Body (Controller): ${request.body}")
+      Log.debug(s"Arrival Notification To Core Request Headers (Controller): ${request.headers}")
+
+      request.headers.get("arrivalId") match {
+
+        case Some(arrivalId) =>
+          connector
+            .resubmitArrivalNotificationMessage(request.body, arrivalId, request.headers)
+            .map {
+              response =>
+                val location = response.header("Location").getOrElse("Location is missing")
+                Status(response.status)
+                  .withHeaders(
+                    "Location"  -> location,
+                    "arrivalId" -> location.split("/").last
+                  )
+            }
+
+        case _ => Future.successful(BadRequest("ArrivalId is missing"))
+      }
+  }
+
   def messageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       Log.debug(s"To Core Request Body (Controller): ${request.body}")

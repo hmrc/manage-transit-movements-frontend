@@ -59,6 +59,21 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
   }
 
+  def resubmitArrivalNotificationMessage(requestData: NodeSeq, arrivalId: String, headers: Headers)(
+    implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+
+    val serviceUrl = s"${config.destinationUrl}/movements/arrivals/$arrivalId"
+
+    Log.debug(s"Implicit Headers To Core (Connector): ${headerCarrier.headers.toString()}")
+    Log.debug(s"Explicit Headers To Core (Connector): ${headers.headers.toString()}")
+
+    val newHeaders = headerCarrier
+      .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
+      .withExtraHeaders(addHeaders(): _*)
+
+    http.PUTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
+  }
+
   def submitMessageToCore(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals/$arrivalId/messages"
