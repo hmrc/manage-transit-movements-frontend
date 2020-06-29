@@ -19,7 +19,6 @@ package viewModels
 import base.SpecBase
 import generators.Generators
 import models.Arrival
-import org.mockito.Matchers.any
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
@@ -33,8 +32,39 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
         forAll(arbitrary[Arrival]) {
           arrival =>
             val arr: Arrival = arrival.copy(status = "ArrivalSubmitted")
+            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.arrivalSubmitted")
+        }
+      }
+      "When status is ArrivalRejected show correct message" in {
 
-            MovementStatus(arr)(any(), any()).status mustBe Messages("movement.status.unloadingRejection")
+        forAll(arbitrary[Arrival]) {
+          arrival =>
+            val arr: Arrival = arrival.copy(status = "ArrivalRejected")
+            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.arrivalRejected")
+        }
+      }
+      "When status is UnloadingRemarksSubmitted show correct message" in {
+
+        forAll(arbitrary[Arrival]) {
+          arrival =>
+            val arr: Arrival = arrival.copy(status = "UnloadingRemarksSubmitted")
+            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.unloadingRemarksSubmitted")
+        }
+      }
+      "When status is UnloadingRemarksRejected show correct message" in {
+
+        forAll(arbitrary[Arrival]) {
+          arrival =>
+            val arr: Arrival = arrival.copy(status = "UnloadingRemarksRejected")
+            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.unloadingRemarksRejected")
+        }
+      }
+      "When status is GoodsReleased show correct message" in {
+
+        forAll(arbitrary[Arrival]) {
+          arrival =>
+            val arr: Arrival = arrival.copy(status = "GoodsReleased")
+            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.goodsReleased")
         }
       }
     }

@@ -49,12 +49,12 @@ object MovementStatus {
   }
 
   private def displayStatus()(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
-    case arrival if arrival.status == "ArrivalSubmitted"         => MovementStatus(Messages("movement.status.arrivalSubmitted"), actions         = Nil)
-    case arrival if arrival.status == "ArrivalRejected"          => MovementStatus(Messages("movement.status.arrivalRejected"), actions          = Nil)
-    case arrival if arrival.status == "UnloadingPermission"      => MovementStatus(Messages("movement.status.unloadingPermission"), actions      = Nil)
-    case arrival if arrival.status == "GoodsReleased"            => MovementStatus(Messages("movement.status.goodsReleased"), actions            = Nil)
-    case arrival if arrival.status == "UnloadingRemarksRejected" => MovementStatus(Messages("movement.status.unloadingRemarksRejected"), actions = Nil)
-    case arrival if arrival.status == "GoodsReleased"            => MovementStatus(Messages("movement.status.goodsReleased"), actions            = Nil)
-    case arrival                                                 => MovementStatus(arrival.status, actions                                       = Nil)
+    case arrival if arrival.status == "ArrivalSubmitted"          => MovementStatus(Messages("movement.status.arrivalSubmitted"), actions          = Nil)
+    case arrival if arrival.status == "ArrivalRejected"           => MovementStatus(Messages("movement.status.arrivalRejected"), actions           = Nil)
+    case arrival if arrival.status == "UnloadingPermission"       => MovementStatus(Messages("movement.status.unloadingPermission"), actions       = Nil)
+    case arrival if arrival.status == "UnloadingRemarksSubmitted" => MovementStatus(Messages("movement.status.unloadingRemarksSubmitted"), actions = Nil)
+    case arrival if arrival.status == "UnloadingRemarksRejected"  => MovementStatus(Messages("movement.status.unloadingRemarksRejected"), actions  = Nil)
+    case arrival if arrival.status == "GoodsReleased"             => MovementStatus(Messages("movement.status.goodsReleased"), actions             = Nil)
+    case arrival                                                  => MovementStatus(arrival.status, actions                                        = Nil)
   }
 }
