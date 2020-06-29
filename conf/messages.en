@@ -70,9 +70,11 @@ viewArrivalNotifications.table.action.unloadingRemarks    = Make unloading remar
 viewArrivalNotifications.table.action.viewHistory      = View history
 viewArrivalNotifications.goToManageTransitMovements = Go to manage transit movements
 
-movement.status.unloadingPermission = You can unload
-movement.status.arrivalRejected = Arrival notification rejected
 movement.status.arrivalSubmitted = Arrival notification sent
+movement.status.arrivalRejected = Arrival notification rejected
+movement.status.unloadingPermission = Unloading permission granted
+movement.status.unloadingRemarksSubmitted = Unloading remarks sent
+movement.status.unloadingRemarksRejected = Unloading remarks rejected
 movement.status.goodsReleased = Goods Released
 
 technicalDifficulties.title = Sorry, there is a problem with the service
