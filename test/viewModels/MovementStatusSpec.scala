@@ -55,8 +55,10 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival = arrival.copy(status = "UnloadingRemarksRejected")
-            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.unloadingRemarksRejected")
+            val arr: Arrival                   = arrival.copy(status = "UnloadingRemarksRejected")
+            val movementStatus: MovementStatus = MovementStatus(arr)(messages, frontendAppConfig)
+            movementStatus.status mustBe Messages("movement.status.unloadingRemarksRejected")
+            movementStatus.actions.head.href mustBe frontendAppConfig.unloadingRemarksRejectedUrl(arr.arrivalId)
         }
       }
       "When status is GoodsReleased show correct message" in {

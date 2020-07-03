@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import controllers.actions.IdentifierAction
 import javax.inject.Inject
+import models.Arrival
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,7 +41,7 @@ class ViewArrivalsController @Inject()(renderer: Renderer,
     implicit request =>
       arrivalMovementConnector.getArrivals().flatMap {
         allArrivals =>
-          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(arrival => ViewMovement(arrival))
+          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map((arrival: Arrival) => ViewMovement(arrival))
           val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
           renderer
