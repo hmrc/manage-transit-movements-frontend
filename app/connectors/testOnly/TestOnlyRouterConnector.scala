@@ -37,7 +37,7 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
     Log.debug(s"Implicit Headers From Core (Connector): ${headerCarrier.headers.toString()}")
     Log.debug(s"Explicit Headers From Core (Connector): ${headers.headers.toString()}")
 
-    val header = headers.headers.filter(x => x._1 == "X-Message-Sender" || x._1 == "X-Message-Type" || x._1 == "Content-Type")
+    val header = headers.headers.filter(x => x._1 == "X-Message-Recipient" || x._1 == "X-Message-Type" || x._1 == "Content-Type")
     Log.debug(s"updated header : $header")
 
     http.POSTString[HttpResponse](routerUrl, requestData.toString, header)
