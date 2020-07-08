@@ -25,7 +25,7 @@ case class MovementStatus(status: String, actions: Seq[ViewMovementAction])
 object MovementStatus {
 
   def apply(arrival: Arrival)(implicit messages: Messages, config: FrontendAppConfig): MovementStatus = {
-    val allPfs: PartialFunction[Arrival, MovementStatus] = Seq(unloadingPermission, arrivalRejected, others).reduce(_ orElse _)
+    val allPfs: PartialFunction[Arrival, MovementStatus] = Seq(unloadingPermission, arrivalRejected, unloadingRemarksRejected, displayStatus).reduce(_ orElse _)
 
     allPfs.apply(arrival)
   }
@@ -48,9 +48,23 @@ object MovementStatus {
       MovementStatus(Messages("movement.status.arrivalRejected"), action)
   }
 
-  private def others()(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
-    case arrival if arrival.status == "ArrivalSubmitted" => MovementStatus(Messages("movement.status.arrivalSubmitted"), actions = Nil)
-    case arrival if arrival.status == "GoodsReleased"    => MovementStatus(Messages("movement.status.goodsReleased"), actions    = Nil)
-    case arrival                                         => MovementStatus(arrival.status, actions                               = Nil)
+  private def unloadingRemarksRejected()(implicit messages: Messages, config: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
+    case arrival if arrival.status == "UnloadingRemarksRejected" =>
+      val action: Seq[ViewMovementAction] = if (config.arrivalRejectedLinkToggle) {
+        Seq(ViewMovementAction(config.unloadingRemarksRejectedUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.viewErrors")))
+      } else {
+        Nil
+      }
+      MovementStatus(Messages("movement.status.unloadingRemarksRejected"), action)
+  }
+
+  private def displayStatus()(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
+    case arrival if arrival.status == "ArrivalSubmitted"          => MovementStatus(Messages("movement.status.arrivalSubmitted"), actions          = Nil)
+    case arrival if arrival.status == "ArrivalRejected"           => MovementStatus(Messages("movement.status.arrivalRejected"), actions           = Nil)
+    case arrival if arrival.status == "UnloadingPermission"       => MovementStatus(Messages("movement.status.unloadingPermission"), actions       = Nil)
+    case arrival if arrival.status == "UnloadingRemarksSubmitted" => MovementStatus(Messages("movement.status.unloadingRemarksSubmitted"), actions = Nil)
+    case arrival if arrival.status == "UnloadingRemarksRejected"  => MovementStatus(Messages("movement.status.unloadingRemarksRejected"), actions  = Nil)
+    case arrival if arrival.status == "GoodsReleased"             => MovementStatus(Messages("movement.status.goodsReleased"), actions             = Nil)
+    case arrival                                                  => MovementStatus(arrival.status, actions                                        = Nil)
   }
 }
