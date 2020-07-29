@@ -15,3 +15,5 @@ GET        /accessibility-statement                     controllers.Accessibilit
 GET        /view-arrivals                               controllers.ViewArrivalsController.onPageLoad
 
 GET        /technical-difficulties                      controllers.TechnicalDifficultiesController.onPageLoad
+
+GET        /unloading-permission-pdf/:arrivalId         controllers.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)

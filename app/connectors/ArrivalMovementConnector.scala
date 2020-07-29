@@ -18,16 +18,31 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.Arrivals
+import models.{ArrivalId, Arrivals}
+import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import cats.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
+class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) {
 
   def getArrivals()(implicit hc: HeaderCarrier): Future[Arrivals] = {
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
     http.GET[Arrivals](serviceUrl)
   }
+
+  def getPDF(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[Option[Array[Byte]]] = {
+    val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.index}/unloading-permission"
+
+    hc.authorization.traverse(
+      result =>
+        ws.url(serviceUrl)
+          .withHttpHeaders(("Authorization", result.value))
+          .get
+          .map(_.bodyAsBytes.toArray)
+    )
+  }
+
 }
