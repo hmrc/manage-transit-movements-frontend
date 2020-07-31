@@ -31,6 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
 import scala.reflect.ClassTag
@@ -69,7 +70,7 @@ trait SpecBase
 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
 
   def bindingOverride[A: ClassTag](module: A): GuiceApplicationBuilder => GuiceApplicationBuilder =
     guiceApplicationBuilder => guiceApplicationBuilder.overrides(bind[A].toInstance(module))

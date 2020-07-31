@@ -41,6 +41,7 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
         ws.url(serviceUrl)
           .withHttpHeaders(("Authorization", result.value))
           .get
+          .filter(_.status == 200)
           .map(_.bodyAsBytes.toArray)
     )
   }

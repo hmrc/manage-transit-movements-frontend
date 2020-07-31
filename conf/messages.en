@@ -68,7 +68,7 @@ viewArrivalNotifications.table.action      = Action
 viewArrivalNotifications.table.action.viewErrors        = View and fix errors
 viewArrivalNotifications.table.action.unloadingRemarks  = Make unloading remarks
 viewArrivalNotifications.table.action.viewHistory       = View history
-viewArrivalNotifications.table.action.viewPDF           = View PDF
+viewArrivalNotifications.table.action.viewPDF           = Unloading Permission PDF
 viewArrivalNotifications.goToManageTransitMovements     = Go to manage transit movements
 
 movement.status.arrivalSubmitted = Arrival notification sent

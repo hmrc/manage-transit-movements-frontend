@@ -20,6 +20,7 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import helper.WireMockServerHandler
 import models.{Arrival, ArrivalId, Arrivals}
 import org.scalacheck.Gen
@@ -28,6 +29,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -91,6 +93,57 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
           s"/$startUrl/movements/arrivals",
           connector.getArrivals()
         )
+      }
+    }
+
+    "getPDF" - {
+      "must return status Ok and PDF" in {
+
+        val arrivalId = ArrivalId(0)
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals/${arrivalId.index}/unloading-permission"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+            )
+        )
+
+        val result: Future[Option[Array[Byte]]] = connector.getPDF(arrivalId)
+
+        result.futureValue.value mustBe an[Array[Byte]]
+      }
+
+      "must return None for an unauthorized response" in {
+
+        val genErrorResponse             = Gen.oneOf(300, 500).sample.value
+        val arrivalId                    = ArrivalId(0)
+        val hcWithoutAuth: HeaderCarrier = HeaderCarrier()
+
+        val result: Future[Option[Array[Byte]]] = connector.getPDF(arrivalId)(hcWithoutAuth)
+
+        result.futureValue mustBe None
+      }
+
+      "must return status error response" in {
+
+        val genErrorResponse = Gen.oneOf(300, 500).sample.value
+        val arrivalId        = ArrivalId(0)
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals/${arrivalId.index}/unloading-permission"))
+            .willReturn(
+              aResponse()
+                .withStatus(genErrorResponse)
+            )
+        )
+
+        val result: Future[Option[Array[Byte]]] = connector.getPDF(arrivalId)
+
+        whenReady(result.failed) {
+          response =>
+            response mustBe an[NoSuchElementException]
+        }
       }
     }
   }

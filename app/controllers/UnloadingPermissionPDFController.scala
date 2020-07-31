@@ -37,8 +37,8 @@ class UnloadingPermissionPDFController @Inject()(
   def getPDF(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
       arrivalMovementConnector.getPDF(arrivalId).map {
-        case Some(x) => Ok(x)
-        case _       => BadRequest
+        case Some(pdf) => Ok(pdf)
+        case None      => Unauthorized
       }
   }
 }
