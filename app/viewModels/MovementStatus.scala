@@ -19,6 +19,7 @@ package viewModels
 import config.FrontendAppConfig
 import models.{Arrival, ViewMovementAction}
 import play.api.i18n.Messages
+import controllers.routes
 
 case class MovementStatus(status: String, actions: Seq[ViewMovementAction])
 
@@ -37,7 +38,7 @@ object MovementStatus {
         Seq(
           ViewMovementAction(config.declareUnloadingRemarksUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.unloadingRemarks")),
           ViewMovementAction(
-            s"/manage-transit-movements/unloading-permission-pdf/${arrival.arrivalId.index}",
+            routes.UnloadingPermissionPDFController.getPDF(arrival.arrivalId).url,
             Messages("viewArrivalNotifications.table.action.viewPDF")
           )
         )
