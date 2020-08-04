@@ -21,6 +21,7 @@ import connectors.ArrivalMovementConnector
 import controllers.actions.IdentifierAction
 import javax.inject.Inject
 import models.ArrivalId
+import models.requests.IdentifierRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -36,18 +37,21 @@ class UnloadingPermissionPDFController @Inject()(
 
   def getPDF(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
-      request.headers
-        .get("Authorization")
+      hc.authorization
         .map {
           token =>
-            arrivalMovementConnector.getPDF(arrivalId, token).map {
+            arrivalMovementConnector.getPDF(arrivalId, token.value).map {
               result =>
                 result.status match {
-                  case OK => Ok(result.bodyAsBytes.toArray)
-                  case _  => InternalServerError
+                  case OK =>
+                    Ok(result.bodyAsBytes.toArray)
+                  case _ =>
+                    Redirect(controllers.routes.TechnicalDifficultiesController.onPageLoad())
                 }
             }
         }
-        .getOrElse(Future.successful(Unauthorized))
+        .getOrElse {
+          Future.successful(Redirect(controllers.routes.UnauthorisedController.onPageLoad()))
+        }
   }
 }
