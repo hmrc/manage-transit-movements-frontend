@@ -25,7 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class UnloadingPermissionPDFController @Inject()(
   identify: IdentifierAction,
@@ -36,9 +36,18 @@ class UnloadingPermissionPDFController @Inject()(
 
   def getPDF(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
-      arrivalMovementConnector.getPDF(arrivalId).map {
-        case Some(pdf) => Ok(pdf)
-        case None      => Unauthorized
-      }
+      request.headers
+        .get("Authorization")
+        .map {
+          token =>
+            arrivalMovementConnector.getPDF(arrivalId, token).map {
+              result =>
+                result.status match {
+                  case OK => Ok(result.bodyAsBytes.toArray)
+                  case _  => InternalServerError
+                }
+            }
+        }
+        .getOrElse(Future.successful(Unauthorized))
   }
 }

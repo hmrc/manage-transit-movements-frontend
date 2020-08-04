@@ -29,6 +29,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -97,7 +98,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
     }
 
     "getPDF" - {
-      "must return status Ok and PDF" in {
+      "must return status Ok" in {
 
         val arrivalId = ArrivalId(0)
 
@@ -109,23 +110,12 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             )
         )
 
-        val result: Future[Option[Array[Byte]]] = connector.getPDF(arrivalId)
+        val result: Future[WSResponse] = connector.getPDF(arrivalId, "bearerToken")
 
-        result.futureValue.value mustBe an[Array[Byte]]
+        result.futureValue.status mustBe 200
       }
 
-      "must return None for an unauthorized response" in {
-
-        val genErrorResponse             = Gen.oneOf(300, 500).sample.value
-        val arrivalId                    = ArrivalId(0)
-        val hcWithoutAuth: HeaderCarrier = HeaderCarrier()
-
-        val result: Future[Option[Array[Byte]]] = connector.getPDF(arrivalId)(hcWithoutAuth)
-
-        result.futureValue mustBe None
-      }
-
-      "must return status error response" in {
+      "must return other error status codes without exceptions" in {
 
         val genErrorResponse = Gen.oneOf(300, 500).sample.value
         val arrivalId        = ArrivalId(0)
@@ -138,12 +128,9 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             )
         )
 
-        val result: Future[Option[Array[Byte]]] = connector.getPDF(arrivalId)
+        val result: Future[WSResponse] = connector.getPDF(arrivalId, "bearerToken")
 
-        whenReady(result.failed) {
-          response =>
-            response mustBe an[NoSuchElementException]
-        }
+        result.futureValue.status mustBe genErrorResponse
       }
     }
   }

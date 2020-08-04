@@ -27,8 +27,12 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.bind
+import play.api.libs.ws.ahc.AhcWSResponse
+import play.api.libs.ws.ahc.cache.{CacheableHttpResponseBodyPart, CacheableHttpResponseStatus}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.shaded.ahc.org.asynchttpclient.Response
+import play.shaded.ahc.org.asynchttpclient.uri.Uri
 
 import scala.concurrent.Future
 
@@ -44,8 +48,14 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
 
         forAll(arbitrary[Array[Byte]]) {
           pdf =>
-            when(mockArrivalMovementConnector.getPDF(any())(any()))
-              .thenReturn(Future.successful(Some(pdf)))
+            val wsResponse: AhcWSResponse = new AhcWSResponse(
+              new Response.ResponseBuilder()
+                .accumulate(new CacheableHttpResponseStatus(Uri.create("http://uri"), 200, "status text", "protocols!"))
+                .accumulate(new CacheableHttpResponseBodyPart(pdf, true))
+                .build())
+
+            when(mockArrivalMovementConnector.getPDF(any(), any())(any()))
+              .thenReturn(Future.successful(wsResponse))
 
             val arrivalId = ArrivalId(0)
 
@@ -59,22 +69,18 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
             val request = FakeRequest(
               GET,
               routes.UnloadingPermissionPDFController.getPDF(arrivalId).url
-            )
+            ).withHeaders(("Authorization", "BearerToken"))
 
             running(application) {
 
               val result = route(application, request).value
 
               status(result) mustEqual OK
-              contentAsBytes(result) mustEqual pdf
             }
         }
       }
 
       "must return Unauthorized if bearer token is missing" in {
-
-        when(mockArrivalMovementConnector.getPDF(any())(any()))
-          .thenReturn(Future.successful(None))
 
         val arrivalId = ArrivalId(0)
 
