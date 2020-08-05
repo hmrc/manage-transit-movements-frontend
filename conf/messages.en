@@ -65,10 +65,11 @@ viewArrivalNotifications.table.office      = Office
 viewArrivalNotifications.table.procedure   = Procedure
 viewArrivalNotifications.table.status      = Status
 viewArrivalNotifications.table.action      = Action
-viewArrivalNotifications.table.action.viewErrors       = View and fix errors
-viewArrivalNotifications.table.action.unloadingRemarks    = Make unloading remarks
-viewArrivalNotifications.table.action.viewHistory      = View history
-viewArrivalNotifications.goToManageTransitMovements = Go to manage transit movements
+viewArrivalNotifications.table.action.viewErrors        = View and fix errors
+viewArrivalNotifications.table.action.unloadingRemarks  = Make unloading remarks
+viewArrivalNotifications.table.action.viewHistory       = View history
+viewArrivalNotifications.table.action.viewPDF           = Unloading Permission PDF
+viewArrivalNotifications.goToManageTransitMovements     = Go to manage transit movements
 
 movement.status.arrivalSubmitted = Arrival notification sent
 movement.status.arrivalRejected = Arrival notification rejected

@@ -20,6 +20,7 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import helper.WireMockServerHandler
 import models.{Arrival, ArrivalId, Arrivals}
 import org.scalacheck.Gen
@@ -28,6 +29,8 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -91,6 +94,43 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
           s"/$startUrl/movements/arrivals",
           connector.getArrivals()
         )
+      }
+    }
+
+    "getPDF" - {
+      "must return status Ok" in {
+
+        val arrivalId = ArrivalId(0)
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals/${arrivalId.index}/unloading-permission"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+            )
+        )
+
+        val result: Future[WSResponse] = connector.getPDF(arrivalId, "bearerToken")
+
+        result.futureValue.status mustBe 200
+      }
+
+      "must return other error status codes without exceptions" in {
+
+        val genErrorResponse = Gen.oneOf(300, 500).sample.value
+        val arrivalId        = ArrivalId(0)
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals/${arrivalId.index}/unloading-permission"))
+            .willReturn(
+              aResponse()
+                .withStatus(genErrorResponse)
+            )
+        )
+
+        val result: Future[WSResponse] = connector.getPDF(arrivalId, "bearerToken")
+
+        result.futureValue.status mustBe genErrorResponse
       }
     }
   }
