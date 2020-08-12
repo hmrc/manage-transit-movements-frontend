@@ -58,6 +58,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")
 
   val arrivalRejectedLinkToggle: Boolean      = configuration.get[Boolean]("microservice.services.features.arrivalRejectedLink")
+  val departureJourneyToggle: Boolean         = configuration.getOptional[Boolean]("microservice.services.features.departureJourney").getOrElse(false)
   private val departureLRNUrl: String         = configuration.get[String]("microservice.services.departure-frontend.lrnUrl")
   val declareDepartureStartWithLRNUrl: String = s"$departureFrontendUrl/$departureLRNUrl"
 

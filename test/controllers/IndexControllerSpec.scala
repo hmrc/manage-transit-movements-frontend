@@ -24,6 +24,7 @@ import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.mockito.Matchers.any
+import play.api.Configuration
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -70,6 +71,7 @@ class IndexControllerSpec extends SpecBase {
         .thenReturn(Future.successful(mockDestinationResponse))
 
       val application = applicationBuilder(userAnswers = None)
+        .configure(Configuration("microservice.services.features.departureJourney" -> true))
         .overrides(
           bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
         )
@@ -88,6 +90,7 @@ class IndexControllerSpec extends SpecBase {
         "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
         "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
         "hasArrivals"                    -> true,
+        "showDeparture"                  -> true,
         "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
         "hasDepartures"                  -> false
       )
@@ -115,6 +118,7 @@ class IndexControllerSpec extends SpecBase {
             )))
 
       val application = applicationBuilder(userAnswers = None)
+        .configure(Configuration("microservice.services.features.departureJourney" -> false))
         .overrides(
           bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
         )
@@ -133,6 +137,7 @@ class IndexControllerSpec extends SpecBase {
         "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
         "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
         "hasArrivals"                    -> false,
+        "showDeparture"                  -> false,
         "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
         "hasDepartures"                  -> false
       )

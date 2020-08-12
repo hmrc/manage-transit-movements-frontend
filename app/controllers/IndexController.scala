@@ -51,6 +51,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
                   "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
                   "viewArrivalNotificationUrl"     -> viewArrivals,
                   "hasArrivals"                    -> arrivals.arrivals.nonEmpty,
+                  "showDeparture"                  -> appConfig.departureJourneyToggle,
                   "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
                   "hasDepartures"                  -> false
                 )
