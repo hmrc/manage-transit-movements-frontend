@@ -33,6 +33,24 @@
             {{ messages("index.arrival.noArrivals") }}
         {% endif %}
         </p>
+
+        <h2 class="govuk-heading-m">
+            {{ messages("index.subHeading.departure") }}
+        </h2>
+        <p class="govuk-body">
+            <a id= "make-departure-declaration" href={{declareDepartureDeclarationUrl}}>
+                {{ messages("index.link.departure.makeDeparture") }}
+            </a>
+        </p>
+        <p class="govuk-body">
+        {% if hasDepartures %}
+            <a id= "view-departure-declarations" href="#">
+                {{ messages("index.link.departure.viewDepartures") }}
+            </a>
+        {% else %}
+            {{ messages("index.departure.noDepartures") }}
+        {% endif %}
+        </p>
       </div>
     </div>
   </div>

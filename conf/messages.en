@@ -43,6 +43,10 @@ index.subHeading.arrival = Arrivals
 index.link.arrival.makeArrival = Make an arrival notification
 index.link.arrival.viewArrival = View arrival notifications
 index.arrival.noArrivals = There are no arrival notifications.
+index.subHeading.departure = Departures
+index.link.departure.makeDeparture = Make a departure declaration
+index.link.departure.viewDepartures = View departure declarations
+index.departure.noDepartures = There are no departure declarations.
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
