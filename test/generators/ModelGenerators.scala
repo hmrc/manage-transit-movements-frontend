@@ -111,4 +111,11 @@ trait ModelGenerators {
         seqOfViewMovements <- listOfN(10, arbitrary[ViewMovement])
       } yield ViewArrivalMovements(seqOfViewMovements)
     }
+
+  implicit lazy val arbitraryLocalReferenceNumber: Arbitrary[LocalReferenceNumber] =
+    Arbitrary {
+      for {
+        lrn <- alphaNumericWithMaxLength(22)
+      } yield new LocalReferenceNumber(lrn)
+    }
 }

@@ -121,4 +121,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       length <- choose(1, maxLength)
       seq    <- listOfN(length, arbitrary[A])
     } yield seq
+
+  def alphaNumericWithMaxLength(maxLength: Int): Gen[String] =
+    for {
+      length <- choose(1, maxLength)
+      chars <- listOfN(length, Gen.alphaNumChar)
+    } yield chars.mkString
+
 }
