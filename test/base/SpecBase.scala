@@ -22,6 +22,8 @@ import models.UserAnswers
 import org.mockito.Mockito
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice._
 import play.api.i18n.{Messages, MessagesApi}
@@ -37,8 +39,8 @@ import uk.gov.hmrc.nunjucks.NunjucksRenderer
 import scala.reflect.ClassTag
 
 trait SpecBase
-    extends FreeSpec
-    with MustMatchers
+    extends AnyFreeSpec
+    with Matchers
     with GuiceOneAppPerSuite
     with OptionValues
     with TryValues

@@ -23,19 +23,10 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.libs.json.{JsString, Json}
-import play.api.mvc.PathBindable
 
 class LocalReferenceNumberSpec extends AnyFreeSpec with Generators with Matchers with EitherValues {
 
   "a Local Reference Number" - {
-    val pathBindable = implicitly[PathBindable[LocalReferenceNumber]]
-
-    "must bind from a url" in {
-      val lrn = new LocalReferenceNumber("12345ABC")
-      val result: Either[String, LocalReferenceNumber] = pathBindable.bind("lrn", "12345ABC")
-
-      result.right.value mustEqual lrn
-    }
 
     "must deserialise" in {
       forAll(arbitrary[LocalReferenceNumber]) {

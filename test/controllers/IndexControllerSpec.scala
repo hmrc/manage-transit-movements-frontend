@@ -23,7 +23,7 @@ import connectors.ArrivalMovementConnector
 import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import play.api.Configuration
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest

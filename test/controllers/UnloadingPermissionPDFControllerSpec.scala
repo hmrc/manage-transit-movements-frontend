@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.ArrivalMovementConnector
 import generators.Generators
 import models.ArrivalId
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
