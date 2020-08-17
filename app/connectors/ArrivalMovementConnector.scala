@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.{ArrivalId, Arrivals}
+import models.{ArrivalId, Arrivals, Departures}
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -30,6 +30,11 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
   def getArrivals()(implicit hc: HeaderCarrier): Future[Arrivals] = {
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
     http.GET[Arrivals](serviceUrl)
+  }
+
+  def getDepartures()(implicit hc: HeaderCarrier): Future[Departures] = {
+    val serviceUrl: String = s"${config.destinationUrl}/movements/departures"
+    http.GET[Departures](serviceUrl)
   }
 
   def getPDF(arrivalId: ArrivalId, bearerToken: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {

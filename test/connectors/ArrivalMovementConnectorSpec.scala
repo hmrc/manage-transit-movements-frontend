@@ -22,7 +22,7 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import helper.WireMockServerHandler
-import models.{Arrival, ArrivalId, Arrivals}
+import models.{Arrival, ArrivalId, Arrivals, Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -60,6 +60,20 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         )
     )
 
+  private val departuresResponseJson =
+    Json.obj(
+      "departures" ->
+        Json.arr(
+          Json.obj(
+            "departureId"          -> 22,
+            "created"              -> localDateTime,
+            "localReferenceNumber" -> "lrn",
+            "officeOfDeparture"    -> "office",
+            "status"               -> "Submitted"
+          )
+        )
+    )
+
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
   "arrivalMovementConnector" - {
@@ -93,6 +107,39 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         checkErrorResponse(
           s"/$startUrl/movements/arrivals",
           connector.getArrivals()
+        )
+      }
+    }
+
+    "getDepartures" - {
+      "must return a successful future response" in {
+        val expectedResult = {
+          Departures(
+            Seq(
+              Departure(
+                DepartureId(22),
+                localDateTime,
+                LocalReferenceNumber("lrn"),
+                "office",
+                "Submitted"
+              )
+            )
+          )
+        }
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/departures"))
+            .willReturn(okJson(departuresResponseJson.toString()))
+        )
+
+        connector.getDepartures().futureValue mustBe expectedResult
+      }
+
+      "must return an exception when an error response is returned from getDepartures" in {
+
+        checkErrorResponse(
+          s"/$startUrl/movements/departures",
+          connector.getDepartures()
         )
       }
     }
