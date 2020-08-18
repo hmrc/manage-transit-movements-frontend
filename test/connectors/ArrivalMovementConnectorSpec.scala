@@ -88,7 +88,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         connector.getArrivals.futureValue mustBe expectedResult
       }
 
-      "must return an exception when an error response is returned from getArrivals" in {
+      "must return an exception when getArrivals returns an error response" in {
 
         checkErrorResponse(
           s"/$startUrl/movements/arrivals",
