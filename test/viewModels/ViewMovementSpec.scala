@@ -95,3 +95,4 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
   }
 
 }
+
