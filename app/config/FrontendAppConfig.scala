@@ -56,8 +56,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")
 
-  val arrivalRejectedLinkToggle = configuration.get[Boolean]("microservice.services.features.arrivalRejectedLink")
-
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 
