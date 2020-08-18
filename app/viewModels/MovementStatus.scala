@@ -47,21 +47,15 @@ object MovementStatus {
 
   private def arrivalRejected()(implicit messages: Messages, config: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
     case arrival if arrival.status == "ArrivalRejected" =>
-      val action: Seq[ViewMovementAction] = if (config.arrivalRejectedLinkToggle) {
+      val action: Seq[ViewMovementAction] =
         Seq(ViewMovementAction(config.arrivalFrontendRejectedUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.viewErrors")))
-      } else {
-        Nil
-      }
       MovementStatus(Messages("movement.status.arrivalRejected"), action)
   }
 
   private def unloadingRemarksRejected()(implicit messages: Messages, config: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
     case arrival if arrival.status == "UnloadingRemarksRejected" =>
-      val action: Seq[ViewMovementAction] = if (config.arrivalRejectedLinkToggle) {
+      val action: Seq[ViewMovementAction] =
         Seq(ViewMovementAction(config.unloadingRemarksRejectedUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.viewErrors")))
-      } else {
-        Nil
-      }
       MovementStatus(Messages("movement.status.unloadingRemarksRejected"), action)
   }
 
