@@ -1,17 +1,19 @@
 # microservice specific routes
 
-GET        /                                            controllers.IndexController.onPageLoad
+GET        /                                                controllers.IndexController.onPageLoad
 
-GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file                                    controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
+GET        /language/:lang                                  controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
+GET        /this-service-has-been-reset                     controllers.SessionExpiredController.onPageLoad
 
-GET        /cannot-use-service-no-eori                  controllers.UnauthorisedController.onPageLoad
+GET        /cannot-use-service-no-eori                      controllers.UnauthorisedController.onPageLoad
 
-GET        /accessibility-statement                     controllers.AccessibilityController.onPageLoad
+GET        /accessibility-statement                         controllers.AccessibilityController.onPageLoad
 
-GET        /view-arrivals                               controllers.ViewArrivalsController.onPageLoad
+GET        /view-arrivals                                   controllers.ViewArrivalsController.onPageLoad
 
-GET        /technical-difficulties                      controllers.TechnicalDifficultiesController.onPageLoad
+GET        /technical-difficulties                          controllers.TechnicalDifficultiesController.onPageLoad
+
+GET        /arrivals/:arrivalId/unloading-permission-pdf    controllers.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)

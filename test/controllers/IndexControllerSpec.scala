@@ -24,6 +24,7 @@ import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.mockito.Matchers.any
+import play.api.Configuration
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,9 +35,9 @@ import scala.concurrent.Future
 
 class IndexControllerSpec extends SpecBase {
 
-  val manageTransitMovementRoute   = "manage-transit-movements"
-  val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
-  val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
+  val manageTransitMovementRoute                             = "manage-transit-movements"
+  val viewArrivalNotificationUrl                             = s"/$manageTransitMovementRoute/view-arrivals"
+  val mockArrivalMovementConnector: ArrivalMovementConnector = mock[ArrivalMovementConnector]
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -54,9 +55,14 @@ class IndexControllerSpec extends SpecBase {
     )
   }
 
+  override def beforeEach: Unit = {
+    reset(mockArrivalMovementConnector)
+    super.beforeEach
+  }
+
   "Index Controller" - {
 
-    "must return OK and the correct view for a GET with Arrivals" in {
+    "must return OK and the correct view for a GET with Arrivals and Departures" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("foo")))
@@ -65,6 +71,7 @@ class IndexControllerSpec extends SpecBase {
         .thenReturn(Future.successful(mockDestinationResponse))
 
       val application = applicationBuilder(userAnswers = None)
+        .configure(Configuration("microservice.services.features.departureJourney" -> true))
         .overrides(
           bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
         )
@@ -80,9 +87,12 @@ class IndexControllerSpec extends SpecBase {
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
-        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-        "viewArrivalNotificationUrl"    -> viewArrivalNotificationUrl,
-        "hasArrivals"                   -> true
+        "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
+        "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
+        "hasArrivals"                    -> true,
+        "showDeparture"                  -> true,
+        "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
+        "hasDepartures"                  -> false
       )
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
@@ -95,7 +105,7 @@ class IndexControllerSpec extends SpecBase {
       application.stop()
     }
 
-    "must return OK and the correct view for a GET with no Arrivals" in {
+    "must return OK and the correct view for a GET with no Arrivals and Departures" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("foo")))
@@ -108,6 +118,7 @@ class IndexControllerSpec extends SpecBase {
             )))
 
       val application = applicationBuilder(userAnswers = None)
+        .configure(Configuration("microservice.services.features.departureJourney" -> false))
         .overrides(
           bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
         )
@@ -123,9 +134,12 @@ class IndexControllerSpec extends SpecBase {
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
-        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-        "viewArrivalNotificationUrl"    -> viewArrivalNotificationUrl,
-        "hasArrivals"                   -> false
+        "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
+        "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
+        "hasArrivals"                    -> false,
+        "showDeparture"                  -> false,
+        "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
+        "hasDepartures"                  -> false
       )
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())

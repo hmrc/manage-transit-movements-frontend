@@ -48,9 +48,12 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
               .render(
                 "index.njk",
                 Json.obj(
-                  "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationStartUrl,
-                  "viewArrivalNotificationUrl"    -> viewArrivals,
-                  "hasArrivals"                   -> arrivals.arrivals.nonEmpty
+                  "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
+                  "viewArrivalNotificationUrl"     -> viewArrivals,
+                  "hasArrivals"                    -> arrivals.arrivals.nonEmpty,
+                  "showDeparture"                  -> appConfig.departureJourneyToggle,
+                  "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
+                  "hasDepartures"                  -> false
                 )
               )
               .map(Ok(_))

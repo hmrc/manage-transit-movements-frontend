@@ -17,11 +17,22 @@
 package models
 
 import play.api.libs.json.{Reads, _}
+import play.api.mvc.PathBindable
+
 import scala.language.implicitConversions
 
 case class ArrivalId(index: Int)
 
 object ArrivalId {
-  implicit def reads: Reads[ArrivalId]                = __.read[Int] map ArrivalId.apply
+  implicit def reads: Reads[ArrivalId] = __.read[Int] map ArrivalId.apply
+
   implicit def writes(arrivalId: ArrivalId): JsNumber = JsNumber(arrivalId.index)
+
+  implicit lazy val pathBindable: PathBindable[ArrivalId] = new PathBindable[ArrivalId] {
+    override def bind(key: String, value: String): Either[String, ArrivalId] =
+      implicitly[PathBindable[Int]].bind(key, value).right.map(ArrivalId(_))
+
+    override def unbind(key: String, value: ArrivalId): String =
+      value.index.toString
+  }
 }
