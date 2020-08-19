@@ -22,7 +22,7 @@ import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
-import viewModels.{ViewArrivalMovements, ViewMovement}
+import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement}
 
 trait ModelGenerators {
   self: Generators =>
@@ -105,11 +105,30 @@ trait ModelGenerators {
     }
   }
 
+  implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] = {
+    Arbitrary {
+      for {
+        createdDate          <- arbitrary[LocalDate]
+        createdTime          <- arbitrary[LocalTime]
+        localReferenceNumber <- arbitrary[LocalReferenceNumber]
+        officeOfDeparture    <- arbitrary[String]
+        status               <- arbitrary[String]
+      } yield new ViewDeparture(createdDate, createdTime, localReferenceNumber, officeOfDeparture, status)
+    }
+  }
+
   implicit val arbitraryViewArrivalMovements: Arbitrary[ViewArrivalMovements] =
     Arbitrary {
       for {
         seqOfViewMovements <- listOfN(10, arbitrary[ViewMovement])
       } yield ViewArrivalMovements(seqOfViewMovements)
+    }
+
+  implicit val arbitraryViewDepartureMovements: Arbitrary[ViewDepartureMovements] =
+    Arbitrary {
+      for {
+        seqOfViewDepartureMovements <- listOfN(10, arbitrary[ViewDeparture])
+      } yield ViewDepartureMovements(seqOfViewDepartureMovements)
     }
 
   implicit lazy val arbitraryLocalReferenceNumber: Arbitrary[LocalReferenceNumber] =
