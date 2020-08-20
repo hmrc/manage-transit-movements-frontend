@@ -16,13 +16,17 @@
 
 package controllers
 
+import config.FrontendAppConfig
+import connectors.ArrivalMovementConnector
 import controllers.actions._
 import javax.inject.Inject
+import models.Departure
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import viewModels.{ViewDeparture, ViewDepartureMovements}
 
 import scala.concurrent.ExecutionContext
 
@@ -30,13 +34,20 @@ class ViewDeparturesController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
+  arrivalMovementConnector: ArrivalMovementConnector,
   renderer: Renderer
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = identify.async {
     implicit request =>
-      renderer.render("viewDepartures.njk").map(Ok(_))
+      arrivalMovementConnector.getDepartures().flatMap {
+        allDepartures =>
+          val viewDepartures: Seq[ViewDeparture] = allDepartures.departures.map((departure: Departure) => ViewDeparture(departure))
+          val formatToJson: JsObject             = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
+
+          renderer.render("viewDepartures.njk", formatToJson).map(Ok(_))
+      }
   }
 }

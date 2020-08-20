@@ -42,8 +42,10 @@ object ViewDeparture {
   implicit val writes: OWrites[ViewDeparture] =
     new OWrites[ViewDeparture] {
       override def writes(o: ViewDeparture): JsObject = Json.obj(
-        "createdDate"          -> o.createdDate,
-        "createdTime"          -> o.createdTime,
+        "createdDate" -> o.createdDate,
+        "createdTime" -> o.createdTime
+          .format(DateTimeFormatter.ofPattern("h:mma"))
+          .toLowerCase,
         "localReferenceNumber" -> o.localReferenceNumber,
         "officeOfDeparture"    -> o.officeOfDeparture,
         "status"               -> o.status

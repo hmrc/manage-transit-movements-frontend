@@ -1,6 +1,8 @@
 {% extends "includes/layout.njk" %}
 
 {% from "macros/title.njk"                         import title %}
+{% from "macros/table.njk"                         import departureNotification %}
+
 
 {% block pageTitle %}
   {{ title(messages("viewDepartures.title")) }}
@@ -8,15 +10,19 @@
 
 {% block mainContent %}
 
-  <div class="govuk-main-wrapper">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
         <h1 class="govuk-heading-xl">
           {{ messages("viewDepartures.heading") }}
         </h1>
 
-      </div>
+        <p class="govuk-body"><a id = "make-departure-notification" href={{ declareDepartureNotificationUrl }} > {{ messages("viewDepartures.makeDepartureNotification") }}</a></p>
+
+        {{ departureNotification(dataRows) }}
+
+        <p class="govuk-body govuk-!-margin-top-3"><a id = "go-to-manage-transit-movements" href="{{ homePageUrl }}"> {{ messages("viewDepartures.goToManageTransitMovements") }} </a></p>
+
     </div>
   </div>
 

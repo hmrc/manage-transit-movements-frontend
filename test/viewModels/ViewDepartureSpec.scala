@@ -16,6 +16,8 @@
 
 package viewModels
 
+import java.time.format.DateTimeFormatter
+
 import base.SpecBase
 import models.Departure
 import generators.Generators
@@ -29,8 +31,10 @@ class ViewDepartureSpec extends SpecBase with Generators with ScalaCheckProperty
     forAll(arbitrary[ViewDeparture]) {
       viewDeparture =>
         val expectedJson = Json.obj(
-          "createdDate"          -> viewDeparture.createdDate,
-          "createdTime"          -> viewDeparture.createdTime,
+          "createdDate" -> viewDeparture.createdDate,
+          "createdTime" -> viewDeparture.createdTime
+            .format(DateTimeFormatter.ofPattern("h:mma"))
+            .toLowerCase,
           "localReferenceNumber" -> viewDeparture.localReferenceNumber,
           "officeOfDeparture"    -> viewDeparture.officeOfDeparture,
           "status"               -> viewDeparture.status

@@ -16,9 +16,11 @@
 
 package connectors
 
+import java.time.LocalDateTime
+
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.{ArrivalId, Arrivals, Departures}
+import models.{ArrivalId, Arrivals, Departure, DepartureId, Departures, LocalReferenceNumber}
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -32,10 +34,13 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
     http.GET[Arrivals](serviceUrl)
   }
 
-  def getDepartures()(implicit hc: HeaderCarrier): Future[Departures] = {
+  /*def getDepartures()(implicit hc: HeaderCarrier): Future[Departures] = {
     val serviceUrl: String = s"${config.destinationUrl}/movements/departures"
     http.GET[Departures](serviceUrl)
-  }
+  }*/
+
+  def getDepartures()(implicit hc: HeaderCarrier): Future[Departures] = //TODO: Remove once backend and stubs are sorted
+    Future.successful(Departures(Seq(Departure(DepartureId(22), LocalDateTime.now(), LocalReferenceNumber("lrn123456"), "office", "submitted"))))
 
   def getPDF(arrivalId: ArrivalId, bearerToken: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.index}/unloading-permission"

@@ -18,4 +18,4 @@ GET        /technical-difficulties                          controllers.Technica
 
 GET        /arrivals/:arrivalId/unloading-permission-pdf    controllers.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
 
-GET        /viewDepartures                       controllers.ViewDeparturesController.onPageLoad
+GET        /view-departures                                 controllers.ViewDeparturesController.onPageLoad

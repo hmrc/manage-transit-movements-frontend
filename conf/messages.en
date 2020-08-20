@@ -170,9 +170,16 @@ compliant.nine.p2.2=Digital Accessibility Centre
 compliant.nine.p2.3=The full service was tested by HMRC and included disabled users.
 compliant.nine.p3=This page was prepared on [date when it was first published]. It was last updated on [date when it was last updated].
 
+viewDepartures.title = Departure declarations
+viewDepartures.heading = Departure declarations
+viewDepartures.makeDepartureNotification = Make a departure declaration
+viewDepartures.goToManageTransitMovements = Go to manage transit movements
+viewDepartures.table.updated = Updated
+viewDepartures.table.lrn = Local reference number
+viewDepartures.table.officeOfDeparture = Office of departure
+viewDepartures.table.status = Status
+viewDepartures.table.action = Action
+viewDepartures.table.action.viewErrors        = View and fix errors
+viewDepartures.table.action.viewHistory       = View history
+viewDepartures.table.action.viewPDF           = TAD PDF ({0})
 
-
-
-
-viewDepartures.title = viewDepartures
-viewDepartures.heading = viewDepartures
