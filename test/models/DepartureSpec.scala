@@ -14,34 +14,27 @@
  * limitations under the License.
  */
 
-package viewModels
-
-import java.time.format.DateTimeFormatter
+package models
 
 import base.SpecBase
-import models.Departure
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 
-class ViewDepartureSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
+class DepartureSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
   "must serialise to Json" in {
-    forAll(arbitrary[ViewDeparture]) {
-      viewDeparture =>
+    forAll(arbitrary[Departure]) {
+      departure =>
         val expectedJson = Json.obj(
-          "createdDate" -> viewDeparture.createdDate,
-          "createdTime" -> viewDeparture.createdTime
-            .format(DateTimeFormatter.ofPattern("h:mma"))
-            .toLowerCase,
-          "localReferenceNumber" -> viewDeparture.localReferenceNumber,
-          "officeOfDeparture"    -> viewDeparture.officeOfDeparture,
-          "status"               -> viewDeparture.status,
-          "actions"              -> viewDeparture.actions
+          "departureId"          -> departure.departureId,
+          "created"              -> departure.created,
+          "localReferenceNumber" -> departure.localReferenceNumber,
+          "officeOfDeparture"    -> departure.officeOfDeparture,
+          "status"               -> departure.status
         )
 
-        Json.toJson(viewDeparture) mustBe expectedJson
+        Json.toJson(departure) mustBe expectedJson
     }
   }
 }

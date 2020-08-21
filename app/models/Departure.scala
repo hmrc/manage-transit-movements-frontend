@@ -19,9 +19,9 @@ package models
 import java.time.LocalDateTime
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Json, Reads}
+import play.api.libs.json.{__, Json, Reads, Writes}
 
-case class Departure(departureID: DepartureId, created: LocalDateTime, localReferenceNumber: LocalReferenceNumber, officeOfDeparture: String, status: String)
+case class Departure(departureId: DepartureId, created: LocalDateTime, localReferenceNumber: LocalReferenceNumber, officeOfDeparture: String, status: String)
 
 object Departure {
   implicit val reads: Reads[Departure] = (
@@ -31,6 +31,8 @@ object Departure {
       (__ \ "officeOfDeparture").read[String] and
       (__ \ "status").read[String]
   )(Departure.apply _)
+
+  implicit val writes: Writes[Departure] = Json.writes[Departure]
 }
 
 case class Departures(departures: Seq[Departure])

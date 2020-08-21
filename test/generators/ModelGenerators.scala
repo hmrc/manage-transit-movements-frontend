@@ -72,6 +72,15 @@ trait ModelGenerators {
     }
   }
 
+  implicit lazy val arbitraryDepartureId: Arbitrary[DepartureId] = {
+    Arbitrary {
+      for {
+        length        <- choose(1, 9)
+        listOfCharNum <- listOfN(length, numChar)
+      } yield DepartureId(listOfCharNum.mkString.toInt)
+    }
+  }
+
   implicit val arbitraryArrival: Arbitrary[Arrival] = {
     Arbitrary {
       for {
@@ -81,6 +90,18 @@ trait ModelGenerators {
         status    <- Gen.oneOf(Seq("GoodsReleased", "UnloadingPermission", "ArrivalSubmitted", "Rejection"))
         mrn       <- stringsWithMaxLength(17)
       } yield Arrival(arrivalId, date, time, status, mrn)
+    }
+  }
+
+  implicit val arbitraryDeparture: Arbitrary[Departure] = {
+    Arbitrary {
+      for {
+        departureID          <- arbitrary[DepartureId]
+        created              <- arbitrary[LocalDateTime]
+        localReferenceNumber <- arbitrary[LocalReferenceNumber]
+        officeOfDeparture    <- arbitrary[String]
+        status               <- arbitrary[String]
+      } yield Departure(departureID, created, localReferenceNumber, officeOfDeparture, status)
     }
   }
 
@@ -113,7 +134,8 @@ trait ModelGenerators {
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
         officeOfDeparture    <- arbitrary[String]
         status               <- arbitrary[String]
-      } yield new ViewDeparture(createdDate, createdTime, localReferenceNumber, officeOfDeparture, status)
+        actions              <- listOfN(4, arbitrary[ViewMovementAction])
+      } yield new ViewDeparture(createdDate, createdTime, localReferenceNumber, officeOfDeparture, status, actions)
     }
   }
 

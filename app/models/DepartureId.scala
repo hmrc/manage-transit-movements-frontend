@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{__, JsNumber, Reads}
+import play.api.libs.json.{__, JsNumber, Reads, Writes}
 import play.api.mvc.PathBindable
 
 case class DepartureId(index: Int)
@@ -24,7 +24,7 @@ case class DepartureId(index: Int)
 object DepartureId {
   implicit def reads: Reads[DepartureId] = __.read[Int] map DepartureId.apply
 
-  implicit def writes(departureId: DepartureId): JsNumber = JsNumber(departureId.index)
+  implicit def writes: Writes[DepartureId] = Writes(departureId => JsNumber(departureId.index))
 
   implicit lazy val pathBindable: PathBindable[DepartureId] = new PathBindable[DepartureId] {
     override def bind(key: String, value: String): Either[String, DepartureId] =

@@ -19,25 +19,29 @@ package viewModels
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 import java.time.format.DateTimeFormatter
 
-import models.{Departure, LocalReferenceNumber}
+import models.{Departure, LocalReferenceNumber, ViewMovementAction}
 import play.api.libs.json.{JsObject, Json, OWrites}
 
 final case class ViewDeparture(createdDate: LocalDate,
                                createdTime: LocalTime,
                                localReferenceNumber: LocalReferenceNumber,
                                officeOfDeparture: String,
-                               status: String)
+                               status: String,
+                               actions: Seq[ViewMovementAction])
 
 object ViewDeparture {
 
-  def apply(departure: Departure): ViewDeparture =
+  def apply(departure: Departure): ViewDeparture = {
+    val departureStatus = DepartureStatus(departure)
     ViewDeparture(
       createdDate          = departure.created.toLocalDate,
       createdTime          = departure.created.toLocalTime,
       localReferenceNumber = departure.localReferenceNumber,
       officeOfDeparture    = departure.officeOfDeparture,
-      status               = departure.status
+      status               = departureStatus.status,
+      actions              = departureStatus.actions
     )
+  }
 
   implicit val writes: OWrites[ViewDeparture] =
     new OWrites[ViewDeparture] {
@@ -48,7 +52,8 @@ object ViewDeparture {
           .toLowerCase,
         "localReferenceNumber" -> o.localReferenceNumber,
         "officeOfDeparture"    -> o.officeOfDeparture,
-        "status"               -> o.status
+        "status"               -> o.status,
+        "actions"              -> o.actions
       )
     }
 }

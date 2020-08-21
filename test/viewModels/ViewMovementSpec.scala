@@ -91,9 +91,7 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         viewMovement.action mustBe Nil
     }
-
   }
-
 }
 
 class ViewMovementFeatureFalseSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
@@ -110,7 +108,5 @@ class ViewMovementFeatureFalseSpec extends SpecBase with Generators with ScalaCh
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
         viewMovement.action.headOption mustBe None
     }
-
   }
-
 }

@@ -39,8 +39,17 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
     http.GET[Departures](serviceUrl)
   }*/
 
-  def getDepartures()(implicit hc: HeaderCarrier): Future[Departures] = //TODO: Remove once backend and stubs are sorted
-    Future.successful(Departures(Seq(Departure(DepartureId(22), LocalDateTime.now(), LocalReferenceNumber("lrn123456"), "office", "submitted"))))
+  def getDepartures()(implicit hc: HeaderCarrier): Future[Departures] = { //TODO: Remove once backend and stubs are sorted
+    val depSub     = Departure(DepartureId(22), LocalDateTime.now(), LocalReferenceNumber("LRN123456"), "office1", "DepartureSubmitted")
+    val depMrn     = Departure(DepartureId(23), LocalDateTime.now(), LocalReferenceNumber("LRN123457"), "office2", "MrnAllocated")
+    val depRel     = Departure(DepartureId(24), LocalDateTime.now().minusDays(1), LocalReferenceNumber("LRN123458"), "office3", "ReleasedForTransit")
+    val depTra     = Departure(DepartureId(25), LocalDateTime.now().minusDays(1), LocalReferenceNumber("LRN123459"), "office4", "TransitDeclarationRejected")
+    val depDep     = Departure(DepartureId(26), LocalDateTime.now().minusDays(1), LocalReferenceNumber("LRN123460"), "office5", "DepartureDeclarationReceived")
+    val depQua     = Departure(DepartureId(27), LocalDateTime.now().minusDays(2), LocalReferenceNumber("LRN123461"), "office6", "QuaranteeValidationFail")
+    val depSent    = Departure(DepartureId(28), LocalDateTime.now().minusDays(2), LocalReferenceNumber("LRN123462"), "office7", "TransitDeclarationSent")
+    val departures = Departures(Seq(depSub, depMrn, depRel, depTra, depDep, depQua, depSent))
+    Future.successful(departures)
+  }
 
   def getPDF(arrivalId: ArrivalId, bearerToken: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.index}/unloading-permission"
