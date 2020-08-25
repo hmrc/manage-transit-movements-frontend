@@ -93,20 +93,3 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
     }
   }
 }
-
-class ViewMovementFeatureFalseSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  override lazy val app: Application = GuiceApplicationBuilder().configure(Map("microservice.services.features.arrivalRejectedLink" -> false)).build()
-
-  "must not display rejection action when toggle set to false" in {
-
-    forAll(arbitrary[Arrival]) {
-      arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "ArrivalRejected")
-        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
-
-        viewMovement.status mustBe Messages("movement.status.arrivalRejected")
-        viewMovement.action.headOption mustBe None
-    }
-  }
-}
