@@ -20,9 +20,8 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import helper.WireMockServerHandler
-import models.{Arrival, ArrivalId, Arrivals, Departure, DepartureId, Departures, LocalReferenceNumber}
+import models.{Arrival, ArrivalId, Arrivals}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -30,7 +29,6 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -56,20 +54,6 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             "updated"                 -> localDateTime,
             "status"                  -> "Submitted",
             "movementReferenceNumber" -> "test mrn"
-          )
-        )
-    )
-
-  private val departuresResponseJson =
-    Json.obj(
-      "departures" ->
-        Json.arr(
-          Json.obj(
-            "departureId"          -> 22,
-            "created"              -> localDateTime,
-            "localReferenceNumber" -> "lrn",
-            "officeOfDeparture"    -> "office",
-            "status"               -> "Submitted"
           )
         )
     )
@@ -107,39 +91,6 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         checkErrorResponse(
           s"/$startUrl/movements/arrivals",
           connector.getArrivals()
-        )
-      }
-    }
-
-    "getDepartures" - {
-      "must return a successful future response" ignore { //TODO readd once backend and stubs working
-        val expectedResult = {
-          Departures(
-            Seq(
-              Departure(
-                DepartureId(22),
-                localDateTime,
-                LocalReferenceNumber("lrn"),
-                "office",
-                "Submitted"
-              )
-            )
-          )
-        }
-
-        server.stubFor(
-          get(urlEqualTo(s"/$startUrl/movements/departures"))
-            .willReturn(okJson(departuresResponseJson.toString()))
-        )
-
-        connector.getDepartures().futureValue mustBe expectedResult
-      }
-
-      "must return an exception when an error response is returned from getDepartures" ignore { //TODO readd once backend and stubs working
-
-        checkErrorResponse(
-          s"/$startUrl/movements/departures",
-          connector.getDepartures()
         )
       }
     }

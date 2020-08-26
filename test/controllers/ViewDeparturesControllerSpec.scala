@@ -19,18 +19,18 @@ package controllers
 import java.time.LocalDateTime
 
 import base.SpecBase
-import connectors.ArrivalMovementConnector
+import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
-import play.api.inject.bind
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import org.mockito.ArgumentMatchers.any
 
 import scala.concurrent.Future
 
@@ -54,15 +54,15 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
     "return OK and the correct view for a GET" in {
 
-      val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
-      when(mockArrivalMovementConnector.getDepartures()(any()))
+      val mockConnector = mock[DeparturesMovementConnector]
+      when(mockConnector.get()(any()))
         .thenReturn(Future.successful(mockDepartureResponse))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector))
+        .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
         .build()
 
       val request        = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)

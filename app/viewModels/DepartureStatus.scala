@@ -22,8 +22,20 @@ case class DepartureStatus(status: String, actions: Seq[ViewMovementAction])
 
 object DepartureStatus {
 
+  type DepartureStatusViewModel = PartialFunction[Departure, DepartureStatus]
+
   def apply(departure: Departure): DepartureStatus = {
-    val partialFunctions: PartialFunction[Departure, DepartureStatus] = Seq(mrnAllocated, displayStatus).reduce(_ orElse _)
+    val partialFunctions: PartialFunction[Departure, DepartureStatus] =
+      Seq(
+        mrnAllocated,
+        departureSubmitted,
+        releasedForTransit,
+        transitDeclarationRejected,
+        departureDeclarationReceived,
+        guaranteeValidationFail,
+        transitDeclarationSent,
+        invalidStatus
+      ).reduce(_ orElse _)
     partialFunctions.apply(departure)
   }
 
@@ -34,19 +46,37 @@ object DepartureStatus {
 
   private def viewHistoryAction(departure: Departure) = ViewMovementAction("", "departure.viewHistory")
 
-  private def displayStatus(): PartialFunction[Departure, DepartureStatus] = {
+  private def departureSubmitted: DepartureStatusViewModel = {
     case departure if departure.status == "DepartureSubmitted" =>
       DepartureStatus("departure.status.submitted", actions = Seq(viewHistoryAction(departure)))
+  }
+
+  private def releasedForTransit: DepartureStatusViewModel = {
     case departure if departure.status == "ReleasedForTransit" =>
       DepartureStatus("departure.status.releasedForTransit", actions = Seq(viewHistoryAction(departure)))
+  }
+
+  private def transitDeclarationRejected: DepartureStatusViewModel = {
     case departure if departure.status == "TransitDeclarationRejected" =>
       DepartureStatus("departure.status.transitDeclarationRejected", actions = Seq(viewHistoryAction(departure)))
+  }
+
+  private def departureDeclarationReceived: DepartureStatusViewModel = {
     case departure if departure.status == "DepartureDeclarationReceived" =>
       DepartureStatus("departure.status.departureDeclarationReceived", actions = Seq(viewHistoryAction(departure)))
-    case departure if departure.status == "QuaranteeValidationFail" =>
+  }
+
+  private def guaranteeValidationFail: DepartureStatusViewModel = {
+    case departure if departure.status == "GuaranteeValidationFail" =>
       DepartureStatus("departure.status.guaranteeValidationFail", actions = Seq(viewHistoryAction(departure)))
+  }
+
+  private def transitDeclarationSent: DepartureStatusViewModel = {
     case departure if departure.status == "TransitDeclarationSent" =>
       DepartureStatus("departure.status.transitDeclarationSent", actions = Seq(viewHistoryAction(departure)))
+  }
+
+  private def invalidStatus: DepartureStatusViewModel = {
     case departure => DepartureStatus(departure.status, actions = Nil)
   }
 }
