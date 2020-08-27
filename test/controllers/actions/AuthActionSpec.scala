@@ -19,7 +19,7 @@ package controllers.actions
 import base.SpecBase
 import com.google.inject.Inject
 import controllers.routes
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.mvc.{BodyParsers, Results}
 import play.api.test.Helpers._

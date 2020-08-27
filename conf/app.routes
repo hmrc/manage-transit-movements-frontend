@@ -17,3 +17,5 @@ GET        /view-arrivals                                   controllers.ViewArri
 GET        /technical-difficulties                          controllers.TechnicalDifficultiesController.onPageLoad
 
 GET        /arrivals/:arrivalId/unloading-permission-pdf    controllers.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
+
+GET        /view-departures                                 controllers.ViewDeparturesController.onPageLoad

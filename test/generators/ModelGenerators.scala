@@ -22,7 +22,7 @@ import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
-import viewModels.{ViewArrivalMovements, ViewMovement}
+import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement}
 
 trait ModelGenerators {
   self: Generators =>
@@ -72,6 +72,15 @@ trait ModelGenerators {
     }
   }
 
+  implicit lazy val arbitraryDepartureId: Arbitrary[DepartureId] = {
+    Arbitrary {
+      for {
+        length        <- choose(1, 9)
+        listOfCharNum <- listOfN(length, numChar)
+      } yield DepartureId(listOfCharNum.mkString.toInt)
+    }
+  }
+
   implicit val arbitraryArrival: Arbitrary[Arrival] = {
     Arbitrary {
       for {
@@ -81,6 +90,18 @@ trait ModelGenerators {
         status    <- Gen.oneOf(Seq("GoodsReleased", "UnloadingPermission", "ArrivalSubmitted", "Rejection"))
         mrn       <- stringsWithMaxLength(17)
       } yield Arrival(arrivalId, date, time, status, mrn)
+    }
+  }
+
+  implicit val arbitraryDeparture: Arbitrary[Departure] = {
+    Arbitrary {
+      for {
+        departureID          <- arbitrary[DepartureId]
+        created              <- arbitrary[LocalDateTime]
+        localReferenceNumber <- arbitrary[LocalReferenceNumber]
+        officeOfDeparture    <- arbitrary[String]
+        status               <- arbitrary[String]
+      } yield Departure(departureID, created, localReferenceNumber, officeOfDeparture, status)
     }
   }
 
@@ -105,10 +126,37 @@ trait ModelGenerators {
     }
   }
 
+  implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] = {
+    Arbitrary {
+      for {
+        createdDate          <- arbitrary[LocalDate]
+        createdTime          <- arbitrary[LocalTime]
+        localReferenceNumber <- arbitrary[LocalReferenceNumber]
+        officeOfDeparture    <- arbitrary[String]
+        status               <- arbitrary[String]
+        actions              <- listOfN(4, arbitrary[ViewMovementAction])
+      } yield new ViewDeparture(createdDate, createdTime, localReferenceNumber, officeOfDeparture, status, actions)
+    }
+  }
+
   implicit val arbitraryViewArrivalMovements: Arbitrary[ViewArrivalMovements] =
     Arbitrary {
       for {
         seqOfViewMovements <- listOfN(10, arbitrary[ViewMovement])
       } yield ViewArrivalMovements(seqOfViewMovements)
+    }
+
+  implicit val arbitraryViewDepartureMovements: Arbitrary[ViewDepartureMovements] =
+    Arbitrary {
+      for {
+        seqOfViewDepartureMovements <- listOfN(10, arbitrary[ViewDeparture])
+      } yield ViewDepartureMovements(seqOfViewDepartureMovements)
+    }
+
+  implicit lazy val arbitraryLocalReferenceNumber: Arbitrary[LocalReferenceNumber] =
+    Arbitrary {
+      for {
+        lrn <- alphaNumericWithMaxLength(22)
+      } yield new LocalReferenceNumber(lrn)
     }
 }

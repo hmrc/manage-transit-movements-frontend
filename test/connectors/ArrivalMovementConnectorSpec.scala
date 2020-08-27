@@ -20,7 +20,6 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import helper.WireMockServerHandler
 import models.{Arrival, ArrivalId, Arrivals}
 import org.scalacheck.Gen
@@ -30,7 +29,6 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 

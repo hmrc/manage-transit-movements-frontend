@@ -17,7 +17,7 @@
             <div class="govuk-summary-list__row">
               <span class="govuk-summary-list__value govuk-!-width-full">{{ row.updated }}</span>
               <span class="govuk-summary-list__value govuk-!-width-full">{{ row.mrn }}</span>
-              <span class="govuk-summary-list__value govuk-!-width-full">{{ row.status  }}</span>
+              <span class="govuk-summary-list__value govuk-!-width-full">{{ messages(row.status) }}</span>
               <span class="govuk-summary-list__value govuk-!-width-full">
 
                    {% for action in row.actions %}
@@ -39,4 +39,49 @@
            
     {% endfor %}
 
+{% endmacro %}
+
+
+{% macro departureNotification(dataRows) %}
+
+    {% for date, rows in dataRows %}
+
+        <h2 class="govuk-heading-m">{{date}}</h2>
+
+        <div class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewDepartures.table.updated") }}</span>
+                <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewDepartures.table.lrn") }}</span>
+                <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewDepartures.table.officeOfDeparture") }}</span>
+                <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewDepartures.table.status") }}</span>
+                <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewDepartures.table.action") }}</span>
+            </div>
+
+            {% for row in rows %}
+
+                <div class="govuk-summary-list__row">
+                    <span class="govuk-summary-list__value govuk-!-width-full">{{ row.createdTime }}</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full">{{ row.localReferenceNumber }}</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full">{{ row.officeOfDeparture  }}</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full">{{ messages(row.status) }}</span>
+                    <span class="govuk-summary-list__value govuk-!-width-full">
+
+                   {% for action in row.actions %}
+                       <a id="{{ messages(action.key) }}-{{ row.lrn }}"
+                          href=" {{ action.href }} ">
+                   {{ messages(action.key) }}
+              <span class="govuk-visually-hidden"> for {{ row.lrn }}</span>
+                   </a>
+
+                   {% endfor %}
+
+              </span>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endfor %}
 {% endmacro %}

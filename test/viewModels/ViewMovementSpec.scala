@@ -91,8 +91,5 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         viewMovement.action mustBe Nil
     }
-
   }
-
 }
-
