@@ -61,7 +61,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
   "DeparturesMovementConnector" - {
 
     "getDepartures" - {
-      "must return a successful future response" in { //TODO readd once backend and stubs working
+      "must return a successful future response" in {
         val expectedResult = {
           Departures(
             Seq(

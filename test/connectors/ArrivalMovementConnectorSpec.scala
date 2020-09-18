@@ -80,7 +80,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         connector.getArrivals.futureValue mustBe Some(expectedResult)
       }
 
-      "must return an exception when getArrivals returns an error response" in {
+      "must return a None when getArrivals returns an error response" in {
 
         forAll(errorResponses) {
           errorResponse =>

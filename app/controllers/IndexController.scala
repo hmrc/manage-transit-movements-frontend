@@ -49,17 +49,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader) = {
-    val hasDepartures = departures match {
-      case Some(departures) if departures.departures.nonEmpty => true
-      case _                                                  => false
-    }
-
-    val hasArrivals = arrivals match {
-      case Some(arrivals) if arrivals.arrivals.nonEmpty => true
-      case _                                            => false
-    }
-
+  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader) =
     renderer
       .render(
         "index.njk",
@@ -67,13 +57,12 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
           "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
           "viewArrivalNotificationUrl"     -> routes.ViewArrivalsController.onPageLoad().url,
           "arrivalsAvailable"              -> arrivals.nonEmpty,
-          "hasArrivals"                    -> hasArrivals,
+          "hasArrivals"                    -> arrivals.exists(_.arrivals.nonEmpty),
           "showDeparture"                  -> appConfig.departureJourneyToggle,
           "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
           "viewDepartureNotificationUrl"   -> routes.ViewDeparturesController.onPageLoad().url,
           "departuresAvailable"            -> departures.nonEmpty,
-          "hasDepartures"                  -> hasDepartures
+          "hasDepartures"                  -> departures.exists(_.departures.nonEmpty)
         )
       )
-  }
 }
