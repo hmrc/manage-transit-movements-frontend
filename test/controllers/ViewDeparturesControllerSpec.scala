@@ -43,7 +43,6 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
           DepartureId(1),
           LocalDateTime.now(),
           LocalReferenceNumber("lrn"),
-          "office",
           "Submitted"
         )
       )
@@ -55,8 +54,8 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
     "return OK and the correct view for a GET" in {
 
       val mockConnector = mock[DeparturesMovementConnector]
-      when(mockConnector.get()(any()))
-        .thenReturn(Future.successful(mockDepartureResponse))
+      when(mockConnector.getDepartures()(any()))
+        .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))

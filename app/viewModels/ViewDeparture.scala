@@ -25,7 +25,6 @@ import play.api.libs.json.{JsObject, Json, OWrites}
 final case class ViewDeparture(createdDate: LocalDate,
                                createdTime: LocalTime,
                                localReferenceNumber: LocalReferenceNumber,
-                               officeOfDeparture: String,
                                status: String,
                                actions: Seq[ViewMovementAction])
 
@@ -37,7 +36,6 @@ object ViewDeparture {
       createdDate          = departure.created.toLocalDate,
       createdTime          = departure.created.toLocalTime,
       localReferenceNumber = departure.localReferenceNumber,
-      officeOfDeparture    = departure.officeOfDeparture,
       status               = departureStatus.status,
       actions              = departureStatus.actions
     )
@@ -51,7 +49,6 @@ object ViewDeparture {
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
         "localReferenceNumber" -> o.localReferenceNumber,
-        "officeOfDeparture"    -> o.officeOfDeparture,
         "status"               -> o.status,
         "actions"              -> o.actions
       )

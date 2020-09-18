@@ -17,50 +17,63 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.ArrivalMovementConnector
+import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import controllers.actions.IdentifierAction
 import javax.inject.Inject
+import models.{Arrivals, Departures}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject()(appConfig: FrontendAppConfig,
                                 identify: IdentifierAction,
                                 val controllerComponents: MessagesControllerComponents,
                                 val arrivalMovementConnector: ArrivalMovementConnector,
+                                val departuresMovementConnector: DeparturesMovementConnector,
                                 renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
-      arrivalMovementConnector
-        .getArrivals()
-        .flatMap {
-          arrivals =>
-            val viewArrivals = controllers.routes.ViewArrivalsController.onPageLoad().url
+      for {
+        arrivals   <- arrivalMovementConnector.getArrivals()
+        departures <- departuresMovementConnector.getDepartures()
+        html       <- renderPage(arrivals, departures)
+      } yield {
+        Ok(html)
+      }
+  }
 
-            renderer
-              .render(
-                "index.njk",
-                Json.obj(
-                  "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
-                  "viewArrivalNotificationUrl"     -> viewArrivals,
-                  "hasArrivals"                    -> arrivals.arrivals.nonEmpty,
-                  "showDeparture"                  -> appConfig.departureJourneyToggle,
-                  "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
-                  "hasDepartures"                  -> false
-                )
-              )
-              .map(Ok(_))
-        }
-        .recover {
-          case _ =>
-            Redirect(controllers.routes.TechnicalDifficultiesController.onPageLoad())
-        }
+  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader) = {
+    val hasDepartures = departures match {
+      case Some(departures) if departures.departures.nonEmpty => true
+      case _                                                  => false
+    }
+
+    val hasArrivals = arrivals match {
+      case Some(arrivals) if arrivals.arrivals.nonEmpty => true
+      case _                                            => false
+    }
+
+    renderer
+      .render(
+        "index.njk",
+        Json.obj(
+          "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
+          "viewArrivalNotificationUrl"     -> routes.ViewArrivalsController.onPageLoad().url,
+          "arrivalsAvailable"              -> arrivals.nonEmpty,
+          "hasArrivals"                    -> hasArrivals,
+          "showDeparture"                  -> appConfig.departureJourneyToggle,
+          "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
+          "viewDepartureNotificationUrl"   -> routes.ViewDeparturesController.onPageLoad().url,
+          "departuresAvailable"            -> departures.nonEmpty,
+          "hasDepartures"                  -> hasDepartures
+        )
+      )
   }
 }

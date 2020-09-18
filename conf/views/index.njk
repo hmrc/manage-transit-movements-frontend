@@ -26,11 +26,15 @@
         </p>
         <p class="govuk-body">
         {% if hasArrivals %}
-            <a id= "view-arrival-notifications" href={{viewArrivalNotificationUrl}}>
+            <a id= "view-arrival-notifications" href={{ viewArrivalNotificationUrl }}>
                 {{ messages("index.link.arrival.viewArrival") }}
             </a>
         {% else %}
-            {{ messages("index.arrival.noArrivals") }}
+            {% if arrivalsAvailable %}
+                {{ messages("index.arrival.noArrivals") }}
+            {% else %}
+                {{ messages("index.arrival.arrivalsUnavailable") }}
+            {% endif %}
         {% endif %}
         </p>
          {% if showDeparture %}
@@ -38,17 +42,21 @@
                 {{ messages("index.subHeading.departure") }}
             </h2>
             <p class="govuk-body">
-                <a id= "make-departure-declaration" href={{declareDepartureDeclarationUrl}}>
+                <a id= "make-departure-declaration" href={{ declareDepartureDeclarationUrl }}>
                     {{ messages("index.link.departure.makeDeparture") }}
                 </a>
             </p>
             <p class="govuk-body">
             {% if hasDepartures %}
-                <a id= "view-departure-declarations" href="#">
+                <a id= "view-departure-declarations" href="{{ viewDepartureNotificationUrl }}">
                     {{ messages("index.link.departure.viewDepartures") }}
                 </a>
             {% else %}
-                {{ messages("index.departure.noDepartures") }}
+                {% if departuresAvailable %}
+                    {{ messages("index.departure.noDepartures") }}
+                {% else %}
+                    {{ messages("index.departure.departuresUnavailable") }}
+                {% endif %}
             {% endif %}
             </p>
           {% endif %}

@@ -67,13 +67,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         val expectedResult = {
           Arrivals(
             Seq(
-              Arrival(
-                ArrivalId(22),
-                localDateTime,
-                localDateTime,
-                "Submitted",
-                "test mrn"
-              )
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
             )
           )
         }
@@ -83,15 +77,22 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             .willReturn(okJson(arrivalsResponseJson.toString()))
         )
 
-        connector.getArrivals.futureValue mustBe expectedResult
+        connector.getArrivals.futureValue mustBe Some(expectedResult)
       }
 
       "must return an exception when getArrivals returns an error response" in {
 
-        checkErrorResponse(
-          s"/$startUrl/movements/arrivals",
-          connector.getArrivals()
-        )
+        forAll(errorResponses) {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/movements/arrivals"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+            connector.getArrivals().futureValue mustBe None
+        }
       }
     }
 
@@ -132,20 +133,4 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
       }
     }
   }
-
-  private def checkErrorResponse(url: String, result: Future[_]): Assertion =
-    forAll(errorResponses) {
-      errorResponse =>
-        server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(
-              aResponse()
-                .withStatus(errorResponse)
-            )
-        )
-
-        whenReady(result.failed) {
-          _ mustBe an[Exception]
-        }
-    }
 }

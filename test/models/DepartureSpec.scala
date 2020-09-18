@@ -30,7 +30,6 @@ class DepartureSpec extends SpecBase with Generators with ScalaCheckPropertyChec
           "departureId"          -> departure.departureId,
           "created"              -> departure.created,
           "localReferenceNumber" -> departure.localReferenceNumber,
-          "officeOfDeparture"    -> departure.officeOfDeparture,
           "status"               -> departure.status
         )
 

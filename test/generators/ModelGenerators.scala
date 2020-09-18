@@ -99,9 +99,8 @@ trait ModelGenerators {
         departureID          <- arbitrary[DepartureId]
         created              <- arbitrary[LocalDateTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        officeOfDeparture    <- arbitrary[String]
         status               <- arbitrary[String]
-      } yield Departure(departureID, created, localReferenceNumber, officeOfDeparture, status)
+      } yield Departure(departureID, created, localReferenceNumber, status)
     }
   }
 
@@ -132,10 +131,9 @@ trait ModelGenerators {
         createdDate          <- arbitrary[LocalDate]
         createdTime          <- arbitrary[LocalTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        officeOfDeparture    <- arbitrary[String]
         status               <- arbitrary[String]
         actions              <- listOfN(4, arbitrary[ViewMovementAction])
-      } yield new ViewDeparture(createdDate, createdTime, localReferenceNumber, officeOfDeparture, status, actions)
+      } yield new ViewDeparture(createdDate, createdTime, localReferenceNumber, status, actions)
     }
   }
 
