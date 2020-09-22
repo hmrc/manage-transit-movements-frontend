@@ -49,7 +49,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
         Json.arr(
           Json.obj(
             "departureId"     -> 22,
-            "created"         -> localDateTime,
+            "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
             "status"          -> "Submitted"
           )

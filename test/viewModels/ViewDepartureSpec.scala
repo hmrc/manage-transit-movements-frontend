@@ -31,8 +31,8 @@ class ViewDepartureSpec extends SpecBase with Generators with ScalaCheckProperty
     forAll(arbitrary[ViewDeparture]) {
       viewDeparture =>
         val expectedJson = Json.obj(
-          "createdDate" -> viewDeparture.createdDate,
-          "createdTime" -> viewDeparture.createdTime
+          "updatedDate" -> viewDeparture.updatedDate,
+          "updatedTime" -> viewDeparture.updatedTime
             .format(DateTimeFormatter.ofPattern("h:mma"))
             .toLowerCase,
           "localReferenceNumber" -> viewDeparture.localReferenceNumber,

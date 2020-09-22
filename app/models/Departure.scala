@@ -21,12 +21,12 @@ import java.time.LocalDateTime
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Json, Reads, Writes}
 
-case class Departure(departureId: DepartureId, created: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: String)
+case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: String)
 
 object Departure {
   implicit val reads: Reads[Departure] = (
     (__ \ "departureId").read[DepartureId] and
-      (__ \ "created").read[LocalDateTime] and
+      (__ \ "updated").read[LocalDateTime] and
       (__ \ "referenceNumber").read[LocalReferenceNumber] and
       (__ \ "status").read[String]
   )(Departure.apply _)
