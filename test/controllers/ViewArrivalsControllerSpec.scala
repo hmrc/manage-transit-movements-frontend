@@ -92,7 +92,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
         .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivals()(any()))
-        .thenReturn(Future.successful(mockArrivalResponse))
+        .thenReturn(Future.successful(Some(mockArrivalResponse)))
 
       val request = FakeRequest(
         GET,

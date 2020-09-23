@@ -28,9 +28,8 @@ class DepartureSpec extends SpecBase with Generators with ScalaCheckPropertyChec
       departure =>
         val expectedJson = Json.obj(
           "departureId"          -> departure.departureId,
-          "created"              -> departure.created,
+          "updated"              -> departure.updated,
           "localReferenceNumber" -> departure.localReferenceNumber,
-          "officeOfDeparture"    -> departure.officeOfDeparture,
           "status"               -> departure.status
         )
 

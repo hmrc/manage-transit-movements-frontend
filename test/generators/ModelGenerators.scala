@@ -97,11 +97,10 @@ trait ModelGenerators {
     Arbitrary {
       for {
         departureID          <- arbitrary[DepartureId]
-        created              <- arbitrary[LocalDateTime]
+        updated              <- arbitrary[LocalDateTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        officeOfDeparture    <- arbitrary[String]
         status               <- arbitrary[String]
-      } yield Departure(departureID, created, localReferenceNumber, officeOfDeparture, status)
+      } yield Departure(departureID, updated, localReferenceNumber, status)
     }
   }
 
@@ -129,13 +128,12 @@ trait ModelGenerators {
   implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] = {
     Arbitrary {
       for {
-        createdDate          <- arbitrary[LocalDate]
-        createdTime          <- arbitrary[LocalTime]
+        updatedDate          <- arbitrary[LocalDate]
+        updatedTime          <- arbitrary[LocalTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        officeOfDeparture    <- arbitrary[String]
         status               <- arbitrary[String]
         actions              <- listOfN(4, arbitrary[ViewMovementAction])
-      } yield new ViewDeparture(createdDate, createdTime, localReferenceNumber, officeOfDeparture, status, actions)
+      } yield new ViewDeparture(updatedDate, updatedTime, localReferenceNumber, status, actions)
     }
   }
 

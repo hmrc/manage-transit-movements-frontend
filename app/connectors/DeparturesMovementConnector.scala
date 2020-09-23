@@ -16,11 +16,9 @@
 
 package connectors
 
-import java.time.LocalDateTime
-
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
+import models.Departures
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -29,25 +27,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) {
 
-  def get()(implicit hc: HeaderCarrier): Future[Departures] = {
+  def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] = {
     val serviceUrl: String = s"${config.departureUrl}/movements/departures"
-    http.GET[Departures](serviceUrl)
-  }
-
-}
-
-//TODO: Remove this once we're calling stub/backend
-class DeparturesMovementConnectorTemp {
-
-  def get()(implicit hc: HeaderCarrier): Future[Departures] = {
-    val depSub     = Departure(DepartureId(22), LocalDateTime.now(), LocalReferenceNumber("LRN123456"), "office1", "DepartureSubmitted")
-    val depMrn     = Departure(DepartureId(23), LocalDateTime.now(), LocalReferenceNumber("LRN123457"), "office2", "MrnAllocated")
-    val depRel     = Departure(DepartureId(24), LocalDateTime.now().minusDays(1), LocalReferenceNumber("LRN123458"), "office3", "ReleasedForTransit")
-    val depTra     = Departure(DepartureId(25), LocalDateTime.now().minusDays(1), LocalReferenceNumber("LRN123459"), "office4", "TransitDeclarationRejected")
-    val depDep     = Departure(DepartureId(26), LocalDateTime.now().minusDays(1), LocalReferenceNumber("LRN123460"), "office5", "DepartureDeclarationReceived")
-    val depQua     = Departure(DepartureId(27), LocalDateTime.now().minusDays(2), LocalReferenceNumber("LRN123461"), "office6", "QuaranteeValidationFail")
-    val depSent    = Departure(DepartureId(28), LocalDateTime.now().minusDays(2), LocalReferenceNumber("LRN123462"), "office7", "TransitDeclarationSent")
-    val departures = Departures(Seq(depSub, depMrn, depRel, depTra, depDep, depQua, depSent))
-    Future.successful(departures)
+    http
+      .GET[Departures](serviceUrl)
+      .map {
+        case departures => Some(departures)
+      }
+      .recover {
+        case _ => None
+      }
   }
 }

@@ -46,7 +46,7 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
         seqWithMaxLength(10) {
           Arbitrary {
             arbitrary[ViewDeparture].map(
-              _.copy(createdDate = date, createdTime = localTime)
+              _.copy(updatedDate = date, updatedTime = localTime)
             )
           }
       }
@@ -70,7 +70,7 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
       time =>
         Arbitrary {
           arbitrary[ViewDeparture].map(
-            _.copy(createdDate = localDateToday, createdTime = time)
+            _.copy(updatedDate = localDateToday, updatedTime = time)
           )
         }
     }

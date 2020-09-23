@@ -48,11 +48,10 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
       "departures" ->
         Json.arr(
           Json.obj(
-            "departureId"          -> 22,
-            "created"              -> localDateTime,
-            "localReferenceNumber" -> "lrn",
-            "officeOfDeparture"    -> "office",
-            "status"               -> "Submitted"
+            "departureId"     -> 22,
+            "updated"         -> localDateTime,
+            "referenceNumber" -> "lrn",
+            "status"          -> "Submitted"
           )
         )
     )
@@ -61,8 +60,8 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
   "DeparturesMovementConnector" - {
 
-    "get" - {
-      "must return a successful future response" in { //TODO readd once backend and stubs working
+    "getDepartures" - {
+      "must return a successful future response" in {
         val expectedResult = {
           Departures(
             Seq(
@@ -70,7 +69,6 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                 DepartureId(22),
                 localDateTime,
                 LocalReferenceNumber("lrn"),
-                "office",
                 "Submitted"
               )
             )
@@ -82,33 +80,23 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             .willReturn(okJson(departuresResponseJson.toString()))
         )
 
-        connector.get().futureValue mustBe expectedResult
+        connector.getDepartures().futureValue mustBe Some(expectedResult)
       }
 
-      "must return an exception when an error response is returned from getDepartures" in {
+      "must return a None when an error response is returned from getDepartures" in {
 
-        checkErrorResponse(
-          s"/$startUrl/movements/departures",
-          connector.get()
-        )
-      }
-    }
-
-  }
-
-  private def checkErrorResponse(url: String, result: Future[_]): Assertion =
-    forAll(errorResponses) {
-      errorResponse =>
-        server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(
-              aResponse()
-                .withStatus(errorResponse)
+        forAll(errorResponses) {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/movements/departures"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
             )
-        )
-
-        whenReady(result.failed) {
-          _ mustBe an[Exception]
+            connector.getDepartures().futureValue mustBe None
         }
+      }
     }
+  }
 }

@@ -22,14 +22,22 @@ import models.{ArrivalId, Arrivals}
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) {
 
-  def getArrivals()(implicit hc: HeaderCarrier): Future[Arrivals] = {
+  def getArrivals()(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
-    http.GET[Arrivals](serviceUrl)
+    http
+      .GET[Arrivals](serviceUrl)
+      .map {
+        case arrivals => Some(arrivals)
+      }
+      .recover {
+        case _ => None
+      }
   }
 
   def getPDF(arrivalId: ArrivalId, bearerToken: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {

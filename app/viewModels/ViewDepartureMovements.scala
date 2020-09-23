@@ -36,7 +36,7 @@ object ViewDepartureMovements {
 
   private def format(departures: Seq[ViewDeparture]): Map[String, Seq[ViewDeparture]] = {
     val groupDepartures: Map[LocalDate, Seq[ViewDeparture]] =
-      departures.groupBy(_.createdDate)
+      departures.groupBy(_.updatedDate)
     val sortByDate: Seq[(LocalDate, Seq[ViewDeparture])] =
       groupDepartures.toSeq.sortBy(_._1).reverse
 
@@ -44,7 +44,7 @@ object ViewDepartureMovements {
       result =>
         val dateFormater: DateTimeFormatter =
           DateTimeFormatter.ofPattern("d MMMM yyyy")
-        (result._1.format(dateFormater), result._2.sortBy(_.createdTime))
+        (result._1.format(dateFormater), result._2.sortBy(_.updatedTime))
     }.toMap
 
   }

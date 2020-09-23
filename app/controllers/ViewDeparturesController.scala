@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{ArrivalMovementConnector, DeparturesMovementConnector, DeparturesMovementConnectorTemp}
+import connectors.DeparturesMovementConnector
 import controllers.actions._
 import javax.inject.Inject
 import models.Departure
@@ -34,7 +34,7 @@ class ViewDeparturesController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  connector: DeparturesMovementConnectorTemp, //TODO: Switch this once we're calling stubs/backend
+  connector: DeparturesMovementConnector,
   renderer: Renderer
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -42,8 +42,8 @@ class ViewDeparturesController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = identify.async {
     implicit request =>
-      connector.get().flatMap {
-        allDepartures =>
+      connector.getDepartures().flatMap {
+        case Some(allDepartures) =>
           val viewDepartures: Seq[ViewDeparture] = allDepartures.departures.map((departure: Departure) => ViewDeparture(departure))
           val formatToJson: JsObject             = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
 
