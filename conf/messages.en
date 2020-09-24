@@ -42,12 +42,12 @@ index.heading = Manage transit movements
 index.subHeading.arrival = Arrivals
 index.link.arrival.makeArrival = Make an arrival notification
 index.link.arrival.viewArrival = View arrival notifications
-index.arrival.noArrivals = There are no arrival notifications.
+index.arrival.noArrivals = You have no arrival notifications.
 index.arrival.arrivalsUnavailable = View arrival notifications is currently unavailable.
 index.subHeading.departure = Departures
 index.link.departure.makeDeparture = Make a departure declaration
 index.link.departure.viewDepartures = View departure declarations
-index.departure.noDepartures = There are no departure declarations.
+index.departure.noDepartures = You have no departure declarations.
 index.departure.departuresUnavailable = View departure notifications is currently unavailable.
 
 session_expired.title = For your security, this service has been reset
