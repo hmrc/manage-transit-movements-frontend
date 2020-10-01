@@ -26,7 +26,7 @@ import scala.concurrent.Future
 
 class TestOnlyCustomsReferenceDataConnector @Inject()(ws: WSClient, config: FrontendAppConfig) {
 
-  def post(body: File): Future[WSResponse] = {
+  def referenceDataListpost(body: File): Future[WSResponse] = {
 
     val serviceUrl = s"${config.customsReferenceDataUrl}/reference-data-lists"
 

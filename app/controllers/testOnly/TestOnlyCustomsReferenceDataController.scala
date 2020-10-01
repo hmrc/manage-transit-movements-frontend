@@ -31,14 +31,14 @@ class TestOnlyCustomsReferenceDataController @Inject()(
 )(implicit val ec: ExecutionContext)
     extends BackendController(cc) {
 
-  def post(): Action[File] =
+  def referenceDataListpost(): Action[File] =
     Action(parse.file(to = new File("/tmp/test.gz"))).async {
       request: Request[File] =>
         {
-          connector.post(request.body).map {
+          connector.referenceDataListpost(request.body).map {
             result =>
               result.status match {
-                case Accepted => Accepted
+                case ACCEPTED => Accepted
                 case _        => BadRequest(s"Failed: ${result.status} - ${result.body}")
               }
           }
