@@ -24,7 +24,8 @@ POST        /manage-transit-movements/test-only/from-core-message               
 + nocsrf
 POST        /manage-transit-movements/test-only/declaration-to-core                         controllers.testOnly.TestOnlyDeparturesRouterController.declarationMessageToCore()
 
-
++ nocsrf
+POST        /manage-transit-movements/test-only/test                                        controllers.testOnly.TestOnlyCustomsReferenceDataController.post()
 
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
