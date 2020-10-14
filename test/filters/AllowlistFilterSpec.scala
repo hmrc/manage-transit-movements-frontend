@@ -78,7 +78,7 @@ class AllowlistFilterSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
 
             val allowlistFilter = new AllowlistFilter(config, mockMaterializer)
 
-            allowlistFilter.whitelist mustBe empty
+            allowlistFilter.allowlist mustBe empty
         }
       }
     }
@@ -102,7 +102,7 @@ class AllowlistFilterSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
 
             val allowlistFilter = new AllowlistFilter(config, mockMaterializer)
 
-            allowlistFilter.whitelist must contain theSameElementsAs ips
+            allowlistFilter.allowlist must contain theSameElementsAs ips
         }
       }
     }
