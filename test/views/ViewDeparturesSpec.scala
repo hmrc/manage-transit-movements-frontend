@@ -21,13 +21,13 @@ import java.time.format.DateTimeFormatter
 
 import base.ViewSpecBase
 import generators.Generators
-import models.{Arrival, Departure}
+import models.Departure
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
-import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement}
+import viewModels.{ViewDeparture, ViewDepartureMovements}
 
 class ViewDeparturesSpec extends ViewSpecBase with Generators with ScalaCheckPropertyChecks {
 

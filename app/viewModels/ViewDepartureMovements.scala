@@ -31,7 +31,7 @@ object ViewDepartureMovements {
   implicit val localDateOrdering: Ordering[LocalDate] =
     Ordering.by(identity[ChronoLocalDate])
 
-  def apply(departures: Seq[ViewDeparture], dummy: String = ""): ViewDepartureMovements =
+  def apply(departures: Seq[ViewDeparture])(implicit d: DummyImplicit): ViewDepartureMovements =
     ViewDepartureMovements(format(departures))
 
   private def format(departures: Seq[ViewDeparture]): Seq[(String, Seq[ViewDeparture])] = {

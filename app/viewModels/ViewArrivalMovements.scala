@@ -34,9 +34,8 @@ object ViewArrivalMovements {
     Ordering.by(identity[ChronoLocalDate])
 
   def apply(
-    movements: Seq[ViewMovement],
-    dummmy: String = ""
-  ): ViewArrivalMovements =
+    movements: Seq[ViewMovement]
+  )(implicit d: DummyImplicit): ViewArrivalMovements =
     ViewArrivalMovements(format(movements))
 
   private def format(movements: Seq[ViewMovement]): Seq[(String, Seq[ViewMovement])] = {
