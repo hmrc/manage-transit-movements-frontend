@@ -24,17 +24,17 @@ import config.FrontendAppConfig
 import controllers.routes
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-case class ViewDepartureMovements(dataRows: Map[String, Seq[ViewDeparture]])
+case class ViewDepartureMovements(dataRows: Seq[(String, Seq[ViewDeparture])])
 
 object ViewDepartureMovements {
 
   implicit val localDateOrdering: Ordering[LocalDate] =
     Ordering.by(identity[ChronoLocalDate])
 
-  def apply(departures: Seq[ViewDeparture]): ViewDepartureMovements =
+  def apply(departures: Seq[ViewDeparture], dummy: String = ""): ViewDepartureMovements =
     ViewDepartureMovements(format(departures))
 
-  private def format(departures: Seq[ViewDeparture]): Map[String, Seq[ViewDeparture]] = {
+  private def format(departures: Seq[ViewDeparture]): Seq[(String, Seq[ViewDeparture])] = {
     val groupDepartures: Map[LocalDate, Seq[ViewDeparture]] =
       departures.groupBy(_.updatedDate)
     val sortByDate: Seq[(LocalDate, Seq[ViewDeparture])] =
@@ -45,8 +45,7 @@ object ViewDepartureMovements {
         val dateFormater: DateTimeFormatter =
           DateTimeFormatter.ofPattern("d MMMM yyyy")
         (result._1.format(dateFormater), result._2.sortBy(_.updatedTime))
-    }.toMap
-
+    }
   }
 
   implicit def writes(implicit frontendAppConfig: FrontendAppConfig): OWrites[ViewDepartureMovements] =

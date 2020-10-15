@@ -51,12 +51,12 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
           }
       }
 
-    forAll(departuresGen(localDateToday), departuresGen(localDateYesterday)) {
+    forAll(departuresGen(localDateToday).suchThat(_.nonEmpty), departuresGen(localDateYesterday).suchThat(_.nonEmpty)) {
       (todaysDepartures: Seq[ViewDeparture], yesterdaysDepartures: Seq[ViewDeparture]) =>
         val result: ViewDepartureMovements = ViewDepartureMovements(todaysDepartures ++ yesterdaysDepartures)
 
-        result.dataRows(formatter(localDateToday)) mustEqual todaysDepartures
-        result.dataRows(formatter(localDateYesterday)) mustEqual yesterdaysDepartures
+        result.dataRows(0)._2 mustEqual todaysDepartures
+        result.dataRows(1)._2 mustEqual yesterdaysDepartures
     }
   }
 
@@ -86,7 +86,7 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
 
         val expectedResult = Seq(departureMinus2, departureMinus1, currentDeparture)
 
-        result.dataRows(formatter(localDateToday)) mustEqual expectedResult
+        result.dataRows(0)._2 mustEqual expectedResult
     }
   }
 
