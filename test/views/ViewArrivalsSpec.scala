@@ -20,36 +20,19 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 import base.ViewSpecBase
-import generators.{Generators, ModelGenerators}
+import generators.Generators
 import models.Arrival
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
 class ViewArrivalsSpec extends ViewSpecBase with Generators with ScalaCheckPropertyChecks {
 
   "ViewArrivals" - {
     "generate list on correct order" in {
-      val json = Json
-        .parse("""{"dataRows":{
-            |"16 August 2020":[{"updated":"7:22am","mrn":"嫳馇煦擛箐㩳蝔뉏䫡瓾䵦","status":"Unloading permission granted","actions":[{"href":"http://localhost:9488/common-transit-convention-unloading-arrival/874","key":"Make unloading remarks"},{"href":"/manage-transit-movements/arrivals/874/unloading-permission-pdf","key":"Unloading Permission PDF"}]}],
-            |"15 August 2020":[{"updated":"7:22am","mrn":"継뒹묉껡鐾권Ⲁ鼆쬟욤㾀믧꾒཈䱛嚾","status":"Rejection","actions":[]}],
-            |"14 August 2020":[{"updated":"7:22am","mrn":"슙㰀홙⩞⤦䔽䛍쀦ꮣ팎榜","status":"Unloading permission granted","actions":[{"href":"http://localhost:9488/common-transit-convention-unloading-arrival/13301277","key":"Make unloading remarks"},{"href":"/manage-transit-movements/arrivals/13301277/unloading-permission-pdf","key":"Unloading Permission PDF"}]}],
-            |"13 August 2020":[{"updated":"7:22am","mrn":"덵쉮餎ퟸ穨긐鼌裮ﶰ精⺕⎇令嗲枸","status":"Rejection","actions":[]}],
-            |"12 August 2020":[{"updated":"7:22am","mrn":"͓","status":"Arrival notification sent","actions":[]}],
-            |"11 August 2020":[{"updated":"7:22am","mrn":"⳶ࠜꄗ뵱","status":"Goods Released","actions":[]}]},
-            |"declareArrivalNotificationUrl":"http://localhost:9483/common-transit-convention-trader-arrival/movement-reference-number","homePageUrl":"/manage-transit-movements"}
-            |""".stripMargin)
-        .as[JsObject]
-
-      val orig = Json
-        .parse(
-          """{"dataRows":{"15 August 2020":[{"updated":"7:22am","mrn":"継뒹묉껡鐾권Ⲁ鼆쬟욤㾀믧꾒཈䱛嚾","status":"Rejection","actions":[]}],"16 August 2020":[{"updated":"7:22am","mrn":"嫳馇煦擛箐㩳蝔뉏䫡瓾䵦","status":"Unloading permission granted","actions":[{"href":"http://localhost:9488/common-transit-convention-unloading-arrival/874","key":"Make unloading remarks"},{"href":"/manage-transit-movements/arrivals/874/unloading-permission-pdf","key":"Unloading Permission PDF"}]}],"11 August 2020":[{"updated":"7:22am","mrn":"⳶ࠜꄗ뵱","status":"Goods Released","actions":[]}],"12 August 2020":[{"updated":"7:22am","mrn":"͓","status":"Arrival notification sent","actions":[]}],"14 August 2020":[{"updated":"7:22am","mrn":"슙㰀홙⩞⤦䔽䛍쀦ꮣ팎榜","status":"Unloading permission granted","actions":[{"href":"http://localhost:9488/common-transit-convention-unloading-arrival/13301277","key":"Make unloading remarks"},{"href":"/manage-transit-movements/arrivals/13301277/unloading-permission-pdf","key":"Unloading Permission PDF"}]}],"13 August 2020":[{"updated":"7:22am","mrn":"덵쉮餎ퟸ穨긐鼌裮ﶰ精⺕⎇令嗲枸","status":"Rejection","actions":[]}]},"declareArrivalNotificationUrl":"http://localhost:9483/common-transit-convention-trader-arrival/movement-reference-number","homePageUrl":"/manage-transit-movements"}""".stripMargin)
-        .as[JsObject]
-
       val dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
       val day1 = LocalDateTime.parse("2020-08-16 07:22:05", dateTimeFormat)
@@ -71,7 +54,8 @@ class ViewArrivalsSpec extends ViewSpecBase with Generators with ScalaCheckPrope
       val viewMovements: Seq[ViewMovement] = arrivals.map((arrival: Arrival) => ViewMovement(arrival)(messages, frontendAppConfig))
 
       val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
-      val doc: Document          = renderDocument("viewArrivals.njk", formatToJson).futureValue
+
+      val doc: Document = renderDocument("viewArrivals.njk", formatToJson).futureValue
 
       doc.getElementsByClass("govuk-heading-m").size() mustEqual 6
       val ls: Elements = doc.getElementsByClass("govuk-heading-m")

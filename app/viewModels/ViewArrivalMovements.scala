@@ -25,7 +25,7 @@ import controllers.routes
 import play.api.libs.json.{JsObject, Json, OWrites}
 
 case class ViewArrivalMovements(
-  dataRows: Map[String, Seq[ViewMovement]]
+  dataRows: Seq[(String, Seq[ViewMovement])]
 )
 
 object ViewArrivalMovements {
@@ -34,13 +34,12 @@ object ViewArrivalMovements {
     Ordering.by(identity[ChronoLocalDate])
 
   def apply(
-    movements: Seq[ViewMovement]
+    movements: Seq[ViewMovement],
+    dummmy: String = ""
   ): ViewArrivalMovements =
     ViewArrivalMovements(format(movements))
 
-  private def format(
-    movements: Seq[ViewMovement]
-  ): Map[String, Seq[ViewMovement]] = {
+  private def format(movements: Seq[ViewMovement]): Seq[(String, Seq[ViewMovement])] = {
     val groupMovements: Map[LocalDate, Seq[ViewMovement]] =
       movements.groupBy(_.date)
     val sortByDate: Seq[(LocalDate, Seq[ViewMovement])] =
@@ -51,7 +50,7 @@ object ViewArrivalMovements {
         val dateFormatter: DateTimeFormatter =
           DateTimeFormatter.ofPattern("d MMMM yyyy")
         (result._1.format(dateFormatter), result._2.sortBy(_.time))
-    }.toMap
+    }
   }
 
   implicit def writes(
