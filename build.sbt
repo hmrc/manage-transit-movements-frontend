@@ -16,6 +16,7 @@ lazy val root = (project in file("."))
   .settings(SbtDistributablesPlugin.publishingSettings: _*)
   .settings(inConfig(Test)(testSettings): _*)
   .settings(majorVersion := 0)
+  .settings(scalaVersion := "2.12.12")
   .settings(
     name := appName,
     RoutesKeys.routesImport += "models._",
