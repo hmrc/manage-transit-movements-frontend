@@ -195,3 +195,4 @@ departure.status.guaranteeValidationFail = Guarantee validation fail
 departure.status.transitDeclarationSent = Transit declaration sent
 departure.status.writeOffNotification = Guarantee written off
 departure.viewHistory = View history
+departure.downloadTAD = TAD PDF [NEEDS IMPLEMENTING]
