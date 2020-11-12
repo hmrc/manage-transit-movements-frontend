@@ -29,6 +29,7 @@ object DepartureStatus {
       Seq(
         mrnAllocated,
         departureSubmitted,
+        positiveAcknowledgement,
         releasedForTransit,
         transitDeclarationRejected,
         departureDeclarationReceived,
@@ -49,6 +50,11 @@ object DepartureStatus {
   private def departureSubmitted: DepartureStatusViewModel = {
     case departure if departure.status == "DepartureSubmitted" =>
       DepartureStatus("departure.status.submitted", actions = Seq(viewHistoryAction(departure)))
+  }
+
+  private def positiveAcknowledgement: DepartureStatusViewModel = {
+    case departure if departure.status == "PositiveAcknowledgement" =>
+      DepartureStatus("departure.status.positiveAcknowledgement", actions = Seq(viewHistoryAction(departure)))
   }
 
   private def releasedForTransit: DepartureStatusViewModel = {
