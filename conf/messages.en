@@ -192,5 +192,6 @@ departure.status.releasedForTransit = Released for transit
 departure.status.transitDeclarationRejected = Transit declaration rejected
 departure.status.departureDeclarationReceived = Departure declaration received
 departure.status.guaranteeValidationFail = Guarantee validation fail
-departure.status.transitDeclarationSent = 	Transit declaration sent
+departure.status.transitDeclarationSent = Transit declaration sent
+departure.status.writeOffNotification = Guarantee written off
 departure.viewHistory = View history

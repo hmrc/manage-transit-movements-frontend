@@ -35,6 +35,7 @@ object DepartureStatus {
         departureDeclarationReceived,
         guaranteeValidationFail,
         transitDeclarationSent,
+        writeOffNotification,
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -80,6 +81,11 @@ object DepartureStatus {
   private def transitDeclarationSent: DepartureStatusViewModel = {
     case departure if departure.status == "TransitDeclarationSent" =>
       DepartureStatus("departure.status.transitDeclarationSent", actions = Seq(viewHistoryAction(departure)))
+  }
+
+  private def writeOffNotification: DepartureStatusViewModel = {
+    case departure if departure.status == "WriteOffNotification" =>
+      DepartureStatus("departure.status.writeOffNotification", actions = Seq(viewHistoryAction(departure)))
   }
 
   private def invalidStatus: DepartureStatusViewModel = {

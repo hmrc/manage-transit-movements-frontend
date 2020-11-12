@@ -33,7 +33,8 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
       ("TransitDeclarationRejected"   -> "departure.status.transitDeclarationRejected"),
       ("DepartureDeclarationReceived" -> "departure.status.departureDeclarationReceived"),
       ("GuaranteeValidationFail"      -> "departure.status.guaranteeValidationFail"),
-      ("TransitDeclarationSent"       -> "departure.status.transitDeclarationSent")
+      ("TransitDeclarationSent"       -> "departure.status.transitDeclarationSent"),
+      ("WriteOffNotification"         -> "departure.status.writeOffNotification")
     )
 
     "display correct status" - {
