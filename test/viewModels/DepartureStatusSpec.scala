@@ -30,7 +30,6 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
       Map("title" -> "MrnAllocated", "messageKey"                 -> "departure.status.mrnAllocated", "link"                 -> Nil),
       Map("title" -> "TransitDeclarationRejected", "messageKey"   -> "departure.status.transitDeclarationRejected", "link"   -> Nil),
       Map("title" -> "DepartureDeclarationReceived", "messageKey" -> "departure.status.departureDeclarationReceived", "link" -> Nil),
-      Map("title" -> "GuaranteeValidationFail", "messageKey"      -> "departure.status.guaranteeValidationFail", "link"      -> Nil),
       Map("title" -> "TransitDeclarationSent", "messageKey"       -> "departure.status.transitDeclarationSent", "link"       -> Nil),
       Map("title" -> "WriteOffNotification", "messageKey"         -> "departure.status.writeOffNotification", "link"         -> Nil),
       Map("title" -> "PositiveAcknowledgement", "messageKey"      -> "departure.status.positiveAcknowledgement", "link"      -> Nil)
@@ -41,9 +40,10 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
         s"When status is `${status("title")}` display message and link" in {
           forAll(arbitrary[Departure]) {
             departure =>
-              val dep = departure.copy(status = status("title").toString)
-              DepartureStatus(dep).status mustBe status("messageKey").toString
-              DepartureStatus(dep).actions mustBe status("link")
+              val dep             = departure.copy(status = status("title").toString)
+              val departureStatus = DepartureStatus(dep, frontendAppConfig)
+              departureStatus.status mustBe status("messageKey").toString
+              departureStatus.actions mustBe status("link")
           }
         }
       }
@@ -52,10 +52,11 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
     "include tad link on ReleasedForTransit status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val dep = departure.copy(status = "ReleasedForTransit")
-          DepartureStatus(dep).status mustBe "departure.status.releasedForTransit"
-          DepartureStatus(dep).actions.head.href mustBe s"/manage-transit-movements/departures/${departure.departureId.index}/tad-pdf"
-          DepartureStatus(dep).actions.head.key mustBe "departure.downloadTAD"
+          val dep             = departure.copy(status = "ReleasedForTransit")
+          val departureStatus = DepartureStatus(dep, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.releasedForTransit"
+          departureStatus.actions.head.href mustBe s"/manage-transit-movements/departures/${departure.departureId.index}/tad-pdf"
+          departureStatus.actions.head.key mustBe "departure.downloadTAD"
       }
     }
 
@@ -63,10 +64,11 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
 
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure     = departure.copy(status = "GuaranteeValidationFail")
-          val movementStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
-          movementStatus.status mustBe "departure.status.guaranteeValidationFail"
-          movementStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
+          val updatedDeparture: Departure      = departure.copy(status = "GuaranteeValidationFail")
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.guaranteeValidationFail"
+          departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
+          departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
       }
     }
   }

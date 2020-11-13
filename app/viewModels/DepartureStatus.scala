@@ -81,8 +81,7 @@ object DepartureStatus {
 
   private def guaranteeValidationFail(config: FrontendAppConfig): DepartureStatusViewModel = {
     case departure if departure.status == "GuaranteeValidationFail" =>
-      DepartureStatus("departure.status.guaranteeValidationFail",
-                      actions = Seq(viewGuaranteeValidationFailAction(departure.departureId, config), viewHistoryAction(departure)))
+      DepartureStatus("departure.status.guaranteeValidationFail", actions = Seq(viewGuaranteeValidationFailAction(departure.departureId, config)))
   }
 
   private def transitDeclarationSent: DepartureStatusViewModel = {
