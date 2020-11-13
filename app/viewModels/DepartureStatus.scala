@@ -16,7 +16,8 @@
 
 package viewModels
 
-import models.{Departure, ViewMovementAction}
+import config.FrontendAppConfig
+import models.{Departure, DepartureId, ViewMovementAction}
 
 case class DepartureStatus(status: String, actions: Seq[ViewMovementAction])
 
@@ -24,7 +25,7 @@ object DepartureStatus {
 
   type DepartureStatusViewModel = PartialFunction[Departure, DepartureStatus]
 
-  def apply(departure: Departure): DepartureStatus = {
+  def apply(departure: Departure, config: FrontendAppConfig): DepartureStatus = {
     val partialFunctions: PartialFunction[Departure, DepartureStatus] =
       Seq(
         mrnAllocated,
@@ -32,7 +33,7 @@ object DepartureStatus {
         releasedForTransit,
         transitDeclarationRejected,
         departureDeclarationReceived,
-        guaranteeValidationFail,
+        guaranteeValidationFail(config),
         transitDeclarationSent,
         invalidStatus
       ).reduce(_ orElse _)
@@ -45,6 +46,8 @@ object DepartureStatus {
   }
 
   private def viewHistoryAction(departure: Departure) = ViewMovementAction("", "departure.viewHistory")
+  private def viewGuaranteeValidationFailAction(departureId: DepartureId, config: FrontendAppConfig) =
+    ViewMovementAction(config.departureFrontendRejectedUrl(departureId), "viewDepartures.table.action.viewErrors")
 
   private def departureSubmitted: DepartureStatusViewModel = {
     case departure if departure.status == "DepartureSubmitted" =>
@@ -66,9 +69,10 @@ object DepartureStatus {
       DepartureStatus("departure.status.departureDeclarationReceived", actions = Seq(viewHistoryAction(departure)))
   }
 
-  private def guaranteeValidationFail: DepartureStatusViewModel = {
+  private def guaranteeValidationFail(config: FrontendAppConfig): DepartureStatusViewModel = {
     case departure if departure.status == "GuaranteeValidationFail" =>
-      DepartureStatus("departure.status.guaranteeValidationFail", actions = Seq(viewHistoryAction(departure)))
+      DepartureStatus("departure.status.guaranteeValidationFail",
+                      actions = Seq(viewGuaranteeValidationFailAction(departure.departureId, config), viewHistoryAction(departure)))
   }
 
   private def transitDeclarationSent: DepartureStatusViewModel = {

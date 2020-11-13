@@ -19,7 +19,6 @@ package viewModels
 import java.time.format.DateTimeFormatter
 
 import base.SpecBase
-import models.Departure
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

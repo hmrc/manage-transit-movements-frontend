@@ -25,25 +25,36 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "Departure Status" - {
-    val statusus = Seq(
-      ("DepartureSubmitted"           -> "departure.status.submitted"),
-      ("MrnAllocated"                 -> "departure.status.mrnAllocated"),
-      ("ReleasedForTransit"           -> "departure.status.releasedForTransit"),
-      ("TransitDeclarationRejected"   -> "departure.status.transitDeclarationRejected"),
-      ("DepartureDeclarationReceived" -> "departure.status.departureDeclarationReceived"),
-      ("GuaranteeValidationFail"      -> "departure.status.guaranteeValidationFail"),
-      ("TransitDeclarationSent"       -> "departure.status.transitDeclarationSent")
+    val statuses = Seq(
+      "DepartureSubmitted"           -> "departure.status.submitted",
+      "MrnAllocated"                 -> "departure.status.mrnAllocated",
+      "ReleasedForTransit"           -> "departure.status.releasedForTransit",
+      "TransitDeclarationRejected"   -> "departure.status.transitDeclarationRejected",
+      "DepartureDeclarationReceived" -> "departure.status.departureDeclarationReceived",
+      "GuaranteeValidationFail"      -> "departure.status.guaranteeValidationFail",
+      "TransitDeclarationSent"       -> "departure.status.transitDeclarationSent"
     )
 
     "display correct status" - {
-      for (status <- statusus) {
+      for (status <- statuses) {
         s"When status is '${status._1}' display correct message '${status._2}'" in {
           forAll(arbitrary[Departure]) {
             departure =>
               val dep = departure.copy(status = status._1)
-              DepartureStatus(dep).status mustBe status._2
+              DepartureStatus(dep, frontendAppConfig).status mustBe status._2
           }
         }
+      }
+    }
+
+    "When status is guaranteeValidationFail show correct status and action" in {
+
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure     = departure.copy(status = "GuaranteeValidationFail")
+          val movementStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
+          movementStatus.status mustBe "departure.status.guaranteeValidationFail"
+          movementStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
       }
     }
   }

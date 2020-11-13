@@ -18,7 +18,7 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import controllers.routes
-import models.ArrivalId
+import models.{ArrivalId, DepartureId}
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
@@ -57,9 +57,10 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")
 
-  val departureJourneyToggle: Boolean         = configuration.getOptional[Boolean]("microservice.services.features.departureJourney").getOrElse(false)
-  private val departureFrontendUrl: String    = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
-  val declareDepartureStartWithLRNUrl: String = s"$departureFrontendUrl/local-reference-number"
+  val departureJourneyToggle: Boolean                        = configuration.getOptional[Boolean]("microservice.services.features.departureJourney").getOrElse(false)
+  private val departureFrontendUrl: String                   = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
+  val declareDepartureStartWithLRNUrl: String                = s"$departureFrontendUrl/local-reference-number"
+  def departureFrontendRejectedUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-rejection"
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")

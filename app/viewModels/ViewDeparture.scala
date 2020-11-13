@@ -16,9 +16,10 @@
 
 package viewModels
 
-import java.time.{LocalDate, LocalDateTime, LocalTime}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalTime}
 
+import config.FrontendAppConfig
 import models.{Departure, LocalReferenceNumber, ViewMovementAction}
 import play.api.libs.json.{JsObject, Json, OWrites}
 
@@ -30,8 +31,8 @@ final case class ViewDeparture(updatedDate: LocalDate,
 
 object ViewDeparture {
 
-  def apply(departure: Departure): ViewDeparture = {
-    val departureStatus = DepartureStatus(departure)
+  def apply(departure: Departure, config: FrontendAppConfig): ViewDeparture = {
+    val departureStatus = DepartureStatus(departure, config)
     ViewDeparture(
       updatedDate          = departure.updated.toLocalDate,
       updatedTime          = departure.updated.toLocalTime,

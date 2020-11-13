@@ -64,14 +64,17 @@
                     <span class="govuk-summary-list__value govuk-!-width-full">{{ messages(row.status) }}</span>
                     <span class="govuk-summary-list__value govuk-!-width-full">
 
-                   {% for action in row.actions %}
-                       <a id="{{ messages(action.key) }}-{{ row.lrn }}"
-                          href=" {{ action.href }} ">
-                   {{ messages(action.key) }}
-              <span class="govuk-visually-hidden"> for {{ row.lrn }}</span>
-                   </a>
-
-                   {% endfor %}
+                   <ul class="govuk-list">
+                       {% for action in row.actions %}
+                           <li>
+                               <a id="{{ messages(action.key) }}-{{ row.lrn }}"
+                                  href=" {{ action.href }} ">
+                           {{ messages(action.key) }}
+                            <span class="govuk-visually-hidden"> for {{ row.lrn }}</span>
+                           </a>
+                            </li>
+                       {% endfor %}
+                   </ul>
 
               </span>
 
