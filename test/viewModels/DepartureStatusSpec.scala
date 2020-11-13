@@ -32,7 +32,8 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
       Map("title" -> "DepartureDeclarationReceived", "messageKey" -> "departure.status.departureDeclarationReceived", "link" -> Nil),
       Map("title" -> "GuaranteeValidationFail", "messageKey"      -> "departure.status.guaranteeValidationFail", "link"      -> Nil),
       Map("title" -> "TransitDeclarationSent", "messageKey"       -> "departure.status.transitDeclarationSent", "link"       -> Nil),
-      Map("title" -> "WriteOffNotification", "messageKey"         -> "departure.status.writeOffNotification", "link"         -> Nil)
+      Map("title" -> "WriteOffNotification", "messageKey"         -> "departure.status.writeOffNotification", "link"         -> Nil),
+      Map("title" -> "PositiveAcknowledgement", "messageKey"      -> "departure.status.positiveAcknowledgement", "link"      -> Nil)
     )
 
     "display correct data for each status" - {
