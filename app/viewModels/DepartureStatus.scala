@@ -16,6 +16,7 @@
 
 package viewModels
 
+import controllers.routes
 import models.{Departure, ViewMovementAction}
 
 case class DepartureStatus(status: String, actions: Seq[ViewMovementAction])
@@ -40,8 +41,8 @@ object DepartureStatus {
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
   }
-  
-  private def downloadTADAction(departure: Departure) = ViewMovementAction("", "departure.downloadTAD")
+
+  private def downloadTADAction(departure: Departure) = ViewMovementAction(routes.TadPDFController.getPDF(departure.departureId).url, "departure.downloadTAD")
 
   private def mrnAllocated: PartialFunction[Departure, DepartureStatus] = {
     case departure if departure.status == "MrnAllocated" =>

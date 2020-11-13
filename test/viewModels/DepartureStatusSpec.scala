@@ -18,7 +18,7 @@ package viewModels
 
 import base.SpecBase
 import generators.Generators
-import models.{Departure, ViewMovementAction}
+import models.Departure
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -26,19 +26,16 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
 
   "Departure Status" - {
     val statusOptions = Seq(
-      Map("title"      -> "DepartureSubmitted", "messageKey" -> "departure.status.submitted", "link" -> Nil),
-      Map("title"      -> "MrnAllocated", "messageKey" -> "departure.status.mrnAllocated", "link" -> Nil),
-      Map("title"      -> "ReleasedForTransit",
-          "messageKey" -> "departure.status.releasedForTransit",
-          "link"       -> Seq(ViewMovementAction("", "departure.downloadTAD"))),
-      Map("title"      -> "TransitDeclarationRejected", "messageKey" -> "departure.status.transitDeclarationRejected", "link" -> Nil),
-      Map("title"      -> "DepartureDeclarationReceived", "messageKey" -> "departure.status.departureDeclarationReceived", "link" -> Nil),
-      Map("title"      -> "GuaranteeValidationFail", "messageKey" -> "departure.status.guaranteeValidationFail", "link" -> Nil),
-      Map("title"      -> "TransitDeclarationSent", "messageKey" -> "departure.status.transitDeclarationSent", "link" -> Nil),
-      Map("title"      -> "WriteOffNotification", "messageKey" -> "departure.status.writeOffNotification", "link" -> Nil)
+      Map("title" -> "DepartureSubmitted", "messageKey"           -> "departure.status.submitted", "link"                    -> Nil),
+      Map("title" -> "MrnAllocated", "messageKey"                 -> "departure.status.mrnAllocated", "link"                 -> Nil),
+      Map("title" -> "TransitDeclarationRejected", "messageKey"   -> "departure.status.transitDeclarationRejected", "link"   -> Nil),
+      Map("title" -> "DepartureDeclarationReceived", "messageKey" -> "departure.status.departureDeclarationReceived", "link" -> Nil),
+      Map("title" -> "GuaranteeValidationFail", "messageKey"      -> "departure.status.guaranteeValidationFail", "link"      -> Nil),
+      Map("title" -> "TransitDeclarationSent", "messageKey"       -> "departure.status.transitDeclarationSent", "link"       -> Nil),
+      Map("title" -> "WriteOffNotification", "messageKey"         -> "departure.status.writeOffNotification", "link"         -> Nil)
     )
 
-    "display correct data" - {
+    "display correct data for each status" - {
       for (status <- statusOptions) {
         s"When status is `${status("title")}` display message and link" in {
           forAll(arbitrary[Departure]) {
@@ -48,6 +45,16 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
               DepartureStatus(dep).actions mustBe status("link")
           }
         }
+      }
+    }
+
+    "include tad link on ReleasedForTransit status" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val dep = departure.copy(status = "ReleasedForTransit")
+          DepartureStatus(dep).status mustBe "departure.status.releasedForTransit"
+          DepartureStatus(dep).actions.head.href mustBe s"/manage-transit-movements/departures/${departure.departureId.index}/tad-pdf"
+          DepartureStatus(dep).actions.head.key mustBe "departure.downloadTAD"
       }
     }
   }
