@@ -67,10 +67,9 @@
                    {% for action in row.actions %}
                        <a id="{{ messages(action.key) }}-{{ row.lrn }}"
                           href=" {{ action.href }} ">
-                   {{ messages(action.key) }}
-              <span class="govuk-visually-hidden"> for {{ row.lrn }}</span>
-                   </a>
-
+                       {{ messages(action.key) }}
+                        <span class="govuk-visually-hidden"> for {{ row.lrn }}</span>
+                       </a>
                    {% endfor %}
 
               </span>
