@@ -18,6 +18,8 @@ package viewModels
 
 import config.FrontendAppConfig
 import models.{Departure, DepartureId, ViewMovementAction}
+import controllers.routes
+import models.{Departure, ViewMovementAction}
 
 case class DepartureStatus(status: String, actions: Seq[ViewMovementAction])
 
@@ -30,43 +32,51 @@ object DepartureStatus {
       Seq(
         mrnAllocated,
         departureSubmitted,
+        positiveAcknowledgement,
         releasedForTransit,
         transitDeclarationRejected,
         departureDeclarationReceived,
         guaranteeValidationFail(config),
         transitDeclarationSent,
+        writeOffNotification,
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
   }
 
+  private def downloadTADAction(departure: Departure) = ViewMovementAction(routes.TadPDFController.getPDF(departure.departureId).url, "departure.downloadTAD")
+
   private def mrnAllocated: PartialFunction[Departure, DepartureStatus] = {
     case departure if departure.status == "MrnAllocated" =>
-      DepartureStatus("departure.status.mrnAllocated", Seq(viewHistoryAction(departure)))
+      DepartureStatus("departure.status.mrnAllocated", Nil)
   }
 
-  private def viewHistoryAction(departure: Departure) = ViewMovementAction("", "departure.viewHistory")
   private def viewGuaranteeValidationFailAction(departureId: DepartureId, config: FrontendAppConfig) =
     ViewMovementAction(config.departureFrontendRejectedUrl(departureId), "viewDepartures.table.action.viewErrors")
 
   private def departureSubmitted: DepartureStatusViewModel = {
     case departure if departure.status == "DepartureSubmitted" =>
-      DepartureStatus("departure.status.submitted", actions = Seq(viewHistoryAction(departure)))
+      DepartureStatus("departure.status.submitted", actions = Nil)
+  }
+
+  private def positiveAcknowledgement: DepartureStatusViewModel = {
+    case departure if departure.status == "PositiveAcknowledgement" =>
+      DepartureStatus("departure.status.positiveAcknowledgement", actions = Nil)
   }
 
   private def releasedForTransit: DepartureStatusViewModel = {
     case departure if departure.status == "ReleasedForTransit" =>
-      DepartureStatus("departure.status.releasedForTransit", actions = Seq(viewHistoryAction(departure)))
+      DepartureStatus("departure.status.releasedForTransit", actions = Seq(downloadTADAction(departure)))
   }
 
   private def transitDeclarationRejected: DepartureStatusViewModel = {
     case departure if departure.status == "TransitDeclarationRejected" =>
-      DepartureStatus("departure.status.transitDeclarationRejected", actions = Seq(viewHistoryAction(departure)))
+      DepartureStatus("departure.status.transitDeclarationRejected", actions = Nil)
   }
 
   private def departureDeclarationReceived: DepartureStatusViewModel = {
     case departure if departure.status == "DepartureDeclarationReceived" =>
-      DepartureStatus("departure.status.departureDeclarationReceived", actions = Seq(viewHistoryAction(departure)))
+      DepartureStatus("departure.status.departureDeclarationReceived", actions = Nil)
   }
 
   private def guaranteeValidationFail(config: FrontendAppConfig): DepartureStatusViewModel = {
@@ -77,7 +87,12 @@ object DepartureStatus {
 
   private def transitDeclarationSent: DepartureStatusViewModel = {
     case departure if departure.status == "TransitDeclarationSent" =>
-      DepartureStatus("departure.status.transitDeclarationSent", actions = Seq(viewHistoryAction(departure)))
+      DepartureStatus("departure.status.transitDeclarationSent", actions = Nil)
+  }
+
+  private def writeOffNotification: DepartureStatusViewModel = {
+    case departure if departure.status == "WriteOffNotification" =>
+      DepartureStatus("departure.status.writeOffNotification", actions = Nil)
   }
 
   private def invalidStatus: DepartureStatusViewModel = {

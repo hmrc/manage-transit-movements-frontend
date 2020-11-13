@@ -186,10 +186,13 @@ viewDepartures.table.action.viewHistory       = View history
 viewDepartures.table.action.viewPDF           = TAD PDF ({0})
 
 departure.status.submitted = Departure declaration sent
+departure.status.positiveAcknowledgement = Departure declaration sent
 departure.status.mrnAllocated = MRN allocated
 departure.status.releasedForTransit = Released for transit
 departure.status.transitDeclarationRejected = Transit declaration rejected
 departure.status.departureDeclarationReceived = Departure declaration received
 departure.status.guaranteeValidationFail = Guarantee validation fail
-departure.status.transitDeclarationSent = 	Transit declaration sent
+departure.status.transitDeclarationSent = Transit declaration sent
+departure.status.writeOffNotification = Guarantee written off
 departure.viewHistory = View history
+departure.downloadTAD = TAD PDF [NEEDS IMPLEMENTING]

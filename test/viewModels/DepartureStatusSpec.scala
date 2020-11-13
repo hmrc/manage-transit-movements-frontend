@@ -25,25 +25,37 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "Departure Status" - {
-    val statuses = Seq(
-      "DepartureSubmitted"           -> "departure.status.submitted",
-      "MrnAllocated"                 -> "departure.status.mrnAllocated",
-      "ReleasedForTransit"           -> "departure.status.releasedForTransit",
-      "TransitDeclarationRejected"   -> "departure.status.transitDeclarationRejected",
-      "DepartureDeclarationReceived" -> "departure.status.departureDeclarationReceived",
-      "GuaranteeValidationFail"      -> "departure.status.guaranteeValidationFail",
-      "TransitDeclarationSent"       -> "departure.status.transitDeclarationSent"
+    val statusOptions = Seq(
+      Map("title" -> "DepartureSubmitted", "messageKey"           -> "departure.status.submitted", "link"                    -> Nil),
+      Map("title" -> "MrnAllocated", "messageKey"                 -> "departure.status.mrnAllocated", "link"                 -> Nil),
+      Map("title" -> "TransitDeclarationRejected", "messageKey"   -> "departure.status.transitDeclarationRejected", "link"   -> Nil),
+      Map("title" -> "DepartureDeclarationReceived", "messageKey" -> "departure.status.departureDeclarationReceived", "link" -> Nil),
+      Map("title" -> "GuaranteeValidationFail", "messageKey"      -> "departure.status.guaranteeValidationFail", "link"      -> Nil),
+      Map("title" -> "TransitDeclarationSent", "messageKey"       -> "departure.status.transitDeclarationSent", "link"       -> Nil),
+      Map("title" -> "WriteOffNotification", "messageKey"         -> "departure.status.writeOffNotification", "link"         -> Nil),
+      Map("title" -> "PositiveAcknowledgement", "messageKey"      -> "departure.status.positiveAcknowledgement", "link"      -> Nil)
     )
 
-    "display correct status" - {
-      for (status <- statuses) {
-        s"When status is '${status._1}' display correct message '${status._2}'" in {
+    "display correct data for each status" - {
+      for (status <- statusOptions) {
+        s"When status is `${status("title")}` display message and link" in {
           forAll(arbitrary[Departure]) {
             departure =>
-              val dep = departure.copy(status = status._1)
-              DepartureStatus(dep, frontendAppConfig).status mustBe status._2
+              val dep = departure.copy(status = status("title").toString)
+              DepartureStatus(dep).status mustBe status("messageKey").toString
+              DepartureStatus(dep).actions mustBe status("link")
           }
         }
+      }
+    }
+
+    "include tad link on ReleasedForTransit status" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val dep = departure.copy(status = "ReleasedForTransit")
+          DepartureStatus(dep).status mustBe "departure.status.releasedForTransit"
+          DepartureStatus(dep).actions.head.href mustBe s"/manage-transit-movements/departures/${departure.departureId.index}/tad-pdf"
+          DepartureStatus(dep).actions.head.key mustBe "departure.downloadTAD"
       }
     }
 
