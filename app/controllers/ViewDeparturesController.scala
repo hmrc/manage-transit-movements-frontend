@@ -35,6 +35,7 @@ class ViewDeparturesController @Inject()(
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   connector: DeparturesMovementConnector,
+  config: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -44,7 +45,7 @@ class ViewDeparturesController @Inject()(
     implicit request =>
       connector.getDepartures().flatMap {
         case Some(allDepartures) =>
-          val viewDepartures: Seq[ViewDeparture] = allDepartures.departures.map((departure: Departure) => ViewDeparture(departure))
+          val viewDepartures: Seq[ViewDeparture] = allDepartures.departures.map((departure: Departure) => ViewDeparture(departure, config))
           val formatToJson: JsObject             = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
 
           renderer.render("viewDepartures.njk", formatToJson).map(Ok(_))

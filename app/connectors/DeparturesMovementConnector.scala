@@ -31,9 +31,7 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
     val serviceUrl: String = s"${config.departureUrl}/movements/departures"
     http
       .GET[Departures](serviceUrl)
-      .map {
-        case departures => Some(departures)
-      }
+      .map(departures => Some(departures))
       .recover {
         case _ => None
       }
