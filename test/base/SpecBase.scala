@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.UserAnswers
+import models.{DepartureId, UserAnswers}
 import org.mockito.Mockito
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest._
@@ -56,6 +56,8 @@ trait SpecBase
   val configKey = "config"
 
   val userAnswersId = "id"
+
+  val departureId = DepartureId(0)
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, Json.obj())
 
