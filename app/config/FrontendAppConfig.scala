@@ -60,7 +60,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val departureJourneyToggle: Boolean                               = configuration.getOptional[Boolean]("microservice.services.features.departureJourney").getOrElse(false)
   private val departureFrontendUrl: String                          = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
   val declareDepartureStartWithLRNUrl: String                       = s"$departureFrontendUrl/local-reference-number"
-  def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/departure-rejection"
+  def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
 
   lazy val languageTranslationEnabled: Boolean =
