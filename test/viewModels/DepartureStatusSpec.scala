@@ -18,21 +18,26 @@ package viewModels
 
 import base.SpecBase
 import generators.Generators
-import models.Departure
+import models.{Departure, DepartureId, ViewMovementAction}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "Departure Status" - {
+    val viewTransitDeclarationFailAction =
+      ViewMovementAction(frontendAppConfig.departureFrontendDeclarationFailUrl(departureId), "viewDepartures.table.action.viewErrors")
+
     val statusOptions = Seq(
-      Map("title" -> "DepartureSubmitted", "messageKey"           -> "departure.status.submitted", "link"                    -> Nil),
-      Map("title" -> "MrnAllocated", "messageKey"                 -> "departure.status.mrnAllocated", "link"                 -> Nil),
-      Map("title" -> "TransitDeclarationRejected", "messageKey"   -> "departure.status.transitDeclarationRejected", "link"   -> Nil),
-      Map("title" -> "DepartureDeclarationReceived", "messageKey" -> "departure.status.departureDeclarationReceived", "link" -> Nil),
-      Map("title" -> "TransitDeclarationSent", "messageKey"       -> "departure.status.transitDeclarationSent", "link"       -> Nil),
-      Map("title" -> "WriteOffNotification", "messageKey"         -> "departure.status.writeOffNotification", "link"         -> Nil),
-      Map("title" -> "PositiveAcknowledgement", "messageKey"      -> "departure.status.positiveAcknowledgement", "link"      -> Nil)
+      Map("title"      -> "DepartureSubmitted", "messageKey" -> "departure.status.submitted", "link" -> Nil),
+      Map("title"      -> "MrnAllocated", "messageKey" -> "departure.status.mrnAllocated", "link" -> Nil),
+      Map("title"      -> "TransitDeclarationRejected",
+          "messageKey" -> "departure.status.transitDeclarationRejected",
+          "link"       -> Seq(viewTransitDeclarationFailAction)),
+      Map("title"      -> "DepartureDeclarationReceived", "messageKey" -> "departure.status.departureDeclarationReceived", "link" -> Nil),
+      Map("title"      -> "TransitDeclarationSent", "messageKey" -> "departure.status.transitDeclarationSent", "link" -> Nil),
+      Map("title"      -> "WriteOffNotification", "messageKey" -> "departure.status.writeOffNotification", "link" -> Nil),
+      Map("title"      -> "PositiveAcknowledgement", "messageKey" -> "departure.status.positiveAcknowledgement", "link" -> Nil)
     )
 
     "display correct data for each status" - {
@@ -40,7 +45,9 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
         s"When status is `${status("title")}` display message and link" in {
           forAll(arbitrary[Departure]) {
             departure =>
-              val dep             = departure.copy(status = status("title").toString)
+              val dep = departure
+                .copy(departureId = departureId)
+                .copy(status = status("title").toString)
               val departureStatus = DepartureStatus(dep, frontendAppConfig)
               departureStatus.status mustBe status("messageKey").toString
               departureStatus.actions mustBe status("link")
@@ -61,7 +68,6 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
     }
 
     "When status is guaranteeValidationFail show correct status and action" in {
-
       forAll(arbitrary[Departure]) {
         departure =>
           val updatedDeparture: Departure      = departure.copy(status = "GuaranteeValidationFail")
