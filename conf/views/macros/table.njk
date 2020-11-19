@@ -67,10 +67,10 @@
                     <ul class="govuk-list">
                    {% for action in row.actions %}
                         <li>
-                       <a id="{{ messages(action.key) }}-{{ row.lrn }}"
+                       <a id="{{ messages(action.key) }}-{{ row.localReferenceNumber }}"
                           href=" {{ action.href }} ">
                        {{ messages(action.key) }}
-                        <span class="govuk-visually-hidden"> for {{ row.lrn }}</span>
+                        <span class="govuk-visually-hidden"> for {{ row.localReferenceNumber }}</span>
                        </a>
                        </li>
                    {% endfor %}
