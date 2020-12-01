@@ -17,10 +17,13 @@
 package connectors
 
 import config.FrontendAppConfig
+
 import javax.inject.Inject
-import models.Departures
+import models.{DepartureId, Departures, MessagesSummary}
+import play.api.Logger
 import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpReads.is2xx
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,5 +38,17 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
       .recover {
         case _ => None
       }
+  }
+
+  def getSummary(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[Option[MessagesSummary]] = {
+
+    val serviceUrl: String = s"${config.departureUrl}/movements/departures/${departureId.index}/messages/summary"
+    http.GET[HttpResponse](serviceUrl) map {
+      case responseMessage if is2xx(responseMessage.status) =>
+        Some(responseMessage.json.as[MessagesSummary])
+      case _ =>
+        Logger.error(s"Get Summary failed to return data")
+        None
+    }
   }
 }

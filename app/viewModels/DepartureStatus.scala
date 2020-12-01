@@ -17,6 +17,7 @@
 package viewModels
 
 import config.FrontendAppConfig
+import connectors.DeparturesMovementConnector
 import models.{Departure, DepartureId, ViewMovementAction}
 import controllers.routes
 import models.{Departure, ViewMovementAction}
@@ -39,6 +40,8 @@ object DepartureStatus {
         guaranteeValidationFail(config),
         transitDeclarationSent,
         writeOffNotification,
+        cancellationDecision,
+        declarationCancellationRequest,
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -95,6 +98,17 @@ object DepartureStatus {
   private def writeOffNotification: DepartureStatusViewModel = {
     case departure if departure.status == "WriteOffNotification" =>
       DepartureStatus("departure.status.writeOffNotification", actions = Nil)
+  }
+
+  private def cancellationDecision: DepartureStatusViewModel = {
+
+    case departure if departure.status == "DeclarationCancellationRequest" =>
+      DepartureStatus("departure.status.declarationCancellationRequest", actions = Nil)
+  }
+
+  private def declarationCancellationRequest: DepartureStatusViewModel = {
+    case departure if departure.status == "DeclarationCancellationRequest" =>
+      DepartureStatus("departure.status.declarationCancellationRequest", actions = Nil)
   }
 
   private def invalidStatus: DepartureStatusViewModel = {
