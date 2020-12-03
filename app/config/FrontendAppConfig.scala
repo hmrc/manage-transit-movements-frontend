@@ -57,11 +57,12 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")
 
-  val departureJourneyToggle: Boolean                               = configuration.getOptional[Boolean]("microservice.services.features.departureJourney").getOrElse(false)
-  private val departureFrontendUrl: String                          = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
-  val declareDepartureStartWithLRNUrl: String                       = s"$departureFrontendUrl/local-reference-number"
-  def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
-  def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
+  val departureJourneyToggle: Boolean                                    = configuration.getOptional[Boolean]("microservice.services.features.departureJourney").getOrElse(false)
+  private val departureFrontendUrl: String                               = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
+  val declareDepartureStartWithLRNUrl: String                            = s"$departureFrontendUrl/local-reference-number"
+  def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
+  def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
+  def departureFrontendCancellationDecisionUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
