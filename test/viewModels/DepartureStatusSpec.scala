@@ -77,5 +77,17 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
       }
     }
+
+    "When status is CancellationDecision show correct status and action" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure      = departure.copy(status = "CancellationDecision")
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.declarationCancellationRequest"
+          departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendCancellationDecisionUrl(updatedDeparture.departureId)
+          departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewCancellation"
+      }
+    }
+
   }
 }
