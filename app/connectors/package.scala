@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import models.Arrivals
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 package object connectors {
