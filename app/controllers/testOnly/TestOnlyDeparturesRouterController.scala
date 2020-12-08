@@ -19,18 +19,18 @@ package controllers.testOnly
 import connectors.testOnly.TestOnlyDeparturesRouterConnector
 import javax.inject.Inject
 import play.api.Logger
-import play.api.mvc.{Action, ControllerComponents, DefaultActionBuilder}
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
 class TestOnlyDeparturesRouterController @Inject()(
-  cc: ControllerComponents,
+  cc: MessagesControllerComponents,
   connector: TestOnlyDeparturesRouterConnector,
   action: DefaultActionBuilder
 )(implicit val ec: ExecutionContext)
-    extends BackendController(cc) {
+    extends FrontendController(cc) {
 
   val Log: Logger = Logger(getClass)
 

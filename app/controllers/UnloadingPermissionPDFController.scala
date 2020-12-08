@@ -24,15 +24,15 @@ import models.ArrivalId
 import models.requests.IdentifierRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class UnloadingPermissionPDFController @Inject()(
   identify: IdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
+  cc: MessagesControllerComponents,
   arrivalMovementConnector: ArrivalMovementConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-    extends FrontendBaseController
+    extends FrontendController(cc)
     with I18nSupport {
 
   def getPDF(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
