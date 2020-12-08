@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewDeparture, ViewDepartureMovements}
 
 import scala.concurrent.ExecutionContext
@@ -33,12 +33,12 @@ import scala.concurrent.ExecutionContext
 class ViewDeparturesController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
+  cc: MessagesControllerComponents,
   connector: DeparturesMovementConnector,
   config: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
-    extends FrontendBaseController
+    extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = identify.async {

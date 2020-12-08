@@ -23,18 +23,18 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
 class TechnicalDifficultiesController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
+  cc: MessagesControllerComponents,
   val frontendAppConfig: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+    extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify.async {
