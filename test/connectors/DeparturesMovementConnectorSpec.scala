@@ -77,6 +77,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/departures"))
+            .withHeader("Channel", containing("web"))
             .willReturn(okJson(departuresResponseJson.toString()))
         )
 
@@ -89,6 +90,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
           errorResponse =>
             server.stubFor(
               get(urlEqualTo(s"/$startUrl/movements/departures"))
+                .withHeader("Channel", containing("web"))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)

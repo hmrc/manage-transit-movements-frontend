@@ -27,9 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
-class TadPDFController @Inject()(identify: IdentifierAction,
-                                 cc: MessagesControllerComponents,
-                                 arrivalMovementConnector: ArrivalMovementConnector)(
+class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents, arrivalMovementConnector: ArrivalMovementConnector)(
   implicit ec: ExecutionContext,
   appConfig: FrontendAppConfig)
     extends FrontendController(cc)
