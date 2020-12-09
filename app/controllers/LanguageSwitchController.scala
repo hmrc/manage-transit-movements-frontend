@@ -20,13 +20,13 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import play.api.i18n.{I18nSupport, Lang, MessagesApi}
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 class LanguageSwitchController @Inject()(
   appConfig: FrontendAppConfig,
   implicit override val messagesApi: MessagesApi,
-  val controllerComponents: MessagesControllerComponents
-) extends FrontendBaseController
+  cc: MessagesControllerComponents
+) extends FrontendController(cc)
     with I18nSupport {
 
   private def fallbackURL: String = routes.IndexController.onPageLoad().url

@@ -74,6 +74,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/arrivals"))
+            .withHeader("Channel", containing("web"))
             .willReturn(okJson(arrivalsResponseJson.toString()))
         )
 
@@ -86,6 +87,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
           errorResponse =>
             server.stubFor(
               get(urlEqualTo(s"/$startUrl/movements/arrivals"))
+                .withHeader("Channel", containing("web"))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)
@@ -103,6 +105,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/arrivals/${arrivalId.index}/unloading-permission"))
+            .withHeader("Channel", containing("web"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -121,6 +124,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/arrivals/${arrivalId.index}/unloading-permission"))
+            .withHeader("Channel", containing("web"))
             .willReturn(
               aResponse()
                 .withStatus(genErrorResponse)

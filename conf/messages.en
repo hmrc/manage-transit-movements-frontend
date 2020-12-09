@@ -182,6 +182,7 @@ viewDepartures.table.officeOfDeparture = Office of departure
 viewDepartures.table.status = Status
 viewDepartures.table.action = Action
 viewDepartures.table.action.viewErrors        = View and fix errors
+viewDepartures.table.action.viewCancellation       = View cancellation
 viewDepartures.table.action.viewHistory       = View history
 viewDepartures.table.action.viewPDF           = TAD PDF ({0})
 
@@ -194,5 +195,13 @@ departure.status.departureDeclarationReceived = Departure declaration received
 departure.status.guaranteeValidationFail = Guarantee rejected
 departure.status.transitDeclarationSent = Transit declaration sent
 departure.status.writeOffNotification = Guarantee written off
+departure.status.declarationCancellationRequest = Cancellation decision
 departure.viewHistory = View history
 departure.downloadTAD = TAD PDF [NEEDS IMPLEMENTING]
+
+pageNotFound.title = Page not found
+pageNotFound.heading = Page not found
+pageNotFound.paragraph1 = If you typed the web address, check it is correct.
+pageNotFound.paragraph2 = If you pasted the web address, check you copied the entire address.
+pageNotFound.paragraph3Start = If the web address is correct or you selected a link or button,
+pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpdesk if you need to speak to someone about your transit movement (opens in a new tab)

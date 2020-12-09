@@ -25,17 +25,17 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
 import renderer.Renderer
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class IndexController @Inject()(appConfig: FrontendAppConfig,
                                 identify: IdentifierAction,
-                                val controllerComponents: MessagesControllerComponents,
+                                cc: MessagesControllerComponents,
                                 val arrivalMovementConnector: ArrivalMovementConnector,
                                 val departuresMovementConnector: DeparturesMovementConnector,
                                 renderer: Renderer)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+    extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify.async {
