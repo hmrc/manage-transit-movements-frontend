@@ -23,14 +23,14 @@ import javax.inject.Inject
 import models.DepartureId
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
-class TadPDFController @Inject()(identify: IdentifierAction,
-                                 val controllerComponents: MessagesControllerComponents,
-                                 arrivalMovementConnector: ArrivalMovementConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-    extends FrontendBaseController
+class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents, arrivalMovementConnector: ArrivalMovementConnector)(
+  implicit ec: ExecutionContext,
+  appConfig: FrontendAppConfig)
+    extends FrontendController(cc)
     with I18nSupport {
 
   //TODO: Implement this for TAD
