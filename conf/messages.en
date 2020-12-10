@@ -37,8 +37,8 @@ phaseBanner.3 = will help us to improve it.
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 
-index.title = Manage transit movements
-index.heading = Manage transit movements
+index.title =  Manage your transit movements - GOV.UK
+index.heading = Manage your transit movements
 index.subHeading.arrival = Arrivals
 index.link.arrival.makeArrival = Make an arrival notification
 index.link.arrival.viewArrival = View arrival notifications
