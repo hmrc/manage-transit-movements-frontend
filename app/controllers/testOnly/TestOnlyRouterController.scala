@@ -36,8 +36,6 @@ class TestOnlyRouterController @Inject()(
 
   def fromCoreMessage: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      Log.debug(s"From Core Request Body (Controller): ${request.body}")
-      Log.debug(s"From Core Request Headers (Controller): ${request.headers}")
       connector
         .submitInboundMessage(request.body, request.headers)
         .map(response => Status(response.status))
@@ -45,8 +43,6 @@ class TestOnlyRouterController @Inject()(
 
   def arrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      Log.debug(s"Arrival Notification To Core Request Body (Controller): ${request.body}")
-      Log.debug(s"Arrival Notification To Core Request Headers (Controller): ${request.headers}")
       connector
         .createArrivalNotificationMessage(request.body, request.headers)
         .map {
@@ -62,11 +58,7 @@ class TestOnlyRouterController @Inject()(
 
   def resubmitArrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      Log.debug(s"Arrival Notification To Core Request Body (Controller): ${request.body}")
-      Log.debug(s"Arrival Notification To Core Request Headers (Controller): ${request.headers}")
-
       request.headers.get("arrivalId") match {
-
         case Some(arrivalId) =>
           connector
             .resubmitArrivalNotificationMessage(request.body, arrivalId, request.headers)
@@ -86,9 +78,6 @@ class TestOnlyRouterController @Inject()(
 
   def messageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      Log.debug(s"To Core Request Body (Controller): ${request.body}")
-      Log.debug(s"To Core Request Headers (Controller): ${request.headers}")
-
       request.headers.get("arrivalId") match {
         case Some(arrivalId) =>
           connector

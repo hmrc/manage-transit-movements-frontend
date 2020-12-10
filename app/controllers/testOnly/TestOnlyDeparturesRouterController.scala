@@ -36,8 +36,6 @@ class TestOnlyDeparturesRouterController @Inject()(
 
   def declarationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      Log.debug(s"Declaration To Core Request Body (Controller): ${request.body}")
-      Log.debug(s"Declaration To Core Request Headers (Controller): ${request.headers}")
       connector
         .createDeclarationMessage(request.body, request.headers)
         .map {
