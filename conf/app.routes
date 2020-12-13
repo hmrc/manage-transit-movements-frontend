@@ -10,6 +10,8 @@ GET        /this-service-has-been-reset                     controllers.SessionE
 
 GET        /cannot-use-service-no-eori                      controllers.UnauthorisedController.onPageLoad
 
+GET        /keep-alive                                      controllers.KeepAliveController.keepAlive()
+
 GET        /accessibility-statement                         controllers.AccessibilityController.onPageLoad
 
 GET        /view-arrivals                                   controllers.ViewArrivalsController.onPageLoad
