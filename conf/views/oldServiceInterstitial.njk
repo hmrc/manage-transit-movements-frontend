@@ -1,0 +1,32 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+{% from "govuk/components/back-link/macro.njk"        import govukBackLink %}
+
+{% block pageTitle %}
+  {{ title(messages("oldServiceInterstitial.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+{{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("oldServiceInterstitial.heading") }}
+        </h1>
+
+        <p class="govuk-body">
+           {{messages("oldServiceInterstitial.youMust")}} <a href="https://customs.hmrc.gov.uk/nctsPortalWebApp/ncts.portal" target="_blank">{{ messages("oldServiceInterstitial.ntcsSerivice") }}</a>.
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
