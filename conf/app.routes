@@ -21,3 +21,11 @@ GET        /arrivals/:arrivalId/unloading-permission-pdf    controllers.Unloadin
 GET        /departures/:departureId/tad-pdf                 controllers.TadPDFController.getPDF(departureId: DepartureId)
 
 GET        /view-departures                                 controllers.ViewDeparturesController.onPageLoad
+
+GET        /what-do-you-want-to-do                       controllers.WhatDoYouWantToDoController.onPageLoad
+
+POST        /what-do-you-want-to-do                       controllers.WhatDoYouWantToDoController.onSubmit
+
+GET        /cannot-use-this-service-northern-ireland                       controllers.NorthernIrelandInterstitialController.onPageLoad
+
+GET        /cannot-use-this-service                       controllers.OldServiceInterstitialController.onPageLoad

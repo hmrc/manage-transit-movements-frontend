@@ -205,3 +205,25 @@ pageNotFound.paragraph1 = If you typed the web address, check it is correct.
 pageNotFound.paragraph2 = If you pasted the web address, check you copied the entire address.
 pageNotFound.paragraph3Start = If the web address is correct or you selected a link or button,
 pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpdesk if you need to speak to someone about your transit movement (opens in a new tab)
+
+whatDoYouWantToDo.title = What do you want to do?
+whatDoYouWantToDo.heading = What do you want to do?
+whatDoYouWantToDo.makeArrivalNotificationText=Make an arrival notification
+whatDoYouWantToDo.viewArrivalNotificationAfterText=View arrival notifications sent on or after 1 January 2021
+whatDoYouWantToDo.viewArrivalNotificationBeforeText=View arrival notifications sent on or before 11pm on 31 December 2020
+whatDoYouWantToDo.makeDepartureDeclarationText=Make a new departure declaration
+whatDoYouWantToDo.viewDepartureDeclarationText=View sent departure declarations
+whatDoYouWantToDo.viewNorthernIrelandText=Northern Ireland (NI) movements
+whatDoYouWantToDo.error.required = Select what you want to do
+whatDoYouWantToDo.warningText = From 31 January 2021, you will no longer be able to access any arrival notifications sent before 31 December 2020.
+
+northernIrelandInterstitial.title = You cannot use this service
+northernIrelandInterstitial.heading = You cannot use this service
+northernIrelandInterstitial.youMust = You must:
+northernIrelandInterstitial.viewOldTransit = view old transit movements on the original NCTS service (opens in a new tab)
+northernIrelandInterstitial.readAboutMakingDeparture = read about making departure declarations or arrival notifications for Northern Ireland movements (opens in a new tab)
+
+oldServiceInterstitial.title = You cannot use this service
+oldServiceInterstitial.heading = You cannot use this service
+oldServiceInterstitial.youMust = You must
+oldServiceInterstitial.ntcsSerivice = use the original NCTS service (opens in a new tab)
