@@ -26,7 +26,7 @@ import play.api.mvc.Call
 @Singleton
 class FrontendAppConfig @Inject()(configuration: Configuration) {
 
-  private val contactHost                  = configuration.get[Service]("microservice.services.contact-frontend").fullServiceUrl
+  private val contactHost                  = configuration.get[String]("urls.contactFrontend")
   private val contactFormServiceIdentifier = "play26frontend"
 
   val trackingConsentUrl: String = configuration.get[String]("microservice.services.tracking-consent-frontend.url")
