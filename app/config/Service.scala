@@ -23,7 +23,7 @@ import scala.language.implicitConversions
 final case class Service(host: String, port: String, protocol: String, startUrl: String) {
 
   def baseUrl: String =
-    s"$protocol://$host:$port"
+    s"$protocol://$host:$port/$startUrl"
 
   override def toString: String =
     baseUrl
