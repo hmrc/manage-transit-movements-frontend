@@ -37,9 +37,6 @@ class TestOnlyDeparturesRouterConnector @Inject()(val http: HttpClient, config: 
 
     val serviceUrl = s"${config.departureUrl}/movements/departures"
 
-    Log.debug(s"Implicit Headers To Core (Connector): ${headerCarrier.headers.toString()}")
-    Log.debug(s"Explicit Headers To Core (Connector): ${headers.headers.toString()}")
-
     val newHeaders = headerCarrier
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
       .withExtraHeaders(addHeaders(): _*)

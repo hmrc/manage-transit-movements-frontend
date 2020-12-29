@@ -34,12 +34,9 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
   def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val routerUrl = s"${config.routerUrl}/messages"
-    Log.debug(s"Implicit Headers From Core (Connector): ${headerCarrier.headers.toString()}")
-    Log.debug(s"Explicit Headers From Core (Connector): ${headers.headers.toString()}")
 
     val header = headers.headers.filter(x =>
       x._1.equalsIgnoreCase("X-Message-Recipient") || x._1.equalsIgnoreCase("X-Message-Type") || x._1.equalsIgnoreCase("Content-Type"))
-    Log.debug(s"updated header : $header")
 
     http.POSTString[HttpResponse](routerUrl, requestData.toString, header)
   }
@@ -49,9 +46,6 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
   def createArrivalNotificationMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
-
-    Log.debug(s"Implicit Headers To Core (Connector): ${headerCarrier.headers.toString()}")
-    Log.debug(s"Explicit Headers To Core (Connector): ${headers.headers.toString()}")
 
     val newHeaders = headerCarrier
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
@@ -65,9 +59,6 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals/$arrivalId"
 
-    Log.debug(s"Implicit Headers To Core (Connector): ${headerCarrier.headers.toString()}")
-    Log.debug(s"Explicit Headers To Core (Connector): ${headers.headers.toString()}")
-
     val newHeaders = headerCarrier
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
       .withExtraHeaders(addHeaders(): _*)
@@ -78,9 +69,6 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
   def submitMessageToCore(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals/$arrivalId/messages"
-
-    Log.debug(s"submitMessageToCore:Implicit Headers To Core (Connector): ${headerCarrier.headers.toString()}")
-    Log.debug(s"submitMessageToCore:Explicit Headers To Core (Connector): ${headers.headers.toString()}")
 
     val newHeaders = headerCarrier
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
