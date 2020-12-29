@@ -10,8 +10,6 @@ GET        /cannot-use-service-no-eori                      controllers.Unauthor
 
 GET        /keep-alive                                      controllers.KeepAliveController.keepAlive()
 
-GET        /accessibility-statement                         controllers.AccessibilityController.onPageLoad
-
 GET        /view-arrivals                                   controllers.ViewArrivalsController.onPageLoad
 
 GET        /technical-difficulties                          controllers.TechnicalDifficultiesController.onPageLoad
@@ -22,10 +20,10 @@ GET        /departures/:departureId/tad-pdf                 controllers.TadPDFCo
 
 GET        /view-departures                                 controllers.ViewDeparturesController.onPageLoad
 
-GET        /what-do-you-want-to-do                       controllers.WhatDoYouWantToDoController.onPageLoad
+GET        /what-do-you-want-to-do                          controllers.WhatDoYouWantToDoController.onPageLoad
 
-POST        /what-do-you-want-to-do                       controllers.WhatDoYouWantToDoController.onSubmit
+POST       /what-do-you-want-to-do                          controllers.WhatDoYouWantToDoController.onSubmit
 
-GET        /cannot-use-this-service-northern-ireland                       controllers.NorthernIrelandInterstitialController.onPageLoad
+GET        /cannot-use-this-service-northern-ireland        controllers.NorthernIrelandInterstitialController.onPageLoad
 
-GET        /cannot-use-this-service                       controllers.OldServiceInterstitialController.onPageLoad
+GET        /cannot-use-this-service                         controllers.OldServiceInterstitialController.onPageLoad
