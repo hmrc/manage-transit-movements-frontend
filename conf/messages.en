@@ -12,7 +12,7 @@ site.yes = Yes
 site.continue = Continue
 site.service_name = Manage your transit movements
 site.textarea.char_limit = (Limit is {0} characters)
-site.title.suffix = - Manage Transit Movements - GOV.UK
+site.title.suffix = - Manage your transit movements - GOV.UK
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
