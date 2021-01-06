@@ -41,7 +41,7 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
     http.POSTString[HttpResponse](routerUrl, requestData.toString, header)
   }
 
-  private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml")
+  private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml", "Channel" -> "web")
 
   def createArrivalNotificationMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
