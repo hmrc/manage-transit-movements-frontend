@@ -31,7 +31,7 @@ class TestOnlyDeparturesRouterConnector @Inject()(val http: HttpClient, config: 
 
   val Log: Logger = Logger(getClass)
 
-  private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml")
+  private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml", "Channel" -> "web")
 
   def createDeclarationMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
