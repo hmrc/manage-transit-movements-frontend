@@ -41,8 +41,8 @@ class Renderer @Inject()(appConfig: FrontendAppConfig, renderer: NunjucksRendere
 
   private lazy val config: JsObject = Json.obj(
     "betaFeedbackUnauthenticatedUrl" -> appConfig.betaFeedbackUnauthenticatedUrl,
-    "reportAProblemPartialUrl"       -> appConfig.reportAProblemPartialUrl,
-    "reportAProblemNonJSUrl"         -> appConfig.reportAProblemNonJSUrl,
+    "serviceIdentifier"              -> appConfig.contactFormServiceIdentifier,
+    "contactHost"                    -> appConfig.contactHost,
     "signOutUrl"                     -> appConfig.signOutUrl,
     "timeout"                        -> appConfig.timeoutSeconds,
     "countdown"                      -> appConfig.countdownSeconds,

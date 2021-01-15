@@ -26,18 +26,17 @@ import play.api.mvc.Call
 @Singleton
 class FrontendAppConfig @Inject()(configuration: Configuration) {
 
-  private val contactHost                  = configuration.get[String]("urls.contactFrontend")
-  private val contactFormServiceIdentifier = "play26frontend"
+  lazy val contactHost: String        = configuration.get[Service]("microservice.services.contact-frontend").baseUrl
+  lazy val contactFrontendUrl: String = configuration.get[Service]("microservice.services.contact-frontend").fullServiceUrl
+  val contactFormServiceIdentifier    = "CTCTraders"
 
   val trackingConsentUrl: String = configuration.get[String]("microservice.services.tracking-consent-frontend.url")
   val gtmContainer: String       = configuration.get[String]("microservice.services.tracking-consent-frontend.gtm.container")
 
   val analyticsToken: String         = configuration.get[String](s"google-analytics.token")
   val analyticsHost: String          = configuration.get[String](s"google-analytics.host")
-  val reportAProblemPartialUrl       = s"$contactHost/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  val reportAProblemNonJSUrl         = s"$contactHost/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  val betaFeedbackUrl                = s"$contactHost/beta-feedback"
-  val betaFeedbackUnauthenticatedUrl = s"$contactHost/beta-feedback-unauthenticated"
+  val betaFeedbackUrl                = s"$contactFrontendUrl/beta-feedback"
+  val betaFeedbackUnauthenticatedUrl = s"$contactFrontendUrl/beta-feedback-unauthenticated"
   val signOutUrl: String             = configuration.get[String]("urls.logout")
 
   private val declareUnloadingRemarksUrlBase            = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
@@ -48,13 +47,13 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$declareArrivalNotificationUrlBase/${arrivalId.index}/arrival-rejection"
   def unloadingRemarksRejectedUrl(arrivalId: ArrivalId) = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}/unloading-rejection"
 
-  lazy val authUrl: String          = configuration.get[Service]("auth").baseUrl
+  lazy val authUrl: String          = configuration.get[Service]("auth").fullServiceUrl
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  lazy val departureUrl: String     = configuration.get[Service]("microservice.services.departure").baseUrl
-  lazy val destinationUrl: String   = configuration.get[Service]("microservice.services.destination").baseUrl
-  lazy val referenceDataUrl: String = configuration.get[Service]("microservice.services.reference-data").baseUrl
-  lazy val routerUrl: String        = configuration.get[Service]("microservice.services.testOnly-router").baseUrl
+  lazy val departureUrl: String     = configuration.get[Service]("microservice.services.departure").fullServiceUrl
+  lazy val destinationUrl: String   = configuration.get[Service]("microservice.services.destination").fullServiceUrl
+  lazy val referenceDataUrl: String = configuration.get[Service]("microservice.services.reference-data").fullServiceUrl
+  lazy val routerUrl: String        = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
   lazy val enrolmentKey: String     = configuration.get[String]("keys.enrolmentKey")
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
