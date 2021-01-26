@@ -67,6 +67,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
+  def departureFrontendNoReleasedForTransitUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/no-released-for-transit"
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")

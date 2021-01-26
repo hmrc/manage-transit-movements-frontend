@@ -28,7 +28,7 @@ import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewDeparture, ViewDepartureMovements}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewDeparturesController @Inject()(
   override val messagesApi: MessagesApi,
@@ -49,6 +49,7 @@ class ViewDeparturesController @Inject()(
           val formatToJson: JsObject             = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
 
           renderer.render("viewDepartures.njk", formatToJson).map(Ok(_))
+        case None => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
   }
 }

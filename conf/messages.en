@@ -196,7 +196,9 @@ departure.status.guaranteeValidationFail = Guarantee rejected
 departure.status.transitDeclarationSent = Transit declaration sent
 departure.status.writeOffNotification = Guarantee written off
 departure.status.declarationCancellationRequest = Cancellation decision
+departure.status.noReleaseForTransit = Goods not released
 departure.viewHistory = View history
+departure.viewDetails = View details
 departure.downloadTAD = TAD PDF [NEEDS IMPLEMENTING]
 
 pageNotFound.title = Page not found

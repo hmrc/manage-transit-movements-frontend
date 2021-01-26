@@ -35,9 +35,7 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
 
     http
       .GET[Departures](serviceUrl)(HttpReads[Departures], header, ec)
-      .map {
-        case departures => Some(departures)
-      }
+      .map(departures => Some(departures))
       .recover {
         case _ => None
       }

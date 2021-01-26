@@ -89,5 +89,16 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
       }
     }
 
+    "When status is noReleasedForTransit show correct status and action" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure      = departure.copy(status = "NoReleaseForTransit")
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.noReleasedForTransit"
+          departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendNoReleasedForTransitUrl(updatedDeparture.departureId)
+          departureStatus.actions.head.key mustBe "departure.viewDetails"
+      }
+    }
+
   }
 }

@@ -28,7 +28,7 @@ import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewArrivalsController @Inject()(renderer: Renderer,
                                        identify: IdentifierAction,
@@ -47,6 +47,7 @@ class ViewArrivalsController @Inject()(renderer: Renderer,
           renderer
             .render("viewArrivals.njk", formatToJson)
             .map(Ok(_))
+        case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
   }
 }
