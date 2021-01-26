@@ -115,6 +115,22 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       application.stop()
     }
+
+    "return technical difficulty" in {
+
+      when(mockArrivalMovementConnector.getArrivals()(any()))
+        .thenReturn(Future.successful(None))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewArrivalsController.onPageLoad().url
+      )
+
+      val result = route(application, request).value
+      status(result) mustEqual SEE_OTHER
+
+      application.stop()
+    }
   }
 
   override def beforeEach: Unit = {
