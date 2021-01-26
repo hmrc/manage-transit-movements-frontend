@@ -47,6 +47,7 @@ class ViewArrivalsController @Inject()(renderer: Renderer,
           renderer
             .render("viewArrivals.njk", formatToJson)
             .map(Ok(_))
+
         case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
   }

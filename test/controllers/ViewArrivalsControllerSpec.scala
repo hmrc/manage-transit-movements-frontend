@@ -116,7 +116,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
       application.stop()
     }
 
-    "return Technical difficulty and the correct view for a GET" in {
+    "return technical difficulty" in {
 
       when(mockArrivalMovementConnector.getArrivals()(any()))
         .thenReturn(Future.successful(None))
