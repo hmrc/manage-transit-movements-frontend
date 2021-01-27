@@ -229,3 +229,5 @@ oldServiceInterstitial.title = You cannot use this service
 oldServiceInterstitial.heading = You cannot use this service
 oldServiceInterstitial.youMust = You must
 oldServiceInterstitial.ntcsSerivice = use the original NCTS service (opens in a new tab)
+noReleaseForTransit.title = noReleaseForTransit
+noReleaseForTransit.heading = noReleaseForTransit
