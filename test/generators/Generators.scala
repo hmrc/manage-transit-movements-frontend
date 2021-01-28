@@ -122,10 +122,17 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       seq    <- listOfN(length, arbitrary[A])
     } yield seq
 
+  def listWithMaxLength[T](maxSize: Int, gen: Gen[T]): Gen[Seq[T]] =
+    for {
+      size  <- Gen.choose(1, maxSize)
+      items <- Gen.listOfN(size, gen)
+    } yield items
+
   def alphaNumericWithMaxLength(maxLength: Int): Gen[String] =
     for {
       length <- choose(1, maxLength)
       chars  <- listOfN(length, Gen.alphaNumChar)
     } yield chars.mkString
 
+  val localDateGen: Gen[LocalDate] = datesBetween(LocalDate.of(1900, 1, 1), LocalDate.now)
 }

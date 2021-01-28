@@ -18,9 +18,11 @@ package services
 
 import base.SpecBase
 import connectors.DeparturesMovementConnector
+import generators.Generators
 import models.departure.{MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -28,7 +30,7 @@ import play.api.inject.bind
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with Matchers {
+class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with Matchers with Generators {
 
   private val mockDepartureConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
 
@@ -46,7 +48,7 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
   "DepartureMessageService" - {
     "getNoReleaseForTransitMessage" - {
       "must return NoReleaseForTransitMessage for the input departureId" in {
-        val transitMessage = NoReleaseForTransitMessage("19GB00006010021477", Some("token"), 1000, "RefNumber")
+        val transitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
         val messagesSummary =
           MessagesSummary(
             departureId,

@@ -20,18 +20,21 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
+import generators.Generators
 import helper.WireMockServerHandler
 import models.departure.{MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import utils.Format
 
 import scala.xml.NodeSeq
 
-class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
+class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
   private lazy val connector: DeparturesMovementConnector =
     app.injector.instanceOf[DeparturesMovementConnector]
@@ -151,15 +154,22 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
     "getNoReleaseForTransitMessage" - {
       "must return valid 'no release for transit message'" in {
-        val location     = s"/transits-movements-trader-at-departure/movements/departures/${departureId.index}/messages/1"
-        val xml: NodeSeq = <CC051B>
-              <HEAHEA>
-                <DocNumHEA5>19GB00006010021477</DocNumHEA5>
-                <NoRelMotHEA272>token</NoRelMotHEA272>
-                <TotNumOfIteHEA305>1000</TotNumOfIteHEA305>
-              </HEAHEA>
-              <CUSOFFDEPEPT><RefNumEPT1>RefNumber</RefNumEPT1></CUSOFFDEPEPT>
-            </CC051B>
+        val location         = s"/transits-movements-trader-at-departure/movements/departures/${departureId.index}/messages/1"
+        val noReleaseMessage = arbitrary[NoReleaseForTransitMessage].sample.value.copy(resultsOfControl = None)
+        val xml: NodeSeq     = <CC051B>
+          <HEAHEA>
+          <DocNumHEA5>{noReleaseMessage.mrn}</DocNumHEA5>
+          {noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
+            noReleaseMotivation =>
+              <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>}}
+          <TotNumOfIteHEA305>{noReleaseMessage.totalNumberOfItems}</TotNumOfIteHEA305>
+        </HEAHEA>
+          <CUSOFFDEPEPT><RefNumEPT1>{noReleaseMessage.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>
+          <CONRESERS>
+            <ConResCodERS16>{noReleaseMessage.controlResult.code}</ConResCodERS16>
+            <ConDatERS14>{Format.dateFormatted(noReleaseMessage.controlResult.datLimERS69)}</ConDatERS14>
+          </CONRESERS>
+        </CC051B>
 
         val json = Json.obj("message" -> xml.toString())
 
@@ -170,7 +180,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
               okJson(json.toString)
             )
         )
-        val expectedResult = Some(NoReleaseForTransitMessage("19GB00006010021477", Some("token"), 1000, "RefNumber"))
+        val expectedResult = Some(noReleaseMessage)
 
         connector.getNoReleaseForTransitMessage(location).futureValue mustBe expectedResult
       }

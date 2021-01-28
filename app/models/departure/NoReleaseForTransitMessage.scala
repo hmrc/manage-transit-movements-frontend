@@ -19,8 +19,14 @@ package models.departure
 import cats.syntax.all._
 import com.lucidchart.open.xtract.{__, XmlReader}
 import play.api.libs.json.{Json, OWrites}
+import models.XMLReads._
 
-case class NoReleaseForTransitMessage(mrn: String, noReleaseMotivation: Option[String], totalNumberOfItems: Int, officeOfDepartureRefNumber: String)
+case class NoReleaseForTransitMessage(mrn: String,
+                                      noReleaseMotivation: Option[String],
+                                      totalNumberOfItems: Int,
+                                      officeOfDepartureRefNumber: String,
+                                      controlResult: ControlResult,
+                                      resultsOfControl: Option[Seq[ResultsOfControl]])
 
 object NoReleaseForTransitMessage {
   implicit val writes: OWrites[NoReleaseForTransitMessage] = Json.writes[NoReleaseForTransitMessage]
@@ -29,6 +35,8 @@ object NoReleaseForTransitMessage {
     (__ \ "HEAHEA" \ "DocNumHEA5").read[String],
     (__ \ "HEAHEA" \ "NoRelMotHEA272").read[String].optional,
     (__ \ "HEAHEA" \ "TotNumOfIteHEA305").read[Int],
-    (__ \ "CUSOFFDEPEPT" \ "RefNumEPT1").read[String]
+    (__ \ "CUSOFFDEPEPT" \ "RefNumEPT1").read[String],
+    (__ \ "CONRESERS").read[ControlResult],
+    (__ \ "RESOFCON534").read(strictReadOptionSeq[ResultsOfControl])
   ).mapN(apply)
 }

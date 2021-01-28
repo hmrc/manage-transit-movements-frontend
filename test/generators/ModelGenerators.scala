@@ -16,9 +16,10 @@
 
 package generators
 
-import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneOffset}
+import java.time._
 
 import models._
+import models.departure.{ControlResult, NoReleaseForTransitMessage, ResultsOfControl}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
@@ -157,4 +158,39 @@ trait ModelGenerators {
         lrn <- alphaNumericWithMaxLength(22)
       } yield new LocalReferenceNumber(lrn)
     }
+
+  implicit lazy val arbitraryControlResult: Arbitrary[ControlResult] =
+    Arbitrary {
+      for {
+        dateLimit <- localDateGen
+        code      <- stringsWithMaxLength(2)
+      } yield ControlResult(dateLimit, code)
+    }
+
+  implicit lazy val arbitraryResultsOfControl: Arbitrary[ResultsOfControl] =
+    Arbitrary {
+      for {
+        indicator   <- stringsWithMaxLength(2)
+        description <- Gen.option(nonEmptyString)
+      } yield ResultsOfControl(indicator, description)
+    }
+
+  implicit val arbitraryNoReleaseForTransitMessage: Arbitrary[NoReleaseForTransitMessage] = Arbitrary {
+    for {
+      mrn                        <- nonEmptyString
+      noReleaseMotivation        <- Gen.option(nonEmptyString)
+      totalNumberOfItems         <- arbitrary[Int]
+      officeOfDepartureRefNumber <- arbitrary[String]
+      controlResult              <- arbitrary[ControlResult]
+      resultsOfControl           <- Gen.option(listWithMaxLength(ResultsOfControl.maxResultsOfControl, arbitrary[ResultsOfControl]))
+    } yield
+      new NoReleaseForTransitMessage(
+        mrn                        = mrn,
+        noReleaseMotivation        = noReleaseMotivation,
+        totalNumberOfItems         = totalNumberOfItems,
+        officeOfDepartureRefNumber = officeOfDepartureRefNumber,
+        controlResult              = controlResult,
+        resultsOfControl           = resultsOfControl
+      )
+  }
 }

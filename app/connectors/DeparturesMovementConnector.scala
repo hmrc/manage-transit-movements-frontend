@@ -66,7 +66,7 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
 
   def getNoReleaseForTransitMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[NoReleaseForTransitMessage]] = {
     val serviceUrl = s"${config.departureBaseUrl}$location"
-    val header = hc.withExtraHeaders(ChannelHeader(channel))
+    val header     = hc.withExtraHeaders(ChannelHeader(channel))
 
     http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
       case responseMessage if is2xx(responseMessage.status) =>

@@ -18,9 +18,11 @@ package models.departure
 
 import com.lucidchart.open.xtract.XmlReader
 import generators.Generators
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import utils.Format
 
 import scala.xml.NodeSeq
 
@@ -28,7 +30,7 @@ class NoReleaseForTransitMessageSpec extends AnyFreeSpec with Matchers with Gene
 
   "NoReleaseForTransitMessage" - {
     "must read xml" in {
-      val expectedResult: NoReleaseForTransitMessage = NoReleaseForTransitMessage("mrn", Some("ref"), 111, "token")
+      val expectedResult: NoReleaseForTransitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
       val validXml: NodeSeq                          = <CC051B>
         <HEAHEA>
           <DocNumHEA5>{expectedResult.mrn}</DocNumHEA5>
@@ -38,6 +40,21 @@ class NoReleaseForTransitMessageSpec extends AnyFreeSpec with Matchers with Gene
           <TotNumOfIteHEA305>{expectedResult.totalNumberOfItems}</TotNumOfIteHEA305>
         </HEAHEA>
         <CUSOFFDEPEPT><RefNumEPT1>{expectedResult.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>
+        <CONRESERS>
+          <ConResCodERS16>{expectedResult.controlResult.code}</ConResCodERS16>
+          <ConDatERS14>{Format.dateFormatted(expectedResult.controlResult.datLimERS69)}</ConDatERS14>
+        </CONRESERS>
+        {expectedResult.resultsOfControl.fold(NodeSeq.Empty) {
+          resultsOfControl =>
+            resultsOfControl.map { rc =>
+              <RESOFCON534><ConInd424>{rc.controlIndicator}</ConInd424>
+                {rc.description.fold(NodeSeq.Empty) {
+                description => <DesTOC2>{description}</DesTOC2>
+              }}
+              </RESOFCON534>
+            }
+        }}
+
       </CC051B>
 
       XmlReader.of[NoReleaseForTransitMessage].read(validXml).toOption mustBe Some(expectedResult)

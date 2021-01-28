@@ -17,13 +17,14 @@
 package controllers
 
 import base.SpecBase
+import generators.Generators
 import matchers.JsonMatchers
 import models.departure.NoReleaseForTransitMessage
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
-import play.api
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -33,7 +34,7 @@ import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
   private val mockDepartureMessageService = mock[DepartureMessageService]
 
   override def beforeEach: Unit = {
@@ -43,7 +44,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
   "NoReleaseForTransit Controller" - {
 
     "return OK and the correct view for a GET" in {
-      val transitMessage = NoReleaseForTransitMessage("19GB00006010021477", Some("token"), 1000, "RefNumber")
+      val transitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
