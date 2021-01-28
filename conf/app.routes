@@ -29,4 +29,4 @@ GET        /cannot-use-this-service-northern-ireland        controllers.Northern
 
 GET        /cannot-use-this-service                         controllers.OldServiceInterstitialController.onPageLoad
 
-GET        /noReleaseForTransit                       controllers.NoReleaseForTransitController.onPageLoad
+GET        /:departureId/no-release-for-transit             controllers.NoReleaseForTransitController.onPageLoad(departureId: DepartureId)

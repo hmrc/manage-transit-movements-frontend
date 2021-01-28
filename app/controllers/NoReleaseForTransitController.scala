@@ -18,25 +18,33 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
+import models.DepartureId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.DepartureMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class NoReleaseForTransitController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
+  departureMessageService: DepartureMessageService,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(departureId: DepartureId): Action[AnyContent] = identify.async {
     implicit request =>
-      renderer.render("noReleaseForTransit.njk").map(Ok(_))
+      departureMessageService.noReleaseForTransitMessage(departureId).flatMap {
+        case Some(message) =>
+          val json = Json.obj("noReleaseForTransitMessage" -> Json.toJson(message))
+          renderer.render("noReleaseForTransit.njk", json).map(Ok(_))
+        case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+      }
   }
 }

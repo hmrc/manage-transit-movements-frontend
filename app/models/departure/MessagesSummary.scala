@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+package models.departure
 
-package object connectors {
+import models.DepartureId
+import play.api.libs.json.{__, Reads}
 
-  object CustomHttpReads {
+case class MessagesSummary(departureId: DepartureId, messagesLocation: MessagesLocation)
 
-    implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      new HttpReads[HttpResponse] {
+object MessagesSummary {
 
-        def read(method: String, url: String, response: HttpResponse): HttpResponse = response
-
-      }
-
+  implicit lazy val reads: Reads[MessagesSummary] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "departureId").read[DepartureId] and
+        (__ \ "messages").read[MessagesLocation]
+    )(MessagesSummary.apply _)
   }
-
 }

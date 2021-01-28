@@ -41,7 +41,7 @@ object DepartureStatus {
         writeOffNotification,
         cancellationDecision,
         declarationCancellationRequest(config),
-        noReleasedForTransit(config),
+        noReleasedForTransit,
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -114,11 +114,11 @@ object DepartureStatus {
       )
   }
 
-  private def noReleasedForTransit(config: FrontendAppConfig): DepartureStatusViewModel = {
+  private def noReleasedForTransit: DepartureStatusViewModel = {
     case departure if departure.status == "NoReleaseForTransit" =>
       DepartureStatus(
         "departure.status.noReleaseForTransit",
-        actions = Seq(ViewMovementAction(config.departureFrontendNoReleasedForTransitUrl(departure.departureId), "departure.viewDetails"))
+        actions = Seq(ViewMovementAction(routes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"))
       )
   }
 

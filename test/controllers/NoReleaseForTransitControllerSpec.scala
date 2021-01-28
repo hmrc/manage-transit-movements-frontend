@@ -18,28 +18,42 @@ package controllers
 
 import base.SpecBase
 import matchers.JsonMatchers
+import models.departure.NoReleaseForTransitMessage
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api
+import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.DepartureMessageService
 
 import scala.concurrent.Future
 
 class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+  private val mockDepartureMessageService = mock[DepartureMessageService]
 
+  override def beforeEach: Unit = {
+    reset(mockDepartureMessageService)
+    super.beforeEach
+  }
   "NoReleaseForTransit Controller" - {
 
     "return OK and the correct view for a GET" in {
+      val transitMessage = NoReleaseForTransitMessage("19GB00006010021477", Some("token"), 1000, "RefNumber")
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
+        .thenReturn(Future.successful(Some(transitMessage)))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad().url)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .build()
+      val request        = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 

@@ -229,5 +229,11 @@ oldServiceInterstitial.title = You cannot use this service
 oldServiceInterstitial.heading = You cannot use this service
 oldServiceInterstitial.youMust = You must
 oldServiceInterstitial.ntcsSerivice = use the original NCTS service (opens in a new tab)
-noReleaseForTransit.title = noReleaseForTransit
-noReleaseForTransit.heading = noReleaseForTransit
+
+noReleaseForTransit.title = There is a problem with this departure declaration
+noReleaseForTransit.heading = There is a problem with this departure declaration
+noReleaseForTransit.mrn = Movement reference number
+noReleaseForTransit.totalNumberOfItems = Total number of items
+noReleaseForTransit.noReleaseMotivation = No release motivation
+noReleaseForTransit.officeOfDepartureRefNumber = Office of departure reference number
+noReleaseForTransit.p = You must contact the office of departure for more details.

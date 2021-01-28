@@ -15,7 +15,43 @@
         <h1 class="govuk-heading-xl">
           {{ messages("noReleaseForTransit.heading") }}
         </h1>
-
+        <dl class="govuk-summary-list">
+        {% if noReleaseForTransitMessage.noReleaseMotivation %}
+            <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key" style="width: 48%">
+                 {{ messages("noReleaseForTransit.noReleaseMotivation") }}
+                  </dt>
+                  <dd class="govuk-summary-list__value" style="width: 62%">
+                  {{noReleaseForTransitMessage.noReleaseMotivation}}
+                  </dd>
+            </div>
+        {% endif %}
+            <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key" style="width: 48%">
+                 {{ messages("noReleaseForTransit.mrn") }}
+                  </dt>
+                  <dd class="govuk-summary-list__value" style="width: 62%">
+                  {{noReleaseForTransitMessage.mrn}}
+                  </dd>
+            </div>
+             <div class="govuk-summary-list__row">
+                   <dt class="govuk-summary-list__key" style="width: 48%">
+                  {{ messages("noReleaseForTransit.totalNumberOfItems") }}
+                   </dt>
+                   <dd class="govuk-summary-list__value" style="width: 62%">
+                   {{noReleaseForTransitMessage.totalNumberOfItems}}
+                   </dd>
+             </div>
+               <div class="govuk-summary-list__row">
+                     <dt class="govuk-summary-list__key" style="width: 48%">
+                    {{ messages("noReleaseForTransit.officeOfDepartureRefNumber") }}
+                     </dt>
+                     <dd class="govuk-summary-list__value" style="width: 62%">
+                     {{noReleaseForTransitMessage.officeOfDepartureRefNumber}}
+                     </dd>
+               </div>
+               </dl>
+          <p class="govuk-body">{{ messages("noReleaseForTransit.p") }}
       </div>
     </div>
   </div>
