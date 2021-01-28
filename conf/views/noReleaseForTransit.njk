@@ -51,7 +51,42 @@
                      </dd>
                </div>
                </dl>
-          <p class="govuk-body">{{ messages("noReleaseForTransit.p") }}
+
+           <dl class="govuk-summary-list">
+                  {% if noReleaseForTransitMessage.resultsOfControl %}
+                    {% for resultsOfControl in noReleaseForTransitMessage.resultsOfControl %}
+                      <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key" style="width: 48%">
+                           {{ messages("noReleaseForTransit.resultsOfControlIndicator") }}
+                            </dt>
+                            <dd class="govuk-summary-list__value" style="width: 62%">
+                            {{resultsOfControl.controlIndicator}}
+                            </dd>
+                      </div>
+                      {% if resultsOfControl.description %}
+                          <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key" style="width: 48%">
+                               {{ messages("noReleaseForTransit.resultsOfControlDescription") }}
+                                </dt>
+                                <dd class="govuk-summary-list__value" style="width: 62%">
+                                {{resultsOfControl.description}}
+                                </dd>
+                          </div>
+                      {% endif %}
+                     {% endfor %}
+                     <div class="govuk-summary-list__row">
+                          <dt class="govuk-summary-list__key" style="width: 48%">
+                         {{ messages("noReleaseForTransit.ControlResultCode") }}
+                          </dt>
+                          <dd class="govuk-summary-list__value" style="width: 62%">
+                          {{noReleaseForTransitMessage.controlResult.code}}
+                          </dd>
+                    </div>
+                  {% endif %}
+           </dl>
+
+         <p class="govuk-body">{{ messages("noReleaseForTransit.p") }}
+
       </div>
     </div>
   </div>
