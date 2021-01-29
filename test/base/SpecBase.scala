@@ -57,7 +57,7 @@ trait SpecBase
 
   val userAnswersId = "id"
 
-  val departureId = DepartureId(0)
+  val departureId = DepartureId(1)
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, Json.obj())
 

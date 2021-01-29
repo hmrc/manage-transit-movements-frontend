@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+package models.departure
 
-package object connectors {
+import java.time.LocalDate
 
-  object CustomHttpReads {
+import com.lucidchart.open.xtract.{__, XmlReader}
+import cats.syntax.all._
+import models.XMLReads._
+import play.api.libs.json.{Json, OWrites}
 
-    implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      new HttpReads[HttpResponse] {
+case class ControlResult(datLimERS69: LocalDate, code: String)
 
-        def read(method: String, url: String, response: HttpResponse): HttpResponse = response
+object ControlResult {
+  implicit val writes: OWrites[ControlResult] = Json.writes[ControlResult]
 
-      }
-
-  }
+  implicit val xmlReader: XmlReader[ControlResult] =
+    ((__ \ "ConDatERS14").read[LocalDate], (__ \ "ConResCodERS16").read[String]).mapN(apply)
 
 }

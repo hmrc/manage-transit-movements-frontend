@@ -20,18 +20,21 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
+import generators.Generators
 import helper.WireMockServerHandler
+import models.departure.{MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import utils.Format
 
-import scala.concurrent.Future
+import scala.xml.NodeSeq
 
-class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
+class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
   private lazy val connector: DeparturesMovementConnector =
     app.injector.instanceOf[DeparturesMovementConnector]
@@ -100,5 +103,129 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
         }
       }
     }
+
+    "getSummary" - {
+
+      "must be return summary of messages" in {
+        val json = Json.obj(
+          "departureId" -> departureId.index,
+          "messages" -> Json.obj(
+            "IE015" -> s"/movements/departures/${departureId.index}/messages/3",
+            "IE055" -> s"/movements/departures/${departureId.index}/messages/5",
+            "IE016" -> s"/movements/departures/${departureId.index}/messages/7",
+            "IE009" -> s"/movements/departures/${departureId.index}/messages/9",
+            "IE014" -> s"/movements/departures/${departureId.index}/messages/11",
+            "IE051" -> s"/movements/departures/${departureId.index}/messages/12"
+          )
+        )
+
+        val messageAction =
+          MessagesSummary(
+            departureId,
+            MessagesLocation(
+              s"/movements/departures/${departureId.index}/messages/3",
+              Some(s"/movements/departures/${departureId.index}/messages/5"),
+              Some(s"/movements/departures/${departureId.index}/messages/7"),
+              Some(s"/movements/departures/${departureId.index}/messages/9"),
+              Some(s"/movements/departures/${departureId.index}/messages/11"),
+              Some(s"/movements/departures/${departureId.index}/messages/12")
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/transits-movements-trader-at-departure/movements/departures/${departureId.index}/messages/summary"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+        connector.getSummary(departureId).futureValue mustBe Some(messageAction)
+      }
+
+      "must return 'None' when an error response is returned from getSummary" in {
+        forAll(errorResponses) {
+          errorResponseCode: Int =>
+            stubGetResponse(errorResponseCode, "/transits-movements-trader-at-departure/movements/departures/1/messages/summary")
+
+            connector.getSummary(departureId).futureValue mustBe None
+        }
+      }
+    }
+
+    "getNoReleaseForTransitMessage" - {
+      "must return valid 'no release for transit message'" in {
+        val location         = s"/transits-movements-trader-at-departure/movements/departures/${departureId.index}/messages/1"
+        val noReleaseMessage = arbitrary[NoReleaseForTransitMessage].sample.value.copy(resultsOfControl = None)
+        val xml: NodeSeq     = <CC051B>
+          <HEAHEA>
+          <DocNumHEA5>{noReleaseMessage.mrn}</DocNumHEA5>
+          {noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
+            noReleaseMotivation =>
+              <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>}}
+          <TotNumOfIteHEA305>{noReleaseMessage.totalNumberOfItems}</TotNumOfIteHEA305>
+        </HEAHEA>
+          <CUSOFFDEPEPT><RefNumEPT1>{noReleaseMessage.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>
+          <CONRESERS>
+            <ConResCodERS16>{noReleaseMessage.controlResult.code}</ConResCodERS16>
+            <ConDatERS14>{Format.dateFormatted(noReleaseMessage.controlResult.datLimERS69)}</ConDatERS14>
+          </CONRESERS>
+        </CC051B>
+
+        val json = Json.obj("message" -> xml.toString())
+
+        server.stubFor(
+          get(urlEqualTo(location))
+            .withHeader("Channel", containing("web"))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+        val expectedResult = Some(noReleaseMessage)
+
+        connector.getNoReleaseForTransitMessage(location).futureValue mustBe expectedResult
+      }
+
+      "must return None for malformed input'" in {
+        val location     = s"/transits-movements-trader-at-departure/movements/departures/${departureId.index}/messages/1"
+        val xml: NodeSeq = <CC051B>
+          <HEAHEA>
+            <NoRelMotHEA272>token</NoRelMotHEA272>
+            <TotNumOfIteHEA305>1000</TotNumOfIteHEA305>
+          </HEAHEA>
+          <CUSOFFDEPEPT><RefNumEPT1>RefNumber</RefNumEPT1></CUSOFFDEPEPT>
+        </CC051B>
+
+        val json = Json.obj("message" -> xml.toString())
+
+        server.stubFor(
+          get(urlEqualTo(location))
+            .withHeader("Channel", containing("web"))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+
+        connector.getNoReleaseForTransitMessage(location).futureValue mustBe None
+      }
+
+      "must return None when an error response is returned from getGuaranteeNotValidMessage" in {
+        val location: String = "/transits-movements-trader-at-departure/movements/departures/1/messages/1"
+        forAll(errorResponses) {
+          errorResponseCode =>
+            stubGetResponse(errorResponseCode, location)
+
+            connector.getNoReleaseForTransitMessage(location).futureValue mustBe None
+        }
+      }
+    }
   }
+
+  private def stubGetResponse(errorResponseCode: Int, serviceUrl: String) =
+    server.stubFor(
+      get(urlEqualTo(serviceUrl))
+        .withHeader("Channel", containing("web"))
+        .willReturn(
+          aResponse()
+            .withStatus(errorResponseCode)
+        ))
 }

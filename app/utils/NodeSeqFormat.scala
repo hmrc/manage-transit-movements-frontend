@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+package utils
 
-package object connectors {
+import play.api.libs.json._
 
-  object CustomHttpReads {
+import scala.xml.{NodeSeq, XML}
 
-    implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      new HttpReads[HttpResponse] {
+trait NodeSeqFormat {
+  implicit val writesNodeSeq: Writes[NodeSeq] = (o: NodeSeq) => JsString(o.mkString)
 
-        def read(method: String, url: String, response: HttpResponse): HttpResponse = response
-
-      }
-
+  implicit val readsNodeSeq: Reads[NodeSeq] = {
+    case JsString(value) => JsSuccess(XML.loadString(value))
+    case _               => JsError("Value cannot be parsed as XML")
   }
-
 }
+
+object NodeSeqFormat extends NodeSeqFormat

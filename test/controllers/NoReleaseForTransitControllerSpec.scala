@@ -16,55 +16,45 @@
 
 package controllers
 
-import java.time.LocalDateTime
-
 import base.SpecBase
-import connectors.DeparturesMovementConnector
+import generators.Generators
 import matchers.JsonMatchers
-import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
+import models.departure.NoReleaseForTransitMessage
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+  private val mockDepartureMessageService = mock[DepartureMessageService]
 
-  private val mockDepartureResponse: Departures = {
-    Departures(
-      Seq(
-        Departure(
-          DepartureId(1),
-          LocalDateTime.now(),
-          LocalReferenceNumber("lrn"),
-          "Submitted"
-        )
-      )
-    )
+  override def beforeEach: Unit = {
+    reset(mockDepartureMessageService)
+    super.beforeEach
   }
-
-  "ViewDepartures Controller" - {
+  "NoReleaseForTransit Controller" - {
 
     "return OK and the correct view for a GET" in {
-
-      val mockConnector = mock[DeparturesMovementConnector]
-      when(mockConnector.getDepartures()(any()))
-        .thenReturn(Future.successful(Some(mockDepartureResponse)))
+      val transitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
+        .thenReturn(Future.successful(Some(transitMessage)))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
+        .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
         .build()
-
-      val request        = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
+      val request        = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -76,26 +66,8 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       val expectedJson = Json.obj()
 
-      templateCaptor.getValue mustEqual "viewDepartures.njk"
+      templateCaptor.getValue mustEqual "noReleaseForTransit.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "redirect to Technical difficulties page on failing to fetch departures" in {
-
-      val mockConnector = mock[DeparturesMovementConnector]
-      when(mockConnector.getDepartures()(any()))
-        .thenReturn(Future.successful(None))
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
-        .build()
-
-      val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
 
       application.stop()
     }

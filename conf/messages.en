@@ -196,7 +196,9 @@ departure.status.guaranteeValidationFail = Guarantee rejected
 departure.status.transitDeclarationSent = Transit declaration sent
 departure.status.writeOffNotification = Guarantee written off
 departure.status.declarationCancellationRequest = Cancellation decision
+departure.status.noReleaseForTransit = Goods not released
 departure.viewHistory = View history
+departure.viewDetails = View details
 departure.downloadTAD = TAD PDF [NEEDS IMPLEMENTING]
 
 pageNotFound.title = Page not found
@@ -227,3 +229,14 @@ oldServiceInterstitial.title = You cannot use this service
 oldServiceInterstitial.heading = You cannot use this service
 oldServiceInterstitial.youMust = You must
 oldServiceInterstitial.ntcsSerivice = use the original NCTS service (opens in a new tab)
+
+noReleaseForTransit.title = There is a problem with this departure declaration
+noReleaseForTransit.heading = There is a problem with this departure declaration
+noReleaseForTransit.mrn = Movement reference number
+noReleaseForTransit.totalNumberOfItems = Total number of items
+noReleaseForTransit.noReleaseMotivation = No release motivation
+noReleaseForTransit.resultsOfControlIndicator = Control indicator
+noReleaseForTransit.resultsOfControlDescription = Description
+noReleaseForTransit.ControlResultCode = Code
+noReleaseForTransit.officeOfDepartureRefNumber = Office of departure reference number
+noReleaseForTransit.p = You must contact the office of departure for more details.

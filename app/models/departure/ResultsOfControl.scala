@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+package models.departure
 
-package object connectors {
+import cats.syntax.all._
+import com.lucidchart.open.xtract.{__, XmlReader}
+import play.api.libs.json.{Json, OWrites}
 
-  object CustomHttpReads {
+case class ResultsOfControl(controlIndicator: String, description: Option[String])
 
-    implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      new HttpReads[HttpResponse] {
+object ResultsOfControl {
+  val maxResultsOfControl = 9
 
-        def read(method: String, url: String, response: HttpResponse): HttpResponse = response
+  implicit val writes: OWrites[ResultsOfControl] = Json.writes[ResultsOfControl]
 
-      }
-
-  }
-
+  implicit val xmlReader: XmlReader[ResultsOfControl] =
+    ((__ \ "ConInd424").read[String], (__ \ "DesTOC2").read[String].optional).mapN(apply)
 }

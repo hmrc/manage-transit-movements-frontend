@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+package models
 
-package object connectors {
+import play.api.libs.json.{Json, Reads}
+import utils.NodeSeqFormat
 
-  object CustomHttpReads {
+import scala.xml.NodeSeq
 
-    implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      new HttpReads[HttpResponse] {
+case class ResponseMessage(message: NodeSeq)
 
-        def read(method: String, url: String, response: HttpResponse): HttpResponse = response
-
-      }
-
-  }
-
+object ResponseMessage extends NodeSeqFormat {
+  implicit val reads: Reads[ResponseMessage] = Json.reads[ResponseMessage]
 }

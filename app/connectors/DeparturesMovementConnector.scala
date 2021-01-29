@@ -18,15 +18,22 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.{Arrivals, Departures}
+import models.departure.{MessagesSummary, NoReleaseForTransitMessage}
+import models.{DepartureId, Departures, ResponseMessage}
+import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import CustomHttpReads.rawHttpResponseHttpReads
+import com.lucidchart.open.xtract.XmlReader
+import uk.gov.hmrc.http.HttpReads.is2xx
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.NodeSeq
 
 class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) {
+  val logger: Logger          = Logger(getClass)
   private val channel: String = "web"
 
   def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] = {
@@ -35,12 +42,40 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
 
     http
       .GET[Departures](serviceUrl)(HttpReads[Departures], header, ec)
-      .map {
-        case departures => Some(departures)
-      }
+      .map(departures => Some(departures))
       .recover {
-        case _ => None
+        case _ =>
+          logger.error(s"get Departures failed to return data")
+          None
       }
+  }
+
+  def getSummary(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[Option[MessagesSummary]] = {
+
+    val serviceUrl: String = s"${config.departureUrl}/movements/departures/${departureId.index}/messages/summary"
+    val header             = hc.withExtraHeaders(ChannelHeader(channel))
+
+    http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
+      case responseMessage if is2xx(responseMessage.status) =>
+        Some(responseMessage.json.as[MessagesSummary])
+      case _ =>
+        logger.error(s"Get Summary failed to return data")
+        None
+    }
+  }
+
+  def getNoReleaseForTransitMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[NoReleaseForTransitMessage]] = {
+    val serviceUrl = s"${config.departureBaseUrl}$location"
+    val header     = hc.withExtraHeaders(ChannelHeader(channel))
+
+    http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
+      case responseMessage if is2xx(responseMessage.status) =>
+        val message: NodeSeq = responseMessage.json.as[ResponseMessage].message
+        XmlReader.of[NoReleaseForTransitMessage].read(message).toOption
+      case _ =>
+        logger.error(s"NoReleaseForTransitMessage failed to return data")
+        None
+    }
   }
 
   object ChannelHeader {
