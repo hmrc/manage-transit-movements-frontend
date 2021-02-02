@@ -240,3 +240,6 @@ noReleaseForTransit.resultsOfControlDescription = Description
 noReleaseForTransit.ControlResultCode = Code
 noReleaseForTransit.officeOfDepartureRefNumber = Office of departure reference number
 noReleaseForTransit.p = You must contact the office of departure for more details.
+
+controlDecision.title = controlDecision
+controlDecision.heading = controlDecision
