@@ -106,7 +106,9 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
           val updatedDeparture: Departure      = departure.copy(status = "ControlDecision")
           val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.controlDecision"
-          departureStatus.actions.head.href mustBe controllers.routes.ControlDecisionController.onPageLoad(updatedDeparture.departureId).url
+          departureStatus.actions.head.href mustBe controllers.routes.ControlDecisionController
+            .onPageLoad(updatedDeparture.departureId, updatedDeparture.localReferenceNumber)
+            .url
           departureStatus.actions.head.key mustBe "departure.viewDetails"
       }
     }

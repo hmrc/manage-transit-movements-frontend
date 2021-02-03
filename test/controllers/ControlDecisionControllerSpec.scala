@@ -19,13 +19,13 @@ package controllers
 import base.SpecBase
 import generators.Generators
 import matchers.JsonMatchers
-import models.departure.{ControlDecision, NoReleaseForTransitMessage}
+import models.LocalReferenceNumber
+import models.departure.ControlDecision
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -48,7 +48,8 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
 
     "return OK and the correct view for a GET" in {
 
-      val controlDecision = arbitrary[ControlDecision].sample.value
+      val controlDecision      = arbitrary[ControlDecision].sample.value
+      val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -60,7 +61,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
         .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
         .build()
 
-      val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId).url)
+      val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])

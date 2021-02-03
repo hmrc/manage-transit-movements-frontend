@@ -32,7 +32,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         mrn                 <- arbitrary[String]
-        dateOfControl       <- arbitrary[String]
+        dateOfControl       <- arbitrary[LocalDate]
         principleTraderName <- arbitrary[String]
         principleTraderEori <- Gen.option(arbitrary[String])
       } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)

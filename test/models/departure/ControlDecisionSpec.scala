@@ -24,6 +24,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import utils.Format
 
 import scala.xml.NodeSeq
 
@@ -50,7 +51,7 @@ object ControlDecisionSpec {
     <CC060A>
       <HEAHEA>
         <DocNumHEA5>{controlDecision.movementReferenceNumber}</DocNumHEA5>
-        <DatOfConNotHEA148>{controlDecision.dateOfControl}</DatOfConNotHEA148>
+        <DatOfConNotHEA148>{Format.dateFormatted(controlDecision.dateOfControl)}</DatOfConNotHEA148>
       </HEAHEA>
       <TRAPRIPC1>
         <NamPC17>{controlDecision.principleTraderName}</NamPC17>

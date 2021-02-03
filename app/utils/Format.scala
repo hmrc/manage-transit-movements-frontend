@@ -25,9 +25,14 @@ object Format {
   def dateFormatted(date: LocalDate): String         = date.format(dateFormatter)
   def dateFormatted(dateTime: LocalDateTime): String = dateTime.format(dateFormatter)
 
+  val controlDecisionDateFormatter: DateTimeFormatter               = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+  def controlDecisionDateFormatted(date: LocalDate): String         = date.format(controlDecisionDateFormatter)
+  def controlDecisionDateFormatted(dateTime: LocalDateTime): String = dateTime.format(controlDecisionDateFormatter)
+
   val timeFormatter: DateTimeFormatter               = DateTimeFormatter.ofPattern("HHmm")
   def timeFormatted(dateTime: LocalDateTime): String = dateTime.format(timeFormatter)
   def timeFormatted(time: LocalTime): String         = time.format(timeFormatter)
+
 
   def dateFormattedForHeader(dateTime: OffsetDateTime): String =
     dateTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
