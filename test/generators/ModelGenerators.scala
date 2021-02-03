@@ -31,10 +31,10 @@ trait ModelGenerators {
   implicit val arbitraryControlDecision: Arbitrary[ControlDecision] = {
     Arbitrary {
       for {
-        mrn                 <- arbitrary[String]
+        mrn                 <- Gen.alphaNumStr
         dateOfControl       <- arbitrary[LocalDate]
-        principleTraderName <- arbitrary[String]
-        principleTraderEori <- Gen.option(arbitrary[String])
+        principleTraderName <- Gen.alphaNumStr
+        principleTraderEori <- Gen.option(Gen.alphaNumStr)
       } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)
     }
   }
