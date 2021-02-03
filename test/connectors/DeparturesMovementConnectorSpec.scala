@@ -22,7 +22,7 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
-import models.departure.{MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
+import models.departure.{ControlDecision, ControlDecisionSpec, MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -115,7 +115,8 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             "IE016" -> s"/movements/departures/${departureId.index}/messages/7",
             "IE009" -> s"/movements/departures/${departureId.index}/messages/9",
             "IE014" -> s"/movements/departures/${departureId.index}/messages/11",
-            "IE051" -> s"/movements/departures/${departureId.index}/messages/12"
+            "IE051" -> s"/movements/departures/${departureId.index}/messages/12",
+            "IE060" -> s"/movements/departures/${departureId.index}/messages/13"
           )
         )
 
@@ -128,7 +129,8 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
               Some(s"/movements/departures/${departureId.index}/messages/7"),
               Some(s"/movements/departures/${departureId.index}/messages/9"),
               Some(s"/movements/departures/${departureId.index}/messages/11"),
-              Some(s"/movements/departures/${departureId.index}/messages/12")
+              Some(s"/movements/departures/${departureId.index}/messages/12"),
+              Some(s"/movements/departures/${departureId.index}/messages/13")
             )
           )
 
@@ -218,6 +220,58 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
         }
       }
     }
+
+    "getControlDecisionMessage" - {
+      "must return valid controlDecision" in {
+
+        forAll(arbitrary[ControlDecision]) {
+          controlDecision =>
+            val location     = s"/transits-movements-trader-at-departure/movements/departures/${departureId.index}/messages/1"
+            val xml: NodeSeq = ControlDecisionSpec.toXml(controlDecision)
+
+            val json = Json.obj("message" -> xml.toString())
+
+            server.stubFor(
+              get(urlEqualTo(location))
+                .withHeader("Channel", containing("web"))
+                .willReturn(
+                  okJson(json.toString)
+                )
+            )
+            val result = connector.getControlDecisionMessage(location).futureValue.value
+
+            result mustBe controlDecision
+        }
+      }
+
+      "must return None for malformed input'" in {
+        val location     = s"/transits-movements-trader-at-departure/movements/departures/${departureId.index}/messages/1"
+        val xml: NodeSeq = <CC060A></CC060A>
+
+        val json = Json.obj("message" -> xml.toString())
+
+        server.stubFor(
+          get(urlEqualTo(location))
+            .withHeader("Channel", containing("web"))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+
+        connector.getControlDecisionMessage(location).futureValue mustBe None
+      }
+
+      "must return None when an error response is returned from getGuaranteeNotValidMessage" in {
+        val location: String = "/transits-movements-trader-at-departure/movements/departures/1/messages/1"
+        forAll(errorResponses) {
+          errorResponseCode =>
+            stubGetResponse(errorResponseCode, location)
+
+            connector.getControlDecisionMessage(location).futureValue mustBe None
+        }
+      }
+    }
+
   }
 
   private def stubGetResponse(errorResponseCode: Int, serviceUrl: String) =

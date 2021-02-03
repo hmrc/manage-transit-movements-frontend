@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import connectors.DeparturesMovementConnector
 import generators.Generators
-import models.departure.{MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
+import models.departure.{ControlDecision, MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -58,7 +58,8 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
               declarationRejection       = Some("/movements/departures/1234/messages/7"),
               cancellationDecisionUpdate = Some("/movements/departures/1234/messages/9"),
               declarationCancellation    = Some("/movements/departures/1234/messages/11"),
-              noReleaseForTransit        = Some("/movements/departures/1234/messages/12")
+              noReleaseForTransit        = Some("/movements/departures/1234/messages/12"),
+              None
             )
           )
 
@@ -71,7 +72,7 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
 
       "must return None when getSummary fails to get noReleaseForTransit message" in {
         val messagesSummary =
-          MessagesSummary(departureId, MessagesLocation(s"/movements/departures/${departureId.index}/messages/3", None, None, None, None, None))
+          MessagesSummary(departureId, MessagesLocation(s"/movements/departures/${departureId.index}/messages/3", None, None, None, None, None, None))
         when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))
 
         messageService.noReleaseForTransitMessage(departureId).futureValue mustBe None
@@ -83,5 +84,45 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
         messageService.noReleaseForTransitMessage(departureId).futureValue mustBe None
       }
     }
+
+    "getControlDecisionMessage" - {
+      "must return ControlDecision for the input departureId" in {
+        val transitMessage = arbitrary[ControlDecision].sample.value
+        val messagesSummary =
+          MessagesSummary(
+            departureId,
+            MessagesLocation(
+              departureMessage = s"/movements/departures/${departureId.index}/messages/3",
+              None,
+              None,
+              None,
+              None,
+              None,
+              controlDecision = Some(s"/movements/departures/${departureId.index}/messages/5")
+            )
+          )
+
+        when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))
+        when(mockDepartureConnector.getControlDecisionMessage(any())(any()))
+          .thenReturn(Future.successful(Some(transitMessage)))
+
+        messageService.controlDecisionMessage(departureId).futureValue.value mustBe transitMessage
+      }
+
+      "must return None when getSummary fails to get controlDecision message" in {
+        val messagesSummary =
+          MessagesSummary(departureId, MessagesLocation(s"/movements/departures/${departureId.index}/messages/3", None, None, None, None, None, None))
+        when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))
+
+        messageService.controlDecisionMessage(departureId).futureValue mustBe None
+      }
+
+      "must return None when getSummary call fails to get MessagesSummary" in {
+        when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(None))
+
+        messageService.controlDecisionMessage(departureId).futureValue mustBe None
+      }
+    }
+
   }
 }

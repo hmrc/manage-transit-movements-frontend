@@ -39,7 +39,8 @@ case class MessagesLocation(departureMessage: String,
                             declarationRejection: Option[String],
                             cancellationDecisionUpdate: Option[String],
                             declarationCancellation: Option[String],
-                            noReleaseForTransit: Option[String])
+                            noReleaseForTransit: Option[String],
+                            controlDecision: Option[String])
 
 object MessagesLocation {
 
@@ -51,6 +52,7 @@ object MessagesLocation {
       (__ \ "IE016").readNullable[String] and
       (__ \ "IE009").readNullable[String] and
       (__ \ "IE014").readNullable[String] and
-      (__ \ "IE051").readNullable[String])(MessagesLocation.apply _)
+      (__ \ "IE051").readNullable[String] and
+      (__ \ "IE060").readNullable[String])(MessagesLocation.apply _)
   }
 }

@@ -19,7 +19,7 @@ package services
 import connectors.DeparturesMovementConnector
 import javax.inject.Inject
 import models.DepartureId
-import models.departure.NoReleaseForTransitMessage
+import models.departure.{ControlDecision, NoReleaseForTransitMessage}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -34,6 +34,21 @@ class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector)
         summary.messagesLocation.noReleaseForTransit match {
           case Some(location) =>
             connectors.getNoReleaseForTransitMessage(location)
+          case _ =>
+            logger.error(s"Get Summary failed to get noReleaseForTransit location")
+            Future.successful(None)
+        }
+      case _ =>
+        logger.error(s"Get Summary failed to return data")
+        Future.successful(None)
+    }
+
+  def controlDecisionMessage(departureId: DepartureId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ControlDecision]] =
+    connectors.getSummary(departureId) flatMap {
+      case Some(summary) =>
+        summary.messagesLocation.controlDecision match {
+          case Some(location) =>
+            connectors.getControlDecisionMessage(location)
           case _ =>
             logger.error(s"Get Summary failed to get noReleaseForTransit location")
             Future.successful(None)

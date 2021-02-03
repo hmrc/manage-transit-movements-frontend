@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.departure.{MessagesSummary, NoReleaseForTransitMessage}
+import models.departure.{ControlDecision, MessagesSummary, NoReleaseForTransitMessage}
 import models.{DepartureId, Departures, ResponseMessage}
 import play.api.Logger
 import play.api.http.HeaderNames
@@ -74,6 +74,20 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
         XmlReader.of[NoReleaseForTransitMessage].read(message).toOption
       case _ =>
         logger.error(s"NoReleaseForTransitMessage failed to return data")
+        None
+    }
+  }
+
+  def getControlDecisionMessage(location: String)(implicit hc: HeaderCarrier): Future[Option[ControlDecision]] = {
+    val serviceUrl = s"${config.departureBaseUrl}$location"
+    val header     = hc.withExtraHeaders(ChannelHeader(channel))
+
+    http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
+      case responseMessage if is2xx(responseMessage.status) =>
+        val message: NodeSeq = responseMessage.json.as[ResponseMessage].message
+        XmlReader.of[ControlDecision].read(message).toOption
+      case _ =>
+        logger.error(s"ControlDecision failed to return data")
         None
     }
   }

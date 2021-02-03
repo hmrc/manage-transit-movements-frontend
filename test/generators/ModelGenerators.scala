@@ -19,7 +19,7 @@ package generators
 import java.time._
 
 import models._
-import models.departure.{ControlResult, NoReleaseForTransitMessage, ResultsOfControl}
+import models.departure.{ControlDecision, ControlResult, NoReleaseForTransitMessage, ResultsOfControl}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
@@ -27,6 +27,17 @@ import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, 
 
 trait ModelGenerators {
   self: Generators =>
+
+  implicit val arbitraryControlDecision: Arbitrary[ControlDecision] = {
+    Arbitrary {
+      for {
+        mrn                 <- arbitrary[String]
+        dateOfControl       <- arbitrary[String]
+        principleTraderName <- arbitrary[String]
+        principleTraderEori <- Gen.option(arbitrary[String])
+      } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)
+    }
+  }
 
   implicit val arbitrarylocalDate: Arbitrary[LocalDate] = {
     Arbitrary {
