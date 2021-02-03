@@ -197,6 +197,7 @@ departure.status.transitDeclarationSent = Transit declaration sent
 departure.status.writeOffNotification = Guarantee written off
 departure.status.declarationCancellationRequest = Cancellation decision
 departure.status.noReleaseForTransit = Goods not released
+departure.status.controlDecision = Control decision
 departure.viewHistory = View history
 departure.viewDetails = View details
 departure.downloadTAD = TAD PDF [NEEDS IMPLEMENTING]

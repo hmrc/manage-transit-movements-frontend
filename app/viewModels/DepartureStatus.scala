@@ -42,6 +42,7 @@ object DepartureStatus {
         cancellationDecision,
         declarationCancellationRequest(config),
         noReleasedForTransit,
+        controlDecision,
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -119,6 +120,14 @@ object DepartureStatus {
       DepartureStatus(
         "departure.status.noReleaseForTransit",
         actions = Seq(ViewMovementAction(routes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"))
+      )
+  }
+
+  private def controlDecision: DepartureStatusViewModel = {
+    case departure if departure.status == "ControlDecision" =>
+      DepartureStatus(
+        "departure.status.controlDecision",
+        actions = Seq(ViewMovementAction(routes.ControlDecisionController.onPageLoad(departure.departureId).url, "departure.viewDetails"))
       )
   }
 

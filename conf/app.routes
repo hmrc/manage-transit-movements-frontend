@@ -31,4 +31,4 @@ GET        /cannot-use-this-service                         controllers.OldServi
 
 GET        /:departureId/no-release-for-transit             controllers.NoReleaseForTransitController.onPageLoad(departureId: DepartureId)
 
-GET        /controlDecision                       controllers.ControlDecisionController.onPageLoad
+GET        /:departureId/control-decision                   controllers.ControlDecisionController.onPageLoad(departureId: DepartureId)

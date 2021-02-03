@@ -17,29 +17,51 @@
 package controllers
 
 import base.SpecBase
+import generators.Generators
 import matchers.JsonMatchers
+import models.departure.{ControlDecision, NoReleaseForTransitMessage}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+
+  private val mockDepartureMessageService = mock[DepartureMessageService]
+
+  override def beforeEach: Unit = {
+    reset(mockDepartureMessageService)
+    super.beforeEach
+  }
 
   "ControlDecision Controller" - {
 
     "return OK and the correct view for a GET" in {
 
+      val controlDecision = arbitrary[ControlDecision].sample.value
+
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(GET, routes.ControlDecisionController.onPageLoad().url)
+      when(mockDepartureMessageService.controlDecisionMessage(any())(any(), any()))
+        .thenReturn(Future.successful(Some(controlDecision)))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .build()
+
+      val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId).url)
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
