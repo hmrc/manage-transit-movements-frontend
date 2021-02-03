@@ -33,7 +33,6 @@ object Format {
   def timeFormatted(dateTime: LocalDateTime): String = dateTime.format(timeFormatter)
   def timeFormatted(time: LocalTime): String         = time.format(timeFormatter)
 
-
   def dateFormattedForHeader(dateTime: OffsetDateTime): String =
     dateTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
 }

@@ -16,6 +16,8 @@
 
 package models.departure
 
+import java.time.LocalDate
+
 import com.lucidchart.open.xtract.XmlReader
 import generators.Generators
 import models.departure.ControlDecisionSpec.toXml
@@ -24,6 +26,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, StreamlinedXmlEquality}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.Json
 import utils.Format
 
 import scala.xml.NodeSeq
@@ -39,6 +42,25 @@ class ControlDecisionSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
             val expectedResult = XmlReader.of[ControlDecision].read(toXml(controlDecision)).toOption.value
 
             expectedResult mustBe controlDecision
+        }
+      }
+    }
+
+    "json" - {
+
+      "must serialize and format date" in {
+
+        forAll(arbitrary[ControlDecision]) {
+          controlDecision =>
+            val expectedJson =
+              Json.obj(
+                "movementReferenceNumber" -> controlDecision.movementReferenceNumber,
+                "dateOfControl"           -> Format.controlDecisionDateFormatted(controlDecision.dateOfControl),
+                "principleTraderName"     -> controlDecision.principleTraderName,
+                "principleEori"           -> controlDecision.principleEori
+              )
+
+            Json.toJsObject(controlDecision) mustBe expectedJson
         }
       }
     }

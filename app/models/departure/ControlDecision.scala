@@ -19,12 +19,10 @@ package models.departure
 import java.time.LocalDate
 
 import cats.implicits.catsSyntaxTuple4Semigroupal
-import com.lucidchart.open.xtract.{XmlReader, __}
-import config.FrontendAppConfig
-import controllers.routes
+import com.lucidchart.open.xtract.{__, XmlReader}
 import models.XMLReads._
-import play.api.libs.json.{JsObject, Json, OWrites}
-import viewModels.ViewArrivalMovements
+import play.api.libs.json.{Json, OWrites}
+import utils.Format
 
 case class ControlDecision(
   movementReferenceNumber: String,
@@ -35,11 +33,13 @@ case class ControlDecision(
 
 object ControlDecision {
 
-  implicit val writes: OWrites[ControlDecision] = Json.writes[ControlDecision]
-
-  implicit val writes: OWrites[ViewArrivalMovements] =
-    (o: ViewArrivalMovements) => Json.obj(
-      ???
+  implicit val writes: OWrites[ControlDecision] =
+    (controlDecision: ControlDecision) =>
+      Json.obj(
+        "movementReferenceNumber" -> controlDecision.movementReferenceNumber,
+        "dateOfControl"           -> Format.controlDecisionDateFormatted(controlDecision.dateOfControl),
+        "principleTraderName"     -> controlDecision.principleTraderName,
+        "principleEori"           -> controlDecision.principleEori
     )
 
   implicit val xmlReader: XmlReader[ControlDecision] = (
