@@ -17,9 +17,8 @@
 package viewModels
 
 import config.FrontendAppConfig
-import models.{Departure, DepartureId, ViewMovementAction}
+import models.{Departure, DepartureId, LocalReferenceNumber, ViewMovementAction}
 import controllers.routes
-import models.{Departure, ViewMovementAction}
 
 case class DepartureStatus(status: String, actions: Seq[ViewMovementAction])
 
@@ -127,7 +126,8 @@ object DepartureStatus {
     case departure if departure.status == "ControlDecision" =>
       DepartureStatus(
         "departure.status.controlDecision",
-        actions = Seq(ViewMovementAction(routes.ControlDecisionController.onPageLoad(departure.departureId).url, "departure.viewDetails"))
+        actions = Seq(
+          ViewMovementAction(routes.ControlDecisionController.onPageLoad(departure.departureId, departure.localReferenceNumber).url, "departure.viewDetails"))
       )
   }
 

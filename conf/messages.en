@@ -242,5 +242,11 @@ noReleaseForTransit.ControlResultCode = Code
 noReleaseForTransit.officeOfDepartureRefNumber = Office of departure reference number
 noReleaseForTransit.p = You must contact the office of departure for more details.
 
-controlDecision.title = controlDecision
-controlDecision.heading = controlDecision
+controlDecision.title = Your goods have been selected for control
+controlDecision.heading = Your goods have been selected for control
+controlDecision.mrn = Movement reference number
+controlDecision.lrn = Local reference number
+controlDecision.principalEoriNumber = Principal EORI number
+controlDecision.principalTraderName = Principal trader name
+controlDecision.dateOfControl = Date of control
+controlDecision.paragraph = You must wait for the outcome of your customs check.

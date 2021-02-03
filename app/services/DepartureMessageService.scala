@@ -50,7 +50,7 @@ class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector)
           case Some(location) =>
             connectors.getControlDecisionMessage(location)
           case _ =>
-            logger.error(s"Get Summary failed to get noReleaseForTransit location")
+            logger.error(s"Get Summary failed to get controlDecision location")
             Future.successful(None)
         }
       case _ =>

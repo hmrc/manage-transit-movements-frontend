@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.DepartureId
+import models.{DepartureId, LocalReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,11 +38,11 @@ class ControlDecisionController @Inject()(
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: DepartureId): Action[AnyContent] = identify.async {
+  def onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber): Action[AnyContent] = identify.async {
     implicit request =>
       departureMessageService.controlDecisionMessage(departureId).flatMap {
         case Some(message) =>
-          val json = Json.obj("controlDecisionMessage" -> Json.toJson(message))
+          val json = Json.obj("controlDecisionMessage" -> Json.toJson(message), "lrn" -> lrn.value)
           renderer.render("controlDecision.njk", json).map(Ok(_))
         case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
       }
