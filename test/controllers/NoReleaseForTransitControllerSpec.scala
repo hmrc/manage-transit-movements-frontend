@@ -44,10 +44,12 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
   "NoReleaseForTransit Controller" - {
 
     "return OK and the correct view for a GET" in {
+
       val transitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(transitMessage)))
 
@@ -64,7 +66,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj()
+      val expectedJson = Json.obj("noReleaseForTransitMessage" -> Json.toJson(transitMessage))
 
       templateCaptor.getValue mustEqual "noReleaseForTransit.njk"
       jsonCaptor.getValue must containJson(expectedJson)

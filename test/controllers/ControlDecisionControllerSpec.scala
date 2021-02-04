@@ -72,7 +72,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj()
+      val expectedJson = Json.obj("controlDecisionMessage" -> controlDecision, "lrn" -> localReferenceNumber)
 
       templateCaptor.getValue mustEqual "controlDecision.njk"
       jsonCaptor.getValue must containJson(expectedJson)
