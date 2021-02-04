@@ -47,15 +47,16 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$declareArrivalNotificationUrlBase/${arrivalId.index}/arrival-rejection"
   def unloadingRemarksRejectedUrl(arrivalId: ArrivalId) = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}/unloading-rejection"
 
-  lazy val authUrl: String          = configuration.get[Service]("auth").fullServiceUrl
-  lazy val loginUrl: String         = configuration.get[String]("urls.login")
-  lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  lazy val departureBaseUrl: String = configuration.get[Service]("microservice.services.departure").baseUrl
-  lazy val departureUrl: String     = configuration.get[Service]("microservice.services.departure").fullServiceUrl
-  lazy val destinationUrl: String   = configuration.get[Service]("microservice.services.destination").fullServiceUrl
-  lazy val referenceDataUrl: String = configuration.get[Service]("microservice.services.reference-data").fullServiceUrl
-  lazy val routerUrl: String        = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
-  lazy val enrolmentKey: String     = configuration.get[String]("keys.enrolmentKey")
+  lazy val authUrl: String            = configuration.get[Service]("auth").fullServiceUrl
+  lazy val loginUrl: String           = configuration.get[String]("urls.login")
+  lazy val loginContinueUrl: String   = configuration.get[String]("urls.loginContinue")
+  lazy val departureBaseUrl: String   = configuration.get[Service]("microservice.services.departure").baseUrl
+  lazy val departureUrl: String       = configuration.get[Service]("microservice.services.departure").fullServiceUrl
+  lazy val destinationBaseUrl: String = configuration.get[Service]("microservice.services.destination").baseUrl
+  lazy val destinationUrl: String     = configuration.get[Service]("microservice.services.destination").fullServiceUrl
+  lazy val referenceDataUrl: String   = configuration.get[Service]("microservice.services.reference-data").fullServiceUrl
+  lazy val routerUrl: String          = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
+  lazy val enrolmentKey: String       = configuration.get[String]("keys.enrolmentKey")
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")

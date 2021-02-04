@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package models.arrival
 
-case class Field(name: String, errorKeys: Map[FieldErrorType, String])
+import cats.syntax.all._
+import com.lucidchart.open.xtract.XmlReader._
+import com.lucidchart.open.xtract.{__, XmlReader}
+import models.FunctionalError
 
-object Field {
+final case class XMLSubmissionNegativeAcknowledgementMessage(movementReferenceNumber: String, error: FunctionalError)
 
-  def apply(name: String, errors: (FieldErrorType, String)*): Field =
-    Field(name, errors.toMap)
+object XMLSubmissionNegativeAcknowledgementMessage {
+
+  implicit val xmlReader: XmlReader[XMLSubmissionNegativeAcknowledgementMessage] = (
+    (__ \ "HEAHEA" \ "DocNumHEA5").read[String],
+    (__ \ "FUNERRER1").read[FunctionalError]
+  ).mapN(apply)
 }
-
-sealed trait FieldErrorType
-case object Required extends FieldErrorType
-case object Invalid extends FieldErrorType

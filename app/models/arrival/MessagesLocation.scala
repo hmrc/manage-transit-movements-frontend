@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.arrival
 
-case class Field(name: String, errorKeys: Map[FieldErrorType, String])
+import play.api.libs.json.Reads
+import play.api.libs.json._
 
-object Field {
+case class MessagesLocation(arrivalNotification: String, arrivalRejection: Option[String] = None, xmlSubmissionNegativeAcknowledgement: Option[String] = None)
 
-  def apply(name: String, errors: (FieldErrorType, String)*): Field =
-    Field(name, errors.toMap)
+object MessagesLocation {
+
+  import play.api.libs.functional.syntax._
+
+  implicit val reads: Reads[MessagesLocation] = {
+    ((__ \ "IE007").read[String] and
+      (__ \ "IE008").readNullable[String] and
+      (__ \ "IE917").readNullable[String])(MessagesLocation.apply _)
+  }
 }
-
-sealed trait FieldErrorType
-case object Required extends FieldErrorType
-case object Invalid extends FieldErrorType
