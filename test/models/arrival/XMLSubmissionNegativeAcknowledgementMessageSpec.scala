@@ -30,7 +30,6 @@ class XMLSubmissionNegativeAcknowledgementMessageSpec extends SpecBase with Scal
     "must deserialize from XML" in {
       forAll(arbitrary[XMLSubmissionNegativeAcknowledgementMessage]) {
         rejectionMessage =>
-
           val xml: Elem = {
             <CC917A>
               <HEAHEA>

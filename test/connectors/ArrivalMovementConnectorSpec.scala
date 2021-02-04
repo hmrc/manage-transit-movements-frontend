@@ -20,10 +20,12 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
+import generators.Generators
 import helper.WireMockServerHandler
-import models.{Arrival, ArrivalId, Arrivals}
+import models._
+import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -31,8 +33,9 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 
 import scala.concurrent.Future
+import scala.xml.NodeSeq
 
-class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
+class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
   private lazy val connector: ArrivalMovementConnector =
     app.injector.instanceOf[ArrivalMovementConnector]
@@ -41,7 +44,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(conf = "microservice.services.destination.port" -> server.port())
     .build()
-
+  private val arrivalId                    = ArrivalId(1)
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 
   private val arrivalsResponseJson =
@@ -135,6 +138,60 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         result.futureValue.status mustBe genErrorResponse
       }
+    }
+
+    "getXMLSubmissionNegativeAcknowledgementMessage" - {
+      "must return valid 'getXMLSubmissionNegativeAcknowledgementMessage'" in {
+        val rejectionLocation = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
+        val genRejectionError = arbitrary[ErrorType].sample.value
+        val rejectionXml: NodeSeq =
+          <CC917A>
+          <HEAHEA>
+            <DocNumHEA5>19IT021300100075E9</DocNumHEA5>
+          </HEAHEA>
+          <FUNERRER1>
+            <ErrTypER11>{genRejectionError.code}</ErrTypER11>
+            <ErrPoiER12>Message type</ErrPoiER12>
+            <OriAttValER14>GB007A</OriAttValER14>
+          </FUNERRER1>
+        </CC917A>
+
+        val json = Json.obj("message" -> rejectionXml.toString())
+
+        server.stubFor(
+          get(urlEqualTo(rejectionLocation))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+        val expectedResult = Some(
+          XMLSubmissionNegativeAcknowledgementMessage(
+            "19IT021300100075E9",
+            FunctionalError(genRejectionError, ErrorPointer("Message type"), None, Some("GB007A"))
+          ))
+        connector.getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation).futureValue mustBe expectedResult
+      }
+
+      "must return None for malformed xml'" in {
+        val rejectionLocation = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
+        val rejectionXml: NodeSeq =
+          <CC917A>
+          <HEAHEA><DocNumHEA5>19IT021300100075E9</DocNumHEA5>
+          </HEAHEA>
+        </CC917A>
+
+        val json = Json.obj("message" -> rejectionXml.toString())
+
+        server.stubFor(
+          get(urlEqualTo(rejectionLocation))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+
+        connector.getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation).futureValue mustBe None
+      }
+
     }
   }
 }

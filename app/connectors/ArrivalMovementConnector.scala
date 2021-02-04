@@ -64,8 +64,8 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
     }
   }
 
-  def getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation: String)(implicit hc: HeaderCarrier)
-  : Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
+  def getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation: String)(
+    implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
     val serviceUrl = s"${config.destinationBaseUrl}$rejectionLocation"
     val header     = hc.withExtraHeaders(ChannelHeader(channel))
     http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
