@@ -23,7 +23,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models._
-import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
+import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -137,6 +137,49 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         val result: Future[WSResponse] = connector.getPDF(arrivalId, "bearerToken")
 
         result.futureValue.status mustBe genErrorResponse
+      }
+    }
+
+    "getSummary" - {
+
+      "must be return summary of messages" in {
+        val json = Json.obj(
+          "arrivalId" -> arrivalId.value,
+          "messages" -> Json.obj(
+            "IE007" -> s"/movements/arrivals/${arrivalId.value}/messages/3",
+            "IE917" -> s"/movements/arrivals/${arrivalId.value}/messages/5"
+          )
+        )
+
+        val messageAction =
+          MessagesSummary(arrivalId,
+                          MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3",
+                                           None,
+                                           Some(s"/movements/arrivals/${arrivalId.value}/messages/5")))
+
+        server.stubFor(
+          get(urlEqualTo(s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/summary"))
+            .willReturn(
+              okJson(json.toString)
+            )
+        )
+        connector.getSummary(arrivalId).futureValue mustBe Some(messageAction)
+      }
+
+      "must return 'None' when an error response is returned from getSummary" in {
+        forAll(errorResponses) {
+          errorResponse: Int =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/movements/arrivals/1/messages/summary"))
+                .withHeader("Channel", containing("web"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+
+            connector.getSummary(ArrivalId(1)).futureValue mustBe None
+        }
       }
     }
 
