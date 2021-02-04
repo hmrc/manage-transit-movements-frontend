@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.testOnly
 
 import controllers.actions._
 import javax.inject.Inject
@@ -25,6 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.DepartureMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import controllers.routes._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,7 +45,7 @@ class NoReleaseForTransitController @Inject()(
         case Some(message) =>
           val json = Json.obj("noReleaseForTransitMessage" -> Json.toJson(message))
           renderer.render("noReleaseForTransit.njk", json).map(Ok(_))
-        case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+        case _ => Future.successful(Redirect(TechnicalDifficultiesController.onPageLoad()))
       }
   }
 }

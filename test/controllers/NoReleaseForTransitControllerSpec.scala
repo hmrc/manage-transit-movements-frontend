@@ -31,6 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.DepartureMessageService
+import controllers.testOnly.{routes => testRoutes}
 
 import scala.concurrent.Future
 
@@ -54,7 +55,8 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
         .build()
-      val request        = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
+
+      val request        = FakeRequest(GET, testRoutes.NoReleaseForTransitController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 

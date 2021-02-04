@@ -28,5 +28,3 @@ GET        /view-departures                                 controllers.ViewDepa
 GET        /cannot-use-this-service-northern-ireland        controllers.NorthernIrelandInterstitialController.onPageLoad
 
 GET        /cannot-use-this-service                         controllers.OldServiceInterstitialController.onPageLoad
-
-GET        /:departureId/no-release-for-transit             controllers.NoReleaseForTransitController.onPageLoad(departureId: DepartureId)
