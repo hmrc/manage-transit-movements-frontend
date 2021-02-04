@@ -30,7 +30,10 @@ class ArrivalMessageService @Inject()(arrivalMovementConnector: ArrivalMovementC
                                                                            ec: ExecutionContext): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
     arrivalMovementConnector.getSummary(arrivalId) flatMap {
       case Some(summary) =>
-        arrivalMovementConnector.getXMLSubmissionNegativeAcknowledgementMessage(summary.messagesLocation.arrivalNotification)
+        summary.messagesLocation.xmlSubmissionNegativeAcknowledgement match {
+          case Some(negativeAcknowledgementLocation) => arrivalMovementConnector.getXMLSubmissionNegativeAcknowledgementMessage(negativeAcknowledgementLocation)
+          case _                                     => Future.successful(None)
+        }
       case _ => Future.successful(None)
     }
 }

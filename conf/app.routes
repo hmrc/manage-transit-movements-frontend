@@ -31,4 +31,4 @@ GET        /cannot-use-this-service                         controllers.OldServi
 
 GET        /:departureId/no-release-for-transit             controllers.NoReleaseForTransitController.onPageLoad(departureId: DepartureId)
 
-GET        /xml-negative-acknowledgement                       controllers.XmlNegativeAcknowledgementController.onPageLoad
+GET        /:arrivalId/negative-acknowledgement             controllers.arrival.XmlNegativeAcknowledgementController.onPageLoad(arrivalId: ArrivalId)

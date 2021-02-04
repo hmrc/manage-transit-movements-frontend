@@ -20,10 +20,13 @@ import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{__, XmlReader}
 import models.FunctionalError
+import play.api.libs.json.{Json, OWrites}
 
 final case class XMLSubmissionNegativeAcknowledgementMessage(movementReferenceNumber: String, error: FunctionalError)
 
 object XMLSubmissionNegativeAcknowledgementMessage {
+
+  implicit val writes: OWrites[XMLSubmissionNegativeAcknowledgementMessage] = Json.writes[XMLSubmissionNegativeAcknowledgementMessage]
 
   implicit val xmlReader: XmlReader[XMLSubmissionNegativeAcknowledgementMessage] = (
     (__ \ "HEAHEA" \ "DocNumHEA5").read[String],

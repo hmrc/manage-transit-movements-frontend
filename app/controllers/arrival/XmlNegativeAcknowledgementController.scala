@@ -14,32 +14,40 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.arrival
 
 import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
+import models.ArrivalId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.ArrivalMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class XmlNegativeAcknowledgementController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   val frontendAppConfig: FrontendAppConfig,
+  arrivalMessageService: ArrivalMessageService,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
     implicit request =>
-      val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
-      renderer.render("xmlNegativeAcknowledgement.njk", json).map(Ok(_))
+      arrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).flatMap {
+        case Some(rejectionMessage) =>
+          val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl, "functionalError" -> rejectionMessage.error)
+
+          renderer.render("xmlNegativeAcknowledgement.njk", json).map(Ok(_))
+        case _ => Future.successful(Redirect(controllers.routes.TechnicalDifficultiesController.onPageLoad()))
+      }
   }
 }

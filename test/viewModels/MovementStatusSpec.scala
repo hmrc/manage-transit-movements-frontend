@@ -18,7 +18,8 @@ package viewModels
 
 import base.SpecBase
 import generators.Generators
-import models.Arrival
+import models.{Arrival, ViewMovementAction}
+import controllers.arrival.{routes => arrivalRoute}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
@@ -67,6 +68,18 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
           arrival =>
             val arr: Arrival = arrival.copy(status = "GoodsReleased")
             MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.goodsReleased")
+        }
+      }
+      "When status is XMLSubmissionNegativeAcknowledgement show correct message" in {
+
+        forAll(arbitrary[Arrival]) {
+          arrival =>
+            val arr: Arrival = arrival.copy(status = "XMLSubmissionNegativeAcknowledgement")
+            val expectedAction = ViewMovementAction(arrivalRoute.XmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
+                                                    Messages("viewArrivalNotifications.table.action.viewErrors"))
+
+            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.XMLSubmissionNegativeAcknowledgement")
+            MovementStatus(arr)(messages, frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }
     }
