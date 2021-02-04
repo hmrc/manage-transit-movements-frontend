@@ -240,3 +240,9 @@ noReleaseForTransit.resultsOfControlDescription = Description
 noReleaseForTransit.ControlResultCode = Code
 noReleaseForTransit.officeOfDepartureRefNumber = Office of departure reference number
 noReleaseForTransit.p = You must contact the office of departure for more details.
+
+xmlNegativeAcknowledgement.title = There is a problem with this arrival notification
+xmlNegativeAcknowledgement.heading = There is a problem with this arrival notification
+xmlNegativeAcknowledgement.paragraph = You must
+xmlNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab).
+
