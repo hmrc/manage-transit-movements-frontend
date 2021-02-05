@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalMessageService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) {
-  val logger: Logger          = Logger(getClass)
+  val logger: Logger = Logger(getClass)
 
   def getXMLSubmissionNegativeAcknowledgementMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier,
                                                                            ec: ExecutionContext): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =

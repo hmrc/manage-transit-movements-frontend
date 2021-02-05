@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
 class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) extends HttpReadsTry {
-  val logger: Logger          = Logger(getClass)
+  val logger: Logger = Logger(getClass)
 
   private val channel: String = "web"
 
@@ -65,7 +65,7 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
     val header             = hc.withExtraHeaders(ChannelHeader(channel))
     http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
       case responseMessage if is2xx(responseMessage.status) => Some(responseMessage.json.as[MessagesSummary])
-      case _                                                =>
+      case _ =>
         logger.error("GetSummary failed to return data")
         None
     }
