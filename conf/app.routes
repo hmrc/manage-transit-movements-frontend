@@ -23,8 +23,6 @@ GET        /arrivals/:arrivalId/unloading-permission-pdf    controllers.Unloadin
 
 GET        /departures/:departureId/tad-pdf                 controllers.TadPDFController.getPDF(departureId: DepartureId)
 
-GET        /view-departures                                 controllers.ViewDeparturesController.onPageLoad
-
 GET        /cannot-use-this-service-northern-ireland        controllers.NorthernIrelandInterstitialController.onPageLoad
 
 GET        /cannot-use-this-service                         controllers.OldServiceInterstitialController.onPageLoad

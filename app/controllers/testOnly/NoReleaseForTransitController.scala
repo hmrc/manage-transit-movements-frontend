@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.DepartureMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import controllers.routes._
+import controllers.{routes => normalRoutes}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +45,7 @@ class NoReleaseForTransitController @Inject()(
         case Some(message) =>
           val json = Json.obj("noReleaseForTransitMessage" -> Json.toJson(message))
           renderer.render("noReleaseForTransit.njk", json).map(Ok(_))
-        case _ => Future.successful(Redirect(TechnicalDifficultiesController.onPageLoad()))
+        case _ => Future.successful(Redirect(normalRoutes.TechnicalDifficultiesController.onPageLoad()))
       }
   }
 }

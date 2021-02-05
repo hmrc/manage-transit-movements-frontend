@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.testOnly
 
 import config.FrontendAppConfig
 import connectors.DeparturesMovementConnector
@@ -27,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewDeparture, ViewDepartureMovements}
+import controllers.{routes => normalRoutes}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,7 +50,7 @@ class ViewDeparturesController @Inject()(
           val formatToJson: JsObject             = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
 
           renderer.render("viewDepartures.njk", formatToJson).map(Ok(_))
-        case None => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+        case None => Future.successful(Redirect(normalRoutes.TechnicalDifficultiesController.onPageLoad()))
       }
   }
 }
