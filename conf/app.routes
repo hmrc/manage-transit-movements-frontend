@@ -21,8 +21,6 @@ GET        /technical-difficulties                          controllers.Technica
 
 GET        /arrivals/:arrivalId/unloading-permission-pdf    controllers.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
 
-GET        /departures/:departureId/tad-pdf                 controllers.TadPDFController.getPDF(departureId: DepartureId)
-
 GET        /cannot-use-this-service-northern-ireland        controllers.NorthernIrelandInterstitialController.onPageLoad
 
 GET        /cannot-use-this-service                         controllers.OldServiceInterstitialController.onPageLoad

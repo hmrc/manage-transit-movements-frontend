@@ -63,7 +63,7 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
           val dep             = departure.copy(status = "ReleasedForTransit")
           val departureStatus = DepartureStatus(dep, frontendAppConfig)
           departureStatus.status mustBe "departure.status.releasedForTransit"
-          departureStatus.actions.head.href mustBe s"/manage-transit-movements/departures/${departure.departureId.index}/tad-pdf"
+          departureStatus.actions.head.href mustBe s"/manage-transit-movements/test-only/departures/${departure.departureId.index}/tad-pdf"
           departureStatus.actions.head.key mustBe "departure.downloadTAD"
       }
     }

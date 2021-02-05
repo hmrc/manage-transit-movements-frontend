@@ -47,7 +47,8 @@ object DepartureStatus {
     partialFunctions.apply(departure)
   }
 
-  private def downloadTADAction(departure: Departure) = ViewMovementAction(routes.TadPDFController.getPDF(departure.departureId).url, "departure.downloadTAD")
+  private def downloadTADAction(departure: Departure) =
+    ViewMovementAction(testRoutes.TadPDFController.getPDF(departure.departureId).url, "departure.downloadTAD")
 
   private def mrnAllocated: PartialFunction[Departure, DepartureStatus] = {
     case departure if departure.status == "MrnAllocated" =>
