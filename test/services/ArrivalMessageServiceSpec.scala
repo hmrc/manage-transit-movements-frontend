@@ -54,7 +54,7 @@ class ArrivalMessageServiceSpec extends SpecBase with BeforeAndAfterEach with Ma
 
       val xmlNegativeAcknowledgement = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
       val messagesSummary =
-        MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", Some("/movements/arrivals/1234/messages/5")))
+        MessagesSummary(arrivalId, MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3", None, Some("/movements/arrivals/1234/messages/5")))
 
       when(mockConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))
       when(mockConnector.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
