@@ -22,6 +22,7 @@ import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import javax.inject.Inject
 import models.arrival.{MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import models.{ArrivalId, Arrivals, ResponseMessage}
+import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
@@ -32,6 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
 class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) extends HttpReadsTry {
+  val logger: Logger          = Logger(getClass)
+
   private val channel: String = "web"
 
   def getArrivals()(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
@@ -44,7 +47,9 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
         case arrivals => Some(arrivals)
       }
       .recover {
-        case _ => None
+        case _ =>
+          logger.error("GetArrivals failed to get data")
+          None
       }
   }
 
@@ -60,7 +65,9 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
     val header             = hc.withExtraHeaders(ChannelHeader(channel))
     http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
       case responseMessage if is2xx(responseMessage.status) => Some(responseMessage.json.as[MessagesSummary])
-      case _                                                => None
+      case _                                                =>
+        logger.error("GetSummary failed to return data")
+        None
     }
   }
 
@@ -72,7 +79,9 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
       case responseMessage if is2xx(responseMessage.status) =>
         val message: NodeSeq = responseMessage.json.as[ResponseMessage].message
         XmlReader.of[XMLSubmissionNegativeAcknowledgementMessage].read(message).toOption
-      case _ => None
+      case _ =>
+        logger.error("getXMLSubmissionNegativeAcknowledgementMessage failed to get data")
+        None
     }
   }
 
