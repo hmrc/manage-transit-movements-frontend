@@ -194,7 +194,7 @@ trait ModelGenerators {
       mrn                        <- nonEmptyString
       noReleaseMotivation        <- Gen.option(nonEmptyString)
       totalNumberOfItems         <- arbitrary[Int]
-      officeOfDepartureRefNumber <- arbitrary[String]
+      officeOfDepartureRefNumber <- Gen.alphaNumStr
       controlResult              <- arbitrary[ControlResult]
       resultsOfControl           <- Gen.option(listWithMaxLength(ResultsOfControl.maxResultsOfControl, arbitrary[ResultsOfControl]))
     } yield
