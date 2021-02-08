@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.testOnly
 
 import base.SpecBase
 import generators.Generators
