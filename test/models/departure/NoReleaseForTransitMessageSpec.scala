@@ -54,7 +54,6 @@ class NoReleaseForTransitMessageSpec extends AnyFreeSpec with Matchers with Gene
               </RESOFCON534>
             }
         }}
-
       </CC051B>
 
       XmlReader.of[NoReleaseForTransitMessage].read(validXml).toOption mustBe Some(expectedResult)
