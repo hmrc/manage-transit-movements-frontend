@@ -76,7 +76,7 @@ class WhatDoYouWantToDoController @Inject()(
             case WhatDoYouWantToDoOptions.MakeDepartureDeclaration =>
               Future.successful(Redirect(routes.OldServiceInterstitialController.onPageLoad()))
             case WhatDoYouWantToDoOptions.ViewDepartureDeclaration =>
-              Future.successful(Redirect(routes.ViewArrivalsController.onPageLoad()))
+              Future.successful(Redirect(routes.OldServiceInterstitialController.onPageLoad()))
             case WhatDoYouWantToDoOptions.ViewNorthernIreland =>
               Future.successful(Redirect(routes.NorthernIrelandInterstitialController.onPageLoad()))
           }
