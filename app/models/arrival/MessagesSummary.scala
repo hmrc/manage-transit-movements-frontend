@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.arrival
 
-case class Field(name: String, errorKeys: Map[FieldErrorType, String])
+import models.ArrivalId
+import play.api.libs.json.{__, Reads}
 
-object Field {
+case class MessagesSummary(arrivalId: ArrivalId, messagesLocation: MessagesLocation)
 
-  def apply(name: String, errors: (FieldErrorType, String)*): Field =
-    Field(name, errors.toMap)
+object MessagesSummary {
+
+  implicit lazy val reads: Reads[MessagesSummary] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "arrivalId").read[ArrivalId] and
+        (__ \ "messages").read[MessagesLocation]
+    )(MessagesSummary.apply _)
+  }
 }
-
-sealed trait FieldErrorType
-case object Required extends FieldErrorType
-case object Invalid extends FieldErrorType

@@ -16,14 +16,15 @@
 
 package models
 
-case class Field(name: String, errorKeys: Map[FieldErrorType, String])
+import com.lucidchart.open.xtract.{__, XmlReader}
+import play.api.libs.json.{Json, OWrites}
 
-object Field {
+case class ErrorPointer(value: String)
 
-  def apply(name: String, errors: (FieldErrorType, String)*): Field =
-    Field(name, errors.toMap)
+object ErrorPointer {
+
+  implicit val writes: OWrites[ErrorPointer] = Json.writes[ErrorPointer]
+
+  implicit val xmlReader: XmlReader[ErrorPointer] =
+    __.read[String].map(apply)
 }
-
-sealed trait FieldErrorType
-case object Required extends FieldErrorType
-case object Invalid extends FieldErrorType

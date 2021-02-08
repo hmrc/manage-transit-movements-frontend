@@ -23,6 +23,9 @@ import models.departure.{ControlResult, NoReleaseForTransitMessage, ResultsOfCon
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
+import models.ErrorType
+import models.ErrorType.GenericError
+import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement}
 
 trait ModelGenerators {
@@ -193,4 +196,37 @@ trait ModelGenerators {
         resultsOfControl           = resultsOfControl
       )
   }
+
+  implicit lazy val genericErrorType: Arbitrary[GenericError] =
+    Arbitrary {
+      Gen.oneOf(ErrorType.genericValues)
+    }
+
+  implicit lazy val arbitraryErrorType: Arbitrary[ErrorType] =
+    Arbitrary {
+      for {
+        genericError <- arbitrary[GenericError]
+        errorType    <- Gen.oneOf(Seq(genericError))
+      } yield errorType
+    }
+
+  implicit lazy val arbitraryRejectionError: Arbitrary[FunctionalError] =
+    Arbitrary {
+
+      for {
+        errorType     <- arbitrary[ErrorType]
+        pointer       <- arbitrary[String]
+        reason        <- arbitrary[Option[String]]
+        originalValue <- arbitrary[Option[String]]
+      } yield FunctionalError(errorType, ErrorPointer(pointer), reason, originalValue)
+    }
+
+  implicit lazy val arbitraryXMLSubmissionNegativeAcknowledgementMessage: Arbitrary[XMLSubmissionNegativeAcknowledgementMessage] =
+    Arbitrary {
+
+      for {
+        mrn   <- nonEmptyString
+        error <- arbitrary[FunctionalError]
+      } yield XMLSubmissionNegativeAcknowledgementMessage(mrn, error)
+    }
 }

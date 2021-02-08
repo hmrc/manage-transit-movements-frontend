@@ -18,7 +18,6 @@ package connectors.testOnly
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import play.api.Logger
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
@@ -28,8 +27,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
 class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
-
-  val Log: Logger = Logger(getClass)
 
   def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 

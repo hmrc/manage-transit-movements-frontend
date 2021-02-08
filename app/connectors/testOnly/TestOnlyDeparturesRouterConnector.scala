@@ -18,7 +18,7 @@ package connectors.testOnly
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import play.api.Logger
+import logging.Logging
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
@@ -27,9 +27,7 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyDeparturesRouterConnector @Inject()(val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
-
-  val Log: Logger = Logger(getClass)
+class TestOnlyDeparturesRouterConnector @Inject()(val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml", "Channel" -> "web")
 

@@ -16,17 +16,26 @@
 
 package connectors
 
+import com.lucidchart.open.xtract.XmlReader
 import config.FrontendAppConfig
+import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import javax.inject.Inject
-import models.{ArrivalId, Arrivals}
+import models.arrival.{MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
+import models.{ArrivalId, Arrivals, ResponseMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpReadsTry}
+import uk.gov.hmrc.http.HttpReads.is2xx
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpReadsTry, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import logging.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.NodeSeq
 
-class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) extends HttpReadsTry {
+class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext)
+    extends HttpReadsTry
+    with Logging {
+
   private val channel: String = "web"
 
   def getArrivals()(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
@@ -39,7 +48,9 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
         case arrivals => Some(arrivals)
       }
       .recover {
-        case _ => None
+        case _ =>
+          logger.error("GetArrivals failed to get data")
+          None
       }
   }
 
@@ -47,6 +58,32 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.index}/unloading-permission"
 
     ws.url(serviceUrl).withHttpHeaders(ChannelHeader(channel), ("Authorization", bearerToken)).get
+  }
+
+  def getSummary(arrivalId: ArrivalId)(implicit hc: HeaderCarrier): Future[Option[MessagesSummary]] = {
+
+    val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.value}/messages/summary"
+    val header             = hc.withExtraHeaders(ChannelHeader(channel))
+    http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
+      case responseMessage if is2xx(responseMessage.status) => Some(responseMessage.json.as[MessagesSummary])
+      case _ =>
+        logger.error("GetSummary failed to return data")
+        None
+    }
+  }
+
+  def getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation: String)(
+    implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
+    val serviceUrl = s"${config.destinationBaseUrl}$rejectionLocation"
+    val header     = hc.withExtraHeaders(ChannelHeader(channel))
+    http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
+      case responseMessage if is2xx(responseMessage.status) =>
+        val message: NodeSeq = responseMessage.json.as[ResponseMessage].message
+        XmlReader.of[XMLSubmissionNegativeAcknowledgementMessage].read(message).toOption
+      case _ =>
+        logger.error("getXMLSubmissionNegativeAcknowledgementMessage failed to get data")
+        None
+    }
   }
 
   object ChannelHeader {
