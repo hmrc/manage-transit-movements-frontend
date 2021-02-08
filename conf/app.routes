@@ -24,5 +24,3 @@ GET        /arrivals/:arrivalId/unloading-permission-pdf    controllers.Unloadin
 GET        /cannot-use-this-service-northern-ireland        controllers.NorthernIrelandInterstitialController.onPageLoad
 
 GET        /cannot-use-this-service                         controllers.OldServiceInterstitialController.onPageLoad
-
-GET        /:departureId/:lrn/control-decision              controllers.ControlDecisionController.onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber)

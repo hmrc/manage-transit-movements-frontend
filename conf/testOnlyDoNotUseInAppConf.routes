@@ -34,5 +34,7 @@ GET         /manage-transit-movements/test-only/view-departures                 
 
 GET         /manage-transit-movements/test-only/departures/:departureId/tad-pdf             controllers.testOnly.TadPDFController.getPDF(departureId: DepartureId)
 
+GET         /manage-transit-movements/test-only/:departureId/:lrn/control-decision          controllers.testOnly.ControlDecisionController.onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber)
+
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes

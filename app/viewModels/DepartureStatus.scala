@@ -130,7 +130,8 @@ object DepartureStatus {
       DepartureStatus(
         "departure.status.controlDecision",
         actions = Seq(
-          ViewMovementAction(routes.ControlDecisionController.onPageLoad(departure.departureId, departure.localReferenceNumber).url, "departure.viewDetails"))
+          ViewMovementAction(testRoutes.ControlDecisionController.onPageLoad(departure.departureId, departure.localReferenceNumber).url,
+                             "departure.viewDetails"))
       )
   }
 
