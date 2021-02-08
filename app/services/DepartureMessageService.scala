@@ -19,14 +19,13 @@ package services
 import connectors.DeparturesMovementConnector
 import javax.inject.Inject
 import models.DepartureId
+import logging.Logging
 import models.departure.{ControlDecision, NoReleaseForTransitMessage}
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector) {
-  val logger: Logger = Logger(getClass)
+class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector) extends Logging {
 
   def noReleaseForTransitMessage(departureId: DepartureId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[NoReleaseForTransitMessage]] =
     connectors.getSummary(departureId) flatMap {

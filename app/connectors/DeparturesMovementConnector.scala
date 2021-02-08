@@ -20,11 +20,11 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 import models.departure.{ControlDecision, MessagesSummary, NoReleaseForTransitMessage}
 import models.{DepartureId, Departures, ResponseMessage}
-import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.libs.ws.WSClient
 import CustomHttpReads.rawHttpResponseHttpReads
 import com.lucidchart.open.xtract.XmlReader
+import logging.Logging
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -32,8 +32,7 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) {
-  val logger: Logger          = Logger(getClass)
+class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) extends Logging {
   private val channel: String = "web"
 
   def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] = {
