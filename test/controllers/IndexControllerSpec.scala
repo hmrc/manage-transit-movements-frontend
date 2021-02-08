@@ -37,7 +37,7 @@ class IndexControllerSpec extends SpecBase {
 
   private val manageTransitMovementRoute   = "manage-transit-movements"
   private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
-  private val viewDepartureNotificationUrl = s"/$manageTransitMovementRoute/view-departures"
+  private val viewDepartureNotificationUrl = s"/$manageTransitMovementRoute/test-only/view-departures"
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]

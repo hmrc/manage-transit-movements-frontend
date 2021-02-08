@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.testOnly
 
 import java.time.LocalDateTime
 
 import base.SpecBase
-import connectors.DeparturesMovementConnector
+import connectors.{DeparturesMovementConnector, ReferenceDataConnector}
 import matchers.JsonMatchers
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
@@ -31,6 +31,9 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import controllers.{routes => mainRoutes}
+import navigation.{FakeNavigator, Navigator}
+import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.Future
 
@@ -54,6 +57,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
     "return OK and the correct view for a GET" in {
 
       val mockConnector = mock[DeparturesMovementConnector]
+
       when(mockConnector.getDepartures()(any()))
         .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
@@ -64,7 +68,8 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
         .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
         .build()
 
-      val request        = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -85,8 +90,10 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
     "redirect to Technical difficulties page on failing to fetch departures" in {
 
       val mockConnector = mock[DeparturesMovementConnector]
+
       when(mockConnector.getDepartures()(any()))
         .thenReturn(Future.successful(None))
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
         .build()
@@ -95,7 +102,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       val result = route(application, request).value
 
-      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual mainRoutes.TechnicalDifficultiesController.onPageLoad().url
 
       application.stop()
     }

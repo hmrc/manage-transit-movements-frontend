@@ -14,42 +14,38 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.testOnly
 
-import config.FrontendAppConfig
-import connectors.DeparturesMovementConnector
 import controllers.actions._
 import javax.inject.Inject
-import models.Departure
+import models.DepartureId
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.DepartureMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.{ViewDeparture, ViewDepartureMovements}
+import controllers.{routes => normalRoutes}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ViewDeparturesController @Inject()(
+class NoReleaseForTransitController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  connector: DeparturesMovementConnector,
-  config: FrontendAppConfig,
+  departureMessageService: DepartureMessageService,
   renderer: Renderer
-)(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(departureId: DepartureId): Action[AnyContent] = identify.async {
     implicit request =>
-      connector.getDepartures().flatMap {
-        case Some(allDepartures) =>
-          val viewDepartures: Seq[ViewDeparture] = allDepartures.departures.map((departure: Departure) => ViewDeparture(departure, config))
-          val formatToJson: JsObject             = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
-
-          renderer.render("viewDepartures.njk", formatToJson).map(Ok(_))
-        case None => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+      departureMessageService.noReleaseForTransitMessage(departureId).flatMap {
+        case Some(message) =>
+          val json = Json.obj("noReleaseForTransitMessage" -> Json.toJson(message))
+          renderer.render("noReleaseForTransit.njk", json).map(Ok(_))
+        case _ => Future.successful(Redirect(normalRoutes.TechnicalDifficultiesController.onPageLoad()))
       }
   }
 }
