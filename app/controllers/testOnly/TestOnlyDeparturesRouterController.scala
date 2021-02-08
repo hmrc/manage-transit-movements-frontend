@@ -31,7 +31,6 @@ class TestOnlyDeparturesRouterController @Inject()(
 )(implicit val ec: ExecutionContext)
     extends FrontendController(cc) {
 
-
   def declarationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector

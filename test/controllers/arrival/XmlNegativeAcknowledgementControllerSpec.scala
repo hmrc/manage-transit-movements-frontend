@@ -90,7 +90,7 @@ class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSuga
 
       val result = route(application, request).value
 
-      status(result) mustEqual SEE_OTHER
+      status(result) mustEqual INTERNAL_SERVER_ERROR
       application.stop()
     }
   }

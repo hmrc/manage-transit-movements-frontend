@@ -29,7 +29,6 @@ import scala.xml.NodeSeq
 
 class TestOnlyDeparturesRouterConnector @Inject()(val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
 
-
   private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml", "Channel" -> "web")
 
   def createDeclarationMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {

@@ -27,7 +27,7 @@ import renderer.Renderer
 import services.ArrivalMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class XmlNegativeAcknowledgementController @Inject()(
   override val messagesApi: MessagesApi,
@@ -47,7 +47,11 @@ class XmlNegativeAcknowledgementController @Inject()(
           val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl, "functionalError" -> rejectionMessage.error)
 
           renderer.render("xmlNegativeAcknowledgement.njk", json).map(Ok(_))
-        case _ => Future.successful(Redirect(controllers.routes.TechnicalDifficultiesController.onPageLoad()))
+        case _ =>
+          renderer.render("internalServerError.njk").map {
+            content =>
+              InternalServerError(content)
+          }
       }
   }
 }

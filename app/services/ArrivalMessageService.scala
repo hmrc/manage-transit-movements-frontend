@@ -33,7 +33,7 @@ class ArrivalMessageService @Inject()(arrivalMovementConnector: ArrivalMovementC
         summary.messagesLocation.xmlSubmissionNegativeAcknowledgement match {
           case Some(negativeAcknowledgementLocation) =>
             arrivalMovementConnector.getXMLSubmissionNegativeAcknowledgementMessage(negativeAcknowledgementLocation)
-          case _                                     => Future.successful(None)
+          case _ => Future.successful(None)
         }
       case _ => Future.successful(None)
     }
