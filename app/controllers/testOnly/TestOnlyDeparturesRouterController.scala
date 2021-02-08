@@ -18,7 +18,6 @@ package controllers.testOnly
 
 import connectors.testOnly.TestOnlyDeparturesRouterConnector
 import javax.inject.Inject
-import play.api.Logger
 import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -32,7 +31,6 @@ class TestOnlyDeparturesRouterController @Inject()(
 )(implicit val ec: ExecutionContext)
     extends FrontendController(cc) {
 
-  val Log: Logger = Logger(getClass)
 
   def declarationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>

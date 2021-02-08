@@ -22,18 +22,19 @@ import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import javax.inject.Inject
 import models.arrival.{MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import models.{ArrivalId, Arrivals, ResponseMessage}
-import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpReadsTry, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import logging.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) extends HttpReadsTry {
-  val logger: Logger = Logger(getClass)
+class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext)
+    extends HttpReadsTry
+    with Logging {
 
   private val channel: String = "web"
 

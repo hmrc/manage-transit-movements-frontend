@@ -20,20 +20,19 @@ import connectors.ArrivalMovementConnector
 import javax.inject.Inject
 import models.ArrivalId
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalMessageService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) {
-  val logger: Logger = Logger(getClass)
 
   def getXMLSubmissionNegativeAcknowledgementMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier,
                                                                            ec: ExecutionContext): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
     arrivalMovementConnector.getSummary(arrivalId) flatMap {
       case Some(summary) =>
         summary.messagesLocation.xmlSubmissionNegativeAcknowledgement match {
-          case Some(negativeAcknowledgementLocation) => arrivalMovementConnector.getXMLSubmissionNegativeAcknowledgementMessage(negativeAcknowledgementLocation)
+          case Some(negativeAcknowledgementLocation) =>
+            arrivalMovementConnector.getXMLSubmissionNegativeAcknowledgementMessage(negativeAcknowledgementLocation)
           case _                                     => Future.successful(None)
         }
       case _ => Future.successful(None)
