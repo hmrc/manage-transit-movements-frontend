@@ -21,7 +21,7 @@ import java.time._
 import models._
 import models.departure.{ControlDecision, ControlResult, NoReleaseForTransitMessage, ResultsOfControl}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.{choose, listOfN, numChar}
+import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
 import models.ErrorType
 import models.ErrorType.GenericError
@@ -185,7 +185,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         indicator   <- stringsWithMaxLength(2)
-        description <- Gen.option(nonEmptyString)
+        description <- Gen.option(alphaNumStr)
       } yield ResultsOfControl(indicator, description)
     }
 
