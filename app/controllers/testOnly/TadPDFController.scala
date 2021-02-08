@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.testOnly
 
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector

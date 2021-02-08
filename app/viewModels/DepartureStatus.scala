@@ -17,9 +17,9 @@
 package viewModels
 
 import config.FrontendAppConfig
-import models.{Departure, DepartureId, ViewMovementAction}
 import controllers.routes
-import models.{Departure, ViewMovementAction}
+import controllers.testOnly.{routes => testRoutes}
+import models.{Departure, DepartureId, ViewMovementAction}
 
 case class DepartureStatus(status: String, actions: Seq[ViewMovementAction])
 
@@ -47,7 +47,8 @@ object DepartureStatus {
     partialFunctions.apply(departure)
   }
 
-  private def downloadTADAction(departure: Departure) = ViewMovementAction(routes.TadPDFController.getPDF(departure.departureId).url, "departure.downloadTAD")
+  private def downloadTADAction(departure: Departure) =
+    ViewMovementAction(testRoutes.TadPDFController.getPDF(departure.departureId).url, "departure.downloadTAD")
 
   private def mrnAllocated: PartialFunction[Departure, DepartureStatus] = {
     case departure if departure.status == "MrnAllocated" =>
@@ -118,7 +119,7 @@ object DepartureStatus {
     case departure if departure.status == "NoReleaseForTransit" =>
       DepartureStatus(
         "departure.status.noReleaseForTransit",
-        actions = Seq(ViewMovementAction(routes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"))
+        actions = Seq(ViewMovementAction(testRoutes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"))
       )
   }
 

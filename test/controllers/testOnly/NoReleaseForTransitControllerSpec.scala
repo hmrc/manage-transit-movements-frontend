@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.testOnly
 
 import base.SpecBase
 import generators.Generators
@@ -35,6 +35,7 @@ import services.DepartureMessageService
 import scala.concurrent.Future
 
 class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+
   private val mockDepartureMessageService = mock[DepartureMessageService]
 
   override def beforeEach: Unit = {
@@ -44,16 +45,19 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
   "NoReleaseForTransit Controller" - {
 
     "return OK and the correct view for a GET" in {
+
       val transitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(transitMessage)))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
         .build()
+
       val request        = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])

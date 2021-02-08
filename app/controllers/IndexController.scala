@@ -26,6 +26,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import controllers.testOnly.{routes => testRoutes}
 
 import scala.concurrent.ExecutionContext
 
@@ -60,7 +61,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
           "hasArrivals"                    -> arrivals.exists(_.arrivals.nonEmpty),
           "showDeparture"                  -> appConfig.departureJourneyToggle,
           "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
-          "viewDepartureNotificationUrl"   -> routes.ViewDeparturesController.onPageLoad().url,
+          "viewDepartureNotificationUrl"   -> testRoutes.ViewDeparturesController.onPageLoad().url,
           "departuresAvailable"            -> departures.nonEmpty,
           "hasDepartures"                  -> departures.exists(_.departures.nonEmpty)
         )
