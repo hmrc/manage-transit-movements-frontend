@@ -16,6 +16,7 @@
 
 package controllers.testOnly
 
+import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
 import models.{DepartureId, LocalReferenceNumber}
@@ -25,16 +26,16 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.DepartureMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import controllers.{routes => normalRoutes}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ControlDecisionController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   departureMessageService: DepartureMessageService,
-  renderer: Renderer
+  renderer: Renderer,
+  appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -45,7 +46,9 @@ class ControlDecisionController @Inject()(
         case Some(message) =>
           val json = Json.obj("controlDecisionMessage" -> Json.toJson(message), "lrn" -> lrn.value)
           renderer.render("controlDecision.njk", json).map(Ok(_))
-        case _ => Future.successful(Redirect(normalRoutes.TechnicalDifficultiesController.onPageLoad()))
+        case _ =>
+          val json = Json.obj("nctsEnquiries" -> appConfig.nctsEnquiriesUrl)
+          renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
       }
   }
 }

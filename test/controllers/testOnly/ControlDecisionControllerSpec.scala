@@ -79,5 +79,39 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
 
       application.stop()
     }
+
+    "return InternalServerError and the TechnicalDifficulties page for a failed GET " in {
+
+      val controlDecision      = arbitrary[ControlDecision].sample.value
+      val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockDepartureMessageService.controlDecisionMessage(any())(any(), any()))
+        .thenReturn(Future.successful(None))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .build()
+
+      val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
+
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
   }
 }
