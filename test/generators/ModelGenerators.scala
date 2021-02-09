@@ -19,9 +19,9 @@ package generators
 import java.time._
 
 import models._
-import models.departure.{ControlResult, NoReleaseForTransitMessage, ResultsOfControl}
+import models.departure.{ControlDecision, ControlResult, NoReleaseForTransitMessage, ResultsOfControl}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.{choose, listOfN, numChar}
+import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
 import models.ErrorType
 import models.ErrorType.GenericError
@@ -30,6 +30,17 @@ import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, 
 
 trait ModelGenerators {
   self: Generators =>
+
+  implicit val arbitraryControlDecision: Arbitrary[ControlDecision] = {
+    Arbitrary {
+      for {
+        mrn                 <- Gen.alphaNumStr
+        dateOfControl       <- arbitrary[LocalDate]
+        principleTraderName <- Gen.alphaNumStr
+        principleTraderEori <- Gen.option(Gen.alphaNumStr)
+      } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)
+    }
+  }
 
   implicit val arbitrarylocalDate: Arbitrary[LocalDate] = {
     Arbitrary {
@@ -174,7 +185,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         indicator   <- stringsWithMaxLength(2)
-        description <- Gen.option(nonEmptyString)
+        description <- Gen.option(alphaNumStr)
       } yield ResultsOfControl(indicator, description)
     }
 
@@ -183,7 +194,7 @@ trait ModelGenerators {
       mrn                        <- nonEmptyString
       noReleaseMotivation        <- Gen.option(nonEmptyString)
       totalNumberOfItems         <- arbitrary[Int]
-      officeOfDepartureRefNumber <- arbitrary[String]
+      officeOfDepartureRefNumber <- Gen.alphaNumStr
       controlResult              <- arbitrary[ControlResult]
       resultsOfControl           <- Gen.option(listWithMaxLength(ResultsOfControl.maxResultsOfControl, arbitrary[ResultsOfControl]))
     } yield

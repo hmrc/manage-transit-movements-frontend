@@ -68,7 +68,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj()
+      val expectedJson = Json.obj("noReleaseForTransitMessage" -> Json.toJson(transitMessage))
 
       templateCaptor.getValue mustEqual "noReleaseForTransit.njk"
       jsonCaptor.getValue must containJson(expectedJson)

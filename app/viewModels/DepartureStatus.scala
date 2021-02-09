@@ -17,6 +17,7 @@
 package viewModels
 
 import config.FrontendAppConfig
+import models.{Departure, DepartureId, LocalReferenceNumber, ViewMovementAction}
 import controllers.routes
 import controllers.testOnly.{routes => testRoutes}
 import models.{Departure, DepartureId, ViewMovementAction}
@@ -42,6 +43,7 @@ object DepartureStatus {
         cancellationDecision,
         declarationCancellationRequest(config),
         noReleasedForTransit,
+        controlDecision,
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -120,6 +122,16 @@ object DepartureStatus {
       DepartureStatus(
         "departure.status.noReleaseForTransit",
         actions = Seq(ViewMovementAction(testRoutes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"))
+      )
+  }
+
+  private def controlDecision: DepartureStatusViewModel = {
+    case departure if departure.status == "ControlDecision" =>
+      DepartureStatus(
+        "departure.status.controlDecision",
+        actions = Seq(
+          ViewMovementAction(testRoutes.ControlDecisionController.onPageLoad(departure.departureId, departure.localReferenceNumber).url,
+                             "departure.viewDetails"))
       )
   }
 

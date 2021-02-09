@@ -22,6 +22,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import utils.Format
 
 import scala.xml.NodeSeq
@@ -30,34 +31,38 @@ class NoReleaseForTransitMessageSpec extends AnyFreeSpec with Matchers with Gene
 
   "NoReleaseForTransitMessage" - {
     "must read xml" in {
-      val expectedResult: NoReleaseForTransitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
-      val validXml: NodeSeq                          = <CC051B>
-        <HEAHEA>
-          <DocNumHEA5>{expectedResult.mrn}</DocNumHEA5>
-          {expectedResult.noReleaseMotivation.fold(NodeSeq.Empty) {
-          noReleaseMotivation =>
-            <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>}}
-          <TotNumOfIteHEA305>{expectedResult.totalNumberOfItems}</TotNumOfIteHEA305>
-        </HEAHEA>
-        <CUSOFFDEPEPT><RefNumEPT1>{expectedResult.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>
-        <CONRESERS>
-          <ConResCodERS16>{expectedResult.controlResult.code}</ConResCodERS16>
-          <ConDatERS14>{Format.dateFormatted(expectedResult.controlResult.datLimERS69)}</ConDatERS14>
-        </CONRESERS>
-        {expectedResult.resultsOfControl.fold(NodeSeq.Empty) {
-          resultsOfControl =>
-            resultsOfControl.map { rc =>
-              <RESOFCON534><ConInd424>{rc.controlIndicator}</ConInd424>
-                {rc.description.fold(NodeSeq.Empty) {
-                description => <DesTOC2>{description}</DesTOC2>
-              }}
-              </RESOFCON534>
-            }
-        }}
-      </CC051B>
 
-      XmlReader.of[NoReleaseForTransitMessage].read(validXml).toOption mustBe Some(expectedResult)
+      forAll(arbitrary[NoReleaseForTransitMessage]) {
+        noReleaseForTransitMessage =>
+          val validXml: NodeSeq = <CC051B>
+            <HEAHEA>
+              <DocNumHEA5>{noReleaseForTransitMessage.mrn}</DocNumHEA5>
+              {noReleaseForTransitMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
+              noReleaseMotivation =>
+                <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>}}
+              <TotNumOfIteHEA305>{noReleaseForTransitMessage.totalNumberOfItems}</TotNumOfIteHEA305>
+            </HEAHEA>
+            <CUSOFFDEPEPT><RefNumEPT1>{noReleaseForTransitMessage.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>
+            <CONRESERS>
+              <ConResCodERS16>{noReleaseForTransitMessage.controlResult.code}</ConResCodERS16>
+              <ConDatERS14>{Format.dateFormatted(noReleaseForTransitMessage.controlResult.datLimERS69)}</ConDatERS14>
+            </CONRESERS>
+            {noReleaseForTransitMessage.resultsOfControl.fold(NodeSeq.Empty) {
+              resultsOfControl =>
+                resultsOfControl.map { rc =>
+                  <RESOFCON534><ConInd424>{rc.controlIndicator}</ConInd424>
+                    {rc.description.fold(NodeSeq.Empty) {
+                    description => <DesTOC2>{description}</DesTOC2>
+                  }}
+                  </RESOFCON534>
+                }
+            }}
+          </CC051B>
 
+          val result = XmlReader.of[NoReleaseForTransitMessage].read(validXml).toOption.value
+
+          result mustBe noReleaseForTransitMessage
+      }
     }
   }
 }
