@@ -1,5 +1,6 @@
 {% extends "includes/layout.njk" %}
 
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
@@ -7,6 +8,10 @@
 {% endblock %}
 
 {% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
 
   <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
@@ -45,13 +50,11 @@
                </div>
             {% endif %}
         </dl>
-        <p>
-            {{ messages("xmlNegativeAcknowledgement.paragraph") }}
-            <a class="govuk-link" href={{contactUrl}} target="_blank">{{ messages("xmlNegativeAcknowledgement.linktext") }}</a>.
-        </p>
-
-      </div>
+       </div>
     </div>
-  </div>
+      <p class="govuk-body"> {{ messages("xmlNegativeAcknowledgement.paragraph") }}
+              <a class="govuk-link" target="_blank" href={{nctsEnquiries}} >{{ messages("xmlNegativeAcknowledgement.linktext") }}</a>.
+      </p>
+      </div>
 
 {% endblock %}
