@@ -96,6 +96,7 @@ class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase 
 
       val result       = route(application, request).value
       val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
+
       status(result) mustEqual INTERNAL_SERVER_ERROR
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())

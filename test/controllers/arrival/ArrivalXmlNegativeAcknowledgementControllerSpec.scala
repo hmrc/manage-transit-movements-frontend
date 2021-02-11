@@ -90,6 +90,7 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
         .build()
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
       val request = FakeRequest(GET, routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
 
