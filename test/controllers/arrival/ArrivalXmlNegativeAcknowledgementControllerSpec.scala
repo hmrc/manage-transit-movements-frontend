@@ -88,8 +88,10 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
         .build()
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
       val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
       val request = FakeRequest(GET, routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
@@ -99,7 +101,7 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
       status(result) mustEqual INTERNAL_SERVER_ERROR
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "xmlNegativeAcknowledgement.njk"
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
       application.stop()
     }
