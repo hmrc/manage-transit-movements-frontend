@@ -35,7 +35,7 @@ import services.ArrivalMessageService
 
 import scala.concurrent.Future
 
-class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
   private val mockArrivalMessageService = mock[ArrivalMessageService]
 
@@ -45,7 +45,7 @@ class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSuga
   }
   private val arrivalId = ArrivalId(1)
 
-  "XmlNegativeAcknowledgement Controller" - {
+  "ArrivalXmlNegativeAcknowledgementController Controller" - {
 
     "return OK and the correct view for a GET" in {
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
@@ -58,7 +58,7 @@ class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSuga
         .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
         .build()
 
-      val request        = FakeRequest(GET, routes.XmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val request        = FakeRequest(GET, routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,7 +68,10 @@ class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSuga
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
+      val expectedJson = Json.obj(
+        "contactUrl"      -> frontendAppConfig.nctsEnquiriesUrl,
+        "functionalError" -> negativeAcknowledgementMessage.error
+      )
 
       templateCaptor.getValue mustEqual "xmlNegativeAcknowledgement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
@@ -86,7 +89,7 @@ class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSuga
         .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
         .build()
 
-      val request = FakeRequest(GET, routes.XmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val request = FakeRequest(GET, routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
 
       val result = route(application, request).value
 

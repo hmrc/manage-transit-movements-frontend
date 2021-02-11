@@ -49,7 +49,7 @@
                    </dd>
                </div>
             {% endif %}
-             {% if functionalError.originalAttributeValue %}
+            {% if functionalError.originalAttributeValue %}
                <div class="govuk-summary-list__row">
                      <dt class="govuk-summary-list__key" style="width: 48%">
                     {{ messages("xmlNegativeAcknowledgement.originalAttributeValue") }}
@@ -62,9 +62,11 @@
         </dl>
        </div>
     </div>
-      <p class="govuk-body"> {{ messages("xmlNegativeAcknowledgement.paragraph") }}
-              <a class="govuk-link" target="_blank" href={{contactUrl}} >{{ messages("xmlNegativeAcknowledgement.linktext") }}</a>.
-      </p>
+     <p class="govuk-body">{{ messages("xmlNegativeAcknowledgement.paragraph") }}</p>
+               <ol class="govuk-list govuk-list--bullet">
+              <li> <a class="govuk-link" href={{declareUnloadingRemarksUrl}} >{{ messages("xmlNegativeAcknowledgement.create.unloadingRemarks") }}</a>
+              <li> <a class="govuk-link" target="_blank" href={{contactUrl}} >{{ messages("xmlNegativeAcknowledgement.linktext") }}</a> </li>
+               </ol>
       </div>
 
 {% endblock %}
