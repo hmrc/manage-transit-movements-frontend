@@ -26,6 +26,7 @@ POST        /manage-transit-movements/test-only/from-core-message               
 + nocsrf
 POST        /manage-transit-movements/test-only/declaration-to-core                         controllers.testOnly.TestOnlyDeparturesRouterController.declarationMessageToCore()
 
++ nocsrf
 POST        /manage-transit-movements/test-only/declaration-cancellation-request-to-core    controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
 # Departure nonlive routes
