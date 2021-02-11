@@ -80,7 +80,7 @@ class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase 
       application.stop()
     }
 
-    "redirect to Technical difficulty page when service fails to ger rejection message" in {
+    "render 'Technical difficulty page' when service fails to get rejection message" in {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
@@ -89,12 +89,20 @@ class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
         .build()
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
 
-      val result = route(application, request).value
-
+      val result       = route(application, request).value
+      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
       status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
       application.stop()
     }
   }

@@ -52,7 +52,8 @@ class UnloadingRemarksXmlNegativeAcknowledgementController @Inject()(
 
           renderer.render("unloadingRemarksXmlNegativeAcknowledgement.njk", json).map(Ok(_))
         case _ =>
-          renderer.render("internalServerError.njk").map(InternalServerError(_))
+          val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
+          renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
       }
   }
 }

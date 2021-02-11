@@ -48,7 +48,8 @@ class ArrivalXmlNegativeAcknowledgementController @Inject()(
 
           renderer.render("xmlNegativeAcknowledgement.njk", json).map(Ok(_))
         case _ =>
-          renderer.render("internalServerError.njk").map(InternalServerError(_))
+          val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
+          renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
       }
   }
 }
