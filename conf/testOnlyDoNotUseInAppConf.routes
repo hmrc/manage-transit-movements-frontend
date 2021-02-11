@@ -26,6 +26,8 @@ POST        /manage-transit-movements/test-only/from-core-message               
 + nocsrf
 POST        /manage-transit-movements/test-only/declaration-to-core                         controllers.testOnly.TestOnlyDeparturesRouterController.declarationMessageToCore()
 
+POST        /manage-transit-movements/test-only/declaration-cancellation-request-to-core    controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
+
 # Departure nonlive routes
 
 GET         /manage-transit-movements/test-only/:departureId/no-release-for-transit         controllers.testOnly.NoReleaseForTransitController.onPageLoad(departureId: DepartureId)

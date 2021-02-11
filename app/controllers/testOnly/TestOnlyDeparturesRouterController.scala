@@ -57,7 +57,7 @@ class TestOnlyDeparturesRouterController @Inject()(
                 val location = response.header("Location").getOrElse("Location is missing")
                 Status(response.status)
                   .withHeaders(
-                    "Location" -> location,
+                    "Location"    -> location,
                     "departureId" -> location.split("/").last
                   )
             }
