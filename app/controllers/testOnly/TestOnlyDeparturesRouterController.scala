@@ -46,12 +46,12 @@ class TestOnlyDeparturesRouterController @Inject()(
         }
   }
 
-  def declarationCancellationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
+  def resubmitDeclarationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       request.headers.get("departureId") match {
         case Some(departureId) =>
           connector
-            .createDeclarationCancellationMessage(request.body, departureId, request.headers)
+            .createResubmissionDeclarationMessage(request.body, departureId, request.headers)
             .map {
               response =>
                 val location = response.header("Location").getOrElse("Location is missing")
