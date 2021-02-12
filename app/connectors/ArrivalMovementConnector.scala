@@ -44,9 +44,7 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
     http
       .GET[Arrivals](serviceUrl)(HttpReads[Arrivals], header, ec)
-      .map {
-        case arrivals => Some(arrivals)
-      }
+      .map(arrivals => Some(arrivals))
       .recover {
         case _ =>
           logger.error("GetArrivals failed to get data")
@@ -64,26 +62,41 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
 
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.value}/messages/summary"
     val header             = hc.withExtraHeaders(ChannelHeader(channel))
-    http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
-      case responseMessage if is2xx(responseMessage.status) => Some(responseMessage.json.as[MessagesSummary])
-      case _ =>
-        logger.error("GetSummary failed to return data")
-        None
-    }
+    http
+      .GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec)
+      .map {
+        case responseMessage if is2xx(responseMessage.status) => Some(responseMessage.json.as[MessagesSummary])
+        case _ =>
+          logger.error(s"GetSummary failed to return data for the arrivalId ${arrivalId.value}")
+          None
+      }
+      .recover {
+        case response =>
+          println("++++++++++++++++++++++++" + response)
+          logger.error(s"GetSummary failed when attempting to retrieve the message")
+          None
+      }
   }
 
   def getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation: String)(
     implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
     val serviceUrl = s"${config.destinationBaseUrl}$rejectionLocation"
     val header     = hc.withExtraHeaders(ChannelHeader(channel))
-    http.GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec) map {
-      case responseMessage if is2xx(responseMessage.status) =>
-        val message: NodeSeq = responseMessage.json.as[ResponseMessage].message
-        XmlReader.of[XMLSubmissionNegativeAcknowledgementMessage].read(message).toOption
-      case _ =>
-        logger.error("getXMLSubmissionNegativeAcknowledgementMessage failed to get data")
-        None
-    }
+    http
+      .GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec)
+      .map {
+        case responseMessage if is2xx(responseMessage.status) =>
+          val message: NodeSeq = responseMessage.json.as[ResponseMessage].message
+          XmlReader.of[XMLSubmissionNegativeAcknowledgementMessage].read(message).toOption
+        case _ =>
+          logger.error("getXMLSubmissionNegativeAcknowledgementMessage failed to get data")
+          None
+      }
+      .recover {
+        case _ =>
+          logger.error(s"getXMLSubmissionNegativeAcknowledgementMessage failed when attempting to retrieve the message")
+          None
+      }
   }
 
   object ChannelHeader {
