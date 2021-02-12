@@ -42,7 +42,7 @@ class TestOnlyDeparturesRouterConnector @Inject()(val http: HttpClient, config: 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
   }
 
-  def createResubmissionDeclarationMessage(requestData: NodeSeq, departureId: String, headers: Headers)(
+  def createDeclarationCancellationMessage(requestData: NodeSeq, departureId: String, headers: Headers)(
     implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.departureUrl}/movements/departures/$departureId/messages"
@@ -51,7 +51,7 @@ class TestOnlyDeparturesRouterConnector @Inject()(val http: HttpClient, config: 
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
       .withExtraHeaders(addHeaders(): _*)
 
-    http.PUTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
   }
 
   //TODO: Not yet implemented (needs updating when we need to get inbound messages - see TestOnlyRouterConnector)
