@@ -27,7 +27,12 @@ object MovementStatus {
 
   def apply(arrival: Arrival)(implicit messages: Messages, config: FrontendAppConfig): MovementStatus = {
     val allPfs: PartialFunction[Arrival, MovementStatus] =
-      Seq(unloadingPermission, arrivalRejected, unloadingRemarksRejected, arrivalNegativeAcknowledgement, displayStatus).reduce(_ orElse _)
+      Seq(unloadingPermission,
+          arrivalRejected,
+          unloadingRemarksRejected,
+          arrivalNegativeAcknowledgement,
+          unloadingRemarksNegativeAcknowledgement,
+          displayStatus).reduce(_ orElse _)
 
     allPfs.apply(arrival)
   }
@@ -61,13 +66,23 @@ object MovementStatus {
   }
 
   private def arrivalNegativeAcknowledgement()(implicit messages: Messages, config: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
-    case arrival if arrival.status == "XMLSubmissionNegativeAcknowledgement" =>
+    case arrival if arrival.status == "ArrivalXMLSubmissionNegativeAcknowledgement" =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(
-          controllers.arrival.routes.XmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
+          controllers.arrival.routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
           Messages("viewArrivalNotifications.table.action.viewErrors")
         ))
       MovementStatus(Messages("movement.status.XMLSubmissionNegativeAcknowledgement"), action)
+  }
+
+  private def unloadingRemarksNegativeAcknowledgement()(implicit messages: Messages, config: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
+    case arrival if arrival.status == "UnloadingRemarksXMLSubmissionNegativeAcknowledgement" =>
+      val action: Seq[ViewMovementAction] = Seq(
+        ViewMovementAction(
+          controllers.unloading.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
+          Messages("viewArrivalNotifications.table.action.viewErrors")
+        ))
+      MovementStatus(Messages("movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement"), action)
   }
 
   private def displayStatus()(implicit messages: Messages): PartialFunction[Arrival, MovementStatus] = {

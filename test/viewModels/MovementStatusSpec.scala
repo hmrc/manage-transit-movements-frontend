@@ -74,11 +74,28 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival = arrival.copy(status = "XMLSubmissionNegativeAcknowledgement")
-            val expectedAction = ViewMovementAction(arrivalRoute.XmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
-                                                    Messages("viewArrivalNotifications.table.action.viewErrors"))
+            val arr: Arrival = arrival.copy(status = "ArrivalXMLSubmissionNegativeAcknowledgement")
+            val expectedAction = ViewMovementAction(
+              arrivalRoute.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
+              Messages("viewArrivalNotifications.table.action.viewErrors")
+            )
 
             MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.XMLSubmissionNegativeAcknowledgement")
+            MovementStatus(arr)(messages, frontendAppConfig).actions.headOption mustBe Some(expectedAction)
+        }
+      }
+
+      "When status is UnloadingRemarksXMLSubmissionNegativeAcknowledgement show correct message" in {
+
+        forAll(arbitrary[Arrival]) {
+          arrival =>
+            val arr: Arrival = arrival.copy(status = "UnloadingRemarksXMLSubmissionNegativeAcknowledgement")
+            val expectedAction = ViewMovementAction(
+              controllers.unloading.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
+              Messages("viewArrivalNotifications.table.action.viewErrors")
+            )
+
+            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement")
             MovementStatus(arr)(messages, frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }

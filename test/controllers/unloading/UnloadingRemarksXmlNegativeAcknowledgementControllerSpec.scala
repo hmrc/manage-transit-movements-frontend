@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.arrival
+package controllers.unloading
 
 import base.SpecBase
 import generators.Generators
@@ -35,7 +35,7 @@ import services.ArrivalMessageService
 
 import scala.concurrent.Future
 
-class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
   private val mockArrivalMessageService = mock[ArrivalMessageService]
 
@@ -45,7 +45,7 @@ class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSuga
   }
   private val arrivalId = ArrivalId(1)
 
-  "XmlNegativeAcknowledgement Controller" - {
+  "UnloadingRemarksXmlNegativeAcknowledgementController" - {
 
     "return OK and the correct view for a GET" in {
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
@@ -58,7 +58,7 @@ class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSuga
         .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
         .build()
 
-      val request        = FakeRequest(GET, routes.XmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val request        = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,15 +68,19 @@ class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSuga
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
+      val expectedJson = Json.obj(
+        "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
+        "declareUnloadingRemarksUrl" -> frontendAppConfig.declareUnloadingRemarksUrl(arrivalId),
+        "functionalError"            -> negativeAcknowledgementMessage.error
+      )
 
-      templateCaptor.getValue mustEqual "xmlNegativeAcknowledgement.njk"
+      templateCaptor.getValue mustEqual "unloadingRemarksXmlNegativeAcknowledgement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
 
-    "redirect to Technical difficulty page when service fails to ger rejection message" in {
+    "render 'Technical difficulty page' when service fails to get rejection message" in {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
@@ -85,12 +89,21 @@ class XmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
         .build()
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val request = FakeRequest(GET, routes.XmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val request = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
 
-      val result = route(application, request).value
+      val result       = route(application, request).value
+      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
       application.stop()
     }
   }

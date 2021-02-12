@@ -84,6 +84,7 @@ movement.status.unloadingRemarksSubmitted = Unloading remarks sent
 movement.status.unloadingRemarksRejected = Unloading remarks rejected
 movement.status.goodsReleased = Goods Released
 movement.status.XMLSubmissionNegativeAcknowledgement = Arrival notification rejected
+movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement = Unloading remarks rejected
 
 technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service
@@ -246,10 +247,12 @@ noReleaseForTransit.p = You must contact the office of departure for more detail
 xmlNegativeAcknowledgement.title = There is a problem with this arrival notification
 xmlNegativeAcknowledgement.heading = There is a problem with this arrival notification
 xmlNegativeAcknowledgement.paragraph = You must
-xmlNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab).
+xmlNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab)
 xmlNegativeAcknowledgement.errorType = Error type
 xmlNegativeAcknowledgement.errorPointer = Error pointer
 xmlNegativeAcknowledgement.errorReason = Error reason
+xmlNegativeAcknowledgement.originalAttributeValue = Original attribute value
+xmlNegativeAcknowledgement.create.unloadingRemarks = create new unloading remarks
 
 controlDecision.title = Your goods have been selected for control
 controlDecision.heading = Your goods have been selected for control

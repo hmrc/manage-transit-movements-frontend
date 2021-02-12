@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.arrival
+package controllers.unloading
 
 import config.FrontendAppConfig
 import controllers.actions._
@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
-class XmlNegativeAcknowledgementController @Inject()(
+class UnloadingRemarksXmlNegativeAcknowledgementController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
@@ -44,14 +44,16 @@ class XmlNegativeAcknowledgementController @Inject()(
     implicit request =>
       arrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).flatMap {
         case Some(rejectionMessage) =>
-          val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl, "functionalError" -> rejectionMessage.error)
+          val json = Json.obj(
+            "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
+            "declareUnloadingRemarksUrl" -> frontendAppConfig.declareUnloadingRemarksUrl(arrivalId),
+            "functionalError"            -> rejectionMessage.error
+          )
 
-          renderer.render("xmlNegativeAcknowledgement.njk", json).map(Ok(_))
+          renderer.render("unloadingRemarksXmlNegativeAcknowledgement.njk", json).map(Ok(_))
         case _ =>
-          renderer.render("internalServerError.njk").map {
-            content =>
-              InternalServerError(content)
-          }
+          val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
+          renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
       }
   }
 }
