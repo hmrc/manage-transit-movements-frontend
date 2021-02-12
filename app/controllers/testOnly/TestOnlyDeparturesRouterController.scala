@@ -48,23 +48,26 @@ class TestOnlyDeparturesRouterController @Inject()(
 
   def resubmitDeclarationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      request.headers.get("departureId") match {
-        case Some(departureId) =>
-          connector
-            .createResubmissionDeclarationMessage(request.body, departureId, request.headers)
-            .map {
-              response =>
-                val location = response.header("Location").getOrElse("Location is missing")
-                Status(response.status)
-                  .withHeaders(
-                    "Location"    -> location,
-                    "departureId" -> location.split("/").last
-                  )
-            }
-
-        case _ => Future.successful(BadRequest("DepartureId is missing"))
-
-      }
+      connector
+        .submitInboundMessage(request.body, request.headers)
+        .map(response => Status(response.status))
+//      request.headers.get("departureId") match {
+//        case Some(departureId) =>
+//          connector
+//            .createResubmissionDeclarationMessage(request.body, departureId, request.headers)
+//            .map {
+//              response =>
+//                val location = response.header("Location").getOrElse("Location is missing")
+//                Status(response.status)
+//                  .withHeaders(
+//                    "Location"    -> location,
+//                    "departureId" -> location.split("/").last
+//                  )
+//            }
+//
+//        case _ => Future.successful(BadRequest("DepartureId is missing"))
+//
+//      }
   }
 
   //TODO: Not yet implemented (see TestOnlyRouterController)
