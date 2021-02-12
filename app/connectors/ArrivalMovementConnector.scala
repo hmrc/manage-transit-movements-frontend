@@ -72,7 +72,6 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
       }
       .recover {
         case response =>
-          println("++++++++++++++++++++++++" + response)
           logger.error(s"GetSummary failed when attempting to retrieve the message")
           None
       }
