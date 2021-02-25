@@ -16,10 +16,9 @@
 
 package controllers.testOnly
 
-import java.time.LocalDateTime
-
 import base.SpecBase
-import connectors.{DeparturesMovementConnector, ReferenceDataConnector}
+import connectors.DeparturesMovementConnector
+import controllers.{routes => mainRoutes}
 import matchers.JsonMatchers
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
@@ -31,10 +30,8 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import controllers.{routes => mainRoutes}
-import navigation.{FakeNavigator, Navigator}
-import play.api.inject.guice.GuiceApplicationBuilder
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {

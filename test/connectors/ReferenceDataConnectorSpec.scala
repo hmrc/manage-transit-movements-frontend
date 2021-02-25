@@ -17,20 +17,14 @@
 package connectors
 
 import base.SpecBase
+import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
+import models.referenceData.CustomsOffice
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import com.github.tomakehurst.wiremock.client.WireMock._
-import models.referenceData.CustomsOffice
-import org.scalacheck.Gen
-import org.scalatest.exceptions.TestFailedException
-import play.api.libs.json.JsResult
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.test.Helpers._
-
-import scala.concurrent.Future
 
 class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
 

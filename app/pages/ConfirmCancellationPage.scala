@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary.arbitrary
-import pages._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsPath
 
-trait UserAnswersEntryGenerators {}
+case object ConfirmCancellationPage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "confirmCancellation"
+}

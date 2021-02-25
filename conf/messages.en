@@ -262,3 +262,8 @@ controlDecision.principalEoriNumber = Principal’s EORI number
 controlDecision.principalTraderName = Principal trader name
 controlDecision.dateOfControl = Date of control
 controlDecision.paragraph = You must wait for the outcome of your customs check.
+
+confirmCancellation.title = confirmCancellation
+confirmCancellation.heading = confirmCancellation
+confirmCancellation.checkYourAnswersLabel = confirmCancellation
+confirmCancellation.error.required = Select yes if confirmCancellation
