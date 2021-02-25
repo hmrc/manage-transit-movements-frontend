@@ -17,22 +17,40 @@
 package controllers.testOnly
 
 import config.FrontendAppConfig
-import connectors.ArrivalMovementConnector
+import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import controllers.actions.IdentifierAction
+
 import javax.inject.Inject
 import models.DepartureId
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents, arrivalMovementConnector: ArrivalMovementConnector)(
+class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents, departuresMovementConnector: DeparturesMovementConnector)(
   implicit ec: ExecutionContext,
   appConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  //TODO: Implement this for TAD
-  def getPDF(departureId: DepartureId): Action[AnyContent] = ???
+  def getPDF(departureId: DepartureId): Action[AnyContent] = identify.async {
+    implicit request =>
+      hc.authorization
+        .map {
+          token =>
+            departuresMovementConnector.getPDF(departureId, token.value).map {
+              result =>
+                result.status match {
+                  case OK =>
+                    Ok(result.bodyAsBytes.toArray)
+                  case _ =>
+                    Redirect(controllers.routes.TechnicalDifficultiesController.onPageLoad())
+                }
+            }
+        }
+        .getOrElse {
+          Future.successful(Redirect(controllers.routes.UnauthorisedController.onPageLoad()))
+        }
+  }
 }
