@@ -22,6 +22,8 @@ import controllers.actions.IdentifierAction
 import models.DepartureId
 import play.api.Logger.logger
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
+import renderer.Renderer
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -30,28 +32,23 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents, departuresMovementConnector: DeparturesMovementConnector)(
   implicit ec: ExecutionContext,
-  appConfig: FrontendAppConfig)
+  appConfig: FrontendAppConfig,
+  renderer: Renderer)
     extends FrontendController(cc)
     with I18nSupport {
 
   def getPDF(departureId: DepartureId): Action[AnyContent] = identify.async {
     implicit request =>
-      hc.authorization
-        .map {
-          token =>
-            departuresMovementConnector.getPDF(departureId, token.value).map {
-              result =>
-                result.status match {
-                  case OK =>
-                    Ok(result.bodyAsBytes.toArray)
-                  case _ =>
-                    logger.error("failed to download TAD pdf")
-                    Redirect(controllers.routes.TechnicalDifficultiesController.onPageLoad())
-                }
-            }
-        }
-        .getOrElse {
-          Future.successful(Redirect(controllers.routes.UnauthorisedController.onPageLoad()))
-        }
+      departuresMovementConnector.getPDF(departureId).flatMap {
+        result =>
+          result.status match {
+            case OK =>
+              Future.successful(Ok(result.bodyAsBytes.toArray))
+            case _ =>
+              logger.error(s"failed to download TAD pdf received status code ${result.status}")
+              val json = Json.obj("nctsEnquiries" -> appConfig.nctsEnquiriesUrl)
+              renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
+          }
+      }
   }
 }

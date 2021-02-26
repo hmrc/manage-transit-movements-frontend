@@ -62,7 +62,7 @@ class TadPDFControllerSpec extends SpecBase with Generators with ScalaCheckPrope
             when(wsResponse.status) thenReturn 200
             when(wsResponse.bodyAsBytes) thenReturn ByteString(pdf)
 
-            when(mockDeparturesMovementConnector.getPDF(any(), any())(any()))
+            when(mockDeparturesMovementConnector.getPDF(any())(any()))
               .thenReturn(Future.successful(wsResponse))
 
             val departureId = DepartureId(0)
@@ -108,7 +108,7 @@ class TadPDFControllerSpec extends SpecBase with Generators with ScalaCheckPrope
             val wsResponse: AhcWSResponse = mock[AhcWSResponse]
             when(wsResponse.status) thenReturn errorCode
 
-            when(mockDeparturesMovementConnector.getPDF(any(), any())(any()))
+            when(mockDeparturesMovementConnector.getPDF(any())(any()))
               .thenReturn(Future.successful(wsResponse))
 
             val departureId = DepartureId(0)
