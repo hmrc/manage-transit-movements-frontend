@@ -266,3 +266,9 @@ controlDecision.paragraph = You must wait for the outcome of your customs check.
 confirmCancellation.title =  Are you sure you want to cancel this departure declaration?
 confirmCancellation.heading =  Are you sure you want to cancel this departure declaration?
 confirmCancellation.error.required = Select yes if you want to cancel this departure declaration
+
+cancellationReason.title = Why do you want to cancel this departure declaration?
+cancellationReason.heading = Why do you want to cancel this departure declaration?
+cancellationReason.error.required = Enter the reason whyyou want to cancel this departure declaration
+cancellationReason.error.length = The reason why you want to cancel this departure declaration must be 350 characters or less
+cancellationReason.error.invalidCharacters = The reason why you want to cancel this departure declaration must only include letters a to z without accents, numbers 0 to 9, blank spaces, at signs (@), forward slashes, back slashes, full stops, commas, hyphens, and question marks

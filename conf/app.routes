@@ -30,3 +30,6 @@ GET        /:arrivalId/unloading-remarks-negative-acknowledgement             co
 
 GET        /:lrn/confirm-cancellation                        controllers.ConfirmCancellationController.onPageLoad(lrn: LocalReferenceNumber)
 POST       /:lrn/confirm-cancellation                        controllers.ConfirmCancellationController.onSubmit(lrn: LocalReferenceNumber)
+
+GET        /:lrn/cancellation-reason                        controllers.CancellationReasonController.onPageLoad(lrn: LocalReferenceNumber)
+POST       /:lrn/cancellation-reason                        controllers.CancellationReasonController.onSubmit(lrn: LocalReferenceNumber)

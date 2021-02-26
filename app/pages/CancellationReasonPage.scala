@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary.arbitrary
-import pages._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsPath
 
-trait UserAnswersEntryGenerators {
+case object CancellationReasonPage extends QuestionPage[String] {
 
-  self: Generators =>
+  override def path: JsPath = JsPath \ toString
 
-  implicit lazy val arbitraryCancellationReasonAnswersEntry: Arbitrary[(CancellationReasonPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[CancellationReasonPage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
-      } yield (page, value)
-    }
+  override def toString: String = "cancellationReason"
 }

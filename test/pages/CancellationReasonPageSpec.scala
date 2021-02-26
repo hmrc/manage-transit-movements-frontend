@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary.arbitrary
-import pages._
-import play.api.libs.json.{JsValue, Json}
+import pages.behaviours.PageBehaviours
 
-trait UserAnswersEntryGenerators {
+class CancellationReasonPageSpec extends PageBehaviours {
 
-  self: Generators =>
+  "CancellationReasonPage" - {
 
-  implicit lazy val arbitraryCancellationReasonAnswersEntry: Arbitrary[(CancellationReasonPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[CancellationReasonPage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
-      } yield (page, value)
-    }
+    beRetrievable[String](CancellationReasonPage)
+
+    beSettable[String](CancellationReasonPage)
+
+    beRemovable[String](CancellationReasonPage)
+  }
 }

@@ -21,6 +21,7 @@ object AppDependencies {
     "org.scalatest"               %% "scalatest"          % "3.2.0",
     "org.scalatestplus"           %% "mockito-3-2"        % "3.1.2.0",
     "org.scalatestplus.play"      %% "scalatestplus-play" % "3.1.3",
+    "wolfendale"                 %% "scalacheck-gen-regexp"    % "0.1.1",
     "org.scalatestplus"           %% "scalatestplus-scalacheck" % "3.1.0.0-RC2",
     "org.pegdown"                 %  "pegdown"            % "1.6.0",
     "org.jsoup"                   %  "jsoup"              % "1.10.3",

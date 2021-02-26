@@ -17,8 +17,9 @@
 package forms.mappings
 
 import java.time.LocalDate
-
 import play.api.data.validation.{Constraint, Invalid, Valid}
+
+import scala.util.matching.Regex
 
 trait Constraints {
 
@@ -73,6 +74,22 @@ trait Constraints {
         Valid
       case _ =>
         Invalid(errorKey, regex)
+    }
+
+  protected def regexp(regex: Regex, errorKey: String, args: Seq[Any]): Constraint[String] =
+    Constraint {
+      case str if str.matches(regex.pattern.pattern()) =>
+        Valid
+      case _ =>
+        Invalid(errorKey, args: _*)
+    }
+
+  protected def regexp(regex: Regex, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.matches(regex.pattern.pattern()) =>
+        Valid
+      case _ =>
+        Invalid(errorKey)
     }
 
   protected def maxLength(maximum: Int, errorKey: String): Constraint[String] =
