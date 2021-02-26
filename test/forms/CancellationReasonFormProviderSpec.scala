@@ -25,7 +25,6 @@ class CancellationReasonFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey      = "cancellationReason.error.required"
   val lengthKey        = "cancellationReason.error.length"
-  val invalidKey       = "cancellationReason.error.invalidCharacters"
   val maxLength        = 100
   val stringFieldRegex = "[\\sa-zA-Z0-9&'@/.\\-? ]*"
 
@@ -51,7 +50,7 @@ class CancellationReasonFormProviderSpec extends StringFieldBehaviours {
 
       val invalidKey = "cancellationReason.error.invalidCharacters"
 
-      val expectedError: FormError = FormError(fieldName, invalidKey)
+      val expectedError: FormError = FormError(fieldName, invalidKey, Seq(stringFieldRegex))
       val generator: Gen[String]   = RegexpGen.from(s"[!£^*(){}_+=:;|`~,±üçñèé@]{35}")
       forAll(generator) {
         invalidString =>

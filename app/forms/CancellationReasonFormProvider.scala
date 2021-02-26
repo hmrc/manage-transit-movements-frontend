@@ -28,6 +28,6 @@ class CancellationReasonFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("cancellationReason.error.required")
         .verifying(maxLength(350, "cancellationReason.error.length"))
-        .verifying(regexp(stringFieldRegex, "cancellationReason.error.invalidCharacters", Seq(stringFieldRegex)))
+        .verifying(regexp(stringFieldRegex, "cancellationReason.error.invalidCharacters"))
     )
 }
