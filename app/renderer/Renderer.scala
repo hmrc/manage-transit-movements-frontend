@@ -16,14 +16,19 @@
 
 package renderer
 
+import cats.data.OptionT.when
 import config.FrontendAppConfig
+import controllers.actions.DataRetrievalActionProvider
+import models.UserAnswers
+import models.requests.{IdentifierRequest, OptionalDataRequest}
+
 import javax.inject.Inject
 import play.api.libs.json.{JsObject, Json, OWrites}
-import play.api.mvc.RequestHeader
+import play.api.mvc.{ActionTransformer, RequestHeader}
 import play.twirl.api.Html
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class Renderer @Inject()(appConfig: FrontendAppConfig, renderer: NunjucksRenderer) {
 

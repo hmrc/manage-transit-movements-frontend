@@ -18,17 +18,17 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{DepartureId, UserAnswers}
+import models.{DepartureId, LocalReferenceNumber, UserAnswers}
 import org.mockito.Mockito
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest._
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.inject.{bind, Binding, Injector}
+import play.api.inject.{bind, Injector}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -53,7 +53,8 @@ trait SpecBase
     Mockito.reset(mockRenderer)
   }
 
-  val configKey = "config"
+  val configKey                 = "config"
+  val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
 
   val userAnswersId = "id"
 

@@ -16,8 +16,6 @@
 
 package models.departure
 
-import java.time.LocalDate
-
 import com.lucidchart.open.xtract.XmlReader
 import generators.Generators
 import models.departure.ControlDecisionSpec.toXml

@@ -16,17 +16,15 @@
 
 package viewModels
 
-import java.time.format.DateTimeFormatter
-
 import base.SpecBase
 import generators.Generators
 import models.Arrival
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.Application
 import play.api.i18n.Messages
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+
+import java.time.format.DateTimeFormatter
 
 class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
