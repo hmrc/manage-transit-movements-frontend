@@ -60,7 +60,7 @@ class ConfirmCancellationController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "mrn"    -> lrn,
+        "lrn"    -> lrn,
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
