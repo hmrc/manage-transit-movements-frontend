@@ -132,22 +132,5 @@ class ConfirmCancellationControllerSpec extends SpecBase with MockitoSugar with 
 //      application.stop()
 //    }
 
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-      dataRetrievalNoData()
-
-      val application = applicationBuilders(userAnswers = None).build()
-
-      val request =
-        FakeRequest(POST, confirmCancellationRoute)
-          .withFormUrlEncodedBody(("value", "true"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
   }
 }
