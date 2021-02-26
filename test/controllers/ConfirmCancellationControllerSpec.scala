@@ -46,7 +46,7 @@ class ConfirmCancellationControllerSpec extends SpecBase with MockitoSugar with 
   val formProvider: ConfirmCancellationFormProvider = new ConfirmCancellationFormProvider()
   val form: Form[Boolean]                           = formProvider()
 
-  lazy val confirmCancellationRoute = routes.ConfirmCancellationController.onPageLoad(lrn, NormalMode).url
+  lazy val confirmCancellationRoute = routes.ConfirmCancellationController.onPageLoad(lrn).url
 
   "ConfirmCancellation Controller" - {
 
@@ -66,33 +66,6 @@ class ConfirmCancellationControllerSpec extends SpecBase with MockitoSugar with 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      templateCaptor.getValue mustEqual "confirmCancellation.njk"
-
-      application.stop()
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = emptyUserAnswers.set(ConfirmCancellationPage, true).success.value
-
-      dataRetrievalWithData(userAnswers)
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val application    = applicationBuilders(userAnswers = Some(userAnswers)).build()
-      val request        = FakeRequest(GET, confirmCancellationRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> "true"))
 
       templateCaptor.getValue mustEqual "confirmCancellation.njk"
 
@@ -128,46 +101,36 @@ class ConfirmCancellationControllerSpec extends SpecBase with MockitoSugar with 
       application.stop()
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      dataRetrievalWithData(emptyUserAnswers)
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val application    = applicationBuilders(userAnswers = Some(emptyUserAnswers)).build()
-      val request        = FakeRequest(POST, confirmCancellationRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
-
-      status(result) mustEqual BAD_REQUEST
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      templateCaptor.getValue mustEqual "confirmCancellation.njk"
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      dataRetrievalNoData()
-
-      val application = applicationBuilders(userAnswers = None).build()
-
-      val request = FakeRequest(GET, confirmCancellationRoute)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
+//    "must return a Bad Request and errors when invalid data is submitted" in {
+//
+//      dataRetrievalWithData(emptyUserAnswers)
+//
+//      when(mockRenderer.render(any(), any())(any()))
+//        .thenReturn(Future.successful(Html("")))
+//
+//      val application    = applicationBuilders(userAnswers = Some(emptyUserAnswers)).build()
+//      val request        = FakeRequest(POST, confirmCancellationRoute).withFormUrlEncodedBody(("value", ""))
+//      val boundForm      = form.bind(Map("value" -> ""))
+//      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+//      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+//
+//      val result = route(application, request).value
+//
+//      status(result) mustEqual BAD_REQUEST
+//
+//      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+//
+//      val expectedJson = Json.obj(
+//      "form" -> boundForm,
+//      "lrn"  -> lrn,
+//      "mode" -> NormalMode
+//      )
+//
+//      templateCaptor.getValue mustEqual "confirmCancellation.njk"
+//      jsonCaptor.getValue must containJson(expectedJson)
+//
+//      application.stop()
+//    }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
       dataRetrievalNoData()

@@ -18,9 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.ConfirmCancellationFormProvider
-
 import javax.inject.Inject
-import models.{LocalReferenceNumber, Mode}
+import models.{LocalReferenceNumber, Mode, NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.ConfirmCancellationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,11 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmCancellationController @Inject()(
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
-  getData: DataRetrievalActionProvider,
-  requireData: DataRequiredAction,
   formProvider: ConfirmCancellationFormProvider,
   cc: MessagesControllerComponents,
   renderer: Renderer
@@ -50,25 +46,21 @@ class ConfirmCancellationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(lrn) andThen requireData).async {
+  def onPageLoad(lrn: LocalReferenceNumber): Action[AnyContent] = identify.async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(ConfirmCancellationPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
+        "form"   -> form,
         "mrn"    -> lrn,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "radios" -> Radios.yesNo(form("value"))
       )
 
       renderer.render("confirmCancellation.njk", json).map(Ok(_))
   }
 
-  def onSubmit(lrn: LocalReferenceNumber, mode: Mode): Action[AnyContent] = (identify andThen getData(lrn) andThen requireData).async {
+  def onSubmit(lrn: LocalReferenceNumber): Action[AnyContent] = identify.async {
     implicit request =>
+      val userAnswers = UserAnswers(request.eoriNumber)
+
       form
         .bindFromRequest()
         .fold(
@@ -76,7 +68,6 @@ class ConfirmCancellationController @Inject()(
 
             val json = Json.obj(
               "form"   -> formWithErrors,
-              "mode"   -> mode,
               "lrn"    -> lrn,
               "radios" -> Radios.yesNo(formWithErrors("value"))
             )
@@ -85,9 +76,8 @@ class ConfirmCancellationController @Inject()(
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmCancellationPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ConfirmCancellationPage, mode, updatedAnswers))
+              updatedAnswers <- Future.fromTry(userAnswers.set(ConfirmCancellationPage, value))
+            } yield Redirect(navigator.nextPage(ConfirmCancellationPage, NormalMode, updatedAnswers))
         )
   }
 }
