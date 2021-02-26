@@ -71,7 +71,6 @@ class ConfirmCancellationController @Inject()(
               "lrn"    -> lrn,
               "radios" -> Radios.yesNo(formWithErrors("value"))
             )
-
             renderer.render("confirmCancellation.njk", json).map(BadRequest(_))
           },
           value =>
