@@ -21,16 +21,20 @@ import base.SpecBase
 import connectors.DeparturesMovementConnector
 import controllers.testOnly.{routes => testRoutes}
 import generators.Generators
-import models.{ArrivalId, DepartureId}
+import matchers.JsonMatchers.containJson
+import models.DepartureId
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.ahc.AhcWSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
 
 import scala.concurrent.Future
 
@@ -81,52 +85,38 @@ class TadPDFControllerSpec extends SpecBase with Generators with ScalaCheckPrope
         }
       }
 
-      "must redirect to UnauthorisedController if bearer token is missing" in {
+      "must redirect to TechnicalDifficultiesController if connector returns error" in {
+        val errorCode = Gen.oneOf(300, 500).sample.value
+
+        val wsResponse: AhcWSResponse = mock[AhcWSResponse]
+        when(wsResponse.status) thenReturn errorCode
+
+        when(mockRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("")))
+
+        when(mockDeparturesMovementConnector.getPDF(any())(any()))
+          .thenReturn(Future.successful(wsResponse))
 
         val departureId = DepartureId(0)
 
         val application = appBuilder.build()
 
-        val request = FakeRequest(GET, testRoutes.TadPDFController.getPDF(departureId).url)
+        val request        = FakeRequest(GET, testRoutes.TadPDFController.getPDF(departureId).url)
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        running(application) {
+        val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
-          val result = route(application, request).value
+        val result = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
+        status(result) mustEqual INTERNAL_SERVER_ERROR
 
-          redirectLocation(result).value mustEqual controllers.routes.UnauthorisedController.onPageLoad().url
-        }
-      }
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      "must redirect to TechnicalDifficultiesController if connector returns error" in {
+        templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+        jsonCaptor.getValue must containJson(expectedJson)
+        application.stop()
 
-        val genErrorResponse = Gen.oneOf(300, 500)
-
-        forAll(genErrorResponse) {
-          errorCode =>
-            val wsResponse: AhcWSResponse = mock[AhcWSResponse]
-            when(wsResponse.status) thenReturn errorCode
-
-            when(mockDeparturesMovementConnector.getPDF(any())(any()))
-              .thenReturn(Future.successful(wsResponse))
-
-            val departureId = DepartureId(0)
-
-            val application = appBuilder.build()
-
-            val request = FakeRequest(GET, testRoutes.TadPDFController.getPDF(departureId).url)
-              .withSession(("authToken" -> "BearerToken"))
-
-            running(application) {
-
-              val result = route(application, request).value
-
-              status(result) mustEqual SEE_OTHER
-
-              redirectLocation(result).value mustEqual controllers.routes.TechnicalDifficultiesController.onPageLoad().url
-            }
-        }
       }
     }
   }
