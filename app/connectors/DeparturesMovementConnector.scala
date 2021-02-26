@@ -51,9 +51,9 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
   }
 
   def getPDF(departureId: DepartureId, bearerToken: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
-    val serviceUrl: String = s"${config.destinationUrl}/movements/departures/$departureId/transit-accompanying-document"
+    val serviceUrl: String = s"${config.departureUrl}/movements/departures/${departureId.index}/transit-accompanying-document"
 
-    ws.url(serviceUrl).withHttpHeaders(ChannelHeader(channel), ("Authorisation", bearerToken)).get
+    ws.url(serviceUrl).withHttpHeaders(ChannelHeader(channel), ("Authorization", bearerToken)).get
   }
 
   def getSummary(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[Option[MessagesSummary]] = {

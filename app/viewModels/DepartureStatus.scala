@@ -69,7 +69,7 @@ object DepartureStatus {
   }
 
   private def releasedForTransit: DepartureStatusViewModel = {
-    case departure if departure.status == "ReleasedForTransit" =>
+    case departure if departure.status == "ReleaseForTransit" =>
       DepartureStatus("departure.status.releasedForTransit", actions = Seq(downloadTADAction(departure)))
   }
 
@@ -124,7 +124,7 @@ object DepartureStatus {
   }
 
   private def controlDecision: DepartureStatusViewModel = {
-    case departure if departure.status == "ControlDecision" =>
+    case departure if departure.status == "ControlDecisionNotification" =>
       DepartureStatus(
         "departure.status.controlDecision",
         actions = Seq(

@@ -17,15 +17,15 @@
 package controllers.testOnly
 
 import config.FrontendAppConfig
-import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
+import connectors.DeparturesMovementConnector
 import controllers.actions.IdentifierAction
-
-import javax.inject.Inject
 import models.DepartureId
+import play.api.Logger.logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents, departuresMovementConnector: DeparturesMovementConnector)(
@@ -45,6 +45,7 @@ class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControl
                   case OK =>
                     Ok(result.bodyAsBytes.toArray)
                   case _ =>
+                    logger.error("failed to download TAD pdf")
                     Redirect(controllers.routes.TechnicalDifficultiesController.onPageLoad())
                 }
             }
