@@ -21,8 +21,8 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
-import models.departure.{ControlDecision, ControlDecisionSpec, MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
-import models.{ArrivalId, Departure, DepartureId, Departures, LocalReferenceNumber}
+import models.departure._
+import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -280,7 +280,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/departures/${departureId.index}/transit-accompanying-document"))
-            .withHeader("User-Agent", equalTo("transits-movements-trader-at-departure"))
+            .withHeader("User-Agent", equalTo(s"${frontendAppConfig.manageUrl}"))
             .withHeader("Channel", equalTo("web"))
             .willReturn(
               aResponse()
