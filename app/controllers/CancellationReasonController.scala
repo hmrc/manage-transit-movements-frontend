@@ -76,7 +76,7 @@ class CancellationReasonController @Inject()(
             for {
               updatedAnswers <- Future.fromTry(userAnswers.set(CancellationReasonPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(CancellationReasonPage, NormalMode, updatedAnswers))
+            } yield Redirect(controllers.routes.ViewArrivalsController.onPageLoad())
         )
   }
 }
