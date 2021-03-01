@@ -52,7 +52,7 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
   def getPDF(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[WSResponse] = {
     val serviceUrl: String = s"${config.departureUrl}/movements/departures/${departureId.index}/transit-accompanying-document"
     val headers = Seq(
-      "User-Agent" -> s"${config.manageUrl}",
+      "User-Agent" -> s"${config.manageService}",
       "Channel"    -> channel
     ) ++ hc.headers
     ws.url(serviceUrl).withHttpHeaders(headers: _*).get
