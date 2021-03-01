@@ -280,7 +280,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/departures/${departureId.index}/transit-accompanying-document"))
-            .withHeader("User-Agent", equalTo("manage-transit-movements"))
+            .withHeader("User-Agent", equalTo("manage-transit-movements-frontend"))
             .withHeader("Channel", equalTo("web"))
             .willReturn(
               aResponse()
@@ -300,7 +300,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/departures/${departureId.index}/transit-accompanying-document"))
-            .withHeader("User-Agent", equalTo("manage-transit-movements"))
+            .withHeader("User-Agent", equalTo("manage-transit-movements-frontend"))
             .withHeader("Channel", equalTo("web"))
             .willReturn(
               aResponse()
