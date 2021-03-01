@@ -16,19 +16,19 @@
 
 package connectors
 
+import com.lucidchart.open.xtract.XmlReader
 import config.FrontendAppConfig
-import javax.inject.Inject
+import connectors.CustomHttpReads.rawHttpResponseHttpReads
+import logging.Logging
 import models.departure.{ControlDecision, MessagesSummary, NoReleaseForTransitMessage}
 import models.{DepartureId, Departures, ResponseMessage}
 import play.api.http.HeaderNames
-import play.api.libs.ws.WSClient
-import CustomHttpReads.rawHttpResponseHttpReads
-import com.lucidchart.open.xtract.XmlReader
-import logging.Logging
+import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
@@ -47,6 +47,15 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
           logger.error(s"get Departures failed to return data")
           None
       }
+  }
+
+  def getPDF(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[WSResponse] = {
+    val serviceUrl: String = s"${config.departureUrl}/movements/departures/${departureId.index}/transit-accompanying-document"
+    val headers = Seq(
+      "User-Agent" -> s"${config.manageService}",
+      "Channel"    -> channel
+    ) ++ hc.headers
+    ws.url(serviceUrl).withHttpHeaders(headers: _*).get
   }
 
   def getSummary(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[Option[MessagesSummary]] = {

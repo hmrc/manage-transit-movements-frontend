@@ -57,6 +57,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val referenceDataUrl: String   = configuration.get[Service]("microservice.services.reference-data").fullServiceUrl
   lazy val routerUrl: String          = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
   lazy val enrolmentKey: String       = configuration.get[String]("keys.enrolmentKey")
+  lazy val manageService: String      = configuration.get[String]("appName")
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")
@@ -69,6 +70,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
+  def departureTadPdfUrl(departureId: DepartureId)                       = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")

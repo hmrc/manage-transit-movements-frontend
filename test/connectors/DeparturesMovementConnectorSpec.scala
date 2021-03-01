@@ -17,12 +17,11 @@
 package connectors
 
 import java.time.LocalDateTime
-
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
-import models.departure.{ControlDecision, ControlDecisionSpec, MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
+import models.departure._
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -30,8 +29,10 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
 import utils.Format
 
+import scala.concurrent.Future
 import scala.xml.NodeSeq
 
 class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
@@ -269,6 +270,47 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
             connector.getControlDecisionMessage(location).futureValue mustBe None
         }
+      }
+    }
+
+    "getTadPdf" - {
+      "must return status Ok" in {
+
+        val departureId = DepartureId(0)
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/departures/${departureId.index}/transit-accompanying-document"))
+            .withHeader("User-Agent", equalTo("manage-transit-movements-frontend"))
+            .withHeader("Channel", equalTo("web"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+            )
+        )
+
+        val result: Future[WSResponse] = connector.getPDF(departureId)
+
+        result.futureValue.status mustBe 200
+      }
+
+      "must return other error status codes without exceptions" in {
+
+        val genErrorResponse = Gen.oneOf(300, 500).sample.value
+        val departureId      = DepartureId(0)
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/departures/${departureId.index}/transit-accompanying-document"))
+            .withHeader("User-Agent", equalTo("manage-transit-movements-frontend"))
+            .withHeader("Channel", equalTo("web"))
+            .willReturn(
+              aResponse()
+                .withStatus(genErrorResponse)
+            )
+        )
+
+        val result: Future[WSResponse] = connector.getPDF(departureId)
+
+        result.futureValue.status mustBe genErrorResponse
       }
     }
 
