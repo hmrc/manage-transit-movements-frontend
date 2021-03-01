@@ -263,7 +263,6 @@ controlDecision.principalTraderName = Principal trader name
 controlDecision.dateOfControl = Date of control
 controlDecision.paragraph = You must wait for the outcome of your customs check.
 
-confirmCancellation.title = confirmCancellation
-confirmCancellation.heading = confirmCancellation
-confirmCancellation.checkYourAnswersLabel = confirmCancellation
-confirmCancellation.error.required = Select yes if confirmCancellation
+confirmCancellation.title =  Are you sure you want to cancel this departure declaration?
+confirmCancellation.heading =  Are you sure you want to cancel this departure declaration?
+confirmCancellation.error.required = Select yes if you want to cancel this departure declaration
