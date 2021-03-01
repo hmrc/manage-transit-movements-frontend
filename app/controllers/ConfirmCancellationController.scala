@@ -18,10 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.ConfirmCancellationFormProvider
+
 import javax.inject.Inject
-import models.{LocalReferenceNumber, Mode, NormalMode, UserAnswers}
+import models.{LocalReferenceNumber, Mode, NormalMode, UserAnswers, WhatDoYouWantToDoOptions}
 import navigation.Navigator
-import pages.ConfirmCancellationPage
+import pages.{CancellationReasonPage, ConfirmCancellationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -73,10 +74,15 @@ class ConfirmCancellationController @Inject()(
             )
             renderer.render("confirmCancellation.njk", json).map(BadRequest(_))
           },
-          value =>
+          success = value =>
             for {
               updatedAnswers <- Future.fromTry(userAnswers.set(ConfirmCancellationPage, value))
-            } yield Redirect(navigator.nextPage(ConfirmCancellationPage, NormalMode, updatedAnswers))
+            } yield
+              if (value == true) {
+                Redirect(controllers.routes.CancellationReasonController.onPageLoad(lrn))
+              } else {
+                Redirect(controllers.routes.ViewArrivalsController.onPageLoad)
+            }
         )
   }
 }
