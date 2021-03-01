@@ -27,8 +27,3 @@ GET        /cannot-use-this-service                                           co
 
 GET        /:arrivalId/negative-acknowledgement                               controllers.arrival.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId: ArrivalId)
 GET        /:arrivalId/unloading-remarks-negative-acknowledgement             controllers.unloading.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId: ArrivalId)
-
-GET        /:lrn/confirmCancellation                        controllers.ConfirmCancellationController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-POST       /:lrn/confirmCancellation                        controllers.ConfirmCancellationController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = NormalMode)
-GET        /:lrn/changeConfirmCancellation                  controllers.ConfirmCancellationController.onPageLoad(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
-POST       /:lrn/changeConfirmCancellation                  controllers.ConfirmCancellationController.onSubmit(lrn: LocalReferenceNumber, mode: Mode = CheckMode)
