@@ -52,13 +52,12 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val loginContinueUrl: String   = configuration.get[String]("urls.loginContinue")
   lazy val departureBaseUrl: String   = configuration.get[Service]("microservice.services.departure").baseUrl
   lazy val departureUrl: String       = configuration.get[Service]("microservice.services.departure").fullServiceUrl
-  lazy val manageBaseUrl: String      = configuration.get[Service]("microservice.services.manage").baseUrl
-  lazy val manageUrl: String          = configuration.get[Service]("microservice.services.manage").fullServiceUrl
   lazy val destinationBaseUrl: String = configuration.get[Service]("microservice.services.destination").baseUrl
   lazy val destinationUrl: String     = configuration.get[Service]("microservice.services.destination").fullServiceUrl
   lazy val referenceDataUrl: String   = configuration.get[Service]("microservice.services.reference-data").fullServiceUrl
   lazy val routerUrl: String          = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
   lazy val enrolmentKey: String       = configuration.get[String]("keys.enrolmentKey")
+  lazy val manageService: String = configuration.get[String]("microservice.services.manage")
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")

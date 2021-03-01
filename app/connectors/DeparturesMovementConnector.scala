@@ -16,20 +16,19 @@
 
 package connectors
 
+import com.lucidchart.open.xtract.XmlReader
 import config.FrontendAppConfig
-
-import javax.inject.Inject
+import connectors.CustomHttpReads.rawHttpResponseHttpReads
+import logging.Logging
 import models.departure.{ControlDecision, MessagesSummary, NoReleaseForTransitMessage}
 import models.{DepartureId, Departures, ResponseMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
-import CustomHttpReads.rawHttpResponseHttpReads
-import com.lucidchart.open.xtract.XmlReader
-import logging.Logging
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
