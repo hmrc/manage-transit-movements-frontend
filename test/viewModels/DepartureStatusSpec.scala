@@ -71,7 +71,7 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
     "When status is guaranteeValidationFail show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure      = departure.copy(status = "GuaranteeValidationFail")
+          val updatedDeparture: Departure      = departure.copy(status = "GuaranteeNotValid")
           val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.guaranteeValidationFail"
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
