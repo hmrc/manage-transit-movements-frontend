@@ -57,18 +57,18 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
     "include tad link on ReleasedForTransit status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val dep             = departure.copy(status = "ReleasedForTransit")
+          val dep             = departure.copy(status = "ReleaseForTransit")
           val departureStatus = DepartureStatus(dep, frontendAppConfig)
           departureStatus.status mustBe "departure.status.releasedForTransit"
           departureStatus.actions.head.href mustBe s"/manage-transit-movements/test-only/departures/${departure.departureId.index}/tad-pdf"
-          departureStatus.actions.head.key mustBe "departure.downloadTAD"
+          departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewPDF"
       }
     }
 
     "When status is guaranteeValidationFail show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure      = departure.copy(status = "GuaranteeValidationFail")
+          val updatedDeparture: Departure      = departure.copy(status = "GuaranteeNotValid")
           val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.guaranteeValidationFail"
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
@@ -101,7 +101,7 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
     "When status is controlDecision show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure      = departure.copy(status = "ControlDecision")
+          val updatedDeparture: Departure      = departure.copy(status = "ControlDecisionNotification")
           val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.controlDecision"
           departureStatus.actions.head.href mustBe testRoutes.ControlDecisionController

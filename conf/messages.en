@@ -184,9 +184,9 @@ viewDepartures.table.officeOfDeparture = Office of departure
 viewDepartures.table.status = Status
 viewDepartures.table.action = Action
 viewDepartures.table.action.viewErrors        = View and fix errors
-viewDepartures.table.action.viewCancellation       = View cancellation
+viewDepartures.table.action.viewCancellation  = View cancellation
 viewDepartures.table.action.viewHistory       = View history
-viewDepartures.table.action.viewPDF           = TAD PDF ({0})
+viewDepartures.table.action.viewPDF           = TAD PDF
 viewDepartures.table.action.cancelDeclaration = Cancel declaration
 
 departure.status.submitted = Departure declaration sent
@@ -263,3 +263,7 @@ controlDecision.principalEoriNumber = Principal’s EORI number
 controlDecision.principalTraderName = Principal trader name
 controlDecision.dateOfControl = Date of control
 controlDecision.paragraph = You must wait for the outcome of your customs check.
+
+confirmCancellation.title =  Are you sure you want to cancel this departure declaration?
+confirmCancellation.heading =  Are you sure you want to cancel this departure declaration?
+confirmCancellation.error.required = Select yes if you want to cancel this departure declaration

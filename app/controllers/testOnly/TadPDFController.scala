@@ -17,22 +17,38 @@
 package controllers.testOnly
 
 import config.FrontendAppConfig
-import connectors.ArrivalMovementConnector
+import connectors.DeparturesMovementConnector
 import controllers.actions.IdentifierAction
-import javax.inject.Inject
 import models.DepartureId
+import play.api.Logger.logger
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
+import renderer.Renderer
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents, arrivalMovementConnector: ArrivalMovementConnector)(
+class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents, departuresMovementConnector: DeparturesMovementConnector)(
   implicit ec: ExecutionContext,
-  appConfig: FrontendAppConfig)
+  appConfig: FrontendAppConfig,
+  renderer: Renderer)
     extends FrontendController(cc)
     with I18nSupport {
 
-  //TODO: Implement this for TAD
-  def getPDF(departureId: DepartureId): Action[AnyContent] = ???
+  def getPDF(departureId: DepartureId): Action[AnyContent] = identify.async {
+    implicit request =>
+      departuresMovementConnector.getPDF(departureId).flatMap {
+        result =>
+          result.status match {
+            case OK =>
+              Future.successful(Ok(result.bodyAsBytes.toArray))
+            case _ =>
+              logger.error(s"failed to download TAD pdf received status code ${result.status}")
+              val json = Json.obj("nctsEnquiries" -> appConfig.nctsEnquiriesUrl)
+              renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
+          }
+      }
+  }
 }

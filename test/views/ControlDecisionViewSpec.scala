@@ -16,21 +16,15 @@
 
 package views
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 import base.ViewSpecBase
 import generators.Generators
-import models.{Arrival, LocalReferenceNumber}
+import models.LocalReferenceNumber
 import models.departure.ControlDecision
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import utils.Format
-import viewModels.{ViewArrivalMovements, ViewMovement}
 
 class ControlDecisionViewSpec extends ViewSpecBase with Generators with ScalaCheckPropertyChecks {
 
