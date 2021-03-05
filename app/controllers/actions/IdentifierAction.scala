@@ -18,6 +18,7 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.EnrolmentStoreConnector
 import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
@@ -35,7 +36,8 @@ trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with
 class AuthenticatedIdentifierAction @Inject()(
   override val authConnector: AuthConnector,
   config: FrontendAppConfig,
-  val parser: BodyParsers.Default
+  val parser: BodyParsers.Default,
+  enrolmentStoreConnector: EnrolmentStoreConnector
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions {
@@ -49,13 +51,16 @@ class AuthenticatedIdentifierAction @Inject()(
 
     authorised(Enrolment(config.enrolmentKey))
       .retrieve(Retrievals.authorisedEnrolments and Retrievals.groupIdentifier) {
-        case enrolments ~ groupId =>
-          val eoriNumber: String = (for {
+        case enrolments ~ maybeGroupId =>
+          val maybeEoriNumber: Option[String] = for {
             enrolment  <- enrolments.enrolments.find(_.key.equals(config.enrolmentKey))
             identifier <- enrolment.getIdentifier(enrolmentIdentifierKey)
-          } yield identifier.value).getOrElse(throw InsufficientEnrolments(s"Unable to retrieve enrolment for $enrolmentIdentifierKey"))
+          } yield identifier.value
 
-          block(IdentifierRequest(request, eoriNumber))
+          maybeEoriNumber match {
+            case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber))
+            case _                => checkForGroupEnrolment(maybeGroupId)
+          }
       }
   } recover {
     case _: NoActiveSession =>
@@ -63,4 +68,15 @@ class AuthenticatedIdentifierAction @Inject()(
     case _: AuthorisationException =>
       Redirect(routes.UnauthorisedController.onPageLoad())
   }
+
+  private def checkForGroupEnrolment(maybeGroupId: Option[String])(implicit hc: HeaderCarrier): Future[Result] =
+    maybeGroupId match {
+      case Some(groupId) =>
+        enrolmentStoreConnector.checkGroupEnrolments(groupId, config.enrolmentKey) map {
+          case true  => Redirect(routes.UnauthorisedWithGroupAccessController.onPageLoad())
+          case false => Redirect(routes.UnauthorisedWithoutGroupAccessController.onPageLoad())
+        }
+      case _ => Future.successful(Redirect(routes.UnauthorisedWithoutGroupAccessController.onPageLoad()))
+    }
+
 }

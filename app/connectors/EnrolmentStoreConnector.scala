@@ -16,21 +16,22 @@
 
 package connectors
 
-import com.google.inject.Inject
+import config.FrontendAppConfig
+import connectors.CustomHttpReads.rawHttpResponseHttpReads
+import javax.inject.Inject
+import logging.Logging
 import models.QueryGroupsEnrolmentsResponseModel
-import play.api.Logging
 import play.api.http.Status._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnrolmentStoreConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig, implicit val ec: ExecutionContext) extends Logging {
-
-  private def host: String = servicesConfig.baseUrl("enrolment-store-proxy")
+class EnrolmentStoreConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
   def checkGroupEnrolments(groupId: String, enrolmentKey: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val serviceUrl = s"$host/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"
+    val serviceUrl: String = s"${config.enrolmentProxyBaseUrl}/enrolment-store-proxy/enrolment-store/groups/$groupId/" +
+      s"enrolments?type=principal&service=$enrolmentKey"
     http.GET[HttpResponse](serviceUrl).map {
       response =>
         response.status match {
