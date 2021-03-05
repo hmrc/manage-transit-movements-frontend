@@ -29,9 +29,9 @@ object DepartureStatus {
   def apply(departure: Departure, config: FrontendAppConfig): DepartureStatus = {
     val partialFunctions: PartialFunction[Departure, DepartureStatus] =
       Seq(
-        mrnAllocated,
-        departureSubmitted,
-        positiveAcknowledgement,
+        mrnAllocated(config),
+        departureSubmitted(config),
+        positiveAcknowledgement(config),
         releasedForTransit,
         transitDeclarationRejected(config),
         departureDeclarationReceived,
@@ -50,22 +50,34 @@ object DepartureStatus {
   private def downloadTADAction(departure: Departure) =
     ViewMovementAction(testRoutes.TadPDFController.getPDF(departure.departureId).url, "viewDepartures.table.action.viewPDF")
 
-  private def mrnAllocated: PartialFunction[Departure, DepartureStatus] = {
+  private def mrnAllocated(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatus] = {
     case departure if departure.status == "MrnAllocated" =>
-      DepartureStatus("departure.status.mrnAllocated", Nil)
+      DepartureStatus(
+        "departure.status.mrnAllocated",
+        actions =
+          Seq(ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration"))
+      )
   }
 
   private def viewGuaranteeValidationFailAction(departureId: DepartureId, config: FrontendAppConfig) =
     ViewMovementAction(config.departureFrontendRejectedUrl(departureId), "viewDepartures.table.action.viewErrors")
 
-  private def departureSubmitted: DepartureStatusViewModel = {
+  private def departureSubmitted(config: FrontendAppConfig): DepartureStatusViewModel = {
     case departure if departure.status == "DepartureSubmitted" =>
-      DepartureStatus("departure.status.submitted", actions = Nil)
+      DepartureStatus(
+        "departure.status.submitted",
+        actions =
+          Seq(ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration"))
+      )
   }
 
-  private def positiveAcknowledgement: DepartureStatusViewModel = {
+  private def positiveAcknowledgement(config: FrontendAppConfig): DepartureStatusViewModel = {
     case departure if departure.status == "PositiveAcknowledgement" =>
-      DepartureStatus("departure.status.positiveAcknowledgement", actions = Nil)
+      DepartureStatus(
+        "departure.status.positiveAcknowledgement",
+        actions =
+          Seq(ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration"))
+      )
   }
 
   private def releasedForTransit: DepartureStatusViewModel = {
