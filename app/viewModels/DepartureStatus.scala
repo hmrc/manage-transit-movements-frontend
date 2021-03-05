@@ -19,8 +19,46 @@ package viewModels
 import config.FrontendAppConfig
 import controllers.testOnly.{routes => testRoutes}
 import models.{Departure, DepartureId, ViewMovementAction}
+import play.api.libs.json.{__, Reads}
 
 case class DepartureStatus(status: String, actions: Seq[ViewMovementAction])
+
+sealed trait DepartureStatus2
+
+object DepartureStatus2 {
+
+  implicit val reads: Reads[DepartureStatus2] = __.read[String].map {
+    case "MrnAllocated"                   => MrnAllocated
+    case "DepartureSubmitted"             => DepartureSubmitted
+    case "PositiveAcknowledgement"        => PositiveAcknowledgement
+    case "ReleaseForTransit"              => ReleaseForTransit
+    case "TransitDeclarationRejected"     => TransitDeclarationRejected
+    case "DepartureDeclarationReceived"   => DepartureDeclarationReceived
+    case "GuaranteeNotValid"              => GuaranteeNotValid
+    case "TransitDeclarationSent"         => TransitDeclarationSent
+    case "WriteOffNotification"           => WriteOffNotification
+    case "DeclarationCancellationRequest" => DeclarationCancellationRequest
+    case "CancellationDecision"           => CancellationDecision
+    case "NoReleaseForTransit"            => NoReleaseForTransit
+    case "ControlDecisionNotification"    => ControlDecisionNotification
+    case _                                => InvalidStatus
+  }
+}
+
+case object MrnAllocated extends DepartureStatus2
+case object DepartureSubmitted extends DepartureStatus2
+case object PositiveAcknowledgement extends DepartureStatus2
+case object ReleaseForTransit extends DepartureStatus2
+case object TransitDeclarationRejected extends DepartureStatus2
+case object DepartureDeclarationReceived extends DepartureStatus2
+case object GuaranteeNotValid extends DepartureStatus2
+case object TransitDeclarationSent extends DepartureStatus2
+case object WriteOffNotification extends DepartureStatus2
+case object DeclarationCancellationRequest extends DepartureStatus2
+case object CancellationDecision extends DepartureStatus2
+case object NoReleaseForTransit extends DepartureStatus2
+case object ControlDecisionNotification extends DepartureStatus2
+case object InvalidStatus extends DepartureStatus2
 
 object DepartureStatus {
 
