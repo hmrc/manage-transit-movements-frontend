@@ -50,9 +50,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader) = {
-    println("-------------------------------" + arrivals)
-
+  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader) =
     renderer
       .render(
         "index.njk",
@@ -68,6 +66,4 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
           "hasDepartures"                  -> departures.exists(_.departures.nonEmpty)
         )
       )
-
-  }
 }
