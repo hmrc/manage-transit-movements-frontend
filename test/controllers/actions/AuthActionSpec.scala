@@ -24,9 +24,12 @@ import org.mockito.Mockito.{reset, when}
 import play.api.mvc.{BodyParsers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.{core => authClient}
+import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.retrieve.{~, Credentials, LoginTimes, Name, Retrieval}
 import uk.gov.hmrc.http.HeaderCarrier
+import AuthActionSpec._
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -233,9 +236,42 @@ class AuthActionSpec extends SpecBase {
 
     "AuthAction" - {
       "must redirect to unauthorised page when given enrolments without eori" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(enrolmentsWithoutEori ~ Some("testName")))
 
-        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
-          .thenReturn(Future.successful(enrolmentsWithoutEori))
+        val application = applicationBuilder(userAnswers = None).build()
+
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+      }
+
+      "must redirect to unauthorised page when given user has no enrolments but group has" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Enrolments(Set.empty) ~ Some("testName")))
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+      }
+
+      "must redirect to unauthorised page when given user has no enrolments and there is no group" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Enrolments(Set.empty) ~ None))
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -251,9 +287,8 @@ class AuthActionSpec extends SpecBase {
       }
 
       "must return Ok when given enrolments with eori" in {
-
-        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
-          .thenReturn(Future.successful(enrolmentsWithEori))
+        when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(enrolmentsWithEori ~ Some("testName")))
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -265,6 +300,7 @@ class AuthActionSpec extends SpecBase {
 
         status(result) mustBe OK
       }
+
     }
   }
 
@@ -272,6 +308,14 @@ class AuthActionSpec extends SpecBase {
     super.beforeEach
     reset(mockAuthConnector)
   }
+}
+
+object AuthActionSpec {
+
+  implicit class RetrievalsUtil[A](val retrieval: A) extends AnyVal {
+    def `~`[B](anotherRetrieval: B): A ~ B = authClient.retrieve.~(retrieval, anotherRetrieval)
+  }
+
 }
 
 class FakeFailingAuthConnector @Inject()(exceptionToReturn: Throwable) extends AuthConnector {

@@ -24,6 +24,7 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
@@ -47,8 +48,8 @@ class AuthenticatedIdentifierAction @Inject()(
       .fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised(Enrolment(config.enrolmentKey))
-      .retrieve(Retrievals.authorisedEnrolments) {
-        enrolments =>
+      .retrieve(Retrievals.authorisedEnrolments and Retrievals.groupIdentifier) {
+        case enrolments ~ groupId =>
           val eoriNumber: String = (for {
             enrolment  <- enrolments.enrolments.find(_.key.equals(config.enrolmentKey))
             identifier <- enrolment.getIdentifier(enrolmentIdentifierKey)
