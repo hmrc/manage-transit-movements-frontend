@@ -66,12 +66,13 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
 
   val departureJourneyToggle: Boolean                                    = configuration.getOptional[Boolean]("microservice.services.features.departureJourney").getOrElse(false)
   private val departureFrontendUrl: String                               = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
+  private val cancellationFrontendUrl: String                            = configuration.get[String]("urls.declareTransitMovementCancellationFrontend")
   val declareDepartureStartWithLRNUrl: String                            = s"$departureFrontendUrl/local-reference-number"
   def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
   def departureTadPdfUrl(departureId: DepartureId)                       = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
-  def departureFrontendConfirmCancellationUrl(departureId: DepartureId)  = s"$departureFrontendUrl/${departureId.index}/confirm-cancellation"
+  def departureFrontendConfirmCancellationUrl(departureId: DepartureId)  = s"$cancellationFrontendUrl/${departureId.index}/confirm-cancellation"
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")

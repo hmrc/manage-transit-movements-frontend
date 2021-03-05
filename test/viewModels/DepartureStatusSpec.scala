@@ -22,6 +22,7 @@ import models.{Departure, ViewMovementAction}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import controllers.testOnly.{routes => testRoutes}
+import play.api.libs.json.{JsString, Json}
 
 class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
