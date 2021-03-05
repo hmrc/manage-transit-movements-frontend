@@ -79,7 +79,12 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       .suchThat(_ != "false")
 
   def nonEmptyString: Gen[String] =
-    arbitrary[String] suchThat (_.nonEmpty)
+    arbitrary[String].map(x =>
+      if (x.nonEmpty) {
+        x
+      } else {
+        "nonEmptyString"
+    })
 
   def stringsWithMaxLength(maxLength: Int): Gen[String] =
     for {
