@@ -30,8 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class EnrolmentStoreConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
   def checkGroupEnrolments(groupId: String, enrolmentKey: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val serviceUrl: String = s"${config.enrolmentProxyBaseUrl}/enrolment-store-proxy/enrolment-store/groups/$groupId/" +
-      s"enrolments?type=principal&service=$enrolmentKey"
+    val serviceUrl: String = s"${config.enrolmentProxyUrl}/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"
+
     http.GET[HttpResponse](serviceUrl).map {
       response =>
         response.status match {

@@ -60,6 +60,11 @@ class AuthActionSpec extends SpecBase {
         state = "Activated"
       ),
       Enrolment(
+        key         = "HMCE-NCTS-ORG",
+        identifiers = Seq.empty,
+        state       = "NotYetActivated"
+      ),
+      Enrolment(
         key = "IR-CT",
         identifiers = Seq(
           EnrolmentIdentifier(
@@ -256,7 +261,6 @@ class AuthActionSpec extends SpecBase {
       "must redirect to unauthorised page when given enrolments without eori" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(enrolmentsWithoutEori ~ Some("testName")))
-        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(false))
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -268,10 +272,10 @@ class AuthActionSpec extends SpecBase {
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(routes.UnauthorisedWithoutGroupAccessController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
       }
 
-      "must redirect to unauthorised page when given user has no enrolments but group has" in {
+      "must redirect to unauthorised page with group access when given user has no enrolments but group has" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(true))
@@ -289,7 +293,25 @@ class AuthActionSpec extends SpecBase {
         redirectLocation(result) mustBe Some(routes.UnauthorisedWithGroupAccessController.onPageLoad().url)
       }
 
-      "must redirect to unauthorised page when given user has enrolments but no eori and there is no group" in {
+      "must redirect to unauthorised page without group access when given both user and group has no enrolments" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Enrolments(Set.empty) ~ Some("testName")))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(false))
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, mockEnrolmentStoreConnector)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(routes.UnauthorisedWithoutGroupAccessController.onPageLoad().url)
+      }
+
+      "must redirect to unauthorised page without group access when given user has no enrolments and there is no group" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ None))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(false))

@@ -42,25 +42,21 @@ class AuthenticatedIdentifierAction @Inject()(
     extends IdentifierAction
     with AuthorisedFunctions {
 
-  private val enrolmentIdentifierKey: String = "VATRegNoTURN"
-
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(Enrolment(config.enrolmentKey))
+    authorised()
       .retrieve(Retrievals.authorisedEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
-          val maybeEoriNumber: Option[String] = for {
-            enrolment  <- enrolments.enrolments.find(_.key.equals(config.enrolmentKey))
-            identifier <- enrolment.getIdentifier(enrolmentIdentifierKey)
-          } yield identifier.value
-
-          maybeEoriNumber match {
-            case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber))
-            case _                => checkForGroupEnrolment(maybeGroupId)
-          }
+          (for {
+            enrolment <- enrolments.enrolments.find(_.key.equals(config.enrolmentKey))
+          } yield
+            enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
+              case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
+              case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+            }).getOrElse(checkForGroupEnrolment(maybeGroupId))
       }
   } recover {
     case _: NoActiveSession =>
