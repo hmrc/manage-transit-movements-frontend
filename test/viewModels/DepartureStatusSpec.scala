@@ -36,7 +36,9 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
           "link"       -> Seq(viewTransitDeclarationFailAction)),
       Map("title"      -> "DepartureDeclarationReceived", "messageKey" -> "departure.status.departureDeclarationReceived", "link" -> Nil),
       Map("title"      -> "TransitDeclarationSent", "messageKey" -> "departure.status.transitDeclarationSent", "link" -> Nil),
-      Map("title"      -> "WriteOffNotification", "messageKey" -> "departure.status.writeOffNotification", "link" -> Nil)
+      Map("title"      -> "WriteOffNotification", "messageKey" -> "departure.status.writeOffNotification", "link" -> Nil),
+      Map("title"      -> "CancellationSubmitted", "messageKey" -> "departure.status.cancellationSubmitted", "link" -> Nil),
+      Map("title"      -> "DepartureCancelled", "messageKey" -> "departure.status.departureCancelled", "link" -> Nil)
     )
 
     "display correct data for each status" - {
@@ -77,6 +79,25 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
       }
     }
 
+    "When status is CancellationSubmitted show correct status" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure      = departure.copy(status = "CancellationSubmitted")
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.cancellationSubmitted"
+
+      }
+    }
+
+    "When status is departureCancelled show correct status" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure      = departure.copy(status = "DepartureCancelled")
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.departureCancelled"
+
+      }
+    }
     "When status is CancellationDecision show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
