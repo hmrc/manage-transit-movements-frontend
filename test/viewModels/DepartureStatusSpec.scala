@@ -18,10 +18,11 @@ package viewModels
 
 import base.SpecBase
 import generators.Generators
-import models.{Departure, DepartureId, ViewMovementAction}
+import models.{Departure, ViewMovementAction}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import controllers.testOnly.{routes => testRoutes}
+import play.api.libs.json.{JsString, Json}
 
 class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
@@ -30,15 +31,12 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
       ViewMovementAction(frontendAppConfig.departureFrontendDeclarationFailUrl(departureId), "viewDepartures.table.action.viewErrors")
 
     val statusOptions = Seq(
-      Map("title"      -> "DepartureSubmitted", "messageKey" -> "departure.status.submitted", "link" -> Nil),
-      Map("title"      -> "MrnAllocated", "messageKey" -> "departure.status.mrnAllocated", "link" -> Nil),
       Map("title"      -> "TransitDeclarationRejected",
           "messageKey" -> "departure.status.transitDeclarationRejected",
           "link"       -> Seq(viewTransitDeclarationFailAction)),
       Map("title"      -> "DepartureDeclarationReceived", "messageKey" -> "departure.status.departureDeclarationReceived", "link" -> Nil),
       Map("title"      -> "TransitDeclarationSent", "messageKey" -> "departure.status.transitDeclarationSent", "link" -> Nil),
-      Map("title"      -> "WriteOffNotification", "messageKey" -> "departure.status.writeOffNotification", "link" -> Nil),
-      Map("title"      -> "PositiveAcknowledgement", "messageKey" -> "departure.status.positiveAcknowledgement", "link" -> Nil)
+      Map("title"      -> "WriteOffNotification", "messageKey" -> "departure.status.writeOffNotification", "link" -> Nil)
     )
 
     "display correct data for each status" - {
@@ -71,7 +69,7 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
     "When status is guaranteeValidationFail show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure      = departure.copy(status = "GuaranteeValidationFail")
+          val updatedDeparture: Departure      = departure.copy(status = "GuaranteeNotValid")
           val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.guaranteeValidationFail"
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
@@ -111,6 +109,39 @@ class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckProper
             .onPageLoad(updatedDeparture.departureId, updatedDeparture.localReferenceNumber)
             .url
           departureStatus.actions.head.key mustBe "departure.viewDetails"
+      }
+    }
+
+    "When status is mrnAllocated show correct status and action" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure      = departure.copy(status = "MrnAllocated")
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.mrnAllocated"
+          departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendConfirmCancellationUrl(updatedDeparture.departureId)
+          departureStatus.actions.head.key mustBe "viewDepartures.table.action.cancelDeclaration"
+      }
+    }
+
+    "When status is positiveAcknowledgement show correct status and action" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure      = departure.copy(status = "PositiveAcknowledgement")
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.positiveAcknowledgement"
+          departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendConfirmCancellationUrl(updatedDeparture.departureId)
+          departureStatus.actions.head.key mustBe "viewDepartures.table.action.cancelDeclaration"
+      }
+    }
+
+    "When status is departureSubmitted show correct status and action" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure      = departure.copy(status = "DepartureSubmitted")
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.submitted"
+          departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendConfirmCancellationUrl(updatedDeparture.departureId)
+          departureStatus.actions.head.key mustBe "viewDepartures.table.action.cancelDeclaration"
       }
     }
 
