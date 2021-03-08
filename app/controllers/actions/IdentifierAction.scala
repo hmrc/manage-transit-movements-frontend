@@ -47,7 +47,7 @@ class AuthenticatedIdentifierAction @Inject()(
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised()
+    authorised(Enrolment(config.enrolmentKey))
       .retrieve(Retrievals.authorisedEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
           (for {
