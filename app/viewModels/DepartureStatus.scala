@@ -38,6 +38,8 @@ object DepartureStatus {
         guaranteeValidationFail(config),
         transitDeclarationSent,
         writeOffNotification,
+        cancellationSubmitted,
+        departureCancelled,
         cancellationDecision,
         declarationCancellationRequest(config),
         noReleasedForTransit,
@@ -111,6 +113,16 @@ object DepartureStatus {
   private def writeOffNotification: DepartureStatusViewModel = {
     case departure if departure.status == "WriteOffNotification" =>
       DepartureStatus("departure.status.writeOffNotification", actions = Nil)
+  }
+
+  private def cancellationSubmitted: DepartureStatusViewModel = {
+    case departure if departure.status == "CancellationSubmitted" =>
+      DepartureStatus("departure.status.cancellationSubmitted", actions = Nil)
+  }
+
+  private def departureCancelled: DepartureStatusViewModel = {
+    case departure if departure.status == "DepartureCancelled" =>
+      DepartureStatus("departure.status.departureCancelled", actions = Nil)
   }
 
   private def cancellationDecision: DepartureStatusViewModel = {
