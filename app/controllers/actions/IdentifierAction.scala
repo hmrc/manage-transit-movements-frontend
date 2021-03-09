@@ -21,8 +21,10 @@ import config.FrontendAppConfig
 import connectors.EnrolmentStoreConnector
 import controllers.routes
 import models.requests.IdentifierRequest
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.mvc._
+import renderer.Renderer
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -38,7 +40,8 @@ class AuthenticatedIdentifierAction @Inject()(
   override val authConnector: AuthConnector,
   config: FrontendAppConfig,
   val parser: BodyParsers.Default,
-  enrolmentStoreConnector: EnrolmentStoreConnector
+  enrolmentStoreConnector: EnrolmentStoreConnector,
+  renderer: Renderer
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions {
@@ -57,7 +60,7 @@ class AuthenticatedIdentifierAction @Inject()(
             enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
               case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
               case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
-            }).getOrElse(checkForGroupEnrolment(maybeGroupId))
+            }).getOrElse(checkForGroupEnrolment(maybeGroupId, config)(hc, request))
       }
   } recover {
     case _: NoActiveSession =>
@@ -66,14 +69,18 @@ class AuthenticatedIdentifierAction @Inject()(
       Redirect(routes.UnauthorisedController.onPageLoad())
   }
 
-  private def checkForGroupEnrolment(maybeGroupId: Option[String])(implicit hc: HeaderCarrier): Future[Result] =
+  private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit hc: HeaderCarrier,
+                                                                                                 request: Request[A]): Future[Result] = {
+    val nctsJson: JsObject = Json.obj("requestAccessToNCTSUrl" -> config.enrolmentManagementFrontendEnrolUrl)
+
     maybeGroupId match {
       case Some(groupId) =>
-        enrolmentStoreConnector.checkGroupEnrolments(groupId, config.enrolmentKey) map {
-          case true  => Redirect(routes.UnauthorisedWithGroupAccessController.onPageLoad())
-          case false => Redirect(routes.UnauthorisedWithoutGroupAccessController.onPageLoad())
+        enrolmentStoreConnector.checkGroupEnrolments(groupId, config.enrolmentKey) flatMap {
+          case true  => renderer.render("unauthorisedWithGroupAccess.njk").map(Unauthorized(_))
+          case false => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
         }
-      case _ => Future.successful(Redirect(routes.UnauthorisedWithoutGroupAccessController.onPageLoad()))
+      case _ => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
     }
+  }
 
 }
