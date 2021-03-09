@@ -30,8 +30,10 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-
 import java.time.LocalDateTime
+
+import models.departure.DepartureStatus.DepartureSubmitted
+
 import scala.concurrent.Future
 
 class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
@@ -43,7 +45,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
           DepartureId(1),
           LocalDateTime.now(),
           LocalReferenceNumber("lrn"),
-          "Submitted"
+          DepartureSubmitted
         )
       )
     )
