@@ -120,7 +120,7 @@ trait ModelGenerators {
     }
   }
 
-  implicit val arbitraryDepartureStatus2: Arbitrary[DepartureStatus] = {
+  implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] = {
     Arbitrary {
       Gen.oneOf(DepartureStatus.values)
     }
