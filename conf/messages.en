@@ -200,6 +200,8 @@ departure.status.transitDeclarationSent = Transit declaration sent
 departure.status.writeOffNotification = Guarantee written off
 departure.status.declarationCancellationRequest = Cancellation decision
 departure.status.noReleaseForTransit = Goods not released
+departure.status.cancellationSubmitted = Cancellation request sent
+departure.status.departureCancelled = Departure submission cancelled
 departure.status.controlDecision = Control decision
 departure.viewHistory = View history
 departure.viewDetails = View details
@@ -221,7 +223,7 @@ whatDoYouWantToDo.makeDepartureDeclarationText=Make a new departure declaration
 whatDoYouWantToDo.viewDepartureDeclarationText=View sent departure declarations
 whatDoYouWantToDo.viewNorthernIrelandText=Northern Ireland (NI) movements
 whatDoYouWantToDo.error.required = Select what you want to do
-whatDoYouWantToDo.warningText = From 30 April 2021, you will no longer be able to access any arrival notifications sent before 31 December 2020.
+whatDoYouWantToDo.warningText = From 30 June 2021, you will no longer be able to access movements sent on or before 31 December 2020.
 
 northernIrelandInterstitial.title = You cannot use this service
 northernIrelandInterstitial.heading = You cannot use this service

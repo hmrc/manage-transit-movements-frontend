@@ -83,6 +83,18 @@ class DepartureStatusSpec extends SpecBase {
       json.as[DepartureStatus] mustEqual DeclarationCancellationRequest
     }
 
+    "is successful for CancellationSubmitted" in {
+      val json = JsString("CancellationSubmitted")
+
+      json.as[DepartureStatus] mustEqual CancellationSubmitted
+    }
+
+    "is successful for DepartureCancelled" in {
+      val json = JsString("DepartureCancelled")
+
+      json.as[DepartureStatus] mustEqual DepartureCancelled
+    }
+
     "is successful for CancellationDecision" in {
       val json = JsString("CancellationDecision")
 

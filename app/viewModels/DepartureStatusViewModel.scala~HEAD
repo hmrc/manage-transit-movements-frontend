@@ -114,19 +114,25 @@ object DepartureStatusViewModel {
       DepartureStatusViewModel("departure.status.writeOffNotification", actions = Nil)
   }
 
-  private def cancellationSubmitted: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.status == CancellationSubmitted =>
-      DepartureStatusViewModel("departure.status.cancellationSubmitted", actions = Nil)
-  }
-
-  private def departureCancelled: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.status == DepartureCancelled =>
-      DepartureStatusViewModel("departure.status.departureCancelled", actions = Nil)
-  }
-
+<<<<<<< HEAD:app/viewModels/DepartureStatusViewModel.scala
   private def cancellationDecision: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == DeclarationCancellationRequest =>
       DepartureStatusViewModel("departure.status.declarationCancellationRequest", actions = Nil)
+=======
+  private def cancellationSubmitted: DepartureStatusViewModel = {
+    case departure if departure.status == "CancellationSubmitted" =>
+      DepartureStatus("departure.status.cancellationSubmitted", actions = Nil)
+  }
+
+  private def departureCancelled: DepartureStatusViewModel = {
+    case departure if departure.status == "DepartureCancelled" =>
+      DepartureStatus("departure.status.departureCancelled", actions = Nil)
+  }
+
+  private def cancellationDecision: DepartureStatusViewModel = {
+    case departure if departure.status == "DeclarationCancellationRequest" =>
+      DepartureStatus("departure.status.declarationCancellationRequest", actions = Nil)
+>>>>>>> master:app/viewModels/DepartureStatus.scala
   }
 
   private def declarationCancellationRequest(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {

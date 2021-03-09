@@ -32,6 +32,8 @@ object DepartureStatus {
   case object TransitDeclarationSent extends DepartureStatus
   case object WriteOffNotification extends DepartureStatus
   case object DeclarationCancellationRequest extends DepartureStatus
+  case object CancellationSubmitted extends DepartureStatus
+  case object DepartureCancelled extends DepartureStatus
   case object CancellationDecision extends DepartureStatus
   case object NoReleaseForTransit extends DepartureStatus
   case object ControlDecisionNotification extends DepartureStatus
@@ -49,6 +51,8 @@ object DepartureStatus {
       TransitDeclarationSent,
       WriteOffNotification,
       DeclarationCancellationRequest,
+      CancellationSubmitted,
+      DepartureCancelled,
       CancellationDecision,
       NoReleaseForTransit,
       ControlDecisionNotification,
@@ -67,6 +71,8 @@ object DepartureStatus {
     case "TransitDeclarationSent"         => TransitDeclarationSent
     case "WriteOffNotification"           => WriteOffNotification
     case "DeclarationCancellationRequest" => DeclarationCancellationRequest
+    case "CancellationSubmitted"          => CancellationSubmitted
+    case "DepartureCancelled"             => DepartureCancelled
     case "CancellationDecision"           => CancellationDecision
     case "NoReleaseForTransit"            => NoReleaseForTransit
     case "ControlDecisionNotification"    => ControlDecisionNotification
