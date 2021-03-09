@@ -52,7 +52,7 @@ class AuthenticatedIdentifierAction @Inject()(
       .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
           (for {
-            enrolment <- enrolments.enrolments.find(_.key.equals(config.enrolmentKey))
+            enrolment <- enrolments.enrolments.filter(_.isActivated).find(_.key.equals(config.enrolmentKey))
           } yield
             enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
               case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))

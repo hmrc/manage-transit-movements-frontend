@@ -62,7 +62,7 @@ class AuthActionSpec extends SpecBase {
       Enrolment(
         key         = "HMCE-NCTS-ORG",
         identifiers = Seq.empty,
-        state       = "NotYetActivated"
+        state       = "Activated"
       ),
       Enrolment(
         key = "IR-CT",
@@ -108,6 +108,31 @@ class AuthActionSpec extends SpecBase {
           )
         ),
         state = "Activated"
+      )
+    )
+  )
+
+  val enrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "IR-SA",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "UTR",
+            "123"
+          )
+        ),
+        state = "Activated"
+      ),
+      Enrolment(
+        key = "HMCE-NCTS-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "VATRegNoTURN",
+            "123"
+          )
+        ),
+        state = "NotYetActivated"
       )
     )
   )
@@ -273,6 +298,24 @@ class AuthActionSpec extends SpecBase {
         status(result) mustBe SEE_OTHER
 
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+      }
+
+      "must redirect to unauthorised page with group access when given user has no active enrolments but group has" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(enrolmentsWithEoriButNoActivated ~ Some("testName")))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers, mockEnrolmentStoreConnector)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(routes.UnauthorisedWithGroupAccessController.onPageLoad().url)
       }
 
       "must redirect to unauthorised page with group access when given user has no enrolments but group has" in {
