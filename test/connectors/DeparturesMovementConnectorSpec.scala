@@ -17,6 +17,7 @@
 package connectors
 
 import java.time.LocalDateTime
+
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
@@ -31,6 +32,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.Format
+import models.departure.DepartureStatus.DepartureSubmitted
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
@@ -55,7 +57,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             "departureId"     -> 22,
             "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
-            "status"          -> "Submitted"
+            "status"          -> DepartureSubmitted.toString
           )
         )
     )
@@ -73,7 +75,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                 DepartureId(22),
                 localDateTime,
                 LocalReferenceNumber("lrn"),
-                "Submitted"
+                DepartureSubmitted
               )
             )
           )

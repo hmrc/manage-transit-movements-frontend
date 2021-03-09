@@ -27,6 +27,7 @@ import models.ErrorType
 import models.ErrorType.GenericError
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement}
+import models.departure.DepartureStatus
 
 trait ModelGenerators {
   self: Generators =>
@@ -114,8 +115,14 @@ trait ModelGenerators {
         departureID          <- arbitrary[DepartureId]
         updated              <- arbitrary[LocalDateTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        status               <- arbitrary[String]
+        status               <- arbitrary[DepartureStatus]
       } yield Departure(departureID, updated, localReferenceNumber, status)
+    }
+  }
+
+  implicit val arbitraryDepartureStatus2: Arbitrary[DepartureStatus] = {
+    Arbitrary {
+      Gen.oneOf(DepartureStatus.values)
     }
   }
 
