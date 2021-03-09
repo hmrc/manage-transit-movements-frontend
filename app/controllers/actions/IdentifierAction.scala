@@ -18,12 +18,17 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.EnrolmentStoreConnector
 import controllers.routes
 import models.requests.IdentifierRequest
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.mvc._
+import renderer.Renderer
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
@@ -34,27 +39,28 @@ trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with
 class AuthenticatedIdentifierAction @Inject()(
   override val authConnector: AuthConnector,
   config: FrontendAppConfig,
-  val parser: BodyParsers.Default
+  val parser: BodyParsers.Default,
+  enrolmentStoreConnector: EnrolmentStoreConnector,
+  renderer: Renderer
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions {
-
-  private val enrolmentIdentifierKey: String = "VATRegNoTURN"
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(Enrolment(config.enrolmentKey))
-      .retrieve(Retrievals.authorisedEnrolments) {
-        enrolments =>
-          val eoriNumber: String = (for {
-            enrolment  <- enrolments.enrolments.find(_.key.equals(config.enrolmentKey))
-            identifier <- enrolment.getIdentifier(enrolmentIdentifierKey)
-          } yield identifier.value).getOrElse(throw InsufficientEnrolments(s"Unable to retrieve enrolment for $enrolmentIdentifierKey"))
-
-          block(IdentifierRequest(request, eoriNumber))
+    authorised(EmptyPredicate)
+      .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
+        case enrolments ~ maybeGroupId =>
+          (for {
+            enrolment <- enrolments.enrolments.filter(_.isActivated).find(_.key.equals(config.enrolmentKey))
+          } yield
+            enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
+              case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
+              case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+            }).getOrElse(checkForGroupEnrolment(maybeGroupId, config)(hc, request))
       }
   } recover {
     case _: NoActiveSession =>
@@ -62,4 +68,19 @@ class AuthenticatedIdentifierAction @Inject()(
     case _: AuthorisationException =>
       Redirect(routes.UnauthorisedController.onPageLoad())
   }
+
+  private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit hc: HeaderCarrier,
+                                                                                                 request: Request[A]): Future[Result] = {
+    val nctsJson: JsObject = Json.obj("requestAccessToNCTSUrl" -> config.enrolmentManagementFrontendEnrolUrl)
+
+    maybeGroupId match {
+      case Some(groupId) =>
+        enrolmentStoreConnector.checkGroupEnrolments(groupId, config.enrolmentKey) flatMap {
+          case true  => renderer.render("unauthorisedWithGroupAccess.njk").map(Unauthorized(_))
+          case false => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
+        }
+      case _ => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
+    }
+  }
+
 }

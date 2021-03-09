@@ -10,6 +10,7 @@ site.edit.hidden = Change {0}
 site.no = No
 site.yes = Yes
 site.continue = Continue
+site.youMust = You must
 site.service_name = Manage your transit movements
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - Manage your transit movements - GOV.UK
@@ -269,3 +270,12 @@ controlDecision.paragraph = You must wait for the outcome of your customs check.
 confirmCancellation.title =  Are you sure you want to cancel this departure declaration?
 confirmCancellation.heading =  Are you sure you want to cancel this departure declaration?
 confirmCancellation.error.required = Select yes if you want to cancel this departure declaration
+
+unauthorisedWithGroupAccess.title = You cannot use this service
+unauthorisedWithGroupAccess.heading = You cannot use this service
+unauthorisedWithGroupAccess.p = If you already have access, you must contact your group administrator to update your access rights.
+
+unauthorisedWithoutGroupAccess.title = You cannot use this service
+unauthorisedWithoutGroupAccess.heading = You cannot use this service
+unauthorisedWithoutGroupAccess.requestAccess = request access to NCTS
+unauthorisedWithoutGroupAccess.beforeUseThisService =  before you can use this service.
