@@ -30,6 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import play.api.inject.bind
+import models.departure.DepartureStatus.DepartureSubmitted
 
 import scala.concurrent.Future
 
@@ -48,7 +49,7 @@ class IndexControllerSpec extends SpecBase {
     Arrivals(Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, "Submitted", "test mrn")))
 
   private val mockDepartureResponse =
-    Departures(Seq(Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), "Submitted")))
+    Departures(Seq(Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted)))
 
   override def beforeEach: Unit = {
     reset(mockArrivalMovementConnector)
