@@ -271,11 +271,11 @@ confirmCancellation.title =  Are you sure you want to cancel this departure decl
 confirmCancellation.heading =  Are you sure you want to cancel this departure declaration?
 confirmCancellation.error.required = Select yes if you want to cancel this departure declaration
 
-unauthorisedWithGroupAccess.title = You cannot use this service
+unauthorisedWithGroupAccess.title = You cannot use this service authorisation
 unauthorisedWithGroupAccess.heading = You cannot use this service
 unauthorisedWithGroupAccess.p = If you already have access, you must contact your group administrator to update your access rights.
 
-unauthorisedWithoutGroupAccess.title = You cannot use this service
+unauthorisedWithoutGroupAccess.title = You cannot use this service group authorisation
 unauthorisedWithoutGroupAccess.heading = You cannot use this service
 unauthorisedWithoutGroupAccess.requestAccess = request access to NCTS
 unauthorisedWithoutGroupAccess.beforeUseThisService =  before you can use this service.
