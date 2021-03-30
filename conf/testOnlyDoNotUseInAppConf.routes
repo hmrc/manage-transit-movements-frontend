@@ -35,7 +35,7 @@ GET         /manage-transit-movements/test-only/:departureId/no-release-for-tran
 
 GET         /manage-transit-movements/test-only/view-departures                             controllers.testOnly.ViewDeparturesController.onPageLoad
 
-GET         /manage-transit-movements/test-only/departures/:departureId/tad-pdf             controllers.testOnly.TadPDFController.getPDF(departureId: DepartureId)
+GET         /manage-transit-movements/test-only/departures/:departureId/accompanying-document-pdf    controllers.testOnly.AccompanyingDocumentPDFController.getPDF(departureId: DepartureId)
 
 GET         /manage-transit-movements/test-only/:departureId/:lrn/control-decision          controllers.testOnly.ControlDecisionController.onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber)
 

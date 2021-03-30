@@ -77,7 +77,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val departureStatus = DepartureStatusViewModel(dep, frontendAppConfig)
           departureStatus.status mustBe "departure.status.releasedForTransit"
           departureStatus.actions.size mustBe 1
-          departureStatus.actions.head.href mustBe s"/manage-transit-movements/test-only/departures/${departure.departureId.index}/tad-pdf"
+          departureStatus.actions.head.href mustBe s"/manage-transit-movements/test-only/departures/${departure.departureId.index}/accompanying-document-pdf"
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewPDF"
       }
     }
