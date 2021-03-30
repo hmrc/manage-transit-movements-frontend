@@ -187,7 +187,7 @@ viewDepartures.table.action = Action
 viewDepartures.table.action.viewErrors        = View and fix errors
 viewDepartures.table.action.viewCancellation  = View cancellation
 viewDepartures.table.action.viewHistory       = View history
-viewDepartures.table.action.viewPDF           = TAD PDF
+viewDepartures.table.action.viewPDF           = View and print accompanying document PDF
 viewDepartures.table.action.cancelDeclaration = Cancel declaration
 
 departure.status.submitted = Departure declaration sent

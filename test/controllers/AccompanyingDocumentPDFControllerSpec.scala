@@ -38,7 +38,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class TadPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   private val wsResponse: AhcWSResponse                            = mock[AhcWSResponse]
   val mockDeparturesMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
@@ -55,7 +55,7 @@ class TadPDFControllerSpec extends SpecBase with Generators with ScalaCheckPrope
         bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector)
       )
 
-  "TadPDFController" - {
+  "AccompanyingDocumentPDFController" - {
 
     "getPDF" - {
 
@@ -73,7 +73,7 @@ class TadPDFControllerSpec extends SpecBase with Generators with ScalaCheckPrope
 
             val application = appBuilder.build()
 
-            val request = FakeRequest(GET, testRoutes.TadPDFController.getPDF(departureId).url)
+            val request = FakeRequest(GET, testRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
               .withSession("authToken" -> "BearerToken")
 
             running(application) {
@@ -101,7 +101,7 @@ class TadPDFControllerSpec extends SpecBase with Generators with ScalaCheckPrope
 
         val application = appBuilder.build()
 
-        val request        = FakeRequest(GET, testRoutes.TadPDFController.getPDF(departureId).url)
+        val request        = FakeRequest(GET, testRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 

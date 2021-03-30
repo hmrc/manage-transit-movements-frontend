@@ -281,7 +281,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
         val departureId = DepartureId(0)
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/movements/departures/${departureId.index}/transit-accompanying-document"))
+          get(urlEqualTo(s"/$startUrl/movements/departures/${departureId.index}/accompanying-document"))
             .withHeader("User-Agent", equalTo("manage-transit-movements-frontend"))
             .withHeader("Channel", equalTo("web"))
             .willReturn(
@@ -301,7 +301,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
         val departureId      = DepartureId(0)
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/movements/departures/${departureId.index}/transit-accompanying-document"))
+          get(urlEqualTo(s"/$startUrl/movements/departures/${departureId.index}/accompanying-document"))
             .withHeader("User-Agent", equalTo("manage-transit-movements-frontend"))
             .withHeader("Channel", equalTo("web"))
             .willReturn(

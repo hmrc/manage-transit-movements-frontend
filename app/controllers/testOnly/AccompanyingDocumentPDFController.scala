@@ -30,10 +30,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TadPDFController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents, departuresMovementConnector: DeparturesMovementConnector)(
-  implicit ec: ExecutionContext,
-  appConfig: FrontendAppConfig,
-  renderer: Renderer)
+class AccompanyingDocumentPDFController @Inject()(
+  identify: IdentifierAction,
+  cc: MessagesControllerComponents,
+  departuresMovementConnector: DeparturesMovementConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, renderer: Renderer)
     extends FrontendController(cc)
     with I18nSupport {
 

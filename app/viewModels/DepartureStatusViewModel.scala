@@ -49,7 +49,7 @@ object DepartureStatusViewModel {
   }
 
   private def downloadTADAction(departure: Departure) =
-    ViewMovementAction(testRoutes.TadPDFController.getPDF(departure.departureId).url, "viewDepartures.table.action.viewPDF")
+    ViewMovementAction(testRoutes.AccompanyingDocumentPDFController.getPDF(departure.departureId).url, "viewDepartures.table.action.viewPDF")
 
   private def mrnAllocated(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == MrnAllocated =>
