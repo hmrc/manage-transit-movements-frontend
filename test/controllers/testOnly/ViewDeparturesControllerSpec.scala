@@ -86,12 +86,16 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
       application.stop()
     }
 
-    "redirect to Technical difficulties page on failing to fetch departures" in {
+    "render Technical difficulties page on failing to fetch departures" in {
 
       val mockConnector = mock[DeparturesMovementConnector]
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
       when(mockConnector.getDepartures()(any()))
         .thenReturn(Future.successful(None))
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
@@ -101,7 +105,14 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       val result = route(application, request).value
 
-      redirectLocation(result).value mustEqual mainRoutes.TechnicalDifficultiesController.onPageLoad().url
+      status(result) mustBe INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj()
+
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }

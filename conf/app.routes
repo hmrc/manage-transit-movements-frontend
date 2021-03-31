@@ -17,8 +17,6 @@ GET        /keep-alive                                                        co
 
 GET        /view-arrivals                                                     controllers.ViewArrivalsController.onPageLoad
 
-GET        /technical-difficulties                                            controllers.TechnicalDifficultiesController.onPageLoad
-
 GET        /arrivals/:arrivalId/unloading-permission-pdf                      controllers.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
 
 GET        /cannot-use-this-service-northern-ireland                          controllers.NorthernIrelandInterstitialController.onPageLoad

@@ -18,8 +18,8 @@ package controllers.testOnly
 
 import config.FrontendAppConfig
 import connectors.DeparturesMovementConnector
+import controllers.TechnicalDifficultiesPage
 import controllers.actions._
-import javax.inject.Inject
 import models.Departure
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
@@ -27,20 +27,21 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewDeparture, ViewDepartureMovements}
-import controllers.{routes => normalRoutes}
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class ViewDeparturesController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   connector: DeparturesMovementConnector,
-  config: FrontendAppConfig,
-  renderer: Renderer
+  val config: FrontendAppConfig,
+  val renderer: Renderer
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
     extends FrontendController(cc)
-    with I18nSupport {
+    with I18nSupport
+    with TechnicalDifficultiesPage {
 
   def onPageLoad(): Action[AnyContent] = identify.async {
     implicit request =>
@@ -50,7 +51,7 @@ class ViewDeparturesController @Inject()(
           val formatToJson: JsObject             = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
 
           renderer.render("viewDepartures.njk", formatToJson).map(Ok(_))
-        case None => Future.successful(Redirect(normalRoutes.TechnicalDifficultiesController.onPageLoad()))
+        case None => renderTechnicalDifficultiesPage
       }
   }
 }

@@ -116,7 +116,11 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
       application.stop()
     }
 
-    "return technical difficulty" in {
+    "render technical difficulty" in {
+
+      val config = app.injector.instanceOf[FrontendAppConfig]
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivals()(any()))
         .thenReturn(Future.successful(None))
@@ -126,8 +130,21 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
         routes.ViewArrivalsController.onPageLoad().url
       )
 
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
       val result = route(application, request).value
-      status(result) mustEqual SEE_OTHER
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj {
+        "contactUrl" -> config.nctsEnquiriesUrl
+      }
+
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
