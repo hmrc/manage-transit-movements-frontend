@@ -37,7 +37,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   val analyticsHost: String          = configuration.get[String](s"google-analytics.host")
   val betaFeedbackUrl                = s"$contactFrontendUrl/beta-feedback"
   val betaFeedbackUnauthenticatedUrl = s"$contactFrontendUrl/beta-feedback-unauthenticated"
-  val signOutUrl: String             = configuration.get[String]("urls.logout")
+  val signOutUrl: String             = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
 
   private val declareUnloadingRemarksUrlBase            = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
   def declareUnloadingRemarksUrl(arrivalId: ArrivalId)  = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}"
