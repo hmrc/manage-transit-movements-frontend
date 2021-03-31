@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import base.SpecBase
+import config.FrontendAppConfig
 import generators.Generators
 import matchers.JsonMatchers
 import models.departure.NoReleaseForTransitMessage
@@ -71,6 +72,38 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       val expectedJson = Json.obj("noReleaseForTransitMessage" -> Json.toJson(transitMessage))
 
       templateCaptor.getValue mustEqual "noReleaseForTransit.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "render Technical difficulties page on failing to fetch noReleaseForTransitMessage" in {
+      val config = app.injector.instanceOf[FrontendAppConfig]
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+
+      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
+        .thenReturn(Future.successful(None))
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .build()
+
+      val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
+
+      val result = route(application, request).value
+
+      status(result) mustBe INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj {
+        "contactUrl" -> config.nctsEnquiriesUrl
+      }
+
+      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

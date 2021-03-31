@@ -18,18 +18,23 @@ package controllers
 
 import akka.util.ByteString
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
+import matchers.JsonMatchers.containJson
 import models.ArrivalId
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.ahc.AhcWSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
 
 import scala.concurrent.Future
 
@@ -101,33 +106,41 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
         }
       }
 
-      "must redirect to TechnicalDifficultiesController if connector returns error" in {
+      "must render TechnicalDifficulties page if connector returns error" in {
+        val config = app.injector.instanceOf[FrontendAppConfig]
+        when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-        val genErrorResponse = Gen.oneOf(300, 500)
+        val genErrorResponseCode = Gen.oneOf(300, 500).sample.value
 
-        forAll(genErrorResponse) {
-          errorCode =>
-            val wsResponse: AhcWSResponse = mock[AhcWSResponse]
-            when(wsResponse.status) thenReturn errorCode
+        val wsResponse: AhcWSResponse = mock[AhcWSResponse]
+        when(wsResponse.status) thenReturn genErrorResponseCode
 
-            when(mockArrivalMovementConnector.getPDF(any(), any())(any()))
-              .thenReturn(Future.successful(wsResponse))
+        when(mockArrivalMovementConnector.getPDF(any(), any())(any()))
+          .thenReturn(Future.successful(wsResponse))
 
-            val arrivalId = ArrivalId(0)
+        val arrivalId      = ArrivalId(0)
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-            val application = appBuilder.build()
+        val application = appBuilder.build()
 
-            val request = FakeRequest(GET, routes.UnloadingPermissionPDFController.getPDF(arrivalId).url)
-              .withSession(("authToken" -> "BearerToken"))
+        val request = FakeRequest(GET, routes.UnloadingPermissionPDFController.getPDF(arrivalId).url)
+          .withSession(("authToken" -> "BearerToken"))
 
-            running(application) {
+        running(application) {
 
-              val result = route(application, request).value
+          val result = route(application, request).value
 
-              status(result) mustEqual SEE_OTHER
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+          verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-              redirectLocation(result).value mustEqual controllers.routes.TechnicalDifficultiesController.onPageLoad().url
-            }
+          val expectedJson = Json.obj {
+            "contactUrl" -> config.nctsEnquiriesUrl
+          }
+
+          templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+          jsonCaptor.getValue must containJson(expectedJson)
+
         }
       }
     }

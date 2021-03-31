@@ -30,12 +30,14 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ViewArrivalsController @Inject()(renderer: Renderer,
+class ViewArrivalsController @Inject()(val renderer: Renderer,
                                        identify: IdentifierAction,
                                        cc: MessagesControllerComponents,
+                                       val config: FrontendAppConfig,
                                        arrivalMovementConnector: ArrivalMovementConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
-    with I18nSupport {
+    with I18nSupport
+    with TechnicalDifficultiesPage {
 
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
@@ -48,7 +50,7 @@ class ViewArrivalsController @Inject()(renderer: Renderer,
             .render("viewArrivals.njk", formatToJson)
             .map(Ok(_))
 
-        case _ => Future.successful(Redirect(routes.TechnicalDifficultiesController.onPageLoad()))
+        case _ => renderTechnicalDifficultiesPage
       }
   }
 }
