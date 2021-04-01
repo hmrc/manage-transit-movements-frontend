@@ -17,11 +17,8 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import controllers.routes
 import models.{ArrivalId, DepartureId}
 import play.api.Configuration
-import play.api.i18n.Lang
-import play.api.mvc.Call
 
 @Singleton
 class FrontendAppConfig @Inject()(configuration: Configuration) {
