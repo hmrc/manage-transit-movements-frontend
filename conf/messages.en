@@ -11,7 +11,7 @@ site.no = No
 site.yes = Yes
 site.continue = Continue
 site.youMust = You must
-site.service_name = Manage your transit movements
+site.service_name = Manage your transit movements - GOV.UK
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - Manage your transit movements - GOV.UK
 
@@ -39,7 +39,7 @@ checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 
 index.title =  Manage your transit movements - GOV.UK
-index.heading = Manage transit movements
+index.heading = Manage your transit movements
 index.subHeading.arrival = Arrivals
 index.link.arrival.makeArrival = Make an arrival notification
 index.link.arrival.viewArrival = View arrival notifications
