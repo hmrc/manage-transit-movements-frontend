@@ -3,9 +3,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title }}
-{% endblock %}
-
+{{  title(messages("index.title")) }}{% endblock %}
 {% block mainContent %}
 
   <div class="govuk-main-wrapper">
