@@ -29,8 +29,8 @@ object DepartureStatusViewModel {
     val partialFunctions: PartialFunction[Departure, DepartureStatusViewModel] =
       Seq(
         mrnAllocated(config),
-        departureSubmitted(config),
-        positiveAcknowledgement(config),
+        departureSubmitted,
+        positiveAcknowledgement,
         releasedForTransit,
         transitDeclarationRejected(config),
         departureDeclarationReceived,
@@ -41,8 +41,8 @@ object DepartureStatusViewModel {
         departureCancelled,
         cancellationDecision,
         declarationCancellationRequest(config),
-        noReleasedForTransit,
-        controlDecision,
+        noReleasedForTransit(config),
+        controlDecision(config),
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -63,22 +63,25 @@ object DepartureStatusViewModel {
   private def viewGuaranteeValidationFailAction(departureId: DepartureId, config: FrontendAppConfig) =
     ViewMovementAction(config.departureFrontendRejectedUrl(departureId), "viewDepartures.table.action.viewErrors")
 
-  private def departureSubmitted(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.status == DepartureSubmitted =>
+  private def guaranteeValidationFail(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
+    case departure if departure.status == GuaranteeNotValid =>
       DepartureStatusViewModel(
-        "departure.status.submitted",
-        actions =
-          Seq(ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration"))
+        "departure.status.guaranteeValidationFail",
+        actions = Seq(
+          viewGuaranteeValidationFailAction(departure.departureId, config),
+          ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration")
+        )
       )
   }
 
-  private def positiveAcknowledgement(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
+  private def departureSubmitted: PartialFunction[Departure, DepartureStatusViewModel] = {
+    case departure if departure.status == DepartureSubmitted =>
+      DepartureStatusViewModel("departure.status.submitted", actions = Nil)
+  }
+
+  private def positiveAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == PositiveAcknowledgement =>
-      DepartureStatusViewModel(
-        "departure.status.positiveAcknowledgement",
-        actions =
-          Seq(ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration"))
-      )
+      DepartureStatusViewModel("departure.status.positiveAcknowledgement", actions = Nil)
   }
 
   private def releasedForTransit: PartialFunction[Departure, DepartureStatusViewModel] = {
@@ -97,11 +100,6 @@ object DepartureStatusViewModel {
   private def departureDeclarationReceived: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == DepartureDeclarationReceived =>
       DepartureStatusViewModel("departure.status.departureDeclarationReceived", actions = Nil)
-  }
-
-  private def guaranteeValidationFail(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.status == GuaranteeNotValid =>
-      DepartureStatusViewModel("departure.status.guaranteeValidationFail", actions = Seq(viewGuaranteeValidationFailAction(departure.departureId, config)))
   }
 
   private def transitDeclarationSent: PartialFunction[Departure, DepartureStatusViewModel] = {
@@ -138,21 +136,26 @@ object DepartureStatusViewModel {
       )
   }
 
-  private def noReleasedForTransit: PartialFunction[Departure, DepartureStatusViewModel] = {
+  private def noReleasedForTransit(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == NoReleaseForTransit =>
       DepartureStatusViewModel(
         "departure.status.noReleaseForTransit",
-        actions = Seq(ViewMovementAction(testRoutes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"))
+        actions = Seq(
+          ViewMovementAction(testRoutes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"),
+          ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration")
+        )
       )
   }
 
-  private def controlDecision: PartialFunction[Departure, DepartureStatusViewModel] = {
+  private def controlDecision(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == ControlDecisionNotification =>
       DepartureStatusViewModel(
         "departure.status.controlDecision",
         actions = Seq(
           ViewMovementAction(testRoutes.ControlDecisionController.onPageLoad(departure.departureId, departure.localReferenceNumber).url,
-                             "departure.viewDetails"))
+                             "departure.viewDetails"),
+          ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration")
+        )
       )
   }
 

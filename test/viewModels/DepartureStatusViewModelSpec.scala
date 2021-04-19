@@ -88,7 +88,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure               = departure.copy(status = GuaranteeNotValid)
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.guaranteeValidationFail"
-          departureStatus.actions.size mustBe 1
+          departureStatus.actions.size mustBe 2
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
       }
@@ -132,7 +132,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure               = departure.copy(status = NoReleaseForTransit)
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.noReleaseForTransit"
-          departureStatus.actions.size mustBe 1
+          departureStatus.actions.size mustBe 2
           departureStatus.actions.head.href mustBe testRoutes.NoReleaseForTransitController.onPageLoad(updatedDeparture.departureId).url
           departureStatus.actions.head.key mustBe "departure.viewDetails"
       }
@@ -144,7 +144,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure               = departure.copy(status = ControlDecisionNotification)
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.controlDecision"
-          departureStatus.actions.size mustBe 1
+          departureStatus.actions.size mustBe 2
           departureStatus.actions.head.href mustBe testRoutes.ControlDecisionController
             .onPageLoad(updatedDeparture.departureId, updatedDeparture.localReferenceNumber)
             .url
@@ -170,9 +170,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure               = departure.copy(status = PositiveAcknowledgement)
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.positiveAcknowledgement"
-          departureStatus.actions.size mustBe 1
-          departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendConfirmCancellationUrl(updatedDeparture.departureId)
-          departureStatus.actions.head.key mustBe "viewDepartures.table.action.cancelDeclaration"
+          departureStatus.actions.size mustBe 0
       }
     }
 
@@ -182,9 +180,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure               = departure.copy(status = DepartureSubmitted)
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.submitted"
-          departureStatus.actions.size mustBe 1
-          departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendConfirmCancellationUrl(updatedDeparture.departureId)
-          departureStatus.actions.head.key mustBe "viewDepartures.table.action.cancelDeclaration"
+          departureStatus.actions.size mustBe 0
       }
     }
 
