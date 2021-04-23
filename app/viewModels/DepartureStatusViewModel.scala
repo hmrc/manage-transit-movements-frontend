@@ -32,7 +32,7 @@ object DepartureStatusViewModel {
         departureSubmitted,
         positiveAcknowledgement,
         releasedForTransit,
-        transitDeclarationRejected(config),
+        departureDeclarationRejected(config),
         departureDeclarationReceived,
         guaranteeValidationFail(config),
         transitDeclarationSent,
@@ -89,10 +89,10 @@ object DepartureStatusViewModel {
       DepartureStatusViewModel("departure.status.releasedForTransit", actions = Seq(downloadTADAction(departure)))
   }
 
-  private def transitDeclarationRejected(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.status == TransitDeclarationRejected =>
+  private def departureDeclarationRejected(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
+    case departure if departure.status == DepartureRejected =>
       DepartureStatusViewModel(
-        "departure.status.transitDeclarationRejected",
+        "departure.status.departureDeclarationRejected",
         actions = Seq(ViewMovementAction(config.departureFrontendDeclarationFailUrl(departure.departureId), "viewDepartures.table.action.viewErrors"))
       )
   }
