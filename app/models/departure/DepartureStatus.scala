@@ -26,7 +26,7 @@ object DepartureStatus {
   case object DepartureSubmitted extends DepartureStatus
   case object PositiveAcknowledgement extends DepartureStatus
   case object ReleaseForTransit extends DepartureStatus
-  case object TransitDeclarationRejected extends DepartureStatus
+  case object DepartureRejected extends DepartureStatus
   case object DepartureDeclarationReceived extends DepartureStatus
   case object GuaranteeNotValid extends DepartureStatus
   case object TransitDeclarationSent extends DepartureStatus
@@ -45,7 +45,7 @@ object DepartureStatus {
       DepartureSubmitted,
       PositiveAcknowledgement,
       ReleaseForTransit,
-      TransitDeclarationRejected,
+      DepartureRejected,
       DepartureDeclarationReceived,
       GuaranteeNotValid,
       TransitDeclarationSent,
@@ -65,7 +65,7 @@ object DepartureStatus {
     case "DepartureSubmitted"             => DepartureSubmitted
     case "PositiveAcknowledgement"        => PositiveAcknowledgement
     case "ReleaseForTransit"              => ReleaseForTransit
-    case "TransitDeclarationRejected"     => TransitDeclarationRejected
+    case "DepartureRejected"              => DepartureRejected
     case "DepartureDeclarationReceived"   => DepartureDeclarationReceived
     case "GuaranteeNotValid"              => GuaranteeNotValid
     case "TransitDeclarationSent"         => TransitDeclarationSent

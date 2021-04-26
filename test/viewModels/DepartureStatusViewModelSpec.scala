@@ -31,9 +31,9 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is TransitDeclarationRejected show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = TransitDeclarationRejected)
+          val updatedDeparture: Departure               = departure.copy(status = DepartureRejected)
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
-          departureStatus.status mustBe "departure.status.transitDeclarationRejected"
+          departureStatus.status mustBe "departure.status.departureDeclarationRejected"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendDeclarationFailUrl(updatedDeparture.departureId)
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"

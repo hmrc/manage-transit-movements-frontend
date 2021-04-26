@@ -47,10 +47,10 @@ class DepartureStatusSpec extends SpecBase {
       json.as[DepartureStatus] mustEqual ReleaseForTransit
     }
 
-    "is successful for TransitDeclarationRejected" in {
-      val json = JsString("TransitDeclarationRejected")
+    "is successful for DepartureRejected" in {
+      val json = JsString("DepartureRejected")
 
-      json.as[DepartureStatus] mustEqual TransitDeclarationRejected
+      json.as[DepartureStatus] mustEqual DepartureRejected
     }
 
     "is successful for DepartureDeclarationReceived" in {
