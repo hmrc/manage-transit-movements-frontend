@@ -19,7 +19,7 @@ package connectors
 import com.lucidchart.open.xtract.XmlReader
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
-import javax.inject.Inject
+import logging.Logging
 import models.arrival.{MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import models.{ArrivalId, Arrivals, ResponseMessage}
 import play.api.http.HeaderNames
@@ -27,8 +27,8 @@ import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpReadsTry, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import logging.Logging
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
