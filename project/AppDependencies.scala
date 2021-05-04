@@ -6,14 +6,14 @@ object AppDependencies {
   val compile = Seq(
     play.sbt.PlayImport.ws,
     "org.reactivemongo" %% "play2-reactivemongo"           % "0.18.6-play26",
-    "uk.gov.hmrc"       %% "logback-json-logger"           % "4.9.0",
-    "uk.gov.hmrc"       %% "play-health"                   % "3.15.0-play-27",
-    "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.4.0-play-26",
-    "uk.gov.hmrc"       %% "bootstrap-frontend-play-27"    % "3.2.0",
-    "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.23.0-play-26",
-    "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.9.0-play-26",
-    "org.webjars.npm"   %  "govuk-frontend"                % "3.10.1",
-    "org.webjars.npm"   %  "hmrc-frontend"                 % "1.22.0",
+    "uk.gov.hmrc"       %% "logback-json-logger"           % "5.1.0",
+    "uk.gov.hmrc"       %% "play-health"                   % "3.16.0-play-27",
+    "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.9.0-play-26",
+    "uk.gov.hmrc"       %% "bootstrap-frontend-play-27"    % "5.0.0",
+    "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.27.0-play-26",
+    "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.13.0-play-26",
+    "org.webjars.npm"   %  "govuk-frontend"                % "3.11.0",
+    "org.webjars.npm"   %  "hmrc-frontend"                 % "1.31.0",
     "com.lucidchart"    %% "xtract"                        % "2.2.1"
   )
 
