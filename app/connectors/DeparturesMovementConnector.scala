@@ -54,7 +54,7 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
     val headers = Seq(
       "User-Agent" -> s"${config.manageService}",
       "Channel"    -> channel
-    ) ++ hc.headers
+    ) ++ hc.headers(Seq.empty)
     ws.url(serviceUrl).withHttpHeaders(headers: _*).get
   }
 

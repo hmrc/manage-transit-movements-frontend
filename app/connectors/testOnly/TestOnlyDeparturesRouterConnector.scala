@@ -17,11 +17,11 @@
 package connectors.testOnly
 
 import config.FrontendAppConfig
+
 import javax.inject.Inject
 import logging.Logging
 import play.api.mvc.Headers
-import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
