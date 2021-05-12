@@ -17,15 +17,12 @@
 package generators
 
 import java.time._
-
-import models._
+import models.{ErrorType, XMLSubmissionNegativeAcknowledgementMessage, _}
 import models.departure.{ControlDecision, ControlResult, NoReleaseForTransitMessage, ResultsOfControl}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
-import models.ErrorType
 import models.ErrorType.GenericError
-import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement}
 import models.departure.DepartureStatus
 
@@ -243,8 +240,9 @@ trait ModelGenerators {
     Arbitrary {
 
       for {
-        mrn   <- nonEmptyString
+        mrn   <- Gen.option(nonEmptyString)
+        lrn   <- Gen.option(nonEmptyString)
         error <- arbitrary[FunctionalError]
-      } yield XMLSubmissionNegativeAcknowledgementMessage(mrn, error)
+      } yield XMLSubmissionNegativeAcknowledgementMessage(mrn, lrn, error)
     }
 }

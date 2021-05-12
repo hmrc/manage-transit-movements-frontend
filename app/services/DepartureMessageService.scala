@@ -17,12 +17,12 @@
 package services
 
 import connectors.DeparturesMovementConnector
-import javax.inject.Inject
-import models.DepartureId
 import logging.Logging
 import models.departure.{ControlDecision, NoReleaseForTransitMessage}
+import models.{DepartureId, XMLSubmissionNegativeAcknowledgementMessage}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector) extends Logging {
@@ -55,5 +55,17 @@ class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector)
       case _ =>
         logger.error(s"Get Summary failed to return data")
         Future.successful(None)
+    }
+
+  def getXMLSubmissionNegativeAcknowledgementMessage(
+    departureId: DepartureId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
+    connectors.getSummary(departureId) flatMap {
+      case Some(summary) =>
+        summary.messagesLocation.xmlSubmissionNegativeAcknowledgement match {
+          case Some(negativeAcknowledgementLocation) =>
+            connectors.getXMLSubmissionNegativeAcknowledgementMessage(negativeAcknowledgementLocation)
+          case _ => Future.successful(None)
+        }
+      case _ => Future.successful(None)
     }
 }

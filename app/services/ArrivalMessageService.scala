@@ -17,9 +17,9 @@
 package services
 
 import connectors.ArrivalMovementConnector
+
 import javax.inject.Inject
-import models.ArrivalId
-import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
+import models.{ArrivalId, XMLSubmissionNegativeAcknowledgementMessage}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}

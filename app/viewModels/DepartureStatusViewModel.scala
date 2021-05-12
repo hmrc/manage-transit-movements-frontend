@@ -18,8 +18,8 @@ package viewModels
 
 import config.FrontendAppConfig
 import controllers.testOnly.{routes => testRoutes}
-import models.{Departure, DepartureId, ViewMovementAction}
 import models.departure.DepartureStatus._
+import models.{Departure, DepartureId, ViewMovementAction}
 
 case class DepartureStatusViewModel(status: String, actions: Seq[ViewMovementAction])
 
@@ -43,6 +43,7 @@ object DepartureStatusViewModel {
         declarationCancellationRequest(config),
         noReleasedForTransit(config),
         controlDecision(config),
+        departureXmlNegativeAcknowledgement(config),
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -155,6 +156,17 @@ object DepartureStatusViewModel {
           ViewMovementAction(testRoutes.ControlDecisionController.onPageLoad(departure.departureId, departure.localReferenceNumber).url,
                              "departure.viewDetails"),
           ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration")
+        )
+      )
+  }
+
+  private def departureXmlNegativeAcknowledgement(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
+    case departure if departure.status == XMLSubmissionNegativeAcknowledgement =>
+      DepartureStatusViewModel(
+        "departure.status.XMLSubmissionNegativeAcknowledgement",
+        actions = Seq(
+          ViewMovementAction(testRoutes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
+                             "viewDepartures.table.action.viewErrors")
         )
       )
   }

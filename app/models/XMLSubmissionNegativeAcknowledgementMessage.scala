@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package models.arrival
+package models
 
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{__, XmlReader}
-import models.FunctionalError
 import play.api.libs.json.{Json, OWrites}
 
-final case class XMLSubmissionNegativeAcknowledgementMessage(movementReferenceNumber: String, error: FunctionalError)
+final case class XMLSubmissionNegativeAcknowledgementMessage(movementReferenceNumber: Option[String],
+                                                             localReferenceNumber: Option[String],
+                                                             error: FunctionalError)
 
 object XMLSubmissionNegativeAcknowledgementMessage {
 
   implicit val writes: OWrites[XMLSubmissionNegativeAcknowledgementMessage] = Json.writes[XMLSubmissionNegativeAcknowledgementMessage]
 
   implicit val xmlReader: XmlReader[XMLSubmissionNegativeAcknowledgementMessage] = (
-    (__ \ "HEAHEA" \ "DocNumHEA5").read[String],
+    (__ \ "HEAHEA" \ "DocNumHEA5").read[String].optional,
+    (__ \ "HEAHEA" \ "RefNumHEA4").read[String].optional,
     (__ \ "FUNERRER1").read[FunctionalError]
   ).mapN(apply)
 }

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.arrival
+package controllers.testOnly
 
 import base.SpecBase
 import generators.Generators
 import matchers.JsonMatchers
-import models.{ArrivalId, XMLSubmissionNegativeAcknowledgementMessage}
+import models.{DepartureId, XMLSubmissionNegativeAcknowledgementMessage}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -30,34 +30,34 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.ArrivalMessageService
+import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
-  private val mockArrivalMessageService = mock[ArrivalMessageService]
+  private val mockDepartureMessageService = mock[DepartureMessageService]
 
   override def beforeEach: Unit = {
-    reset(mockArrivalMessageService)
+    reset(mockDepartureMessageService)
     super.beforeEach
   }
-  private val arrivalId = ArrivalId(1)
+  private val arrivalId = DepartureId(1)
 
-  "ArrivalXmlNegativeAcknowledgementController Controller" - {
+  "DepartureXmlNegativeAcknowledgementController Controller" - {
 
     "return OK and the correct view for a GET" in {
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
+      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
+        .overrides(inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService))
         .build()
 
-      val request        = FakeRequest(GET, routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val request        = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -72,7 +72,7 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
         "functionalError" -> negativeAcknowledgementMessage.error
       )
 
-      templateCaptor.getValue mustEqual "xmlNegativeAcknowledgement.njk"
+      templateCaptor.getValue mustEqual "departureXmlNegativeAcknowledgement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -81,11 +81,11 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
     "render 'Technical difficulty page' when service fails to get rejection message" in {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
+      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
+        .overrides(inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService))
         .build()
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -93,7 +93,7 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
 
       val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
-      val request = FakeRequest(GET, routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val request = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
 
       val result = route(application, request).value
 

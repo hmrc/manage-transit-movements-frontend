@@ -23,7 +23,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models._
-import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
+import models.arrival.{MessagesLocation, MessagesSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -209,7 +209,8 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         )
         val expectedResult = Some(
           XMLSubmissionNegativeAcknowledgementMessage(
-            "19IT021300100075E9",
+            Some("19IT021300100075E9"),
+            None,
             FunctionalError(genRejectionError, ErrorPointer("Message type"), None, Some("GB007A"))
           ))
         connector.getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation).futureValue mustBe expectedResult

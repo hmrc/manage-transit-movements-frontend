@@ -39,5 +39,7 @@ GET         /manage-transit-movements/test-only/departures/:departureId/accompan
 
 GET         /manage-transit-movements/test-only/:departureId/:lrn/control-decision          controllers.testOnly.ControlDecisionController.onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber)
 
+GET         /manage-transit-movements/test-only/:departureId/departure-declaration-rejection    controllers.testOnly.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId: DepartureId)
+
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes

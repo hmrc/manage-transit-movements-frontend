@@ -37,6 +37,7 @@ object DepartureStatus {
   case object CancellationDecision extends DepartureStatus
   case object NoReleaseForTransit extends DepartureStatus
   case object ControlDecisionNotification extends DepartureStatus
+  case object XMLSubmissionNegativeAcknowledgement extends DepartureStatus
   case object InvalidStatus extends DepartureStatus
 
   val values: Seq[DepartureStatus] = {
@@ -56,26 +57,28 @@ object DepartureStatus {
       CancellationDecision,
       NoReleaseForTransit,
       ControlDecisionNotification,
+      XMLSubmissionNegativeAcknowledgement,
       InvalidStatus
     )
   }
 
   implicit val reads: Reads[DepartureStatus] = __.read[String].map {
-    case "MrnAllocated"                   => MrnAllocated
-    case "DepartureSubmitted"             => DepartureSubmitted
-    case "PositiveAcknowledgement"        => PositiveAcknowledgement
-    case "ReleaseForTransit"              => ReleaseForTransit
-    case "DepartureRejected"              => DepartureRejected
-    case "DepartureDeclarationReceived"   => DepartureDeclarationReceived
-    case "GuaranteeNotValid"              => GuaranteeNotValid
-    case "TransitDeclarationSent"         => TransitDeclarationSent
-    case "WriteOffNotification"           => WriteOffNotification
-    case "DeclarationCancellationRequest" => DeclarationCancellationRequest
-    case "CancellationSubmitted"          => CancellationSubmitted
-    case "DepartureCancelled"             => DepartureCancelled
-    case "CancellationDecision"           => CancellationDecision
-    case "NoReleaseForTransit"            => NoReleaseForTransit
-    case "ControlDecisionNotification"    => ControlDecisionNotification
-    case _                                => InvalidStatus
+    case "MrnAllocated"                         => MrnAllocated
+    case "DepartureSubmitted"                   => DepartureSubmitted
+    case "PositiveAcknowledgement"              => PositiveAcknowledgement
+    case "ReleaseForTransit"                    => ReleaseForTransit
+    case "DepartureRejected"                    => DepartureRejected
+    case "DepartureDeclarationReceived"         => DepartureDeclarationReceived
+    case "GuaranteeNotValid"                    => GuaranteeNotValid
+    case "TransitDeclarationSent"               => TransitDeclarationSent
+    case "WriteOffNotification"                 => WriteOffNotification
+    case "DeclarationCancellationRequest"       => DeclarationCancellationRequest
+    case "CancellationSubmitted"                => CancellationSubmitted
+    case "DepartureCancelled"                   => DepartureCancelled
+    case "CancellationDecision"                 => CancellationDecision
+    case "NoReleaseForTransit"                  => NoReleaseForTransit
+    case "ControlDecisionNotification"          => ControlDecisionNotification
+    case "XMLSubmissionNegativeAcknowledgement" => XMLSubmissionNegativeAcknowledgement
+    case _                                      => InvalidStatus
   }
 }
