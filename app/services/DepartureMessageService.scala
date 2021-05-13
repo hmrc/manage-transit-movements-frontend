@@ -64,8 +64,12 @@ class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector)
         summary.messagesLocation.xmlSubmissionNegativeAcknowledgement match {
           case Some(negativeAcknowledgementLocation) =>
             connectors.getXMLSubmissionNegativeAcknowledgementMessage(negativeAcknowledgementLocation)
-          case _ => Future.successful(None)
+          case _ =>
+            logger.error(s"Get Summary failed to get XMLSubmissionNegativeAcknowledgement location")
+            Future.successful(None)
         }
-      case _ => Future.successful(None)
+      case _ =>
+        logger.error(s"Get Summary failed to get XMLSubmissionNegativeAcknowledgement location")
+        Future.successful(None)
     }
 }

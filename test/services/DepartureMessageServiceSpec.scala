@@ -19,6 +19,7 @@ package services
 import base.SpecBase
 import connectors.DeparturesMovementConnector
 import generators.Generators
+import models.XMLSubmissionNegativeAcknowledgementMessage
 import models.departure.{ControlDecision, MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -121,6 +122,47 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
         when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(None))
 
         messageService.controlDecisionMessage(departureId).futureValue mustBe None
+      }
+    }
+
+    "getXMLSubmissionNegativeAcknowledgementMessage" - {
+      "must return XMLSubmissionNegativeAcknowledgementMessage for the input departureId" in {
+
+        val xmlNegativeAcknowledgement = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
+        val messagesSummary =
+          MessagesSummary(
+            departureId,
+            MessagesLocation(s"/movements/departures/${departureId.index}/messages/3",
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             None,
+                             Some("/movements/departures/1234/messages/5"))
+          )
+
+        when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))
+        when(mockDepartureConnector.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
+          .thenReturn(Future.successful(Some(xmlNegativeAcknowledgement)))
+
+        messageService.getXMLSubmissionNegativeAcknowledgementMessage(departureId).futureValue mustBe Some(xmlNegativeAcknowledgement)
+      }
+
+      "must return None when getSummary fails to get xml negative acknowledgement message" in {
+        val messagesSummary =
+          MessagesSummary(departureId, MessagesLocation(s"/movements/departures/${departureId.index}/messages/3", None, None, None, None, None, None))
+        when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))
+        when(mockDepartureConnector.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
+          .thenReturn(Future.successful(None))
+
+        messageService.getXMLSubmissionNegativeAcknowledgementMessage(departureId).futureValue mustBe None
+      }
+
+      "must return None when getSummary call fails to get MessagesSummary" in {
+        when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(None))
+
+        messageService.getXMLSubmissionNegativeAcknowledgementMessage(departureId).futureValue mustBe None
       }
     }
 
