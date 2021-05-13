@@ -69,7 +69,7 @@ class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector)
             Future.successful(None)
         }
       case _ =>
-        logger.error(s"Get Summary failed to get XMLSubmissionNegativeAcknowledgement location")
+        logger.error(s"Get Summary failed to get Data")
         Future.successful(None)
     }
 }
