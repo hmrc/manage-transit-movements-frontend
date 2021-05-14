@@ -56,5 +56,85 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
 
       application.stop()
     }
+
+    "return BAD_REQUEST and the correct view if an invalid value is seelected" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
+        .withFormUrlEncodedBody("value" -> "somethingsWrong")
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj()
+
+      templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "redirect to index page if Arrivals is selected" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
+        .withFormUrlEncodedBody("value" -> "arrivalNotifications")
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+
+      application.stop()
+    }
+
+    "redirect to old service interstitial page if Departures is selected" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
+        .withFormUrlEncodedBody("value" -> "departureDeclarations")
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
+
+      application.stop()
+    }
+
+    "redirect to NI interstitial page if NI is selected" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
+        .withFormUrlEncodedBody("value" -> "northernIrelandMovements")
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result) mustBe Some(controllers.routes.NorthernIrelandInterstitialController.onPageLoad().url)
+
+      application.stop()
+    }
   }
 }

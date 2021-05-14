@@ -23,31 +23,22 @@ sealed trait WhatDoYouWantToDoOptions
 
 object WhatDoYouWantToDoOptions extends Enumerable.Implicits {
 
-  case object MakeArrivalNotification extends WithName("makeArrivalNotification") with WhatDoYouWantToDoOptions
-  case object ViewArrivalNotificationAfter extends WithName("viewArrivalNotificationAfter") with WhatDoYouWantToDoOptions
-  case object ViewArrivalNotificationBefore extends WithName("viewArrivalNotificationBefore") with WhatDoYouWantToDoOptions
-  case object MakeDepartureDeclaration extends WithName("makeDepartureDeclaration") with WhatDoYouWantToDoOptions
-  case object ViewDepartureDeclaration extends WithName("viewDepartureDeclaration") with WhatDoYouWantToDoOptions
-  case object ViewNorthernIreland extends WithName("viewNorthernIreland") with WhatDoYouWantToDoOptions
+  case object ArrivalNotifications extends WithName("arrivalNotifications") with WhatDoYouWantToDoOptions
+  case object DepartureDeclarations extends WithName("departureDeclarations") with WhatDoYouWantToDoOptions
+  case object NorthernIrelandMovements extends WithName("northernIrelandMovements") with WhatDoYouWantToDoOptions
 
   val values: Seq[WhatDoYouWantToDoOptions] = Seq(
-    MakeArrivalNotification,
-    ViewArrivalNotificationAfter,
-    ViewArrivalNotificationBefore,
-    MakeDepartureDeclaration,
-    ViewDepartureDeclaration,
-    ViewNorthernIreland
+    ArrivalNotifications,
+    DepartureDeclarations,
+    NorthernIrelandMovements
   )
 
   def radios(form: Form[_]): Seq[Radios.Item] = {
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"whatDoYouWantToDo.makeArrivalNotificationText", MakeArrivalNotification.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.viewArrivalNotificationAfterText", ViewArrivalNotificationAfter.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.viewArrivalNotificationBeforeText", ViewArrivalNotificationBefore.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.makeDepartureDeclarationText", MakeDepartureDeclaration.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.viewDepartureDeclarationText", ViewDepartureDeclaration.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.viewNorthernIrelandText", ViewNorthernIreland.toString)
+      Radios.Radio(msg"whatDoYouWantToDo.arrivalNotificationsText", ArrivalNotifications.toString),
+      Radios.Radio(msg"whatDoYouWantToDo.departureDeclarationsText", DepartureDeclarations.toString),
+      Radios.Radio(msg"whatDoYouWantToDo.northernIrelandMovementsText", NorthernIrelandMovements.toString)
     )
     Radios(field, items)
   }
