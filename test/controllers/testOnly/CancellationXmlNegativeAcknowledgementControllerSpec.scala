@@ -34,7 +34,7 @@ import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
 
@@ -44,7 +44,7 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
   }
   private val arrivalId = DepartureId(1)
 
-  "DepartureXmlNegativeAcknowledgement Controller" - {
+  "CancellationXmlNegativeAcknowledgement Controller" - {
 
     "return OK and the correct view for a GET" in {
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
@@ -72,7 +72,7 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
         "functionalError" -> negativeAcknowledgementMessage.error
       )
 
-      templateCaptor.getValue mustEqual "departureXmlNegativeAcknowledgement.njk"
+      templateCaptor.getValue mustEqual "cancellationXmlNegativeAcknowledgement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

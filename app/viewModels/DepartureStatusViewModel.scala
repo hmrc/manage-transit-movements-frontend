@@ -43,7 +43,8 @@ object DepartureStatusViewModel {
         declarationCancellationRequest(config),
         noReleasedForTransit(config),
         controlDecision(config),
-        departureXmlNegativeAcknowledgement(config),
+        departureXmlNegativeAcknowledgement,
+        cancellationXmlNegativeAcknowledgement,
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -160,8 +161,8 @@ object DepartureStatusViewModel {
       )
   }
 
-  private def departureXmlNegativeAcknowledgement(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.status == XMLSubmissionNegativeAcknowledgement =>
+  private def departureXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
+    case departure if departure.status == DepartureSubmittedNegativeAcknowledgement =>
       DepartureStatusViewModel(
         "departure.status.XMLSubmissionNegativeAcknowledgement",
         actions = Seq(
@@ -171,6 +172,16 @@ object DepartureStatusViewModel {
       )
   }
 
+  private def cancellationXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
+    case departure if departure.status == DeclarationCancellationRequestNegativeAcknowledgement =>
+      DepartureStatusViewModel(
+        "departure.status.XMLSubmissionNegativeAcknowledgement",
+        actions = Seq(
+          ViewMovementAction(testRoutes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
+                             "viewDepartures.table.action.viewErrors")
+        )
+      )
+  }
   private def invalidStatus: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure => DepartureStatusViewModel(departure.status.toString, actions = Nil)
   }
