@@ -57,7 +57,7 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
         .overrides(inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService))
         .build()
 
-      val request        = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val request        = FakeRequest(GET, routes.CancellationXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,8 +68,9 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "contactUrl"      -> frontendAppConfig.nctsEnquiriesUrl,
-        "functionalError" -> negativeAcknowledgementMessage.error
+        "contactUrl"             -> frontendAppConfig.nctsEnquiriesUrl,
+        "confirmCancellationUrl" -> frontendAppConfig.departureFrontendConfirmCancellationUrl(departureId),
+        "functionalError"        -> negativeAcknowledgementMessage.error
       )
 
       templateCaptor.getValue mustEqual "cancellationXmlNegativeAcknowledgement.njk"

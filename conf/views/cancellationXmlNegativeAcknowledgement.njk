@@ -4,7 +4,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("departureXmlNegativeAcknowledgement.title")) }}
+  {{ title(messages("cancellationXmlNegativeAcknowledgement.title")) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -18,7 +18,7 @@
       <div class="govuk-grid-column-two-thirds">
 
         <h1 class="govuk-heading-xl">
-          {{ messages("departureXmlNegativeAcknowledgement.heading") }}
+          {{ messages("cancellationXmlNegativeAcknowledgement.heading") }}
         </h1>
 
          <dl class="govuk-summary-list">
@@ -62,9 +62,12 @@
         </dl>
        </div>
     </div>
-      <p class="govuk-body"> {{ messages("xmlNegativeAcknowledgement.paragraph") }}
-              <a class="govuk-link" target="_blank" href={{contactUrl}} >{{ messages("xmlNegativeAcknowledgement.linktext") }}</a>.
-      </p>
-      </div>
+
+     <p class="govuk-body">{{ messages("xmlNegativeAcknowledgement.paragraph") }}:</p>
+                   <ol class="govuk-list govuk-list--bullet">
+                  <li> <a id ="create-new-unloading-remarks" class="govuk-link" href={{confirmCancellationUrl}} >{{ messages("cancellationXmlNegativeAcknowledgement.cancelDeclaration") }}</a>
+                  <li> <a class="govuk-link" target="_blank" href={{contactUrl}} >{{ messages("xmlNegativeAcknowledgement.linktext") }}</a> </li>
+                   </ol>
+          </div>
 
 {% endblock %}

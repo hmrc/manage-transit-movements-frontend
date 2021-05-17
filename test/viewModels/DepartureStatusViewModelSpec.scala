@@ -199,7 +199,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
         departure =>
           val updatedDeparture: Departure               = departure.copy(status = DeclarationCancellationRequestNegativeAcknowledgement)
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
-          departureStatus.status mustBe "departure.status.XMLSubmissionNegativeAcknowledgement"
+          departureStatus.status mustBe "departure.status.XMLCancellationSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1
       }
     }

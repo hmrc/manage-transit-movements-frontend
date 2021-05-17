@@ -205,6 +205,7 @@ departure.status.cancellationSubmitted = Cancellation request sent
 departure.status.departureCancelled = Departure declaration cancelled
 departure.status.controlDecision = Control decision
 departure.status.XMLSubmissionNegativeAcknowledgement = Departure declaration rejected
+departure.status.XMLCancellationSubmissionNegativeAcknowledgement = Departure declaration cancellation
 departure.viewHistory = View history
 departure.viewDetails = View details
 departure.downloadTAD = TAD PDF [NEEDS IMPLEMENTING]
@@ -270,6 +271,10 @@ controlDecision.paragraph = You must wait for the outcome of your customs check.
 
 departureXmlNegativeAcknowledgement.title = There is a problem with this departure declaration
 departureXmlNegativeAcknowledgement.heading = There is a problem with this departure declaration
+
+cancellationXmlNegativeAcknowledgement.title = There is a problem with this departure cancellation
+cancellationXmlNegativeAcknowledgement.heading = There is a problem with this departure cancellation
+cancellationXmlNegativeAcknowledgement.cancelDeclaration = Cancel declaration
 
 confirmCancellation.title =  Are you sure you want to cancel this departure declaration?
 confirmCancellation.heading =  Are you sure you want to cancel this departure declaration?

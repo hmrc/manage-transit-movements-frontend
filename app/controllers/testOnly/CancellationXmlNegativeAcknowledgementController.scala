@@ -44,7 +44,11 @@ class CancellationXmlNegativeAcknowledgementController @Inject()(
     implicit request =>
       departureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(departureId).flatMap {
         case Some(rejectionMessage) =>
-          val json = Json.obj("contactUrl" -> frontendAppConfig.nctsEnquiriesUrl, "functionalError" -> rejectionMessage.error)
+          val json = Json.obj(
+            "contactUrl"             -> frontendAppConfig.nctsEnquiriesUrl,
+            "confirmCancellationUrl" -> frontendAppConfig.departureFrontendConfirmCancellationUrl(departureId),
+            "functionalError"        -> rejectionMessage.error
+          )
 
           renderer.render("cancellationXmlNegativeAcknowledgement.njk", json).map(Ok(_))
         case _ =>

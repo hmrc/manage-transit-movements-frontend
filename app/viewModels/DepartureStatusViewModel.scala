@@ -175,7 +175,7 @@ object DepartureStatusViewModel {
   private def cancellationXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == DeclarationCancellationRequestNegativeAcknowledgement =>
       DepartureStatusViewModel(
-        "departure.status.XMLSubmissionNegativeAcknowledgement",
+        "departure.status.XMLCancellationSubmissionNegativeAcknowledgement",
         actions = Seq(
           ViewMovementAction(testRoutes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
                              "viewDepartures.table.action.viewErrors")
