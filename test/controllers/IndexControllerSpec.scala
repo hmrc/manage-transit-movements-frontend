@@ -19,7 +19,7 @@ package controllers
 import java.time.LocalDateTime
 
 import base.SpecBase
-import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
+import connectors.{ArrivalMovementConnector, AuthorizationConnector, DeparturesMovementConnector}
 import models._
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
@@ -42,6 +42,7 @@ class IndexControllerSpec extends SpecBase {
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
+  private val mockAuthorizationConnector: AuthorizationConnector          = mock[AuthorizationConnector]
 
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -75,7 +76,8 @@ class IndexControllerSpec extends SpecBase {
       .configure(Configuration("microservice.services.features.departureJourney" -> true))
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
-        bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector)
+        bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
+        bind[AuthorizationConnector].toInstance(mockAuthorizationConnector)
       )
       .build()
 
@@ -91,6 +93,9 @@ class IndexControllerSpec extends SpecBase {
 
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
+
+        when(mockAuthorizationConnector.getBetaUser(any())(any()))
+          .thenReturn(Future.successful(false))
 
         val application = applicationBuild
         val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
@@ -112,6 +117,94 @@ class IndexControllerSpec extends SpecBase {
         application.stop()
       }
 
+      "Arrivals and Departures when feature toggle is disabled and is a beta user" in {
+
+        def applicationBuild =
+          applicationBuilder(userAnswers = None)
+            .configure(Configuration("microservice.services.features.departureJourney" -> false))
+            .overrides(
+              bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
+              bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
+              bind[AuthorizationConnector].toInstance(mockAuthorizationConnector)
+            )
+            .build()
+
+        when(mockRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
+
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(Some(mockDestinationResponse)))
+
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(Some(mockDepartureResponse)))
+
+        when(mockAuthorizationConnector.getBetaUser(any())(any()))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuild
+        val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val result      = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+        templateCaptor.getValue mustEqual "index.njk"
+        jsonCaptorWithoutConfig mustBe
+          expectedJson(true, true, true, true, true)
+
+        application.stop()
+      }
+
+      "Arrivals when feature toggle is disabled and is not a beta user" in {
+
+        def applicationBuild =
+          applicationBuilder(userAnswers = None)
+            .configure(Configuration("microservice.services.features.departureJourney" -> false))
+            .overrides(
+              bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
+              bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
+              bind[AuthorizationConnector].toInstance(mockAuthorizationConnector)
+            )
+            .build()
+
+        when(mockRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
+
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(Some(mockDestinationResponse)))
+
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(Some(mockDepartureResponse)))
+
+        when(mockAuthorizationConnector.getBetaUser(any())(any()))
+          .thenReturn(Future.successful(false))
+
+        val application = applicationBuild
+        val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val result      = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+        templateCaptor.getValue mustEqual "index.njk"
+        jsonCaptorWithoutConfig mustBe
+          expectedJson(true, true, false, true, true)
+
+        application.stop()
+      }
+
       "Arrivals when Departures does not respond" in {
 
         when(mockRenderer.render(any(), any())(any()))
@@ -122,6 +215,9 @@ class IndexControllerSpec extends SpecBase {
 
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
+
+        when(mockAuthorizationConnector.getBetaUser(any())(any()))
+          .thenReturn(Future.successful(false))
 
         val application = applicationBuild
         val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
@@ -151,6 +247,9 @@ class IndexControllerSpec extends SpecBase {
 
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
+
+        when(mockAuthorizationConnector.getBetaUser(any())(any()))
+          .thenReturn(Future.successful(false))
 
         val application = applicationBuild
         val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)

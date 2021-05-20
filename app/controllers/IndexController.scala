@@ -17,24 +17,26 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
+import connectors.{ArrivalMovementConnector, AuthorizationConnector, DeparturesMovementConnector}
 import controllers.actions.IdentifierAction
+import controllers.testOnly.{routes => testRoutes}
 import javax.inject.Inject
 import models.{Arrivals, Departures}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
+import play.twirl.api.Html
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import controllers.testOnly.{routes => testRoutes}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject()(appConfig: FrontendAppConfig,
                                 identify: IdentifierAction,
                                 cc: MessagesControllerComponents,
                                 val arrivalMovementConnector: ArrivalMovementConnector,
                                 val departuresMovementConnector: DeparturesMovementConnector,
+                                val authorizationConnector: AuthorizationConnector,
                                 renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -42,15 +44,17 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
       for {
-        arrivals   <- arrivalMovementConnector.getArrivals()
-        departures <- departuresMovementConnector.getDepartures()
-        html       <- renderPage(arrivals, departures)
+        arrivals          <- arrivalMovementConnector.getArrivals()
+        departures        <- departuresMovementConnector.getDepartures()
+        betaAuthorization <- authorizationConnector.getBetaUser(request.eoriNumber)
+        html              <- renderPage(arrivals, departures, betaAuthorization)
       } yield {
         Ok(html)
       }
   }
 
-  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader) =
+  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures], betaAuthorization: Boolean)(
+    implicit requestHeader: RequestHeader): Future[Html] =
     renderer
       .render(
         "index.njk",
@@ -59,7 +63,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
           "viewArrivalNotificationUrl"     -> routes.ViewArrivalsController.onPageLoad().url,
           "arrivalsAvailable"              -> arrivals.nonEmpty,
           "hasArrivals"                    -> arrivals.exists(_.arrivals.nonEmpty),
-          "showDeparture"                  -> appConfig.departureJourneyToggle,
+          "showDeparture"                  -> (appConfig.departureJourneyToggle || betaAuthorization),
           "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
           "viewDepartureNotificationUrl"   -> testRoutes.ViewDeparturesController.onPageLoad().url,
           "departuresAvailable"            -> departures.nonEmpty,
