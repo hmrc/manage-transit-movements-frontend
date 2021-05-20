@@ -43,7 +43,7 @@ class BetaAuthorizationConnectorSpec extends SpecBase with WireMockServerHandler
       "must return true if status is NO_CONTENT" in {
 
         server.stubFor(
-          post(urlEqualTo(startUrl))
+          post(urlEqualTo(s"$startUrl/features/private-beta"))
             .withHeader("Content-Type", containing("application/json"))
             .willReturn(
               aResponse()
@@ -58,7 +58,7 @@ class BetaAuthorizationConnectorSpec extends SpecBase with WireMockServerHandler
       "must return false if status is anything else" in {
 
         server.stubFor(
-          post(urlEqualTo(startUrl))
+          post(urlEqualTo(s"$startUrl/features/private-beta"))
             .withHeader("Content-Type", containing("application/json"))
             .willReturn(
               aResponse()
