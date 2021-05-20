@@ -25,7 +25,7 @@ import models.{DepartureId, Departures, ResponseMessage, XMLSubmissionNegativeAc
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, HeaderNames => HMRCHeaderNames}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import javax.inject.Inject
@@ -54,7 +54,7 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
     val headers = Seq(
       "User-Agent" -> s"${config.manageService}",
       "Channel"    -> channel
-    ) ++ hc.headers(Seq.empty)
+    ) ++ hc.headers(HMRCHeaderNames.explicitlyIncludedHeaders)
     ws.url(serviceUrl).withHttpHeaders(headers: _*).get
   }
 
