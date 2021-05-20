@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{ArrivalMovementConnector, AuthorizationConnector, DeparturesMovementConnector}
+import connectors.{ArrivalMovementConnector, BetaAuthorizationConnector, DeparturesMovementConnector}
 import controllers.actions.IdentifierAction
 import controllers.testOnly.{routes => testRoutes}
 import javax.inject.Inject
@@ -36,7 +36,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
                                 cc: MessagesControllerComponents,
                                 val arrivalMovementConnector: ArrivalMovementConnector,
                                 val departuresMovementConnector: DeparturesMovementConnector,
-                                val authorizationConnector: AuthorizationConnector,
+                                val authorizationConnector: BetaAuthorizationConnector,
                                 renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {

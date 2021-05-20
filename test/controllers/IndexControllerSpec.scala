@@ -19,7 +19,7 @@ package controllers
 import java.time.LocalDateTime
 
 import base.SpecBase
-import connectors.{ArrivalMovementConnector, AuthorizationConnector, DeparturesMovementConnector}
+import connectors.{ArrivalMovementConnector, BetaAuthorizationConnector, DeparturesMovementConnector}
 import models._
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
@@ -42,7 +42,7 @@ class IndexControllerSpec extends SpecBase {
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
-  private val mockAuthorizationConnector: AuthorizationConnector          = mock[AuthorizationConnector]
+  private val mockAuthorizationConnector: BetaAuthorizationConnector      = mock[BetaAuthorizationConnector]
 
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -77,7 +77,7 @@ class IndexControllerSpec extends SpecBase {
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
-        bind[AuthorizationConnector].toInstance(mockAuthorizationConnector)
+        bind[BetaAuthorizationConnector].toInstance(mockAuthorizationConnector)
       )
       .build()
 
@@ -125,7 +125,7 @@ class IndexControllerSpec extends SpecBase {
             .overrides(
               bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
               bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
-              bind[AuthorizationConnector].toInstance(mockAuthorizationConnector)
+              bind[BetaAuthorizationConnector].toInstance(mockAuthorizationConnector)
             )
             .build()
 
@@ -169,7 +169,7 @@ class IndexControllerSpec extends SpecBase {
             .overrides(
               bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
               bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
-              bind[AuthorizationConnector].toInstance(mockAuthorizationConnector)
+              bind[BetaAuthorizationConnector].toInstance(mockAuthorizationConnector)
             )
             .build()
 

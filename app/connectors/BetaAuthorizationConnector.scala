@@ -25,20 +25,25 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorizationConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
+class BetaAuthorizationConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
   def getBetaUser(eori: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
 
     val serviceUrl: String = s"${config.betaAuthorizationUrl}/features/private-beta"
     val headers            = Seq(ContentTypeHeader("application/json"))
 
-    http.POSTString[HttpResponse](serviceUrl, s"{eori: $eori}", headers).map {
-      response =>
-        response.status match {
-          case NO_CONTENT => true
-          case _          => false
-        }
-    }
+    http
+      .POSTString[HttpResponse](serviceUrl, s"{eori: $eori}", headers)
+      .map {
+        response =>
+          response.status match {
+            case NO_CONTENT => true
+            case _          => false
+          }
+      }
+      .recover {
+        case _ => false
+      }
   }
 
   object ContentTypeHeader {
