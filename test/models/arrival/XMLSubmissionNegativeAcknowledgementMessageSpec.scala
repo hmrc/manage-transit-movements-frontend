@@ -19,6 +19,7 @@ package models.arrival
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.Generators
+import models.XMLSubmissionNegativeAcknowledgementMessage
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
@@ -33,7 +34,12 @@ class XMLSubmissionNegativeAcknowledgementMessageSpec extends SpecBase with Scal
           val xml: Elem = {
             <CC917A>
               <HEAHEA>
-                <DocNumHEA5>{rejectionMessage.movementReferenceNumber}</DocNumHEA5>
+                {rejectionMessage.movementReferenceNumber.fold(NodeSeq.Empty) {
+                mrn =>
+                  <DocNumHEA5>{mrn}</DocNumHEA5>}}
+                {rejectionMessage.localReferenceNumber.fold(NodeSeq.Empty) {
+                lrn =>
+                  <RefNumHEA4>{lrn}</RefNumHEA4>}}
               </HEAHEA>
               <FUNERRER1>
                 <ErrTypER11>{rejectionMessage.error.errorType.code}</ErrTypER11>

@@ -18,8 +18,8 @@ package viewModels
 
 import config.FrontendAppConfig
 import controllers.testOnly.{routes => testRoutes}
-import models.{Departure, DepartureId, ViewMovementAction}
 import models.departure.DepartureStatus._
+import models.{Departure, DepartureId, ViewMovementAction}
 
 case class DepartureStatusViewModel(status: String, actions: Seq[ViewMovementAction])
 
@@ -43,6 +43,8 @@ object DepartureStatusViewModel {
         declarationCancellationRequest(config),
         noReleasedForTransit(config),
         controlDecision(config),
+        departureXmlNegativeAcknowledgement,
+        cancellationXmlNegativeAcknowledgement,
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -159,6 +161,27 @@ object DepartureStatusViewModel {
       )
   }
 
+  private def departureXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
+    case departure if departure.status == DepartureSubmittedNegativeAcknowledgement =>
+      DepartureStatusViewModel(
+        "departure.status.XMLSubmissionNegativeAcknowledgement",
+        actions = Seq(
+          ViewMovementAction(testRoutes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
+                             "viewDepartures.table.action.viewErrors")
+        )
+      )
+  }
+
+  private def cancellationXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
+    case departure if departure.status == DeclarationCancellationRequestNegativeAcknowledgement =>
+      DepartureStatusViewModel(
+        "departure.status.XMLCancellationSubmissionNegativeAcknowledgement",
+        actions = Seq(
+          ViewMovementAction(testRoutes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
+                             "viewDepartures.table.action.viewErrors")
+        )
+      )
+  }
   private def invalidStatus: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure => DepartureStatusViewModel(departure.status.toString, actions = Nil)
   }

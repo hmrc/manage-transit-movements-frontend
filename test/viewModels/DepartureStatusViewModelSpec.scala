@@ -184,5 +184,24 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       }
     }
 
+    "When status is DepartureSubmittedNegativeAcknowledgement show correct status and action" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure               = departure.copy(status = DepartureSubmittedNegativeAcknowledgement)
+          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.XMLSubmissionNegativeAcknowledgement"
+          departureStatus.actions.size mustBe 1
+      }
+    }
+
+    "When status is DeclarationCancellationRequestNegativeAcknowledgement show correct status and action" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure               = departure.copy(status = DeclarationCancellationRequestNegativeAcknowledgement)
+          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.XMLCancellationSubmissionNegativeAcknowledgement"
+          departureStatus.actions.size mustBe 1
+      }
+    }
   }
 }

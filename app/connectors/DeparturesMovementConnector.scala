@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
 import models.departure.{ControlDecision, MessagesSummary, NoReleaseForTransitMessage}
-import models.{DepartureId, Departures, ResponseMessage}
+import models.{DepartureId, Departures, ResponseMessage, XMLSubmissionNegativeAcknowledgementMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
@@ -98,6 +98,27 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
         logger.error(s"ControlDecision failed to return data")
         None
     }
+  }
+
+  def getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation: String)(
+    implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
+    val serviceUrl = s"${config.departureBaseUrl}$rejectionLocation"
+    val header     = hc.withExtraHeaders(ChannelHeader(channel))
+    http
+      .GET[HttpResponse](serviceUrl)(rawHttpResponseHttpReads, header, ec)
+      .map {
+        case responseMessage if is2xx(responseMessage.status) =>
+          val message: NodeSeq = responseMessage.json.as[ResponseMessage].message
+          XmlReader.of[XMLSubmissionNegativeAcknowledgementMessage].read(message).toOption
+        case _ =>
+          logger.error("getXMLSubmissionNegativeAcknowledgementMessage failed to get data")
+          None
+      }
+      .recover {
+        case _ =>
+          logger.error(s"getXMLSubmissionNegativeAcknowledgementMessage failed when attempting to retrieve the message")
+          None
+      }
   }
 
   object ChannelHeader {

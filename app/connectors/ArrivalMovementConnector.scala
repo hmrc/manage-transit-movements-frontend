@@ -20,8 +20,8 @@ import com.lucidchart.open.xtract.XmlReader
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
-import models.arrival.{MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
-import models.{ArrivalId, Arrivals, ResponseMessage}
+import models.arrival.MessagesSummary
+import models.{ArrivalId, Arrivals, ResponseMessage, XMLSubmissionNegativeAcknowledgementMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
