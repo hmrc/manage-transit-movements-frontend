@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.Json
 
-case class EoriNumber(eoriNumber: String)
+case class EoriNumber(eori: String)
 
 object EoriNumber {
   implicit val format = Json.format[EoriNumber]
