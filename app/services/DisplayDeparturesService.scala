@@ -33,7 +33,9 @@ class DisplayDeparturesService @Inject()(
   def showDepartures(eoriNumber: EoriNumber)(implicit hc: HeaderCarrier): Future[Boolean] =
     if (appConfig.departureJourneyToggle) {
       Future.successful(true)
-    } else {
+    } else if (appConfig.isPrivateBetaEnabled) {
       betaAuthorizationConnector.getBetaUser(eoriNumber)
+    } else {
+      Future.successful(false)
     }
 }

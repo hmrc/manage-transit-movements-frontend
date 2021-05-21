@@ -24,6 +24,7 @@ import models.EoriNumber
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,9 +43,6 @@ class BetaAuthorizationConnector @Inject()(config: FrontendAppConfig, http: Http
             case NO_CONTENT => true
             case _          => false
           }
-      }
-      .recover {
-        case _ => false
       }
   }
 

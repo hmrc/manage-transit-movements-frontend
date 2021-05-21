@@ -51,10 +51,11 @@ class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with
           displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe true
         }
 
-        "if departures toggle is false and user is beta registered" in {
+        "if departures toggle is false, beta toggle is true and user is a registered beta user" in {
 
           val application: Application = applicationBuilder()
             .configure(Configuration("microservice.services.features.departureJourney" -> false))
+            .configure(Configuration("microservice.services.features.isPrivateBetaEnabled" -> true))
             .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
             .build()
 
@@ -64,12 +65,11 @@ class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with
 
           displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe true
         }
-
       }
 
       "must return false" - {
 
-        "if departures toggle is false and user is not beta registered" in {
+        "if departures toggle is false" in {
 
           val application: Application = applicationBuilder()
             .configure(Configuration("microservice.services.features.departureJourney" -> false))
@@ -78,10 +78,22 @@ class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with
 
           val displayDeparturesService: DisplayDeparturesService = application.injector.instanceOf[DisplayDeparturesService]
 
+          displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe false
+        }
+
+        "if departures toggle is false, beta toggle is true and user is not a registered beta user" in {
+
+          val application: Application = applicationBuilder()
+            .configure(Configuration("microservice.services.features.departureJourney" -> false))
+            .configure(Configuration("microservice.services.features.isPrivateBetaEnabled" -> true))
+            .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
+            .build()
+
+          val displayDeparturesService: DisplayDeparturesService = application.injector.instanceOf[DisplayDeparturesService]
+
           when(mockBetaAuthConnector.getBetaUser(any())(any())).thenReturn(Future.successful(false))
 
           displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe false
-
         }
       }
     }
