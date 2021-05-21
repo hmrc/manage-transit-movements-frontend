@@ -39,29 +39,30 @@ class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with
 
       "must return true" - {
 
-        "if departures toggle is true" in {
+        "when departures toggle is true and private beta has been enabled and the user is beta registered" in {
 
           val application: Application = applicationBuilder()
             .configure(Configuration("microservice.services.features.departureJourney" -> true))
-            .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
-            .build()
-
-          val displayDeparturesService: DisplayDeparturesService = application.injector.instanceOf[DisplayDeparturesService]
-
-          displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe true
-        }
-
-        "if departures toggle is false, beta toggle is true and user is a registered beta user" in {
-
-          val application: Application = applicationBuilder()
-            .configure(Configuration("microservice.services.features.departureJourney" -> false))
-            .configure(Configuration("microservice.services.features.isPrivateBetaEnabled" -> true))
+            .configure(Configuration("microservice.services.features.isPrivateBetaEnabled" -> false))
             .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
             .build()
 
           val displayDeparturesService: DisplayDeparturesService = application.injector.instanceOf[DisplayDeparturesService]
 
           when(mockBetaAuthConnector.getBetaUser(any())(any())).thenReturn(Future.successful(true))
+
+          displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe true
+        }
+
+        "when departures toggle is true and private beta has been disabled" in {
+
+          val application: Application = applicationBuilder()
+            .configure(Configuration("microservice.services.features.departureJourney" -> true))
+            .configure(Configuration("microservice.services.features.isPrivateBetaEnabled" -> false))
+            .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
+            .build()
+
+          val displayDeparturesService: DisplayDeparturesService = application.injector.instanceOf[DisplayDeparturesService]
 
           displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe true
         }
@@ -81,10 +82,10 @@ class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with
           displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe false
         }
 
-        "if departures toggle is false, beta toggle is true and user is not a registered beta user" in {
+        "when departures toggle is true and private beta has been enabled and user is not beta registered" in {
 
           val application: Application = applicationBuilder()
-            .configure(Configuration("microservice.services.features.departureJourney" -> false))
+            .configure(Configuration("microservice.services.features.departureJourney" -> true))
             .configure(Configuration("microservice.services.features.isPrivateBetaEnabled" -> true))
             .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
             .build()

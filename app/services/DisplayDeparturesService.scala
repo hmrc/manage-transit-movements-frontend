@@ -31,11 +31,9 @@ class DisplayDeparturesService @Inject()(
 ) extends Logging {
 
   def showDepartures(eoriNumber: EoriNumber)(implicit hc: HeaderCarrier): Future[Boolean] =
-    if (appConfig.departureJourneyToggle) {
-      Future.successful(true)
-    } else if (appConfig.isPrivateBetaEnabled) {
+    if (appConfig.departureJourneyToggle && appConfig.isPrivateBetaEnabled) {
       betaAuthorizationConnector.getBetaUser(eoriNumber)
     } else {
-      Future.successful(false)
+      Future.successful(appConfig.departureJourneyToggle)
     }
 }
