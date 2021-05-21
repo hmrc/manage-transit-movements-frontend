@@ -16,18 +16,18 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.WhatDoYouWantToDoFormProvider
-import models.WhatDoYouWantToDoOptions
+import javax.inject.Inject
+import models.{EoriNumber, WhatDoYouWantToDoOptions}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.DisplayDeparturesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatDoYouWantToDoController @Inject()(
@@ -35,8 +35,8 @@ class WhatDoYouWantToDoController @Inject()(
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   renderer: Renderer,
-  appConfig: FrontendAppConfig,
-  formProvider: WhatDoYouWantToDoFormProvider
+  formProvider: WhatDoYouWantToDoFormProvider,
+  displayDeparturesService: DisplayDeparturesService
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
@@ -70,7 +70,10 @@ class WhatDoYouWantToDoController @Inject()(
             case WhatDoYouWantToDoOptions.ArrivalNotifications =>
               Future.successful(Redirect(routes.IndexController.onPageLoad()))
             case WhatDoYouWantToDoOptions.DepartureDeclarations =>
-              Future.successful(Redirect(routes.OldServiceInterstitialController.onPageLoad()))
+              displayDeparturesService.showDepartures(EoriNumber(request.eoriNumber)).map {
+                case true  => Redirect(routes.IndexController.onPageLoad())
+                case false => Redirect(routes.OldServiceInterstitialController.onPageLoad())
+              }
             case WhatDoYouWantToDoOptions.NorthernIrelandMovements =>
               Future.successful(Redirect(routes.NorthernIrelandInterstitialController.onPageLoad()))
           }

@@ -27,6 +27,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
 import play.twirl.api.Html
 import renderer.Renderer
+import services.DisplayDeparturesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +37,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
                                 cc: MessagesControllerComponents,
                                 val arrivalMovementConnector: ArrivalMovementConnector,
                                 val departuresMovementConnector: DeparturesMovementConnector,
-                                val authorizationConnector: BetaAuthorizationConnector,
+                                val displayDeparturesService: DisplayDeparturesService,
                                 renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -44,16 +45,16 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
       for {
-        arrivals          <- arrivalMovementConnector.getArrivals()
-        departures        <- departuresMovementConnector.getDepartures()
-        betaAuthorization <- authorizationConnector.getBetaUser(EoriNumber(request.eoriNumber))
-        html              <- renderPage(arrivals, departures, betaAuthorization)
+        arrivals       <- arrivalMovementConnector.getArrivals()
+        departures     <- departuresMovementConnector.getDepartures()
+        showDepartures <- displayDeparturesService.showDepartures(EoriNumber(request.eoriNumber))
+        html           <- renderPage(arrivals, departures, showDepartures)
       } yield {
         Ok(html)
       }
   }
 
-  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures], betaAuthorization: Boolean)(
+  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures], showDepartures: Boolean)(
     implicit requestHeader: RequestHeader): Future[Html] =
     renderer
       .render(
@@ -63,7 +64,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
           "viewArrivalNotificationUrl"     -> routes.ViewArrivalsController.onPageLoad().url,
           "arrivalsAvailable"              -> arrivals.nonEmpty,
           "hasArrivals"                    -> arrivals.exists(_.arrivals.nonEmpty),
-          "showDeparture"                  -> (appConfig.departureJourneyToggle || betaAuthorization),
+          "showDeparture"                  -> showDepartures,
           "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
           "viewDepartureNotificationUrl"   -> testRoutes.ViewDeparturesController.onPageLoad().url,
           "departuresAvailable"            -> departures.nonEmpty,
