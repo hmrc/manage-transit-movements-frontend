@@ -19,6 +19,7 @@ package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
+import models.EoriNumber
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status._
@@ -51,7 +52,7 @@ class BetaAuthorizationConnectorSpec extends SpecBase with WireMockServerHandler
             )
         )
 
-        val result: Future[Boolean] = connector.getBetaUser("eoriNumber")
+        val result: Future[Boolean] = connector.getBetaUser(EoriNumber("eoriNumber"))
         result.futureValue mustBe true
       }
 
@@ -66,7 +67,7 @@ class BetaAuthorizationConnectorSpec extends SpecBase with WireMockServerHandler
             )
         )
 
-        val result: Future[Boolean] = connector.getBetaUser("eoriNumber")
+        val result: Future[Boolean] = connector.getBetaUser(EoriNumber("eoriNumber"))
         result.futureValue mustBe false
       }
     }

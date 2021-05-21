@@ -21,7 +21,7 @@ import connectors.{ArrivalMovementConnector, BetaAuthorizationConnector, Departu
 import controllers.actions.IdentifierAction
 import controllers.testOnly.{routes => testRoutes}
 import javax.inject.Inject
-import models.{Arrivals, Departures}
+import models.{Arrivals, Departures, EoriNumber}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
@@ -46,7 +46,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
       for {
         arrivals          <- arrivalMovementConnector.getArrivals()
         departures        <- departuresMovementConnector.getDepartures()
-        betaAuthorization <- authorizationConnector.getBetaUser(request.eoriNumber)
+        betaAuthorization <- authorizationConnector.getBetaUser(EoriNumber(request.eoriNumber))
         html              <- renderPage(arrivals, departures, betaAuthorization)
       } yield {
         Ok(html)
