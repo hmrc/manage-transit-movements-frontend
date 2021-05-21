@@ -44,6 +44,9 @@ class BetaAuthorizationConnector @Inject()(config: FrontendAppConfig, http: Http
             case _          => false
           }
       }
+      .recover {
+        case _ => false
+      }
   }
 
   object ContentTypeHeader {
