@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package controllers.departure
 
 import base.SpecBase
+import connectors.BetaAuthorizationConnector
 import generators.Generators
 import matchers.JsonMatchers
-import models.LocalReferenceNumber
+import models.{DepartureId, LocalReferenceNumber}
 import models.departure.ControlDecision
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -37,10 +39,11 @@ import scala.concurrent.Future
 
 class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
-  private val mockDepartureMessageService = mock[DepartureMessageService]
+  private val mockDepartureMessageService    = mock[DepartureMessageService]
+  private val mockBetaAuthorizationConnector = mock[BetaAuthorizationConnector]
 
   override def beforeEach: Unit = {
-    reset(mockDepartureMessageService)
+    reset(mockDepartureMessageService, mockBetaAuthorizationConnector)
     super.beforeEach
   }
 
@@ -57,8 +60,14 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
       when(mockDepartureMessageService.controlDecisionMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(controlDecision)))
 
+      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        .thenReturn(Future.successful(true))
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .overrides(
+          bind[DepartureMessageService].toInstance(mockDepartureMessageService),
+          bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        )
         .build()
 
       val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
@@ -91,8 +100,14 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
       when(mockDepartureMessageService.controlDecisionMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
+      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        .thenReturn(Future.successful(true))
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .overrides(
+          bind[DepartureMessageService].toInstance(mockDepartureMessageService),
+          bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        )
         .build()
 
       val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
@@ -110,6 +125,29 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to OldInterstitialController if user is not part of the private beta list" in {
+      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        .thenReturn(Future.successful(false))
+
+      val departureId          = DepartureId(0)
+      val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          inject.bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
 
       application.stop()
     }

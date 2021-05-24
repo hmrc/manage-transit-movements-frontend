@@ -1,0 +1,13 @@
+# Departure live routes
+
+GET         /:departureId/no-release-for-transit                    controllers.departure.NoReleaseForTransitController.onPageLoad(departureId: DepartureId)
+
+GET         /view-departures                                        controllers.departure.ViewDeparturesController.onPageLoad
+
+GET         /departures/:departureId/accompanying-document-pdf      controllers.departure.AccompanyingDocumentPDFController.getPDF(departureId: DepartureId)
+
+GET         /:departureId/:lrn/control-decision                     controllers.departure.ControlDecisionController.onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber)
+
+GET         /:departureId/departure-declaration-rejection           controllers.departure.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId: DepartureId)
+
+GET         /:departureId/cancellation-declaration-rejection        controllers.departure.CancellationXmlNegativeAcknowledgementController.onPageLoad(departureId: DepartureId)

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.departure
 
 import akka.util.ByteString
 import base.SpecBase
-import connectors.DeparturesMovementConnector
-import controllers.testOnly.{routes => testRoutes}
+import connectors.{BetaAuthorizationConnector, DeparturesMovementConnector}
+import controllers.departure.{routes => departureRoutes}
 import generators.Generators
 import matchers.JsonMatchers.containJson
 import models.DepartureId
@@ -42,17 +42,20 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
   private val wsResponse: AhcWSResponse                            = mock[AhcWSResponse]
   val mockDeparturesMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
+  private val mockBetaAuthorizationConnector                       = mock[BetaAuthorizationConnector]
 
   override def beforeEach: Unit = {
     super.beforeEach
     reset(wsResponse)
     reset(mockDeparturesMovementConnector)
+    reset(mockBetaAuthorizationConnector)
   }
 
   private val appBuilder =
     applicationBuilder()
       .overrides(
-        bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector)
+        bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector),
+        bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
       )
 
   "AccompanyingDocumentPDFController" - {
@@ -65,6 +68,8 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
           pdf =>
             when(wsResponse.status) thenReturn 200
             when(wsResponse.bodyAsBytes) thenReturn ByteString(pdf)
+            when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+              .thenReturn(Future.successful(true))
 
             when(mockDeparturesMovementConnector.getPDF(any())(any()))
               .thenReturn(Future.successful(wsResponse))
@@ -73,7 +78,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
             val application = appBuilder.build()
 
-            val request = FakeRequest(GET, testRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
+            val request = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
               .withSession("authToken" -> "BearerToken")
 
             running(application) {
@@ -90,6 +95,8 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val wsResponse: AhcWSResponse = mock[AhcWSResponse]
         when(wsResponse.status) thenReturn errorCode
+        when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+          .thenReturn(Future.successful(true))
 
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
@@ -101,7 +108,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val application = appBuilder.build()
 
-        val request        = FakeRequest(GET, testRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
+        val request        = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -116,7 +123,24 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
         templateCaptor.getValue mustEqual "technicalDifficulties.njk"
         jsonCaptor.getValue must containJson(expectedJson)
         application.stop()
+      }
 
+      "must redirect to OldInterstitialController if user is not part of the private beta list" in {
+        when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+          .thenReturn(Future.successful(false))
+
+        val departureId = DepartureId(0)
+
+        val application = appBuilder.build()
+
+        val request = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
+
+        application.stop()
       }
     }
   }

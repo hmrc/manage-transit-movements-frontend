@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package controllers.departure
 
 import base.SpecBase
+import connectors.BetaAuthorizationConnector
+import controllers.testOnly
 import generators.Generators
 import matchers.JsonMatchers
 import models.{DepartureId, XMLSubmissionNegativeAcknowledgementMessage}
@@ -36,13 +38,13 @@ import scala.concurrent.Future
 
 class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
-  private val mockDepartureMessageService = mock[DepartureMessageService]
+  private val mockDepartureMessageService    = mock[DepartureMessageService]
+  private val mockBetaAuthorizationConnector = mock[BetaAuthorizationConnector]
 
   override def beforeEach: Unit = {
-    reset(mockDepartureMessageService)
+    reset(mockDepartureMessageService, mockBetaAuthorizationConnector)
     super.beforeEach
   }
-  private val arrivalId = DepartureId(1)
 
   "CancellationXmlNegativeAcknowledgement Controller" - {
 
@@ -52,12 +54,17 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
         .thenReturn(Future.successful(Html("")))
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
+      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        .thenReturn(Future.successful(true))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .overrides(
+          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService),
+          inject.bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        )
         .build()
 
-      val request        = FakeRequest(GET, routes.CancellationXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val request        = FakeRequest(GET, routes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -84,9 +91,14 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
         .thenReturn(Future.successful(Html("")))
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
+      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        .thenReturn(Future.successful(true))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .overrides(
+          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService),
+          inject.bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        )
         .build()
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -94,7 +106,7 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
 
       val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
-      val request = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val request = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
 
       val result = route(application, request).value
 
@@ -103,6 +115,26 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+      application.stop()
+    }
+
+    "must redirect to OldInterstitialController if user is not part of the private beta list" in {
+      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        .thenReturn(Future.successful(false))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          inject.bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
+
       application.stop()
     }
   }

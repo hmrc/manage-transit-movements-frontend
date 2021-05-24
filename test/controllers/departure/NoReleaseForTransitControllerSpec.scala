@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package controllers.departure
 
 import base.SpecBase
 import config.FrontendAppConfig
+import connectors.BetaAuthorizationConnector
+import controllers.testOnly
 import generators.Generators
 import matchers.JsonMatchers
 import models.departure.NoReleaseForTransitMessage
@@ -26,6 +28,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -37,10 +40,14 @@ import scala.concurrent.Future
 
 class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
-  private val mockDepartureMessageService = mock[DepartureMessageService]
+  private val mockDepartureMessageService    = mock[DepartureMessageService]
+  private val mockBetaAuthorizationConnector = mock[BetaAuthorizationConnector]
 
   override def beforeEach: Unit = {
-    reset(mockDepartureMessageService)
+    reset(
+      mockDepartureMessageService,
+      mockBetaAuthorizationConnector
+    )
     super.beforeEach
   }
   "NoReleaseForTransit Controller" - {
@@ -55,8 +62,14 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(transitMessage)))
 
+      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        .thenReturn(Future.successful(true))
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .overrides(
+          bind[DepartureMessageService].toInstance(mockDepartureMessageService),
+          bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        )
         .build()
 
       val request        = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
@@ -84,14 +97,20 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
+      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        .thenReturn(Future.successful(true))
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[DepartureMessageService].toInstance(mockDepartureMessageService))
+        .overrides(
+          bind[DepartureMessageService].toInstance(mockDepartureMessageService),
+          bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        )
         .build()
 
-      val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
 
       val result = route(application, request).value
 
@@ -105,6 +124,25 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+    "must redirect to OldInterstitialController if user is not part of the private beta list" in {
+      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        .thenReturn(Future.successful(false))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
 
       application.stop()
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package controllers.departure
 
 import config.FrontendAppConfig
 import connectors.DeparturesMovementConnector
@@ -34,6 +34,7 @@ import scala.concurrent.ExecutionContext
 class ViewDeparturesController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
+  filterPrivateBetaUsers: PrivateBetaActionFilter,
   cc: MessagesControllerComponents,
   connector: DeparturesMovementConnector,
   val config: FrontendAppConfig,
@@ -43,7 +44,7 @@ class ViewDeparturesController @Inject()(
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen filterPrivateBetaUsers).async {
     implicit request =>
       connector.getDepartures().flatMap {
         case Some(allDepartures) =>
