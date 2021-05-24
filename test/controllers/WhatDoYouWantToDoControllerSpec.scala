@@ -17,15 +17,18 @@
 package controllers
 
 import base.SpecBase
+import connectors.BetaAuthorizationConnector
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.DisplayDeparturesService
 
 import scala.concurrent.Future
 
@@ -101,12 +104,23 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       application.stop()
     }
 
-    "redirect to old service interstitial page if Departures is selected" in {
+    "redirect to old service interstitial page if Departures is selected and user is not beta registered" in {
+
+      val mockDisplayDeparturesService = mock[DisplayDeparturesService]
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+          )
+          .build()
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
+        .thenReturn(Future.successful(false))
+
       val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
         .withFormUrlEncodedBody("value" -> "departureDeclarations")
 
@@ -115,6 +129,35 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
+
+      application.stop()
+    }
+
+    "redirect to index page if Departures is selected and user is beta registered" in {
+
+      val mockDisplayDeparturesService = mock[DisplayDeparturesService]
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+          )
+          .build()
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
+        .thenReturn(Future.successful(true))
+
+      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
+        .withFormUrlEncodedBody("value" -> "departureDeclarations")
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
 
       application.stop()
     }
