@@ -3,6 +3,7 @@ $hmrc-assets-path: "/manage-transit-movements/assets/lib/hmrc-frontend/hmrc/asse
 
 @import "lib/govuk-frontend/govuk/all";
 @import "components/header.scss";
+@import "lib/hmrc-frontend/hmrc/all";
 @import "components/timeout-dialog";
 @import 'components/hmrc-responsive-tables';
 @import "components/shame";

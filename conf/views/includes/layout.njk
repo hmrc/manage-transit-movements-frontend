@@ -1,5 +1,5 @@
 {% extends "govuk/template.njk" %}
-{% from "macros/hmrc-header/macro.njk"            import hmrcHeader %}
+{% from "hmrc/components/header/macro.njk"            import hmrcHeader %}
 {% from "hmrc/components/timeout-dialog/macro.njk"     import hmrcTimeoutDialog %}
 {% from "hmrc/components/report-technical-issue/macro.njk"  import hmrcReportTechnicalIssue %}
 {%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
@@ -29,10 +29,16 @@
     assetsPath: "/assets",
     phaseBanner: {
       show: true,
-      text: 'beta',
+      tag: {
+        text: 'beta'
+      },
       html: phaseBanner()
     },
-    signOutHref: config.signOutUrl
+    signOutHref: config.signOutUrl,
+    userResearchBanner: {
+     url : "https://signup.take-part-in-research.service.gov.uk/?utm_campaign=List_CTC&utm_source=&utm_medium=other&t=HMRC&id=266"
+    }
+
   }) }}
 
 {% endblock %}
