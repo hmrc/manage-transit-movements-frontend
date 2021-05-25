@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package controllers.departure
 
 import config.FrontendAppConfig
 import controllers.actions._
@@ -32,6 +32,7 @@ import scala.concurrent.ExecutionContext
 class CancellationXmlNegativeAcknowledgementController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
+  filterPrivateBetaUsers: PrivateBetaActionFilter,
   cc: MessagesControllerComponents,
   val frontendAppConfig: FrontendAppConfig,
   departureMessageService: DepartureMessageService,
@@ -40,7 +41,7 @@ class CancellationXmlNegativeAcknowledgementController @Inject()(
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: DepartureId): Action[AnyContent] = identify.async {
+  def onPageLoad(departureId: DepartureId): Action[AnyContent] = (identify andThen filterPrivateBetaUsers).async {
     implicit request =>
       departureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(departureId).flatMap {
         case Some(rejectionMessage) =>

@@ -17,10 +17,10 @@
 package controllers.testOnly
 
 import connectors.testOnly.TestOnlyDeparturesRouterConnector
-import javax.inject.Inject
 import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 

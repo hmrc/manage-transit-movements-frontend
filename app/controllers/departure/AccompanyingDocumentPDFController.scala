@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package controllers.departure
 
 import config.FrontendAppConfig
 import connectors.DeparturesMovementConnector
-import controllers.actions.IdentifierAction
+import controllers.actions.{IdentifierAction, PrivateBetaActionFilter}
 import models.DepartureId
 import play.api.Logger.logger
 import play.api.i18n.I18nSupport
@@ -32,12 +32,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AccompanyingDocumentPDFController @Inject()(
   identify: IdentifierAction,
+  filterPrivateBetaUsers: PrivateBetaActionFilter,
   cc: MessagesControllerComponents,
   departuresMovementConnector: DeparturesMovementConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, renderer: Renderer)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def getPDF(departureId: DepartureId): Action[AnyContent] = identify.async {
+  def getPDF(departureId: DepartureId): Action[AnyContent] = (identify andThen filterPrivateBetaUsers).async {
     implicit request =>
       departuresMovementConnector.getPDF(departureId).flatMap {
         result =>

@@ -17,12 +17,12 @@
 package viewModels
 
 import base.SpecBase
-import controllers.testOnly.{routes => testRoutes}
 import generators.Generators
 import models.Departure
 import models.departure.DepartureStatus._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import controllers.departure.{routes => departureRoutes}
 
 class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
@@ -77,7 +77,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val departureStatus = DepartureStatusViewModel(dep, frontendAppConfig)
           departureStatus.status mustBe "departure.status.releasedForTransit"
           departureStatus.actions.size mustBe 1
-          departureStatus.actions.head.href mustBe s"/manage-transit-movements/test-only/departures/${departure.departureId.index}/accompanying-document-pdf"
+          departureStatus.actions.head.href mustBe s"/manage-transit-movements/departures/${departure.departureId.index}/accompanying-document-pdf"
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewPDF"
       }
     }
@@ -133,7 +133,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.noReleaseForTransit"
           departureStatus.actions.size mustBe 2
-          departureStatus.actions.head.href mustBe testRoutes.NoReleaseForTransitController.onPageLoad(updatedDeparture.departureId).url
+          departureStatus.actions.head.href mustBe departureRoutes.NoReleaseForTransitController.onPageLoad(updatedDeparture.departureId).url
           departureStatus.actions.head.key mustBe "departure.viewDetails"
       }
     }
@@ -145,7 +145,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
           departureStatus.status mustBe "departure.status.controlDecision"
           departureStatus.actions.size mustBe 2
-          departureStatus.actions.head.href mustBe testRoutes.ControlDecisionController
+          departureStatus.actions.head.href mustBe departureRoutes.ControlDecisionController
             .onPageLoad(updatedDeparture.departureId, updatedDeparture.localReferenceNumber)
             .url
           departureStatus.actions.head.key mustBe "departure.viewDetails"

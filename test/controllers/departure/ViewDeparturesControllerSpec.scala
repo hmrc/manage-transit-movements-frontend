@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package controllers.departure
 
 import base.SpecBase
 import connectors.DeparturesMovementConnector
@@ -30,6 +30,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.DisplayDeparturesService
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -53,16 +54,20 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
     "return OK and the correct view for a GET" in {
 
-      val mockConnector = mock[DeparturesMovementConnector]
+      val mockConnector                = mock[DeparturesMovementConnector]
+      val mockDisplayDeparturesService = mock[DisplayDeparturesService]
 
       when(mockConnector.getDepartures()(any()))
         .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
+        .thenReturn(Future.successful(true))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
+        .overrides(bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService))
         .build()
 
       val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
@@ -86,8 +91,12 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
     "render Technical difficulties page on failing to fetch departures" in {
 
-      val mockConnector = mock[DeparturesMovementConnector]
+      val mockConnector                = mock[DeparturesMovementConnector]
+      val mockDisplayDeparturesService = mock[DisplayDeparturesService]
+
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
+        .thenReturn(Future.successful(true))
 
       when(mockConnector.getDepartures()(any()))
         .thenReturn(Future.successful(None))
@@ -97,6 +106,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
+        .overrides(bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService))
         .build()
 
       val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
@@ -111,6 +121,28 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to OldInterstitialController if user is not part of the private beta list" in {
+      val mockDisplayDeparturesService = mock[DisplayDeparturesService]
+
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
+        .thenReturn(Future.successful(false))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
 
       application.stop()
     }

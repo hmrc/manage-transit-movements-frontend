@@ -17,9 +17,9 @@
 package viewModels
 
 import config.FrontendAppConfig
-import controllers.testOnly.{routes => testRoutes}
 import models.departure.DepartureStatus._
 import models.{Departure, DepartureId, ViewMovementAction}
+import controllers.departure.{routes => departureRoutes}
 
 case class DepartureStatusViewModel(status: String, actions: Seq[ViewMovementAction])
 
@@ -51,7 +51,7 @@ object DepartureStatusViewModel {
   }
 
   private def downloadTADAction(departure: Departure) =
-    ViewMovementAction(testRoutes.AccompanyingDocumentPDFController.getPDF(departure.departureId).url, "viewDepartures.table.action.viewPDF")
+    ViewMovementAction(departureRoutes.AccompanyingDocumentPDFController.getPDF(departure.departureId).url, "viewDepartures.table.action.viewPDF")
 
   private def mrnAllocated(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == MrnAllocated =>
@@ -143,7 +143,7 @@ object DepartureStatusViewModel {
       DepartureStatusViewModel(
         "departure.status.noReleaseForTransit",
         actions = Seq(
-          ViewMovementAction(testRoutes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"),
+          ViewMovementAction(departureRoutes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"),
           ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration")
         )
       )
@@ -154,7 +154,7 @@ object DepartureStatusViewModel {
       DepartureStatusViewModel(
         "departure.status.controlDecision",
         actions = Seq(
-          ViewMovementAction(testRoutes.ControlDecisionController.onPageLoad(departure.departureId, departure.localReferenceNumber).url,
+          ViewMovementAction(departureRoutes.ControlDecisionController.onPageLoad(departure.departureId, departure.localReferenceNumber).url,
                              "departure.viewDetails"),
           ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration")
         )
@@ -166,7 +166,7 @@ object DepartureStatusViewModel {
       DepartureStatusViewModel(
         "departure.status.XMLSubmissionNegativeAcknowledgement",
         actions = Seq(
-          ViewMovementAction(testRoutes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
+          ViewMovementAction(departureRoutes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
                              "viewDepartures.table.action.viewErrors")
         )
       )
@@ -177,7 +177,7 @@ object DepartureStatusViewModel {
       DepartureStatusViewModel(
         "departure.status.XMLCancellationSubmissionNegativeAcknowledgement",
         actions = Seq(
-          ViewMovementAction(testRoutes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
+          ViewMovementAction(departureRoutes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
                              "viewDepartures.table.action.viewErrors")
         )
       )
