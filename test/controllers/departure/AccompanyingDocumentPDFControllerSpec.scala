@@ -18,7 +18,7 @@ package controllers.departure
 
 import akka.util.ByteString
 import base.SpecBase
-import connectors.{BetaAuthorizationConnector, DeparturesMovementConnector}
+import connectors.DeparturesMovementConnector
 import controllers.departure.{routes => departureRoutes}
 import generators.Generators
 import matchers.JsonMatchers.containJson
@@ -35,6 +35,7 @@ import play.api.libs.ws.ahc.AhcWSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.DisplayDeparturesService
 
 import scala.concurrent.Future
 
@@ -42,20 +43,20 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
   private val wsResponse: AhcWSResponse                            = mock[AhcWSResponse]
   val mockDeparturesMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
-  private val mockBetaAuthorizationConnector                       = mock[BetaAuthorizationConnector]
+  private val mockDisplayDeparturesService                         = mock[DisplayDeparturesService]
 
   override def beforeEach: Unit = {
     super.beforeEach
     reset(wsResponse)
     reset(mockDeparturesMovementConnector)
-    reset(mockBetaAuthorizationConnector)
+    reset(mockDisplayDeparturesService)
   }
 
   private val appBuilder =
     applicationBuilder()
       .overrides(
         bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector),
-        bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+        bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
       )
 
   "AccompanyingDocumentPDFController" - {
@@ -68,7 +69,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
           pdf =>
             when(wsResponse.status) thenReturn 200
             when(wsResponse.bodyAsBytes) thenReturn ByteString(pdf)
-            when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+            when(mockDisplayDeparturesService.showDepartures(any())(any()))
               .thenReturn(Future.successful(true))
 
             when(mockDeparturesMovementConnector.getPDF(any())(any()))
@@ -95,7 +96,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val wsResponse: AhcWSResponse = mock[AhcWSResponse]
         when(wsResponse.status) thenReturn errorCode
-        when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        when(mockDisplayDeparturesService.showDepartures(any())(any()))
           .thenReturn(Future.successful(true))
 
         when(mockRenderer.render(any(), any())(any()))
@@ -126,7 +127,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
       }
 
       "must redirect to OldInterstitialController if user is not part of the private beta list" in {
-        when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+        when(mockDisplayDeparturesService.showDepartures(any())(any()))
           .thenReturn(Future.successful(false))
 
         val departureId = DepartureId(0)

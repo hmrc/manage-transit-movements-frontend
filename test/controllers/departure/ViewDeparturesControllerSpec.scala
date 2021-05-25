@@ -17,7 +17,7 @@
 package controllers.departure
 
 import base.SpecBase
-import connectors.{BetaAuthorizationConnector, DeparturesMovementConnector}
+import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
@@ -30,6 +30,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.DisplayDeparturesService
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -53,20 +54,20 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
     "return OK and the correct view for a GET" in {
 
-      val mockConnector                  = mock[DeparturesMovementConnector]
-      val mockBetaAuthorizationConnector = mock[BetaAuthorizationConnector]
+      val mockConnector                = mock[DeparturesMovementConnector]
+      val mockDisplayDeparturesService = mock[DisplayDeparturesService]
 
       when(mockConnector.getDepartures()(any()))
         .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
         .thenReturn(Future.successful(true))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
-        .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector))
+        .overrides(bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService))
         .build()
 
       val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
@@ -90,11 +91,11 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
     "render Technical difficulties page on failing to fetch departures" in {
 
-      val mockConnector                  = mock[DeparturesMovementConnector]
-      val mockBetaAuthorizationConnector = mock[BetaAuthorizationConnector]
+      val mockConnector                = mock[DeparturesMovementConnector]
+      val mockDisplayDeparturesService = mock[DisplayDeparturesService]
 
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
         .thenReturn(Future.successful(true))
 
       when(mockConnector.getDepartures()(any()))
@@ -105,7 +106,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
-        .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector))
+        .overrides(bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService))
         .build()
 
       val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
@@ -125,14 +126,14 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
     }
 
     "must redirect to OldInterstitialController if user is not part of the private beta list" in {
-      val mockBetaAuthorizationConnector = mock[BetaAuthorizationConnector]
+      val mockDisplayDeparturesService = mock[DisplayDeparturesService]
 
-      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
         .thenReturn(Future.successful(false))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+          bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
         )
         .build()
 

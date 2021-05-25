@@ -17,14 +17,14 @@
 package controllers.actions
 
 import base.SpecBase
-import connectors.BetaAuthorizationConnector
 import models.EoriNumber
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, when}
-import play.api.mvc.{Action, AnyContent, BodyParser, Request, Result, Results}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.DisplayDeparturesService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,20 +47,20 @@ class PrivateBetaActionFilterSpec extends SpecBase {
     }
   }
 
-  private val mockBetaAuthorizationConnector = mock[BetaAuthorizationConnector]
+  private val mockDisplayDeparturesService = mock[DisplayDeparturesService]
 
   override def beforeEach: Unit = {
     reset(
-      mockBetaAuthorizationConnector
+      mockDisplayDeparturesService
     )
     super.beforeEach
   }
 
   "PrivateBetaActionFilter" - {
     "render the page if user is a private beta user" in {
-      val action = new PrivateBetaActionFilter(mockBetaAuthorizationConnector, ExecutionContext.global)
+      val action = new PrivateBetaActionFilter(mockDisplayDeparturesService, ExecutionContext.global)
 
-      when(mockBetaAuthorizationConnector.getBetaUser(eqTo(EoriNumber("AB123456789")))(any()))
+      when(mockDisplayDeparturesService.showDepartures(eqTo(EoriNumber("AB123456789")))(any()))
         .thenReturn(Future.successful(true))
 
       val result = new Harness(action).onPageLoad()(IdentifierRequest(FakeRequest(), "AB123456789"))
@@ -68,9 +68,9 @@ class PrivateBetaActionFilterSpec extends SpecBase {
       status(result) mustBe OK
     }
     "redirect to the old Interstitial controller if user is not a private beta user" in {
-      val action = new PrivateBetaActionFilter(mockBetaAuthorizationConnector, ExecutionContext.global)
+      val action = new PrivateBetaActionFilter(mockDisplayDeparturesService, ExecutionContext.global)
 
-      when(mockBetaAuthorizationConnector.getBetaUser(eqTo(EoriNumber("AB123456789")))(any()))
+      when(mockDisplayDeparturesService.showDepartures(eqTo(EoriNumber("AB123456789")))(any()))
         .thenReturn(Future.successful(false))
 
       val result = new Harness(action).onPageLoad()(IdentifierRequest(FakeRequest(), "AB123456789"))

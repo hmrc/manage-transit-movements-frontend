@@ -18,8 +18,6 @@ package controllers.departure
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.BetaAuthorizationConnector
-import controllers.testOnly
 import generators.Generators
 import matchers.JsonMatchers
 import models.departure.NoReleaseForTransitMessage
@@ -28,25 +26,24 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.inject
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.DepartureMessageService
+import services.{DepartureMessageService, DisplayDeparturesService}
 
 import scala.concurrent.Future
 
 class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
-  private val mockDepartureMessageService    = mock[DepartureMessageService]
-  private val mockBetaAuthorizationConnector = mock[BetaAuthorizationConnector]
+  private val mockDepartureMessageService  = mock[DepartureMessageService]
+  private val mockDisplayDeparturesService = mock[DisplayDeparturesService]
 
   override def beforeEach: Unit = {
     reset(
       mockDepartureMessageService,
-      mockBetaAuthorizationConnector
+      mockDisplayDeparturesService
     )
     super.beforeEach
   }
@@ -62,13 +59,13 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(transitMessage)))
 
-      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
         .thenReturn(Future.successful(true))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[DepartureMessageService].toInstance(mockDepartureMessageService),
-          bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+          bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
         )
         .build()
 
@@ -97,7 +94,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
-      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
         .thenReturn(Future.successful(true))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -106,7 +103,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[DepartureMessageService].toInstance(mockDepartureMessageService),
-          bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+          bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
         )
         .build()
 
@@ -128,12 +125,12 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       application.stop()
     }
     "must redirect to OldInterstitialController if user is not part of the private beta list" in {
-      when(mockBetaAuthorizationConnector.getBetaUser(any())(any()))
+      when(mockDisplayDeparturesService.showDepartures(any())(any()))
         .thenReturn(Future.successful(false))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          bind[BetaAuthorizationConnector].toInstance(mockBetaAuthorizationConnector)
+          bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
         )
         .build()
 
