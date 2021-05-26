@@ -18,7 +18,7 @@ package viewModels
 
 import config.FrontendAppConfig
 import controllers.routes
-import models.{Arrival, ViewMovementAction}
+import models.Arrival
 import play.api.i18n.Messages
 
 case class MovementStatus(status: String, actions: Seq[ViewMovementAction])

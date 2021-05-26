@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
 import config.FrontendAppConfig
-import models.{Departure, LocalReferenceNumber, ViewMovementAction}
+import models.{Departure, LocalReferenceNumber}
 import play.api.libs.json.{JsObject, Json, OWrites}
 
 final case class ViewDeparture(updatedDate: LocalDate,

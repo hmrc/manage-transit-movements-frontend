@@ -18,7 +18,7 @@ package viewModels
 
 import base.SpecBase
 import generators.Generators
-import models.{Arrival, ViewMovementAction}
+import models.Arrival
 import controllers.arrival.{routes => arrivalRoute}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

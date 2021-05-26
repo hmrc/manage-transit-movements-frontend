@@ -18,7 +18,7 @@ package viewModels
 
 import config.FrontendAppConfig
 import models.departure.DepartureStatus._
-import models.{Departure, DepartureId, ViewMovementAction}
+import models.{Departure, DepartureId}
 import controllers.departure.{routes => departureRoutes}
 
 case class DepartureStatusViewModel(status: String, actions: Seq[ViewMovementAction])

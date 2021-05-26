@@ -19,11 +19,11 @@ package generators
 import models.ErrorType.GenericError
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import models.departure._
-import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber, ViewMovementAction}
+import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
-import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement}
+import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement, ViewMovementAction}
 
 import java.time._
 
@@ -39,7 +39,7 @@ trait ModelGenerators {
         principleTraderEori <- Gen.option(Gen.alphaNumStr)
       } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)
     }
-  }MongoDateTimeFormatsSpec.scala
+  }
 
   implicit val arbitrarylocalDate: Arbitrary[LocalDate] = {
     Arbitrary {
