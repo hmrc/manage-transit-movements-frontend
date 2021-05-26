@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import connectors.DeparturesMovementConnector
 import generators.Generators
-import models.XMLSubmissionNegativeAcknowledgementMessage
+import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import models.departure.{ControlDecision, MessagesLocation, MessagesSummary, NoReleaseForTransitMessage}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}

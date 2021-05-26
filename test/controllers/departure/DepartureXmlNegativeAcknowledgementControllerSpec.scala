@@ -19,7 +19,7 @@ package controllers.departure
 import base.SpecBase
 import generators.Generators
 import matchers.JsonMatchers
-import models.XMLSubmissionNegativeAcknowledgementMessage
+import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}

@@ -27,7 +27,7 @@ class MongoDateTimeFormatsSpec extends AnyFreeSpec with Matchers with OptionValu
 
   "a LocalDateTime" - {
 
-    val date = LocalDate.of(2018, 2, 1).atStartOfDay
+    val localDate = LocalDate.of(2018, 2, 1).atStartOfDay
 
     val dateMillis = 1517443200000L
 
@@ -36,18 +36,18 @@ class MongoDateTimeFormatsSpec extends AnyFreeSpec with Matchers with OptionValu
     )
 
     "must serialise to json" in {
-      val result = Json.toJson(date)
+      val result = Json.toJson(localDate)
       result mustEqual json
     }
 
     "must deserialise from json" in {
       val result = json.as[LocalDateTime]
-      result mustEqual date
+      result mustEqual localDate
     }
 
     "must serialise/deserialise to the same value" in {
-      val result = Json.toJson(date).as[LocalDateTime]
-      result mustEqual date
+      val result = Json.toJson(localDate).as[LocalDateTime]
+      result mustEqual localDate
     }
   }
 }
