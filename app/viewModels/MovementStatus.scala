@@ -17,7 +17,6 @@
 package viewModels
 
 import config.FrontendAppConfig
-import controllers.routes
 import models.Arrival
 import play.api.i18n.Messages
 
@@ -44,7 +43,7 @@ object MovementStatus {
         Seq(
           ViewMovementAction(config.declareUnloadingRemarksUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.unloadingRemarks")),
           ViewMovementAction(
-            routes.UnloadingPermissionPDFController.getPDF(arrival.arrivalId).url,
+            controllers.arrival.routes.UnloadingPermissionPDFController.getPDF(arrival.arrivalId).url,
             Messages("viewArrivalNotifications.table.action.viewPDF")
           )
         )
@@ -79,7 +78,7 @@ object MovementStatus {
     case arrival if arrival.status == "UnloadingRemarksXMLSubmissionNegativeAcknowledgement" =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(
-          controllers.unloading.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
+          controllers.arrival.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
           Messages("viewArrivalNotifications.table.action.viewErrors")
         ))
       MovementStatus(Messages("movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement"), action)

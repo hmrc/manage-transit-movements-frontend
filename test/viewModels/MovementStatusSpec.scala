@@ -91,7 +91,7 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
           arrival =>
             val arr: Arrival = arrival.copy(status = "UnloadingRemarksXMLSubmissionNegativeAcknowledgement")
             val expectedAction = ViewMovementAction(
-              controllers.unloading.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
+              controllers.arrival.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
               Messages("viewArrivalNotifications.table.action.viewErrors")
             )
 

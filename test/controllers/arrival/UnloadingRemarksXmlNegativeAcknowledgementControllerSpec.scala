@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.unloading
+package controllers.arrival
 
 import base.SpecBase
 import generators.Generators

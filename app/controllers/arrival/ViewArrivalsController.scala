@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.arrival
 
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
+import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
-import javax.inject.Inject
 import models.Arrival
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsObject, Json}
@@ -28,7 +28,8 @@ import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class ViewArrivalsController @Inject()(val renderer: Renderer,
                                        identify: IdentifierAction,

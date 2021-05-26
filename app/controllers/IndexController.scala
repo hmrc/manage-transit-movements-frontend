@@ -17,9 +17,9 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{ArrivalMovementConnector, BetaAuthorizationConnector, DeparturesMovementConnector}
+import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import controllers.actions.IdentifierAction
-import javax.inject.Inject
+import controllers.departure.{routes => departureRoutes}
 import models.{Arrivals, Departures, EoriNumber}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -28,8 +28,8 @@ import play.twirl.api.Html
 import renderer.Renderer
 import services.DisplayDeparturesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import controllers.departure.{routes => departureRoutes}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject()(appConfig: FrontendAppConfig,
@@ -61,7 +61,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
         "index.njk",
         Json.obj(
           "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
-          "viewArrivalNotificationUrl"     -> routes.ViewArrivalsController.onPageLoad().url,
+          "viewArrivalNotificationUrl"     -> controllers.arrival.routes.ViewArrivalsController.onPageLoad().url,
           "arrivalsAvailable"              -> arrivals.nonEmpty,
           "hasArrivals"                    -> arrivals.exists(_.arrivals.nonEmpty),
           "showDeparture"                  -> showDepartures,

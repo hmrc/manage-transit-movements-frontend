@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.unloading
+package controllers.arrival
 
 import config.FrontendAppConfig
 import controllers.actions._
-import javax.inject.Inject
 import models.ArrivalId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -27,6 +26,7 @@ import renderer.Renderer
 import services.ArrivalMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class UnloadingRemarksXmlNegativeAcknowledgementController @Inject()(
