@@ -51,6 +51,10 @@ class UnloadingPermissionPDFController @Inject()(
                   case OK =>
                     Future.successful(
                       Ok(result.bodyAsBytes.toArray)
+                        .withHeaders(
+                          CONTENT_TYPE        -> "application/pdf",
+                          CONTENT_DISPOSITION -> s"""attachment; filename="unloading_permission_${arrivalId.index}.pdf""""
+                        )
                     )
                   case _ =>
                     renderTechnicalDifficultiesPage

@@ -65,29 +65,30 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
       "must return OK and PDF" in {
 
-        forAll(arbitrary[Array[Byte]] suchThat (_.nonEmpty)) {
-          pdf =>
-            when(wsResponse.status) thenReturn 200
-            when(wsResponse.bodyAsBytes) thenReturn ByteString(pdf)
-            when(mockDisplayDeparturesService.showDepartures(any())(any()))
-              .thenReturn(Future.successful(true))
+        val pdfAsBytes: Array[Byte] = Seq.fill(10)(Byte.MaxValue).toArray
 
-            when(mockDeparturesMovementConnector.getPDF(any())(any()))
-              .thenReturn(Future.successful(wsResponse))
+        when(wsResponse.status) thenReturn 200
+        when(wsResponse.bodyAsBytes) thenReturn ByteString(pdfAsBytes)
+        when(mockDisplayDeparturesService.showDepartures(any())(any()))
+          .thenReturn(Future.successful(true))
 
-            val departureId = DepartureId(0)
+        when(mockDeparturesMovementConnector.getPDF(any())(any()))
+          .thenReturn(Future.successful(wsResponse))
 
-            val application = appBuilder.build()
+        val departureId = DepartureId(0)
 
-            val request = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
-              .withSession("authToken" -> "BearerToken")
+        val application = appBuilder.build()
 
-            running(application) {
+        val request = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
+          .withSession("authToken" -> "BearerToken")
 
-              val result = route(application, request).value
+        running(application) {
 
-              status(result) mustEqual OK
-            }
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
+          headers(result).get(CONTENT_DISPOSITION).value must fullyMatch regex """attachment\; filename=\"accompanying_document_.*\.pdf\""""
         }
       }
 

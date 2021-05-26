@@ -26,7 +26,6 @@ import models.ArrivalId
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
@@ -60,28 +59,28 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
     "getPDF" - {
 
       "must return OK and PDF" in {
+        val pdfAsBytes: Array[Byte] = Seq.fill(10)(Byte.MaxValue).toArray
 
-        forAll(arbitrary[Array[Byte]] suchThat (_.nonEmpty)) {
-          pdf =>
-            when(wsResponse.status) thenReturn 200
-            when(wsResponse.bodyAsBytes) thenReturn ByteString(pdf)
+        when(wsResponse.status) thenReturn 200
+        when(wsResponse.bodyAsBytes) thenReturn ByteString(pdfAsBytes)
 
-            when(mockArrivalMovementConnector.getPDF(any(), any())(any()))
-              .thenReturn(Future.successful(wsResponse))
+        when(mockArrivalMovementConnector.getPDF(any(), any())(any()))
+          .thenReturn(Future.successful(wsResponse))
 
-            val arrivalId = ArrivalId(0)
+        val arrivalId = ArrivalId(0)
 
-            val application = appBuilder.build()
+        val application = appBuilder.build()
 
-            val request = FakeRequest(GET, routes.UnloadingPermissionPDFController.getPDF(arrivalId).url)
-              .withSession(("authToken" -> "BearerToken"))
+        val request = FakeRequest(GET, routes.UnloadingPermissionPDFController.getPDF(arrivalId).url)
+          .withSession(("authToken" -> "BearerToken"))
 
-            running(application) {
+        running(application) {
 
-              val result = route(application, request).value
+          val result = route(application, request).value
 
-              status(result) mustEqual OK
-            }
+          status(result) mustEqual OK
+          headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
+          headers(result).get(CONTENT_DISPOSITION).value must fullyMatch regex """^attachment\; filename=\"unloading_permission_.*\.pdf\"$"""
         }
       }
 
