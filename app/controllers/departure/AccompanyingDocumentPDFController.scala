@@ -52,7 +52,7 @@ class AccompanyingDocumentPDFController @Inject()(
                   )
               )
             case _ =>
-              logger.error(s"failed to download TAD pdf received status code ${result.status}")
+              logger.error(s"[PDF][AD] Received downstream status code of ${result.status}")
               val json = Json.obj("nctsEnquiries" -> appConfig.nctsEnquiriesUrl)
               renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
           }

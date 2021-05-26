@@ -21,6 +21,7 @@ import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
 import models.ArrivalId
+import play.api.Logger.logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -57,6 +58,7 @@ class UnloadingPermissionPDFController @Inject()(
                         )
                     )
                   case _ =>
+                    logger.error(s"[PDF][UP] Received downstream status code of ${result.status}")
                     renderTechnicalDifficultiesPage
                 }
             }
