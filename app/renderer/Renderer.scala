@@ -47,6 +47,7 @@ class Renderer @Inject()(appConfig: FrontendAppConfig, renderer: NunjucksRendere
     "timeout"                        -> appConfig.timeoutSeconds,
     "countdown"                      -> appConfig.countdownSeconds,
     "trackingConsentUrl"             -> appConfig.trackingConsentUrl,
-    "gtmContainer"                   -> appConfig.gtmContainer
+    "gtmContainer"                   -> appConfig.gtmContainer,
+    "signupForUserResearch"          -> appConfig.signupForUserResearch
   )
 }
