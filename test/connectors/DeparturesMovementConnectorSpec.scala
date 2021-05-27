@@ -16,7 +16,7 @@
 
 package connectors
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
@@ -159,9 +159,19 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
     "getNoReleaseForTransitMessage" - {
       "must return valid 'no release for transit message'" in {
-        val location         = s"/transits-movements-trader-at-departure/movements/departures/${departureId.index}/messages/1"
-        val noReleaseMessage = arbitrary[NoReleaseForTransitMessage].sample.value.copy(resultsOfControl = None)
-        val xml: NodeSeq     = <CC051B>
+        val location = s"/transits-movements-trader-at-departure/movements/departures/${departureId.index}/messages/1"
+
+        val noReleaseMessage =
+          NoReleaseForTransitMessage(
+            "mrnValue",
+            Some("noReleaseMotivationVlaue"),
+            10,
+            "officeOfDepartureRefNumberValue",
+            ControlResult(LocalDate.now(), "codeValue"),
+            None
+          )
+
+        val xml: NodeSeq = <CC051B>
           <HEAHEA>
           <DocNumHEA5>{noReleaseMessage.mrn}</DocNumHEA5>
           {noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
