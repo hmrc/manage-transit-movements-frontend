@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.arrival
 
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{__, XmlReader}
+import models.FunctionalError
 import play.api.libs.json.{Json, OWrites}
 
 final case class XMLSubmissionNegativeAcknowledgementMessage(movementReferenceNumber: Option[String],

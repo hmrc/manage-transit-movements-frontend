@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package viewModels
 
 import base.SpecBase
 import generators.Generators

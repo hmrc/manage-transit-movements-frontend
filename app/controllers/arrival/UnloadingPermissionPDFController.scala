@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.arrival
 
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
+import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
 import models.ArrivalId
 import play.api.i18n.I18nSupport
@@ -48,7 +49,9 @@ class UnloadingPermissionPDFController @Inject()(
               result =>
                 result.status match {
                   case OK =>
-                    Future.successful(Ok(result.bodyAsBytes.toArray))
+                    Future.successful(
+                      Ok(result.bodyAsBytes.toArray)
+                    )
                   case _ =>
                     renderTechnicalDifficultiesPage
                 }

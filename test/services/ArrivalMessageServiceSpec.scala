@@ -19,8 +19,8 @@ package services
 import base.SpecBase
 import connectors.ArrivalMovementConnector
 import generators.Generators
-import models.{ArrivalId, XMLSubmissionNegativeAcknowledgementMessage}
-import models.arrival.{MessagesLocation, MessagesSummary}
+import models.ArrivalId
+import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary

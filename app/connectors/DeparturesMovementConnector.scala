@@ -20,8 +20,9 @@ import com.lucidchart.open.xtract.XmlReader
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
+import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import models.departure.{ControlDecision, MessagesSummary, NoReleaseForTransitMessage}
-import models.{DepartureId, Departures, ResponseMessage, XMLSubmissionNegativeAcknowledgementMessage}
+import models.{DepartureId, Departures, ResponseMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx

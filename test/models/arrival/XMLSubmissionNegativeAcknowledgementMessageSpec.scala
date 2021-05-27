@@ -19,7 +19,6 @@ package models.arrival
 import base.SpecBase
 import com.lucidchart.open.xtract.XmlReader
 import generators.Generators
-import models.XMLSubmissionNegativeAcknowledgementMessage
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 

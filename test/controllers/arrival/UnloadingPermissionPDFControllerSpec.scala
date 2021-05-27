@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.arrival
 
 import akka.util.ByteString
 import base.SpecBase

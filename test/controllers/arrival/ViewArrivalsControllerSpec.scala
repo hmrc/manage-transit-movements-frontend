@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
-
-import java.time.LocalDateTime
+package controllers.arrival
 
 import base.SpecBase
 import config.FrontendAppConfig
@@ -38,6 +36,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with NunjucksSupport with BeforeAndAfter {
@@ -82,7 +81,7 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
       "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl"                   -> routes.IndexController.onPageLoad().url
+      "homePageUrl"                   -> controllers.routes.IndexController.onPageLoad().url
     )
 
   "ViewArrivalNotifications Controller" - {

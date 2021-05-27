@@ -19,7 +19,8 @@ package services
 import connectors.DeparturesMovementConnector
 import logging.Logging
 import models.departure.{ControlDecision, NoReleaseForTransitMessage}
-import models.{DepartureId, XMLSubmissionNegativeAcknowledgementMessage}
+import models.DepartureId
+import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

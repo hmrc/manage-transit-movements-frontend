@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
 import config.FrontendAppConfig
-import models.{Arrival, ViewMovementAction}
+import models.Arrival
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
 

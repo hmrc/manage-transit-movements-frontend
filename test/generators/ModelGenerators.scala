@@ -16,15 +16,16 @@
 
 package generators
 
-import java.time._
-import models.{ErrorType, XMLSubmissionNegativeAcknowledgementMessage, _}
-import models.departure.{ControlDecision, ControlResult, NoReleaseForTransitMessage, ResultsOfControl}
+import models.ErrorType.GenericError
+import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
+import models.departure._
+import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
-import models.ErrorType.GenericError
-import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement}
-import models.departure.DepartureStatus
+import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement, ViewMovementAction}
+
+import java.time._
 
 trait ModelGenerators {
   self: Generators =>
@@ -52,7 +53,7 @@ trait ModelGenerators {
       } yield LocalDate.of(year, month, day)
     }
   }
-
+  XMLSubmissionNegativeAcknowledgementMessage
   implicit val arbitraryLocalTime: Arbitrary[LocalTime] = Arbitrary {
     for {
       hours   <- Gen.chooseNum(0, 23)
