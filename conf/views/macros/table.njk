@@ -4,6 +4,35 @@
 
       <h2 class="govuk-heading-m">{{date}}</h2>
 
+      <table class="responsive-table">
+          <caption>My favourite movies</caption>
+            <thead>
+              <tr class="govuk-summary-list__row">
+                  <th scope="col"><span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.updated") }}</th>
+                  <th scope="col"><span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.mrn") }}</th>
+                  <th scope="col"><span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.status") }}</th>
+                  <th scope="col"><span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold" >{{ messages("viewArrivalNotifications.table.action") }}</th>
+               </tr>
+            </thead>
+       <tbody>
+       {% for row in rows %}
+           <tr>
+            <td><span class="govuk-summary-list__value govuk-!-width-full">{{ row.updated }}</span></td>
+            <td><span class="govuk-summary-list__value govuk-!-width-full">{{ row.mrn }}</span></td>
+             <td><span class="govuk-summary-list__value govuk-!-width-full">{{ messages(row.status) }}</span></td>
+             <td>
+                 {% for action in row.actions %}
+                      <span class="govuk-summary-list__value govuk-!-width-full"><a id="{{ messages(action.key) }}-{{ row.mrn }}"
+                      href=" {{ action.href }} ">
+                      {{ messages(action.key) }}
+                    <span class="govuk-visually-hidden"> for {{ row.mrn }}</span>
+                      </a></span>
+                 {% endfor %}
+            </td>
+           </tr>
+           {% endfor %}
+       </tbody>
+       </table>
       <div class="govuk-summary-list">
             <div class="govuk-summary-list__row">
               <span class="govuk-summary-list__key govuk-!-width-full govuk-!-font-weight-bold">{{ messages("viewArrivalNotifications.table.updated") }}</span>
