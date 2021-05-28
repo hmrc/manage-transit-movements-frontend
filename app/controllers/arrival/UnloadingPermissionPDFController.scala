@@ -21,6 +21,7 @@ import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
 import models.ArrivalId
+import play.api.Logger.logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -51,8 +52,13 @@ class UnloadingPermissionPDFController @Inject()(
                   case OK =>
                     Future.successful(
                       Ok(result.bodyAsBytes.toArray)
+                        .withHeaders(
+                          CONTENT_TYPE        -> "application/pdf",
+                          CONTENT_DISPOSITION -> s"""attachment; filename="unloading_permission_${arrivalId.index}.pdf""""
+                        )
                     )
                   case _ =>
+                    logger.error(s"[PDF][UP] Received downstream status code of ${result.status}")
                     renderTechnicalDifficultiesPage
                 }
             }

@@ -44,9 +44,15 @@ class AccompanyingDocumentPDFController @Inject()(
         result =>
           result.status match {
             case OK =>
-              Future.successful(Ok(result.bodyAsBytes.toArray))
+              Future.successful(
+                Ok(result.bodyAsBytes.toArray)
+                  .withHeaders(
+                    CONTENT_TYPE        -> "application/pdf",
+                    CONTENT_DISPOSITION -> s"""attachment; filename="accompanying_document_${departureId.index}.pdf""""
+                  )
+              )
             case _ =>
-              logger.error(s"failed to download TAD pdf received status code ${result.status}")
+              logger.error(s"[PDF][AD] Received downstream status code of ${result.status}")
               val json = Json.obj("nctsEnquiries" -> appConfig.nctsEnquiriesUrl)
               renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
           }
