@@ -61,8 +61,11 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
       "must return OK and PDF" in {
         val pdfAsBytes: Array[Byte] = Seq.fill(10)(Byte.MaxValue).toArray
 
+        val expectedHeaders = Map(CONTENT_TYPE -> Seq("application/pdf"), CONTENT_DISPOSITION -> Seq("unloading_permission_123"))
+
         when(wsResponse.status) thenReturn 200
         when(wsResponse.bodyAsBytes) thenReturn ByteString(pdfAsBytes)
+        when(wsResponse.headers) thenReturn expectedHeaders
 
         when(mockArrivalMovementConnector.getPDF(any(), any())(any()))
           .thenReturn(Future.successful(wsResponse))
@@ -80,7 +83,7 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
 
           status(result) mustEqual OK
           headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
-          headers(result).get(CONTENT_DISPOSITION).value must fullyMatch regex """^attachment\; filename=\"unloading_permission_.*\.pdf\"$"""
+          headers(result).get(CONTENT_DISPOSITION).value mustBe "unloading_permission_123"
         }
       }
 
