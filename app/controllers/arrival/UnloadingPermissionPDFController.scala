@@ -23,11 +23,12 @@ import controllers.actions.IdentifierAction
 import models.ArrivalId
 import play.api.Logger.logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, ResponseHeader, Result}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.Inject
+import play.api.http.HttpEntity.Strict
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class UnloadingPermissionPDFController @Inject()(
@@ -49,14 +50,17 @@ class UnloadingPermissionPDFController @Inject()(
             arrivalMovementConnector.getPDF(arrivalId, token.value).flatMap {
               result =>
                 result.status match {
-                  case OK =>
+                  case OK => {
+
+                    val headers: Seq[(String, String)] = result.headers map {
+                      h =>
+                        (h._1, h._2.head)
+                    } toSeq
+
                     Future.successful(
-                      Ok(result.bodyAsBytes.toArray)
-                        .withHeaders(
-                          CONTENT_TYPE        -> "application/pdf",
-                          CONTENT_DISPOSITION -> s"""attachment; filename="unloading_permission_${arrivalId.index}.pdf""""
-                        )
+                      Ok(result.bodyAsBytes.toArray).withHeaders(headers: _*)
                     )
+                  }
                   case _ =>
                     logger.error(s"[PDF][UP] Received downstream status code of ${result.status}")
                     renderTechnicalDifficultiesPage
