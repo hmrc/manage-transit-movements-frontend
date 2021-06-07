@@ -20,5 +20,5 @@ import play.api.Logger
 
 trait Logging {
 
-  protected val logger: Logger = Logger(s"application.${this.getClass.getCanonicalName}")
+  protected val logger: Logger = Logger(s"logger.application.${this.getClass.getCanonicalName}")
 }
