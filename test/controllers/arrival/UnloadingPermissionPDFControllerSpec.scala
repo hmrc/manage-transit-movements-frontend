@@ -61,7 +61,7 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
       "must return OK and PDF" in {
         val pdfAsBytes: Array[Byte] = Seq.fill(10)(Byte.MaxValue).toArray
 
-        val expectedHeaders = Map(CONTENT_TYPE -> Seq("application/pdf"), CONTENT_DISPOSITION -> Seq("unloading_permission_123"))
+        val expectedHeaders = Map(CONTENT_TYPE -> Seq("application/pdf"), CONTENT_DISPOSITION -> Seq("unloading_permission_123"), "OtherHeader" -> Seq("value"))
 
         when(wsResponse.status) thenReturn 200
         when(wsResponse.bodyAsBytes) thenReturn ByteString(pdfAsBytes)

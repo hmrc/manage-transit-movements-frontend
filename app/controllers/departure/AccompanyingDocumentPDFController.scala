@@ -44,10 +44,9 @@ class AccompanyingDocumentPDFController @Inject()(
         result =>
           result.status match {
             case OK =>
-              val headers: Seq[(String, String)] = result.headers map {
-                h =>
-                  (h._1, h._2.head)
-              } toSeq
+              val contentDisposition = result.headers.get(CONTENT_DISPOSITION).map(value => Seq((CONTENT_DISPOSITION, value.head))).getOrElse(Seq.empty)
+              val contentType        = result.headers.get(CONTENT_TYPE).map(value => Seq((CONTENT_TYPE, value.head))).getOrElse(Seq.empty)
+              val headers            = contentDisposition ++ contentType
 
               Future.successful(
                 Ok(result.bodyAsBytes.toArray).withHeaders(headers: _*)

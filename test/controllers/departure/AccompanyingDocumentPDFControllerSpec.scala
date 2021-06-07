@@ -68,7 +68,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val pdfAsBytes: Array[Byte] = Seq.fill(10)(Byte.MaxValue).toArray
 
-        val expectedHeaders = Map(CONTENT_TYPE -> Seq("application/pdf"), CONTENT_DISPOSITION -> Seq("TAD_123"))
+        val expectedHeaders = Map(CONTENT_TYPE -> Seq("application/pdf"), CONTENT_DISPOSITION -> Seq("TAD_123"), "OtherHeader" -> Seq("value"))
 
         when(wsResponse.status) thenReturn 200
         when(wsResponse.bodyAsBytes) thenReturn ByteString(pdfAsBytes)
