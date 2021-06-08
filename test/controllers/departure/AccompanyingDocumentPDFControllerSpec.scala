@@ -19,10 +19,11 @@ package controllers.departure
 import akka.util.ByteString
 import base.SpecBase
 import connectors.DeparturesMovementConnector
+import controllers.arrival.routes
 import controllers.departure.{routes => departureRoutes}
 import generators.Generators
 import matchers.JsonMatchers.containJson
-import models.DepartureId
+import models.{ArrivalId, DepartureId}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -67,8 +68,12 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val pdfAsBytes: Array[Byte] = Seq.fill(10)(Byte.MaxValue).toArray
 
+        val expectedHeaders = Map(CONTENT_TYPE -> Seq("application/pdf"), CONTENT_DISPOSITION -> Seq("TAD_123"), "OtherHeader" -> Seq("value"))
+
         when(wsResponse.status) thenReturn 200
         when(wsResponse.bodyAsBytes) thenReturn ByteString(pdfAsBytes)
+        when(wsResponse.headers) thenReturn expectedHeaders
+
         when(mockDisplayDeparturesService.showDepartures(any())(any()))
           .thenReturn(Future.successful(true))
 
@@ -88,7 +93,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
           status(result) mustEqual OK
           headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
-          headers(result).get(CONTENT_DISPOSITION).value must fullyMatch regex """attachment\; filename=\"accompanying_document_.*\.pdf\""""
+          headers(result).get(CONTENT_DISPOSITION).value mustBe "TAD_123"
         }
       }
 

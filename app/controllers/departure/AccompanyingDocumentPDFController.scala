@@ -44,12 +44,12 @@ class AccompanyingDocumentPDFController @Inject()(
         result =>
           result.status match {
             case OK =>
+              val contentDisposition = result.headers.get(CONTENT_DISPOSITION).map(value => Seq((CONTENT_DISPOSITION, value.head))).getOrElse(Seq.empty)
+              val contentType        = result.headers.get(CONTENT_TYPE).map(value => Seq((CONTENT_TYPE, value.head))).getOrElse(Seq.empty)
+              val headers            = contentDisposition ++ contentType
+
               Future.successful(
-                Ok(result.bodyAsBytes.toArray)
-                  .withHeaders(
-                    CONTENT_TYPE        -> "application/pdf",
-                    CONTENT_DISPOSITION -> s"""attachment; filename="accompanying_document_${departureId.index}.pdf""""
-                  )
+                Ok(result.bodyAsBytes.toArray).withHeaders(headers: _*)
               )
             case _ =>
               logger.error(s"[PDF][AD] Received downstream status code of ${result.status}")

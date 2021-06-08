@@ -18,16 +18,18 @@ package controllers.arrival
 
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
+import controllers.Assets.{CONTENT_DISPOSITION, CONTENT_TYPE}
 import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
 import models.ArrivalId
 import play.api.Logger.logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, ResponseHeader, Result}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.Inject
+import play.api.http.HttpEntity.Strict
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class UnloadingPermissionPDFController @Inject()(
@@ -49,14 +51,16 @@ class UnloadingPermissionPDFController @Inject()(
             arrivalMovementConnector.getPDF(arrivalId, token.value).flatMap {
               result =>
                 result.status match {
-                  case OK =>
+                  case OK => {
+
+                    val contentDisposition = result.headers.get(CONTENT_DISPOSITION).map(value => Seq((CONTENT_DISPOSITION, value.head))).getOrElse(Seq.empty)
+                    val contentType        = result.headers.get(CONTENT_TYPE).map(value => Seq((CONTENT_TYPE, value.head))).getOrElse(Seq.empty)
+                    val headers            = contentDisposition ++ contentType
+
                     Future.successful(
-                      Ok(result.bodyAsBytes.toArray)
-                        .withHeaders(
-                          CONTENT_TYPE        -> "application/pdf",
-                          CONTENT_DISPOSITION -> s"""attachment; filename="unloading_permission_${arrivalId.index}.pdf""""
-                        )
+                      Ok(result.bodyAsBytes.toArray).withHeaders(headers: _*)
                     )
+                  }
                   case _ =>
                     logger.error(s"[PDF][UP] Received downstream status code of ${result.status}")
                     renderTechnicalDifficultiesPage
