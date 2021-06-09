@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import connectors.BetaAuthorizationConnector
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
