@@ -42,41 +42,46 @@ class WhatDoYouWantToDoController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(): Action[AnyContent] = identify async {
     implicit request =>
-      val json = Json.obj(
-        "form"        -> form,
-        "radios"      -> WhatDoYouWantToDoOptions.radios(form),
-        "warningText" -> msg"whatDoYouWantToDo.warningText"
-      )
-      renderer.render("whatDoYouWantToDo.njk", json).map(Ok(_))
+      displayDeparturesService.showDepartures(EoriNumber(request.eoriNumber)) flatMap {
+        showDeparture =>
+          val form = formProvider()
+          val json = Json.obj(
+            "form"        -> form,
+            "radios"      -> WhatDoYouWantToDoOptions.radios(form, showDeparture),
+            "warningText" -> msg"whatDoYouWantToDo.warningText"
+          )
+          renderer.render("whatDoYouWantToDo.njk", json).map(Ok(_))
+      }
   }
 
   def onSubmit(): Action[AnyContent] = identify async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
-            val json = Json.obj(
-              "form"        -> formWithErrors,
-              "radios"      -> WhatDoYouWantToDoOptions.radios(formWithErrors),
-              "warningText" -> msg"whatDoYouWantToDo.warningText"
-            )
-            renderer.render("whatDoYouWantToDo.njk", json).map(BadRequest(_))
-          }, {
-            case WhatDoYouWantToDoOptions.ArrivalNotifications =>
-              Future.successful(Redirect(routes.IndexController.onPageLoad()))
-            case WhatDoYouWantToDoOptions.DepartureDeclarations =>
-              displayDeparturesService.showDepartures(EoriNumber(request.eoriNumber)).map {
-                case true  => Redirect(routes.IndexController.onPageLoad())
-                case false => Redirect(routes.OldServiceInterstitialController.onPageLoad())
+      displayDeparturesService.showDepartures(EoriNumber(request.eoriNumber)) flatMap {
+        showDeparture =>
+          formProvider()
+            .bindFromRequest()
+            .fold(
+              formWithErrors => {
+                val json = Json.obj(
+                  "form"        -> formWithErrors,
+                  "radios"      -> WhatDoYouWantToDoOptions.radios(formWithErrors, showDeparture),
+                  "warningText" -> msg"whatDoYouWantToDo.warningText"
+                )
+                renderer.render("whatDoYouWantToDo.njk", json).map(BadRequest(_))
+              }, {
+                case WhatDoYouWantToDoOptions.ArrivalNotifications =>
+                  Future.successful(Redirect(routes.IndexController.onPageLoad()))
+                case WhatDoYouWantToDoOptions.DepartureMakeDeclarations =>
+                  displayDeparturesService.showDepartures(EoriNumber(request.eoriNumber)).map {
+                    case true  => Redirect(routes.IndexController.onPageLoad())
+                    case false => Redirect(routes.OldServiceInterstitialController.onPageLoad())
+                  }
+                case WhatDoYouWantToDoOptions.NorthernIrelandMovements =>
+                  Future.successful(Redirect(routes.NorthernIrelandInterstitialController.onPageLoad()))
               }
-            case WhatDoYouWantToDoOptions.NorthernIrelandMovements =>
-              Future.successful(Redirect(routes.NorthernIrelandInterstitialController.onPageLoad()))
-          }
-        )
+            )
+      }
   }
 }

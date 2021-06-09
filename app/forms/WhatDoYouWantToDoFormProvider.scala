@@ -26,7 +26,9 @@ class WhatDoYouWantToDoFormProvider @Inject() extends Mappings {
 
   def apply(): Form[WhatDoYouWantToDoOptions] =
     Form(
-      "value" -> enumerable[WhatDoYouWantToDoOptions]("whatDoYouWantToDo.error.required")
+      "value" -> {
+        enumerable[WhatDoYouWantToDoOptions]("whatDoYouWantToDo.error.required")
+      }
     )
 
 }

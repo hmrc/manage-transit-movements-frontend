@@ -122,7 +122,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
         .thenReturn(Future.successful(false))
 
       val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "departureDeclarations")
+        .withFormUrlEncodedBody("value" -> "departureMakeDeclarations")
 
       val result = route(application, request).value
 
@@ -151,7 +151,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
         .thenReturn(Future.successful(true))
 
       val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "departureDeclarations")
+        .withFormUrlEncodedBody("value" -> "departureMakeDeclarations")
 
       val result = route(application, request).value
 

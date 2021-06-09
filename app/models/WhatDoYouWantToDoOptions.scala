@@ -24,25 +24,46 @@ sealed trait WhatDoYouWantToDoOptions
 object WhatDoYouWantToDoOptions extends Enumerable.Implicits {
 
   case object ArrivalNotifications extends WithName("arrivalNotifications") with WhatDoYouWantToDoOptions
-  case object DepartureDeclarations extends WithName("departureDeclarations") with WhatDoYouWantToDoOptions
+  case object DepartureViewOldDeclarations extends WithName("departureViewOldDeclarations") with WhatDoYouWantToDoOptions
+  case object DepartureMakeDeclarations extends WithName("departureMakeDeclarations") with WhatDoYouWantToDoOptions
+  case object DepartureViewDeclarations extends WithName("departureViewDeclarations") with WhatDoYouWantToDoOptions
   case object NorthernIrelandMovements extends WithName("northernIrelandMovements") with WhatDoYouWantToDoOptions
 
-  val values: Seq[WhatDoYouWantToDoOptions] = Seq(
+  val allValues: Seq[WhatDoYouWantToDoOptions] = Seq(
     ArrivalNotifications,
-    DepartureDeclarations,
+    DepartureViewOldDeclarations,
+    DepartureMakeDeclarations,
+    DepartureViewDeclarations,
     NorthernIrelandMovements
   )
 
-  def radios(form: Form[_]): Seq[Radios.Item] = {
+  val values: Seq[WhatDoYouWantToDoOptions] = Seq(
+    ArrivalNotifications,
+    DepartureMakeDeclarations,
+    NorthernIrelandMovements
+  )
+
+  def radios(form: Form[_], showDepartures: Boolean): Seq[Radios.Item] = {
     val field = form("value")
-    val items = Seq(
+
+    val allItems = Seq(
       Radios.Radio(msg"whatDoYouWantToDo.arrivalNotificationsText", ArrivalNotifications.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.departureDeclarationsText", DepartureDeclarations.toString),
+      Radios.Radio(msg"whatDoYouWantToDo.departureViewOldDeclarationsText", DepartureViewOldDeclarations.toString),
+      Radios.Radio(msg"whatDoYouWantToDo.departureMakeDeclarationsText", DepartureMakeDeclarations.toString),
+      Radios.Radio(msg"whatDoYouWantToDo.departureViewDeclarationsText", DepartureViewDeclarations.toString),
       Radios.Radio(msg"whatDoYouWantToDo.northernIrelandMovementsText", NorthernIrelandMovements.toString)
     )
-    Radios(field, items)
+
+    val items = Seq(
+      Radios.Radio(msg"whatDoYouWantToDo.arrivalNotificationsText", ArrivalNotifications.toString),
+      Radios.Radio(msg"whatDoYouWantToDo.departureMakeDeclarationsText", DepartureMakeDeclarations.toString),
+      Radios.Radio(msg"whatDoYouWantToDo.northernIrelandMovementsText", NorthernIrelandMovements.toString)
+    )
+
+    val itemRadios = if (showDepartures) allItems else items
+    Radios(field, itemRadios)
   }
 
   implicit val enumerable: Enumerable[WhatDoYouWantToDoOptions] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(allValues.map(v => v.toString -> v): _*)
 }
