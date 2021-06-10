@@ -16,23 +16,19 @@
 
 package controllers
 
-import akka.actor.Status.Success
 import config.FrontendAppConfig
-import connectors.BetaAuthorizationConnector
 import controllers.actions._
 import forms.WhatDoYouWantToDoFormProvider
-
-import javax.inject.Inject
 import models.{EoriNumber, WhatDoYouWantToDoOptions}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.DisplayDeparturesService
-import uk.gov.hmrc.http.HeaderCarrier
+import services.WhatDoYouWantToDoRadioToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatDoYouWantToDoController @Inject()(
@@ -41,30 +37,22 @@ class WhatDoYouWantToDoController @Inject()(
   cc: MessagesControllerComponents,
   renderer: Renderer,
   formProvider: WhatDoYouWantToDoFormProvider,
-  displayDeparturesService: DisplayDeparturesService,
+  whatDoYouWantToDoRadioToggleService: WhatDoYouWantToDoRadioToggleService,
   frontendAppConfig: FrontendAppConfig,
-  betaAuthorizationConnector: BetaAuthorizationConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with NunjucksSupport {
 
-  def radioButtons(eoriNumber: EoriNumber)(implicit hc: HeaderCarrier): Future[Seq[Radios.Item]] =
-    if (frontendAppConfig.isPrivateBetaEnabled) {
-      betaAuthorizationConnector.getBetaUser(eoriNumber) map (WhatDoYouWantToDoOptions.radios(formProvider(), _))
-    } else {
-      Future.successful(WhatDoYouWantToDoOptions.radios(formProvider(), true))
-    }
-
   def onPageLoad(): Action[AnyContent] = identify async {
 
     implicit request =>
-      radioButtons(EoriNumber(request.eoriNumber)) flatMap {
-        radios =>
+      whatDoYouWantToDoRadioToggleService.displayGoLiveButtons(EoriNumber(request.eoriNumber)) flatMap {
+        toggle =>
           val form = formProvider()
           val json = Json.obj(
             "form"        -> form,
-            "radios"      -> radios,
+            "radios"      -> WhatDoYouWantToDoOptions.radios(formProvider(), toggle),
             "warningText" -> msg"whatDoYouWantToDo.warningText"
           )
           renderer.render("whatDoYouWantToDo.njk", json).map(Ok(_))
@@ -73,15 +61,15 @@ class WhatDoYouWantToDoController @Inject()(
 
   def onSubmit(): Action[AnyContent] = identify async {
     implicit request =>
-      radioButtons(EoriNumber(request.eoriNumber)) flatMap {
-        radios =>
+      whatDoYouWantToDoRadioToggleService.displayGoLiveButtons(EoriNumber(request.eoriNumber)) flatMap {
+        toggle =>
           formProvider()
             .bindFromRequest()
             .fold(
               formWithErrors => {
                 val json = Json.obj(
                   "form"        -> formWithErrors,
-                  "radios"      -> radios,
+                  "radios"      -> WhatDoYouWantToDoOptions.radios(formProvider(), toggle),
                   "warningText" -> msg"whatDoYouWantToDo.warningText"
                 )
                 renderer.render("whatDoYouWantToDo.njk", json).map(BadRequest(_))
@@ -91,9 +79,9 @@ class WhatDoYouWantToDoController @Inject()(
                 case WhatDoYouWantToDoOptions.DepartureViewOldDeclarations =>
                   Future.successful(Redirect(routes.OldServiceInterstitialController.onPageLoad()))
                 case WhatDoYouWantToDoOptions.DepartureMakeDeclarations =>
-                  frontendAppConfig.departureJourneyToggle match {
-                    case true  => Future.successful(Redirect(routes.IndexController.onPageLoad()))
-                    case false => Future.successful(Redirect(routes.OldServiceInterstitialController.onPageLoad()))
+                  (frontendAppConfig.departureJourneyToggle, toggle) match {
+                    case (true, true) => Future.successful(Redirect(routes.IndexController.onPageLoad()))
+                    case _            => Future.successful(Redirect(routes.OldServiceInterstitialController.onPageLoad()))
                   }
                 case WhatDoYouWantToDoOptions.DepartureViewDeclarations =>
                   Future.successful(Redirect(routes.IndexController.onPageLoad()))
