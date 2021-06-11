@@ -17,6 +17,7 @@
 package controllers.actions
 
 import base.SpecBase
+import featureFlags.DisplayDepartures
 import models.EoriNumber
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
@@ -24,7 +25,6 @@ import org.mockito.Mockito.{reset, when}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.DisplayDeparturesService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,7 +47,7 @@ class PrivateBetaActionFilterSpec extends SpecBase {
     }
   }
 
-  private val mockDisplayDeparturesService = mock[DisplayDeparturesService]
+  private val mockDisplayDeparturesService = mock[DisplayDepartures]
 
   override def beforeEach: Unit = {
     reset(

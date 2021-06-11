@@ -16,18 +16,18 @@
 
 package controllers.actions
 
+import featureFlags.DisplayDepartures
 import models.EoriNumber
 import models.requests.IdentifierRequest
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import services.DisplayDeparturesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PrivateBetaActionFilter @Inject()(displayDeparturesService: DisplayDeparturesService, implicit val executionContext: ExecutionContext)
+class PrivateBetaActionFilter @Inject()(displayDeparturesService: DisplayDepartures, implicit val executionContext: ExecutionContext)
     extends ActionRefiner[IdentifierRequest, IdentifierRequest] {
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, IdentifierRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)

@@ -17,9 +17,9 @@
 package controllers
 
 import java.time.LocalDateTime
-
 import base.SpecBase
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
+import featureFlags.DisplayDepartures
 import models._
 import models.departure.DepartureStatus.DepartureSubmitted
 import org.mockito.ArgumentCaptor
@@ -31,7 +31,6 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.DisplayDeparturesService
 
 import scala.concurrent.Future
 
@@ -43,7 +42,7 @@ class IndexControllerSpec extends SpecBase {
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
-  private val mockDisplayDeparturesService: DisplayDeparturesService      = mock[DisplayDeparturesService]
+  private val mockDisplayDeparturesService: DisplayDepartures             = mock[DisplayDepartures]
 
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -78,7 +77,7 @@ class IndexControllerSpec extends SpecBase {
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
-        bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+        bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
       )
       .build()
 

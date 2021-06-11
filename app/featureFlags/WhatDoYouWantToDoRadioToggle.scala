@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package services
+package featureFlags
 
 import config.FrontendAppConfig
 import connectors.BetaAuthorizationConnector
-import javax.inject.Inject
 import logging.Logging
 import models.EoriNumber
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
-class DisplayDeparturesService @Inject()(
+class WhatDoYouWantToDoRadioToggle @Inject()(
   betaAuthorizationConnector: BetaAuthorizationConnector,
   appConfig: FrontendAppConfig
 ) extends Logging {
 
-  def showDepartures(eoriNumber: EoriNumber)(implicit hc: HeaderCarrier): Future[Boolean] =
-    if (appConfig.departureJourneyToggle && appConfig.isPrivateBetaEnabled) {
+  def displayGoLiveButtons(eoriNumber: EoriNumber)(implicit hc: HeaderCarrier) =
+    if (appConfig.isPrivateBetaEnabled) {
       betaAuthorizationConnector.getBetaUser(eoriNumber)
     } else {
-      Future.successful(appConfig.departureJourneyToggle)
+      Future.successful(true)
     }
 }

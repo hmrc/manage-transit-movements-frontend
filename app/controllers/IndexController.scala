@@ -20,13 +20,13 @@ import config.FrontendAppConfig
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import controllers.actions.IdentifierAction
 import controllers.departure.{routes => departureRoutes}
+import featureFlags.DisplayDepartures
 import models.{Arrivals, Departures, EoriNumber}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
 import play.twirl.api.Html
 import renderer.Renderer
-import services.DisplayDeparturesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -37,7 +37,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
                                 cc: MessagesControllerComponents,
                                 val arrivalMovementConnector: ArrivalMovementConnector,
                                 val departuresMovementConnector: DeparturesMovementConnector,
-                                val displayDeparturesService: DisplayDeparturesService,
+                                val displayDeparturesService: DisplayDepartures,
                                 renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {

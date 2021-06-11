@@ -17,6 +17,7 @@
 package controllers.departure
 
 import base.SpecBase
+import featureFlags.DisplayDepartures
 import generators.Generators
 import matchers.JsonMatchers
 import models.departure.ControlDecision
@@ -32,14 +33,14 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.{DepartureMessageService, DisplayDeparturesService}
+import services.DepartureMessageService
 
 import scala.concurrent.Future
 
 class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
   private val mockDepartureMessageService  = mock[DepartureMessageService]
-  private val mockDisplayDeparturesService = mock[DisplayDeparturesService]
+  private val mockDisplayDeparturesService = mock[DisplayDepartures]
 
   override def beforeEach: Unit = {
     reset(
@@ -68,7 +69,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[DepartureMessageService].toInstance(mockDepartureMessageService),
-          bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+          bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
         )
         .build()
 
@@ -108,7 +109,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[DepartureMessageService].toInstance(mockDepartureMessageService),
-          bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+          bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
         )
         .build()
 
@@ -140,7 +141,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          inject.bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+          inject.bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
         )
         .build()
 
