@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import featureFlags.WhatDoYouWantToDoRadioToggle
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -28,7 +29,6 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.WhatDoYouWantToDoRadioToggleService
 
 import scala.concurrent.Future
 
@@ -124,12 +124,12 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
 
     "redirect to old service interstitial page if Departures is selected and user is not beta registered" in {
 
-      val mockWhatDoYouWantToDoRadioToggleService = mock[WhatDoYouWantToDoRadioToggleService]
+      val mockWhatDoYouWantToDoRadioToggleService = mock[WhatDoYouWantToDoRadioToggle]
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[WhatDoYouWantToDoRadioToggleService].toInstance(mockWhatDoYouWantToDoRadioToggleService)
+            bind[WhatDoYouWantToDoRadioToggle].toInstance(mockWhatDoYouWantToDoRadioToggleService)
           )
           .build()
 
@@ -153,13 +153,13 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
 
     "redirect to index page if Departures is selected, the user is beta registered and the departures journey is enabled" in {
 
-      val mockWhatDoYouWantToDoRadioToggleService = mock[WhatDoYouWantToDoRadioToggleService]
+      val mockWhatDoYouWantToDoRadioToggleService = mock[WhatDoYouWantToDoRadioToggle]
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .configure(Configuration("microservice.services.features.departureJourney" -> true))
           .overrides(
-            bind[WhatDoYouWantToDoRadioToggleService].toInstance(mockWhatDoYouWantToDoRadioToggleService)
+            bind[WhatDoYouWantToDoRadioToggle].toInstance(mockWhatDoYouWantToDoRadioToggleService)
           )
           .build()
 
@@ -183,13 +183,13 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
 
     "redirect to the old service interstitial page if Departures is selected, the user is beta registered but departures journey is disabled" in {
 
-      val mockWhatDoYouWantToDoRadioToggleService = mock[WhatDoYouWantToDoRadioToggleService]
+      val mockWhatDoYouWantToDoRadioToggleService = mock[WhatDoYouWantToDoRadioToggle]
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .configure(Configuration("microservice.services.features.departureJourney" -> false))
           .overrides(
-            bind[WhatDoYouWantToDoRadioToggleService].toInstance(mockWhatDoYouWantToDoRadioToggleService)
+            bind[WhatDoYouWantToDoRadioToggle].toInstance(mockWhatDoYouWantToDoRadioToggleService)
           )
           .build()
 

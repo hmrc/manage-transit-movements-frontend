@@ -18,13 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import featureFlags.WhatDoYouWantToDoRadioToggle
 import forms.WhatDoYouWantToDoFormProvider
 import models.{EoriNumber, WhatDoYouWantToDoOptions}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.WhatDoYouWantToDoRadioToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -37,7 +37,7 @@ class WhatDoYouWantToDoController @Inject()(
   cc: MessagesControllerComponents,
   renderer: Renderer,
   formProvider: WhatDoYouWantToDoFormProvider,
-  whatDoYouWantToDoRadioToggleService: WhatDoYouWantToDoRadioToggleService,
+  whatDoYouWantToDoRadioToggleService: WhatDoYouWantToDoRadioToggle,
   frontendAppConfig: FrontendAppConfig,
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)

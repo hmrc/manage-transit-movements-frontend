@@ -18,6 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.BetaAuthorizationConnector
+import featureFlags.DisplayDepartures
 import generators.Generators
 import models.EoriNumber
 import org.mockito.ArgumentMatchers.any
@@ -29,7 +30,7 @@ import play.api.{Application, Configuration}
 
 import scala.concurrent.Future
 
-class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with Matchers with Generators {
+class DisplayDeparturesSpec extends SpecBase with BeforeAndAfterEach with Matchers with Generators {
 
   private val mockBetaAuthConnector: BetaAuthorizationConnector = mock[BetaAuthorizationConnector]
 
@@ -47,7 +48,7 @@ class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with
             .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
             .build()
 
-          val displayDeparturesService: DisplayDeparturesService = application.injector.instanceOf[DisplayDeparturesService]
+          val displayDeparturesService: DisplayDepartures = application.injector.instanceOf[DisplayDepartures]
 
           when(mockBetaAuthConnector.getBetaUser(any())(any())).thenReturn(Future.successful(true))
 
@@ -62,7 +63,7 @@ class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with
             .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
             .build()
 
-          val displayDeparturesService: DisplayDeparturesService = application.injector.instanceOf[DisplayDeparturesService]
+          val displayDeparturesService: DisplayDepartures = application.injector.instanceOf[DisplayDepartures]
 
           displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe true
         }
@@ -77,7 +78,7 @@ class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with
             .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
             .build()
 
-          val displayDeparturesService: DisplayDeparturesService = application.injector.instanceOf[DisplayDeparturesService]
+          val displayDeparturesService: DisplayDepartures = application.injector.instanceOf[DisplayDepartures]
 
           displayDeparturesService.showDepartures(EoriNumber("test")).futureValue mustBe false
         }
@@ -90,7 +91,7 @@ class DisplayDeparturesServiceSpec extends SpecBase with BeforeAndAfterEach with
             .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
             .build()
 
-          val displayDeparturesService: DisplayDeparturesService = application.injector.instanceOf[DisplayDeparturesService]
+          val displayDeparturesService: DisplayDepartures = application.injector.instanceOf[DisplayDepartures]
 
           when(mockBetaAuthConnector.getBetaUser(any())(any())).thenReturn(Future.successful(false))
 

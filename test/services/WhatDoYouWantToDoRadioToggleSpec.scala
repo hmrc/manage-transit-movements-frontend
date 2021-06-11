@@ -18,6 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.BetaAuthorizationConnector
+import featureFlags.WhatDoYouWantToDoRadioToggle
 import models.EoriNumber
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -26,7 +27,7 @@ import play.api.{Application, Configuration}
 
 import scala.concurrent.Future
 
-class WhatDoYouWantToDoRadioToggleServiceSpec extends SpecBase {
+class WhatDoYouWantToDoRadioToggleSpec extends SpecBase {
 
   private val mockBetaAuthConnector: BetaAuthorizationConnector = mock[BetaAuthorizationConnector]
 
@@ -39,7 +40,7 @@ class WhatDoYouWantToDoRadioToggleServiceSpec extends SpecBase {
         .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
         .build()
 
-      val whatDoYouWantToDoRadioToggleService = application.injector.instanceOf[WhatDoYouWantToDoRadioToggleService]
+      val whatDoYouWantToDoRadioToggleService = application.injector.instanceOf[WhatDoYouWantToDoRadioToggle]
 
       when(mockBetaAuthConnector.getBetaUser(any())(any())).thenReturn(Future.successful(true))
 
@@ -53,7 +54,7 @@ class WhatDoYouWantToDoRadioToggleServiceSpec extends SpecBase {
         .overrides(bind[BetaAuthorizationConnector].toInstance(mockBetaAuthConnector))
         .build()
 
-      val whatDoYouWantToDoRadioToggleService = application.injector.instanceOf[WhatDoYouWantToDoRadioToggleService]
+      val whatDoYouWantToDoRadioToggleService = application.injector.instanceOf[WhatDoYouWantToDoRadioToggle]
 
       when(mockBetaAuthConnector.getBetaUser(any())(any())).thenReturn(Future.successful(false))
 
@@ -66,7 +67,7 @@ class WhatDoYouWantToDoRadioToggleServiceSpec extends SpecBase {
         .configure(Configuration("microservice.services.features.isPrivateBetaEnabled" -> false))
         .build()
 
-      val whatDoYouWantToDoRadioToggleService = application.injector.instanceOf[WhatDoYouWantToDoRadioToggleService]
+      val whatDoYouWantToDoRadioToggleService = application.injector.instanceOf[WhatDoYouWantToDoRadioToggle]
 
       whatDoYouWantToDoRadioToggleService.displayGoLiveButtons(EoriNumber("test")).futureValue mustBe true
     }

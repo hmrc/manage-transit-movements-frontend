@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package featureFlags
 
 import config.FrontendAppConfig
 import connectors.BetaAuthorizationConnector
@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatDoYouWantToDoRadioToggleService @Inject()(
+class WhatDoYouWantToDoRadioToggle @Inject()(
   betaAuthorizationConnector: BetaAuthorizationConnector,
   appConfig: FrontendAppConfig
 ) extends Logging {

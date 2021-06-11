@@ -21,6 +21,7 @@ import base.SpecBase
 import connectors.DeparturesMovementConnector
 import controllers.arrival.routes
 import controllers.departure.{routes => departureRoutes}
+import featureFlags.DisplayDepartures
 import generators.Generators
 import matchers.JsonMatchers.containJson
 import models.{ArrivalId, DepartureId}
@@ -36,7 +37,6 @@ import play.api.libs.ws.ahc.AhcWSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.DisplayDeparturesService
 
 import scala.concurrent.Future
 
@@ -44,7 +44,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
   private val wsResponse: AhcWSResponse                            = mock[AhcWSResponse]
   val mockDeparturesMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
-  private val mockDisplayDeparturesService                         = mock[DisplayDeparturesService]
+  private val mockDisplayDeparturesService                         = mock[DisplayDepartures]
 
   override def beforeEach: Unit = {
     super.beforeEach
@@ -57,7 +57,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
     applicationBuilder()
       .overrides(
         bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector),
-        bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+        bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
       )
 
   "AccompanyingDocumentPDFController" - {

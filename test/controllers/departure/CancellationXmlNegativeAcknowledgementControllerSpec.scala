@@ -18,6 +18,7 @@ package controllers.departure
 
 import base.SpecBase
 import connectors.BetaAuthorizationConnector
+import featureFlags.DisplayDepartures
 import generators.Generators
 import matchers.JsonMatchers
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
@@ -31,14 +32,14 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.{DepartureMessageService, DisplayDeparturesService}
+import services.DepartureMessageService
 
 import scala.concurrent.Future
 
 class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
   private val mockDepartureMessageService  = mock[DepartureMessageService]
-  private val mockDisplayDeparturesService = mock[DisplayDeparturesService]
+  private val mockDisplayDeparturesService = mock[DisplayDepartures]
 
   override def beforeEach: Unit = {
     reset(
@@ -62,7 +63,7 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService),
-          inject.bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+          inject.bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
         )
         .build()
 
@@ -99,7 +100,7 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService),
-          inject.bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+          inject.bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
         )
         .build()
 
@@ -126,7 +127,7 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          inject.bind[DisplayDeparturesService].toInstance(mockDisplayDeparturesService)
+          inject.bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
         )
         .build()
 

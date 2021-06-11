@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package services
+package featureFlags
 
 import config.FrontendAppConfig
 import connectors.BetaAuthorizationConnector
-import javax.inject.Inject
 import logging.Logging
 import models.EoriNumber
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
-class DisplayDeparturesService @Inject()(
+class DisplayDepartures @Inject()(
   betaAuthorizationConnector: BetaAuthorizationConnector,
   appConfig: FrontendAppConfig
 ) extends Logging {
