@@ -29,7 +29,7 @@ object WhatDoYouWantToDoOptions extends Enumerable.Implicits {
   case object DepartureViewDeclarations extends WithName("departureViewDeclarations") with WhatDoYouWantToDoOptions
   case object NorthernIrelandMovements extends WithName("northernIrelandMovements") with WhatDoYouWantToDoOptions
 
-  val allValues: Seq[WhatDoYouWantToDoOptions] = Seq(
+  val values: Seq[WhatDoYouWantToDoOptions] = Seq(
     ArrivalNotifications,
     DepartureViewOldDeclarations,
     DepartureMakeDeclarations,
@@ -37,16 +37,10 @@ object WhatDoYouWantToDoOptions extends Enumerable.Implicits {
     NorthernIrelandMovements
   )
 
-  val values: Seq[WhatDoYouWantToDoOptions] = Seq(
-    ArrivalNotifications,
-    DepartureMakeDeclarations,
-    NorthernIrelandMovements
-  )
-
-  def radios(form: Form[_], showDepartures: Boolean): Seq[Radios.Item] = {
+  def radios(form: Form[_], showPrivateBetaButtons: Boolean): Seq[Radios.Item] = {
     val field = form("value")
 
-    val allItems = Seq(
+    val privateBetaButtons = Seq(
       Radios.Radio(msg"whatDoYouWantToDo.arrivalNotificationsText", ArrivalNotifications.toString),
       Radios.Radio(msg"whatDoYouWantToDo.departureViewOldDeclarationsText", DepartureViewOldDeclarations.toString),
       Radios.Radio(msg"whatDoYouWantToDo.departureMakeDeclarationsText", DepartureMakeDeclarations.toString),
@@ -54,16 +48,16 @@ object WhatDoYouWantToDoOptions extends Enumerable.Implicits {
       Radios.Radio(msg"whatDoYouWantToDo.northernIrelandMovementsText", NorthernIrelandMovements.toString)
     )
 
-    val items = Seq(
+    val publicBetaButtons = Seq(
       Radios.Radio(msg"whatDoYouWantToDo.arrivalNotificationsText", ArrivalNotifications.toString),
       Radios.Radio(msg"whatDoYouWantToDo.departureMakeDeclarationsText", DepartureMakeDeclarations.toString),
       Radios.Radio(msg"whatDoYouWantToDo.northernIrelandMovementsText", NorthernIrelandMovements.toString)
     )
 
-    val itemRadios = if (showDepartures) allItems else items
-    Radios(field, itemRadios)
+    val radioButtons = if (showPrivateBetaButtons) privateBetaButtons else publicBetaButtons
+    Radios(field, radioButtons)
   }
 
   implicit val enumerable: Enumerable[WhatDoYouWantToDoOptions] =
-    Enumerable(allValues.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v): _*)
 }
