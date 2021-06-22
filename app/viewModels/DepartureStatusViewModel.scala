@@ -126,7 +126,7 @@ object DepartureStatusViewModel {
 
   private def cancellationDecision: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == DeclarationCancellationRequest =>
-      DepartureStatusViewModel("departure.status.declarationCancellationRequest", actions = Nil)
+      DepartureStatusViewModel("departure.status.declarationCancellationDecision", actions = Nil)
   }
 
   private def declarationCancellationRequest(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
