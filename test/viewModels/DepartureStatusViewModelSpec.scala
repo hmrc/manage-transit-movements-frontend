@@ -114,12 +114,22 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       }
     }
 
+    "When status is DeclarationCancellationRequest show correct status" in {
+      forAll(arbitrary[Departure]) {
+        departure =>
+          val updatedDeparture: Departure               = departure.copy(status = DeclarationCancellationRequest)
+          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          departureStatus.status mustBe "departure.status.declarationCancellationRequest"
+          departureStatus.actions.size mustBe 0
+      }
+    }
+
     "When status is CancellationDecision show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
           val updatedDeparture: Departure               = departure.copy(status = CancellationDecision)
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
-          departureStatus.status mustBe "departure.status.declarationCancellationRequest"
+          departureStatus.status mustBe "departure.status.declarationCancellationDecision"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendCancellationDecisionUrl(updatedDeparture.departureId)
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewCancellation"

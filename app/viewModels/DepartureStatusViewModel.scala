@@ -39,8 +39,8 @@ object DepartureStatusViewModel {
         writeOffNotification,
         cancellationSubmitted,
         departureCancelled,
-        cancellationDecision,
-        declarationCancellationRequest(config),
+        declarationCancellationRequest,
+        cancellationDecision(config),
         noReleasedForTransit(config),
         controlDecision(config),
         departureXmlNegativeAcknowledgement,
@@ -124,15 +124,15 @@ object DepartureStatusViewModel {
       DepartureStatusViewModel("departure.status.departureCancelled", actions = Nil)
   }
 
-  private def cancellationDecision: PartialFunction[Departure, DepartureStatusViewModel] = {
+  private def declarationCancellationRequest: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == DeclarationCancellationRequest =>
-      DepartureStatusViewModel("departure.status.declarationCancellationDecision", actions = Nil)
+      DepartureStatusViewModel("departure.status.declarationCancellationRequest", actions = Nil)
   }
 
-  private def declarationCancellationRequest(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
+  private def cancellationDecision(config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == CancellationDecision =>
       DepartureStatusViewModel(
-        "departure.status.declarationCancellationRequest",
+        "departure.status.declarationCancellationDecision",
         actions =
           Seq(ViewMovementAction(config.departureFrontendCancellationDecisionUrl(departure.departureId), "viewDepartures.table.action.viewCancellation"))
       )
