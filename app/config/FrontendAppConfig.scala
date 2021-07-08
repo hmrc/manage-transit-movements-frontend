@@ -67,6 +67,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
 
   val departureJourneyToggle: Boolean = configuration.getOptional[Boolean]("microservice.services.features.departureJourney").getOrElse(false)
   val isPrivateBetaEnabled: Boolean   = configuration.getOptional[Boolean]("microservice.services.features.isPrivateBetaEnabled").getOrElse(false)
+  val isNIJourneyEnabled: Boolean     = configuration.getOptional[Boolean]("microservice.services.features.isNIJourneyEnabled").getOrElse(false)
 
   private val departureFrontendUrl: String                               = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
   private val cancellationFrontendUrl: String                            = configuration.get[String]("urls.declareTransitMovementCancellationFrontend")
