@@ -74,16 +74,7 @@ class WhatDoYouWantToDoController @Inject()(
                 )
                 renderer.render("whatDoYouWantToDo.njk", json).map(BadRequest(_))
               }, {
-                case WhatDoYouWantToDoOptions.ArrivalNotifications =>
-                  Future.successful(Redirect(routes.IndexController.onPageLoad()))
-                case WhatDoYouWantToDoOptions.DepartureViewOldDeclarations =>
-                  Future.successful(Redirect(routes.OldServiceInterstitialController.onPageLoad()))
-                case WhatDoYouWantToDoOptions.DepartureMakeDeclarations =>
-                  (frontendAppConfig.departureJourneyToggle, toggle) match {
-                    case (true, true) => Future.successful(Redirect(routes.IndexController.onPageLoad()))
-                    case _            => Future.successful(Redirect(routes.OldServiceInterstitialController.onPageLoad()))
-                  }
-                case WhatDoYouWantToDoOptions.DepartureViewDeclarations =>
+                case WhatDoYouWantToDoOptions.GBMovements =>
                   Future.successful(Redirect(routes.IndexController.onPageLoad()))
                 case WhatDoYouWantToDoOptions.NorthernIrelandMovements =>
                   Future.successful(Redirect(routes.NorthernIrelandInterstitialController.onPageLoad()))
