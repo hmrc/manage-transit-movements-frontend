@@ -17,14 +17,11 @@
 package controllers
 
 import base.SpecBase
-import featureFlags.WhatDoYouWantToDoRadioToggle
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Configuration
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -86,139 +83,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       application.stop()
     }
 
-    "redirect to index page if Arrivals is selected" in {
+    "redirect to index page if GB Movements is selected" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "arrivalNotifications")
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
-
-      application.stop()
-    }
-
-    "redirect to old service interstitial page if DepartureViewOldDeclarations is selected" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "departureViewOldDeclarations")
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
-
-      application.stop()
-    }
-
-    "redirect to old service interstitial page if Departures is selected and user is not beta registered" in {
-
-      val mockWhatDoYouWantToDoRadioToggleService = mock[WhatDoYouWantToDoRadioToggle]
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[WhatDoYouWantToDoRadioToggle].toInstance(mockWhatDoYouWantToDoRadioToggleService)
-          )
-          .build()
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      when(mockWhatDoYouWantToDoRadioToggleService.displayGoLiveButtons(any())(any()))
-        .thenReturn(Future.successful(false))
-
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "departureMakeDeclarations")
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
-
-      application.stop()
-    }
-
-    "redirect to index page if Departures is selected, the user is beta registered and the departures journey is enabled" in {
-
-      val mockWhatDoYouWantToDoRadioToggleService = mock[WhatDoYouWantToDoRadioToggle]
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure(Configuration("microservice.services.features.departureJourney" -> true))
-          .overrides(
-            bind[WhatDoYouWantToDoRadioToggle].toInstance(mockWhatDoYouWantToDoRadioToggleService)
-          )
-          .build()
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      when(mockWhatDoYouWantToDoRadioToggleService.displayGoLiveButtons(any())(any()))
-        .thenReturn(Future.successful(true))
-
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "departureMakeDeclarations")
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
-
-      application.stop()
-    }
-
-    "redirect to the old service interstitial page if Departures is selected, the user is beta registered but departures journey is disabled" in {
-
-      val mockWhatDoYouWantToDoRadioToggleService = mock[WhatDoYouWantToDoRadioToggle]
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure(Configuration("microservice.services.features.departureJourney" -> false))
-          .overrides(
-            bind[WhatDoYouWantToDoRadioToggle].toInstance(mockWhatDoYouWantToDoRadioToggleService)
-          )
-          .build()
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      when(mockWhatDoYouWantToDoRadioToggleService.displayGoLiveButtons(any())(any()))
-        .thenReturn(Future.successful(true))
-
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "departureMakeDeclarations")
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
-
-      application.stop()
-    }
-
-    "redirect to index page if DepartureViewDeclarations is selected" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "departureViewDeclarations")
+        .withFormUrlEncodedBody("value" -> "gbMovements")
 
       val result = route(application, request).value
 
