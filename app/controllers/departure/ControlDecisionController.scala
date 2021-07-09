@@ -32,7 +32,6 @@ import scala.concurrent.ExecutionContext
 class ControlDecisionController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  filterPrivateBetaUsers: PrivateBetaActionFilter,
   cc: MessagesControllerComponents,
   departureMessageService: DepartureMessageService,
   renderer: Renderer,
@@ -41,7 +40,7 @@ class ControlDecisionController @Inject()(
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber): Action[AnyContent] = (identify andThen filterPrivateBetaUsers).async {
+  def onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber): Action[AnyContent] = identify.async {
     implicit request =>
       departureMessageService.controlDecisionMessage(departureId).flatMap {
         case Some(message) =>

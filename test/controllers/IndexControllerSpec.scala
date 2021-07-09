@@ -19,7 +19,6 @@ package controllers
 import java.time.LocalDateTime
 import base.SpecBase
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
-import featureFlags.DisplayDepartures
 import models._
 import models.departure.DepartureStatus.DepartureSubmitted
 import org.mockito.ArgumentCaptor
@@ -42,7 +41,6 @@ class IndexControllerSpec extends SpecBase {
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
-  private val mockDisplayDeparturesService: DisplayDepartures             = mock[DisplayDepartures]
 
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -58,13 +56,12 @@ class IndexControllerSpec extends SpecBase {
     super.beforeEach
   }
 
-  private def expectedJson(arrivalsAvailable: Boolean, hasArrivals: Boolean, showDeparture: Boolean, departuresAvailable: Boolean, hasDepartures: Boolean) =
+  private def expectedJson(arrivalsAvailable: Boolean, hasArrivals: Boolean, departuresAvailable: Boolean, hasDepartures: Boolean) =
     Json.obj(
       "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
       "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
       "arrivalsAvailable"              -> arrivalsAvailable,
       "hasArrivals"                    -> hasArrivals,
-      "showDeparture"                  -> showDeparture,
       "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
       "viewDepartureNotificationUrl"   -> viewDepartureNotificationUrl,
       "departuresAvailable"            -> departuresAvailable,
@@ -76,8 +73,7 @@ class IndexControllerSpec extends SpecBase {
       .configure(Configuration("microservice.services.features.departureJourney" -> true))
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
-        bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
-        bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
+        bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector)
       )
       .build()
 
@@ -94,9 +90,6 @@ class IndexControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-        when(mockDisplayDeparturesService.showDepartures(any())(any()))
-          .thenReturn(Future.successful(true))
-
         val application = applicationBuild
         val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
         val result      = route(application, request).value
@@ -112,7 +105,7 @@ class IndexControllerSpec extends SpecBase {
 
         templateCaptor.getValue mustEqual "index.njk"
         jsonCaptorWithoutConfig mustBe
-          expectedJson(true, true, true, true, true)
+          expectedJson(true, true, true, true)
 
         application.stop()
       }
@@ -127,9 +120,6 @@ class IndexControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-        when(mockDisplayDeparturesService.showDepartures(any())(any()))
-          .thenReturn(Future.successful(false))
-
         val application = applicationBuild
         val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
         val result      = route(application, request).value
@@ -145,7 +135,7 @@ class IndexControllerSpec extends SpecBase {
 
         templateCaptor.getValue mustEqual "index.njk"
         jsonCaptorWithoutConfig mustBe
-          expectedJson(true, true, false, true, true)
+          expectedJson(true, true, true, true)
 
         application.stop()
       }
@@ -161,9 +151,6 @@ class IndexControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
 
-        when(mockDisplayDeparturesService.showDepartures(any())(any()))
-          .thenReturn(Future.successful(true))
-
         val application = applicationBuild
         val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
         val result      = route(application, request).value
@@ -178,7 +165,7 @@ class IndexControllerSpec extends SpecBase {
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
         templateCaptor.getValue mustEqual "index.njk"
-        jsonCaptorWithoutConfig mustBe expectedJson(true, true, true, false, false)
+        jsonCaptorWithoutConfig mustBe expectedJson(true, true, false, false)
 
         application.stop()
       }
@@ -193,9 +180,6 @@ class IndexControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
 
-        when(mockDisplayDeparturesService.showDepartures(any())(any()))
-          .thenReturn(Future.successful(false))
-
         val application = applicationBuild
         val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
         val result      = route(application, request).value
@@ -210,7 +194,7 @@ class IndexControllerSpec extends SpecBase {
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
         templateCaptor.getValue mustEqual "index.njk"
-        jsonCaptorWithoutConfig mustBe expectedJson(false, false, false, false, false)
+        jsonCaptorWithoutConfig mustBe expectedJson(false, false, false, false)
 
         application.stop()
       }

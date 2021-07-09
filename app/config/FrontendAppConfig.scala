@@ -65,9 +65,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration) {
   lazy val timeoutSeconds: String   = configuration.get[String]("session.timeoutSeconds")
   lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
 
-  val departureJourneyToggle: Boolean = configuration.getOptional[Boolean]("microservice.services.features.departureJourney").getOrElse(false)
-  val isPrivateBetaEnabled: Boolean   = configuration.getOptional[Boolean]("microservice.services.features.isPrivateBetaEnabled").getOrElse(false)
-
   private val departureFrontendUrl: String                               = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
   private val cancellationFrontendUrl: String                            = configuration.get[String]("urls.declareTransitMovementCancellationFrontend")
   val declareDepartureStartWithLRNUrl: String                            = s"$departureFrontendUrl/local-reference-number"
