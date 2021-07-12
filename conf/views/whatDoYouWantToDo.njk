@@ -42,15 +42,6 @@
             errorMessage: form.value.error
           }) }}
 
-          <div class="govuk-warning-text">
-                      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                      <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        {{warningText}}
-                      </strong>
-                    </div>
-
-
           {{ govukButton({
             text: messages("site.continue"),
             attributes: {id:"submit"}

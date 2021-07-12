@@ -17,8 +17,6 @@
 package controllers.departure
 
 import base.SpecBase
-import connectors.BetaAuthorizationConnector
-import featureFlags.DisplayDepartures
 import generators.Generators
 import matchers.JsonMatchers
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
@@ -38,13 +36,11 @@ import scala.concurrent.Future
 
 class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
 
-  private val mockDepartureMessageService  = mock[DepartureMessageService]
-  private val mockDisplayDeparturesService = mock[DisplayDepartures]
+  private val mockDepartureMessageService = mock[DepartureMessageService]
 
   override def beforeEach: Unit = {
     reset(
-      mockDepartureMessageService,
-      mockDisplayDeparturesService
+      mockDepartureMessageService
     )
     super.beforeEach
   }
@@ -57,13 +53,10 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
         .thenReturn(Future.successful(Html("")))
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
-      when(mockDisplayDeparturesService.showDepartures(any())(any()))
-        .thenReturn(Future.successful(true))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService),
-          inject.bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
+          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService)
         )
         .build()
 
@@ -94,13 +87,10 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
         .thenReturn(Future.successful(Html("")))
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
-      when(mockDisplayDeparturesService.showDepartures(any())(any()))
-        .thenReturn(Future.successful(true))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService),
-          inject.bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
+          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService)
         )
         .build()
 
@@ -118,26 +108,6 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-      application.stop()
-    }
-
-    "must redirect to OldInterstitialController if user is not part of the private beta list" in {
-      when(mockDisplayDeparturesService.showDepartures(any())(any()))
-        .thenReturn(Future.successful(false))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          inject.bind[DisplayDepartures].toInstance(mockDisplayDeparturesService)
-        )
-        .build()
-
-      val request = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.OldServiceInterstitialController.onPageLoad().url)
-
       application.stop()
     }
   }

@@ -35,29 +35,28 @@
             {% endif %}
         {% endif %}
         </p>
-         {% if showDeparture %}
-            <h2 class="govuk-heading-m">
-                {{ messages("index.subHeading.departure") }}
-            </h2>
-            <p class="govuk-body">
-                <a id= "make-departure-declaration" href={{ declareDepartureDeclarationUrl }}>
-                    {{ messages("index.link.departure.makeDeparture") }}
-                </a>
-            </p>
-            <p class="govuk-body">
-            {% if hasDepartures %}
-                <a id= "view-departure-declarations" href="{{ viewDepartureNotificationUrl }}">
-                    {{ messages("index.link.departure.viewDepartures") }}
-                </a>
+         
+        <h2 class="govuk-heading-m">
+            {{ messages("index.subHeading.departure") }}
+        </h2>
+        <p class="govuk-body">
+            <a id= "make-departure-declaration" href={{ declareDepartureDeclarationUrl }}>
+                {{ messages("index.link.departure.makeDeparture") }}
+            </a>
+        </p>
+        <p class="govuk-body">
+        {% if hasDepartures %}
+            <a id= "view-departure-declarations" href="{{ viewDepartureNotificationUrl }}">
+                {{ messages("index.link.departure.viewDepartures") }}
+            </a>
+        {% else %}
+            {% if departuresAvailable %}
+                {{ messages("index.departure.noDepartures") }}
             {% else %}
-                {% if departuresAvailable %}
-                    {{ messages("index.departure.noDepartures") }}
-                {% else %}
-                    {{ messages("index.departure.departuresUnavailable") }}
-                {% endif %}
+                {{ messages("index.departure.departuresUnavailable") }}
             {% endif %}
-            </p>
-          {% endif %}
+        {% endif %}
+        </p>
       </div>
     </div>
   </div>

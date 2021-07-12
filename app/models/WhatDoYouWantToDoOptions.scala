@@ -23,38 +23,22 @@ sealed trait WhatDoYouWantToDoOptions
 
 object WhatDoYouWantToDoOptions extends Enumerable.Implicits {
 
-  case object ArrivalNotifications extends WithName("arrivalNotifications") with WhatDoYouWantToDoOptions
-  case object DepartureViewOldDeclarations extends WithName("departureViewOldDeclarations") with WhatDoYouWantToDoOptions
-  case object DepartureMakeDeclarations extends WithName("departureMakeDeclarations") with WhatDoYouWantToDoOptions
-  case object DepartureViewDeclarations extends WithName("departureViewDeclarations") with WhatDoYouWantToDoOptions
+  case object GBMovements extends WithName("gbMovements") with WhatDoYouWantToDoOptions
   case object NorthernIrelandMovements extends WithName("northernIrelandMovements") with WhatDoYouWantToDoOptions
 
   val values: Seq[WhatDoYouWantToDoOptions] = Seq(
-    ArrivalNotifications,
-    DepartureViewOldDeclarations,
-    DepartureMakeDeclarations,
-    DepartureViewDeclarations,
+    GBMovements,
     NorthernIrelandMovements
   )
 
-  def radios(form: Form[_], showPrivateBetaButtons: Boolean): Seq[Radios.Item] = {
+  def radios(form: Form[_]): Seq[Radios.Item] = {
     val field = form("value")
 
-    val privateBetaButtons = Seq(
-      Radios.Radio(msg"whatDoYouWantToDo.arrivalNotificationsText", ArrivalNotifications.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.departureViewOldDeclarationsText", DepartureViewOldDeclarations.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.departureMakeDeclarationsText", DepartureMakeDeclarations.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.departureViewDeclarationsText", DepartureViewDeclarations.toString),
+    val radioButtons = Seq(
+      Radios.Radio(msg"whatDoYouWantToDo.gbMovements", GBMovements.toString),
       Radios.Radio(msg"whatDoYouWantToDo.northernIrelandMovementsText", NorthernIrelandMovements.toString)
     )
 
-    val publicBetaButtons = Seq(
-      Radios.Radio(msg"whatDoYouWantToDo.arrivalNotificationsText", ArrivalNotifications.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.departureMakeDeclarationsText", DepartureMakeDeclarations.toString),
-      Radios.Radio(msg"whatDoYouWantToDo.northernIrelandMovementsText", NorthernIrelandMovements.toString)
-    )
-
-    val radioButtons = if (showPrivateBetaButtons) privateBetaButtons else publicBetaButtons
     Radios(field, radioButtons)
   }
 

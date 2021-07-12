@@ -220,13 +220,9 @@ pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpd
 
 whatDoYouWantToDo.title = What do you want to do?
 whatDoYouWantToDo.heading = What do you want to do?
-whatDoYouWantToDo.arrivalNotificationsText=Arrival notifications
-whatDoYouWantToDo.departureViewOldDeclarationsText = View departure declarations sent on or before 13 June 2021
-whatDoYouWantToDo.departureMakeDeclarationsText = Make a new departure declaration
-whatDoYouWantToDo.departureViewDeclarationsText = View departure declarations sent from 14 June 2021
+whatDoYouWantToDo.gbMovements = Movement starting from England, Scotland or Wales
 whatDoYouWantToDo.northernIrelandMovementsText=Northern Ireland movements
 whatDoYouWantToDo.error.required = Select what you want to do
-whatDoYouWantToDo.warningText = From 30 June 2021, you will no longer be able to view movements sent using the legacy service.
 
 northernIrelandInterstitial.title = You cannot use this service
 northernIrelandInterstitial.heading = You cannot use this service
