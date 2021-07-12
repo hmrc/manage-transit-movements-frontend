@@ -33,7 +33,6 @@ import scala.concurrent.ExecutionContext
 class NoReleaseForTransitController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  filterPrivateBetaUsers: PrivateBetaActionFilter,
   cc: MessagesControllerComponents,
   departureMessageService: DepartureMessageService,
   val renderer: Renderer,
@@ -43,7 +42,7 @@ class NoReleaseForTransitController @Inject()(
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(departureId: DepartureId): Action[AnyContent] = (identify andThen filterPrivateBetaUsers).async {
+  def onPageLoad(departureId: DepartureId): Action[AnyContent] = identify.async {
     implicit request =>
       departureMessageService.noReleaseForTransitMessage(departureId).flatMap {
         case Some(message) =>

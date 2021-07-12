@@ -31,7 +31,7 @@ object WhatDoYouWantToDoOptions extends Enumerable.Implicits {
     NorthernIrelandMovements
   )
 
-  def radios(form: Form[_], showPrivateBetaButtons: Boolean): Seq[Radios.Item] = {
+  def radios(form: Form[_]): Seq[Radios.Item] = {
     val field = form("value")
 
     val radioButtons = Seq(

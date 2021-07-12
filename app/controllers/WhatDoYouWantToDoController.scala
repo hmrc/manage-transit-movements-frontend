@@ -18,9 +18,8 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import featureFlags.WhatDoYouWantToDoRadioToggle
 import forms.WhatDoYouWantToDoFormProvider
-import models.{EoriNumber, WhatDoYouWantToDoOptions}
+import models.WhatDoYouWantToDoOptions
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,7 +36,6 @@ class WhatDoYouWantToDoController @Inject()(
   cc: MessagesControllerComponents,
   renderer: Renderer,
   formProvider: WhatDoYouWantToDoFormProvider,
-  whatDoYouWantToDoRadioToggleService: WhatDoYouWantToDoRadioToggle,
   frontendAppConfig: FrontendAppConfig,
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
@@ -45,41 +43,36 @@ class WhatDoYouWantToDoController @Inject()(
     with NunjucksSupport {
 
   def onPageLoad(): Action[AnyContent] = identify async {
-
     implicit request =>
-      whatDoYouWantToDoRadioToggleService.displayGoLiveButtons(EoriNumber(request.eoriNumber)) flatMap {
-        toggle =>
-          val form = formProvider()
-          val json = Json.obj(
-            "form"        -> form,
-            "radios"      -> WhatDoYouWantToDoOptions.radios(formProvider(), toggle),
-            "warningText" -> msg"whatDoYouWantToDo.warningText"
-          )
-          renderer.render("whatDoYouWantToDo.njk", json).map(Ok(_))
-      }
+      val form = formProvider()
+
+      val json = Json.obj(
+        "form"        -> form,
+        "radios"      -> WhatDoYouWantToDoOptions.radios(form),
+        "warningText" -> msg"whatDoYouWantToDo.warningText"
+      )
+
+      renderer.render("whatDoYouWantToDo.njk", json).map(Ok(_))
   }
 
   def onSubmit(): Action[AnyContent] = identify async {
     implicit request =>
-      whatDoYouWantToDoRadioToggleService.displayGoLiveButtons(EoriNumber(request.eoriNumber)) flatMap {
-        toggle =>
-          formProvider()
-            .bindFromRequest()
-            .fold(
-              formWithErrors => {
-                val json = Json.obj(
-                  "form"        -> formWithErrors,
-                  "radios"      -> WhatDoYouWantToDoOptions.radios(formProvider(), toggle),
-                  "warningText" -> msg"whatDoYouWantToDo.warningText"
-                )
-                renderer.render("whatDoYouWantToDo.njk", json).map(BadRequest(_))
-              }, {
-                case WhatDoYouWantToDoOptions.GBMovements =>
-                  Future.successful(Redirect(routes.IndexController.onPageLoad()))
-                case WhatDoYouWantToDoOptions.NorthernIrelandMovements =>
-                  Future.successful(Redirect(routes.NorthernIrelandInterstitialController.onPageLoad()))
-              }
+      formProvider()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
+            val json = Json.obj(
+              "form"        -> formWithErrors,
+              "radios"      -> WhatDoYouWantToDoOptions.radios(formProvider()),
+              "warningText" -> msg"whatDoYouWantToDo.warningText"
             )
-      }
+            renderer.render("whatDoYouWantToDo.njk", json).map(BadRequest(_))
+          }, {
+            case WhatDoYouWantToDoOptions.GBMovements =>
+              Future.successful(Redirect(routes.IndexController.onPageLoad()))
+            case WhatDoYouWantToDoOptions.NorthernIrelandMovements =>
+              Future.successful(Redirect(routes.NorthernIrelandInterstitialController.onPageLoad()))
+          }
+        )
   }
 }
