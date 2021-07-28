@@ -18,7 +18,7 @@ site.title.suffix = - Manage your transit movements - GOV.UK
 error.title.prefix = Error:
 error.summary.title = There is a problem
 
-footer.links.support_links = Cysylltiadau cymorth
+footer.links.support_links = Support links
 footer.links.help = Help using GOV.UK
 footer.links.cookies = Cookies
 footer.links.accessibility = Accessibility statement
