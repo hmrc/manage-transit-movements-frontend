@@ -48,7 +48,7 @@ object ViewArrivalMovements {
       result =>
         val dateFormatter: DateTimeFormatter =
           DateTimeFormatter.ofPattern("d MMMM yyyy")
-        (result._1.format(dateFormatter), result._2.sortBy(_.time))
+        (result._1.format(dateFormatter), result._2.sortBy(_.time).reverse)
     }
   }
 
