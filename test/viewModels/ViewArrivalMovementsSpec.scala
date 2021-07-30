@@ -39,7 +39,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
 
     val movementsGen: LocalDate => Gen[Seq[ViewMovement]] =
       date =>
-        seqWithMaxLength(10) {
+        seqWithMaxLength(1) {
           Arbitrary {
             arbitrary[ViewMovement].map(
               _.copy(date = date, time = localTime)
@@ -57,7 +57,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
     }
   }
 
-  "apply ordering to Movements by descending time in the same date" in {
+  "apply ordering to Movements by ascending time in the same date" in {
     val localDateToday = LocalDate.now
 
     val localTime       = LocalTime.now
@@ -85,9 +85,8 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
           ViewArrivalMovements(movementsInWrongOrder)
 
         val expectedResult: Seq[ViewMovement] =
-          Seq(movementMinus2, movementMinus1, movement)
-
-        result.dataRows(0)._2 mustEqual expectedResult
+          Seq(movement, movementMinus1, movementMinus2)
+        result.dataRows.head._2 mustEqual expectedResult
     }
   }
 
