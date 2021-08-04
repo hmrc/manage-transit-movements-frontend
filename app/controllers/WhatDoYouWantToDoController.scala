@@ -17,15 +17,18 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import controllers.actions._
 import forms.WhatDoYouWantToDoFormProvider
-import models.WhatDoYouWantToDoOptions
+import models.{Arrivals, Departures, WhatDoYouWantToDoOptions}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
+import play.twirl.api.Html
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import controllers.departure.{routes => departureRoutes}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +39,9 @@ class WhatDoYouWantToDoController @Inject()(
   cc: MessagesControllerComponents,
   renderer: Renderer,
   formProvider: WhatDoYouWantToDoFormProvider,
-  frontendAppConfig: FrontendAppConfig,
+  val arrivalMovementConnector: ArrivalMovementConnector,
+  val departuresMovementConnector: DeparturesMovementConnector,
+  appConfig: FrontendAppConfig,
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
@@ -51,8 +56,17 @@ class WhatDoYouWantToDoController @Inject()(
         "radios"      -> WhatDoYouWantToDoOptions.radios(form),
         "warningText" -> msg"whatDoYouWantToDo.warningText"
       )
-
-      renderer.render("whatDoYouWantToDo.njk", json).map(Ok(_))
+      if (appConfig.isNIJourneyEnabled) {
+        for {
+          arrivals   <- arrivalMovementConnector.getArrivals()
+          departures <- departuresMovementConnector.getDepartures()
+          html       <- renderIndexPage(arrivals, departures)
+        } yield {
+          Ok(html)
+        }
+      } else {
+        renderer.render("whatDoYouWantToDo.njk", json).map(Ok(_))
+      }
   }
 
   def onSubmit(): Action[AnyContent] = identify async {
@@ -75,4 +89,21 @@ class WhatDoYouWantToDoController @Inject()(
           }
         )
   }
+
+  private def renderIndexPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader): Future[Html] =
+    renderer
+      .render(
+        "index.njk",
+        Json.obj(
+          "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
+          "viewArrivalNotificationUrl"     -> controllers.arrival.routes.ViewArrivalsController.onPageLoad().url,
+          "arrivalsAvailable"              -> arrivals.nonEmpty,
+          "hasArrivals"                    -> arrivals.exists(_.arrivals.nonEmpty),
+          "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
+          "viewDepartureNotificationUrl"   -> departureRoutes.ViewDeparturesController.onPageLoad().url,
+          "departuresAvailable"            -> departures.nonEmpty,
+          "hasDepartures"                  -> departures.exists(_.departures.nonEmpty)
+        )
+      )
+
 }

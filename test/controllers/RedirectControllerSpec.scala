@@ -44,27 +44,10 @@ class RedirectControllerSpec extends SpecBase with MockitoSugar with JsonMatcher
       .guiceApplicationBuilder()
       .overrides(bind(classOf[FrontendAppConfig]).toInstance(mockFrontendAppConfig))
 
-  "return OK and the correct view for a GET when NI journey is enabled" in {
+  "return OK and the correct view for a GET" in {
 
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
-    when(mockFrontendAppConfig.isNIJourneyEnabled)
-      .thenReturn(true)
-
-    val request = FakeRequest(GET, routes.RedirectController.onPageLoad().url)
-
-    val result = route(app, request).value
-
-    status(result) mustEqual SEE_OTHER
-    redirectLocation(result).value mustEqual routes.IndexController.onPageLoad().url
-  }
-
-  "return OK and the correct view for a GET when NI journey is disabled" in {
-
-    when(mockRenderer.render(any(), any())(any()))
-      .thenReturn(Future.successful(Html("")))
-    when(mockFrontendAppConfig.isNIJourneyEnabled)
-      .thenReturn(false)
 
     val request = FakeRequest(GET, routes.RedirectController.onPageLoad().url)
 

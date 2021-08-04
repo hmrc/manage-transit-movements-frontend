@@ -16,6 +16,7 @@
 
 package controllers
 
+import akka.stream.TLSRole.server
 import base.SpecBase
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
@@ -33,12 +34,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
 
   "WhatDoYouWantToDo Controller" - {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET when NI is not enabled" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application    = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(conf = "microservice.services.features.isNIJourneyEnabled" -> false)
+        .build()
       val request        = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -57,7 +60,33 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       application.stop()
     }
 
-    "return BAD_REQUEST and the correct view if an invalid value is seelected" in {
+    "return OK and the correct view for a GET when NI is enabled" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(conf = "microservice.services.features.isNIJourneyEnabled" -> true)
+        .build()
+      val request        = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj()
+
+      templateCaptor.getValue mustEqual "index.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "return BAD_REQUEST and the correct view if an invalid value is selected" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))

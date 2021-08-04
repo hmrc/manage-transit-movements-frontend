@@ -31,11 +31,8 @@ class RedirectController @Inject()(appConfig: FrontendAppConfig, identify: Ident
 
   def onPageLoad(): Action[AnyContent] = identify {
 
-    if (appConfig.isNIJourneyEnabled) {
-      Redirect(routes.IndexController.onPageLoad())
-    } else {
-      Redirect(routes.WhatDoYouWantToDoController.onPageLoad())
-    }
+    Redirect(routes.WhatDoYouWantToDoController.onPageLoad())
+
   }
 
 }
