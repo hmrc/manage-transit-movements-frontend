@@ -16,13 +16,16 @@
 
 package controllers
 
-import akka.stream.TLSRole.server
+import java.time.LocalDateTime
 import base.SpecBase
-import matchers.JsonMatchers
+import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
+import models._
+import models.departure.DepartureStatus.DepartureSubmitted
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito._
+import play.api.Configuration
+import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -30,122 +33,171 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class WhatDoYouWantToDoControllerSpec extends SpecBase {
+
+  private val manageTransitMovementRoute   = "manage-transit-movements"
+  private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
+  private val viewDepartureNotificationUrl = s"/$manageTransitMovementRoute/view-departures"
+
+  private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
+  private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
+
+  private val localDateTime: LocalDateTime = LocalDateTime.now()
+
+  private val mockDestinationResponse =
+    Arrivals(Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, "Submitted", "test mrn")))
+
+  private val mockDepartureResponse =
+    Departures(Seq(Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted)))
+
+  override def beforeEach: Unit = {
+    reset(mockArrivalMovementConnector)
+    reset(mockDepartureMovementConnector)
+    super.beforeEach
+  }
+
+  private def expectedJson(arrivalsAvailable: Boolean, hasArrivals: Boolean, departuresAvailable: Boolean, hasDepartures: Boolean) =
+    Json.obj(
+      "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
+      "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
+      "arrivalsAvailable"              -> arrivalsAvailable,
+      "hasArrivals"                    -> hasArrivals,
+      "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
+      "viewDepartureNotificationUrl"   -> viewDepartureNotificationUrl,
+      "departuresAvailable"            -> departuresAvailable,
+      "hasDepartures"                  -> hasDepartures
+    )
+
+  def applicationBuild =
+    applicationBuilder(userAnswers = None)
+      .configure(Configuration("microservice.services.features.departureJourney" -> true))
+      .overrides(
+        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
+        bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector)
+      )
+      .build()
 
   "WhatDoYouWantToDo Controller" - {
 
-    "return OK and the correct view for a GET when NI is not enabled" in {
+    "must return OK and the correct view for a GET with" - {
+      "Arrivals and Departures when both respond" in {
+        when(mockRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(Some(mockDestinationResponse)))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(conf = "microservice.services.features.isNIJourneyEnabled" -> false)
-        .build()
-      val request        = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-      val result = route(application, request).value
+        val application = applicationBuild
+        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result      = route(application, request).value
 
-      status(result) mustEqual OK
+        status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val expectedJson = Json.obj()
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-      application.stop()
-    }
+        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
+        jsonCaptorWithoutConfig mustBe
+          expectedJson(true, true, true, true)
 
-    "return OK and the correct view for a GET when NI is enabled" in {
+        application.stop()
+      }
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      "Arrivals and no departures when display departures services returns false" in {
+        when(mockRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(conf = "microservice.services.features.isNIJourneyEnabled" -> true)
-        .build()
-      val request        = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(Some(mockDestinationResponse)))
 
-      val result = route(application, request).value
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-      status(result) mustEqual OK
+        val application = applicationBuild
+        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result      = route(application, request).value
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        status(result) mustEqual OK
 
-      val expectedJson = Json.obj()
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      templateCaptor.getValue mustEqual "index.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      application.stop()
-    }
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-    "return BAD_REQUEST and the correct view if an invalid value is selected" in {
+        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
+        jsonCaptorWithoutConfig mustBe
+          expectedJson(true, true, true, true)
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+        application.stop()
+      }
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "somethingsWrong")
+      "Arrivals when Departures does not respond" in {
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        when(mockRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
 
-      val result = route(application, request).value
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(Some(mockDestinationResponse)))
 
-      status(result) mustEqual BAD_REQUEST
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(None))
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val application = applicationBuild
+        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result      = route(application, request).value
 
-      val expectedJson = Json.obj()
+        status(result) mustEqual OK
 
-      templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      application.stop()
-    }
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    "redirect to index page if GB Movements is selected" in {
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
+        jsonCaptorWithoutConfig mustBe expectedJson(true, true, false, false)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "gbMovements")
+        application.stop()
+      }
 
-      val result = route(application, request).value
+      "no Arrivals and Departures" in {
+        when(mockRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
 
-      status(result) mustEqual SEE_OTHER
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(None))
 
-      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(None))
 
-      application.stop()
-    }
+        val application = applicationBuild
+        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result      = route(application, request).value
 
-    "redirect to NI interstitial page if NI is selected" in {
+        status(result) mustEqual OK
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "northernIrelandMovements")
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val result = route(application, request).value
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-      status(result) mustEqual SEE_OTHER
+        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
+        jsonCaptorWithoutConfig mustBe expectedJson(false, false, false, false)
 
-      redirectLocation(result) mustBe Some(controllers.routes.NorthernIrelandInterstitialController.onPageLoad().url)
-
-      application.stop()
+        application.stop()
+      }
     }
   }
 }

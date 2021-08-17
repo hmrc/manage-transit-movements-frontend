@@ -16,23 +16,21 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class RedirectController @Inject()(appConfig: FrontendAppConfig, identify: IdentifierAction, cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+class RedirectController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = identify {
 
     Redirect(routes.WhatDoYouWantToDoController.onPageLoad())
-
   }
 
 }

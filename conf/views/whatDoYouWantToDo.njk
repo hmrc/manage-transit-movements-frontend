@@ -1,53 +1,62 @@
 {% extends "includes/layout.njk" %}
-{% from "govuk/components/radios/macro.njk"        import govukRadios %}
-{% from "govuk/components/button/macro.njk"        import govukButton %}
-{% from "govuk/components/back-link/macro.njk"        import govukBackLink %}
-{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("whatDoYouWantToDo.title")) }}
-{% endblock %}
-
+{{ (messages("whatDoYouWantToDo.title")) }}{% endblock %}
 {% block mainContent %}
-
-{{ govukBackLink({
-    text: messages("site.back")
-  }) }}
 
   <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-      {% if form.errors.length > 0 %}
-                {{ govukErrorSummary({
-                  "titleText": messages("error.summary.title"),
-                  "errorList": form.errors
-                }) }}
-      {% endif %}
+        <h1 class="govuk-heading-xl">
+          {{ messages("whatDoYouWantToDo.heading") }}
+        </h1>
 
-<form action="{{ routes.controllers.WhatDoYouWantToDoController.onSubmit().url }}" method="post">
-
-      {{ csrf() | safe }}
-        {{ govukRadios({
-            name: 'value',
-            fieldset: {
-              legend: {
-                text: messages("whatDoYouWantToDo.heading"),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
-              }
-            },
-            items: radios,
-            errorMessage: form.value.error
-          }) }}
-
-          {{ govukButton({
-            text: messages("site.continue"),
-            attributes: {id:"submit"}
-          }) }}
-          </form>
-
+        <h2 class="govuk-heading-m">
+            {{ messages("whatDoYouWantToDo.subHeading.arrival") }}
+        </h2>
+        <p class="govuk-body">
+            <a id= "make-arrival-notification" href={{declareArrivalNotificationUrl}}>
+                {{ messages("whatDoYouWantToDo.link.arrival.makeArrival") }}
+            </a>
+        </p>
+        <p class="govuk-body">
+        {% if hasArrivals %}
+            <a id= "view-arrival-notifications" href={{ viewArrivalNotificationUrl }}>
+                {{ messages("whatDoYouWantToDo.link.arrival.viewArrival") }}
+            </a>
+        {% else %}
+            {% if arrivalsAvailable %}
+                {{ messages("whatDoYouWantToDo.arrival.noArrivals") }}
+            {% else %}
+                {{ messages("whatDoYouWantToDo.arrival.arrivalsUnavailable") }}
+            {% endif %}
+        {% endif %}
+        </p>
+         
+        <h2 class="govuk-heading-m">
+            {{ messages("whatDoYouWantToDo.subHeading.departure") }}
+        </h2>
+        <p class="govuk-body">
+            <a id= "make-departure-declaration" href={{ declareDepartureDeclarationUrl }}>
+                {{ messages("whatDoYouWantToDo.link.departure.makeDeparture") }}
+            </a>
+        </p>
+        <p class="govuk-body">
+        {% if hasDepartures %}
+            <a id= "view-departure-declarations" href="{{ viewDepartureNotificationUrl }}">
+                {{ messages("whatDoYouWantToDo.link.departure.viewDepartures") }}
+            </a>
+        {% else %}
+            {% if departuresAvailable %}
+                {{ messages("whatDoYouWantToDo.departure.noDepartures") }}
+            {% else %}
+                {{ messages("whatDoYouWantToDo.departure.departuresUnavailable") }}
+            {% endif %}
+        {% endif %}
+        </p>
       </div>
     </div>
   </div>

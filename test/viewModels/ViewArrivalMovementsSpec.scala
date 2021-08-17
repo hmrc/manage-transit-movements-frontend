@@ -124,7 +124,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
 
           val result = (testJson \ "homePageUrl").validate[String].asOpt.value
 
-          result mustBe controllers.routes.IndexController.onPageLoad().url
+          result mustBe controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
       }
     }
 
