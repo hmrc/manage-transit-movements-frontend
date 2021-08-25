@@ -16,26 +16,17 @@
 
 package base
 
-import config.FrontendAppConfig
-import controllers.actions._
 import models.{DepartureId, LocalReferenceNumber, UserAnswers}
-import org.mockito.Mockito
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice._
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.inject.{bind, Injector}
-import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import play.api.test.Helpers
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
-import uk.gov.hmrc.nunjucks.NunjucksRenderer
-
-import scala.reflect.ClassTag
 
 trait SpecBase
     extends AnyFreeSpec
@@ -54,13 +45,16 @@ trait SpecBase
 
   val departureId = DepartureId(1)
 
-  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, Json.obj())
+  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
-  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+  // TODO: remove all references to this and use [[play.api.test.Helpers.stubMessagesApi]]
+  def messagesApi: MessagesApi = Helpers.stubMessagesApi()
+
+  // TODO: remove all references to this and explicitly use [[play.api.test.Helpers.stubMessages]]
+  implicit def messages: Messages = Helpers.stubMessages()
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
-  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
 

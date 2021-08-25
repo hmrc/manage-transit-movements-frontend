@@ -17,8 +17,6 @@
 package base
 
 import controllers.actions._
-import models.UserAnswers
-import models.requests.IdentifierRequest
 import org.mockito.Mockito
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.mockito.MockitoSugar

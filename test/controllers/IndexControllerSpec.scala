@@ -34,12 +34,11 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 import play.api.inject.guice.GuiceApplicationBuilder
+import config.FrontendAppConfig
 
 class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
 
   private val manageTransitMovementRoute   = "manage-transit-movements"
-  private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
-  private val viewDepartureNotificationUrl = s"/$manageTransitMovementRoute/view-departures"
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
@@ -60,12 +59,12 @@ class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
 
   private def expectedJson(arrivalsAvailable: Boolean, hasArrivals: Boolean, departuresAvailable: Boolean, hasDepartures: Boolean) =
     Json.obj(
-      "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
+      "declareArrivalNotificationUrl"  -> app.injector.instanceOf[FrontendAppConfig].declareArrivalNotificationStartUrl,
+      "viewArrivalNotificationUrl"     -> s"/$manageTransitMovementRoute/view-arrivals",
       "arrivalsAvailable"              -> arrivalsAvailable,
       "hasArrivals"                    -> hasArrivals,
-      "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
-      "viewDepartureNotificationUrl"   -> viewDepartureNotificationUrl,
+      "declareDepartureDeclarationUrl" -> app.injector.instanceOf[FrontendAppConfig].declareDepartureStartWithLRNUrl,
+      "viewDepartureNotificationUrl"   -> s"/$manageTransitMovementRoute/view-departures",
       "departuresAvailable"            -> departuresAvailable,
       "hasDepartures"                  -> hasDepartures
     )

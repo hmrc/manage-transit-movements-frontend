@@ -18,7 +18,9 @@ package controllers
 
 import base.SpecBase
 import play.api.test.FakeRequest
+import play.api.test.Helpers
 import play.api.test.Helpers._
+import controllers.actions._
 
 class KeepAliveControllerSpec extends SpecBase {
 
@@ -28,7 +30,9 @@ class KeepAliveControllerSpec extends SpecBase {
 
       val request = FakeRequest(GET, routes.KeepAliveController.keepAlive().url)
 
-      val result = route(app, request).value
+      val controller = new KeepAliveController(FakeIdentifierAction(), Helpers.stubMessagesControllerComponents())
+
+      val result = controller.keepAlive.apply(request)
 
       status(result) mustEqual NO_CONTENT
 
