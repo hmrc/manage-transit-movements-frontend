@@ -16,44 +16,43 @@
 
 package controllers
 
-import base.SpecBase
+import base.{MockNunjucksRendererApp, SpecBase}
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import play.api.test.{FakeRequest, Helpers}
+import renderer.Renderer
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class NorthernIrelandInterstitialControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class NorthernIrelandInterstitialControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
 
   "NorthernIrelandInterstitial Controller" - {
 
     "return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val renderer = app.injector.instanceOf[Renderer]
+
+      val controller = new NorthernIrelandInterstitialController(Helpers.stubMessagesControllerComponents(), renderer)
 
       val request        = FakeRequest(GET, routes.NorthernIrelandInterstitialController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val result = controller.onPageLoad.apply(request)
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(renderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj()
 
       templateCaptor.getValue mustEqual "northernIrelandInterstitial.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

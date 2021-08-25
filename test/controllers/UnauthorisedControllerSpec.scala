@@ -16,35 +16,35 @@
 
 package controllers
 
-import base.SpecBase
+import base.{MockNunjucksRendererApp, SpecBase}
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import play.api.test.FakeRequest
+import org.mockito.Mockito.{times, verify}
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import play.api.test.{FakeRequest, Helpers}
+import renderer.Renderer
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class UnauthorisedControllerSpec extends SpecBase with JsonMatchers {
+class UnauthorisedControllerSpec extends SpecBase with JsonMatchers with MockNunjucksRendererApp {
 
   "Unauthorised Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val renderer = app.injector.instanceOf[Renderer]
 
-      val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
+      val controller = new UnauthorisedController(Helpers.stubMessagesControllerComponents(), renderer)
 
-      val result = route(app, request).value
+      val request        = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = controller.onPageLoad.apply(request)
 
       status(result) mustEqual OK
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(renderer, times(1)).render(templateCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "unauthorised.njk"
     }

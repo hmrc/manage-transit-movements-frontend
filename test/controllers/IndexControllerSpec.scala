@@ -38,7 +38,7 @@ import config.FrontendAppConfig
 
 class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
 
-  private val manageTransitMovementRoute   = "manage-transit-movements"
+  private val manageTransitMovementRoute = "manage-transit-movements"
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]

@@ -16,10 +16,12 @@
 
 package controllers.departure
 
-import base.SpecBase
-import base.MockNunjucksRendererApp
+import base.{MockNunjucksRendererApp, SpecBase}
+import config.FrontendAppConfig
+import controllers.actions.FakeIdentifierAction
 import generators.Generators
 import matchers.JsonMatchers
+import models.DepartureId
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -32,13 +34,18 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import renderer.Renderer
 import services.DepartureMessageService
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
+  private val mockFrontendAppConfig       = mock[FrontendAppConfig]
+
+  private val renderer = app.injector.instanceOf[Renderer]
 
   override def beforeEach: Unit = {
     reset(
@@ -51,31 +58,43 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[DepartureMessageService].toInstance(mockDepartureMessageService)
+        bind[DepartureMessageService].toInstance(mockDepartureMessageService),
+        bind[FrontendAppConfig].toInstance(mockFrontendAppConfig)
       )
 
   "CancellationXmlNegativeAcknowledgement Controller" - {
 
     "return OK and the correct view for a GET" in {
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
+
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
+
+      val controller = new CancellationXmlNegativeAcknowledgementController(
+        messagesApi             = messagesApi,
+        identify                = FakeIdentifierAction(),
+        cc                      = stubMessagesControllerComponents(),
+        renderer                = renderer,
+        frontendAppConfig       = mockFrontendAppConfig,
+        departureMessageService = mockDepartureMessageService
+      )
 
       val request        = FakeRequest(GET, routes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val result = controller.onPageLoad(DepartureId(0)).apply(request)
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "contactUrl"             -> frontendAppConfig.nctsEnquiriesUrl,
-        "confirmCancellationUrl" -> frontendAppConfig.departureFrontendConfirmCancellationUrl(departureId),
+        "contactUrl"             -> mockFrontendAppConfig.nctsEnquiriesUrl,
+        "confirmCancellationUrl" -> mockFrontendAppConfig.departureFrontendConfirmCancellationUrl(departureId),
         "functionalError"        -> negativeAcknowledgementMessage.error
       )
 
