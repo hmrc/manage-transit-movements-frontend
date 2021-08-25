@@ -32,7 +32,7 @@ class KeepAliveController @Inject()(
     with I18nSupport {
 
   def keepAlive: Action[AnyContent] =
-    identify.async {
+    (Action andThen identify).async {
       implicit request =>
         Future.successful(NoContent)
     }

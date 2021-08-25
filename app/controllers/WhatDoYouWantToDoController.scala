@@ -47,7 +47,7 @@ class WhatDoYouWantToDoController @Inject()(
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(): Action[AnyContent] = identify async {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify) async {
     implicit request =>
       val form = formProvider()
 
@@ -69,7 +69,7 @@ class WhatDoYouWantToDoController @Inject()(
       }
   }
 
-  def onSubmit(): Action[AnyContent] = identify async {
+  def onSubmit(): Action[AnyContent] = (Action andThen identify) async {
     implicit request =>
       formProvider()
         .bindFromRequest()

@@ -41,7 +41,7 @@ class UnloadingPermissionPDFController @Inject()(
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def getPDF(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
+  def getPDF(arrivalId: ArrivalId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       hc.authorization
         .map {

@@ -42,7 +42,7 @@ class NoReleaseForTransitController @Inject()(
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(departureId: DepartureId): Action[AnyContent] = identify.async {
+  def onPageLoad(departureId: DepartureId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       departureMessageService.noReleaseForTransitMessage(departureId).flatMap {
         case Some(message) =>

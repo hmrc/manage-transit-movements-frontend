@@ -18,7 +18,6 @@ package controllers.actions
 
 import models.requests.IdentifierRequest
 import play.api.mvc._
-import play.api.test.Helpers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -26,9 +25,6 @@ class FakeIdentifierAction extends IdentifierAction {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
     block(IdentifierRequest(request, "id"))
-
-  override def parser: BodyParser[AnyContent] =
-    Helpers.stubBodyParser[AnyContent](AnyContentAsEmpty)
 
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global

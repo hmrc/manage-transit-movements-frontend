@@ -40,7 +40,7 @@ class ViewArrivalsController @Inject()(val renderer: Renderer,
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad: Action[AnyContent] = identify.async {
+  def onPageLoad: Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       arrivalMovementConnector.getArrivals().flatMap {
         case Some(allArrivals) =>

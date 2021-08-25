@@ -28,7 +28,7 @@ import play.api.test.Helpers._
 
 class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
+  lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.reference-data.port" -> server.port()
     )

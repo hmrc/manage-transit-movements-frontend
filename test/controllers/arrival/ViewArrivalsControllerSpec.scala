@@ -17,6 +17,7 @@
 package controllers.arrival
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
 import base.MockNunjucksRendererApp
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
@@ -49,6 +50,7 @@ class ViewArrivalsControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
+  implicit val frontendAppConfig                    = FakeFrontendAppConfig()
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -57,14 +59,14 @@ class ViewArrivalsControllerSpec
     super.beforeEach
   }
 
-  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+  override def guiceApplicationBuilder() =
     super
       .guiceApplicationBuilder()
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
 
-  private val mockArrivalResponse: Arrivals = {
+  private val mockArrivalResponse: Arrivals =
     Arrivals(
       Seq(
         Arrival(
@@ -76,9 +78,6 @@ class ViewArrivalsControllerSpec
         )
       )
     )
-  }
-
-  implicit val appConfig: FrontendAppConfig = frontendAppConfig
 
   private val mockViewMovement = ViewMovement(
     localDateTime.toLocalDate,
@@ -92,7 +91,7 @@ class ViewArrivalsControllerSpec
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
-      "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationStartUrl,
+      "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
       "homePageUrl"                   -> controllers.routes.IndexController.onPageLoad().url
     )
 
@@ -113,7 +112,7 @@ class ViewArrivalsControllerSpec
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1))
@@ -142,7 +141,7 @@ class ViewArrivalsControllerSpec
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
 

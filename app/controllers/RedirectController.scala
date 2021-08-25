@@ -29,7 +29,7 @@ class RedirectController @Inject()(appConfig: FrontendAppConfig, identify: Ident
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = identify {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify) {
 
     Redirect(routes.WhatDoYouWantToDoController.onPageLoad())
 

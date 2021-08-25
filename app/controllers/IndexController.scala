@@ -40,7 +40,7 @@ class IndexController @Inject()(appConfig: FrontendAppConfig,
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify.async {
+  def onPageLoad: Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
         arrivals   <- arrivalMovementConnector.getArrivals()

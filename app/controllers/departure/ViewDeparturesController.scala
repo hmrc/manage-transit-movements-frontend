@@ -43,7 +43,7 @@ class ViewDeparturesController @Inject()(
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       connector.getDepartures().flatMap {
         case Some(allDepartures) =>

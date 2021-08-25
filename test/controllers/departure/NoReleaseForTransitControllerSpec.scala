@@ -64,7 +64,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
+      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
         .thenReturn(Future.successful(Some(transitMessage)))
 
       val request        = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
@@ -87,7 +87,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       val config = app.injector.instanceOf[FrontendAppConfig]
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
+      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

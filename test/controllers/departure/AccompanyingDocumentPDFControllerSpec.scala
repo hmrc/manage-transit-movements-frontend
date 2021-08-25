@@ -18,6 +18,7 @@ package controllers.departure
 
 import akka.util.ByteString
 import base.SpecBase
+import base.FakeFrontendAppConfig
 import base.MockNunjucksRendererApp
 import connectors.DeparturesMovementConnector
 import controllers.departure.{routes => departureRoutes}
@@ -43,6 +44,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
   private val wsResponse: AhcWSResponse                            = mock[AhcWSResponse]
   val mockDeparturesMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
+  val frontendAppConfig                 = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     super.beforeEach

@@ -17,6 +17,7 @@
 package controllers.departure
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
 import base.MockNunjucksRendererApp
 import generators.Generators
 import matchers.JsonMatchers
@@ -40,6 +41,7 @@ import scala.concurrent.Future
 class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
+  val frontendAppConfig = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(
@@ -65,7 +67,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMessageService.controlDecisionMessage(any())(any(), any()))
+      when(mockDepartureMessageService.controlDecisionMessage(any())(any()))
         .thenReturn(Future.successful(Some(controlDecision)))
 
       val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
@@ -91,7 +93,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMessageService.controlDecisionMessage(any())(any(), any()))
+      when(mockDepartureMessageService.controlDecisionMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)

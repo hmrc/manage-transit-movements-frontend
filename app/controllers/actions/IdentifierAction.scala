@@ -34,12 +34,11 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+trait IdentifierAction extends ActionFunction[Request, IdentifierRequest]
 
 class AuthenticatedIdentifierAction @Inject()(
   override val authConnector: AuthConnector,
   config: FrontendAppConfig,
-  val parser: BodyParsers.Default,
   enrolmentStoreConnector: EnrolmentStoreConnector,
   renderer: Renderer
 )(implicit val executionContext: ExecutionContext)

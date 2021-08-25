@@ -17,6 +17,7 @@
 package controllers.departure
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
 import base.MockNunjucksRendererApp
 import generators.Generators
 import matchers.JsonMatchers
@@ -38,6 +39,7 @@ import scala.concurrent.Future
 class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
+  val frontendAppConfig                   = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(
@@ -59,7 +61,7 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
+      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
 
       val request        = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
@@ -84,7 +86,7 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
     "render 'Technical difficulty page' when service fails to get rejection message" in {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
+      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

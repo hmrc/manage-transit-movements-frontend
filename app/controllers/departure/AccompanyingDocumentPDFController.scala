@@ -37,7 +37,7 @@ class AccompanyingDocumentPDFController @Inject()(
     extends FrontendController(cc)
     with I18nSupport {
 
-  def getPDF(departureId: DepartureId): Action[AnyContent] = identify.async {
+  def getPDF(departureId: DepartureId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       departuresMovementConnector.getPDF(departureId).flatMap {
         result =>

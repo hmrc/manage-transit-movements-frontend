@@ -21,7 +21,6 @@ import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify}
-import play.api.libs.json.JsObject
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import renderer.Renderer

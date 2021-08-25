@@ -17,6 +17,7 @@
 package controllers.arrival
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
 import base.MockNunjucksRendererApp
 import generators.Generators
 import matchers.JsonMatchers
@@ -39,6 +40,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 
 class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp with Generators {
   private val mockArrivalMessageService = mock[ArrivalMessageService]
+  val frontendAppConfig                 = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(mockArrivalMessageService)

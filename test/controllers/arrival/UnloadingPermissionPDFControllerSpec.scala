@@ -17,7 +17,7 @@
 package controllers.arrival
 
 import akka.util.ByteString
-import base.SpecBase
+import base._
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
@@ -37,7 +37,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with MockNunjucksRendererApp {
 
   private val wsResponse: AhcWSResponse                      = mock[AhcWSResponse]
   val mockArrivalMovementConnector: ArrivalMovementConnector = mock[ArrivalMovementConnector]
@@ -48,8 +48,9 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
     reset(mockArrivalMovementConnector)
   }
 
-  private val appBuilder =
-    applicationBuilder()
+  override def guiceApplicationBuilder() =
+    super
+      .guiceApplicationBuilder()
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
@@ -72,40 +73,30 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
 
         val arrivalId = ArrivalId(0)
 
-        val application = appBuilder.build()
-
         val request = FakeRequest(GET, routes.UnloadingPermissionPDFController.getPDF(arrivalId).url)
           .withSession(("authToken" -> "BearerToken"))
 
-        running(application) {
+        val result = route(app, request).value
 
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-          headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
-          headers(result).get(CONTENT_DISPOSITION).value mustBe "unloading_permission_123"
-        }
+        status(result) mustEqual OK
+        headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
+        headers(result).get(CONTENT_DISPOSITION).value mustBe "unloading_permission_123"
       }
 
       "must redirect to UnauthorisedController if bearer token is missing" in {
 
         val arrivalId = ArrivalId(0)
 
-        val application = appBuilder.build()
-
         val request = FakeRequest(
           GET,
           routes.UnloadingPermissionPDFController.getPDF(arrivalId).url
         )
 
-        running(application) {
+        val result = route(app, request).value
 
-          val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
 
-          status(result) mustEqual SEE_OTHER
-
-          redirectLocation(result).value mustEqual controllers.routes.UnauthorisedController.onPageLoad().url
-        }
+        redirectLocation(result).value mustEqual controllers.routes.UnauthorisedController.onPageLoad().url
       }
 
       "must render TechnicalDifficulties page if connector returns error" in {
@@ -124,26 +115,21 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        val application = appBuilder.build()
-
         val request = FakeRequest(GET, routes.UnloadingPermissionPDFController.getPDF(arrivalId).url)
           .withSession(("authToken" -> "BearerToken"))
 
-        running(application) {
+        val result = route(app, request).value
 
-          val result = route(application, request).value
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-          status(result) mustEqual INTERNAL_SERVER_ERROR
-          verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-          val expectedJson = Json.obj {
-            "contactUrl" -> config.nctsEnquiriesUrl
-          }
-
-          templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-          jsonCaptor.getValue must containJson(expectedJson)
-
+        val expectedJson = Json.obj {
+          "contactUrl" -> config.nctsEnquiriesUrl
         }
+
+        templateCaptor.getValue mustEqual "technicalDifficulties.njk"
+        jsonCaptor.getValue must containJson(expectedJson)
+
       }
     }
   }

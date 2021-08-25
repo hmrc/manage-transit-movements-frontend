@@ -17,6 +17,7 @@
 package controllers.departure
 
 import base.{MockNunjucksRendererApp, SpecBase}
+import base.FakeFrontendAppConfig
 import config.FrontendAppConfig
 import controllers.actions.FakeIdentifierAction
 import generators.Generators
@@ -44,6 +45,7 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
   private val mockFrontendAppConfig       = mock[FrontendAppConfig]
+  val frontendAppConfig                   = FakeFrontendAppConfig()
 
   private val renderer = app.injector.instanceOf[Renderer]
 
@@ -70,15 +72,15 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
+      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
 
       val controller = new CancellationXmlNegativeAcknowledgementController(
-        messagesApi             = messagesApi,
-        identify                = FakeIdentifierAction(),
-        cc                      = stubMessagesControllerComponents(),
-        renderer                = renderer,
-        frontendAppConfig       = mockFrontendAppConfig,
+        messagesApi = messagesApi,
+        identify = FakeIdentifierAction(),
+        cc = stubMessagesControllerComponents(),
+        renderer = renderer,
+        frontendAppConfig = mockFrontendAppConfig,
         departureMessageService = mockDepartureMessageService
       )
 
@@ -105,7 +107,7 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
     "render 'Technical difficulty page' when service fails to get rejection message" in {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
+      when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

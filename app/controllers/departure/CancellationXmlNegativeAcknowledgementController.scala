@@ -40,7 +40,7 @@ class CancellationXmlNegativeAcknowledgementController @Inject()(
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: DepartureId): Action[AnyContent] = identify.async {
+  def onPageLoad(departureId: DepartureId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       departureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(departureId).flatMap {
         case Some(rejectionMessage) =>

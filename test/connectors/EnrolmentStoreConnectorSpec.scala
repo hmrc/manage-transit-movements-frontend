@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
+  val app: Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.enrolment-store-proxy.port" -> server.port()
     )

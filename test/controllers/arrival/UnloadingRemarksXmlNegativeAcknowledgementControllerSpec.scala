@@ -17,6 +17,7 @@
 package controllers.arrival
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
 import base.MockNunjucksRendererApp
 import generators.Generators
 import matchers.JsonMatchers
@@ -45,6 +46,7 @@ class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMessageService = mock[ArrivalMessageService]
+  val frontendAppConfig                 = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(mockArrivalMessageService)
