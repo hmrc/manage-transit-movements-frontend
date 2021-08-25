@@ -18,6 +18,7 @@ package controllers.departure
 
 import akka.util.ByteString
 import base.SpecBase
+import base.MockNunjucksRendererApp
 import connectors.DeparturesMovementConnector
 import controllers.departure.{routes => departureRoutes}
 import generators.Generators
@@ -29,6 +30,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.ahc.AhcWSResponse
 import play.api.test.FakeRequest
@@ -37,7 +39,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with MockNunjucksRendererApp {
 
   private val wsResponse: AhcWSResponse                            = mock[AhcWSResponse]
   val mockDeparturesMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
@@ -48,8 +50,9 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
     reset(mockDeparturesMovementConnector)
   }
 
-  private val appBuilder =
-    applicationBuilder()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
       .overrides(
         bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector)
       )
@@ -73,14 +76,12 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val departureId = DepartureId(0)
 
-        val application = appBuilder.build()
-
         val request = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
           .withSession("authToken" -> "BearerToken")
 
-        running(application) {
+        running(app) {
 
-          val result = route(application, request).value
+          val result = route(app, request).value
 
           status(result) mustEqual OK
           headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
@@ -102,15 +103,13 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val departureId = DepartureId(0)
 
-        val application = appBuilder.build()
-
         val request        = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
         val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
 
@@ -118,7 +117,6 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         templateCaptor.getValue mustEqual "technicalDifficulties.njk"
         jsonCaptor.getValue must containJson(expectedJson)
-        application.stop()
       }
     }
   }

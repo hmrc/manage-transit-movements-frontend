@@ -35,11 +35,9 @@ class SessionExpiredControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = None).build()
-
       val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -48,8 +46,6 @@ class SessionExpiredControllerSpec extends SpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "session-expired.njk"
-
-      application.stop()
     }
   }
 }

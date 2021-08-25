@@ -25,11 +25,10 @@ class KeepAliveControllerSpec extends SpecBase {
   "KeepAliveController" - {
 
     "must return NOContent and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = None).build()
 
       val request = FakeRequest(GET, routes.KeepAliveController.keepAlive().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual NO_CONTENT
 

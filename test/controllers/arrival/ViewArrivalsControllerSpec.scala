@@ -17,6 +17,7 @@
 package controllers.arrival
 
 import base.SpecBase
+import base.MockNunjucksRendererApp
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
@@ -25,9 +26,8 @@ import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
@@ -39,18 +39,30 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with NunjucksSupport with BeforeAndAfter {
+class ViewArrivalsControllerSpec
+    extends SpecBase
+    with MockitoSugar
+    with JsonMatchers
+    with Generators
+    with NunjucksSupport
+    with BeforeAndAfterEach
+    with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
-  private val application: Application =
-    applicationBuilder(userAnswers = Some(emptyUserAnswers))
+  override def beforeEach: Unit = {
+    reset(mockArrivalMovementConnector)
+    super.beforeEach
+  }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
-      .build()
 
   private val mockArrivalResponse: Arrivals = {
     Arrivals(
@@ -111,8 +123,6 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       templateCaptor.getValue mustEqual "viewArrivals.njk"
       jsonCaptorWithoutConfig mustBe expectedJson
-
-      application.stop()
     }
 
     "render technical difficulty" in {
@@ -144,13 +154,6 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
-  }
-
-  override def beforeEach: Unit = {
-    reset(mockArrivalMovementConnector)
-    super.beforeEach
   }
 }

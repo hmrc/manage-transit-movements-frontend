@@ -18,6 +18,7 @@ package controllers
 
 import java.time.LocalDateTime
 import base.SpecBase
+import base.MockNunjucksRendererApp
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
 import models.departure.DepartureStatus.DepartureSubmitted
@@ -32,8 +33,9 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 
 import scala.concurrent.Future
+import play.api.inject.guice.GuiceApplicationBuilder
 
-class IndexControllerSpec extends SpecBase {
+class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
 
   private val manageTransitMovementRoute   = "manage-transit-movements"
   private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
@@ -68,14 +70,14 @@ class IndexControllerSpec extends SpecBase {
       "hasDepartures"                  -> hasDepartures
     )
 
-  def applicationBuild =
-    applicationBuilder(userAnswers = None)
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
       .configure(Configuration("microservice.services.features.departureJourney" -> true))
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector)
       )
-      .build()
 
   "Index Controller" - {
 
@@ -90,9 +92,8 @@ class IndexControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-        val application = applicationBuild
-        val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
-        val result      = route(application, request).value
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
@@ -107,7 +108,6 @@ class IndexControllerSpec extends SpecBase {
         jsonCaptorWithoutConfig mustBe
           expectedJson(true, true, true, true)
 
-        application.stop()
       }
 
       "Arrivals and no departures when display departures services returns false" in {
@@ -120,9 +120,8 @@ class IndexControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-        val application = applicationBuild
-        val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
-        val result      = route(application, request).value
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
@@ -136,8 +135,6 @@ class IndexControllerSpec extends SpecBase {
         templateCaptor.getValue mustEqual "index.njk"
         jsonCaptorWithoutConfig mustBe
           expectedJson(true, true, true, true)
-
-        application.stop()
       }
 
       "Arrivals when Departures does not respond" in {
@@ -151,9 +148,8 @@ class IndexControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
 
-        val application = applicationBuild
-        val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
-        val result      = route(application, request).value
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
@@ -166,8 +162,6 @@ class IndexControllerSpec extends SpecBase {
 
         templateCaptor.getValue mustEqual "index.njk"
         jsonCaptorWithoutConfig mustBe expectedJson(true, true, false, false)
-
-        application.stop()
       }
 
       "no Arrivals and Departures" in {
@@ -180,9 +174,8 @@ class IndexControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
 
-        val application = applicationBuild
-        val request     = FakeRequest(GET, routes.IndexController.onPageLoad().url)
-        val result      = route(application, request).value
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
@@ -195,8 +188,6 @@ class IndexControllerSpec extends SpecBase {
 
         templateCaptor.getValue mustEqual "index.njk"
         jsonCaptorWithoutConfig mustBe expectedJson(false, false, false, false)
-
-        application.stop()
       }
     }
   }

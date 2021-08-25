@@ -17,15 +17,17 @@
 package controllers.departure
 
 import base.SpecBase
+import base.MockNunjucksRendererApp
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,7 +36,7 @@ import play.twirl.api.Html
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
 
   private val mockDepartureResponse: Departures = {
     Departures(
@@ -49,28 +51,36 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
     )
   }
 
+  override def beforeEach: Unit = {
+    super.beforeEach
+    reset(mockDeparturesMovementConnector)
+  }
+
+  val mockDeparturesMovementConnector = mock[DeparturesMovementConnector]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(
+        bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector)
+      )
+
   "ViewDepartures Controller" - {
 
     "return OK and the correct view for a GET" in {
 
-      val mockConnector = mock[DeparturesMovementConnector]
-
-      when(mockConnector.getDepartures()(any()))
+      when(mockDeparturesMovementConnector.getDepartures()(any()))
         .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
-        .build()
 
       val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -80,29 +90,21 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       templateCaptor.getValue mustEqual "viewDepartures.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "render Technical difficulties page on failing to fetch departures" in {
 
-      val mockConnector = mock[DeparturesMovementConnector]
-
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-      when(mockConnector.getDepartures()(any()))
+      when(mockDeparturesMovementConnector.getDepartures()(any()))
         .thenReturn(Future.successful(None))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[DeparturesMovementConnector].toInstance(mockConnector))
-        .build()
-
       val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustBe INTERNAL_SERVER_ERROR
 
@@ -112,8 +114,6 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

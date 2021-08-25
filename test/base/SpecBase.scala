@@ -40,17 +40,12 @@ import scala.reflect.ClassTag
 trait SpecBase
     extends AnyFreeSpec
     with Matchers
-    with GuiceOneAppPerSuite
     with OptionValues
     with TryValues
     with ScalaFutures
     with IntegrationPatience
     with MockitoSugar
     with BeforeAndAfterEach {
-
-  override def beforeEach {
-    Mockito.reset(mockRenderer)
-  }
 
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
@@ -61,30 +56,12 @@ trait SpecBase
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, Json.obj())
 
-  def injector: Injector = app.injector
-
-  def frontendAppConfig: FrontendAppConfig =
-    injector.instanceOf[FrontendAppConfig]
-
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
-
-  val mockRenderer: NunjucksRenderer = mock[NunjucksRenderer]
 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
 
-  def bindingOverride[A: ClassTag](module: A): GuiceApplicationBuilder => GuiceApplicationBuilder =
-    guiceApplicationBuilder => guiceApplicationBuilder.overrides(bind[A].toInstance(module))
-
-  protected def applicationBuilder(
-    userAnswers: Option[UserAnswers] = None
-  ): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-      .overrides(
-        bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[NunjucksRenderer].toInstance(mockRenderer)
-      )
 }

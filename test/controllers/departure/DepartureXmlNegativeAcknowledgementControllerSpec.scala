@@ -17,6 +17,7 @@
 package controllers.departure
 
 import base.SpecBase
+import base.MockNunjucksRendererApp
 import generators.Generators
 import matchers.JsonMatchers
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
@@ -34,7 +35,7 @@ import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
 
@@ -45,6 +46,13 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
     super.beforeEach
   }
 
+  override def guiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(
+        inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService)
+      )
+
   "DepartureXmlNegativeAcknowledgement Controller" - {
 
     "return OK and the correct view for a GET" in {
@@ -54,17 +62,11 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService)
-        )
-        .build()
-
       val request        = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -77,8 +79,6 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
 
       templateCaptor.getValue mustEqual "departureXmlNegativeAcknowledgement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "render 'Technical difficulty page' when service fails to get rejection message" in {
@@ -87,12 +87,6 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService)
-        )
-        .build()
-
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -100,14 +94,13 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
 
       val request = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-      application.stop()
     }
   }
 }

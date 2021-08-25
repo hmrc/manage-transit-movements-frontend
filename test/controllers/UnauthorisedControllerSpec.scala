@@ -36,11 +36,9 @@ class UnauthorisedControllerSpec extends SpecBase with JsonMatchers {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = None).build()
-
       val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -49,8 +47,6 @@ class UnauthorisedControllerSpec extends SpecBase with JsonMatchers {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "unauthorised.njk"
-
-      application.stop()
     }
   }
 }

@@ -17,6 +17,7 @@
 package controllers.departure
 
 import base.SpecBase
+import base.MockNunjucksRendererApp
 import generators.Generators
 import matchers.JsonMatchers
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
@@ -25,7 +26,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.inject
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,7 +36,7 @@ import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
 
@@ -45,6 +47,13 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
     super.beforeEach
   }
 
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(
+        bind[DepartureMessageService].toInstance(mockDepartureMessageService)
+      )
+
   "CancellationXmlNegativeAcknowledgement Controller" - {
 
     "return OK and the correct view for a GET" in {
@@ -54,17 +63,11 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService)
-        )
-        .build()
-
       val request        = FakeRequest(GET, routes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -78,8 +81,6 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
 
       templateCaptor.getValue mustEqual "cancellationXmlNegativeAcknowledgement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "render 'Technical difficulty page' when service fails to get rejection message" in {
@@ -88,12 +89,6 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          inject.bind[DepartureMessageService].toInstance(mockDepartureMessageService)
-        )
-        .build()
-
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -101,14 +96,13 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
 
       val request = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-      application.stop()
     }
   }
 }

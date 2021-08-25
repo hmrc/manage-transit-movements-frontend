@@ -18,10 +18,8 @@ package base
 
 import controllers.actions._
 import models.UserAnswers
-import models.requests.{IdentifierRequest, OptionalDataRequest}
-import org.mockito.ArgumentMatchers._
+import models.requests.IdentifierRequest
 import org.mockito.Mockito
-import org.mockito.Mockito.when
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -29,51 +27,19 @@ import play.api.Application
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.ActionTransformer
 import play.api.test.Helpers
-import repositories.SessionRepository
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
-
-import scala.concurrent.{ExecutionContext, Future}
 
 trait MockNunjucksRendererApp extends GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar {
   self: TestSuite =>
 
-  val mockRenderers: NunjucksRenderer = mock[NunjucksRenderer]
-
-  val mockDataRetrievalActionProvider: DataRetrievalActionProvider = mock[DataRetrievalActionProvider]
-
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockRenderer: NunjucksRenderer = mock[NunjucksRenderer]
 
   override def beforeEach {
     Mockito.reset(
-      mockRenderers,
-      mockDataRetrievalActionProvider,
-      mockSessionRepository
+      mockRenderer
     )
     super.beforeEach()
-  }
-
-  def dataRetrievalWithData(userAnswers: UserAnswers): Unit = {
-    val fakeDataRetrievalAction = new ActionTransformer[IdentifierRequest, OptionalDataRequest] {
-      override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
-        Future.successful(OptionalDataRequest(request.request, request.eoriNumber, Some(userAnswers)))
-
-      override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.global
-    }
-
-    when(mockDataRetrievalActionProvider.apply(any())).thenReturn(fakeDataRetrievalAction)
-  }
-
-  def dataRetrievalNoData(): Unit = {
-    val fakeDataRetrievalAction = new ActionTransformer[IdentifierRequest, OptionalDataRequest] {
-      override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
-        Future.successful(OptionalDataRequest(request.request, request.eoriNumber, None))
-
-      override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.global
-    }
-
-    when(mockDataRetrievalActionProvider.apply(any())).thenReturn(fakeDataRetrievalAction)
   }
 
   override def fakeApplication(): Application =
@@ -84,24 +50,8 @@ trait MockNunjucksRendererApp extends GuiceOneAppPerSuite with BeforeAndAfterEac
   def guiceApplicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalActionProvider].toInstance(mockDataRetrievalActionProvider),
-        bind[NunjucksRenderer].toInstance(mockRenderers),
-        bind[MessagesApi].toInstance(Helpers.stubMessagesApi()),
-        bind[SessionRepository].toInstance(mockSessionRepository)
-      )
-
-  // TODO: Remove and use app from GuiceOneAppPerSuite instead
-  protected def applicationBuilders(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-      .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalActionProvider]
-          .toInstance(new FakeDataRetrievalActionProvider(userAnswers)),
-        bind[NunjucksRenderer].toInstance(mockRenderers),
+        bind[NunjucksRenderer].toInstance(mockRenderer),
         bind[MessagesApi].toInstance(Helpers.stubMessagesApi())
       )
-
 }

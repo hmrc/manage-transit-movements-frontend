@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.stream.TLSRole.server
 import base.SpecBase
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
@@ -26,11 +25,25 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.test.Helpers
 import play.twirl.api.Html
 
 import scala.concurrent.Future
+import play.api.inject.guice.GuiceApplicationBuilder
 
-class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with BeforeAndAfterEach {
+
+  val mockRenderer: NunjucksRenderer  = mock[NunjucksRenderer]
+  val mockArrivalMovementConnector    = mock[ArrivalMovementConnector]
+  val mockDeparturesMovementConnector = mock[DeparturesMovementConnector]
+  val mockFrontendAppConfig           = mock[FrontendAppConfig]
+
+  override def beforeEach {
+    Mockito.reset(
+      mockRenderer
+    )
+    super.beforeEach()
+  }
 
   "WhatDoYouWantToDo Controller" - {
 
@@ -39,14 +52,32 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(conf = "microservice.services.features.isNIJourneyEnabled" -> false)
-        .build()
-      val request        = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      when(mockArrivalMovementConnector.getArrivals()(any()))
+        .thenReturn(Future.successful(None))
+
+      when(mockArrivalMovementConnector.getDepartures()(any()))
+        .thenReturn(Future.successful(None))
+
+      when(mockFrontendAppConfig.isNIJourneyEnabled)
+        .thenReturn(false)
+
+      val controller = new WhatDoYouWantToDoController(
+        messagesApi                 = messagesApi,
+        identify                    = FakeIdentifierAction(),
+        cc                          = stubControllerComponents(),
+        renderer                    = mockRenderer,
+        formProvider                = new WhatDoYouWantToDoFormProvider,
+        arrivalMovementConnector    = mockArrivalMovementConnector,
+        departuresMovementConnector = mockDeparturesMovementConnector,
+        appConfig                   = mockFrontendAppConfig
+      )
+
+      val request = FakeRequest(GET, controller.onPageLoad().url)
+
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -56,8 +87,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
 
       templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "return OK and the correct view for a GET when NI is enabled" in {
@@ -65,14 +94,32 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(conf = "microservice.services.features.isNIJourneyEnabled" -> true)
-        .build()
-      val request        = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      when(mockArrivalMovementConnector.getArrivals()(any()))
+        .thenReturn(Future.successful(None))
+
+      when(mockArrivalMovementConnector.getDepartures()(any()))
+        .thenReturn(Future.successful(None))
+
+      when(mockFrontendAppConfig.isNIJourneyEnabled)
+        .thenReturn(true)
+
+      val controller = new WhatDoYouWantToDoController(
+        messagesApi                 = messagesApi,
+        identify                    = FakeIdentifierAction(),
+        cc                          = stubControllerComponents(),
+        renderer                    = mockRenderer,
+        formProvider                = new WhatDoYouWantToDoFormProvider,
+        arrivalMovementConnector    = mockArrivalMovementConnector,
+        departuresMovementConnector = mockDeparturesMovementConnector,
+        appConfig                   = mockFrontendAppConfig
+      )
+
+      val request = FakeRequest(GET, controller.onPageLoad().url)
+
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -82,8 +129,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
 
       templateCaptor.getValue mustEqual "index.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "return BAD_REQUEST and the correct view if an invalid value is selected" in {
@@ -91,7 +136,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
         .withFormUrlEncodedBody("value" -> "somethingsWrong")
 
@@ -108,8 +152,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
 
       templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "redirect to index page if GB Movements is selected" in {
@@ -127,7 +169,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
 
       redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
 
-      application.stop()
     }
 
     "redirect to NI interstitial page if NI is selected" in {
@@ -135,7 +176,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      // val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
         .withFormUrlEncodedBody("value" -> "northernIrelandMovements")
 
@@ -144,8 +185,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result) mustBe Some(controllers.routes.NorthernIrelandInterstitialController.onPageLoad().url)
-
-      application.stop()
     }
   }
 }
