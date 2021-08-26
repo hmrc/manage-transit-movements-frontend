@@ -20,14 +20,16 @@ import base.{MockNunjucksRendererApp, SpecBase}
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify}
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.JsObject
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
+import play.twirl.api.Html
 import renderer.Renderer
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class NorthernIrelandInterstitialControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
 
@@ -35,9 +37,11 @@ class NorthernIrelandInterstitialControllerSpec extends SpecBase with MockitoSug
 
     "return OK and the correct view for a GET" in {
 
-      val renderer = app.injector.instanceOf[Renderer]
+      val mockRenderer: Renderer = mock[Renderer]
 
-      val controller = new NorthernIrelandInterstitialController(Helpers.stubMessagesControllerComponents(), renderer)
+      when(mockRenderer.render(any())(any())).thenReturn(Future.successful(Html("")))
+
+      val controller = new NorthernIrelandInterstitialController(Helpers.stubMessagesControllerComponents(), mockRenderer)
 
       val request        = FakeRequest(GET, routes.NorthernIrelandInterstitialController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -47,12 +51,9 @@ class NorthernIrelandInterstitialControllerSpec extends SpecBase with MockitoSug
 
       status(result) mustEqual OK
 
-      verify(renderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj()
+      verify(mockRenderer, times(1)).render(templateCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "northernIrelandInterstitial.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
     }
   }
 }

@@ -50,7 +50,7 @@ class ViewArrivalsControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
-  implicit val frontendAppConfig                    = FakeFrontendAppConfig()
+  implicit val frontendAppConfig           = FakeFrontendAppConfig()
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -63,7 +63,8 @@ class ViewArrivalsControllerSpec
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
+        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
+        bind[FrontendAppConfig].toInstance(frontendAppConfig)
       )
 
   private val mockArrivalResponse: Arrivals =
@@ -92,13 +93,13 @@ class ViewArrivalsControllerSpec
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
       "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl"                   -> controllers.routes.IndexController.onPageLoad().url
+      "homePageUrl"                   -> "/manage-transit-movements/index"
     )
 
   "ViewArrivalNotifications Controller" - {
     "return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -115,7 +116,7 @@ class ViewArrivalsControllerSpec
       val result = route(app, request).value
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1))
+      verify(mockNunjucksRenderer, times(1))
         .render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
@@ -127,7 +128,7 @@ class ViewArrivalsControllerSpec
     "render technical difficulty" in {
 
       val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -145,7 +146,7 @@ class ViewArrivalsControllerSpec
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj {
         "contactUrl" -> config.nctsEnquiriesUrl

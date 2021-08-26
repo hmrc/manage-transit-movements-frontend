@@ -82,7 +82,7 @@ class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
 
     "must return OK and the correct view for a GET with" - {
       "Arrivals and Departures when both respond" in {
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
         when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -99,7 +99,7 @@ class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
@@ -110,7 +110,7 @@ class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
       }
 
       "Arrivals and no departures when display departures services returns false" in {
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
         when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -127,7 +127,7 @@ class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
@@ -138,7 +138,7 @@ class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
 
       "Arrivals when Departures does not respond" in {
 
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
         when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -155,7 +155,7 @@ class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
@@ -164,7 +164,7 @@ class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
       }
 
       "no Arrivals and Departures" in {
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
         when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -181,7 +181,7 @@ class IndexControllerSpec extends SpecBase with MockNunjucksRendererApp {
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 

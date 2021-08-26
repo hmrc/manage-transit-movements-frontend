@@ -19,7 +19,7 @@ package viewModels
 import base.SpecBase
 import base.FakeFrontendAppConfig
 import generators.Generators
-import models.Arrival
+import models.{Arrival, ArrivalId}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages

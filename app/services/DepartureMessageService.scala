@@ -58,8 +58,8 @@ class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector)
         Future.successful(None)
     }
 
-  def getXMLSubmissionNegativeAcknowledgementMessage(
-    departureId: DepartureId)(implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
+  def getXMLSubmissionNegativeAcknowledgementMessage(departureId: DepartureId)(
+    implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
     connectors.getSummary(departureId) flatMap {
       case Some(summary) =>
         summary.messagesLocation.xmlSubmissionNegativeAcknowledgement match {

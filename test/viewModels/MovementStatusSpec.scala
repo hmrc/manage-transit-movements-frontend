@@ -26,7 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
 
 class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-  
+
   val frontendAppConfig = FakeFrontendAppConfig()
 
   "Movement status" - {

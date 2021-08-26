@@ -44,7 +44,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
   private val wsResponse: AhcWSResponse                            = mock[AhcWSResponse]
   val mockDeparturesMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
-  val frontendAppConfig                 = FakeFrontendAppConfig()
+  val frontendAppConfig                                            = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     super.beforeEach
@@ -97,7 +97,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
         val wsResponse: AhcWSResponse = mock[AhcWSResponse]
         when(wsResponse.status) thenReturn errorCode
 
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
 
         when(mockDeparturesMovementConnector.getPDF(any())(any()))
@@ -115,7 +115,7 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         templateCaptor.getValue mustEqual "technicalDifficulties.njk"
         jsonCaptor.getValue must containJson(expectedJson)

@@ -48,12 +48,12 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
           MessagesSummary(
             departureId,
             MessagesLocation(
-              departureMessage = s"/movements/departures/${departureId.index}/messages/3",
-              guaranteeNotValid = Some("/movements/departures/1234/messages/5"),
-              declarationRejection = Some("/movements/departures/1234/messages/7"),
+              departureMessage           = s"/movements/departures/${departureId.index}/messages/3",
+              guaranteeNotValid          = Some("/movements/departures/1234/messages/5"),
+              declarationRejection       = Some("/movements/departures/1234/messages/7"),
               cancellationDecisionUpdate = Some("/movements/departures/1234/messages/9"),
-              declarationCancellation = Some("/movements/departures/1234/messages/11"),
-              noReleaseForTransit = Some("/movements/departures/1234/messages/12"),
+              declarationCancellation    = Some("/movements/departures/1234/messages/11"),
+              noReleaseForTransit        = Some("/movements/departures/1234/messages/12"),
               None
             )
           )
@@ -133,8 +133,7 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
                              None,
                              None,
                              None,
-                             Some("/movements/departures/1234/messages/5")
-            )
+                             Some("/movements/departures/1234/messages/5"))
           )
 
         when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))

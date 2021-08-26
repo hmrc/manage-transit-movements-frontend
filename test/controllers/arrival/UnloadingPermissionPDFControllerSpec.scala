@@ -101,7 +101,7 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
 
       "must render TechnicalDifficulties page if connector returns error" in {
         val config = app.injector.instanceOf[FrontendAppConfig]
-        when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+        when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
         val genErrorResponseCode = Gen.oneOf(300, 500).sample.value
 
@@ -121,7 +121,7 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
         val result = route(app, request).value
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val expectedJson = Json.obj {
           "contactUrl" -> config.nctsEnquiriesUrl

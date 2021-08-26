@@ -72,7 +72,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
       when(mockDeparturesMovementConnector.getDepartures()(any()))
         .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
@@ -84,7 +84,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj()
 
@@ -94,7 +94,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
     "render Technical difficulties page on failing to fetch departures" in {
 
-      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
       when(mockDeparturesMovementConnector.getDepartures()(any()))
         .thenReturn(Future.successful(None))
@@ -108,7 +108,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       status(result) mustBe INTERNAL_SERVER_ERROR
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj()
 

@@ -42,7 +42,7 @@ class OldServiceInterstitialControllerSpec extends SpecBase with MockitoSugar wi
 
       val controller = new OldServiceInterstitialController(Helpers.stubMessagesControllerComponents(), renderer)
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       val request        = FakeRequest(GET, routes.OldServiceInterstitialController.onPageLoad().url)
@@ -53,7 +53,7 @@ class OldServiceInterstitialControllerSpec extends SpecBase with MockitoSugar wi
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj()
 

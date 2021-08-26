@@ -41,7 +41,7 @@ import scala.concurrent.Future
 class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
-  val frontendAppConfig = FakeFrontendAppConfig()
+  val frontendAppConfig                   = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(
@@ -64,7 +64,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
       val controlDecision      = arbitrary[ControlDecision].sample.value
       val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockDepartureMessageService.controlDecisionMessage(any())(any()))
@@ -79,7 +79,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj("controlDecisionMessage" -> controlDecision, "lrn" -> localReferenceNumber)
 
@@ -90,7 +90,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
     "return InternalServerError and the TechnicalDifficulties page for a failed GET " in {
       val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockDepartureMessageService.controlDecisionMessage(any())(any()))
@@ -105,7 +105,7 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 

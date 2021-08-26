@@ -51,11 +51,6 @@ class WhatDoYouWantToDoController @Inject()(
     implicit request =>
       val form = formProvider()
 
-      val json = Json.obj(
-        "form"        -> form,
-        "radios"      -> WhatDoYouWantToDoOptions.radios(form),
-        "warningText" -> msg"whatDoYouWantToDo.warningText"
-      )
       if (appConfig.isNIJourneyEnabled) {
         for {
           arrivals   <- arrivalMovementConnector.getArrivals()
@@ -65,6 +60,13 @@ class WhatDoYouWantToDoController @Inject()(
           Ok(html)
         }
       } else {
+
+        val json = Json.obj(
+          "form"        -> form,
+          "radios"      -> WhatDoYouWantToDoOptions.radios(form),
+          "warningText" -> msg"whatDoYouWantToDo.warningText"
+        )
+
         renderer.render("whatDoYouWantToDo.njk", json).map(Ok(_))
       }
   }

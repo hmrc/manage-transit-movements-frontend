@@ -27,10 +27,29 @@ object FakeFrontendAppConfig {
       "microservice.services.tracking-consent-frontend.gtm.container" -> "tracking-consent-frontend.gtm.container",
       "google-analytics.token"                                        -> "google-analytics.token",
       "google-analytics.host"                                         -> "google-analytics.host",
-      "microservice.services.contact-frontend"                        -> "contact-frontend"
+      "microservice.services.contact-frontend" -> Map(
+        "host"     -> "microservice.services.contact-frontend.host",
+        "port"     -> "microservice.services.contact-frontend.port",
+        "protocol" -> "microservice.services.contact-frontend.protocol",
+        "startUrl" -> "microservice.services.contact-frontend.startUrl"
+      ),
+      "urls" -> Map(
+        "logoutContinue"                             -> "urls.logoutContinue",
+        "feedback"                                   -> "urls.feedback",
+        "declareTransitMovementUnloadingFrontend"    -> "http://localhost:9488/manage-transit-movements-unloading-remarks",
+        "declareTransitMovementArrivalFrontend"      -> "http://localhost:9483/manage-transit-movements-arrivals",
+        "declareTransitMovementDepartureFrontend"    -> "urls.declareTransitMovementDepartureFrontend",
+        "declareTransitMovementCancellationFrontend" -> "urls.declareTransitMovementCancellationFrontend",
+        "nctsEnquiries"                              -> "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/new-computerised-transit-system-enquiries",
+        "enrolmentManagementFrontendEnrolUrl"        -> "urls.enrolmentManagementFrontendEnrolUrl",
+        "login"                                      -> "urls.login",
+        "loginContinue"                              -> "urls.loginContinue"
+      ),
+      "session" -> Map("timeoutSeconds" -> "1", "countdownSeconds"                   -> "2"),
+      "keys"    -> Map("enrolmentKey"   -> "HMCE-NCTS-ORG", "enrolmentIdentifierKey" -> "VATRegNoTURN")
     )
 
-    new FrontendAppConfig(Configuration.from(configMapping.toMap))
+    new FrontendAppConfig(Configuration.from(default ++ configMapping.toMap))
   }
 
 }

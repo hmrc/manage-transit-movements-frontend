@@ -16,13 +16,10 @@
 
 package controllers.departure
 
-import base.{MockNunjucksRendererApp, SpecBase}
-import base.FakeFrontendAppConfig
+import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.FrontendAppConfig
-import controllers.actions.FakeIdentifierAction
 import generators.Generators
 import matchers.JsonMatchers
-import models.DepartureId
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -35,19 +32,14 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import renderer.Renderer
 import services.DepartureMessageService
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
-  private val mockFrontendAppConfig       = mock[FrontendAppConfig]
-  val frontendAppConfig                   = FakeFrontendAppConfig()
-
-  private val renderer = app.injector.instanceOf[Renderer]
+  private val frontendAppConfig           = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(
@@ -61,7 +53,7 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
       .guiceApplicationBuilder()
       .overrides(
         bind[DepartureMessageService].toInstance(mockDepartureMessageService),
-        bind[FrontendAppConfig].toInstance(mockFrontendAppConfig)
+        bind[FrontendAppConfig].toInstance(frontendAppConfig)
       )
 
   "CancellationXmlNegativeAcknowledgement Controller" - {
@@ -69,34 +61,25 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
     "return OK and the correct view for a GET" in {
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
 
-      val controller = new CancellationXmlNegativeAcknowledgementController(
-        messagesApi = messagesApi,
-        identify = FakeIdentifierAction(),
-        cc = stubMessagesControllerComponents(),
-        renderer = renderer,
-        frontendAppConfig = mockFrontendAppConfig,
-        departureMessageService = mockDepartureMessageService
-      )
-
       val request        = FakeRequest(GET, routes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = controller.onPageLoad(DepartureId(0)).apply(request)
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "contactUrl"             -> mockFrontendAppConfig.nctsEnquiriesUrl,
-        "confirmCancellationUrl" -> mockFrontendAppConfig.departureFrontendConfirmCancellationUrl(departureId),
+        "contactUrl"             -> frontendAppConfig.nctsEnquiriesUrl,
+        "confirmCancellationUrl" -> frontendAppConfig.departureFrontendConfirmCancellationUrl(departureId),
         "functionalError"        -> negativeAcknowledgementMessage.error
       )
 
@@ -105,22 +88,24 @@ class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with
     }
 
     "render 'Technical difficulty page' when service fails to get rejection message" in {
-      when(mockRenderer.render(any(), any())(any()))
+
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(None))
+
+      val request = FakeRequest(GET, routes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
-      val request = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
-
       val result = route(app, request).value
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)

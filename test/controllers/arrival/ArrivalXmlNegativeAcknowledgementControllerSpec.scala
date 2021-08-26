@@ -59,7 +59,7 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
     "return OK and the correct view for a GET" in {
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
@@ -72,7 +72,7 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
         "contactUrl"      -> frontendAppConfig.nctsEnquiriesUrl,
@@ -85,7 +85,7 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
     }
 
     "render 'Technical difficulty page' when service fails to get rejection message" in {
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
@@ -100,7 +100,7 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mock
       val result = route(app, request).value
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)

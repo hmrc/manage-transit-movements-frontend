@@ -61,7 +61,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
 
       val transitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
@@ -75,7 +75,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj("noReleaseForTransitMessage" -> Json.toJson(transitMessage))
 
@@ -85,7 +85,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
 
     "render Technical difficulties page on failing to fetch noReleaseForTransitMessage" in {
       val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
         .thenReturn(Future.successful(None))
@@ -99,7 +99,7 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
 
       status(result) mustBe INTERNAL_SERVER_ERROR
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj {
         "contactUrl" -> config.nctsEnquiriesUrl

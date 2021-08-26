@@ -53,7 +53,7 @@ class IdentifierActionSpec extends SpecBase {
   val mockAuthConnector: AuthConnector                     = mock[AuthConnector]
   val mockEnrolmentStoreConnector: EnrolmentStoreConnector = mock[EnrolmentStoreConnector]
   val mockUIRender: Renderer                               = mock[Renderer]
-  val frontendAppConfig = FakeFrontendAppConfig()
+  val frontendAppConfig                                    = FakeFrontendAppConfig()
 
   val enrolmentsWithoutEori: Enrolments = Enrolments(
     Set(
@@ -152,10 +152,7 @@ class IdentifierActionSpec extends SpecBase {
       "must redirect the user to log in " in {
 
         val authAction =
-          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken),
-                                            frontendAppConfig,
-                                            mockEnrolmentStoreConnector,
-                                            mockUIRender)
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -169,10 +166,7 @@ class IdentifierActionSpec extends SpecBase {
 
       "must redirect the user to log in " in {
         val authAction =
-          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired),
-                                            frontendAppConfig,
-                                            mockEnrolmentStoreConnector,
-                                            mockUIRender)
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -185,7 +179,6 @@ class IdentifierActionSpec extends SpecBase {
     "when the user doesn't have sufficient enrolments" - {
 
       "must redirect the user to the unauthorised page" in {
-
 
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments),
                                                            frontendAppConfig,

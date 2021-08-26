@@ -46,7 +46,7 @@ class RedirectControllerSpec extends SpecBase with MockitoSugar with JsonMatcher
 
   "return OK and the correct view for a GET" in {
 
-    when(mockRenderer.render(any(), any())(any()))
+    when(mockNunjucksRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
     val request = FakeRequest(GET, routes.RedirectController.onPageLoad().url)
