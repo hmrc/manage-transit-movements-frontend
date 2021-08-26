@@ -25,11 +25,10 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
   this: Suite =>
 
-  protected val server: WireMockServer = new WireMockServer(wireMockConfig.dynamicPort())
-
-  override def beforeAll(): Unit = {
-    server.start()
-    super.beforeAll()
+  protected val server: WireMockServer = {
+    val svr = new WireMockServer(wireMockConfig.dynamicPort())
+    svr.start()
+    svr
   }
 
   override def beforeEach(): Unit = {
