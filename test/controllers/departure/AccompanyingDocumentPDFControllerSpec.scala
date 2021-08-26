@@ -81,20 +81,16 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
         val request = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
           .withSession("authToken" -> "BearerToken")
 
-        running(app) {
+        val result = route(app, request).value
 
-          val result = route(app, request).value
-
-          status(result) mustEqual OK
-          headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
-          headers(result).get(CONTENT_DISPOSITION).value mustBe "TAD_123"
-        }
+        status(result) mustEqual OK
+        headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
+        headers(result).get(CONTENT_DISPOSITION).value mustBe "TAD_123"
       }
 
       "must redirect to TechnicalDifficultiesController if connector returns error" in {
         val errorCode = Gen.oneOf(300, 500).sample.value
 
-        val wsResponse: AhcWSResponse = mock[AhcWSResponse]
         when(wsResponse.status) thenReturn errorCode
 
         when(mockNunjucksRenderer.render(any(), any())(any()))
