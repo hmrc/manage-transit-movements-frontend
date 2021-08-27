@@ -42,7 +42,7 @@ abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecB
 
   private def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
-  private lazy val renderer = {
+  private val renderer = {
     val env                   = Environment.simple()
     val nunjucksSetup         = new NunjucksSetup(env)
     val nunjucksConfiguration = (new NunjucksConfigurationProvider(Configuration.load(env), nunjucksSetup)).get()
