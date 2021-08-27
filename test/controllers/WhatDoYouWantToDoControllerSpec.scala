@@ -36,7 +36,7 @@ import scala.concurrent.Future
 import base.MockNunjucksRendererApp
 
 class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRendererApp {
-  val frontendAppConfig                 = FakeFrontendAppConfig()
+  val frontendAppConfig = FakeFrontendAppConfig()
 
   private val manageTransitMovementRoute   = "manage-transit-movements"
   private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
@@ -93,8 +93,8 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result      = route(app, request).value
+        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
@@ -119,8 +119,8 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result      = route(app, request).value
+        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
@@ -148,8 +148,8 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
 
-        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result      = route(app, request).value
+        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
@@ -175,8 +175,8 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
 
-        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result      = route(app, request).value
+        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 

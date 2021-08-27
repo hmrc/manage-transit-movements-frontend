@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class RedirectController @Inject()(identify: IdentifierAction, cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+class RedirectController @Inject() (identify: IdentifierAction, cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
