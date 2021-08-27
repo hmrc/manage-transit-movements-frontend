@@ -16,18 +16,16 @@
 
 package views
 
-import base.ViewSpecBase
+import base.SingleViewSpec
 import generators.Generators
-import models.LocalReferenceNumber
 import models.departure.ControlDecision
 import org.jsoup.nodes.Document
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import utils.Format
 import java.time.LocalDate
 
-class ControlDecisionViewSpec extends ViewSpecBase with Generators with ScalaCheckPropertyChecks {
+class ControlDecisionViewSpec extends SingleViewSpec("controlDecision.njk") with Generators with ScalaCheckPropertyChecks {
 
   "ControlDecisionView" - {
 
@@ -35,7 +33,6 @@ class ControlDecisionViewSpec extends ViewSpecBase with Generators with ScalaChe
       val setControlDecision = ControlDecision("mrnValue", LocalDate.now(), "principleTraderNameValue", Some("eoriValue"))
 
       val doc: Document = renderDocument(
-        "controlDecision.njk",
         Json.obj("controlDecisionMessage" -> Json.toJson(setControlDecision), "lrn" -> lrn.value)
       ).futureValue
 
@@ -53,7 +50,6 @@ class ControlDecisionViewSpec extends ViewSpecBase with Generators with ScalaChe
       val setControlDecision = ControlDecision("mrnValue", LocalDate.now(), "principleTraderNameValue", None)
 
       val doc: Document = renderDocument(
-        "controlDecision.njk",
         Json.obj("controlDecisionMessage" -> Json.toJson(setControlDecision), "lrn" -> lrn.value)
       ).futureValue
 

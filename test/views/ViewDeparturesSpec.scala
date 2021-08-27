@@ -19,7 +19,8 @@ package views
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import base._
+import base.SingleViewSpec
+import base.FakeFrontendAppConfig
 import generators.Generators
 import models.Departure
 import org.jsoup.nodes.Document
@@ -29,7 +30,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewDeparture, ViewDepartureMovements}
 
-class ViewDeparturesSpec extends ViewSpecBase with Generators with ScalaCheckPropertyChecks {
+class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with Generators with ScalaCheckPropertyChecks {
 
   "ViewDepartures" - {
     "generate list on correct order" in {
@@ -58,10 +59,11 @@ class ViewDeparturesSpec extends ViewSpecBase with Generators with ScalaCheckPro
 
       val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))(ViewDepartureMovements.writes(frontendAppConfig))
 
-      val doc: Document = renderDocument("viewArrivals.njk", formatToJson).futureValue
+      val doc: Document = renderDocument(formatToJson).futureValue
 
-      doc.getElementsByClass("govuk-heading-m").size() mustEqual 6
       val ls: Elements = doc.getElementsByClass("govuk-heading-m")
+
+      ls.size() mustEqual 6
       ls.eq(0).text() mustBe "16 August 2020"
       ls.eq(1).text() mustBe "15 August 2020"
       ls.eq(2).text() mustBe "14 August 2020"

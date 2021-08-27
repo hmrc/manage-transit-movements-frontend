@@ -16,53 +16,14 @@
 
 package base
 
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.libs.json.{JsObject, Json}
-import play.twirl.api.Html
-import renderer.Renderer
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import org.scalatest.matchers.must.Matchers
+import play.api.i18n.Messages
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import play.api.Environment
-import play.api.Configuration
-import play.api.test.Helpers
-import uk.gov.hmrc.nunjucks.NunjucksSetup
-import uk.gov.hmrc.nunjucks.NunjucksRenderer
-import uk.gov.hmrc.nunjucks.DevelopmentNunjucksRoutesHelper
-import uk.gov.hmrc.nunjucks.NunjucksConfigurationProvider
+private[base] trait ViewSpecAssertions {
+  self: Matchers =>
 
-trait ViewSpecBase extends SpecBase with NunjucksSupport {
-
-  private def asDocument(html: Html): Document = Jsoup.parse(html.toString())
-
-  private lazy val renderer = {
-    val env                   = Environment.simple()
-    val nunjucksSetup         = new NunjucksSetup(env)
-    val nunjucksConfiguration = (new NunjucksConfigurationProvider(Configuration.load(env), nunjucksSetup)).get()
-    val nunjucksRoutesHelper  = new DevelopmentNunjucksRoutesHelper(env)
-
-    val nunjucksRenderer = new NunjucksRenderer(
-      nunjucksSetup,
-      nunjucksConfiguration,
-      env,
-      nunjucksRoutesHelper,
-      Helpers.stubMessagesApi()
-    )
-
-    new Renderer(FakeFrontendAppConfig(), nunjucksRenderer)
-  }
-
-  def renderDocument(template: String, json: JsObject = Json.obj()): Future[Document] = {
-    import play.api.test.CSRFTokenHelper._
-
-    implicit val fr = fakeRequest.withCSRFToken
-
-    renderer
-      .render(template, json)
-      .map(asDocument)
-  }
+  def messages: Messages
 
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String) =
     assertEqualsValue(doc, cssSelector, messages(expectedMessageKey))

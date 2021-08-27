@@ -18,8 +18,7 @@ package views
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
-import base.ViewSpecBase
+import base.SingleViewSpec
 import base.FakeFrontendAppConfig
 import generators.Generators
 import models.Arrival
@@ -30,7 +29,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
-class ViewArrivalsSpec extends ViewSpecBase with Generators with ScalaCheckPropertyChecks {
+class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generators with ScalaCheckPropertyChecks {
 
   val frontendAppConfig = FakeFrontendAppConfig()
 
@@ -60,7 +59,7 @@ class ViewArrivalsSpec extends ViewSpecBase with Generators with ScalaCheckPrope
 
       val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
 
-      val doc: Document = renderDocument("viewArrivals.njk", formatToJson).futureValue
+      val doc: Document = renderDocument(formatToJson).futureValue
 
       doc.getElementsByClass("govuk-heading-m").size() mustEqual 6
       val ls: Elements = doc.getElementsByClass("govuk-heading-m")
