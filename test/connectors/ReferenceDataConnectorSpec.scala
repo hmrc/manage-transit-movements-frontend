@@ -28,7 +28,7 @@ import play.api.test.Helpers._
 
 class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
+  lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.reference-data.port" -> server.port()
     )
@@ -76,7 +76,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
         val result = connector.getCustomsOffice(customsOfficeId)
 
-        result.futureValue must not be (defined)
+        result.futureValue must not be defined
 
       }
 
@@ -95,7 +95,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
             val result = connector.getCustomsOffice(customsOfficeId)
 
-            result.futureValue must not be (defined)
+            result.futureValue must not be defined
         }
       }
     }

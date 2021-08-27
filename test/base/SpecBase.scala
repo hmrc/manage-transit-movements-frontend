@@ -16,31 +16,21 @@
 
 package base
 
-import config.FrontendAppConfig
-import controllers.actions._
-import models.{DepartureId, LocalReferenceNumber, UserAnswers}
-import org.mockito.Mockito
+import models.{DepartureId, LocalReferenceNumber}
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice._
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.inject.{bind, Injector}
-import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import play.api.test.Helpers
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
-import uk.gov.hmrc.nunjucks.NunjucksRenderer
-
-import scala.reflect.ClassTag
 
 trait SpecBase
     extends AnyFreeSpec
     with Matchers
-    with GuiceOneAppPerSuite
     with OptionValues
     with TryValues
     with ScalaFutures
@@ -48,43 +38,19 @@ trait SpecBase
     with MockitoSugar
     with BeforeAndAfterEach {
 
-  override def beforeEach {
-    Mockito.reset(mockRenderer)
-  }
-
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
 
-  val userAnswersId = "id"
-
   val departureId = DepartureId(1)
 
-  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, Json.obj())
+  // TODO: remove all references to this and use [[play.api.test.Helpers.stubMessagesApi]]
+  def messagesApi: MessagesApi = Helpers.stubMessagesApi()
 
-  def injector: Injector = app.injector
-
-  def frontendAppConfig: FrontendAppConfig =
-    injector.instanceOf[FrontendAppConfig]
-
-  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+  // TODO: remove all references to this and explicitly use [[play.api.test.Helpers.stubMessages]]
+  implicit def messages: Messages = Helpers.stubMessages()
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
-  val mockRenderer: NunjucksRenderer = mock[NunjucksRenderer]
-
-  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
-
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
 
-  def bindingOverride[A: ClassTag](module: A): GuiceApplicationBuilder => GuiceApplicationBuilder =
-    guiceApplicationBuilder => guiceApplicationBuilder.overrides(bind[A].toInstance(module))
-
-  protected def applicationBuilder(
-    userAnswers: Option[UserAnswers] = None
-  ): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-      .overrides(
-        bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[NunjucksRenderer].toInstance(mockRenderer)
-      )
 }

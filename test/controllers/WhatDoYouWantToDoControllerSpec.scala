@@ -17,6 +17,7 @@
 package controllers
 
 import java.time.LocalDateTime
+import base.FakeFrontendAppConfig
 import base.SpecBase
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
@@ -32,8 +33,10 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 
 import scala.concurrent.Future
+import base.MockNunjucksRendererApp
 
-class WhatDoYouWantToDoControllerSpec extends SpecBase {
+class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRendererApp {
+  val frontendAppConfig = FakeFrontendAppConfig()
 
   private val manageTransitMovementRoute   = "manage-transit-movements"
   private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
@@ -68,20 +71,20 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
       "hasDepartures"                  -> hasDepartures
     )
 
-  def applicationBuild =
-    applicationBuilder(userAnswers = None)
+  override def guiceApplicationBuilder() =
+    super
+      .guiceApplicationBuilder()
       .configure(Configuration("microservice.services.features.departureJourney" -> true))
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector)
       )
-      .build()
 
   "WhatDoYouWantToDo Controller" - {
 
     "must return OK and the correct view for a GET with" - {
       "Arrivals and Departures when both respond" in {
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
         when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -90,28 +93,24 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-        val application = applicationBuild
-        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result      = route(application, request).value
+        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
         templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
-        jsonCaptorWithoutConfig mustBe
-          expectedJson(true, true, true, true)
-
-        application.stop()
+        jsonCaptorWithoutConfig mustBe expectedJson(true, true, true, true)
       }
 
       "Arrivals and no departures when display departures services returns false" in {
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
         when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -120,16 +119,15 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-        val application = applicationBuild
-        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result      = route(application, request).value
+        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
@@ -137,12 +135,11 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         jsonCaptorWithoutConfig mustBe
           expectedJson(true, true, true, true)
 
-        application.stop()
       }
 
       "Arrivals when Departures does not respond" in {
 
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
         when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -151,27 +148,25 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
 
-        val application = applicationBuild
-        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result      = route(application, request).value
+        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
         templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
         jsonCaptorWithoutConfig mustBe expectedJson(true, true, false, false)
 
-        application.stop()
       }
 
       "no Arrivals and Departures" in {
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
         when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -180,23 +175,21 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDepartures()(any()))
           .thenReturn(Future.successful(None))
 
-        val application = applicationBuild
-        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result      = route(application, request).value
+        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result  = route(app, request).value
 
         status(result) mustEqual OK
 
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
         templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
         jsonCaptorWithoutConfig mustBe expectedJson(false, false, false, false)
 
-        application.stop()
       }
     }
   }

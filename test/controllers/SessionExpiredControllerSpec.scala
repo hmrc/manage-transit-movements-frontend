@@ -16,40 +16,41 @@
 
 package controllers
 
-import base.SpecBase
+import base.{MockNunjucksRendererApp, SpecBase}
+import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.test.{FakeRequest, Helpers}
 import play.twirl.api.Html
+import renderer.Renderer
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class SessionExpiredControllerSpec extends SpecBase {
+class SessionExpiredControllerSpec extends SpecBase with JsonMatchers with MockNunjucksRendererApp {
 
   "Session Expired Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val mockRenderer: Renderer = mock[Renderer]
 
-      val application = applicationBuilder(userAnswers = None).build()
+      when(mockRenderer.render(any())(any())).thenReturn(Future.successful(Html("")))
 
-      val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
+      val controller = new SessionExpiredController(Helpers.stubMessagesControllerComponents(), mockRenderer)
 
-      val result = route(application, request).value
+      val request        = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = controller.onPageLoad.apply(request)
 
       status(result) mustEqual OK
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "session-expired.njk"
-
-      application.stop()
     }
   }
 }

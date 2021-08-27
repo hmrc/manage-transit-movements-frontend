@@ -30,22 +30,32 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccompanyingDocumentPDFController @Inject()(
-  identify: IdentifierAction,
-  cc: MessagesControllerComponents,
-  departuresMovementConnector: DeparturesMovementConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, renderer: Renderer)
+class AccompanyingDocumentPDFController @Inject() (identify: IdentifierAction,
+                                                   cc: MessagesControllerComponents,
+                                                   departuresMovementConnector: DeparturesMovementConnector
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, renderer: Renderer)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def getPDF(departureId: DepartureId): Action[AnyContent] = identify.async {
+  def getPDF(departureId: DepartureId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       departuresMovementConnector.getPDF(departureId).flatMap {
         result =>
           result.status match {
             case OK =>
-              val contentDisposition = result.headers.get(CONTENT_DISPOSITION).map(value => Seq((CONTENT_DISPOSITION, value.head))).getOrElse(Seq.empty)
-              val contentType        = result.headers.get(CONTENT_TYPE).map(value => Seq((CONTENT_TYPE, value.head))).getOrElse(Seq.empty)
-              val headers            = contentDisposition ++ contentType
+              val contentDisposition = result.headers
+                .get(CONTENT_DISPOSITION)
+                .map(
+                  value => Seq((CONTENT_DISPOSITION, value.head))
+                )
+                .getOrElse(Seq.empty)
+              val contentType = result.headers
+                .get(CONTENT_TYPE)
+                .map(
+                  value => Seq((CONTENT_TYPE, value.head))
+                )
+                .getOrElse(Seq.empty)
+              val headers = contentDisposition ++ contentType
 
               Future.successful(
                 Ok(result.bodyAsBytes.toArray).withHeaders(headers: _*)

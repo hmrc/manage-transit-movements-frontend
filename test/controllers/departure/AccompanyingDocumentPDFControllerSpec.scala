@@ -18,6 +18,8 @@ package controllers.departure
 
 import akka.util.ByteString
 import base.SpecBase
+import base.FakeFrontendAppConfig
+import base.MockNunjucksRendererApp
 import connectors.DeparturesMovementConnector
 import controllers.departure.{routes => departureRoutes}
 import generators.Generators
@@ -29,6 +31,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.ahc.AhcWSResponse
 import play.api.test.FakeRequest
@@ -37,10 +40,11 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with MockNunjucksRendererApp {
 
   private val wsResponse: AhcWSResponse                            = mock[AhcWSResponse]
   val mockDeparturesMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
+  val frontendAppConfig                                            = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     super.beforeEach
@@ -48,8 +52,9 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
     reset(mockDeparturesMovementConnector)
   }
 
-  private val appBuilder =
-    applicationBuilder()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
       .overrides(
         bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector)
       )
@@ -73,28 +78,22 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val departureId = DepartureId(0)
 
-        val application = appBuilder.build()
-
         val request = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
           .withSession("authToken" -> "BearerToken")
 
-        running(application) {
+        val result = route(app, request).value
 
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-          headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
-          headers(result).get(CONTENT_DISPOSITION).value mustBe "TAD_123"
-        }
+        status(result) mustEqual OK
+        headers(result).get(CONTENT_TYPE).value mustEqual "application/pdf"
+        headers(result).get(CONTENT_DISPOSITION).value mustBe "TAD_123"
       }
 
       "must redirect to TechnicalDifficultiesController if connector returns error" in {
         val errorCode = Gen.oneOf(300, 500).sample.value
 
-        val wsResponse: AhcWSResponse = mock[AhcWSResponse]
         when(wsResponse.status) thenReturn errorCode
 
-        when(mockRenderer.render(any(), any())(any()))
+        when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
 
         when(mockDeparturesMovementConnector.getPDF(any())(any()))
@@ -102,23 +101,20 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val departureId = DepartureId(0)
 
-        val application = appBuilder.build()
-
         val request        = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
         val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         templateCaptor.getValue mustEqual "technicalDifficulties.njk"
         jsonCaptor.getValue must containJson(expectedJson)
-        application.stop()
       }
     }
   }

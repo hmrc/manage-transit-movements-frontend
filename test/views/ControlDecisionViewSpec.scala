@@ -25,53 +25,46 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import utils.Format
+import java.time.LocalDate
 
 class ControlDecisionViewSpec extends ViewSpecBase with Generators with ScalaCheckPropertyChecks {
 
   "ControlDecisionView" - {
 
     "must return eori number if available and hide trader name" in {
+      val setControlDecision = ControlDecision("mrnValue", LocalDate.now(), "principleTraderNameValue", Some("eoriValue"))
 
-      forAll(arbitrary[ControlDecision], nonEmptyString, arbitrary[LocalReferenceNumber]) {
-        (controlDecision, eoriNumber, lrn) =>
-          val setControlDecision = controlDecision.copy(principleEori = Some(eoriNumber))
+      val doc: Document = renderDocument(
+        "controlDecision.njk",
+        Json.obj("controlDecisionMessage" -> Json.toJson(setControlDecision), "lrn" -> lrn.value)
+      ).futureValue
 
-          val doc: Document = renderDocument(
-            "controlDecision.njk",
-            Json.obj("controlDecisionMessage" -> Json.toJson(setControlDecision), "lrn" -> lrn.value)
-          ).futureValue
+      val getSummaryElements = doc.getElementsByClass("govuk-summary-list__row")
 
-          val getSummaryElements = doc.getElementsByClass("govuk-summary-list__row")
+      getSummaryElements.size mustBe 4
 
-          getSummaryElements.size mustBe 4
-
-          getSummaryElements.eq(0).select("dd").text mustBe setControlDecision.movementReferenceNumber
-          getSummaryElements.eq(1).select("dd").text mustBe lrn.value
-          getSummaryElements.eq(2).select("dd").text mustBe setControlDecision.principleEori.value
-          getSummaryElements.eq(3).select("dd").text mustBe Format.controlDecisionDateFormatted(setControlDecision.dateOfControl)
-      }
+      getSummaryElements.eq(0).select("dd").text mustBe setControlDecision.movementReferenceNumber
+      getSummaryElements.eq(1).select("dd").text mustBe lrn.value
+      getSummaryElements.eq(2).select("dd").text mustBe setControlDecision.principleEori.value
+      getSummaryElements.eq(3).select("dd").text mustBe Format.controlDecisionDateFormatted(setControlDecision.dateOfControl)
     }
 
     "must return trader name if eori number is unavailable" in {
+      val setControlDecision = ControlDecision("mrnValue", LocalDate.now(), "principleTraderNameValue", None)
 
-      forAll(arbitrary[ControlDecision], arbitrary[LocalReferenceNumber]) {
-        (controlDecision, lrn) =>
-          val setControlDecision = controlDecision.copy(principleEori = None)
+      val doc: Document = renderDocument(
+        "controlDecision.njk",
+        Json.obj("controlDecisionMessage" -> Json.toJson(setControlDecision), "lrn" -> lrn.value)
+      ).futureValue
 
-          val doc: Document = renderDocument(
-            "controlDecision.njk",
-            Json.obj("controlDecisionMessage" -> Json.toJson(setControlDecision), "lrn" -> lrn.value)
-          ).futureValue
+      val getSummaryElements = doc.getElementsByClass("govuk-summary-list__row")
 
-          val getSummaryElements = doc.getElementsByClass("govuk-summary-list__row")
+      getSummaryElements.size mustBe 4
 
-          getSummaryElements.size mustBe 4
-
-          getSummaryElements.eq(0).select("dd").text mustBe setControlDecision.movementReferenceNumber
-          getSummaryElements.eq(1).select("dd").text mustBe lrn.value
-          getSummaryElements.eq(2).select("dd").text mustBe setControlDecision.principleTraderName
-          getSummaryElements.eq(3).select("dd").text mustBe Format.controlDecisionDateFormatted(setControlDecision.dateOfControl)
-      }
+      getSummaryElements.eq(0).select("dd").text mustBe setControlDecision.movementReferenceNumber
+      getSummaryElements.eq(1).select("dd").text mustBe lrn.value
+      getSummaryElements.eq(2).select("dd").text mustBe setControlDecision.principleTraderName
+      getSummaryElements.eq(3).select("dd").text mustBe Format.controlDecisionDateFormatted(setControlDecision.dateOfControl)
     }
   }
 

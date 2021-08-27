@@ -17,6 +17,7 @@
 package viewModels
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
 import generators.Generators
 import models.Arrival
 import controllers.arrival.{routes => arrivalRoute}
@@ -25,6 +26,8 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
 
 class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+
+  val frontendAppConfig = FakeFrontendAppConfig()
 
   "Movement status" - {
     "display correct status" - {

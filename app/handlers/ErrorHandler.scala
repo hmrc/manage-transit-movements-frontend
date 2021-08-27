@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 // NOTE: There should be changes to bootstrap to make this easier, the API in bootstrap should allow a `Future[Html]` rather than just an `Html`
 @Singleton
-class ErrorHandler @Inject()(
+class ErrorHandler @Inject() (
   renderer: Renderer,
   val messagesApi: MessagesApi
 )(implicit ec: ExecutionContext)
@@ -78,9 +78,12 @@ class ErrorHandler @Inject()(
         |
         |! %sInternal server error, for (%s) [%s] ->
         | """.stripMargin.format(ex match {
-        case p: PlayException => "@" + p.id + " - "
-        case _                => ""
-      }, request.method, request.uri),
+                                   case p: PlayException => "@" + p.id + " - "
+                                   case _                => ""
+                                 },
+                                 request.method,
+                                 request.uri
+      ),
       ex
     )
 }

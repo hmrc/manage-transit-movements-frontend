@@ -33,13 +33,12 @@ trait FormBehaviours extends FormSpec {
     }
 
   def formWithOptionalTextFields(fields: String*) =
-    for (field <- fields) {
+    for (field <- fields)
       s"must bind when $field is omitted" in {
         val data      = validData - field
         val boundForm = form.bind(data)
         boundForm.errors.isEmpty mustBe true
       }
-    }
 
   def formWithMandatoryTextFields(fields: Field*) =
     for (field <- fields) {
@@ -86,13 +85,12 @@ trait FormBehaviours extends FormSpec {
     }
 
   def formWithOptionField(field: Field, validValues: String*) = {
-    for (validValue <- validValues) {
+    for (validValue <- validValues)
       s"must bind when ${field.name} is set to $validValue" in {
         val data      = validData + (field.name -> validValue)
         val boundForm = form.bind(data)
         boundForm.errors.isEmpty mustBe true
       }
-    }
 
     s"must fail to bind when ${field.name} is omitted" in {
       val data          = validData - field.name

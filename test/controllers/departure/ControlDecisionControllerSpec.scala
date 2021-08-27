@@ -17,6 +17,8 @@
 package controllers.departure
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
+import base.MockNunjucksRendererApp
 import generators.Generators
 import matchers.JsonMatchers
 import models.departure.ControlDecision
@@ -27,6 +29,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,9 +38,10 @@ import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
+  val frontendAppConfig                   = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(
@@ -46,6 +50,13 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
     super.beforeEach
   }
 
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(
+        bind[DepartureMessageService].toInstance(mockDepartureMessageService)
+      )
+
   "ControlDecision Controller" - {
 
     "return OK and the correct view for a GET" in {
@@ -53,69 +64,53 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
       val controlDecision      = arbitrary[ControlDecision].sample.value
       val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMessageService.controlDecisionMessage(any())(any(), any()))
+      when(mockDepartureMessageService.controlDecisionMessage(any())(any()))
         .thenReturn(Future.successful(Some(controlDecision)))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[DepartureMessageService].toInstance(mockDepartureMessageService)
-        )
-        .build()
 
       val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj("controlDecisionMessage" -> controlDecision, "lrn" -> localReferenceNumber)
 
       templateCaptor.getValue mustEqual "controlDecision.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "return InternalServerError and the TechnicalDifficulties page for a failed GET " in {
       val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMessageService.controlDecisionMessage(any())(any(), any()))
+      when(mockDepartureMessageService.controlDecisionMessage(any())(any()))
         .thenReturn(Future.successful(None))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[DepartureMessageService].toInstance(mockDepartureMessageService)
-        )
-        .build()
 
       val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

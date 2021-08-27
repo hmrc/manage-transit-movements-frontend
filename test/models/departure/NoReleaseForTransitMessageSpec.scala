@@ -37,9 +37,12 @@ class NoReleaseForTransitMessageSpec extends AnyFreeSpec with Matchers with Gene
           val validXml: NodeSeq = <CC051B>
             <HEAHEA>
               <DocNumHEA5>{noReleaseForTransitMessage.mrn}</DocNumHEA5>
-              {noReleaseForTransitMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
+              {
+            noReleaseForTransitMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
               noReleaseMotivation =>
-                <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>}}
+                <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>
+            }
+          }
               <TotNumOfIteHEA305>{noReleaseForTransitMessage.totalNumberOfItems}</TotNumOfIteHEA305>
             </HEAHEA>
             <CUSOFFDEPEPT><RefNumEPT1>{noReleaseForTransitMessage.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>
@@ -47,16 +50,21 @@ class NoReleaseForTransitMessageSpec extends AnyFreeSpec with Matchers with Gene
               <ConResCodERS16>{noReleaseForTransitMessage.controlResult.code}</ConResCodERS16>
               <ConDatERS14>{Format.dateFormatted(noReleaseForTransitMessage.controlResult.datLimERS69)}</ConDatERS14>
             </CONRESERS>
-            {noReleaseForTransitMessage.resultsOfControl.fold(NodeSeq.Empty) {
+            {
+            noReleaseForTransitMessage.resultsOfControl.fold(NodeSeq.Empty) {
               resultsOfControl =>
-                resultsOfControl.map { rc =>
-                  <RESOFCON534><ConInd424>{rc.controlIndicator}</ConInd424>
-                    {rc.description.fold(NodeSeq.Empty) {
-                    description => <DesTOC2>{description}</DesTOC2>
-                  }}
+                resultsOfControl.map {
+                  rc =>
+                    <RESOFCON534><ConInd424>{rc.controlIndicator}</ConInd424>
+                    {
+                      rc.description.fold(NodeSeq.Empty) {
+                        description => <DesTOC2>{description}</DesTOC2>
+                      }
+                    }
                   </RESOFCON534>
                 }
-            }}
+            }
+          }
           </CC051B>
 
           val result = XmlReader.of[NoReleaseForTransitMessage].read(validXml).toOption.value

@@ -17,6 +17,7 @@
 package controllers.departure
 
 import base.SpecBase
+import base.MockNunjucksRendererApp
 import config.FrontendAppConfig
 import generators.Generators
 import matchers.JsonMatchers
@@ -27,6 +28,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,7 +37,7 @@ import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
 
@@ -45,65 +47,59 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
     )
     super.beforeEach
   }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(
+        bind[DepartureMessageService].toInstance(mockDepartureMessageService)
+      )
+
   "NoReleaseForTransit Controller" - {
 
     "return OK and the correct view for a GET" in {
 
       val transitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
+      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
         .thenReturn(Future.successful(Some(transitMessage)))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[DepartureMessageService].toInstance(mockDepartureMessageService)
-        )
-        .build()
 
       val request        = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj("noReleaseForTransitMessage" -> Json.toJson(transitMessage))
 
       templateCaptor.getValue mustEqual "noReleaseForTransit.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "render Technical difficulties page on failing to fetch noReleaseForTransitMessage" in {
       val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any(), any()))
+      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[DepartureMessageService].toInstance(mockDepartureMessageService)
-        )
-        .build()
-
       val request = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustBe INTERNAL_SERVER_ERROR
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj {
         "contactUrl" -> config.nctsEnquiriesUrl
@@ -111,8 +107,6 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

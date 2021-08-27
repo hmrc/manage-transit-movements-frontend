@@ -28,12 +28,13 @@ object AppDependencies {
     "org.mockito"                 %  "mockito-core"             % "3.3.3",
     "org.scalacheck"              %% "scalacheck"               % "1.14.3",
     "com.github.tomakehurst"      % "wiremock-standalone"       % "2.27.1",
-    "com.vladsch.flexmark"        % "flexmark-all"              % "0.36.8"
+    "com.vladsch.flexmark"        % "flexmark-all"              % "0.36.8",
+    "uk.gov.hmrc"                 %% "bootstrap-test-play-27"   % "5.0.0"
   ).map(_ % Test)
 
   def apply(): Seq[ModuleID] = compile ++ test
 
-  val akkaVersion = "2.6.7"
+  val akkaVersion     = "2.6.7"
   val akkaHttpVersion = "10.1.12"
 
   val overrides = Seq(

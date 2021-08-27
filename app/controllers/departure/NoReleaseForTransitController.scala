@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class NoReleaseForTransitController @Inject()(
+class NoReleaseForTransitController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
@@ -42,7 +42,7 @@ class NoReleaseForTransitController @Inject()(
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(departureId: DepartureId): Action[AnyContent] = identify.async {
+  def onPageLoad(departureId: DepartureId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       departureMessageService.noReleaseForTransitMessage(departureId).flatMap {
         case Some(message) =>

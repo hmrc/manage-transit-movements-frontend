@@ -31,24 +31,23 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatDoYouWantToDoController @Inject()(appConfig: FrontendAppConfig,
-                                            identify: IdentifierAction,
-                                            cc: MessagesControllerComponents,
-                                            val arrivalMovementConnector: ArrivalMovementConnector,
-                                            val departuresMovementConnector: DeparturesMovementConnector,
-                                            renderer: Renderer)(implicit ec: ExecutionContext)
+class WhatDoYouWantToDoController @Inject() (appConfig: FrontendAppConfig,
+                                             identify: IdentifierAction,
+                                             cc: MessagesControllerComponents,
+                                             val arrivalMovementConnector: ArrivalMovementConnector,
+                                             val departuresMovementConnector: DeparturesMovementConnector,
+                                             renderer: Renderer
+)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify.async {
+  def onPageLoad: Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
         arrivals   <- arrivalMovementConnector.getArrivals()
         departures <- departuresMovementConnector.getDepartures()
         html       <- renderPage(arrivals, departures)
-      } yield {
-        Ok(html)
-      }
+      } yield Ok(html)
   }
 
   private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader): Future[Html] =

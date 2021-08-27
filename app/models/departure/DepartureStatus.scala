@@ -41,7 +41,7 @@ object DepartureStatus {
   case object DeclarationCancellationRequestNegativeAcknowledgement extends DepartureStatus
   case object InvalidStatus extends DepartureStatus
 
-  val values: Seq[DepartureStatus] = {
+  val values: Seq[DepartureStatus] =
     Seq(
       MrnAllocated,
       DepartureSubmitted,
@@ -61,7 +61,6 @@ object DepartureStatus {
       DepartureSubmittedNegativeAcknowledgement,
       InvalidStatus
     )
-  }
 
   implicit val reads: Reads[DepartureStatus] = __.read[String].map {
     case "MrnAllocated"                                          => MrnAllocated

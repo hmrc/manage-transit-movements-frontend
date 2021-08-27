@@ -36,8 +36,11 @@ class ResultsOfControlSpec extends AnyFreeSpec with Matchers with ScalaCheckProp
           val xml =
             <RESOFCON534>
               <ConInd424>{resultsOfControl.controlIndicator}</ConInd424>
-              {resultsOfControl.description.fold(NodeSeq.Empty) {
-              description => <DesTOC2>{description}</DesTOC2>}}
+              {
+              resultsOfControl.description.fold(NodeSeq.Empty) {
+                description => <DesTOC2>{description}</DesTOC2>
+              }
+            }
             </RESOFCON534>
           val result = XmlReader.of[ResultsOfControl].read(xml).toOption.value
           result mustBe resultsOfControl

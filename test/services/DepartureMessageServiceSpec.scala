@@ -26,10 +26,8 @@ import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
-import play.api.inject.bind
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with Matchers with Generators {
 
@@ -40,11 +38,7 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
     reset(mockDepartureConnector)
   }
 
-  val application = applicationBuilder()
-    .overrides(bind[DeparturesMovementConnector].toInstance(mockDepartureConnector))
-    .build()
-
-  private val messageService = application.injector.instanceOf[DepartureMessageService]
+  private val messageService = new DepartureMessageService(mockDepartureConnector)
 
   "DepartureMessageService" - {
     "getNoReleaseForTransitMessage" - {
@@ -54,12 +48,12 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
           MessagesSummary(
             departureId,
             MessagesLocation(
-              departureMessage           = s"/movements/departures/${departureId.index}/messages/3",
-              guaranteeNotValid          = Some("/movements/departures/1234/messages/5"),
-              declarationRejection       = Some("/movements/departures/1234/messages/7"),
+              departureMessage = s"/movements/departures/${departureId.index}/messages/3",
+              guaranteeNotValid = Some("/movements/departures/1234/messages/5"),
+              declarationRejection = Some("/movements/departures/1234/messages/7"),
               cancellationDecisionUpdate = Some("/movements/departures/1234/messages/9"),
-              declarationCancellation    = Some("/movements/departures/1234/messages/11"),
-              noReleaseForTransit        = Some("/movements/departures/1234/messages/12"),
+              declarationCancellation = Some("/movements/departures/1234/messages/11"),
+              noReleaseForTransit = Some("/movements/departures/1234/messages/12"),
               None
             )
           )
@@ -139,7 +133,8 @@ class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with 
                              None,
                              None,
                              None,
-                             Some("/movements/departures/1234/messages/5"))
+                             Some("/movements/departures/1234/messages/5")
+            )
           )
 
         when(mockDepartureConnector.getSummary(any())(any())).thenReturn(Future.successful(Some(messagesSummary)))

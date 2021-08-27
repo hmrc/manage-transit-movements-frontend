@@ -74,7 +74,9 @@ trait Formatters {
               nonFatalCatch
                 .either(s.toInt)
                 .left
-                .map(_ => Seq(FormError(key, nonNumericKey, args)))
+                .map(
+                  _ => Seq(FormError(key, nonNumericKey, args))
+                )
           }
 
       override def unbind(key: String, value: Int) =

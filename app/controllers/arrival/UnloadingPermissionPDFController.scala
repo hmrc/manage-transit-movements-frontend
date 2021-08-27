@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UnloadingPermissionPDFController @Inject()(
+class UnloadingPermissionPDFController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   arrivalMovementConnector: ArrivalMovementConnector,
@@ -41,7 +41,7 @@ class UnloadingPermissionPDFController @Inject()(
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def getPDF(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
+  def getPDF(arrivalId: ArrivalId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       hc.authorization
         .map {
@@ -49,16 +49,24 @@ class UnloadingPermissionPDFController @Inject()(
             arrivalMovementConnector.getPDF(arrivalId, token.value).flatMap {
               result =>
                 result.status match {
-                  case OK => {
-
-                    val contentDisposition = result.headers.get(CONTENT_DISPOSITION).map(value => Seq((CONTENT_DISPOSITION, value.head))).getOrElse(Seq.empty)
-                    val contentType        = result.headers.get(CONTENT_TYPE).map(value => Seq((CONTENT_TYPE, value.head))).getOrElse(Seq.empty)
-                    val headers            = contentDisposition ++ contentType
+                  case OK =>
+                    val contentDisposition = result.headers
+                      .get(CONTENT_DISPOSITION)
+                      .map(
+                        value => Seq((CONTENT_DISPOSITION, value.head))
+                      )
+                      .getOrElse(Seq.empty)
+                    val contentType = result.headers
+                      .get(CONTENT_TYPE)
+                      .map(
+                        value => Seq((CONTENT_TYPE, value.head))
+                      )
+                      .getOrElse(Seq.empty)
+                    val headers = contentDisposition ++ contentType
 
                     Future.successful(
                       Ok(result.bodyAsBytes.toArray).withHeaders(headers: _*)
                     )
-                  }
                   case _ =>
                     logger.error(s"[PDF][UP] Received downstream status code of ${result.status}")
                     renderTechnicalDifficultiesPage

@@ -31,7 +31,7 @@ import viewModels.{ViewDeparture, ViewDepartureMovements}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ViewDeparturesController @Inject()(
+class ViewDeparturesController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
@@ -43,12 +43,14 @@ class ViewDeparturesController @Inject()(
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       connector.getDepartures().flatMap {
         case Some(allDepartures) =>
-          val viewDepartures: Seq[ViewDeparture] = allDepartures.departures.map((departure: Departure) => ViewDeparture(departure, config))
-          val formatToJson: JsObject             = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
+          val viewDepartures: Seq[ViewDeparture] = allDepartures.departures.map(
+            (departure: Departure) => ViewDeparture(departure, config)
+          )
+          val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
 
           renderer.render("viewDepartures.njk", formatToJson).map(Ok(_))
         case None => renderTechnicalDifficultiesPage

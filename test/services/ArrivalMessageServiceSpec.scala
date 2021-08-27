@@ -26,8 +26,6 @@ import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
-import play.api.Application
-import play.api.inject.bind
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,11 +39,7 @@ class ArrivalMessageServiceSpec extends SpecBase with BeforeAndAfterEach with Ma
     reset(mockConnector)
   }
 
-  val application: Application = applicationBuilder()
-    .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
-    .build()
-
-  val arrivalRejectionService: ArrivalMessageService = application.injector.instanceOf[ArrivalMessageService]
+  val arrivalMessageService = new ArrivalMessageService(mockConnector)
 
   private val arrivalId = ArrivalId(1)
 
@@ -60,7 +54,7 @@ class ArrivalMessageServiceSpec extends SpecBase with BeforeAndAfterEach with Ma
       when(mockConnector.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(Some(xmlNegativeAcknowledgement)))
 
-      arrivalRejectionService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).futureValue mustBe Some(xmlNegativeAcknowledgement)
+      arrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).futureValue mustBe Some(xmlNegativeAcknowledgement)
     }
 
     "must return None when getSummary fails to get xml negative acknowledgement message" in {
@@ -70,19 +64,13 @@ class ArrivalMessageServiceSpec extends SpecBase with BeforeAndAfterEach with Ma
       when(mockConnector.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
-      arrivalRejectionService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).futureValue mustBe None
+      arrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).futureValue mustBe None
     }
 
     "must return None when getSummary call fails to get MessagesSummary" in {
       when(mockConnector.getSummary(any())(any())).thenReturn(Future.successful(None))
 
-      val application = applicationBuilder(Some(emptyUserAnswers))
-        .overrides(bind[ArrivalMovementConnector].toInstance(mockConnector))
-        .build()
-
-      val arrivalRejectionService = application.injector.instanceOf[ArrivalMessageService]
-
-      arrivalRejectionService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).futureValue mustBe None
+      arrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).futureValue mustBe None
     }
   }
 }

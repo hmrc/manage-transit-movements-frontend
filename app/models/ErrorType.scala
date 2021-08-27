@@ -60,22 +60,23 @@ object ErrorType extends Enumerable.Implicits {
     case genericError: GenericError => JsNumber(genericError.code)
   }
 
-  implicit val xmlErrorTypeReads: XmlReader[ErrorType] = {
+  implicit val xmlErrorTypeReads: XmlReader[ErrorType] =
     new XmlReader[ErrorType] {
+
       override def read(xml: NodeSeq): ParseResult[ErrorType] = {
 
         case class ErrorTypeParseError(message: String) extends ParseError
-        genericValues.find(x => x.code.toString == xml.text) match {
+        genericValues.find(
+          x => x.code.toString == xml.text
+        ) match {
           case Some(errorType) => ParseSuccess(errorType)
           case None =>
-            try {
-              ParseSuccess(UnknownErrorCode(xml.text.toInt))
-            } catch {
+            try ParseSuccess(UnknownErrorCode(xml.text.toInt))
+            catch {
               case _: Exception => ParseFailure(ErrorTypeParseError(s"Invalid or missing ErrorType: ${xml.text}"))
             }
         }
       }
     }
-  }
 
 }

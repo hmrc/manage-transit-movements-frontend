@@ -20,6 +20,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 import base.ViewSpecBase
+import base.FakeFrontendAppConfig
 import generators.Generators
 import models.Arrival
 import org.jsoup.nodes.Document
@@ -30,6 +31,8 @@ import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewArrivalMovements, ViewMovement}
 
 class ViewArrivalsSpec extends ViewSpecBase with Generators with ScalaCheckPropertyChecks {
+
+  val frontendAppConfig = FakeFrontendAppConfig()
 
   "ViewArrivals" - {
     "generate list on correct order" in {
@@ -51,7 +54,9 @@ class ViewArrivalsSpec extends ViewSpecBase with Generators with ScalaCheckPrope
 
       val arrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6)
 
-      val viewMovements: Seq[ViewMovement] = arrivals.map((arrival: Arrival) => ViewMovement(arrival)(messages, frontendAppConfig))
+      val viewMovements: Seq[ViewMovement] = arrivals.map(
+        (arrival: Arrival) => ViewMovement(arrival)(messages, frontendAppConfig)
+      )
 
       val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
 

@@ -49,7 +49,7 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
               _.copy(updatedDate = date, updatedTime = localTime)
             )
           }
-      }
+        }
 
     forAll(departuresGen(localDateToday).suchThat(_.nonEmpty), departuresGen(localDateYesterday).suchThat(_.nonEmpty)) {
       (todaysDepartures: Seq[ViewDeparture], yesterdaysDepartures: Seq[ViewDeparture]) =>

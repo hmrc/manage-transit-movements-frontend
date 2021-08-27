@@ -17,6 +17,7 @@
 package viewModels
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
 import generators.Generators
 import models.Departure
 import models.departure.DepartureStatus._
@@ -25,6 +26,8 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import controllers.departure.{routes => departureRoutes}
 
 class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+
+  val frontendAppConfig = FakeFrontendAppConfig()
 
   "Departure Status" - {
 

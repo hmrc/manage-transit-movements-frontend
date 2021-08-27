@@ -17,6 +17,8 @@
 package controllers.arrival
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
+import base.MockNunjucksRendererApp
 import generators.Generators
 import matchers.JsonMatchers
 import models.ArrivalId
@@ -30,14 +32,21 @@ import play.api.inject
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
 import services.ArrivalMessageService
 
 import scala.concurrent.Future
 
-class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators {
+class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec
+    extends SpecBase
+    with MockitoSugar
+    with JsonMatchers
+    with Generators
+    with MockNunjucksRendererApp {
 
   private val mockArrivalMessageService = mock[ArrivalMessageService]
+  val frontendAppConfig                 = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(mockArrivalMessageService)
@@ -45,28 +54,29 @@ class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase 
   }
   private val arrivalId = ArrivalId(1)
 
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
+
   "UnloadingRemarksXmlNegativeAcknowledgementController" - {
 
     "return OK and the correct view for a GET" in {
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
-        .build()
 
       val request        = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
         "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
@@ -76,35 +86,28 @@ class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase 
 
       templateCaptor.getValue mustEqual "unloadingRemarksXmlNegativeAcknowledgement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "render 'Technical difficulty page' when service fails to get rejection message" in {
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(inject.bind[ArrivalMessageService].toInstance(mockArrivalMessageService))
-        .build()
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
 
-      val result       = route(application, request).value
+      val result       = route(app, request).value
       val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

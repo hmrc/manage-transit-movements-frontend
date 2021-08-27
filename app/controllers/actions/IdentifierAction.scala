@@ -34,12 +34,11 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+trait IdentifierAction extends ActionFunction[Request, IdentifierRequest]
 
-class AuthenticatedIdentifierAction @Inject()(
+class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config: FrontendAppConfig,
-  val parser: BodyParsers.Default,
   enrolmentStoreConnector: EnrolmentStoreConnector,
   renderer: Renderer
 )(implicit val executionContext: ExecutionContext)
@@ -48,19 +47,17 @@ class AuthenticatedIdentifierAction @Inject()(
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter
-      .fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(EmptyPredicate)
       .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
           (for {
             enrolment <- enrolments.enrolments.filter(_.isActivated).find(_.key.equals(config.enrolmentKey))
-          } yield
-            enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
-              case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
-              case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
-            }).getOrElse(checkForGroupEnrolment(maybeGroupId, config)(hc, request))
+          } yield enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
+            case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
+            case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+          }).getOrElse(checkForGroupEnrolment(maybeGroupId, config)(hc, request))
       }
   } recover {
     case _: NoActiveSession =>
@@ -69,8 +66,10 @@ class AuthenticatedIdentifierAction @Inject()(
       Redirect(routes.UnauthorisedController.onPageLoad())
   }
 
-  private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit hc: HeaderCarrier,
-                                                                                                 request: Request[A]): Future[Result] = {
+  private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit
+    hc: HeaderCarrier,
+    request: Request[A]
+  ): Future[Result] = {
     val nctsJson: JsObject = Json.obj("requestAccessToNCTSUrl" -> config.enrolmentManagementFrontendEnrolUrl)
 
     maybeGroupId match {

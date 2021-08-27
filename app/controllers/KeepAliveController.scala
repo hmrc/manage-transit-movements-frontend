@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class KeepAliveController @Inject()(
+class KeepAliveController @Inject() (
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
@@ -32,7 +32,7 @@ class KeepAliveController @Inject()(
     with I18nSupport {
 
   def keepAlive: Action[AnyContent] =
-    identify.async {
+    (Action andThen identify).async {
       implicit request =>
         Future.successful(NoContent)
     }

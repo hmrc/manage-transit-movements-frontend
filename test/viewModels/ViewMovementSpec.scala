@@ -17,6 +17,7 @@
 package viewModels
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
 import generators.Generators
 import models.Arrival
 import org.scalacheck.Arbitrary.arbitrary
@@ -27,6 +28,8 @@ import play.api.libs.json.Json
 import java.time.format.DateTimeFormatter
 
 class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+
+  val frontendAppConfig = FakeFrontendAppConfig()
 
   "must serialise to Json" in {
 

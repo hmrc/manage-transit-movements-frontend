@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
+  val app: Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.enrolment-store-proxy.port" -> server.port()
     )
@@ -124,7 +124,8 @@ class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
 
         server.stubFor(
           get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"))
-            .willReturn(okJson(withNCTSGrpEnrolment)))
+            .willReturn(okJson(withNCTSGrpEnrolment))
+        )
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
@@ -134,7 +135,8 @@ class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
       "return false when no NCTS enrolment is presesnt" in {
         server.stubFor(
           get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"))
-            .willReturn(okJson(withOutGrpEnrolment)))
+            .willReturn(okJson(withOutGrpEnrolment))
+        )
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 

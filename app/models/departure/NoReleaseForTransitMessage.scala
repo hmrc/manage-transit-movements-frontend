@@ -26,7 +26,8 @@ case class NoReleaseForTransitMessage(mrn: String,
                                       totalNumberOfItems: Int,
                                       officeOfDepartureRefNumber: String,
                                       controlResult: ControlResult,
-                                      resultsOfControl: Option[Seq[ResultsOfControl]])
+                                      resultsOfControl: Option[Seq[ResultsOfControl]]
+)
 
 object NoReleaseForTransitMessage {
   implicit val writes: OWrites[NoReleaseForTransitMessage] = Json.writes[NoReleaseForTransitMessage]

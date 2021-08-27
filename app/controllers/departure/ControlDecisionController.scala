@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
-class ControlDecisionController @Inject()(
+class ControlDecisionController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
@@ -40,7 +40,7 @@ class ControlDecisionController @Inject()(
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber): Action[AnyContent] = identify.async {
+  def onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       departureMessageService.controlDecisionMessage(departureId).flatMap {
         case Some(message) =>

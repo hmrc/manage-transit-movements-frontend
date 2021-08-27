@@ -155,7 +155,8 @@ object DepartureStatusViewModel {
         "departure.status.controlDecision",
         actions = Seq(
           ViewMovementAction(departureRoutes.ControlDecisionController.onPageLoad(departure.departureId, departure.localReferenceNumber).url,
-                             "departure.viewDetails"),
+                             "departure.viewDetails"
+          ),
           ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration")
         )
       )
@@ -167,7 +168,8 @@ object DepartureStatusViewModel {
         "departure.status.XMLSubmissionNegativeAcknowledgement",
         actions = Seq(
           ViewMovementAction(departureRoutes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
-                             "viewDepartures.table.action.viewErrors")
+                             "viewDepartures.table.action.viewErrors"
+          )
         )
       )
   }
@@ -178,10 +180,12 @@ object DepartureStatusViewModel {
         "departure.status.XMLCancellationSubmissionNegativeAcknowledgement",
         actions = Seq(
           ViewMovementAction(departureRoutes.CancellationXmlNegativeAcknowledgementController.onPageLoad(departure.departureId).url,
-                             "viewDepartures.table.action.viewErrors")
+                             "viewDepartures.table.action.viewErrors"
+          )
         )
       )
   }
+
   private def invalidStatus: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure => DepartureStatusViewModel(departure.status.toString, actions = Nil)
   }

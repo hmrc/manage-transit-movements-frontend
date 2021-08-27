@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
-class ArrivalXmlNegativeAcknowledgementController @Inject()(
+class ArrivalXmlNegativeAcknowledgementController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
@@ -40,7 +40,7 @@ class ArrivalXmlNegativeAcknowledgementController @Inject()(
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = identify.async {
+  def onPageLoad(arrivalId: ArrivalId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       arrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).flatMap {
         case Some(rejectionMessage) =>

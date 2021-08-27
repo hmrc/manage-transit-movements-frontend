@@ -21,8 +21,10 @@ import play.api.libs.json.{JsObject, Json, OWrites}
 case class ViewMovementAction(href: String, key: String)
 
 object ViewMovementAction {
+
   implicit val writes: OWrites[ViewMovementAction] =
     new OWrites[ViewMovementAction] {
+
       override def writes(o: ViewMovementAction): JsObject = Json.obj(
         "href" -> o.href,
         "key"  -> o.key

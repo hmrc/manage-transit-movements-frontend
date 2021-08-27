@@ -31,21 +31,24 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ViewArrivalsController @Inject()(val renderer: Renderer,
-                                       identify: IdentifierAction,
-                                       cc: MessagesControllerComponents,
-                                       val config: FrontendAppConfig,
-                                       arrivalMovementConnector: ArrivalMovementConnector)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+class ViewArrivalsController @Inject() (val renderer: Renderer,
+                                        identify: IdentifierAction,
+                                        cc: MessagesControllerComponents,
+                                        val config: FrontendAppConfig,
+                                        arrivalMovementConnector: ArrivalMovementConnector
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad: Action[AnyContent] = identify.async {
+  def onPageLoad: Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       arrivalMovementConnector.getArrivals().flatMap {
         case Some(allArrivals) =>
-          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map((arrival: Arrival) => ViewMovement(arrival))
-          val formatToJson: JsObject           = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
+          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(
+            (arrival: Arrival) => ViewMovement(arrival)
+          )
+          val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
           renderer
             .render("viewArrivals.njk", formatToJson)

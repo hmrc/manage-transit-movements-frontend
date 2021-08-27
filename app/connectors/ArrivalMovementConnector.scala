@@ -25,14 +25,13 @@ import models.{ArrivalId, Arrivals, ResponseMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpReadsTry, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext)
+class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext)
     extends HttpReadsTry
     with Logging {
 
@@ -44,7 +43,9 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
     http
       .GET[Arrivals](serviceUrl)(HttpReads[Arrivals], header, ec)
-      .map(arrivals => Some(arrivals))
+      .map(
+        arrivals => Some(arrivals)
+      )
       .recover {
         case _ =>
           logger.error("GetArrivals failed to get data")
@@ -77,8 +78,9 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
       }
   }
 
-  def getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation: String)(
-    implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
+  def getXMLSubmissionNegativeAcknowledgementMessage(
+    rejectionLocation: String
+  )(implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
     val serviceUrl = s"${config.destinationBaseUrl}$rejectionLocation"
     val header     = hc.withExtraHeaders(ChannelHeader(channel))
     http

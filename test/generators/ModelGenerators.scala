@@ -30,7 +30,7 @@ import java.time._
 trait ModelGenerators {
   self: Generators =>
 
-  implicit val arbitraryControlDecision: Arbitrary[ControlDecision] = {
+  implicit val arbitraryControlDecision: Arbitrary[ControlDecision] =
     Arbitrary {
       for {
         mrn                 <- Gen.alphaNumStr
@@ -39,9 +39,8 @@ trait ModelGenerators {
         principleTraderEori <- Gen.option(Gen.alphaNumStr)
       } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)
     }
-  }
 
-  implicit val arbitrarylocalDate: Arbitrary[LocalDate] = {
+  implicit val arbitrarylocalDate: Arbitrary[LocalDate] =
     Arbitrary {
       for {
         day <- Gen.choose(1, 28)
@@ -52,8 +51,8 @@ trait ModelGenerators {
         year <- Gen.chooseNum(1111, 3000)
       } yield LocalDate.of(year, month, day)
     }
-  }
   XMLSubmissionNegativeAcknowledgementMessage
+
   implicit val arbitraryLocalTime: Arbitrary[LocalTime] = Arbitrary {
     for {
       hours   <- Gen.chooseNum(0, 23)
@@ -77,25 +76,23 @@ trait ModelGenerators {
     )
   }
 
-  implicit lazy val arbitraryArrivalId: Arbitrary[ArrivalId] = {
+  implicit lazy val arbitraryArrivalId: Arbitrary[ArrivalId] =
     Arbitrary {
       for {
         length        <- choose(1, 9)
         listOfCharNum <- listOfN(length, numChar)
       } yield ArrivalId(listOfCharNum.mkString.toInt)
     }
-  }
 
-  implicit lazy val arbitraryDepartureId: Arbitrary[DepartureId] = {
+  implicit lazy val arbitraryDepartureId: Arbitrary[DepartureId] =
     Arbitrary {
       for {
         length        <- choose(1, 9)
         listOfCharNum <- listOfN(length, numChar)
       } yield DepartureId(listOfCharNum.mkString.toInt)
     }
-  }
 
-  implicit val arbitraryArrival: Arbitrary[Arrival] = {
+  implicit val arbitraryArrival: Arbitrary[Arrival] =
     Arbitrary {
       for {
         arrivalId <- arbitrary[ArrivalId]
@@ -105,9 +102,8 @@ trait ModelGenerators {
         mrn       <- stringsWithMaxLength(17)
       } yield Arrival(arrivalId, date, time, status, mrn)
     }
-  }
 
-  implicit val arbitraryDeparture: Arbitrary[Departure] = {
+  implicit val arbitraryDeparture: Arbitrary[Departure] =
     Arbitrary {
       for {
         departureID          <- arbitrary[DepartureId]
@@ -116,24 +112,21 @@ trait ModelGenerators {
         status               <- arbitrary[DepartureStatus]
       } yield Departure(departureID, updated, localReferenceNumber, status)
     }
-  }
 
-  implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] = {
+  implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] =
     Arbitrary {
       Gen.oneOf(DepartureStatus.values)
     }
-  }
 
-  implicit val arbitraryViewMovementAction: Arbitrary[ViewMovementAction] = {
+  implicit val arbitraryViewMovementAction: Arbitrary[ViewMovementAction] =
     Arbitrary {
       for {
         href <- arbitrary[String]
         key  <- arbitrary[String]
       } yield ViewMovementAction(href, key)
     }
-  }
 
-  implicit val arbitraryViewMovement: Arbitrary[ViewMovement] = {
+  implicit val arbitraryViewMovement: Arbitrary[ViewMovement] =
     Arbitrary {
       for {
         date    <- arbitrary[LocalDate]
@@ -143,9 +136,8 @@ trait ModelGenerators {
         actions <- listOfN(4, arbitrary[ViewMovementAction])
       } yield ViewMovement(date, time, status, mrn, actions)
     }
-  }
 
-  implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] = {
+  implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =
     Arbitrary {
       for {
         updatedDate          <- arbitrary[LocalDate]
@@ -155,7 +147,6 @@ trait ModelGenerators {
         actions              <- listOfN(4, arbitrary[ViewMovementAction])
       } yield new ViewDeparture(updatedDate, updatedTime, localReferenceNumber, status, actions)
     }
-  }
 
   implicit val arbitraryViewArrivalMovements: Arbitrary[ViewArrivalMovements] =
     Arbitrary {
@@ -202,15 +193,14 @@ trait ModelGenerators {
       officeOfDepartureRefNumber <- Gen.alphaNumStr
       controlResult              <- arbitrary[ControlResult]
       resultsOfControl           <- Gen.option(listWithMaxLength(ResultsOfControl.maxResultsOfControl, arbitrary[ResultsOfControl]))
-    } yield
-      new NoReleaseForTransitMessage(
-        mrn                        = mrn,
-        noReleaseMotivation        = noReleaseMotivation,
-        totalNumberOfItems         = totalNumberOfItems,
-        officeOfDepartureRefNumber = officeOfDepartureRefNumber,
-        controlResult              = controlResult,
-        resultsOfControl           = resultsOfControl
-      )
+    } yield new NoReleaseForTransitMessage(
+      mrn = mrn,
+      noReleaseMotivation = noReleaseMotivation,
+      totalNumberOfItems = totalNumberOfItems,
+      officeOfDepartureRefNumber = officeOfDepartureRefNumber,
+      controlResult = controlResult,
+      resultsOfControl = resultsOfControl
+    )
   }
 
   implicit lazy val genericErrorType: Arbitrary[GenericError] =

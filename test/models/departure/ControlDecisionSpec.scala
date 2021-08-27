@@ -76,10 +76,10 @@ object ControlDecisionSpec {
       <TRAPRIPC1>
         <NamPC17>{controlDecision.principleTraderName}</NamPC17>
         {
-        controlDecision.principleEori.fold(NodeSeq.Empty) {
-          principleEori => <TINPC159>{principleEori}</TINPC159>
-        }
-        }
+      controlDecision.principleEori.fold(NodeSeq.Empty) {
+        principleEori => <TINPC159>{principleEori}</TINPC159>
+      }
+    }
       </TRAPRIPC1>
     </CC060A>
 

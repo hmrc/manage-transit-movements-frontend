@@ -52,10 +52,11 @@ object ViewArrivalMovements {
     }
   }
 
-  implicit def writes(
-    implicit frontendAppConfig: FrontendAppConfig
+  implicit def writes(implicit
+    frontendAppConfig: FrontendAppConfig
   ): OWrites[ViewArrivalMovements] =
     new OWrites[ViewArrivalMovements] {
+
       override def writes(o: ViewArrivalMovements): JsObject =
         Json.obj(
           "dataRows"                      -> o.dataRows,

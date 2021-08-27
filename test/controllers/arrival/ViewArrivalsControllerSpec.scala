@@ -17,6 +17,8 @@
 package controllers.arrival
 
 import base.SpecBase
+import base.FakeFrontendAppConfig
+import base.MockNunjucksRendererApp
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
@@ -25,9 +27,8 @@ import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
@@ -39,20 +40,34 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with NunjucksSupport with BeforeAndAfter {
+class ViewArrivalsControllerSpec
+    extends SpecBase
+    with MockitoSugar
+    with JsonMatchers
+    with Generators
+    with NunjucksSupport
+    with BeforeAndAfterEach
+    with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
+  implicit val frontendAppConfig           = FakeFrontendAppConfig()
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
-  private val application: Application =
-    applicationBuilder(userAnswers = Some(emptyUserAnswers))
-      .overrides(
-        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
-      )
-      .build()
+  override def beforeEach: Unit = {
+    reset(mockArrivalMovementConnector)
+    super.beforeEach
+  }
 
-  private val mockArrivalResponse: Arrivals = {
+  override def guiceApplicationBuilder() =
+    super
+      .guiceApplicationBuilder()
+      .overrides(
+        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
+        bind[FrontendAppConfig].toInstance(frontendAppConfig)
+      )
+
+  private val mockArrivalResponse: Arrivals =
     Arrivals(
       Seq(
         Arrival(
@@ -64,9 +79,6 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
         )
       )
     )
-  }
-
-  implicit val appConfig: FrontendAppConfig = frontendAppConfig
 
   private val mockViewMovement = ViewMovement(
     localDateTime.toLocalDate,
@@ -80,14 +92,14 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
-      "declareArrivalNotificationUrl" -> appConfig.declareArrivalNotificationStartUrl,
+      "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
       "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
     )
 
   "ViewArrivalNotifications Controller" - {
     "return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -101,24 +113,22 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1))
+      verify(mockNunjucksRenderer, times(1))
         .render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivals.njk"
       jsonCaptorWithoutConfig mustBe expectedJson
-
-      application.stop()
     }
 
     "render technical difficulty" in {
 
       val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockRenderer.render(any(), any())(any()))
+      when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivals()(any()))
@@ -132,11 +142,11 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj {
         "contactUrl" -> config.nctsEnquiriesUrl
@@ -144,13 +154,6 @@ class ViewArrivalsControllerSpec extends SpecBase with MockitoSugar with JsonMat
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
-  }
-
-  override def beforeEach: Unit = {
-    reset(mockArrivalMovementConnector)
-    super.beforeEach
   }
 }

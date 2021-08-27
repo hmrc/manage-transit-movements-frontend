@@ -31,7 +31,8 @@ object MovementStatus {
           unloadingRemarksRejected,
           arrivalNegativeAcknowledgement,
           unloadingRemarksNegativeAcknowledgement,
-          displayStatus).reduce(_ orElse _)
+          displayStatus
+      ).reduce(_ orElse _)
 
     allPfs.apply(arrival)
   }
@@ -53,14 +54,16 @@ object MovementStatus {
   private def arrivalRejected()(implicit messages: Messages, config: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
     case arrival if arrival.status == "ArrivalRejected" =>
       val action: Seq[ViewMovementAction] = Seq(
-        ViewMovementAction(config.arrivalFrontendRejectedUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.viewErrors")))
+        ViewMovementAction(config.arrivalFrontendRejectedUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.viewErrors"))
+      )
       MovementStatus(Messages("movement.status.arrivalRejected"), action)
   }
 
   private def unloadingRemarksRejected()(implicit messages: Messages, config: FrontendAppConfig): PartialFunction[Arrival, MovementStatus] = {
     case arrival if arrival.status == "UnloadingRemarksRejected" =>
       val action: Seq[ViewMovementAction] = Seq(
-        ViewMovementAction(config.unloadingRemarksRejectedUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.viewErrors")))
+        ViewMovementAction(config.unloadingRemarksRejectedUrl(arrival.arrivalId), Messages("viewArrivalNotifications.table.action.viewErrors"))
+      )
       MovementStatus(Messages("movement.status.unloadingRemarksRejected"), action)
   }
 
@@ -70,7 +73,8 @@ object MovementStatus {
         ViewMovementAction(
           controllers.arrival.routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
           Messages("viewArrivalNotifications.table.action.viewErrors")
-        ))
+        )
+      )
       MovementStatus(Messages("movement.status.XMLSubmissionNegativeAcknowledgement"), action)
   }
 
@@ -80,17 +84,18 @@ object MovementStatus {
         ViewMovementAction(
           controllers.arrival.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
           Messages("viewArrivalNotifications.table.action.viewErrors")
-        ))
+        )
+      )
       MovementStatus(Messages("movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement"), action)
   }
 
   private def displayStatus()(implicit messages: Messages): PartialFunction[Arrival, MovementStatus] = {
-    case arrival if arrival.status == "ArrivalSubmitted"          => MovementStatus(Messages("movement.status.arrivalSubmitted"), actions          = Nil)
-    case arrival if arrival.status == "ArrivalRejected"           => MovementStatus(Messages("movement.status.arrivalRejected"), actions           = Nil)
-    case arrival if arrival.status == "UnloadingPermission"       => MovementStatus(Messages("movement.status.unloadingPermission"), actions       = Nil)
+    case arrival if arrival.status == "ArrivalSubmitted"          => MovementStatus(Messages("movement.status.arrivalSubmitted"), actions = Nil)
+    case arrival if arrival.status == "ArrivalRejected"           => MovementStatus(Messages("movement.status.arrivalRejected"), actions = Nil)
+    case arrival if arrival.status == "UnloadingPermission"       => MovementStatus(Messages("movement.status.unloadingPermission"), actions = Nil)
     case arrival if arrival.status == "UnloadingRemarksSubmitted" => MovementStatus(Messages("movement.status.unloadingRemarksSubmitted"), actions = Nil)
-    case arrival if arrival.status == "UnloadingRemarksRejected"  => MovementStatus(Messages("movement.status.unloadingRemarksRejected"), actions  = Nil)
-    case arrival if arrival.status == "GoodsReleased"             => MovementStatus(Messages("movement.status.goodsReleased"), actions             = Nil)
+    case arrival if arrival.status == "UnloadingRemarksRejected"  => MovementStatus(Messages("movement.status.unloadingRemarksRejected"), actions = Nil)
+    case arrival if arrival.status == "GoodsReleased"             => MovementStatus(Messages("movement.status.goodsReleased"), actions = Nil)
     case arrival if arrival.status == "XMLSubmissionNegativeAcknowledgement" =>
       MovementStatus(Messages("movement.status.XMLSubmissionNegativeAcknowledgement"), actions = Nil)
     case arrival => MovementStatus(arrival.status, actions = Nil)

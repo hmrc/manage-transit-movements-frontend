@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
-class UnauthorisedController @Inject()(
+class UnauthorisedController @Inject() (
   cc: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
