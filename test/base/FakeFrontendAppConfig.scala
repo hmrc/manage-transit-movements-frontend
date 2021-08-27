@@ -38,7 +38,7 @@ object FakeFrontendAppConfig {
         "feedback"                                   -> "urls.feedback",
         "declareTransitMovementUnloadingFrontend"    -> "http://localhost:9488/manage-transit-movements-unloading-remarks",
         "declareTransitMovementArrivalFrontend"      -> "http://localhost:9483/manage-transit-movements-arrivals",
-        "declareTransitMovementDepartureFrontend"    -> "urls.declareTransitMovementDepartureFrontend",
+        "declareTransitMovementDepartureFrontend"    -> "http://localhost:9489/manage-transit-movements-departures",
         "declareTransitMovementCancellationFrontend" -> "urls.declareTransitMovementCancellationFrontend",
         "nctsEnquiries"                              -> "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/new-computerised-transit-system-enquiries",
         "enrolmentManagementFrontendEnrolUrl"        -> "urls.enrolmentManagementFrontendEnrolUrl",

@@ -61,7 +61,7 @@ object ViewArrivalMovements {
         Json.obj(
           "dataRows"                      -> o.dataRows,
           "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-          "homePageUrl"                   -> routes.IndexController.onPageLoad().url
+          "homePageUrl"                   -> routes.WhatDoYouWantToDoController.onPageLoad().url
         )
     }
 }

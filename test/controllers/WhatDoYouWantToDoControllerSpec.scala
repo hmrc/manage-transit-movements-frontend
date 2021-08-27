@@ -16,207 +16,181 @@
 
 package controllers
 
-import base.{MockNunjucksRendererApp, SpecBase}
-import config.FrontendAppConfig
+import java.time.LocalDateTime
+import base.FakeFrontendAppConfig
+import base.SpecBase
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
-import controllers.actions.FakeIdentifierAction
-import forms.WhatDoYouWantToDoFormProvider
-import matchers.JsonMatchers
+import models._
+import models.departure.DepartureStatus.DepartureSubmitted
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.mockito.{ArgumentCaptor, Mockito}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito._
+import play.api.Configuration
+import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import renderer.Renderer
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import base.MockNunjucksRendererApp
 
-class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with BeforeAndAfterEach with MockNunjucksRendererApp {
+class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRendererApp {
+  val frontendAppConfig                 = FakeFrontendAppConfig()
 
-  val mockArrivalMovementConnector    = mock[ArrivalMovementConnector]
-  val mockDeparturesMovementConnector = mock[DeparturesMovementConnector]
-  val mockRenderer                    = mock[Renderer]
-  val mockFrontendAppConfig           = mock[FrontendAppConfig]
+  private val manageTransitMovementRoute   = "manage-transit-movements"
+  private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
+  private val viewDepartureNotificationUrl = s"/$manageTransitMovementRoute/view-departures"
 
-  override def beforeEach {
-    Mockito.reset(
-      mockNunjucksRenderer
-    )
-    super.beforeEach()
+  private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
+  private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
+
+  private val localDateTime: LocalDateTime = LocalDateTime.now()
+
+  private val mockDestinationResponse =
+    Arrivals(Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, "Submitted", "test mrn")))
+
+  private val mockDepartureResponse =
+    Departures(Seq(Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted)))
+
+  override def beforeEach: Unit = {
+    reset(mockArrivalMovementConnector)
+    reset(mockDepartureMovementConnector)
+    super.beforeEach
   }
+
+  private def expectedJson(arrivalsAvailable: Boolean, hasArrivals: Boolean, departuresAvailable: Boolean, hasDepartures: Boolean) =
+    Json.obj(
+      "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
+      "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
+      "arrivalsAvailable"              -> arrivalsAvailable,
+      "hasArrivals"                    -> hasArrivals,
+      "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
+      "viewDepartureNotificationUrl"   -> viewDepartureNotificationUrl,
+      "departuresAvailable"            -> departuresAvailable,
+      "hasDepartures"                  -> hasDepartures
+    )
+
+  override def guiceApplicationBuilder() =
+    super
+      .guiceApplicationBuilder()
+      .configure(Configuration("microservice.services.features.departureJourney" -> true))
+      .overrides(
+        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
+        bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector)
+      )
 
   "WhatDoYouWantToDo Controller" - {
 
-    "return OK and the correct view for a GET when NI is not enabled" in {
+    "must return OK and the correct view for a GET with" - {
+      "Arrivals and Departures when both respond" in {
+        when(mockNunjucksRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(Some(mockDestinationResponse)))
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-      when(mockArrivalMovementConnector.getArrivals()(any()))
-        .thenReturn(Future.successful(None))
+        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result      = route(app, request).value
 
-      when(mockDeparturesMovementConnector.getDepartures()(any()))
-        .thenReturn(Future.successful(None))
+        status(result) mustEqual OK
 
-      when(mockFrontendAppConfig.isNIJourneyEnabled)
-        .thenReturn(false)
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val controller = new WhatDoYouWantToDoController(
-        messagesApi = messagesApi,
-        identify = FakeIdentifierAction(),
-        cc = stubMessagesControllerComponents(),
-        renderer = mockRenderer,
-        formProvider = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector = mockArrivalMovementConnector,
-        departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig = mockFrontendAppConfig
-      )
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-      val result = controller.onPageLoad().apply(request)
+        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
+        jsonCaptorWithoutConfig mustBe expectedJson(true, true, true, true)
+      }
 
-      status(result) mustEqual OK
+      "Arrivals and no departures when display departures services returns false" in {
+        when(mockNunjucksRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(Some(mockDestinationResponse)))
 
-      val expectedJson = Json.obj()
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-      templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
+        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result      = route(app, request).value
 
-    "return OK and the correct view for a GET when NI is enabled" in {
+        status(result) mustEqual OK
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      when(mockArrivalMovementConnector.getArrivals()(any()))
-        .thenReturn(Future.successful(None))
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-      when(mockDeparturesMovementConnector.getDepartures()(any()))
-        .thenReturn(Future.successful(None))
+        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
+        jsonCaptorWithoutConfig mustBe
+          expectedJson(true, true, true, true)
 
-      when(mockFrontendAppConfig.isNIJourneyEnabled)
-        .thenReturn(true)
+      }
 
-      val controller = new WhatDoYouWantToDoController(
-        messagesApi = messagesApi,
-        identify = FakeIdentifierAction(),
-        cc = stubMessagesControllerComponents(),
-        renderer = mockRenderer,
-        formProvider = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector = mockArrivalMovementConnector,
-        departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig = mockFrontendAppConfig
-      )
+      "Arrivals when Departures does not respond" in {
 
-      val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        when(mockNunjucksRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
 
-      val result = controller.onPageLoad().apply(request)
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(Some(mockDestinationResponse)))
 
-      status(result) mustEqual OK
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(None))
 
-      // TODO why is this happening twice
-      verify(mockRenderer, times(2)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result      = route(app, request).value
 
-      val expectedJson = Json.obj()
+        status(result) mustEqual OK
 
-      templateCaptor.getValue mustEqual "index.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-    "return BAD_REQUEST and the correct view if an invalid value is selected" in {
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "somethingsWrong")
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
+        jsonCaptorWithoutConfig mustBe expectedJson(true, true, false, false)
 
-      val controller = new WhatDoYouWantToDoController(
-        messagesApi = messagesApi,
-        identify = FakeIdentifierAction(),
-        cc = stubMessagesControllerComponents(),
-        renderer = mockRenderer,
-        formProvider = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector = mockArrivalMovementConnector,
-        departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig = mockFrontendAppConfig
-      )
+      }
 
-      val result = controller.onSubmit().apply(request)
+      "no Arrivals and Departures" in {
+        when(mockNunjucksRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("foo")))
 
-      status(result) mustEqual BAD_REQUEST
+        when(mockArrivalMovementConnector.getArrivals()(any()))
+          .thenReturn(Future.successful(None))
 
-      // TODO why is this happening 3 times
-      verify(mockRenderer, times(3)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        when(mockDepartureMovementConnector.getDepartures()(any()))
+          .thenReturn(Future.successful(None))
 
-      val expectedJson = Json.obj()
+        val request     = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+        val result      = route(app, request).value
 
-      templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
+        status(result) mustEqual OK
 
-    "redirect to index page if GB Movements is selected" in {
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val controller = new WhatDoYouWantToDoController(
-        messagesApi = messagesApi,
-        identify = FakeIdentifierAction(),
-        cc = stubMessagesControllerComponents(),
-        renderer = mockRenderer,
-        formProvider = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector = mockArrivalMovementConnector,
-        departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig = mockFrontendAppConfig
-      )
+        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "gbMovements")
+        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
-      val result = controller.onSubmit().apply(request)
+        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
+        jsonCaptorWithoutConfig mustBe expectedJson(false, false, false, false)
 
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
-
-    }
-
-    "redirect to NI interstitial page if NI is selected" in {
-
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
-        .withFormUrlEncodedBody("value" -> "northernIrelandMovements")
-
-      val controller = new WhatDoYouWantToDoController(
-        messagesApi = messagesApi,
-        identify = FakeIdentifierAction(),
-        cc = stubMessagesControllerComponents(),
-        renderer = mockRenderer,
-        formProvider = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector = mockArrivalMovementConnector,
-        departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig = mockFrontendAppConfig
-      )
-
-      val result = controller.onSubmit().apply(request)
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result) mustBe Some(controllers.routes.NorthernIrelandInterstitialController.onPageLoad().url)
+      }
     }
   }
 }

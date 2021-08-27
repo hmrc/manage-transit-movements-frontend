@@ -38,18 +38,18 @@ phaseBanner.3 = will help us to improve it.
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 
-index.title =  Manage your transit movements - GOV.UK
-index.heading = Manage your transit movements
-index.subHeading.arrival = Arrivals
-index.link.arrival.makeArrival = Make an arrival notification
-index.link.arrival.viewArrival = View arrival notifications
-index.arrival.noArrivals = You have no arrival notifications.
-index.arrival.arrivalsUnavailable = View arrival notifications is currently unavailable.
-index.subHeading.departure = Departures
-index.link.departure.makeDeparture = Make a departure declaration
-index.link.departure.viewDepartures = View departure declarations
-index.departure.noDepartures = You have no departure declarations.
-index.departure.departuresUnavailable = View departure notifications is currently unavailable.
+whatDoYouWantToDo.title =  Manage your transit movements - GOV.UK
+whatDoYouWantToDo.heading = Manage your transit movements
+whatDoYouWantToDo.subHeading.arrival = Arrivals
+whatDoYouWantToDo.link.arrival.makeArrival = Make an arrival notification
+whatDoYouWantToDo.link.arrival.viewArrival = View arrival notifications
+whatDoYouWantToDo.arrival.noArrivals = You have no arrival notifications.
+whatDoYouWantToDo.arrival.arrivalsUnavailable = View arrival notifications is currently unavailable.
+whatDoYouWantToDo.subHeading.departure = Departures
+whatDoYouWantToDo.link.departure.makeDeparture = Make a departure declaration
+whatDoYouWantToDo.link.departure.viewDepartures = View departure declarations
+whatDoYouWantToDo.departure.noDepartures = You have no departure declarations.
+whatDoYouWantToDo.departure.departuresUnavailable = View departure notifications is currently unavailable.
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
@@ -217,12 +217,6 @@ pageNotFound.paragraph1 = If you typed the web address, check it is correct.
 pageNotFound.paragraph2 = If you pasted the web address, check you copied the entire address.
 pageNotFound.paragraph3Start = If the web address is correct or you selected a link or button,
 pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpdesk if you need to speak to someone about your transit movement (opens in a new tab)
-
-whatDoYouWantToDo.title = What do you want to do?
-whatDoYouWantToDo.heading = What do you want to do?
-whatDoYouWantToDo.gbMovements = Movement starting from England, Scotland or Wales
-whatDoYouWantToDo.northernIrelandMovementsText=Northern Ireland movements
-whatDoYouWantToDo.error.required = Select what you want to do
 
 northernIrelandInterstitial.title = You cannot use this service
 northernIrelandInterstitial.heading = You cannot use this service

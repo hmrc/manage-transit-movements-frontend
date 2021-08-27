@@ -22,7 +22,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.JsObject
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import play.twirl.api.Html
@@ -45,7 +44,6 @@ class NorthernIrelandInterstitialControllerSpec extends SpecBase with MockitoSug
 
       val request        = FakeRequest(GET, routes.NorthernIrelandInterstitialController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = controller.onPageLoad.apply(request)
 

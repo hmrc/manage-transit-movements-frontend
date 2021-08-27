@@ -93,7 +93,7 @@ class ViewArrivalsControllerSpec
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
       "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl"                   -> "/manage-transit-movements/index"
+      "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
     )
 
   "ViewArrivalNotifications Controller" - {
