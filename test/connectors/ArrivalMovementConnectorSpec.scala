@@ -66,13 +66,12 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
     "getArrivals" - {
       "must return a successful future response" in {
-        val expectedResult = {
+        val expectedResult =
           Arrivals(
             Seq(
               Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
             )
           )
-        }
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/arrivals"))
@@ -154,7 +153,9 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
           MessagesSummary(arrivalId,
                           MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3",
                                            None,
-                                           Some(s"/movements/arrivals/${arrivalId.value}/messages/5")))
+                                           Some(s"/movements/arrivals/${arrivalId.value}/messages/5")
+                          )
+          )
 
         server.stubFor(
           get(urlEqualTo(s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/summary"))
@@ -211,7 +212,8 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             Some("19IT021300100075E9"),
             None,
             FunctionalError(genRejectionError, ErrorPointer("Message type"), None, Some("GB007A"))
-          ))
+          )
+        )
         connector.getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation).futureValue mustBe expectedResult
       }
 

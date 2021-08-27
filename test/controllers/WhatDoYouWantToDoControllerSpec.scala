@@ -70,14 +70,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
         .thenReturn(false)
 
       val controller = new WhatDoYouWantToDoController(
-        messagesApi                 = messagesApi,
-        identify                    = FakeIdentifierAction(),
-        cc                          = stubMessagesControllerComponents(),
-        renderer                    = mockRenderer,
-        formProvider                = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector    = mockArrivalMovementConnector,
+        messagesApi = messagesApi,
+        identify = FakeIdentifierAction(),
+        cc = stubMessagesControllerComponents(),
+        renderer = mockRenderer,
+        formProvider = new WhatDoYouWantToDoFormProvider,
+        arrivalMovementConnector = mockArrivalMovementConnector,
         departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig                   = mockFrontendAppConfig
+        appConfig = mockFrontendAppConfig
       )
 
       val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
@@ -112,14 +112,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
         .thenReturn(true)
 
       val controller = new WhatDoYouWantToDoController(
-        messagesApi                 = messagesApi,
-        identify                    = FakeIdentifierAction(),
-        cc                          = stubMessagesControllerComponents(),
-        renderer                    = mockRenderer,
-        formProvider                = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector    = mockArrivalMovementConnector,
+        messagesApi = messagesApi,
+        identify = FakeIdentifierAction(),
+        cc = stubMessagesControllerComponents(),
+        renderer = mockRenderer,
+        formProvider = new WhatDoYouWantToDoFormProvider,
+        arrivalMovementConnector = mockArrivalMovementConnector,
         departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig                   = mockFrontendAppConfig
+        appConfig = mockFrontendAppConfig
       )
 
       val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
@@ -146,14 +146,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val controller = new WhatDoYouWantToDoController(
-        messagesApi                 = messagesApi,
-        identify                    = FakeIdentifierAction(),
-        cc                          = stubMessagesControllerComponents(),
-        renderer                    = mockRenderer,
-        formProvider                = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector    = mockArrivalMovementConnector,
+        messagesApi = messagesApi,
+        identify = FakeIdentifierAction(),
+        cc = stubMessagesControllerComponents(),
+        renderer = mockRenderer,
+        formProvider = new WhatDoYouWantToDoFormProvider,
+        arrivalMovementConnector = mockArrivalMovementConnector,
         departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig                   = mockFrontendAppConfig
+        appConfig = mockFrontendAppConfig
       )
 
       val result = controller.onSubmit().apply(request)
@@ -172,14 +172,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
     "redirect to index page if GB Movements is selected" in {
 
       val controller = new WhatDoYouWantToDoController(
-        messagesApi                 = messagesApi,
-        identify                    = FakeIdentifierAction(),
-        cc                          = stubMessagesControllerComponents(),
-        renderer                    = mockRenderer,
-        formProvider                = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector    = mockArrivalMovementConnector,
+        messagesApi = messagesApi,
+        identify = FakeIdentifierAction(),
+        cc = stubMessagesControllerComponents(),
+        renderer = mockRenderer,
+        formProvider = new WhatDoYouWantToDoFormProvider,
+        arrivalMovementConnector = mockArrivalMovementConnector,
         departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig                   = mockFrontendAppConfig
+        appConfig = mockFrontendAppConfig
       )
 
       val request = FakeRequest(POST, routes.WhatDoYouWantToDoController.onSubmit().url)
@@ -202,14 +202,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockitoSugar with Js
         .withFormUrlEncodedBody("value" -> "northernIrelandMovements")
 
       val controller = new WhatDoYouWantToDoController(
-        messagesApi                 = messagesApi,
-        identify                    = FakeIdentifierAction(),
-        cc                          = stubMessagesControllerComponents(),
-        renderer                    = mockRenderer,
-        formProvider                = new WhatDoYouWantToDoFormProvider,
-        arrivalMovementConnector    = mockArrivalMovementConnector,
+        messagesApi = messagesApi,
+        identify = FakeIdentifierAction(),
+        cc = stubMessagesControllerComponents(),
+        renderer = mockRenderer,
+        formProvider = new WhatDoYouWantToDoFormProvider,
+        arrivalMovementConnector = mockArrivalMovementConnector,
         departuresMovementConnector = mockDeparturesMovementConnector,
-        appConfig                   = mockFrontendAppConfig
+        appConfig = mockFrontendAppConfig
       )
 
       val result = controller.onSubmit().apply(request)

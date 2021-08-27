@@ -41,13 +41,14 @@ case class MessagesLocation(departureMessage: String,
                             declarationCancellation: Option[String],
                             noReleaseForTransit: Option[String],
                             controlDecision: Option[String],
-                            xmlSubmissionNegativeAcknowledgement: Option[String] = None)
+                            xmlSubmissionNegativeAcknowledgement: Option[String] = None
+)
 
 object MessagesLocation {
 
   import play.api.libs.functional.syntax._
 
-  implicit val reads: Reads[MessagesLocation] = {
+  implicit val reads: Reads[MessagesLocation] =
     ((__ \ "IE015").read[String] and
       (__ \ "IE055").readNullable[String] and
       (__ \ "IE016").readNullable[String] and
@@ -56,5 +57,4 @@ object MessagesLocation {
       (__ \ "IE051").readNullable[String] and
       (__ \ "IE060").readNullable[String] and
       (__ \ "IE917").readNullable[String])(MessagesLocation.apply _)
-  }
 }

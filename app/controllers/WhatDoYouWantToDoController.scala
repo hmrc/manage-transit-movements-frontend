@@ -33,7 +33,7 @@ import controllers.departure.{routes => departureRoutes}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatDoYouWantToDoController @Inject()(
+class WhatDoYouWantToDoController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
@@ -41,7 +41,7 @@ class WhatDoYouWantToDoController @Inject()(
   formProvider: WhatDoYouWantToDoFormProvider,
   val arrivalMovementConnector: ArrivalMovementConnector,
   val departuresMovementConnector: DeparturesMovementConnector,
-  appConfig: FrontendAppConfig,
+  appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
@@ -56,9 +56,7 @@ class WhatDoYouWantToDoController @Inject()(
           arrivals   <- arrivalMovementConnector.getArrivals()
           departures <- departuresMovementConnector.getDepartures()
           html       <- renderIndexPage(arrivals, departures)
-        } yield {
-          Ok(html)
-        }
+        } yield Ok(html)
       } else {
 
         val json = Json.obj(
@@ -83,7 +81,8 @@ class WhatDoYouWantToDoController @Inject()(
               "warningText" -> msg"whatDoYouWantToDo.warningText"
             )
             renderer.render("whatDoYouWantToDo.njk", json).map(BadRequest(_))
-          }, {
+          },
+          {
             case WhatDoYouWantToDoOptions.GBMovements =>
               Future.successful(Redirect(routes.IndexController.onPageLoad()))
             case WhatDoYouWantToDoOptions.NorthernIrelandMovements =>

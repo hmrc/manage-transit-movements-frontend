@@ -26,14 +26,15 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
+class TestOnlyRouterConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
   def submitInboundMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val routerUrl = s"${config.routerUrl}/messages"
 
-    val header = headers.headers.filter(x =>
-      x._1.equalsIgnoreCase("X-Message-Recipient") || x._1.equalsIgnoreCase("X-Message-Type") || x._1.equalsIgnoreCase("Content-Type"))
+    val header = headers.headers.filter(
+      x => x._1.equalsIgnoreCase("X-Message-Recipient") || x._1.equalsIgnoreCase("X-Message-Type") || x._1.equalsIgnoreCase("Content-Type")
+    )
 
     http.POSTString[HttpResponse](routerUrl, requestData.toString, header)
   }
@@ -51,8 +52,9 @@ class TestOnlyRouterConnector @Inject()(val http: HttpClient, config: FrontendAp
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
   }
 
-  def resubmitArrivalNotificationMessage(requestData: NodeSeq, arrivalId: String, headers: Headers)(
-    implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+  def resubmitArrivalNotificationMessage(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit
+    headerCarrier: HeaderCarrier
+  ): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.destinationUrl}/movements/arrivals/$arrivalId"
 

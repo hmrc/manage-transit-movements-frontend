@@ -20,6 +20,7 @@ import com.google.inject.AbstractModule
 import controllers.actions._
 
 class Module extends AbstractModule {
+
   // format: off
   override def configure(): Unit = 
     // For session based storage instead of cred based, change to SessionIdentifierAction

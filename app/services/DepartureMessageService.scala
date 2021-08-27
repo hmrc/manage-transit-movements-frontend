@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector)(implicit ec: ExecutionContext) extends Logging {
+class DepartureMessageService @Inject() (connectors: DeparturesMovementConnector)(implicit ec: ExecutionContext) extends Logging {
 
   def noReleaseForTransitMessage(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[Option[NoReleaseForTransitMessage]] =
     connectors.getSummary(departureId) flatMap {
@@ -58,8 +58,9 @@ class DepartureMessageService @Inject()(connectors: DeparturesMovementConnector)
         Future.successful(None)
     }
 
-  def getXMLSubmissionNegativeAcknowledgementMessage(departureId: DepartureId)(
-    implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
+  def getXMLSubmissionNegativeAcknowledgementMessage(
+    departureId: DepartureId
+  )(implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
     connectors.getSummary(departureId) flatMap {
       case Some(summary) =>
         summary.messagesLocation.xmlSubmissionNegativeAcknowledgement match {

@@ -50,6 +50,7 @@ object ViewDepartureMovements {
 
   implicit def writes(implicit frontendAppConfig: FrontendAppConfig): OWrites[ViewDepartureMovements] =
     new OWrites[ViewDepartureMovements] {
+
       override def writes(o: ViewDepartureMovements): JsObject = Json.obj(
         "dataRows"                        -> o.dataRows,
         "declareDepartureNotificationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,

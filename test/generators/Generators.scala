@@ -33,13 +33,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     for {
       seq1 <- gen
       seq2 <- Gen.listOfN(seq1.length, genValue)
-    } yield {
-      seq1.toSeq.zip(seq2).foldRight("") {
-        case ((n, Some(v)), m) =>
-          m + n + v
-        case ((n, _), m) =>
-          m + n
-      }
+    } yield seq1.toSeq.zip(seq2).foldRight("") {
+      case ((n, Some(v)), m) =>
+        m + n + v
+      case ((n, _), m) =>
+        m + n
     }
   }
 
@@ -49,10 +47,14 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   }
 
   def intsLargerThanMaxValue: Gen[BigInt] =
-    arbitrary[BigInt] suchThat (x => x > Int.MaxValue)
+    arbitrary[BigInt] suchThat (
+      x => x > Int.MaxValue
+    )
 
   def intsSmallerThanMinValue: Gen[BigInt] =
-    arbitrary[BigInt] suchThat (x => x < Int.MinValue)
+    arbitrary[BigInt] suchThat (
+      x => x < Int.MinValue
+    )
 
   def nonNumerics: Gen[String] =
     alphaStr suchThat (_.size > 0)
@@ -70,7 +72,9 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     arbitrary[Int] suchThat (_ > value)
 
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
-    arbitrary[Int] suchThat (x => x < min || x > max)
+    arbitrary[Int] suchThat (
+      x => x < min || x > max
+    )
 
   def nonBooleans: Gen[String] =
     arbitrary[String]
@@ -79,12 +83,14 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       .suchThat(_ != "false")
 
   def nonEmptyString: Gen[String] =
-    arbitrary[String].map(x =>
-      if (x.nonEmpty) {
-        x
-      } else {
-        "nonEmptyString"
-    })
+    arbitrary[String].map(
+      x =>
+        if (x.nonEmpty) {
+          x
+        } else {
+          "nonEmptyString"
+        }
+    )
 
   def stringsWithMaxLength(maxLength: Int): Gen[String] =
     for {

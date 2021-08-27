@@ -68,7 +68,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
     "getDepartures" - {
       "must return a successful future response" in {
-        val expectedResult = {
+        val expectedResult =
           Departures(
             Seq(
               Departure(
@@ -79,7 +79,6 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
               )
             )
           )
-        }
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/departures"))
@@ -174,9 +173,12 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
         val xml: NodeSeq = <CC051B>
           <HEAHEA>
           <DocNumHEA5>{noReleaseMessage.mrn}</DocNumHEA5>
-          {noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
+          {
+          noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
             noReleaseMotivation =>
-              <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>}}
+              <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>
+          }
+        }
           <TotNumOfIteHEA305>{noReleaseMessage.totalNumberOfItems}</TotNumOfIteHEA305>
         </HEAHEA>
           <CUSOFFDEPEPT><RefNumEPT1>{noReleaseMessage.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>
@@ -355,7 +357,8 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             Some("19IT021300100075E9"),
             None,
             FunctionalError(genRejectionError, ErrorPointer("Message type"), None, Some("GB007A"))
-          ))
+          )
+        )
         connector.getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation).futureValue mustBe expectedResult
       }
 
@@ -390,5 +393,6 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
         .willReturn(
           aResponse()
             .withStatus(errorResponseCode)
-        ))
+        )
+    )
 }

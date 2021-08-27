@@ -24,18 +24,16 @@ import pages._
 import models._
 
 @Singleton
-class Navigator @Inject()() {
+class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case _ =>
-      _ =>
-        routes.IndexController.onPageLoad()
+      _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case _ =>
-      _ =>
-        routes.IndexController.onPageLoad()
+      _ => routes.IndexController.onPageLoad()
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =

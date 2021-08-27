@@ -40,7 +40,7 @@ object ControlDecision {
         "dateOfControl"           -> Format.controlDecisionDateFormatted(controlDecision.dateOfControl),
         "principleTraderName"     -> controlDecision.principleTraderName,
         "principleEori"           -> controlDecision.principleEori
-    )
+      )
 
   implicit val xmlReader: XmlReader[ControlDecision] = (
     (__ \ "HEAHEA" \ "DocNumHEA5").read[String],

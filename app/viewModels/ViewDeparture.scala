@@ -27,23 +27,25 @@ final case class ViewDeparture(updatedDate: LocalDate,
                                updatedTime: LocalTime,
                                localReferenceNumber: LocalReferenceNumber,
                                status: String,
-                               actions: Seq[ViewMovementAction])
+                               actions: Seq[ViewMovementAction]
+)
 
 object ViewDeparture {
 
   def apply(departure: Departure, config: FrontendAppConfig): ViewDeparture = {
     val departureStatus = DepartureStatusViewModel(departure, config)
     ViewDeparture(
-      updatedDate          = departure.updated.toLocalDate,
-      updatedTime          = departure.updated.toLocalTime,
+      updatedDate = departure.updated.toLocalDate,
+      updatedTime = departure.updated.toLocalTime,
       localReferenceNumber = departure.localReferenceNumber,
-      status               = departureStatus.status,
-      actions              = departureStatus.actions
+      status = departureStatus.status,
+      actions = departureStatus.actions
     )
   }
 
   implicit val writes: OWrites[ViewDeparture] =
     new OWrites[ViewDeparture] {
+
       override def writes(o: ViewDeparture): JsObject = Json.obj(
         "updatedDate" -> o.updatedDate,
         "updatedTime" -> o.updatedTime

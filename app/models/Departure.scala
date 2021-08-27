@@ -25,6 +25,7 @@ import models.departure.DepartureStatus
 case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
 
 object Departure {
+
   implicit val reads: Reads[Departure] = (
     (__ \ "departureId").read[DepartureId] and
       (__ \ "updated").read[LocalDateTime] and

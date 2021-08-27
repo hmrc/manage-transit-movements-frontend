@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyDeparturesRouterConnector @Inject()(val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
+class TestOnlyDeparturesRouterConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml", "Channel" -> "web")
 
@@ -42,8 +42,9 @@ class TestOnlyDeparturesRouterConnector @Inject()(val http: HttpClient, config: 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
   }
 
-  def createDeclarationCancellationMessage(requestData: NodeSeq, departureId: String, headers: Headers)(
-    implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+  def createDeclarationCancellationMessage(requestData: NodeSeq, departureId: String, headers: Headers)(implicit
+    headerCarrier: HeaderCarrier
+  ): Future[HttpResponse] = {
 
     val serviceUrl = s"${config.departureUrl}/movements/departures/$departureId/messages"
 

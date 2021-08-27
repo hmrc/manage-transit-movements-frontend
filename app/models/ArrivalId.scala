@@ -29,6 +29,7 @@ object ArrivalId {
   implicit def writes(arrivalId: ArrivalId): JsNumber = JsNumber(arrivalId.index)
 
   implicit lazy val pathBindable: PathBindable[ArrivalId] = new PathBindable[ArrivalId] {
+
     override def bind(key: String, value: String): Either[String, ArrivalId] =
       implicitly[PathBindable[Int]].bind(key, value).right.map(ArrivalId(_))
 

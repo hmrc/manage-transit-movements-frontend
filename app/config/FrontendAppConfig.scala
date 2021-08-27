@@ -21,7 +21,7 @@ import models.{ArrivalId, DepartureId}
 import play.api.Configuration
 
 @Singleton
-class FrontendAppConfig @Inject()(configuration: Configuration) {
+class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val contactHost: String        = configuration.get[Service]("microservice.services.contact-frontend").baseUrl
   lazy val contactFrontendUrl: String = configuration.get[Service]("microservice.services.contact-frontend").fullServiceUrl

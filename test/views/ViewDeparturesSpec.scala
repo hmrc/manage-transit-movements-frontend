@@ -51,8 +51,10 @@ class ViewDeparturesSpec extends ViewSpecBase with Generators with ScalaCheckPro
 
       val departures = Seq(departure1, departure2, departure3, departure4, departure5, departure6)
 
-      val frontendAppConfig                 = FakeFrontendAppConfig()
-      val viewMovements: Seq[ViewDeparture] = departures.map((departure: Departure) => ViewDeparture(departure, frontendAppConfig))
+      val frontendAppConfig = FakeFrontendAppConfig()
+      val viewMovements: Seq[ViewDeparture] = departures.map(
+        (departure: Departure) => ViewDeparture(departure, frontendAppConfig)
+      )
 
       val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))(ViewDepartureMovements.writes(frontendAppConfig))
 

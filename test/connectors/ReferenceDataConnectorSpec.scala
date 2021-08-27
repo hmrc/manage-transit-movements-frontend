@@ -76,7 +76,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
         val result = connector.getCustomsOffice(customsOfficeId)
 
-        result.futureValue must not be (defined)
+        result.futureValue must not be defined
 
       }
 
@@ -95,7 +95,7 @@ class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler wit
 
             val result = connector.getCustomsOffice(customsOfficeId)
 
-            result.futureValue must not be (defined)
+            result.futureValue must not be defined
         }
       }
     }

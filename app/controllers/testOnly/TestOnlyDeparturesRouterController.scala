@@ -24,7 +24,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyDeparturesRouterController @Inject()(
+class TestOnlyDeparturesRouterController @Inject() (
   cc: MessagesControllerComponents,
   connector: TestOnlyDeparturesRouterConnector,
   action: DefaultActionBuilder

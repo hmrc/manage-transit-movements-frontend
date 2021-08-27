@@ -38,7 +38,7 @@ import scala.concurrent.Future
 
 class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
 
-  private val mockDepartureResponse: Departures = {
+  private val mockDepartureResponse: Departures =
     Departures(
       Seq(
         Departure(
@@ -49,7 +49,6 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
         )
       )
     )
-  }
 
   override def beforeEach: Unit = {
     super.beforeEach

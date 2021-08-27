@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
-class OldServiceInterstitialController @Inject()(
+class OldServiceInterstitialController @Inject() (
   cc: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)

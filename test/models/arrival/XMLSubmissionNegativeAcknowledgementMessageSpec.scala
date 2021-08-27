@@ -30,28 +30,39 @@ class XMLSubmissionNegativeAcknowledgementMessageSpec extends SpecBase with Scal
     "must deserialize from XML" in {
       forAll(arbitrary[XMLSubmissionNegativeAcknowledgementMessage]) {
         rejectionMessage =>
-          val xml: Elem = {
+          val xml: Elem =
             <CC917A>
               <HEAHEA>
-                {rejectionMessage.movementReferenceNumber.fold(NodeSeq.Empty) {
+                {
+              rejectionMessage.movementReferenceNumber.fold(NodeSeq.Empty) {
                 mrn =>
-                  <DocNumHEA5>{mrn}</DocNumHEA5>}}
-                {rejectionMessage.localReferenceNumber.fold(NodeSeq.Empty) {
+                  <DocNumHEA5>{mrn}</DocNumHEA5>
+              }
+            }
+                {
+              rejectionMessage.localReferenceNumber.fold(NodeSeq.Empty) {
                 lrn =>
-                  <RefNumHEA4>{lrn}</RefNumHEA4>}}
+                  <RefNumHEA4>{lrn}</RefNumHEA4>
+              }
+            }
               </HEAHEA>
               <FUNERRER1>
                 <ErrTypER11>{rejectionMessage.error.errorType.code}</ErrTypER11>
                 <ErrPoiER12>{rejectionMessage.error.pointer.value}</ErrPoiER12>
-                {rejectionMessage.error.reason.fold(NodeSeq.Empty) {
+                {
+              rejectionMessage.error.reason.fold(NodeSeq.Empty) {
                 reason =>
-                  <ErrReaER13>{reason}</ErrReaER13>}}
-                {rejectionMessage.error.originalAttributeValue.fold(NodeSeq.Empty) {
+                  <ErrReaER13>{reason}</ErrReaER13>
+              }
+            }
+                {
+              rejectionMessage.error.originalAttributeValue.fold(NodeSeq.Empty) {
                 attrValue =>
-                  <OriAttValER14>{attrValue}</OriAttValER14>}}
+                  <OriAttValER14>{attrValue}</OriAttValER14>
+              }
+            }
               </FUNERRER1>
             </CC917A>
-          }
 
           val result = XmlReader.of[XMLSubmissionNegativeAcknowledgementMessage].read(xml)
 

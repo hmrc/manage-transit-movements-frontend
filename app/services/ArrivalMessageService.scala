@@ -25,10 +25,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalMessageService @Inject()(arrivalMovementConnector: ArrivalMovementConnector) {
+class ArrivalMessageService @Inject() (arrivalMovementConnector: ArrivalMovementConnector) {
 
-  def getXMLSubmissionNegativeAcknowledgementMessage(arrivalId: ArrivalId)(implicit hc: HeaderCarrier,
-                                                                           ec: ExecutionContext): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
+  def getXMLSubmissionNegativeAcknowledgementMessage(
+    arrivalId: ArrivalId
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
     arrivalMovementConnector.getSummary(arrivalId) flatMap {
       case Some(summary) =>
         summary.messagesLocation.xmlSubmissionNegativeAcknowledgement match {

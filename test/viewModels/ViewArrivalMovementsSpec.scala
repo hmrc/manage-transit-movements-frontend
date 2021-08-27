@@ -45,7 +45,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
               _.copy(date = date, time = localTime)
             )
           }
-      }
+        }
 
     forAll(movementsGen(localDateToday).suchThat(_.nonEmpty), movementsGen(localDateYesterday).suchThat(_.nonEmpty)) {
       (todayMovements: Seq[ViewMovement], yesterdayMovements: Seq[ViewMovement]) =>

@@ -68,9 +68,9 @@ class IdentifierActionSpec extends SpecBase {
         state = "Activated"
       ),
       Enrolment(
-        key         = "HMCE-NCTS-ORG",
+        key = "HMCE-NCTS-ORG",
         identifiers = Seq.empty,
-        state       = "Activated"
+        state = "Activated"
       ),
       Enrolment(
         key = "IR-CT",
@@ -183,7 +183,8 @@ class IdentifierActionSpec extends SpecBase {
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments),
                                                            frontendAppConfig,
                                                            mockEnrolmentStoreConnector,
-                                                           mockUIRender)
+                                                           mockUIRender
+        )
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -200,7 +201,8 @@ class IdentifierActionSpec extends SpecBase {
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel),
                                                            frontendAppConfig,
                                                            mockEnrolmentStoreConnector,
-                                                           mockUIRender)
+                                                           mockUIRender
+        )
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -217,7 +219,8 @@ class IdentifierActionSpec extends SpecBase {
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider),
                                                            frontendAppConfig,
                                                            mockEnrolmentStoreConnector,
-                                                           mockUIRender)
+                                                           mockUIRender
+        )
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -234,7 +237,8 @@ class IdentifierActionSpec extends SpecBase {
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup),
                                                            frontendAppConfig,
                                                            mockEnrolmentStoreConnector,
-                                                           mockUIRender)
+                                                           mockUIRender
+        )
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -251,7 +255,8 @@ class IdentifierActionSpec extends SpecBase {
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole),
                                                            frontendAppConfig,
                                                            mockEnrolmentStoreConnector,
-                                                           mockUIRender)
+                                                           mockUIRender
+        )
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -389,7 +394,7 @@ object AuthActionSpec {
 
 }
 
-class FakeFailingAuthConnector @Inject()(exceptionToReturn: Throwable) extends AuthConnector {
+class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
   val serviceUrl: String = ""
 
   override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =

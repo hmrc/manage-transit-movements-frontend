@@ -24,9 +24,12 @@ case class DepartureId(index: Int)
 object DepartureId {
   implicit def reads: Reads[DepartureId] = __.read[Int] map DepartureId.apply
 
-  implicit def writes: Writes[DepartureId] = Writes(departureId => JsNumber(departureId.index))
+  implicit def writes: Writes[DepartureId] = Writes(
+    departureId => JsNumber(departureId.index)
+  )
 
   implicit lazy val pathBindable: PathBindable[DepartureId] = new PathBindable[DepartureId] {
+
     override def bind(key: String, value: String): Either[String, DepartureId] =
       implicitly[PathBindable[Int]].bind(key, value).right.map(DepartureId(_))
 

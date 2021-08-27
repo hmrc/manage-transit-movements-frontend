@@ -27,7 +27,7 @@ import play.api.libs.json.JsResult
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Status {
+class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Status {
 
   def getCustomsOffice(customsOfficeId: String)(implicit hc: HeaderCarrier): Future[Option[CustomsOffice]] = {
     val serviceUrl = s"${config.referenceDataUrl}/customs-office/$customsOfficeId"

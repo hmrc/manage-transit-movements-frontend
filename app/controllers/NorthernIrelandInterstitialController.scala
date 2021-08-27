@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class NorthernIrelandInterstitialController @Inject()(
+class NorthernIrelandInterstitialController @Inject() (
   cc: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)

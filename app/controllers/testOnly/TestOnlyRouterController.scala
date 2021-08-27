@@ -24,7 +24,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyRouterController @Inject()(
+class TestOnlyRouterController @Inject() (
   cc: MessagesControllerComponents,
   connector: TestOnlyRouterConnector,
   action: DefaultActionBuilder
@@ -35,7 +35,9 @@ class TestOnlyRouterController @Inject()(
     implicit request =>
       connector
         .submitInboundMessage(request.body, request.headers)
-        .map(response => Status(response.status))
+        .map(
+          response => Status(response.status)
+        )
   }
 
   def arrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
@@ -79,7 +81,9 @@ class TestOnlyRouterController @Inject()(
         case Some(arrivalId) =>
           connector
             .submitMessageToCore(request.body, arrivalId, request.headers)
-            .map(response => Status(response.status))
+            .map(
+              response => Status(response.status)
+            )
 
         case _ => Future.successful(BadRequest("ArrivalId is missing"))
       }

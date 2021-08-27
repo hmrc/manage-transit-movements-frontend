@@ -24,7 +24,8 @@ import play.api.libs.json.{Json, OWrites}
 
 final case class XMLSubmissionNegativeAcknowledgementMessage(movementReferenceNumber: Option[String],
                                                              localReferenceNumber: Option[String],
-                                                             error: FunctionalError)
+                                                             error: FunctionalError
+)
 
 object XMLSubmissionNegativeAcknowledgementMessage {
 

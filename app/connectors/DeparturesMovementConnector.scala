@@ -32,7 +32,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) extends Logging {
+class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) extends Logging {
   private val channel: String = "web"
 
   def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] = {
@@ -41,7 +41,9 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
 
     http
       .GET[Departures](serviceUrl)(HttpReads[Departures], header, ec)
-      .map(departures => Some(departures))
+      .map(
+        departures => Some(departures)
+      )
       .recover {
         case _ =>
           logger.error(s"get Departures failed to return data")
@@ -100,8 +102,9 @@ class DeparturesMovementConnector @Inject()(config: FrontendAppConfig, http: Htt
     }
   }
 
-  def getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation: String)(
-    implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
+  def getXMLSubmissionNegativeAcknowledgementMessage(
+    rejectionLocation: String
+  )(implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
     val serviceUrl = s"${config.departureBaseUrl}$rejectionLocation"
     val header     = hc.withExtraHeaders(ChannelHeader(channel))
     http

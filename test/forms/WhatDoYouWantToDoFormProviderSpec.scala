@@ -32,7 +32,7 @@ class WhatDoYouWantToDoFormProviderSpec extends OptionFieldBehaviours {
     behave like optionsField[WhatDoYouWantToDoOptions](
       form,
       fieldName,
-      validValues  = WhatDoYouWantToDoOptions.values,
+      validValues = WhatDoYouWantToDoOptions.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

@@ -31,7 +31,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext)
+class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext)
     extends HttpReadsTry
     with Logging {
 
@@ -43,7 +43,9 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
     http
       .GET[Arrivals](serviceUrl)(HttpReads[Arrivals], header, ec)
-      .map(arrivals => Some(arrivals))
+      .map(
+        arrivals => Some(arrivals)
+      )
       .recover {
         case _ =>
           logger.error("GetArrivals failed to get data")
@@ -76,8 +78,9 @@ class ArrivalMovementConnector @Inject()(config: FrontendAppConfig, http: HttpCl
       }
   }
 
-  def getXMLSubmissionNegativeAcknowledgementMessage(rejectionLocation: String)(
-    implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
+  def getXMLSubmissionNegativeAcknowledgementMessage(
+    rejectionLocation: String
+  )(implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] = {
     val serviceUrl = s"${config.destinationBaseUrl}$rejectionLocation"
     val header     = hc.withExtraHeaders(ChannelHeader(channel))
     http

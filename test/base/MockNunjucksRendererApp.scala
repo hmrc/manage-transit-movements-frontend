@@ -28,7 +28,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
-
 trait MockNunjucksRendererApp extends GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar {
   self: TestSuite =>
 
