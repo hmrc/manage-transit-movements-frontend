@@ -40,7 +40,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(UnknownPage, NormalMode, answers)
-              .mustBe(routes.IndexController.onPageLoad())
+              .mustBe(routes.WhatDoYouWantToDoController.onPageLoad())
         }
       }
     }
@@ -55,7 +55,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(UnknownPage, CheckMode, answers)
-              .mustBe(routes.IndexController.onPageLoad())
+              .mustBe(routes.WhatDoYouWantToDoController.onPageLoad())
         }
       }
     }

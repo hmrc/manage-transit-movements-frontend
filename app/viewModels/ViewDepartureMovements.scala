@@ -53,7 +53,7 @@ object ViewDepartureMovements {
       override def writes(o: ViewDepartureMovements): JsObject = Json.obj(
         "dataRows"                        -> o.dataRows,
         "declareDepartureNotificationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
-        "homePageUrl"                     -> routes.IndexController.onPageLoad().url
+        "homePageUrl"                     -> routes.WhatDoYouWantToDoController.onPageLoad().url
       )
     }
 }

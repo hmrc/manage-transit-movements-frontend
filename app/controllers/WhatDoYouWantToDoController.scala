@@ -18,82 +18,43 @@ package controllers
 
 import config.FrontendAppConfig
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
-import controllers.actions._
-import forms.WhatDoYouWantToDoFormProvider
-import models.{Arrivals, Departures, WhatDoYouWantToDoOptions}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import controllers.actions.IdentifierAction
+import controllers.departure.{routes => departureRoutes}
+import models.{Arrivals, Departures}
+import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
 import play.twirl.api.Html
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
-import controllers.departure.{routes => departureRoutes}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatDoYouWantToDoController @Inject()(
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  cc: MessagesControllerComponents,
-  renderer: Renderer,
-  formProvider: WhatDoYouWantToDoFormProvider,
-  val arrivalMovementConnector: ArrivalMovementConnector,
-  val departuresMovementConnector: DeparturesMovementConnector,
-  appConfig: FrontendAppConfig,
-)(implicit ec: ExecutionContext)
+class WhatDoYouWantToDoController @Inject()(appConfig: FrontendAppConfig,
+                                            identify: IdentifierAction,
+                                            cc: MessagesControllerComponents,
+                                            val arrivalMovementConnector: ArrivalMovementConnector,
+                                            val departuresMovementConnector: DeparturesMovementConnector,
+                                            renderer: Renderer)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = identify async {
+  def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
-      val form = formProvider()
-
-      val json = Json.obj(
-        "form"        -> form,
-        "radios"      -> WhatDoYouWantToDoOptions.radios(form),
-        "warningText" -> msg"whatDoYouWantToDo.warningText"
-      )
-      if (appConfig.isNIJourneyEnabled) {
-        for {
-          arrivals   <- arrivalMovementConnector.getArrivals()
-          departures <- departuresMovementConnector.getDepartures()
-          html       <- renderIndexPage(arrivals, departures)
-        } yield {
-          Ok(html)
-        }
-      } else {
-        renderer.render("whatDoYouWantToDo.njk", json).map(Ok(_))
+      for {
+        arrivals   <- arrivalMovementConnector.getArrivals()
+        departures <- departuresMovementConnector.getDepartures()
+        html       <- renderPage(arrivals, departures)
+      } yield {
+        Ok(html)
       }
   }
 
-  def onSubmit(): Action[AnyContent] = identify async {
-    implicit request =>
-      formProvider()
-        .bindFromRequest()
-        .fold(
-          formWithErrors => {
-            val json = Json.obj(
-              "form"        -> formWithErrors,
-              "radios"      -> WhatDoYouWantToDoOptions.radios(formProvider()),
-              "warningText" -> msg"whatDoYouWantToDo.warningText"
-            )
-            renderer.render("whatDoYouWantToDo.njk", json).map(BadRequest(_))
-          }, {
-            case WhatDoYouWantToDoOptions.GBMovements =>
-              Future.successful(Redirect(routes.IndexController.onPageLoad()))
-            case WhatDoYouWantToDoOptions.NorthernIrelandMovements =>
-              Future.successful(Redirect(routes.NorthernIrelandInterstitialController.onPageLoad()))
-          }
-        )
-  }
-
-  private def renderIndexPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader): Future[Html] =
+  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader): Future[Html] =
     renderer
       .render(
-        "index.njk",
+        "whatDoYouWantToDo.njk",
         Json.obj(
           "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
           "viewArrivalNotificationUrl"     -> controllers.arrival.routes.ViewArrivalsController.onPageLoad().url,
@@ -105,5 +66,4 @@ class WhatDoYouWantToDoController @Inject()(
           "hasDepartures"                  -> departures.exists(_.departures.nonEmpty)
         )
       )
-
 }

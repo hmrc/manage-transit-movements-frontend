@@ -116,7 +116,7 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
           val testJson = Json.toJson(viewDepartureMovement)
           val result   = (testJson \ "homePageUrl").validate[String].asOpt.value
 
-          result mustBe controllers.routes.IndexController.onPageLoad().url
+          result mustBe controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
       }
     }
   }
