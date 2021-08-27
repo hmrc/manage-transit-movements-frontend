@@ -32,7 +32,7 @@ case class ControlDecision(
 )
 
 object ControlDecision {
-
+ 
   implicit val writes: OWrites[ControlDecision] =
     (controlDecision: ControlDecision) =>
       Json.obj(

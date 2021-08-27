@@ -16,7 +16,7 @@
 
 package base
 
-import models.{DepartureId, LocalReferenceNumber, UserAnswers}
+import models.{DepartureId, LocalReferenceNumber}
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -41,11 +41,7 @@ trait SpecBase
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
 
-  val userAnswersId = "id"
-
   val departureId = DepartureId(1)
-
-  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   // TODO: remove all references to this and use [[play.api.test.Helpers.stubMessagesApi]]
   def messagesApi: MessagesApi = Helpers.stubMessagesApi()
