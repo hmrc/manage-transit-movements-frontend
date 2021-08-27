@@ -1,7 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "macros/title.njk"                         import title %}
-{% from "macros/table.njk"                         import departureNotification %}
+{% from "macros/showMovementsByDate.njk"           import showMovementsByDate %}
 
 
 {% block pageTitle %}
@@ -19,7 +19,7 @@
 
         <p class="govuk-body"><a id = "make-departure-notification" href={{ declareDepartureNotificationUrl }} > {{ messages("viewDepartures.makeDepartureNotification") }}</a></p>
 
-        {{ departureNotification(dataRows) }}
+        {{ showMovementsByDate("Departures notifications table", messages("viewDepartures.table.updated"), messages("viewDepartures.table.mrn"), messages("viewDepartures.table.status"), messages("viewDepartures.table.action"), dataRows) }}
 
         <p class="govuk-body govuk-!-margin-top-3"><a id = "go-to-manage-transit-movements" href="{{ homePageUrl }}"> {{ messages("viewDepartures.goToManageTransitMovements") }} </a></p>
 
