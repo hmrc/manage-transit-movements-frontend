@@ -12,7 +12,7 @@ GET        /cannot-use-service-no-eori                                        co
 
 GET        /keep-alive                                                        controllers.KeepAliveController.keepAlive()
 
-GET        /view-arrivals                                                     controllers.arrival.ViewArrivalsController.onPageLoad
+GET        /view-arrivals                                                     controllers.arrival.ViewArrivalsController.onPageLoad(mrn: Option[String]?=None)
 
 GET        /arrivals/:arrivalId/unloading-permission-pdf                      controllers.arrival.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
 

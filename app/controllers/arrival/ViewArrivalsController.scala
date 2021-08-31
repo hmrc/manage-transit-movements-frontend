@@ -20,16 +20,17 @@ import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
-import models.Arrival
+import models.{Arrival, Arrivals}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrivalMovements, ViewMovement}
-
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import models.requests.IdentifierRequest
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewArrivalsController @Inject() (val renderer: Renderer,
                                         identify: IdentifierAction,
@@ -41,20 +42,30 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad: Action[AnyContent] = (Action andThen identify).async {
-    implicit request =>
-      arrivalMovementConnector.getArrivals().flatMap {
-        case Some(allArrivals) =>
-          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(
-            (arrival: Arrival) => ViewMovement(arrival)
+  def onPageLoad(mrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
+    implicit request: IdentifierRequest[AnyContent] =>
+      mrn match {
+        case Some(mrnValue) =>
+          renderResults(
+            arrivalMovementConnector.getArrivalSearchResults(mrnValue, "100"),
+            "viewArrivalsSearchResults.njk"
           )
-          val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
-
-          renderer
-            .render("viewArrivals.njk", formatToJson)
-            .map(Ok(_))
-
-        case _ => renderTechnicalDifficultiesPage
+        case _ => renderResults(arrivalMovementConnector.getArrivals(), "viewArrivals.njk")
       }
   }
+
+  private def renderResults(results: Future[Option[Arrivals]], template: String)(implicit request: IdentifierRequest[AnyContent]) =
+    results.flatMap {
+      case Some(allArrivals) =>
+        val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(
+          (arrival: Arrival) => ViewMovement(arrival)
+        )
+        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
+
+        renderer
+          .render(template, formatToJson)
+          .map(Ok(_))
+
+      case _ => renderTechnicalDifficultiesPage
+    }
 }

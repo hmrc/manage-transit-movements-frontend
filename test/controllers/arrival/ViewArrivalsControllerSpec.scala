@@ -25,7 +25,7 @@ import generators.Generators
 import matchers.JsonMatchers
 import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -122,6 +122,36 @@ class ViewArrivalsControllerSpec
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivals.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson
+    }
+
+    "return OK and the correct view for a GET when displaying search results" in {
+
+      when(mockNunjucksRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
+        .thenReturn(Future.successful(Some(mockArrivalResponse)))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewArrivalsController.onPageLoad(Some("theMrn")).url
+      )
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
+      status(result) mustEqual OK
+
+      verify(mockArrivalMovementConnector).getArrivalSearchResults(meq("theMrn"), meq("100"))(any())
+
+      verify(mockNunjucksRenderer, times(1))
+        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+      templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
       jsonCaptorWithoutConfig mustBe expectedJson
     }
 
