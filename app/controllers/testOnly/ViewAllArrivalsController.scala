@@ -36,8 +36,8 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
                                            cc: MessagesControllerComponents,
                                            val config: FrontendAppConfig,
                                            arrivalMovementConnector: ArrivalMovementConnector
-                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendController(cc)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
 

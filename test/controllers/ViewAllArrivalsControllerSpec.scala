@@ -38,13 +38,14 @@ import viewModels.{ViewArrivalMovements, ViewMovement}
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewAllArrivalsControllerSpec  extends SpecBase
-  with MockitoSugar
-  with JsonMatchers
-  with Generators
-  with NunjucksSupport
-  with BeforeAndAfterEach
-  with MockNunjucksRendererApp {
+class ViewAllArrivalsControllerSpec
+    extends SpecBase
+    with MockitoSugar
+    with JsonMatchers
+    with Generators
+    with NunjucksSupport
+    with BeforeAndAfterEach
+    with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
   implicit val frontendAppConfig           = FakeFrontendAppConfig()
