@@ -39,7 +39,7 @@ import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewArrivalsControllerSpec
-  extends SpecBase
+    extends SpecBase
     with MockitoSugar
     with JsonMatchers
     with Generators

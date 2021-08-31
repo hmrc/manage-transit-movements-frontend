@@ -38,10 +38,10 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
           viewMovement.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
 
         val expectedJson = Json.obj(
-          "updated" -> formatTime,
-          "referenceNumber"     -> viewMovement.movementReferenceNumber,
-          "status"  -> viewMovement.status,
-          "actions" -> viewMovement.action
+          "updated"         -> formatTime,
+          "referenceNumber" -> viewMovement.movementReferenceNumber,
+          "status"          -> viewMovement.status,
+          "actions"         -> viewMovement.action
         )
 
         Json.toJson(viewMovement) mustBe expectedJson
@@ -51,7 +51,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "UnloadingPermission")
+        val unloadingArrival: Arrival = arrival.copy(status = "UnloadingPermission")
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
@@ -62,7 +62,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display rejection" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "ArrivalRejected")
+        val unloadingArrival: Arrival = arrival.copy(status = "ArrivalRejected")
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
@@ -74,7 +74,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
 
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "")
+        val unloadingArrival: Arrival = arrival.copy(status = "")
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
 
         viewMovement.status mustBe unloadingArrival.status
@@ -86,7 +86,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
 
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "")
+        val unloadingArrival: Arrival = arrival.copy(status = "")
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
 
         viewMovement.action mustBe Nil

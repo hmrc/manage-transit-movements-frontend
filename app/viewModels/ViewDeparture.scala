@@ -27,7 +27,8 @@ final case class ViewDeparture(updatedDate: LocalDate,
                                updatedTime: LocalTime,
                                localReferenceNumber: LocalReferenceNumber,
                                status: String,
-                               actions: Seq[ViewMovementAction])
+                               actions: Seq[ViewMovementAction]
+)
 
 object ViewDeparture {
 
@@ -50,8 +51,8 @@ object ViewDeparture {
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
         "referenceNumber" -> o.localReferenceNumber,
-        "status"               -> o.status,
-        "actions"              -> o.actions
+        "status"          -> o.status,
+        "actions"         -> o.actions
       )
     }
 }

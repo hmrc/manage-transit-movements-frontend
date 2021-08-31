@@ -23,7 +23,7 @@ import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorTy
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
-import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewArrival, ViewMovementAction}
+import viewModels.{ViewArrival, ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovementAction}
 
 import java.time._
 

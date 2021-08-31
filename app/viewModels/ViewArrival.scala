@@ -49,8 +49,8 @@ object ViewArrival {
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
         "referenceNumber" -> o.movementReferenceNumber,
-        "status"  -> o.status,
-        "actions" -> o.action
+        "status"          -> o.status,
+        "actions"         -> o.action
       )
     }
 }
