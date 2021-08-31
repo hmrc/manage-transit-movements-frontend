@@ -1,16 +1,12 @@
 .pagination {
-// text-align: center;
 
 @include govuk-media-query($from: desktop) {
 
-// Alignment adjustments
 margin-left: - govuk-spacing(1);
     margin-right: - govuk-spacing(1);
 
-// Hide whitespace between elements
    font-size: 0;
 
-// Trick to remove the need for floats
    text-align: justify;
 
 &:after {
