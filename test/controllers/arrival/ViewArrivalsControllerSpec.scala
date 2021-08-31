@@ -102,7 +102,7 @@ class ViewArrivalsControllerSpec
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockArrivalMovementConnector.getArrivals(any(), any(), any())(any()))
+      when(mockArrivalMovementConnector.getArrivals()(any()))
         .thenReturn(Future.successful(Some(mockArrivalResponse)))
 
       val request = FakeRequest(
@@ -131,7 +131,7 @@ class ViewArrivalsControllerSpec
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockArrivalMovementConnector.getArrivals(any(), any(), any())(any()))
+      when(mockArrivalMovementConnector.getArrivals()(any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest(

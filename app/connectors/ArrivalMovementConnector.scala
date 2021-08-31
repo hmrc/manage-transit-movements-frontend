@@ -37,30 +37,10 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
 
   private val channel: String = "web"
 
-  case class QueryParam(param: String, valueParam: Option[String])
-
-  private def makeQueryParams(queryParam: QueryParam*): Seq[(String, String)] =
-    queryParam.foldLeft(Seq.empty[(String, String)]) {
-      (x, y) =>
-        x ++ y.valueParam.fold(Seq.empty[(String, String)])(
-          value => Seq((y.param, value))
-        )
-    }
-
-  def getArrivals(
-    mrn: Option[String] = None,
-    page: Option[String] = None,
-    pageSize: Option[String] = None
-  )(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
+  private def doGetArrivals(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
     val header = hc.withExtraHeaders(ChannelHeader(channel))
 
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
-
-    val queryParams = makeQueryParams(
-      QueryParam("mrn", mrn),
-      QueryParam("page", page),
-      QueryParam("pageSize", pageSize)
-    )
 
     http
       .GET[Arrivals](serviceUrl, queryParams)(HttpReads[Arrivals], header, ec)
@@ -72,6 +52,18 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
           logger.error("GetArrivals failed to get data")
           None
       }
+  }
+
+  def getArrivals()(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
+    doGetArrivals(Seq.empty)
+  }
+
+  def getArrivalSearchResults(mrn: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
+    doGetArrivals(Seq("mrn" -> mrn, "pageSize" -> pageSize))
+  }
+
+  def getPagedArrivals(page: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
+    doGetArrivals(Seq("page" -> page, "pageSize" -> pageSize))
   }
 
   def getPDF(arrivalId: ArrivalId, bearerToken: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
