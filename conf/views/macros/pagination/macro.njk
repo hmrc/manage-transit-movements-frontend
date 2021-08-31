@@ -4,6 +4,11 @@
 
   <p class="govuk-visually-hidden" aria-labelledby="pagination-label">Pagination navigation</p>
 
+
+  {%- if params.results %}
+    <p class="pagination__results">Showing <b>{{ params.results.from }}</b> to <b>{{ params.results.to }}</b> of <b>{{params.results.count}}</b> results</p>
+  {% endif -%}
+
   <ul class="pagination__list">
     {%- if params.previous %}
       <li class="pagination__item  pagination__item--prev">
@@ -29,9 +34,5 @@
       </li>
     {% endif -%}
   </ul>
-
-  {%- if params.results %}
-    <p class="pagination__results">Showing <b>{{ params.results.from }}</b> to <b>{{ params.results.to }}</b> of <b>{{params.results.count}}</b> results</p>
-  {% endif -%}
 
 </nav>{% endmacro %}
