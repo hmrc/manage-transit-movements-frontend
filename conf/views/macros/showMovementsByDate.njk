@@ -1,0 +1,53 @@
+{% macro showMovementsByDate(visuallyHiddenHeader, rowHeadingUpdated, rowHeadingMrn, rowHeadingStatus, rowHeadingAction, dataRows) %}
+
+  {% for date, rows in dataRows %}
+
+    <h2 class="govuk-heading-m" data-testrole="movements-list_group-heading">{{date}}</h2>
+
+    <table class="responsive-table">
+      <caption class="govuk-visually-hidden">{{ visuallyHiddenHeader }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ rowHeadingUpdated }}</th>
+          <th scope="col">{{ rowHeadingMrn }}</th>
+          <th scope="col">{{ rowHeadingStatus }}</th>
+          <th scope="col" class="action-col">{{ rowHeadingAction }}</th>
+        </tr>
+      </thead>
+
+      <tbody class="hmrc-responsive-table__data">
+        {% for row in rows %}
+          <tr role="row">
+            <td role="cell">
+              <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingUpdated }}</span>
+              {{ row.updated }}
+            </td>
+            <td role="cell">
+              <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingMrn }}</span>
+              {{ row.mrn }}
+            </td>
+            <td role="cell">
+              <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingStatus }}</span>
+              {{ messages(row.status) }}
+            </td>
+            <td role="cell">
+              <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingAction }}</span>
+
+              {% for action in row.actions %}
+                {% set dash = joiner("-") %}
+                <a id="{{ messages(action.key) | replace(" ", "-")  }}-{{ row.mrn }}" href=" {{ action.href }} " class="action-link">
+                  <span aria-hidden="true">{{ messages(action.key) }}</span>
+                  <span class="govuk-visually-hidden">
+                    {{ messages(action.key) }} for {{ row.mrn }}</span>
+                </a>
+              {% endfor %}
+            </td>
+          </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% endfor %}
+
+{% endmacro %}
