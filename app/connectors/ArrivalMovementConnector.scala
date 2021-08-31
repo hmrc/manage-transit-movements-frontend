@@ -38,13 +38,15 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
   private val channel: String = "web"
 
   private def makeQueryParam(param: String, valueParam: Option[String]): Seq[(String, String)] =
-    valueParam.fold(Seq.empty[(String, String)])(value => Seq((param, value)))
+    valueParam.fold(Seq.empty[(String, String)])(
+      value => Seq((param, value))
+    )
 
   def getArrivals(
-                   mrn: Option[String] = None,
-                   page: Option[String] = None,
-                   pageSize: Option[String] = None
-                 )(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
+    mrn: Option[String] = None,
+    page: Option[String] = None,
+    pageSize: Option[String] = None
+  )(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
     val header = hc.withExtraHeaders(ChannelHeader(channel))
 
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
