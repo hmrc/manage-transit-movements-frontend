@@ -50,7 +50,7 @@ class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with Gener
   val departure6 = arbitrary[Departure].sample.value.copy(updated = day6_1)
   val departure7 = arbitrary[Departure].sample.value.copy(updated = day6_2)
 
-  val departures = Seq(departure1, departure2, departure3, departure4, departure5, departure6, departure7)
+  val departures       = Seq(departure1, departure2, departure3, departure4, departure5, departure6, departure7)
   val sortedDepartures = Seq(departure1, departure2, departure3, departure4, departure5, departure7, departure6)
 
   val frontendAppConfig = FakeFrontendAppConfig()
@@ -84,33 +84,36 @@ class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with Gener
   }
 
   "display rows in correct (sorted) order" in {
-    rows.toList.zipWithIndex.forEach { x =>
-      val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
+    rows.toList.zipWithIndex.forEach {
+      x =>
+        val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
 
-      cells.get(0).text() mustBe "viewDepartures.table.updated " + (x._2 match {
-        case 0 => "6:06am"
-        case 1 => "5:05am"
-        case 2 => "4:04am"
-        case 3 => "3:03am"
-        case 4 => "2:02am"
-        case 5 => "1:00am"
-        case 6 => "1:01am"
-      })
+        cells.get(0).text() mustBe "viewDepartures.table.updated " + (x._2 match {
+          case 0 => "6:06am"
+          case 1 => "5:05am"
+          case 2 => "4:04am"
+          case 3 => "3:03am"
+          case 4 => "2:02am"
+          case 5 => "1:00am"
+          case 6 => "1:01am"
+        })
     }
   }
 
   "display correct data in each row" in {
-    rows.toList.zipWithIndex.forEach { x =>
-      val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
+    rows.toList.zipWithIndex.forEach {
+      x =>
+        val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
 
-      cells.get(1).text() mustBe s"viewDepartures.table.lrn ${viewMovements(x._2).localReferenceNumber.value}"
-      cells.get(2).text() mustBe s"viewDepartures.table.status ${viewMovements(x._2).status}"
+        cells.get(1).text() mustBe s"viewDepartures.table.lrn ${viewMovements(x._2).localReferenceNumber.value}"
+        cells.get(2).text() mustBe s"viewDepartures.table.status ${viewMovements(x._2).status}"
 
-      val actions = cells.get(3).getElementsByTag("a")
-      actions.toList.zipWithIndex.forEach { y =>
-        y._1.attr("id") mustBe s"${viewMovements(x._2).actions(y._2).key}-${viewMovements(x._2).localReferenceNumber.value}"
-        y._1.attr("href") mustBe viewMovements(x._2).actions(y._2).href
-      }
+        val actions = cells.get(3).getElementsByTag("a")
+        actions.toList.zipWithIndex.forEach {
+          y =>
+            y._1.attr("id") mustBe s"${viewMovements(x._2).actions(y._2).key}-${viewMovements(x._2).localReferenceNumber.value}"
+            y._1.attr("href") mustBe viewMovements(x._2).actions(y._2).href
+        }
     }
   }
 

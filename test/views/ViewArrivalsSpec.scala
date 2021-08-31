@@ -52,7 +52,7 @@ class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generator
   val arrival6 = arbitrary[Arrival].sample.value.copy(updated = day6_1)
   val arrival7 = arbitrary[Arrival].sample.value.copy(updated = day6_2)
 
-  val arrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6, arrival7)
+  val arrivals       = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6, arrival7)
   val sortedArrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival7, arrival6)
 
   val viewMovements: Seq[ViewArrival] = sortedArrivals.map(
@@ -84,33 +84,36 @@ class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generator
   }
 
   "display rows in correct (sorted) order" in {
-    rows.toList.zipWithIndex.forEach { x =>
-      val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
+    rows.toList.zipWithIndex.forEach {
+      x =>
+        val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
 
-      cells.get(0).text() mustBe "viewArrivalNotifications.table.updated " + (x._2 match {
-        case 0 => "6:06am"
-        case 1 => "5:05am"
-        case 2 => "4:04am"
-        case 3 => "3:03am"
-        case 4 => "2:02am"
-        case 5 => "1:01am"
-        case 6 => "1:00am"
-      })
+        cells.get(0).text() mustBe "viewArrivalNotifications.table.updated " + (x._2 match {
+          case 0 => "6:06am"
+          case 1 => "5:05am"
+          case 2 => "4:04am"
+          case 3 => "3:03am"
+          case 4 => "2:02am"
+          case 5 => "1:01am"
+          case 6 => "1:00am"
+        })
     }
   }
 
   "display correct data in each row" in {
-    rows.toList.zipWithIndex.forEach { x =>
-      val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
+    rows.toList.zipWithIndex.forEach {
+      x =>
+        val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
 
-      cells.get(1).text() mustBe s"viewArrivalNotifications.table.mrn ${viewMovements(x._2).movementReferenceNumber}"
-      cells.get(2).text() mustBe s"viewArrivalNotifications.table.status ${viewMovements(x._2).status}"
+        cells.get(1).text() mustBe s"viewArrivalNotifications.table.mrn ${viewMovements(x._2).movementReferenceNumber}"
+        cells.get(2).text() mustBe s"viewArrivalNotifications.table.status ${viewMovements(x._2).status}"
 
-      val actions = cells.get(3).getElementsByTag("a")
-      actions.toList.zipWithIndex.forEach { y =>
-        y._1.attr("id") mustBe s"${viewMovements(x._2).action(y._2).key}-${viewMovements(x._2).movementReferenceNumber}"
-        y._1.attr("href") mustBe viewMovements(x._2).action(y._2).href
-      }
+        val actions = cells.get(3).getElementsByTag("a")
+        actions.toList.zipWithIndex.forEach {
+          y =>
+            y._1.attr("id") mustBe s"${viewMovements(x._2).action(y._2).key}-${viewMovements(x._2).movementReferenceNumber}"
+            y._1.attr("href") mustBe viewMovements(x._2).action(y._2).href
+        }
     }
   }
 
