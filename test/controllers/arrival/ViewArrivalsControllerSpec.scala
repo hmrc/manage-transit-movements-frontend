@@ -88,7 +88,7 @@ class ViewArrivalsControllerSpec
     Nil
   )
 
-  private val expectedJson: JsValue =
+  private lazy val expectedJson: JsValue =
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
@@ -97,12 +97,12 @@ class ViewArrivalsControllerSpec
     )
 
   "ViewArrivalNotifications Controller" - {
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET when not displaying search results" in {
 
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockArrivalMovementConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getArrivals(any(), any(), any())(any()))
         .thenReturn(Future.successful(Some(mockArrivalResponse)))
 
       val request = FakeRequest(
@@ -125,13 +125,41 @@ class ViewArrivalsControllerSpec
       jsonCaptorWithoutConfig mustBe expectedJson
     }
 
+    "return OK and the correct view for a GET when displaying search results" in {
+
+      when(mockNunjucksRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockArrivalMovementConnector.getArrivals(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Some(mockArrivalResponse)))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewArrivalsController.onPageLoad(Some("123456")).url
+      )
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
+      status(result) mustEqual OK
+
+      verify(mockNunjucksRenderer, times(1))
+        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+      templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson
+    }
+
     "render technical difficulty" in {
 
       val config = app.injector.instanceOf[FrontendAppConfig]
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockArrivalMovementConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getArrivals(any(), any(), any())(any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest(

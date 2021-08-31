@@ -79,8 +79,43 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             .willReturn(okJson(arrivalsResponseJson.toString()))
         )
 
-        connector.getArrivals.futureValue mustBe Some(expectedResult)
+        connector.getArrivals().futureValue mustBe Some(expectedResult)
       }
+
+      "must return a successful future response with parameters" in {
+        val expectedResult =
+          Arrivals(
+            Seq(
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals?mrn=theMrn&page=42&pageSize=100"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(arrivalsResponseJson.toString()))
+        )
+
+        connector.getArrivals(Some("theMrn"), Some("42"), Some("100")).futureValue mustBe Some(expectedResult)
+      }
+
+      "must return a successful future response with some parameters" in {
+        val expectedResult =
+          Arrivals(
+            Seq(
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals?mrn=theMrn&pageSize=100"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(arrivalsResponseJson.toString()))
+        )
+
+        connector.getArrivals(Some("theMrn"), None, Some("100")).futureValue mustBe Some(expectedResult)
+      }
+
 
       "must return a None when getArrivals returns an error response" in {
 

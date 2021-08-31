@@ -87,7 +87,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.getArrivals()(any()))
+        when(mockArrivalMovementConnector.getArrivals(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockDestinationResponse)))
 
         when(mockDepartureMovementConnector.getDepartures()(any()))
@@ -113,7 +113,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.getArrivals()(any()))
+        when(mockArrivalMovementConnector.getArrivals(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockDestinationResponse)))
 
         when(mockDepartureMovementConnector.getDepartures()(any()))
@@ -142,7 +142,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.getArrivals()(any()))
+        when(mockArrivalMovementConnector.getArrivals(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockDestinationResponse)))
 
         when(mockDepartureMovementConnector.getDepartures()(any()))
@@ -169,7 +169,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.getArrivals()(any()))
+        when(mockArrivalMovementConnector.getArrivals(any(), any(), any())(any()))
           .thenReturn(Future.successful(None))
 
         when(mockDepartureMovementConnector.getDepartures()(any()))
