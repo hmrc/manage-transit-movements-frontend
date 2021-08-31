@@ -116,7 +116,6 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         connector.getArrivals(Some("theMrn"), None, Some("100")).futureValue mustBe Some(expectedResult)
       }
 
-
       "must return a None when getArrivals returns an error response" in {
 
         forAll(errorResponses) {
