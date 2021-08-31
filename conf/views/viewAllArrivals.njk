@@ -2,6 +2,7 @@
 
 {% from "macros/title.njk" import title %}
 {% from "macros/showMovementsByDate.njk" import showMovementsByDate %}
+{% from "macros/pagination/macro.njk" import pagination %}
 
 {% block pageTitle %}
   {{ title(messages("viewArrivalNotifications.title")) }}
@@ -19,6 +20,33 @@
           {{ messages("viewArrivalNotifications.makeArrivalNotification") }}
         </a>
       </p>
+
+      {{ pagination({
+        results: {
+          from: 10,
+          to: 20,
+          count: 30
+        },
+        previous: {
+          text: 'Previous',
+          href: ''
+        },
+        next: {
+          text: 'Next',
+          href: ''
+        },
+        items: [{
+          text: '1',
+          href: '/page=1'
+        }, {
+          text: '2',
+          href: '/page=2',
+          selected: true
+        }, {
+          text: '3',
+          href: '/page=3'
+        }]
+      }) }}
 
       {{ showMovementsByDate("Arrival notifications table", messages("viewArrivalNotifications.table.updated"), messages("viewArrivalNotifications.table.mrn"), messages("viewArrivalNotifications.table.status"), messages("viewArrivalNotifications.table.action"), dataRows) }}
 
