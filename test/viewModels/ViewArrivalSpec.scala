@@ -16,8 +16,7 @@
 
 package viewModels
 
-import base.SpecBase
-import base.FakeFrontendAppConfig
+import base.{FakeFrontendAppConfig, SpecBase}
 import generators.Generators
 import models.Arrival
 import org.scalacheck.Arbitrary.arbitrary

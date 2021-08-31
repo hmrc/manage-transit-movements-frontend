@@ -16,13 +16,13 @@
 
 package viewModels
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalTime}
-
 import config.FrontendAppConfig
 import models.Arrival
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
+
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalTime}
 
 final case class ViewArrival(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, action: Seq[ViewMovementAction])
 

@@ -26,7 +26,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.{ViewArrivalMovements, ViewArrival}
+import viewModels.{ViewArrival, ViewArrivalMovements}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -36,8 +36,8 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
                                         cc: MessagesControllerComponents,
                                         val config: FrontendAppConfig,
                                         arrivalMovementConnector: ArrivalMovementConnector
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-    extends FrontendController(cc)
+                                       )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
 

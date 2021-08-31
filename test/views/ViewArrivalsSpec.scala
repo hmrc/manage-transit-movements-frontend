@@ -16,10 +16,7 @@
 
 package views
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import base.SingleViewSpec
-import base.FakeFrontendAppConfig
+import base.{FakeFrontendAppConfig, SingleViewSpec}
 import generators.Generators
 import models.Arrival
 import org.jsoup.nodes.Document
@@ -27,7 +24,10 @@ import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
-import viewModels.{ViewArrivalMovements, ViewArrival}
+import viewModels.{ViewArrival, ViewArrivalMovements}
+
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generators with ScalaCheckPropertyChecks {
 
