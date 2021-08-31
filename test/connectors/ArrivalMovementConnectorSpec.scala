@@ -79,7 +79,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             .willReturn(okJson(arrivalsResponseJson.toString()))
         )
 
-        connector.getArrivals.futureValue mustBe Some(expectedResult)
+        connector.getArrivals().futureValue mustBe Some(expectedResult)
       }
 
       "must return a None when getArrivals returns an error response" in {
@@ -95,6 +95,76 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
                 )
             )
             connector.getArrivals().futureValue mustBe None
+        }
+      }
+    }
+
+    "getArrivalSearchResults" - {
+      "must return a successful future response" in {
+        val expectedResult =
+          Arrivals(
+            Seq(
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals?mrn=theMrn&pageSize=100"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(arrivalsResponseJson.toString()))
+        )
+
+        connector.getArrivalSearchResults("theMrn", "100").futureValue mustBe Some(expectedResult)
+      }
+
+      "must return a None when arrivals API returns an error response" in {
+
+        forAll(errorResponses) {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/movements/arrivals?mrn=theMrn&pageSize=100"))
+                .withHeader("Channel", containing("web"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+            connector.getArrivalSearchResults("theMrn", "100").futureValue mustBe None
+        }
+      }
+    }
+
+    "getPagedArrivals" - {
+      "must return a successful future response" in {
+        val expectedResult =
+          Arrivals(
+            Seq(
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals?page=42&pageSize=100"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(arrivalsResponseJson.toString()))
+        )
+
+        connector.getPagedArrivals("42", "100").futureValue mustBe Some(expectedResult)
+      }
+
+      "must return a None when getArrivals returns an error response" in {
+
+        forAll(errorResponses) {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/movements/arrivals?page=42&pageSize=100"))
+                .withHeader("Channel", containing("web"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+            connector.getPagedArrivals("42", "100").futureValue mustBe None
         }
       }
     }

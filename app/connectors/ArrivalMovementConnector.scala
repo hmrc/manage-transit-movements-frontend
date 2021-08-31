@@ -37,12 +37,13 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
 
   private val channel: String = "web"
 
-  def getArrivals()(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
+  private def doGetArrivals(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[Arrivals]] = {
     val header = hc.withExtraHeaders(ChannelHeader(channel))
 
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
+
     http
-      .GET[Arrivals](serviceUrl)(HttpReads[Arrivals], header, ec)
+      .GET[Arrivals](serviceUrl, queryParams)(HttpReads[Arrivals], header, ec)
       .map(
         arrivals => Some(arrivals)
       )
@@ -52,6 +53,15 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
           None
       }
   }
+
+  def getArrivals()(implicit hc: HeaderCarrier): Future[Option[Arrivals]] =
+    doGetArrivals(Seq.empty)
+
+  def getArrivalSearchResults(mrn: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Arrivals]] =
+    doGetArrivals(Seq("mrn" -> mrn, "pageSize" -> pageSize))
+
+  def getPagedArrivals(page: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Arrivals]] =
+    doGetArrivals(Seq("page" -> page, "pageSize" -> pageSize))
 
   def getPDF(arrivalId: ArrivalId, bearerToken: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.index}/unloading-permission"
