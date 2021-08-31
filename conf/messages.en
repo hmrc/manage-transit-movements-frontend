@@ -278,3 +278,6 @@ unauthorisedWithoutGroupAccess.title = You cannot use this service group authori
 unauthorisedWithoutGroupAccess.heading = You cannot use this service
 unauthorisedWithoutGroupAccess.requestAccess = request access to NCTS
 unauthorisedWithoutGroupAccess.beforeUseThisService =  before you can use this service.
+
+viewAllArrivals.title = viewAllArrivals
+viewAllArrivals.heading = viewAllArrivals
