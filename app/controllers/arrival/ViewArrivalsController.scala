@@ -42,12 +42,14 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
     with I18nSupport
     with TechnicalDifficultiesPage {
 
+  private val pageSize = 100
+
   def onPageLoad(mrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
       mrn match {
         case Some(mrnValue) =>
           renderResults(
-            arrivalMovementConnector.getArrivalSearchResults(mrnValue, "100"),
+            arrivalMovementConnector.getArrivalSearchResults(mrnValue, pageSize),
             "viewArrivalsSearchResults.njk"
           )
         case _ => renderResults(arrivalMovementConnector.getArrivals(), "viewArrivals.njk")
