@@ -34,7 +34,7 @@ class ViewDepartureSpec extends SpecBase with Generators with ScalaCheckProperty
           "updatedTime" -> viewDeparture.updatedTime
             .format(DateTimeFormatter.ofPattern("h:mma"))
             .toLowerCase,
-          "localReferenceNumber" -> viewDeparture.localReferenceNumber,
+          "referenceNumber" -> viewDeparture.localReferenceNumber,
           "status"               -> viewDeparture.status,
           "actions"              -> viewDeparture.actions
         )

@@ -24,15 +24,15 @@ import models.Arrival
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
 
-final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, action: Seq[ViewMovementAction])
+final case class ViewArrival(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, action: Seq[ViewMovementAction])
 
-object ViewMovement {
+object ViewArrival {
 
-  def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewMovement = {
+  def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewArrival = {
 
     val movementStatus: MovementStatus = MovementStatus(arrival)
 
-    ViewMovement(
+    ViewArrival(
       arrival.updated.toLocalDate,
       arrival.updated.toLocalTime,
       arrival.movementReferenceNumber,
@@ -41,14 +41,14 @@ object ViewMovement {
     )
   }
 
-  implicit val writes: OWrites[ViewMovement] =
-    new OWrites[ViewMovement] {
+  implicit val writes: OWrites[ViewArrival] =
+    new OWrites[ViewArrival] {
 
-      override def writes(o: ViewMovement): JsObject = Json.obj(
+      override def writes(o: ViewArrival): JsObject = Json.obj(
         "updated" -> o.time
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
-        "mrn"     -> o.movementReferenceNumber,
+        "referenceNumber" -> o.movementReferenceNumber,
         "status"  -> o.status,
         "actions" -> o.action
       )

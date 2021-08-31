@@ -27,7 +27,7 @@ import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
-import viewModels.{ViewArrivalMovements, ViewMovement}
+import viewModels.{ViewArrivalMovements, ViewArrival}
 
 class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generators with ScalaCheckPropertyChecks {
 
@@ -53,8 +53,8 @@ class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generator
 
   val arrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6, arrival7)
 
-  val viewMovements: Seq[ViewMovement] = arrivals.map(
-    (arrival: Arrival) => ViewMovement(arrival)(messages, frontendAppConfig)
+  val viewMovements: Seq[ViewArrival] = arrivals.map(
+    (arrival: Arrival) => ViewArrival(arrival)(messages, frontendAppConfig)
   )
 
   val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))

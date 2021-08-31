@@ -23,7 +23,7 @@ import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorTy
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
-import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewMovement, ViewMovementAction}
+import viewModels.{ViewArrivalMovements, ViewDeparture, ViewDepartureMovements, ViewArrival, ViewMovementAction}
 
 import java.time._
 
@@ -126,7 +126,7 @@ trait ModelGenerators {
       } yield ViewMovementAction(href, key)
     }
 
-  implicit val arbitraryViewMovement: Arbitrary[ViewMovement] =
+  implicit val arbitraryViewMovement: Arbitrary[ViewArrival] =
     Arbitrary {
       for {
         date    <- arbitrary[LocalDate]
@@ -134,7 +134,7 @@ trait ModelGenerators {
         status  <- arbitrary[String]
         mrn     <- stringsWithMaxLength(17)
         actions <- listOfN(4, arbitrary[ViewMovementAction])
-      } yield ViewMovement(date, time, status, mrn, actions)
+      } yield ViewArrival(date, time, status, mrn, actions)
     }
 
   implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =
@@ -151,7 +151,7 @@ trait ModelGenerators {
   implicit val arbitraryViewArrivalMovements: Arbitrary[ViewArrivalMovements] =
     Arbitrary {
       for {
-        seqOfViewMovements <- listOfN(10, arbitrary[ViewMovement])
+        seqOfViewMovements <- listOfN(10, arbitrary[ViewArrival])
       } yield ViewArrivalMovements(seqOfViewMovements)
     }
 

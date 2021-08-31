@@ -35,7 +35,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import viewModels.{ViewArrivalMovements, ViewMovement}
+import viewModels.{ViewArrivalMovements, ViewArrival}
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -80,7 +80,7 @@ class ViewArrivalsControllerSpec
       )
     )
 
-  private val mockViewMovement = ViewMovement(
+  private val mockViewMovement = ViewArrival(
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
     "test mrn",
