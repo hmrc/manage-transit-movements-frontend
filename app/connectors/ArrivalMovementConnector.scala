@@ -37,10 +37,15 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
 
   private val channel: String = "web"
 
-  private def makeQueryParam(param: String, valueParam: Option[String]): Seq[(String, String)] =
-    valueParam.fold(Seq.empty[(String, String)])(
-      value => Seq((param, value))
-    )
+  case class QueryParam(param: String, valueParam: Option[String])
+
+  private def makeQueryParams(queryParam: QueryParam*): Seq[(String, String)] =
+    queryParam.foldLeft(Seq.empty[(String, String)]) {
+      (x, y) =>
+        x ++ y.valueParam.fold(Seq.empty[(String, String)])(
+          value => Seq((y.param, value))
+        )
+    }
 
   def getArrivals(
     mrn: Option[String] = None,
@@ -51,9 +56,11 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
 
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals"
 
-    val queryParams = makeQueryParam("mrn", mrn) ++
-      makeQueryParam("page", page) ++
-      makeQueryParam("pageSize", pageSize)
+    val queryParams = makeQueryParams(
+      QueryParam("mrn", mrn),
+      QueryParam("page", page),
+      QueryParam("pageSize", pageSize)
+    )
 
     http
       .GET[Arrivals](serviceUrl, queryParams)(HttpReads[Arrivals], header, ec)
