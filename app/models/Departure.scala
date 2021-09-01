@@ -18,9 +18,9 @@ package models
 
 import java.time.LocalDateTime
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Json, Reads, Writes}
 import models.departure.DepartureStatus
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{__, Json, Reads}
 
 case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
 

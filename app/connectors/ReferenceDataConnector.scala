@@ -17,13 +17,12 @@
 package connectors
 
 import config.FrontendAppConfig
+import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import javax.inject.Inject
 import models.referenceData.CustomsOffice
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import CustomHttpReads.rawHttpResponseHttpReads
 import play.api.http.Status
-import play.api.libs.json.JsResult
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -36,7 +36,7 @@ class UnloadingPermissionPDFController @Inject() (
   arrivalMovementConnector: ArrivalMovementConnector,
   val config: FrontendAppConfig,
   val renderer: Renderer
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
