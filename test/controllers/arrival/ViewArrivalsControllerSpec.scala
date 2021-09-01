@@ -88,7 +88,7 @@ class ViewArrivalsControllerSpec
     Nil
   )
 
-  private val expectedJson: JsValue =
+  private lazy val expectedJson: JsValue =
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
@@ -97,7 +97,7 @@ class ViewArrivalsControllerSpec
     )
 
   "ViewArrivalNotifications Controller" - {
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET when not displaying search results" in {
 
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
