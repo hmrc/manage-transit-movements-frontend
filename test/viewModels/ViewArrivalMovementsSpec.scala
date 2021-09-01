@@ -37,18 +37,18 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
     val localDateYesterday = LocalDate.now().minusDays(1)
     val localTime          = LocalTime.now()
 
-    val movementsGen: LocalDate => Gen[Seq[ViewMovement]] =
+    val movementsGen: LocalDate => Gen[Seq[ViewArrival]] =
       date =>
         seqWithMaxLength(1) {
           Arbitrary {
-            arbitrary[ViewMovement].map(
+            arbitrary[ViewArrival].map(
               _.copy(date = date, time = localTime)
             )
           }
         }
 
     forAll(movementsGen(localDateToday).suchThat(_.nonEmpty), movementsGen(localDateYesterday).suchThat(_.nonEmpty)) {
-      (todayMovements: Seq[ViewMovement], yesterdayMovements: Seq[ViewMovement]) =>
+      (todayMovements: Seq[ViewArrival], yesterdayMovements: Seq[ViewArrival]) =>
         val result: ViewArrivalMovements =
           ViewArrivalMovements(todayMovements ++ yesterdayMovements)
 
@@ -64,10 +64,10 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
     val localTimeMinus1 = LocalTime.now.minusHours(1)
     val localTimeMinus2 = LocalTime.now.minusHours(2)
 
-    val movementsGen: LocalTime => Arbitrary[ViewMovement] = {
+    val movementsGen: LocalTime => Arbitrary[ViewArrival] = {
       time =>
         Arbitrary {
-          arbitrary[ViewMovement].map(
+          arbitrary[ViewArrival].map(
             _.copy(date = localDateToday, time = time)
           )
         }
@@ -79,12 +79,12 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
       movementsGen(localTimeMinus2).arbitrary
     ) {
       (movement, movementMinus1, movementMinus2) =>
-        val movementsInWrongOrder: Seq[ViewMovement] =
+        val movementsInWrongOrder: Seq[ViewArrival] =
           Seq(movementMinus1, movementMinus2, movement)
         val result: ViewArrivalMovements =
           ViewArrivalMovements(movementsInWrongOrder)
 
-        val expectedResult: Seq[ViewMovement] =
+        val expectedResult: Seq[ViewArrival] =
           Seq(movement, movementMinus1, movementMinus2)
         result.dataRows.head._2 mustEqual expectedResult
     }
