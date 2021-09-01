@@ -1,6 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "macros/title.njk" import title %}
+{% from "macros/movementSearch.njk" import movementSearch %}
 {% from "macros/showMovementsByDate.njk" import showMovementsByDate %}
 
 {% block pageTitle %}
@@ -20,6 +21,7 @@
         </a>
       </p>
 
+      {{ movementSearch() }}
       {{ showMovementsByDate("Arrival notifications table", messages("viewArrivalNotifications.table.updated"), messages("viewArrivalNotifications.table.mrn"), messages("viewArrivalNotifications.table.status"), messages("viewArrivalNotifications.table.action"), dataRows) }}
 
       <p class="govuk-body govuk-!-margin-top-3">

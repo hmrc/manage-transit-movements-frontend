@@ -11,6 +11,7 @@ site.no = No
 site.yes = Yes
 site.continue = Continue
 site.youMust = You must
+site.search = Search
 site.service_name = Manage your transit movements
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - Manage your transit movements - GOV.UK
@@ -77,6 +78,8 @@ viewArrivalNotifications.table.action.unloadingRemarks  = Make unloading remarks
 viewArrivalNotifications.table.action.viewHistory       = View history
 viewArrivalNotifications.table.action.viewPDF           = Unloading Permission PDF
 viewArrivalNotifications.goToManageTransitMovements     = Go to manage transit movements
+
+movement.search.title = Search by movement reference number
 
 movement.status.arrivalSubmitted = Arrival notification sent
 movement.status.arrivalRejected = Arrival notification rejected
