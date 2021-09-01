@@ -4,7 +4,6 @@
 
   <p class="govuk-visually-hidden" aria-labelledby="pagination-label">Pagination navigation</p>
 
-
   {%- if results %}
     <p class="pagination__results">Showing <b>{{ results.from }}</b> to <b>{{ results.to }}</b> of <b>{{results.count}}</b> results</p>
   {% endif -%}
@@ -17,14 +16,18 @@
     {% endif -%}
 
     {%- for item in items %}
-        {%- if item.selected %}
-          <li class="pagination__item pagination__item--active">{{ item.text }}</li>
-        {% else %}
-          <li class="pagination__item"><a class="pagination__link" href="{{ item.href }}">{{ item.text }}</a></li>
-        {% endif -%}
-        {%- if item.type == 'dots' %}
+        {%- if loop.last and not item.selected and item.dottedRight %}
             <li class="pagination__item pagination__item--dots">...</li>
-        {% endif %}
+        {% endif -%}
+        {%- if item.selected %}
+          <li class="pagination__item pagination__item--active">{{ item.pageNumber }}</li>
+        {% else %}
+          <li class="pagination__item"><a class="pagination__link" href="{{ item.href }}">{{ item.pageNumber }}</a></li>
+        {% endif -%}
+
+        {%- if loop.first and not item.selected and item.dottedLeft %}
+            <li class="pagination__item pagination__item--dots">...</li>
+        {% endif -%}
     {% endfor -%}
 
     {%- if next %}
@@ -34,4 +37,6 @@
     {% endif -%}
   </ul>
 
-</nav>{% endmacro %}
+</nav>
+
+{% endmacro %}

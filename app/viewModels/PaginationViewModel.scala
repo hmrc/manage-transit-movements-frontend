@@ -35,48 +35,54 @@ object PaginationViewModel {
       numberOfPagesFloat.toInt + 1
     }
 
-    def buildItem(pageNumber: Int, dotted: Boolean) = Json.obj(
-      "text" -> pageNumber,
-      "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(pageNumber)).url}", // TODO move this to param
-      "selected" -> Json.toJson(pageNumber == currentPage),
-      "type" -> {if (dotted) "dots" else ""}
+    def buildItem(pageNumber: Int, dottedLeft: Boolean, dottedRight: Boolean): JsObject = Json.obj(
+      "pageNumber" -> pageNumber,
+      "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(pageNumber)).url}", // TODO move this to param
+      "selected"    -> Json.toJson(pageNumber == currentPage),
+      "dottedLeft"  -> dottedLeft,
+      "dottedRight" -> dottedRight
     )
 
-    val items = if (totalNumberOfPages < 6) {
-      (1 to totalNumberOfPages).map {
-        buildItem(_, dotted = false)
-      }
-    } else if (currentPage == 1 | currentPage == 2) {
+    val items = if (currentPage == 1 | currentPage == 2) {
 
       val head = (1 to totalNumberOfPages).take(3)
       val tail = totalNumberOfPages
       val range = head ++ Seq(tail)
 
-      range.map {
-        pageNumber =>
-          val dotted = (pageNumber == totalNumberOfPages)
-          buildItem(pageNumber, dotted)
-      }
-    } else if (currentPage == totalNumberOfPages) {
-      val range = Seq(1, totalNumberOfPages - 2, totalNumberOfPages - 1, totalNumberOfPages)
+      range.map(buildItem(_, dottedLeft = totalNumberOfPages < 6, dottedRight = true ))
 
-      range.map {
-        pageNumber =>
-          val dotted = pageNumber == 1
-          buildItem(pageNumber, dotted)
-      }
+    } else if (currentPage == totalNumberOfPages | currentPage == totalNumberOfPages - 1) {
+
+      val range = Seq(1 ,totalNumberOfPages - 2, totalNumberOfPages - 1, totalNumberOfPages)
+
+      range.map(buildItem(_, dottedLeft = true, dottedRight = false))
+
     } else {
-      val range = Seq(1, currentPage - 1, currentPage, currentPage + 1, totalNumberOfPages)
 
-      range.map {
-        pageNumber =>
-          val dotted = (pageNumber == 1 | pageNumber == totalNumberOfPages)
-          buildItem(pageNumber, dotted)
-      }
+      val range = Seq(1 ,currentPage - 1, currentPage, currentPage + 1, totalNumberOfPages)
+
+      range.map(buildItem(_, dottedLeft = true, dottedRight = true))
+
     }
 
-    val from = if (currentPage == 1) currentPage else currentPage * numberOfMovementsPerPage
-    val to   = if (currentPage == 1) currentPage * numberOfMovementsPerPage else (currentPage + 1) * numberOfMovementsPerPage
+    val from = currentPage match {
+      case 1    => 1
+      case 2    => numberOfMovementsPerPage
+      case page => numberOfMovementsPerPage * (page - 1)
+
+    }
+
+    val to = if (currentPage == 1) {
+      numberOfMovementsPerPage
+    } else {
+      val roundedNumberOfMovementsPerPage = numberOfMovementsPerPage * currentPage
+
+      if (roundedNumberOfMovementsPerPage > totalNumberOfMovements) {
+        totalNumberOfMovements
+      } else {
+        roundedNumberOfMovementsPerPage
+      }
+    }
 
     Json.obj(
       "results" -> Json.obj(
@@ -86,11 +92,11 @@ object PaginationViewModel {
       ),
       "previous" -> Json.obj(
         "text" -> "Previous",
-        "next" -> ""
+        "next" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(currentPage - 1)).url}" // TODO move to param
       ),
       "next" -> Json.obj(
         "text" -> "Next",
-        "href" -> ""
+        "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(currentPage + 1)).url}" // TODO move to param
       ),
       "items" -> items
     )
