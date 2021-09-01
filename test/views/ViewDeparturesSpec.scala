@@ -85,27 +85,28 @@ class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with Gener
   "display correct data in each row" - {
     rows.toList.zipWithIndex.forEach {
       x =>
-        val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
-
         s"row ${x._2 + 1}" - {
           "display correct time" in {
-            val time = Json.toJson(viewMovements(x._2)).transform((JsPath \ "updated").json.pick[JsString]).get.value
-            cells.get(0).ownText() mustBe time
-            cells.get(0).text() mustBe s"viewDepartures.table.updated $time"
+            val updated = x._1.selectFirst("[data-testrole*=updated]")
+            val time    = Json.toJson(viewMovements(x._2)).transform((JsPath \ "updated").json.pick[JsString]).get.value
+            updated.ownText() mustBe time
+            updated.text() mustBe s"viewDepartures.table.updated $time"
           }
 
           "display correct local reference number" in {
-            cells.get(1).ownText() mustBe viewMovements(x._2).localReferenceNumber.value
-            cells.get(1).text() mustBe s"viewDepartures.table.lrn ${viewMovements(x._2).localReferenceNumber}"
+            val ref = x._1.selectFirst("[data-testrole*=ref]")
+            ref.ownText() mustBe viewMovements(x._2).localReferenceNumber.value
+            ref.text() mustBe s"viewDepartures.table.lrn ${viewMovements(x._2).localReferenceNumber}"
           }
 
           "display correct status" in {
-            cells.get(2).ownText() mustBe viewMovements(x._2).status
-            cells.get(2).text() mustBe s"viewDepartures.table.status ${viewMovements(x._2).status}"
+            val status = x._1.selectFirst("[data-testrole*=status]")
+            status.ownText() mustBe viewMovements(x._2).status
+            status.text() mustBe s"viewDepartures.table.status ${viewMovements(x._2).status}"
           }
 
           "display actions" - {
-            val actions = cells.get(3).getElementsByTag("a")
+            val actions = x._1.select("[data-testrole*=action]")
             actions.toList.zipWithIndex.forEach {
               y =>
                 s"action ${y._2 + 1}" - {

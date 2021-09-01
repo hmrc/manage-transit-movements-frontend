@@ -17,16 +17,17 @@
 
       <tbody class="hmrc-responsive-table__data">
         {% for row in rows %}
+          {% set rowIndex = loop.index %}
           <tr role="row">
-            <td role="cell">
+            <td role="cell" data-testrole="movements-list_row{{ rowIndex }}-updated">
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingUpdated }}</span>
               {{ row.updated }}
             </td>
-            <td role="cell">
+            <td role="cell" data-testrole="movements-list_row{{ rowIndex }}-ref">
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingMrn }}</span>
               {{ row.referenceNumber }}
             </td>
-            <td role="cell">
+            <td role="cell" data-testrole="movements-list_row{{ rowIndex }}-status">
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingStatus }}</span>
               {{ messages(row.status) }}
             </td>
@@ -34,7 +35,8 @@
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingAction }}</span>
 
               {% for action in row.actions %}
-                <a id="{{ messages(action.key) | replace(" ", "-")  }}-{{ row.referenceNumber }}" href="{{ action.href }}" class="action-link">
+                {% set actionIndex = loop.index %}
+                <a id="{{ messages(action.key) | replace(" ", "-")  }}-{{ row.referenceNumber }}" href="{{ action.href }}" class="action-link" data-testrole="movements-list_row{{ rowIndex }}-action{{ actionIndex }}">
                   <span aria-hidden="true">{{ messages(action.key) }}</span>
                   <span class="govuk-visually-hidden">{{ messages(action.key + ".hidden", row.referenceNumber) }}</span>
                 </a>
