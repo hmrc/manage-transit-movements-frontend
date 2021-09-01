@@ -22,9 +22,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class RedirectController @Inject() (identify: IdentifierAction, cc: MessagesControllerComponents)
-    extends FrontendController(cc)
-    with I18nSupport {
+class RedirectController @Inject() (identify: IdentifierAction, cc: MessagesControllerComponents) extends FrontendController(cc) with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify) {
 

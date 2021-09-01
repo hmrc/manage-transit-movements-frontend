@@ -27,7 +27,8 @@ import scala.concurrent.Future
 class KeepAliveController @Inject() (
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents
-) extends FrontendBaseController with I18nSupport {
+) extends FrontendBaseController
+    with I18nSupport {
 
   def keepAlive: Action[AnyContent] =
     (Action andThen identify).async {
