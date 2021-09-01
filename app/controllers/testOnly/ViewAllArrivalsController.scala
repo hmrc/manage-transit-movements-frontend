@@ -20,16 +20,11 @@ import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
-import models.Arrival
 import play.api.i18n.I18nSupport
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.{ViewArrivalMovements, ViewMovement}
-
-
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -46,13 +41,13 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
 
   def onPageLoad(page: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-
       arrivalMovementConnector.getPagedArrivals(page.getOrElse("1"), "50").flatMap {
         case Some(filteredArrivals) =>
+
           val sampleJson = Json.obj(
             "results" -> Json.obj(
-              "from" -> 10,
-              "to" -> 20,
+              "from"  -> 10,
+              "to"    -> 20,
               "count" -> 30
             ),
             "previous" -> Json.obj(
@@ -65,8 +60,8 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
             ),
             "items" -> Json.arr(
               Json.obj(
-                "text" -> "1",
-                "href" -> "/page=1",
+                "text"     -> "1",
+                "href"     -> "/page=1",
                 "selected" -> "true"
               ),
               Json.obj(
