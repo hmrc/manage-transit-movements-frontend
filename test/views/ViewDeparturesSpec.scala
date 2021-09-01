@@ -23,7 +23,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsPath, JsString, Json}
 import viewModels.{ViewDeparture, ViewDepartureMovements}
 
 import java.time.LocalDateTime
@@ -39,8 +39,8 @@ class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with Gener
   val day3   = LocalDateTime.parse("2020-08-14 04:04:04", dateTimeFormat)
   val day4   = LocalDateTime.parse("2020-08-13 03:03:03", dateTimeFormat)
   val day5   = LocalDateTime.parse("2020-08-12 02:02:02", dateTimeFormat)
-  val day6_1 = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
-  val day6_2 = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
+  val day6_1 = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
+  val day6_2 = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
 
   val departure1 = arbitrary[Departure].sample.value.copy(updated = day1)
   val departure2 = arbitrary[Departure].sample.value.copy(updated = day2)
@@ -50,12 +50,11 @@ class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with Gener
   val departure6 = arbitrary[Departure].sample.value.copy(updated = day6_1)
   val departure7 = arbitrary[Departure].sample.value.copy(updated = day6_2)
 
-  val departures       = Seq(departure1, departure2, departure3, departure4, departure5, departure6, departure7)
-  val sortedDepartures = Seq(departure1, departure2, departure3, departure4, departure5, departure7, departure6)
+  val departures = Seq(departure1, departure2, departure3, departure4, departure5, departure6, departure7)
 
   val frontendAppConfig = FakeFrontendAppConfig()
 
-  val viewMovements: Seq[ViewDeparture] = sortedDepartures.map(
+  val viewMovements: Seq[ViewDeparture] = departures.map(
     (departure: Departure) => ViewDeparture(departure)(frontendAppConfig)
   )
 
@@ -83,40 +82,47 @@ class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with Gener
     rows.size() mustEqual 7
   }
 
-  "display rows in correct (sorted) order" in {
+  "display correct data in each row" - {
     rows.toList.zipWithIndex.forEach {
       x =>
         val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
 
-        cells.get(0).text() mustBe "viewDepartures.table.updated " + (x._2 match {
-          case 0 => "6:06am"
-          case 1 => "5:05am"
-          case 2 => "4:04am"
-          case 3 => "3:03am"
-          case 4 => "2:02am"
-          case 5 => "1:00am"
-          case 6 => "1:01am"
-        })
-    }
-  }
+        s"row ${x._2 + 1}" - {
+          "display correct time" in {
+            val time = Json.toJson(viewMovements(x._2)).transform((JsPath \ "updated").json.pick[JsString]).get.value
+            cells.get(0).ownText() mustBe time
+            cells.get(0).text() mustBe s"viewDepartures.table.updated $time"
+          }
 
-  "display correct data in each row" in {
-    rows.toList.zipWithIndex.forEach {
-      x =>
-        val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
+          "display correct local reference number" in {
+            cells.get(1).ownText() mustBe viewMovements(x._2).localReferenceNumber.value
+            cells.get(1).text() mustBe s"viewDepartures.table.lrn ${viewMovements(x._2).localReferenceNumber}"
+          }
 
-        cells.get(1).ownText() mustBe viewMovements(x._2).localReferenceNumber.value
-        cells.get(1).text() mustBe s"viewDepartures.table.lrn ${viewMovements(x._2).localReferenceNumber.value}"
+          "display correct status" in {
+            cells.get(2).ownText() mustBe viewMovements(x._2).status
+            cells.get(2).text() mustBe s"viewDepartures.table.status ${viewMovements(x._2).status}"
+          }
 
-        cells.get(2).ownText() mustBe viewMovements(x._2).status
-        cells.get(2).text() mustBe s"viewDepartures.table.status ${viewMovements(x._2).status}"
+          "display actions" - {
+            val actions = cells.get(3).getElementsByTag("a")
+            actions.toList.zipWithIndex.forEach {
+              y =>
+                s"action ${y._2 + 1}" - {
+                  "display correct text" in {
+                    y._1.text() mustBe s"${viewMovements(x._2).actions(y._2).key} ${s"${viewMovements(x._2).actions(y._2).key}.hidden"}"
+                  }
 
-        val actions = cells.get(3).getElementsByTag("a")
-        actions.toList.zipWithIndex.forEach {
-          y =>
-            y._1.text() mustBe s"${viewMovements(x._2).actions(y._2).key} ${s"${viewMovements(x._2).actions(y._2).key}.hidden"}"
-            y._1.attr("id") mustBe s"${viewMovements(x._2).actions(y._2).key}-${viewMovements(x._2).localReferenceNumber.value}"
-            y._1.attr("href") mustBe viewMovements(x._2).actions(y._2).href
+                  "have correct id" in {
+                    y._1.attr("id") mustBe s"${viewMovements(x._2).actions(y._2).key}-${viewMovements(x._2).localReferenceNumber}"
+                  }
+
+                  "have correct href" in {
+                    y._1.attr("href") mustBe viewMovements(x._2).actions(y._2).href
+                  }
+                }
+            }
+          }
         }
     }
   }

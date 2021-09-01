@@ -23,7 +23,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsPath, JsString, Json}
 import viewModels.{ViewArrival, ViewArrivalMovements}
 
 import java.time.LocalDateTime
@@ -41,8 +41,8 @@ class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generator
   val day3   = LocalDateTime.parse("2020-08-14 04:04:04", dateTimeFormat)
   val day4   = LocalDateTime.parse("2020-08-13 03:03:03", dateTimeFormat)
   val day5   = LocalDateTime.parse("2020-08-12 02:02:02", dateTimeFormat)
-  val day6_1 = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
-  val day6_2 = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
+  val day6_1 = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
+  val day6_2 = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
 
   val arrival1 = arbitrary[Arrival].sample.value.copy(updated = day1)
   val arrival2 = arbitrary[Arrival].sample.value.copy(updated = day2)
@@ -52,10 +52,9 @@ class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generator
   val arrival6 = arbitrary[Arrival].sample.value.copy(updated = day6_1)
   val arrival7 = arbitrary[Arrival].sample.value.copy(updated = day6_2)
 
-  val arrivals       = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6, arrival7)
-  val sortedArrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival7, arrival6)
+  val arrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6, arrival7)
 
-  val viewMovements: Seq[ViewArrival] = sortedArrivals.map(
+  val viewMovements: Seq[ViewArrival] = arrivals.map(
     (arrival: Arrival) => ViewArrival(arrival)(frontendAppConfig)
   )
 
@@ -83,40 +82,47 @@ class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generator
     rows.size() mustEqual 7
   }
 
-  "display rows in correct (sorted) order" in {
+  "display correct data in each row" - {
     rows.toList.zipWithIndex.forEach {
       x =>
         val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
 
-        cells.get(0).text() mustBe "viewArrivalNotifications.table.updated " + (x._2 match {
-          case 0 => "6:06am"
-          case 1 => "5:05am"
-          case 2 => "4:04am"
-          case 3 => "3:03am"
-          case 4 => "2:02am"
-          case 5 => "1:01am"
-          case 6 => "1:00am"
-        })
-    }
-  }
+        s"row ${x._2 + 1}" - {
+          "display correct time" in {
+            val time = Json.toJson(viewMovements(x._2)).transform((JsPath \ "updated").json.pick[JsString]).get.value
+            cells.get(0).ownText() mustBe time
+            cells.get(0).text() mustBe s"viewArrivalNotifications.table.updated $time"
+          }
 
-  "display correct data in each row" in {
-    rows.toList.zipWithIndex.forEach {
-      x =>
-        val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
+          "display correct movement reference number" in {
+            cells.get(1).ownText() mustBe viewMovements(x._2).movementReferenceNumber
+            cells.get(1).text() mustBe s"viewArrivalNotifications.table.mrn ${viewMovements(x._2).movementReferenceNumber}"
+          }
 
-        cells.get(1).ownText() mustBe viewMovements(x._2).movementReferenceNumber
-        cells.get(1).text() mustBe s"viewArrivalNotifications.table.mrn ${viewMovements(x._2).movementReferenceNumber}"
+          "display correct status" in {
+            cells.get(2).ownText() mustBe viewMovements(x._2).status
+            cells.get(2).text() mustBe s"viewArrivalNotifications.table.status ${viewMovements(x._2).status}"
+          }
 
-        cells.get(2).ownText() mustBe viewMovements(x._2).status
-        cells.get(2).text() mustBe s"viewArrivalNotifications.table.status ${viewMovements(x._2).status}"
+          "display actions" - {
+            val actions = cells.get(3).getElementsByTag("a")
+            actions.toList.zipWithIndex.forEach {
+              y =>
+                s"action ${y._2 + 1}" - {
+                  "display correct text" in {
+                    y._1.text() mustBe s"${viewMovements(x._2).actions(y._2).key} ${s"${viewMovements(x._2).actions(y._2).key}.hidden"}"
+                  }
 
-        val actions = cells.get(3).getElementsByTag("a")
-        actions.toList.zipWithIndex.forEach {
-          y =>
-            y._1.text() mustBe s"${viewMovements(x._2).actions(y._2).key} ${s"${viewMovements(x._2).actions(y._2).key}.hidden"}"
-            y._1.attr("id") mustBe s"${viewMovements(x._2).actions(y._2).key}-${viewMovements(x._2).movementReferenceNumber}"
-            y._1.attr("href") mustBe viewMovements(x._2).actions(y._2).href
+                  "have correct id" in {
+                    y._1.attr("id") mustBe s"${viewMovements(x._2).actions(y._2).key}-${viewMovements(x._2).movementReferenceNumber}"
+                  }
+
+                  "have correct href" in {
+                    y._1.attr("href") mustBe viewMovements(x._2).actions(y._2).href
+                  }
+                }
+            }
+          }
         }
     }
   }
