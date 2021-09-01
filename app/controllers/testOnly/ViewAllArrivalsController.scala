@@ -26,7 +26,7 @@ import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.{ViewArrivalMovements, ViewMovement}
+import viewModels.{PaginationViewModel, ViewArrivalMovements, ViewMovement}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -50,77 +50,17 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
       arrivalMovementConnector.getPagedArrivals(page.getOrElse(1).toString, numberOfMovements.toString).flatMap {
         case Some(filteredArrivals) =>
 
-          val numberOfPagesFloat = filteredArrivals.totalArrivals.toFloat / numberOfMovements
-
-          val totalNumberOfPages   = if (numberOfPagesFloat.isWhole) {
-            numberOfPagesFloat.toInt
-          } else {
-            numberOfPagesFloat.toInt + 1
-          }
-
-          val scenario1: JsArray = if (totalNumberOfPages < 6) {
-            (1 to totalNumberOfPages).foldLeft(JsArray.empty) {
-              (jsonArr, pageNumber) =>
-
-                val item = Json.obj(
-                  "text" -> pageNumber,
-                  "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(pageNumber)).url}",
-                  "selected" -> Json.toJson(pageNumber == currentPage)
-                )
-
-                jsonArr :+ item
-            }
-          } else if (currentPage == totalNumberOfPages) {
-            Seq(1, totalNumberOfPages - 2, totalNumberOfPages - 1, totalNumberOfPages).foldLeft(JsArray.empty) {
-              (jsonArr, pageNumber) =>
-            val item = if(pageNumber == 1) {
-              Json.obj(
-                "text" -> pageNumber,
-                "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(pageNumber)).url}",
-                "selected" -> Json.toJson(pageNumber == currentPage),
-                "type" -> "dots"
-              )
-            } else {
-              Json.obj(
-                "text" -> pageNumber,
-                "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(pageNumber)).url}",
-                "selected" -> Json.toJson(pageNumber == currentPage)
-              )
-            }
-                jsonArr :+ item
-            }
-          } else {
-            JsArray.empty
-          }
-
-          // TODO what if greater than????
-          val from = if (currentPage == 1) currentPage else currentPage * numberOfMovements
-          val to   = if (currentPage == 1) currentPage * numberOfMovements else (currentPage + 1) * numberOfMovements
-
-          val sampleJson = Json.obj(
-            "results" -> Json.obj(
-              "from"  -> from,
-              "to"    -> to,
-              "count" -> filteredArrivals.totalArrivals
-            ),
-            "previous" -> Json.obj(
-              "text" -> "Previous",
-              "next" -> ""
-            ),
-            "next" -> Json.obj(
-              "text" -> "Next",
-              "href" -> ""
-            ),
-            "items" -> scenario1
-          )
 
           val viewMovements: Seq[ViewMovement] = filteredArrivals.arrivals.map(
             (arrival: Arrival) => ViewMovement(arrival)
           )
 
+          val paginationViewModel = PaginationViewModel.apply(filteredArrivals.totalArrivals, currentPage, numberOfMovements)
+
           val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
-          val mergeMyStuff = formatToJson.deepMerge(sampleJson)
+
+          val mergeMyStuff = formatToJson.deepMerge(paginationViewModel)
 
           renderer
             .render("viewAllArrivals.njk", mergeMyStuff)

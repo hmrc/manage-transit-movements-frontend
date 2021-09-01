@@ -23,8 +23,8 @@
           <li class="pagination__item"><a class="pagination__link" href="{{ item.href }}">{{ item.text }}</a></li>
         {% endif -%}
         {%- if item.type == 'dots' %}
-                <li class="pagination__item pagination__item--dots">...</li>
-              {% endif %}
+            <li class="pagination__item pagination__item--dots">...</li>
+        {% endif %}
     {% endfor -%}
 
     {%- if next %}
