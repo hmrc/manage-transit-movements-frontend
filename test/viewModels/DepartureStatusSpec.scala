@@ -25,7 +25,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import controllers.departure.{routes => departureRoutes}
 
-class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class DepartureStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   val frontendAppConfig = FakeFrontendAppConfig()
 
@@ -34,8 +34,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is TransitDeclarationRejected show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = DepartureRejected)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = DepartureRejected)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.departureDeclarationRejected"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendDeclarationFailUrl(updatedDeparture.departureId)
@@ -46,8 +46,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is DepartureDeclarationReceived show correct status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = DepartureDeclarationReceived)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = DepartureDeclarationReceived)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.departureDeclarationReceived"
           departureStatus.actions.size mustBe 0
       }
@@ -56,8 +56,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is TransitDeclarationSent show correct status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = TransitDeclarationSent)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = TransitDeclarationSent)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.transitDeclarationSent"
           departureStatus.actions.size mustBe 0
       }
@@ -66,8 +66,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is WriteOffNotification show correct status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = WriteOffNotification)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = WriteOffNotification)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.writeOffNotification"
           departureStatus.actions.size mustBe 0
       }
@@ -77,7 +77,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
           val dep             = departure.copy(status = ReleaseForTransit)
-          val departureStatus = DepartureStatusViewModel(dep, frontendAppConfig)
+          val departureStatus = DepartureStatus(dep)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.releasedForTransit"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe s"/manage-transit-movements/departures/${departure.departureId.index}/accompanying-document-pdf"
@@ -88,8 +88,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is GuaranteeValidationFail show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = GuaranteeNotValid)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = GuaranteeNotValid)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.guaranteeValidationFail"
           departureStatus.actions.size mustBe 2
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
@@ -100,8 +100,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is CancellationSubmitted show correct status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = CancellationSubmitted)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = CancellationSubmitted)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.cancellationSubmitted"
           departureStatus.actions.size mustBe 0
       }
@@ -110,8 +110,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is DepartureCancelled show correct status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = DepartureCancelled)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = DepartureCancelled)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.departureCancelled"
           departureStatus.actions.size mustBe 0
       }
@@ -120,8 +120,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is DeclarationCancellationRequest show correct status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = DeclarationCancellationRequest)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = DeclarationCancellationRequest)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.declarationCancellationRequest"
           departureStatus.actions.size mustBe 0
       }
@@ -130,8 +130,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is CancellationDecision show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = CancellationDecision)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = CancellationDecision)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.declarationCancellationDecision"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendCancellationDecisionUrl(updatedDeparture.departureId)
@@ -142,8 +142,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is NoReleasedForTransit show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = NoReleaseForTransit)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = NoReleaseForTransit)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.noReleaseForTransit"
           departureStatus.actions.size mustBe 2
           departureStatus.actions.head.href mustBe departureRoutes.NoReleaseForTransitController.onPageLoad(updatedDeparture.departureId).url
@@ -154,8 +154,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is ControlDecision show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = ControlDecisionNotification)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = ControlDecisionNotification)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.controlDecision"
           departureStatus.actions.size mustBe 2
           departureStatus.actions.head.href mustBe departureRoutes.ControlDecisionController
@@ -168,8 +168,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is MrnAllocated show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = MrnAllocated)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = MrnAllocated)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.mrnAllocated"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendConfirmCancellationUrl(updatedDeparture.departureId)
@@ -180,8 +180,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is PositiveAcknowledgement show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = PositiveAcknowledgement)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = PositiveAcknowledgement)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.positiveAcknowledgement"
           departureStatus.actions.size mustBe 0
       }
@@ -190,8 +190,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is DepartureSubmitted show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = DepartureSubmitted)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = DepartureSubmitted)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.submitted"
           departureStatus.actions.size mustBe 0
       }
@@ -200,8 +200,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is DepartureSubmittedNegativeAcknowledgement show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = DepartureSubmittedNegativeAcknowledgement)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = DepartureSubmittedNegativeAcknowledgement)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.XMLSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1
       }
@@ -210,8 +210,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is DeclarationCancellationRequestNegativeAcknowledgement show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure               = departure.copy(status = DeclarationCancellationRequestNegativeAcknowledgement)
-          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture, frontendAppConfig)
+          val updatedDeparture: Departure      = departure.copy(status = DeclarationCancellationRequestNegativeAcknowledgement)
+          val departureStatus: DepartureStatus = DepartureStatus(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.XMLCancellationSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1
       }

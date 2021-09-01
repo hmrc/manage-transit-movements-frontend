@@ -18,7 +18,6 @@ package viewModels
 
 import config.FrontendAppConfig
 import models.Arrival
-import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, OWrites}
 
 import java.time.format.DateTimeFormatter
@@ -28,9 +27,9 @@ final case class ViewArrival(date: LocalDate, time: LocalTime, movementReference
 
 object ViewArrival {
 
-  def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewArrival = {
+  def apply(arrival: Arrival)(implicit frontendAppConfig: FrontendAppConfig): ViewArrival = {
 
-    val movementStatus: MovementStatus = MovementStatus(arrival)
+    val movementStatus: ArrivalStatus = ArrivalStatus(arrival)
 
     ViewArrival(
       arrival.updated.toLocalDate,

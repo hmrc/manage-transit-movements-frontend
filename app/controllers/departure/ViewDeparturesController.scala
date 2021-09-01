@@ -48,7 +48,7 @@ class ViewDeparturesController @Inject() (
       connector.getDepartures().flatMap {
         case Some(allDepartures) =>
           val viewDepartures: Seq[ViewDeparture] = allDepartures.departures.map(
-            (departure: Departure) => ViewDeparture(departure, config)
+            (departure: Departure) => ViewDeparture(departure)(config)
           )
           val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
 

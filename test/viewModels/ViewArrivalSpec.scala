@@ -52,7 +52,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     forAll(arbitrary[Arrival]) {
       arrival =>
         val unloadingArrival: Arrival = arrival.copy(status = "UnloadingPermission")
-        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
+        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
         viewMovement.actions.head.href mustBe s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrival.arrivalId.index}"
@@ -63,7 +63,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     forAll(arbitrary[Arrival]) {
       arrival =>
         val unloadingArrival: Arrival = arrival.copy(status = "ArrivalRejected")
-        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
+        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
         viewMovement.actions.head.href mustBe s"http://localhost:9483/manage-transit-movements-arrivals/${arrival.arrivalId.index}/arrival-rejection"
@@ -75,7 +75,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     forAll(arbitrary[Arrival]) {
       arrival =>
         val unloadingArrival: Arrival = arrival.copy(status = "")
-        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
+        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.status mustBe unloadingArrival.status
     }
@@ -87,7 +87,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     forAll(arbitrary[Arrival]) {
       arrival =>
         val unloadingArrival: Arrival = arrival.copy(status = "")
-        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
+        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.actions mustBe Nil
     }

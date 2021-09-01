@@ -56,7 +56,7 @@ class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with Gener
   val frontendAppConfig = FakeFrontendAppConfig()
 
   val viewMovements: Seq[ViewDeparture] = sortedDepartures.map(
-    (departure: Departure) => ViewDeparture(departure, frontendAppConfig)
+    (departure: Departure) => ViewDeparture(departure)(frontendAppConfig)
   )
 
   val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))(ViewDepartureMovements.writes(frontendAppConfig))

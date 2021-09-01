@@ -56,7 +56,7 @@ class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generator
   val sortedArrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival7, arrival6)
 
   val viewMovements: Seq[ViewArrival] = sortedArrivals.map(
-    (arrival: Arrival) => ViewArrival(arrival)(messages, frontendAppConfig)
+    (arrival: Arrival) => ViewArrival(arrival)(frontendAppConfig)
   )
 
   val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))

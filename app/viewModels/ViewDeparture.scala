@@ -32,8 +32,8 @@ final case class ViewDeparture(updatedDate: LocalDate,
 
 object ViewDeparture {
 
-  def apply(departure: Departure, config: FrontendAppConfig): ViewDeparture = {
-    val departureStatus = DepartureStatusViewModel(departure, config)
+  def apply(departure: Departure)(implicit config: FrontendAppConfig): ViewDeparture = {
+    val departureStatus = DepartureStatus(departure)
     ViewDeparture(
       updatedDate = departure.updated.toLocalDate,
       updatedTime = departure.updated.toLocalTime,
