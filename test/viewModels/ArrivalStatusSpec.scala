@@ -25,7 +25,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
 
-class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class ArrivalStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   val frontendAppConfig = FakeFrontendAppConfig()
 
@@ -36,7 +36,7 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
         forAll(arbitrary[Arrival]) {
           arrival =>
             val arr: Arrival = arrival.copy(status = "ArrivalSubmitted")
-            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.arrivalSubmitted")
+            ArrivalStatus(arr)(frontendAppConfig).status mustBe Messages("movement.status.arrivalSubmitted")
         }
       }
       "When status is ArrivalRejected show correct message" in {
@@ -44,7 +44,7 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
         forAll(arbitrary[Arrival]) {
           arrival =>
             val arr: Arrival = arrival.copy(status = "ArrivalRejected")
-            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.arrivalRejected")
+            ArrivalStatus(arr)(frontendAppConfig).status mustBe Messages("movement.status.arrivalRejected")
         }
       }
       "When status is UnloadingRemarksSubmitted show correct message" in {
@@ -52,15 +52,15 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
         forAll(arbitrary[Arrival]) {
           arrival =>
             val arr: Arrival = arrival.copy(status = "UnloadingRemarksSubmitted")
-            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.unloadingRemarksSubmitted")
+            ArrivalStatus(arr)(frontendAppConfig).status mustBe Messages("movement.status.unloadingRemarksSubmitted")
         }
       }
       "When status is UnloadingRemarksRejected show correct message" in {
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival                   = arrival.copy(status = "UnloadingRemarksRejected")
-            val movementStatus: MovementStatus = MovementStatus(arr)(messages, frontendAppConfig)
+            val arr: Arrival                  = arrival.copy(status = "UnloadingRemarksRejected")
+            val movementStatus: ArrivalStatus = ArrivalStatus(arr)(frontendAppConfig)
             movementStatus.status mustBe Messages("movement.status.unloadingRemarksRejected")
             movementStatus.actions.head.href mustBe frontendAppConfig.unloadingRemarksRejectedUrl(arr.arrivalId)
         }
@@ -70,7 +70,7 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
         forAll(arbitrary[Arrival]) {
           arrival =>
             val arr: Arrival = arrival.copy(status = "GoodsReleased")
-            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.goodsReleased")
+            ArrivalStatus(arr)(frontendAppConfig).status mustBe Messages("movement.status.goodsReleased")
         }
       }
       "When status is XMLSubmissionNegativeAcknowledgement show correct message" in {
@@ -83,8 +83,8 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
               Messages("viewArrivalNotifications.table.action.viewErrors")
             )
 
-            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.XMLSubmissionNegativeAcknowledgement")
-            MovementStatus(arr)(messages, frontendAppConfig).actions.headOption mustBe Some(expectedAction)
+            ArrivalStatus(arr)(frontendAppConfig).status mustBe Messages("movement.status.XMLSubmissionNegativeAcknowledgement")
+            ArrivalStatus(arr)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }
 
@@ -98,8 +98,8 @@ class MovementStatusSpec extends SpecBase with Generators with ScalaCheckPropert
               Messages("viewArrivalNotifications.table.action.viewErrors")
             )
 
-            MovementStatus(arr)(messages, frontendAppConfig).status mustBe Messages("movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement")
-            MovementStatus(arr)(messages, frontendAppConfig).actions.headOption mustBe Some(expectedAction)
+            ArrivalStatus(arr)(frontendAppConfig).status mustBe Messages("movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement")
+            ArrivalStatus(arr)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }
     }

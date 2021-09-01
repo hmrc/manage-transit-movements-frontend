@@ -26,7 +26,8 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.{ViewArrivalMovements, ViewMovement}
+import viewModels.{ViewArrival, ViewArrivalMovements}
+
 import javax.inject.Inject
 import models.requests.IdentifierRequest
 
@@ -59,8 +60,8 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
   private def renderResults(results: Future[Option[Arrivals]], template: String)(implicit request: IdentifierRequest[AnyContent]) =
     results.flatMap {
       case Some(allArrivals) =>
-        val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(
-          (arrival: Arrival) => ViewMovement(arrival)
+        val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
+          (arrival: Arrival) => ViewArrival(arrival)
         )
         val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 

@@ -16,23 +16,22 @@
 
 package viewModels
 
+import config.FrontendAppConfig
+import models.Arrival
+import play.api.libs.json.{JsObject, Json, OWrites}
+
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
-import config.FrontendAppConfig
-import models.Arrival
-import play.api.i18n.Messages
-import play.api.libs.json.{JsObject, Json, OWrites}
+final case class ViewArrival(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, actions: Seq[ViewMovementAction])
 
-final case class ViewMovement(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, action: Seq[ViewMovementAction])
+object ViewArrival {
 
-object ViewMovement {
+  def apply(arrival: Arrival)(implicit frontendAppConfig: FrontendAppConfig): ViewArrival = {
 
-  def apply(arrival: Arrival)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): ViewMovement = {
+    val movementStatus: ArrivalStatus = ArrivalStatus(arrival)
 
-    val movementStatus: MovementStatus = MovementStatus(arrival)
-
-    ViewMovement(
+    ViewArrival(
       arrival.updated.toLocalDate,
       arrival.updated.toLocalTime,
       arrival.movementReferenceNumber,
@@ -41,16 +40,16 @@ object ViewMovement {
     )
   }
 
-  implicit val writes: OWrites[ViewMovement] =
-    new OWrites[ViewMovement] {
+  implicit val writes: OWrites[ViewArrival] =
+    new OWrites[ViewArrival] {
 
-      override def writes(o: ViewMovement): JsObject = Json.obj(
+      override def writes(o: ViewArrival): JsObject = Json.obj(
         "updated" -> o.time
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
-        "mrn"     -> o.movementReferenceNumber,
-        "status"  -> o.status,
-        "actions" -> o.action
+        "referenceNumber" -> o.movementReferenceNumber,
+        "status"          -> o.status,
+        "actions"         -> o.actions
       )
     }
 }

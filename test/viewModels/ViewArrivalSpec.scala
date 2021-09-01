@@ -16,8 +16,7 @@
 
 package viewModels
 
-import base.SpecBase
-import base.FakeFrontendAppConfig
+import base.{FakeFrontendAppConfig, SpecBase}
 import generators.Generators
 import models.Arrival
 import org.scalacheck.Arbitrary.arbitrary
@@ -27,22 +26,22 @@ import play.api.libs.json.Json
 
 import java.time.format.DateTimeFormatter
 
-class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   val frontendAppConfig = FakeFrontendAppConfig()
 
   "must serialise to Json" in {
 
-    forAll(arbitrary[ViewMovement]) {
+    forAll(arbitrary[ViewArrival]) {
       viewMovement =>
         val formatTime =
           viewMovement.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
 
         val expectedJson = Json.obj(
-          "updated" -> formatTime,
-          "mrn"     -> viewMovement.movementReferenceNumber,
-          "status"  -> viewMovement.status,
-          "actions" -> viewMovement.action
+          "updated"         -> formatTime,
+          "referenceNumber" -> viewMovement.movementReferenceNumber,
+          "status"          -> viewMovement.status,
+          "actions"         -> viewMovement.actions
         )
 
         Json.toJson(viewMovement) mustBe expectedJson
@@ -52,22 +51,22 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
   "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "UnloadingPermission")
-        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+        val unloadingArrival: Arrival = arrival.copy(status = "UnloadingPermission")
+        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
-        viewMovement.action.head.href mustBe s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrival.arrivalId.index}"
+        viewMovement.actions.head.href mustBe s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrival.arrivalId.index}"
     }
   }
 
   "must display rejection" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "ArrivalRejected")
-        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+        val unloadingArrival: Arrival = arrival.copy(status = "ArrivalRejected")
+        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
-        viewMovement.action.head.href mustBe s"http://localhost:9483/manage-transit-movements-arrivals/${arrival.arrivalId.index}/arrival-rejection"
+        viewMovement.actions.head.href mustBe s"http://localhost:9483/manage-transit-movements-arrivals/${arrival.arrivalId.index}/arrival-rejection"
     }
   }
 
@@ -75,8 +74,8 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "")
-        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+        val unloadingArrival: Arrival = arrival.copy(status = "")
+        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.status mustBe unloadingArrival.status
     }
@@ -87,10 +86,10 @@ class ViewMovementSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival  = arrival.copy(status = "")
-        val viewMovement: ViewMovement = ViewMovement(unloadingArrival)(messages, frontendAppConfig)
+        val unloadingArrival: Arrival = arrival.copy(status = "")
+        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
-        viewMovement.action mustBe Nil
+        viewMovement.actions mustBe Nil
     }
   }
 }
