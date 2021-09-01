@@ -24,7 +24,7 @@ import play.api.libs.json.{JsObject, Json, OWrites}
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
-final case class ViewArrival(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, action: Seq[ViewMovementAction])
+final case class ViewArrival(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, actions: Seq[ViewMovementAction])
 
 object ViewArrival {
 
@@ -50,7 +50,7 @@ object ViewArrival {
           .toLowerCase,
         "referenceNumber" -> o.movementReferenceNumber,
         "status"          -> o.status,
-        "actions"         -> o.action
+        "actions"         -> o.actions
       )
     }
 }

@@ -41,7 +41,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
           "updated"         -> formatTime,
           "referenceNumber" -> viewMovement.movementReferenceNumber,
           "status"          -> viewMovement.status,
-          "actions"         -> viewMovement.action
+          "actions"         -> viewMovement.actions
         )
 
         Json.toJson(viewMovement) mustBe expectedJson
@@ -55,7 +55,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
-        viewMovement.action.head.href mustBe s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrival.arrivalId.index}"
+        viewMovement.actions.head.href mustBe s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrival.arrivalId.index}"
     }
   }
 
@@ -66,7 +66,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
-        viewMovement.action.head.href mustBe s"http://localhost:9483/manage-transit-movements-arrivals/${arrival.arrivalId.index}/arrival-rejection"
+        viewMovement.actions.head.href mustBe s"http://localhost:9483/manage-transit-movements-arrivals/${arrival.arrivalId.index}/arrival-rejection"
     }
   }
 
@@ -89,7 +89,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         val unloadingArrival: Arrival = arrival.copy(status = "")
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(messages, frontendAppConfig)
 
-        viewMovement.action mustBe Nil
+        viewMovement.actions mustBe Nil
     }
   }
 }

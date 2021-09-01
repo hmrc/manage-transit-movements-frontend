@@ -79,7 +79,7 @@ class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generator
 
   val rows: Elements = doc.getElementsByAttributeValue("role", "row")
 
-  "generate a row for each departure" in {
+  "generate a row for each arrival" in {
     rows.size() mustEqual 7
   }
 
@@ -105,14 +105,18 @@ class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generator
       x =>
         val cells: Elements = x._1.getElementsByAttributeValue("role", "cell")
 
+        cells.get(1).ownText() mustBe viewMovements(x._2).movementReferenceNumber
         cells.get(1).text() mustBe s"viewArrivalNotifications.table.mrn ${viewMovements(x._2).movementReferenceNumber}"
+
+        cells.get(2).ownText() mustBe viewMovements(x._2).status
         cells.get(2).text() mustBe s"viewArrivalNotifications.table.status ${viewMovements(x._2).status}"
 
         val actions = cells.get(3).getElementsByTag("a")
         actions.toList.zipWithIndex.forEach {
           y =>
-            y._1.attr("id") mustBe s"${viewMovements(x._2).action(y._2).key}-${viewMovements(x._2).movementReferenceNumber}"
-            y._1.attr("href") mustBe viewMovements(x._2).action(y._2).href
+            y._1.text() mustBe s"${viewMovements(x._2).actions(y._2).key} ${s"${viewMovements(x._2).actions(y._2).key}.hidden"}"
+            y._1.attr("id") mustBe s"${viewMovements(x._2).actions(y._2).key}-${viewMovements(x._2).movementReferenceNumber}"
+            y._1.attr("href") mustBe viewMovements(x._2).actions(y._2).href
         }
     }
   }
