@@ -144,7 +144,10 @@ class ViewArrivalsControllerSpec
       val result = route(app, request).value
       status(result) mustEqual OK
 
-      verify(mockArrivalMovementConnector).getArrivalSearchResults(meq("theMrn"), meq(100))(any())
+      verify(mockArrivalMovementConnector).getArrivalSearchResults(
+        meq("theMrn"),
+        meq(frontendAppConfig.maxSearchResults)
+      )(any())
 
       verify(mockNunjucksRenderer, times(1))
         .render(templateCaptor.capture(), jsonCaptor.capture())(any())

@@ -42,7 +42,7 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  private val pageSize = 100
+  private val pageSize = config.maxSearchResults
 
   def onPageLoad(mrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
