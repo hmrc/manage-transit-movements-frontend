@@ -68,7 +68,7 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
         when(wsResponse.bodyAsBytes) thenReturn ByteString(pdfAsBytes)
         when(wsResponse.headers) thenReturn expectedHeaders
 
-        when(mockArrivalMovementConnector.getPDF(any(), any())(any()))
+        when(mockArrivalMovementConnector.getPDF(any(), any()))
           .thenReturn(Future.successful(wsResponse))
 
         val arrivalId = ArrivalId(0)
@@ -108,7 +108,7 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
         val wsResponse: AhcWSResponse = mock[AhcWSResponse]
         when(wsResponse.status) thenReturn genErrorResponseCode
 
-        when(mockArrivalMovementConnector.getPDF(any(), any())(any()))
+        when(mockArrivalMovementConnector.getPDF(any(), any()))
           .thenReturn(Future.successful(wsResponse))
 
         val arrivalId      = ArrivalId(0)

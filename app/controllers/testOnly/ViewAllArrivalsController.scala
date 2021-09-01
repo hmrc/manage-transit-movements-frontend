@@ -26,9 +26,11 @@ import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewModels.{ViewArrival, ViewArrivalMovements}
 import viewModels.{PaginationViewModel, ViewArrivalMovements, ViewMovement}
 
 import javax.inject.Inject
+
 import scala.concurrent.ExecutionContext
 
 class ViewAllArrivalsController @Inject() (val renderer: Renderer,
@@ -51,8 +53,8 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
         case Some(filteredArrivals) =>
 
 
-          val viewMovements: Seq[ViewMovement] = filteredArrivals.arrivals.map(
-            (arrival: Arrival) => ViewMovement(arrival)
+          val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
+            (arrival: Arrival) => ViewArrival(arrival)
           )
 
           val paginationViewModel = PaginationViewModel.apply(filteredArrivals.totalArrivals, currentPage, numberOfMovements)

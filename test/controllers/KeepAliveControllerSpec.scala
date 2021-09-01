@@ -22,8 +22,6 @@ import play.api.test.Helpers
 import play.api.test.Helpers._
 import controllers.actions._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class KeepAliveControllerSpec extends SpecBase {
 
   "KeepAliveController" - {

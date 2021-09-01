@@ -16,9 +16,7 @@
 
 package controllers.arrival
 
-import base.SpecBase
-import base.FakeFrontendAppConfig
-import base.MockNunjucksRendererApp
+import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
@@ -35,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import viewModels.{ViewArrivalMovements, ViewMovement}
+import viewModels.{ViewArrival, ViewArrivalMovements}
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -83,7 +81,7 @@ class ViewArrivalsControllerSpec
       )
     )
 
-  private val mockViewMovement = ViewMovement(
+  private val mockViewMovement = ViewArrival(
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
     "test mrn",

@@ -16,12 +16,12 @@
 
 package viewModels
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalTime}
-
 import config.FrontendAppConfig
 import models.{Departure, LocalReferenceNumber}
 import play.api.libs.json.{JsObject, Json, OWrites}
+
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalTime}
 
 final case class ViewDeparture(updatedDate: LocalDate,
                                updatedTime: LocalTime,
@@ -32,8 +32,8 @@ final case class ViewDeparture(updatedDate: LocalDate,
 
 object ViewDeparture {
 
-  def apply(departure: Departure, config: FrontendAppConfig): ViewDeparture = {
-    val departureStatus = DepartureStatusViewModel(departure, config)
+  def apply(departure: Departure)(implicit config: FrontendAppConfig): ViewDeparture = {
+    val departureStatus = DepartureStatus(departure)
     ViewDeparture(
       updatedDate = departure.updated.toLocalDate,
       updatedTime = departure.updated.toLocalTime,
@@ -47,13 +47,12 @@ object ViewDeparture {
     new OWrites[ViewDeparture] {
 
       override def writes(o: ViewDeparture): JsObject = Json.obj(
-        "updatedDate" -> o.updatedDate,
-        "updatedTime" -> o.updatedTime
+        "updated" -> o.updatedTime
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
-        "localReferenceNumber" -> o.localReferenceNumber,
-        "status"               -> o.status,
-        "actions"              -> o.actions
+        "referenceNumber" -> o.localReferenceNumber,
+        "status"          -> o.status,
+        "actions"         -> o.actions
       )
     }
 }

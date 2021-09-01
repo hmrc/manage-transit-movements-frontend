@@ -16,7 +16,7 @@
 
 package models
 
-import java.time.{LocalDate, LocalDateTime, LocalTime}
+import java.time.{LocalDate, LocalTime}
 
 import com.lucidchart.open.xtract.XmlReader.{intReader, strictReadSeq}
 import com.lucidchart.open.xtract._
