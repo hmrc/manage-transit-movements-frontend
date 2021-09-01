@@ -35,7 +35,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     forAll(arbitrary[ViewArrival]) {
       viewMovement =>
         val formatTime =
-          viewMovement.time.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
+          viewMovement.updatedTime.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
 
         val expectedJson = Json.obj(
           "updated"         -> formatTime,

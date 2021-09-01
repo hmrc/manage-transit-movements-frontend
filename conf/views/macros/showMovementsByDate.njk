@@ -31,7 +31,7 @@
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingStatus }}</span>
               {{ messages(row.status) }}
             </td>
-            <td role="cell">
+            <td role="cell" data-testrole="movements-list_row{{ rowIndex }}-actions">
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingAction }}</span>
 
               {% for action in row.actions %}

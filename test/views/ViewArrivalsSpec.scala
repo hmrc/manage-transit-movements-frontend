@@ -16,116 +16,37 @@
 
 package views
 
-import base.{FakeFrontendAppConfig, SingleViewSpec}
-import generators.Generators
 import models.Arrival
-import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, JsPath, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewArrival, ViewArrivalMovements}
+import views.behaviours.ViewMovementsBehaviours
 
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import scala.collection.convert.ImplicitConversions._
 
-class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with Generators with ScalaCheckPropertyChecks {
+class ViewArrivalsSpec extends ViewMovementsBehaviours[ViewArrival]("viewArrivals.njk") {
 
-  val frontendAppConfig = FakeFrontendAppConfig()
+  override val day6_1: LocalDateTime = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
+  override val day6_2: LocalDateTime = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
 
-  val dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+  private val arrival1 = arbitrary[Arrival].sample.value.copy(updated = day1)
+  private val arrival2 = arbitrary[Arrival].sample.value.copy(updated = day2)
+  private val arrival3 = arbitrary[Arrival].sample.value.copy(updated = day3)
+  private val arrival4 = arbitrary[Arrival].sample.value.copy(updated = day4)
+  private val arrival5 = arbitrary[Arrival].sample.value.copy(updated = day5)
+  private val arrival6 = arbitrary[Arrival].sample.value.copy(updated = day6_1)
+  private val arrival7 = arbitrary[Arrival].sample.value.copy(updated = day6_2)
 
-  val day1   = LocalDateTime.parse("2020-08-16 06:06:06", dateTimeFormat)
-  val day2   = LocalDateTime.parse("2020-08-15 05:05:05", dateTimeFormat)
-  val day3   = LocalDateTime.parse("2020-08-14 04:04:04", dateTimeFormat)
-  val day4   = LocalDateTime.parse("2020-08-13 03:03:03", dateTimeFormat)
-  val day5   = LocalDateTime.parse("2020-08-12 02:02:02", dateTimeFormat)
-  val day6_1 = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
-  val day6_2 = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
+  private val arrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6, arrival7)
 
-  val arrival1 = arbitrary[Arrival].sample.value.copy(updated = day1)
-  val arrival2 = arbitrary[Arrival].sample.value.copy(updated = day2)
-  val arrival3 = arbitrary[Arrival].sample.value.copy(updated = day3)
-  val arrival4 = arbitrary[Arrival].sample.value.copy(updated = day4)
-  val arrival5 = arbitrary[Arrival].sample.value.copy(updated = day5)
-  val arrival6 = arbitrary[Arrival].sample.value.copy(updated = day6_1)
-  val arrival7 = arbitrary[Arrival].sample.value.copy(updated = day6_2)
+  override val viewMovements: Seq[ViewArrival] = arrivals.map(ViewArrival(_))
 
-  val arrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6, arrival7)
+  override val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
 
-  val viewMovements: Seq[ViewArrival] = arrivals.map(
-    (arrival: Arrival) => ViewArrival(arrival)(frontendAppConfig)
-  )
+  override val messageKeyPrefix: String = "viewArrivalNotifications"
 
-  val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
+  override val refType: String = "mrn"
 
-  val doc: Document = renderDocument(formatToJson).futureValue
-
-  "generate a heading for each unique day" in {
-
-    val ls: Elements = doc.getElementsByAttributeValue("data-testrole", "movements-list_group-heading")
-
-    ls.size() mustEqual 6
-
-    ls.eq(0).text() mustBe "16 August 2020"
-    ls.eq(1).text() mustBe "15 August 2020"
-    ls.eq(2).text() mustBe "14 August 2020"
-    ls.eq(3).text() mustBe "13 August 2020"
-    ls.eq(4).text() mustBe "12 August 2020"
-    ls.eq(5).text() mustBe "11 August 2020"
-  }
-
-  val rows: Elements = doc.getElementsByAttributeValue("role", "row")
-
-  "generate a row for each arrival" in {
-    rows.size() mustEqual 7
-  }
-
-  "display correct data in each row" - {
-    rows.toList.zipWithIndex.forEach {
-      x =>
-        s"row ${x._2 + 1}" - {
-          "display correct time" in {
-            val updated = x._1.selectFirst("[data-testrole*=updated]")
-            val time    = Json.toJson(viewMovements(x._2)).transform((JsPath \ "updated").json.pick[JsString]).get.value
-            updated.ownText() mustBe time
-            updated.text() mustBe s"viewArrivalNotifications.table.updated $time"
-          }
-
-          "display correct movement reference number" in {
-            val ref = x._1.selectFirst("[data-testrole*=ref]")
-            ref.ownText() mustBe viewMovements(x._2).movementReferenceNumber
-            ref.text() mustBe s"viewArrivalNotifications.table.mrn ${viewMovements(x._2).movementReferenceNumber}"
-          }
-
-          "display correct status" in {
-            val status = x._1.selectFirst("[data-testrole*=status]")
-            status.ownText() mustBe viewMovements(x._2).status
-            status.text() mustBe s"viewArrivalNotifications.table.status ${viewMovements(x._2).status}"
-          }
-
-          "display actions" - {
-            val actions = x._1.select("[data-testrole*=action]")
-            actions.toList.zipWithIndex.forEach {
-              y =>
-                s"action ${y._2 + 1}" - {
-                  "display correct text" in {
-                    y._1.text() mustBe s"${viewMovements(x._2).actions(y._2).key} ${s"${viewMovements(x._2).actions(y._2).key}.hidden"}"
-                  }
-
-                  "have correct id" in {
-                    y._1.attr("id") mustBe s"${viewMovements(x._2).actions(y._2).key}-${viewMovements(x._2).movementReferenceNumber}"
-                  }
-
-                  "have correct href" in {
-                    y._1.attr("href") mustBe viewMovements(x._2).actions(y._2).href
-                  }
-                }
-            }
-          }
-        }
-    }
-  }
+  behave like pageWithMovementsData()
 
 }

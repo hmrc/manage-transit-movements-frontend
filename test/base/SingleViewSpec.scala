@@ -33,6 +33,7 @@ import uk.gov.hmrc.nunjucks.NunjucksRenderer
 import uk.gov.hmrc.nunjucks.DevelopmentNunjucksRoutesHelper
 import uk.gov.hmrc.nunjucks.NunjucksConfigurationProvider
 import play.api.i18n.Messages
+import play.api.mvc.RequestHeader
 
 abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecBase with ViewSpecAssertions with NunjucksSupport {
 
@@ -45,7 +46,7 @@ abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecB
   private val renderer = {
     val env                   = Environment.simple()
     val nunjucksSetup         = new NunjucksSetup(env)
-    val nunjucksConfiguration = (new NunjucksConfigurationProvider(Configuration.load(env), nunjucksSetup)).get()
+    val nunjucksConfiguration = new NunjucksConfigurationProvider(Configuration.load(env), nunjucksSetup).get()
     val nunjucksRoutesHelper  = new DevelopmentNunjucksRoutesHelper(env)
 
     val nunjucksRenderer = new NunjucksRenderer(
@@ -62,7 +63,7 @@ abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecB
   def renderDocument(json: JsObject = Json.obj()): Future[Document] = {
     import play.api.test.CSRFTokenHelper._
 
-    implicit val fr = fakeRequest.withCSRFToken
+    implicit val fr: RequestHeader = fakeRequest.withCSRFToken
 
     renderer
       .render(viewUnderTest, json)
