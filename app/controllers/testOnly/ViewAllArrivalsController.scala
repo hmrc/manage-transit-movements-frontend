@@ -44,12 +44,12 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad: Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(page: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      arrivalMovementConnector.getArrivals().flatMap {
-        case Some(allArrivals) =>
 
-          val halp = Json.obj(
+      arrivalMovementConnector.getPagedArrivals(page.getOrElse("1"), "50").flatMap {
+        case Some(filteredArrivals) =>
+          val sampleJson = Json.obj(
             "results" -> Json.obj(
               "from" -> 10,
               "to" -> 20,
@@ -81,7 +81,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
           )
 
           renderer
-            .render("viewAllArrivals.njk", halp)
+            .render("viewAllArrivals.njk", sampleJson)
             .map(Ok(_))
 
         case _ => renderTechnicalDifficultiesPage
