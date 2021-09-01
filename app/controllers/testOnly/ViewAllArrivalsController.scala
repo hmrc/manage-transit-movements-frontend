@@ -22,11 +22,14 @@ import controllers.TechnicalDifficultiesPage
 import controllers.actions._
 import models.Arrival
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrivalMovements, ViewMovement}
+
+
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -45,13 +48,40 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
     implicit request =>
       arrivalMovementConnector.getArrivals().flatMap {
         case Some(allArrivals) =>
-          val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(
-            (arrival: Arrival) => ViewMovement(arrival)
+
+          val halp = Json.obj(
+            "results" -> Json.obj(
+              "from" -> 10,
+              "to" -> 20,
+              "count" -> 30
+            ),
+            "previous" -> Json.obj(
+              "text" -> "Previous",
+              "next" -> ""
+            ),
+            "next" -> Json.obj(
+              "text" -> "Next",
+              "href" -> ""
+            ),
+            "items" -> Json.arr(
+              Json.obj(
+                "text" -> "1",
+                "href" -> "/page=1",
+                "selected" -> "true"
+              ),
+              Json.obj(
+                "text" -> "2",
+                "href" -> "/page=2"
+              ),
+              Json.obj(
+                "text" -> "3",
+                "href" -> "/page=3"
+              )
+            )
           )
-          val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
           renderer
-            .render("viewAllArrivals.njk", formatToJson)
+            .render("viewAllArrivals.njk", halp)
             .map(Ok(_))
 
         case _ => renderTechnicalDifficultiesPage
