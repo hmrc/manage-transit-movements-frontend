@@ -63,7 +63,7 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
   def getPagedArrivals(page: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Arrivals]] =
     doGetArrivals(Seq("page" -> page, "pageSize" -> pageSize))
 
-  def getPDF(arrivalId: ArrivalId, bearerToken: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
+  def getPDF(arrivalId: ArrivalId, bearerToken: String): Future[WSResponse] = {
     val serviceUrl: String = s"${config.destinationUrl}/movements/arrivals/${arrivalId.index}/unloading-permission"
 
     ws.url(serviceUrl).withHttpHeaders(ChannelHeader(channel), ("Authorization", bearerToken)).get

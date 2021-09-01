@@ -24,7 +24,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result, Results}
-import play.api.{Logger, PlayException}
+import play.api.{Logging, PlayException}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.http.ApplicationException
 
@@ -37,7 +37,8 @@ class ErrorHandler @Inject() (
   val messagesApi: MessagesApi
 )(implicit ec: ExecutionContext)
     extends HttpErrorHandler
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String = ""): Future[Result] = {
 
@@ -73,7 +74,7 @@ class ErrorHandler @Inject() (
   }
 
   private def logError(request: RequestHeader, ex: Throwable): Unit =
-    Logger.error(
+    logger.error(
       """
         |
         |! %sInternal server error, for (%s) [%s] ->

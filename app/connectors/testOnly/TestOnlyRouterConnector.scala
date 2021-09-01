@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq

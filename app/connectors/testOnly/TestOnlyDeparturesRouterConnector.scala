@@ -22,14 +22,14 @@ import javax.inject.Inject
 import logging.Logging
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
 class TestOnlyDeparturesRouterConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
 
-  private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml", "Channel" -> "web")
+  private def addHeaders(): Seq[(String, String)] = Seq("Content-Type" -> "application/xml", "Channel" -> "web")
 
   def createDeclarationMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
