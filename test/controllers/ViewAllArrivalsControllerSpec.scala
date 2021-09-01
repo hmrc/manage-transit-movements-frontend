@@ -108,7 +108,7 @@ class ViewAllArrivalsControllerSpec
 
       val request = FakeRequest(
         GET,
-        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad().url
+        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad(Some(1)).url
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -137,7 +137,7 @@ class ViewAllArrivalsControllerSpec
 
       val request = FakeRequest(
         GET,
-        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad().url
+        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad(None).url
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
