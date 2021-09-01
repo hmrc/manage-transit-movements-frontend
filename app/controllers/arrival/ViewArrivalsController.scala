@@ -45,6 +45,7 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
     implicit request =>
       arrivalMovementConnector.getArrivals().flatMap {
         case Some(allArrivals) =>
+
           val viewMovements: Seq[ViewMovement] = allArrivals.arrivals.map(
             (arrival: Arrival) => ViewMovement(arrival)
           )

@@ -1,22 +1,22 @@
-{% macro pagination(params) %}
+{% macro pagination(results, previous, next, items) %}
 
- <nav class="pagination {{- ' ' + params.classes if params.classes}}" id="pagination-label">
+ <nav class="pagination {{- ' ' + classes if classes}}" id="pagination-label">
 
   <p class="govuk-visually-hidden" aria-labelledby="pagination-label">Pagination navigation</p>
 
 
-  {%- if params.results %}
-    <p class="pagination__results">Showing <b>{{ params.results.from }}</b> to <b>{{ params.results.to }}</b> of <b>{{params.results.count}}</b> results</p>
+  {%- if results %}
+    <p class="pagination__results">Showing <b>{{ results.from }}</b> to <b>{{ results.to }}</b> of <b>{{results.count}}</b> results</p>
   {% endif -%}
 
   <ul class="pagination__list">
-    {%- if params.previous %}
+    {%- if previous %}
       <li class="pagination__item  pagination__item--prev">
-        <a class="pagination__link" href="{{ params.previous.href }}">{{ params.previous.text }}<span class="govuk-visually-hidden"> set of pages</span></a>
+        <a class="pagination__link" href="{{ previous.href }}">{{ previous.text }}<span class="govuk-visually-hidden"> set of pages</span></a>
       </li>
     {% endif -%}
 
-    {%- for item in params.items %}
+    {%- for item in items %}
       {%- if item.type == 'dots' %}
         <li class="pagination__item pagination__item--dots">...</li>
       {% else %}
@@ -28,9 +28,9 @@
       {% endif -%}
     {% endfor -%}
 
-    {%- if params.next %}
+    {%- if next %}
       <li class="pagination__item  pagination__item--next">
-        <a class="pagination__link" href="{{ params.next.href }}">{{ params.next.text }}<span class="govuk-visually-hidden"> set of pages</span></a>
+        <a class="pagination__link" href="{{ next.href }}">{{ next.text }}<span class="govuk-visually-hidden"> set of pages</span></a>
       </li>
     {% endif -%}
   </ul>

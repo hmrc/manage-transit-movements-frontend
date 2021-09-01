@@ -39,16 +39,42 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(page: Option[String]): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      arrivalMovementConnector.getPagedArrivals(page.getOrElse("1"), "50").flatMap {
+
+      val currentPage       = page.getOrElse(1)
+      val numberOfMovements = 50
+
+      arrivalMovementConnector.getPagedArrivals(page.getOrElse(2).toString, numberOfMovements.toString).flatMap {
         case Some(filteredArrivals) =>
+
+          val numberOfPagesFloat = filteredArrivals.totalArrivals.toFloat / numberOfMovements
+          val numberOfPagesInt   = if (numberOfPagesFloat.isWhole) {
+            numberOfPagesFloat.toInt
+          } else {
+            numberOfPagesFloat.toInt + 1
+          }
+
+          val from = if (currentPage == 1) currentPage else currentPage * numberOfMovements
+          val to   = if (currentPage == 1) currentPage * numberOfMovements else (currentPage + 1) * numberOfMovements
+
+          val items: JsArray = (1 to numberOfPagesInt).foldLeft(JsArray.empty) {
+            (jsonArr, pageNumber) =>
+
+              val item =    Json.obj(
+                "text"     -> pageNumber,
+                "href"     -> s"${routes.ViewAllArrivalsController.onPageLoad().url}?page=$pageNumber" ,
+                "selected" -> Json.toJson(pageNumber == currentPage)
+              )
+
+            jsonArr :+ item
+          }
 
           val sampleJson = Json.obj(
             "results" -> Json.obj(
-              "from"  -> 10,
-              "to"    -> 20,
-              "count" -> 30
+              "from"  -> from,
+              "to"    -> to,
+              "count" -> filteredArrivals.totalArrivals
             ),
             "previous" -> Json.obj(
               "text" -> "Previous",
@@ -58,21 +84,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
               "text" -> "Next",
               "href" -> ""
             ),
-            "items" -> Json.arr(
-              Json.obj(
-                "text"     -> "1",
-                "href"     -> "/page=1",
-                "selected" -> "true"
-              ),
-              Json.obj(
-                "text" -> "2",
-                "href" -> "/page=2"
-              ),
-              Json.obj(
-                "text" -> "3",
-                "href" -> "/page=3"
-              )
-            )
+            "items" -> items
           )
 
           renderer
