@@ -26,21 +26,21 @@ import models.{DepartureId, Departures, ResponseMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, HeaderNames => HMRCHeaderNames, HttpClient}
-
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, HeaderNames => HMRCHeaderNames}
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
 class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) extends Logging {
   private val channel: String = "web"
 
-  def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] = {
+  private def doGetDepartures(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[Departures]] = {
     val serviceUrl: String = s"${config.departureUrl}/movements/departures"
     val header             = hc.withExtraHeaders(ChannelHeader(channel))
 
     http
-      .GET[Departures](serviceUrl)(HttpReads[Departures], header, ec)
+      .GET[Departures](serviceUrl, queryParams)(HttpReads[Departures], header, ec)
       .map(
         departures => Some(departures)
       )
@@ -50,6 +50,15 @@ class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: Ht
           None
       }
   }
+
+  def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] =
+    doGetDepartures(Seq.empty)
+
+  def getDepartureSearchResults(mrn: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
+    doGetDepartures(Seq("mrn" -> mrn, "pageSize" -> pageSize))
+
+  def getPagedDepartures(page: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
+    doGetDepartures(Seq("page" -> page, "pageSize" -> pageSize))
 
   def getPDF(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[WSResponse] = {
     val serviceUrl: String = s"${config.departureUrl}/movements/departures/${departureId.index}/accompanying-document"

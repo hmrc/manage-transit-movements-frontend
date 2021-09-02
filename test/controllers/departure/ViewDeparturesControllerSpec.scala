@@ -40,6 +40,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
   private val mockDepartureResponse: Departures =
     Departures(
+      1, 2, Some(3),
       Seq(
         Departure(
           DepartureId(1),
