@@ -21,7 +21,9 @@
         </a>
       </p>
 
-      {{ pagination(results, previous, next, items) }}
+      {%- if results.totalPages != 1 %}
+          {{ pagination(results, previous, next, items) }}
+      {% endif -%}
 
       {{ showMovementsByDate("Arrival notifications table", messages("viewArrivalNotifications.table.updated"), messages("viewArrivalNotifications.table.mrn"), messages("viewArrivalNotifications.table.status"), messages("viewArrivalNotifications.table.action"), dataRows) }}
 
