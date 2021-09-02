@@ -16,21 +16,19 @@
 
 package views.behaviours
 
-import base.SpecBase
+import base.SingleViewSpec
 import org.jsoup.nodes.Document
 
-trait ViewBehaviours extends SpecBase {
+abstract class ViewBehaviours(override protected val viewUnderTest: String) extends SingleViewSpec(viewUnderTest) {
 
   def pageWithHeading(doc: Document, messageKeyPrefix: String): Unit =
     "display page heading" in {
-      doc.selectFirst("h1").text() mustBe s"$messageKeyPrefix.heading"
+      assertPageHasHeading(doc, s"$messageKeyPrefix.heading")
     }
 
   def pageWithLink(doc: Document, id: String, expectedText: String, expectedHref: String): Unit =
     s"display link with id $id" in {
-      val link = doc.selectFirst(s"a[id=$id]")
-      link.text() mustBe expectedText
-      link.attr("href") mustBe expectedHref
+      assertPageHasLink(doc, id, expectedText, expectedHref)
     }
 
 }

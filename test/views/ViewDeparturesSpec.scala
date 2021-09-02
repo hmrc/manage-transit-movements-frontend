@@ -16,7 +16,6 @@
 
 package views
 
-import base.SingleViewSpec
 import generators.Generators
 import models.Departure
 import org.jsoup.nodes.Document
@@ -28,12 +27,17 @@ import views.behaviours.MovementsTableViewBehaviours
 
 import java.time.LocalDateTime
 
-class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with MovementsTableViewBehaviours with Generators with ScalaCheckPropertyChecks {
+class ViewDeparturesSpec extends MovementsTableViewBehaviours("viewDepartures.njk") with Generators with ScalaCheckPropertyChecks {
 
   private val messageKeyPrefix: String = "viewDepartures"
 
-  override val day6_1: LocalDateTime = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
-  override val day6_2: LocalDateTime = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
+  private val day1: LocalDateTime   = LocalDateTime.parse("2020-08-16 06:06:06", dateTimeFormat)
+  private val day2: LocalDateTime   = LocalDateTime.parse("2020-08-15 05:05:05", dateTimeFormat)
+  private val day3: LocalDateTime   = LocalDateTime.parse("2020-08-14 04:04:04", dateTimeFormat)
+  private val day4: LocalDateTime   = LocalDateTime.parse("2020-08-13 03:03:03", dateTimeFormat)
+  private val day5: LocalDateTime   = LocalDateTime.parse("2020-08-12 02:02:02", dateTimeFormat)
+  private val day6_1: LocalDateTime = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
+  private val day6_2: LocalDateTime = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
 
   private val departure1 = arbitrary[Departure].sample.value.copy(updated = day1)
   private val departure2 = arbitrary[Departure].sample.value.copy(updated = day2)

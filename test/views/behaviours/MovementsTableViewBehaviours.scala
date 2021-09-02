@@ -23,23 +23,14 @@ import org.jsoup.select.Elements
 import play.api.libs.json._
 import viewModels.ViewMovement
 
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.collection.convert.ImplicitConversions._
 
-trait MovementsTableViewBehaviours extends ViewBehaviours {
+abstract class MovementsTableViewBehaviours(override protected val viewUnderTest: String) extends ViewBehaviours(viewUnderTest) {
 
   implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
 
   val dateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-  val day1: LocalDateTime = LocalDateTime.parse("2020-08-16 06:06:06", dateTimeFormat)
-  val day2: LocalDateTime = LocalDateTime.parse("2020-08-15 05:05:05", dateTimeFormat)
-  val day3: LocalDateTime = LocalDateTime.parse("2020-08-14 04:04:04", dateTimeFormat)
-  val day4: LocalDateTime = LocalDateTime.parse("2020-08-13 03:03:03", dateTimeFormat)
-  val day5: LocalDateTime = LocalDateTime.parse("2020-08-12 02:02:02", dateTimeFormat)
-  val day6_1: LocalDateTime
-  val day6_2: LocalDateTime
 
   // scalastyle:off method.length
   // scalastyle:off magic.number
