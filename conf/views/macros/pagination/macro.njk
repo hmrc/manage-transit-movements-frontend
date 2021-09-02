@@ -1,0 +1,43 @@
+{% macro pagination(results, previous, next, items) %}
+
+ <nav class="pagination {{- ' ' + classes if classes}}" id="pagination-label">
+
+  <p class="govuk-visually-hidden" aria-labelledby="pagination-label">Pagination navigation</p>
+
+  {%- if results %}
+    <p class="pagination__results">Showing <b>{{ results.from }}</b> to <b>{{ results.to }}</b> of <b>{{results.count}}</b> results</p>
+  {% endif -%}
+
+  <ul class="pagination__list">
+
+    {%- if previous and results.currentPage != 1 %}
+      <li class="pagination__item  pagination__item--prev">
+        <a class="pagination__link" href="{{ previous.href }}">{{ previous.text }}<span class="govuk-visually-hidden"> set of pages</span></a>
+      </li>
+    {% endif -%}
+
+    {%- for item in items %}
+        {%- if loop.last and not item.selected and item.dottedRight %}
+            <li class="pagination__item pagination__item--dots">...</li>
+        {% endif -%}
+        {%- if item.selected %}
+          <li class="pagination__item pagination__item--active">{{ item.pageNumber }}</li>
+        {% else %}
+          <li class="pagination__item"><a class="pagination__link" href="{{ item.href }}">{{ item.pageNumber }}</a></li>
+        {% endif -%}
+
+        {%- if loop.first and not item.selected and item.dottedLeft %}
+            <li class="pagination__item pagination__item--dots">...</li>
+        {% endif -%}
+    {% endfor -%}
+
+    {%- if next and results.currentPage != results.totalPages  %}
+      <li class="pagination__item  pagination__item--next">
+        <a class="pagination__link" href="{{ next.href }}">{{ next.text }}<span class="govuk-visually-hidden"> set of pages</span></a>
+      </li>
+    {% endif -%}
+  </ul>
+
+</nav>
+
+{% endmacro %}

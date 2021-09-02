@@ -67,6 +67,9 @@ class ViewAllArrivalsControllerSpec
 
   private val mockArrivalResponse: Arrivals =
     Arrivals(
+      1,
+      2,
+      Some(3),
       Seq(
         Arrival(
           ArrivalId(1),
@@ -105,7 +108,7 @@ class ViewAllArrivalsControllerSpec
 
       val request = FakeRequest(
         GET,
-        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad().url
+        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad(Some(1)).url
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -134,7 +137,7 @@ class ViewAllArrivalsControllerSpec
 
       val request = FakeRequest(
         GET,
-        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad().url
+        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad(None).url
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
