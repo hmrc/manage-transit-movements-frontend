@@ -9,7 +9,8 @@
   {% endif -%}
 
   <ul class="pagination__list">
-    {%- if previous %}
+
+    {%- if previous and results.currentPage != 1 %}
       <li class="pagination__item  pagination__item--prev">
         <a class="pagination__link" href="{{ previous.href }}">{{ previous.text }}<span class="govuk-visually-hidden"> set of pages</span></a>
       </li>
@@ -30,7 +31,7 @@
         {% endif -%}
     {% endfor -%}
 
-    {%- if next %}
+    {%- if next and results.currentPage != results.totalPages  %}
       <li class="pagination__item  pagination__item--next">
         <a class="pagination__link" href="{{ next.href }}">{{ next.text }}<span class="govuk-visually-hidden"> set of pages</span></a>
       </li>
