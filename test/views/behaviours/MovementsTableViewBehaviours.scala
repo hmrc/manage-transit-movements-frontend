@@ -16,12 +16,10 @@
 
 package views.behaviours
 
-import base.{FakeFrontendAppConfig, SingleViewSpec}
+import base.FakeFrontendAppConfig
 import config.FrontendAppConfig
-import generators.Generators
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
 import viewModels.ViewMovement
 
@@ -29,10 +27,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.collection.convert.ImplicitConversions._
 
-abstract class MovementsBehaviours(override protected val viewUnderTest: String)
-    extends SingleViewSpec(viewUnderTest)
-    with Generators
-    with ScalaCheckPropertyChecks {
+trait MovementsTableViewBehaviours extends ViewBehaviours {
 
   implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
 

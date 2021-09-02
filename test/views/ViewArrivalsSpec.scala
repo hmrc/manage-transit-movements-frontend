@@ -16,16 +16,19 @@
 
 package views
 
+import base.SingleViewSpec
+import generators.Generators
 import models.Arrival
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewArrival, ViewArrivalMovements}
-import views.behaviours.MovementsBehaviours
+import views.behaviours.MovementsTableViewBehaviours
 
 import java.time.LocalDateTime
 
-class ViewArrivalsSpec extends MovementsBehaviours("viewArrivals.njk") {
+class ViewArrivalsSpec extends SingleViewSpec("viewArrivals.njk") with MovementsTableViewBehaviours with Generators with ScalaCheckPropertyChecks {
 
   private val messageKeyPrefix: String = "viewArrivalNotifications"
 
@@ -57,7 +60,18 @@ class ViewArrivalsSpec extends MovementsBehaviours("viewArrivals.njk") {
     refType = "mrn"
   )
 
-  behave like pageWithLink(doc, "make-arrival-notification", s"$messageKeyPrefix.makeArrivalNotification")
-  behave like pageWithLink(doc, "go-to-manage-transit-movements", s"$messageKeyPrefix.goToManageTransitMovements")
+  behave like pageWithLink(
+    doc = doc,
+    id = "make-arrival-notification",
+    expectedText = s"$messageKeyPrefix.makeArrivalNotification",
+    expectedHref = frontendAppConfig.declareArrivalNotificationStartUrl
+  )
+
+  behave like pageWithLink(
+    doc = doc,
+    id = "go-to-manage-transit-movements",
+    expectedText = s"$messageKeyPrefix.goToManageTransitMovements",
+    expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
+  )
 
 }

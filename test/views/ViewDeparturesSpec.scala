@@ -16,16 +16,19 @@
 
 package views
 
+import base.SingleViewSpec
+import generators.Generators
 import models.Departure
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewDeparture, ViewDepartureMovements}
-import views.behaviours.MovementsBehaviours
+import views.behaviours.MovementsTableViewBehaviours
 
 import java.time.LocalDateTime
 
-class ViewDeparturesSpec extends MovementsBehaviours("viewDepartures.njk") {
+class ViewDeparturesSpec extends SingleViewSpec("viewDepartures.njk") with MovementsTableViewBehaviours with Generators with ScalaCheckPropertyChecks {
 
   private val messageKeyPrefix: String = "viewDepartures"
 
@@ -57,7 +60,18 @@ class ViewDeparturesSpec extends MovementsBehaviours("viewDepartures.njk") {
     refType = "lrn"
   )
 
-  behave like pageWithLink(doc, "make-departure-notification", s"$messageKeyPrefix.makeDepartureNotification")
-  behave like pageWithLink(doc, "go-to-manage-transit-movements", s"$messageKeyPrefix.goToManageTransitMovements")
+  behave like pageWithLink(
+    doc = doc,
+    id = "make-departure-notification",
+    expectedText = s"$messageKeyPrefix.makeDepartureNotification",
+    expectedHref = frontendAppConfig.declareDepartureStartWithLRNUrl
+  )
+
+  behave like pageWithLink(
+    doc = doc,
+    id = "go-to-manage-transit-movements",
+    expectedText = s"$messageKeyPrefix.goToManageTransitMovements",
+    expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
+  )
 
 }

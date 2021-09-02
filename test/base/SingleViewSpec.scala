@@ -66,14 +66,4 @@ abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecB
       .map(asDocument)
   }
 
-  def pageWithHeading(doc: Document, messageKeyPrefix: String): Unit =
-    "display page heading" in {
-      doc.selectFirst("h1").text() mustBe s"$messageKeyPrefix.heading"
-    }
-
-  def pageWithLink(doc: Document, id: String, expectedText: String): Unit =
-    s"display link with id $id" in {
-      doc.selectFirst(s"a[id=$id]").text() mustBe expectedText
-    }
-
 }
