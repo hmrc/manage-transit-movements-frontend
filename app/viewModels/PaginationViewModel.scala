@@ -98,7 +98,7 @@ object PaginationViewModel {
       ),
       "previous" -> Json.obj(
         "text" -> "Previous",
-        "next" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(currentPage - 1)).url}" // TODO move to param
+        "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(currentPage - 1)).url}" // TODO move to param
       ),
       "next" -> Json.obj(
         "text" -> "Next",
