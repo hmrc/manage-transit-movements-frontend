@@ -45,7 +45,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
     implicit request =>
 
       val currentPage       = page.getOrElse(1)
-      val numberOfMovements = 50
+      val numberOfMovements = 10
 
       arrivalMovementConnector.getPagedArrivals(page.getOrElse(1).toString, numberOfMovements.toString).flatMap {
         case Some(filteredArrivals) =>
