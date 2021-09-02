@@ -17,32 +17,17 @@
 package controllers
 
 import base.{MockNunjucksRendererApp, SpecBase}
-import config.FrontendAppConfig
 import matchers.JsonMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import play.api.inject.bind
 
 import scala.concurrent.Future
 
 class RedirectControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
-
-  val mockFrontendAppConfig = mock[FrontendAppConfig]
-
-  override def beforeEach = {
-    reset(mockFrontendAppConfig)
-    super.beforeEach
-  }
-
-  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
-    super
-      .guiceApplicationBuilder()
-      .overrides(bind(classOf[FrontendAppConfig]).toInstance(mockFrontendAppConfig))
 
   "return OK and the correct view for a GET" in {
 
