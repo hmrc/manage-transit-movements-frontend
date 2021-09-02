@@ -24,8 +24,7 @@ object PaginationViewModel {
   def apply(
              totalNumberOfMovements: Int,
              currentPage: Int,
-             numberOfMovementsPerPage: Int,
-             href: String
+             numberOfMovementsPerPage: Int
            ): JsObject = {
 
     val numberOfPagesFloat = totalNumberOfMovements.toFloat / numberOfMovementsPerPage
