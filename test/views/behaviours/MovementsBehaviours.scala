@@ -29,7 +29,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.collection.convert.ImplicitConversions._
 
-abstract class ViewMovementsBehaviours[T <: ViewMovement](override protected val viewUnderTest: String)(implicit wts: Writes[T])
+abstract class MovementsBehaviours(override protected val viewUnderTest: String)
     extends SingleViewSpec(viewUnderTest)
     with Generators
     with ScalaCheckPropertyChecks {
@@ -46,18 +46,11 @@ abstract class ViewMovementsBehaviours[T <: ViewMovement](override protected val
   val day6_1: LocalDateTime
   val day6_2: LocalDateTime
 
-  val viewMovements: Seq[T]
-
-  val formatToJson: JsObject
-
-  val messageKeyPrefix: String
-  val refType: String
-
-  lazy val doc: Document = renderDocument(formatToJson).futureValue
-
   // scalastyle:off method.length
   // scalastyle:off magic.number
-  def pageWithMovementsData(): Unit = {
+  def pageWithMovementsData[T <: ViewMovement](doc: Document, viewMovements: Seq[T], messageKeyPrefix: String, refType: String)(implicit
+    wts: Writes[T]
+  ): Unit = {
 
     "generate a heading for each unique day" in {
       val ls: Elements = doc.getElementsByAttributeValue("data-testrole", "movements-list_group-heading")

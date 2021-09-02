@@ -17,14 +17,17 @@
 package views
 
 import models.Departure
+import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewDeparture, ViewDepartureMovements}
-import views.behaviours.ViewMovementsBehaviours
+import views.behaviours.MovementsBehaviours
 
 import java.time.LocalDateTime
 
-class ViewDeparturesSpec extends ViewMovementsBehaviours[ViewDeparture]("viewDepartures.njk") {
+class ViewDeparturesSpec extends MovementsBehaviours("viewDepartures.njk") {
+
+  private val messageKeyPrefix: String = "viewDepartures"
 
   override val day6_1: LocalDateTime = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
   override val day6_2: LocalDateTime = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
@@ -39,14 +42,22 @@ class ViewDeparturesSpec extends ViewMovementsBehaviours[ViewDeparture]("viewDep
 
   private val departures = Seq(departure1, departure2, departure3, departure4, departure5, departure6, departure7)
 
-  override val viewMovements: Seq[ViewDeparture] = departures.map(ViewDeparture(_))
+  private val viewMovements: Seq[ViewDeparture] = departures.map(ViewDeparture(_))
 
-  override val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))(ViewDepartureMovements.writes(frontendAppConfig))
+  private val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))(ViewDepartureMovements.writes(frontendAppConfig))
 
-  override val messageKeyPrefix: String = "viewDepartures"
+  private val doc: Document = renderDocument(formatToJson).futureValue
 
-  override val refType: String = "lrn"
+  behave like pageWithHeading(doc, messageKeyPrefix)
 
-  behave like pageWithMovementsData()
+  behave like pageWithMovementsData[ViewDeparture](
+    doc = doc,
+    viewMovements = viewMovements,
+    messageKeyPrefix = messageKeyPrefix,
+    refType = "lrn"
+  )
+
+  behave like pageWithLink(doc, "make-departure-notification", s"$messageKeyPrefix.makeDepartureNotification")
+  behave like pageWithLink(doc, "go-to-manage-transit-movements", s"$messageKeyPrefix.goToManageTransitMovements")
 
 }

@@ -18,22 +18,18 @@ package base
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.RequestHeader
+import play.api.test.Helpers
+import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import renderer.Renderer
+import uk.gov.hmrc.nunjucks.{DevelopmentNunjucksRoutesHelper, NunjucksConfigurationProvider, NunjucksRenderer, NunjucksSetup}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import play.api.Environment
-import play.api.Configuration
-import play.api.test.Helpers
-import uk.gov.hmrc.nunjucks.NunjucksSetup
-import uk.gov.hmrc.nunjucks.NunjucksRenderer
-import uk.gov.hmrc.nunjucks.DevelopmentNunjucksRoutesHelper
-import uk.gov.hmrc.nunjucks.NunjucksConfigurationProvider
-import play.api.i18n.Messages
-import play.api.mvc.RequestHeader
 
 abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecBase with ViewSpecAssertions with NunjucksSupport {
 
@@ -69,5 +65,15 @@ abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecB
       .render(viewUnderTest, json)
       .map(asDocument)
   }
+
+  def pageWithHeading(doc: Document, messageKeyPrefix: String): Unit =
+    "display page heading" in {
+      doc.selectFirst("h1").text() mustBe s"$messageKeyPrefix.heading"
+    }
+
+  def pageWithLink(doc: Document, id: String, expectedText: String): Unit =
+    s"display link with id $id" in {
+      doc.selectFirst(s"a[id=$id]").text() mustBe expectedText
+    }
 
 }

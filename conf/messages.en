@@ -65,6 +65,7 @@ unauthorised.again.later = again later.
 viewArrivalNotifications.title                      = Arrival notifications
 viewArrivalNotifications.heading                    = Arrival notifications
 viewArrivalNotifications.makeArrivalNotification    = Make an arrival notification
+viewArrivalNotifications.goToManageTransitMovements = Go to manage transit movements
 viewArrivalNotifications.table.updated     = Updated
 viewArrivalNotifications.table.mrn         = Movement reference number
 viewArrivalNotifications.table.trader.name = Trader name
@@ -80,8 +81,6 @@ viewArrivalNotifications.table.action.viewHistory             = View history
 viewArrivalNotifications.table.action.viewHistory.hidden      = View history for {0}
 viewArrivalNotifications.table.action.viewPDF                 = Unloading Permission PDF
 viewArrivalNotifications.table.action.viewPDF.hidden          = Unloading Permission PDF for {0}
-viewArrivalNotifications.goToManageTransitMovements           = Go to manage transit movements
-viewArrivalNotifications.goToManageTransitMovements.hidden    = Go to manage transit movements for {0}
 
 movement.status.arrivalSubmitted = Arrival notification sent
 movement.status.arrivalRejected = Arrival notification rejected

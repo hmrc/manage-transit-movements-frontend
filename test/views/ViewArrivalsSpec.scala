@@ -17,14 +17,17 @@
 package views
 
 import models.Arrival
+import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewArrival, ViewArrivalMovements}
-import views.behaviours.ViewMovementsBehaviours
+import views.behaviours.MovementsBehaviours
 
 import java.time.LocalDateTime
 
-class ViewArrivalsSpec extends ViewMovementsBehaviours[ViewArrival]("viewArrivals.njk") {
+class ViewArrivalsSpec extends MovementsBehaviours("viewArrivals.njk") {
+
+  private val messageKeyPrefix: String = "viewArrivalNotifications"
 
   override val day6_1: LocalDateTime = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
   override val day6_2: LocalDateTime = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
@@ -39,14 +42,22 @@ class ViewArrivalsSpec extends ViewMovementsBehaviours[ViewArrival]("viewArrival
 
   private val arrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6, arrival7)
 
-  override val viewMovements: Seq[ViewArrival] = arrivals.map(ViewArrival(_))
+  private val viewMovements: Seq[ViewArrival] = arrivals.map(ViewArrival(_))
 
-  override val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
+  private val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
 
-  override val messageKeyPrefix: String = "viewArrivalNotifications"
+  private val doc: Document = renderDocument(formatToJson).futureValue
 
-  override val refType: String = "mrn"
+  behave like pageWithHeading(doc, messageKeyPrefix)
 
-  behave like pageWithMovementsData()
+  behave like pageWithMovementsData[ViewArrival](
+    doc = doc,
+    viewMovements = viewMovements,
+    messageKeyPrefix = messageKeyPrefix,
+    refType = "mrn"
+  )
+
+  behave like pageWithLink(doc, "make-arrival-notification", s"$messageKeyPrefix.makeArrivalNotification")
+  behave like pageWithLink(doc, "go-to-manage-transit-movements", s"$messageKeyPrefix.goToManageTransitMovements")
 
 }
