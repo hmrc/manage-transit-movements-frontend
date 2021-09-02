@@ -23,7 +23,11 @@ import play.api.libs.json.{JsObject, Json, OWrites}
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
-final case class ViewArrival(date: LocalDate, time: LocalTime, movementReferenceNumber: String, status: String, actions: Seq[ViewMovementAction])
+final case class ViewArrival(updatedDate: LocalDate, updatedTime: LocalTime, movementReferenceNumber: String, status: String, actions: Seq[ViewMovementAction])
+    extends ViewMovement {
+
+  override val referenceNumber: String = movementReferenceNumber
+}
 
 object ViewArrival {
 
@@ -44,7 +48,7 @@ object ViewArrival {
     new OWrites[ViewArrival] {
 
       override def writes(o: ViewArrival): JsObject = Json.obj(
-        "updated" -> o.time
+        "updated" -> o.updatedTime
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
         "referenceNumber" -> o.movementReferenceNumber,
