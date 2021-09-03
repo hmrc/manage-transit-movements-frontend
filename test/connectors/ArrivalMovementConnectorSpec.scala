@@ -43,21 +43,21 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
   lazy val app: Application = new GuiceApplicationBuilder()
     .configure(conf = "microservice.services.destination.port" -> server.port())
     .build()
-  private val arrivalId = ArrivalId(1)
+  private val arrivalId                    = ArrivalId(1)
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 
   private val arrivalsResponseJson =
     Json.obj(
       "retrievedArrivals" -> 1,
-      "totalArrivals" -> 2,
-      "totalMatched" -> 3,
+      "totalArrivals"     -> 2,
+      "totalMatched"      -> 3,
       "arrivals" ->
         Json.arr(
           Json.obj(
-            "arrivalId" -> 22,
-            "created" -> localDateTime,
-            "updated" -> localDateTime,
-            "status" -> "Submitted",
+            "arrivalId"               -> 22,
+            "created"                 -> localDateTime,
+            "updated"                 -> localDateTime,
+            "status"                  -> "Submitted",
             "movementReferenceNumber" -> "test mrn"
           )
         )
@@ -203,7 +203,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
       "must return other error status codes without exceptions" in {
 
         val genErrorResponse = Gen.oneOf(300, 500).sample.value
-        val arrivalId = ArrivalId(0)
+        val arrivalId        = ArrivalId(0)
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/arrivals/${arrivalId.index}/unloading-permission"))
@@ -233,10 +233,10 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         val messageAction =
           MessagesSummary(arrivalId,
-            MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3",
-              None,
-              Some(s"/movements/arrivals/${arrivalId.value}/messages/5")
-            )
+                          MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3",
+                                           None,
+                                           Some(s"/movements/arrivals/${arrivalId.value}/messages/5")
+                          )
           )
 
         server.stubFor(
@@ -275,9 +275,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
               <DocNumHEA5>19IT021300100075E9</DocNumHEA5>
             </HEAHEA>
             <FUNERRER1>
-              <ErrTypER11>
-                {genRejectionError.code}
-              </ErrTypER11>
+              <ErrTypER11>{genRejectionError.code}</ErrTypER11>
               <ErrPoiER12>Message type</ErrPoiER12>
               <OriAttValER14>GB007A</OriAttValER14>
             </FUNERRER1>
