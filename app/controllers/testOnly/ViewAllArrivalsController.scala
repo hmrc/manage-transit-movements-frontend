@@ -52,8 +52,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
             (arrival: Arrival) => ViewArrival(arrival)
           )
 
-          val paginationViewModel = PaginationViewModel
-            .apply(filteredArrivals.totalArrivals, currentPage, paginationAppConfig.numberOfMovements, routes.ViewAllArrivalsController.onPageLoad)
+          val paginationViewModel = Json.toJsObject(viewModels.pagination.PaginationViewModel.apply(filteredArrivals.totalArrivals, currentPage, paginationAppConfig.numberOfMovements, routes.ViewAllArrivalsController.onPageLoad(None).url))
 
           val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 

@@ -18,13 +18,13 @@ package viewModels
 
 import config.FrontendAppConfig
 import models.Arrival
-import play.api.libs.json.{JsObject, Json, OWrites}
+import play.api.libs.json.{Json, OWrites}
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
 final case class ViewArrival(updatedDate: LocalDate, updatedTime: LocalTime, movementReferenceNumber: String, status: String, actions: Seq[ViewMovementAction])
-    extends ViewMovement {
+  extends ViewMovement {
 
   override val referenceNumber: String = movementReferenceNumber
 }
@@ -45,15 +45,12 @@ object ViewArrival {
   }
 
   implicit val writes: OWrites[ViewArrival] =
-    new OWrites[ViewArrival] {
-
-      override def writes(o: ViewArrival): JsObject = Json.obj(
-        "updated" -> o.updatedTime
-          .format(DateTimeFormatter.ofPattern("h:mma"))
-          .toLowerCase,
-        "referenceNumber" -> o.movementReferenceNumber,
-        "status"          -> o.status,
-        "actions"         -> o.actions
-      )
-    }
+    (o: ViewArrival) => Json.obj(
+      "updated" -> o.updatedTime
+        .format(DateTimeFormatter.ofPattern("h:mma"))
+        .toLowerCase,
+      "referenceNumber" -> o.movementReferenceNumber,
+      "status" -> o.status,
+      "actions" -> o.actions
+    )
 }

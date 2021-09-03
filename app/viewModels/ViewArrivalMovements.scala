@@ -16,13 +16,13 @@
 
 package viewModels
 
+import config.FrontendAppConfig
+import controllers.routes
+import play.api.libs.json.{Json, OWrites}
+
 import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
-
-import config.FrontendAppConfig
-import controllers.routes
-import play.api.libs.json.{JsObject, Json, OWrites}
 
 case class ViewArrivalMovements(
   dataRows: Seq[(String, Seq[ViewArrival])]
@@ -55,13 +55,9 @@ object ViewArrivalMovements {
   implicit def writes(implicit
     frontendAppConfig: FrontendAppConfig
   ): OWrites[ViewArrivalMovements] =
-    new OWrites[ViewArrivalMovements] {
-
-      override def writes(o: ViewArrivalMovements): JsObject =
-        Json.obj(
-          "dataRows"                      -> o.dataRows,
-          "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-          "homePageUrl"                   -> routes.WhatDoYouWantToDoController.onPageLoad().url
-        )
-    }
+    (o: ViewArrivalMovements) => Json.obj(
+      "dataRows" -> o.dataRows,
+      "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
+      "homePageUrl" -> routes.WhatDoYouWantToDoController.onPageLoad().url
+    )
 }
