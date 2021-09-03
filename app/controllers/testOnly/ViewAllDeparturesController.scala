@@ -55,7 +55,12 @@ class ViewAllDeparturesController @Inject()(
             (departure: Departure) => ViewDeparture(departure)
           )
 
-          val paginationViewModel = PaginationViewModel.apply(filteredDepartures.totalDepartures, currentPage, numberOfMovements)
+          val paginationViewModel = PaginationViewModel.apply(
+            filteredDepartures.totalDepartures,
+            currentPage,
+            numberOfMovements,
+            routes.ViewAllDeparturesController.onPageLoad
+          )
 
           val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))
 

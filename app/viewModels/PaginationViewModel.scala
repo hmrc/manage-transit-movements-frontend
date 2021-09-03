@@ -16,15 +16,16 @@
 
 package viewModels
 
-import controllers.testOnly.routes
 import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
 
 object PaginationViewModel {
 
   def apply(
     totalNumberOfMovements: Int,
     currentPage: Int,
-    numberOfMovementsPerPage: Int
+    numberOfMovementsPerPage: Int,
+    pageNavigation: (Option[Int] => Call)
   ): JsObject = {
 
     val numberOfPagesFloat = totalNumberOfMovements.toFloat / numberOfMovementsPerPage
@@ -39,7 +40,7 @@ object PaginationViewModel {
 
     def buildItem(pageNumber: Int, dottedLeft: Boolean, dottedRight: Boolean): JsObject = Json.obj(
       "pageNumber"  -> pageNumber,
-      "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(pageNumber)).url}", // TODO move this to param
+      "href"        -> s"${pageNavigation(Some(pageNumber)).url}",
       "selected"    -> Json.toJson(pageNumber == validateCurrentPage),
       "dottedLeft"  -> dottedLeft,
       "dottedRight" -> dottedRight
@@ -100,11 +101,11 @@ object PaginationViewModel {
       ),
       "previous" -> Json.obj(
         "text" -> "Previous",
-        "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(currentPage - 1)).url}" // TODO move to param
+        "href" -> s"${pageNavigation(Some(currentPage - 1)).url}"
       ),
       "next" -> Json.obj(
         "text" -> "Next",
-        "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(currentPage + 1)).url}" // TODO move to param
+        "href" -> s"${pageNavigation(Some(currentPage + 1)).url}"
       ),
       "items" -> items
     )
