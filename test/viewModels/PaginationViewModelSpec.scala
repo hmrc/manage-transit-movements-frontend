@@ -26,11 +26,11 @@ class PaginationViewModelSpec extends SpecBase {
     "Must return paginated list without dots when the number of pages is less than 6" in {
       val expectedResult = Json.obj(
         "results" -> Json.obj(
-          "from" -> 1,
-          "to" -> 50,
-          "count" -> 60,
+          "from"        -> 1,
+          "to"          -> 50,
+          "count"       -> 60,
           "currentPage" -> 1,
-          "totalPages" -> 2
+          "totalPages"  -> 2
         ),
         "previous" -> Json.obj(
           "text" -> "Previous",
@@ -40,18 +40,19 @@ class PaginationViewModelSpec extends SpecBase {
           "text" -> "Next",
           "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(2)).url}"
         ),
-        "items" -> Json.arr(Json.obj(
-          "pageNumber" -> 1,
-          "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(1)).url}",
-          "selected" -> Json.toJson(true),
-          "dottedLeft" -> false,
-          "dottedRight" -> false
-        ),
+        "items" -> Json.arr(
           Json.obj(
-            "pageNumber" -> 2,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(2)).url}",
-            "selected" -> Json.toJson(false),
-            "dottedLeft" -> false,
+            "pageNumber"  -> 1,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(1)).url}",
+            "selected"    -> Json.toJson(true),
+            "dottedLeft"  -> false,
+            "dottedRight" -> false
+          ),
+          Json.obj(
+            "pageNumber"  -> 2,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(2)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> false,
             "dottedRight" -> false
           )
         )
@@ -62,11 +63,11 @@ class PaginationViewModelSpec extends SpecBase {
     "Must return paginated list with left and right dots when the current page is not the first 2 or last 2 pages" in {
       val expectedResult = Json.obj(
         "results" -> Json.obj(
-          "from" -> 151,
-          "to" -> 200,
-          "count" -> 260,
+          "from"        -> 151,
+          "to"          -> 200,
+          "count"       -> 260,
           "currentPage" -> 4,
-          "totalPages" -> 6
+          "totalPages"  -> 6
         ),
         "previous" -> Json.obj(
           "text" -> "Previous",
@@ -76,39 +77,40 @@ class PaginationViewModelSpec extends SpecBase {
           "text" -> "Next",
           "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(5)).url}"
         ),
-        "items" -> Json.arr(Json.obj(
-          "pageNumber" -> 1,
-          "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(1)).url}",
-          "selected" -> Json.toJson(false),
-          "dottedLeft" -> true,
-          "dottedRight" -> true
-        ),
+        "items" -> Json.arr(
           Json.obj(
-            "pageNumber" -> 3,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(3)).url}",
-            "selected" -> Json.toJson(false),
-            "dottedLeft" -> true,
+            "pageNumber"  -> 1,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(1)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> true,
             "dottedRight" -> true
           ),
           Json.obj(
-            "pageNumber" -> 4,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(4)).url}",
-            "selected" -> Json.toJson(true),
-            "dottedLeft" -> true,
+            "pageNumber"  -> 3,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(3)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> true,
             "dottedRight" -> true
           ),
           Json.obj(
-            "pageNumber" -> 5,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(5)).url}",
-            "selected" -> Json.toJson(false),
-            "dottedLeft" -> true,
+            "pageNumber"  -> 4,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(4)).url}",
+            "selected"    -> Json.toJson(true),
+            "dottedLeft"  -> true,
             "dottedRight" -> true
           ),
           Json.obj(
-            "pageNumber" -> 6,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(6)).url}",
-            "selected" -> Json.toJson(false),
-            "dottedLeft" -> true,
+            "pageNumber"  -> 5,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(5)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> true,
+            "dottedRight" -> true
+          ),
+          Json.obj(
+            "pageNumber"  -> 6,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(6)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> true,
             "dottedRight" -> true
           )
         )
@@ -119,11 +121,11 @@ class PaginationViewModelSpec extends SpecBase {
     "Must return paginated list with left dots when the current page is one of the last 2 pages" in {
       val expectedResult = Json.obj(
         "results" -> Json.obj(
-          "from" -> 251,
-          "to" -> 260,
-          "count" -> 260,
+          "from"        -> 251,
+          "to"          -> 260,
+          "count"       -> 260,
           "currentPage" -> 6,
-          "totalPages" -> 6
+          "totalPages"  -> 6
         ),
         "previous" -> Json.obj(
           "text" -> "Previous",
@@ -133,32 +135,33 @@ class PaginationViewModelSpec extends SpecBase {
           "text" -> "Next",
           "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(7)).url}"
         ),
-        "items" -> Json.arr(Json.obj(
-          "pageNumber" -> 1,
-          "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(1)).url}",
-          "selected" -> Json.toJson(false),
-          "dottedLeft" -> true,
-          "dottedRight" -> false
-        ),
+        "items" -> Json.arr(
           Json.obj(
-            "pageNumber" -> 4,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(4)).url}",
-            "selected" -> Json.toJson(false),
-            "dottedLeft" -> true,
+            "pageNumber"  -> 1,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(1)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> true,
             "dottedRight" -> false
           ),
           Json.obj(
-            "pageNumber" -> 5,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(5)).url}",
-            "selected" -> Json.toJson(false),
-            "dottedLeft" -> true,
+            "pageNumber"  -> 4,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(4)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> true,
             "dottedRight" -> false
           ),
           Json.obj(
-            "pageNumber" -> 6,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(6)).url}",
-            "selected" -> Json.toJson(true),
-            "dottedLeft" -> true,
+            "pageNumber"  -> 5,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(5)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> true,
+            "dottedRight" -> false
+          ),
+          Json.obj(
+            "pageNumber"  -> 6,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(6)).url}",
+            "selected"    -> Json.toJson(true),
+            "dottedLeft"  -> true,
             "dottedRight" -> false
           )
         )
@@ -169,11 +172,11 @@ class PaginationViewModelSpec extends SpecBase {
     "Must return paginated list with right dots when the current page is one of the first 2 pages and number of p[ages is greater than 5" in {
       val expectedResult = Json.obj(
         "results" -> Json.obj(
-          "from" -> 1,
-          "to" -> 50,
-          "count" -> 260,
+          "from"        -> 1,
+          "to"          -> 50,
+          "count"       -> 260,
           "currentPage" -> 1,
-          "totalPages" -> 6
+          "totalPages"  -> 6
         ),
         "previous" -> Json.obj(
           "text" -> "Previous",
@@ -183,32 +186,33 @@ class PaginationViewModelSpec extends SpecBase {
           "text" -> "Next",
           "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(2)).url}"
         ),
-        "items" -> Json.arr(Json.obj(
-          "pageNumber" -> 1,
-          "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(1)).url}",
-          "selected" -> Json.toJson(true),
-          "dottedLeft" -> false,
-          "dottedRight" -> true
-        ),
+        "items" -> Json.arr(
           Json.obj(
-            "pageNumber" -> 2,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(2)).url}",
-            "selected" -> Json.toJson(false),
-            "dottedLeft" -> false,
+            "pageNumber"  -> 1,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(1)).url}",
+            "selected"    -> Json.toJson(true),
+            "dottedLeft"  -> false,
             "dottedRight" -> true
           ),
           Json.obj(
-            "pageNumber" -> 3,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(3)).url}",
-            "selected" -> Json.toJson(false),
-            "dottedLeft" -> false,
+            "pageNumber"  -> 2,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(2)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> false,
             "dottedRight" -> true
           ),
           Json.obj(
-            "pageNumber" -> 6,
-            "href" -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(6)).url}",
-            "selected" -> Json.toJson(false),
-            "dottedLeft" -> false,
+            "pageNumber"  -> 3,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(3)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> false,
+            "dottedRight" -> true
+          ),
+          Json.obj(
+            "pageNumber"  -> 6,
+            "href"        -> s"${routes.ViewAllArrivalsController.onPageLoad(Some(6)).url}",
+            "selected"    -> Json.toJson(false),
+            "dottedLeft"  -> false,
             "dottedRight" -> true
           )
         )
