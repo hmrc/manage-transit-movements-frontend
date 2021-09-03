@@ -34,8 +34,7 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
       assertPageHasLink(doc, id, expectedText, expectedHref)
     }
 
-  def pageWithPagination(expectedCall: Option[Int] => Call): Unit = {
-
+  def pageWithPagination(expectedCall: Option[Int] => Call): Unit =
     "Pagination" - {
 
       "must display pagination results when there is more than one page" in {
@@ -109,5 +108,4 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
         assertRenderedById(doc, "pagination-item-12")
       }
     }
-  }
 }

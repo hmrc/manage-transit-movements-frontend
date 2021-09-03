@@ -20,9 +20,8 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
 
 @Singleton
-class PaginationAppConfig @Inject()(configuration: Configuration) {
+class PaginationAppConfig @Inject() (configuration: Configuration) {
 
   val numberOfMovements: Int = configuration.get[Int]("pagination.numberOfMovements")
-
 
 }
