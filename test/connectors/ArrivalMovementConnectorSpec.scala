@@ -275,9 +275,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
               <DocNumHEA5>19IT021300100075E9</DocNumHEA5>
             </HEAHEA>
             <FUNERRER1>
-              <ErrTypER11>
-                {genRejectionError.code}
-              </ErrTypER11>
+              <ErrTypER11>{genRejectionError.code}</ErrTypER11>
               <ErrPoiER12>Message type</ErrPoiER12>
               <OriAttValER14>GB007A</OriAttValER14>
             </FUNERRER1>
