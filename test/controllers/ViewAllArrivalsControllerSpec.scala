@@ -39,7 +39,7 @@ import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewAllArrivalsControllerSpec
-    extends SpecBase
+  extends SpecBase
     with MockitoSugar
     with JsonMatchers
     with Generators
@@ -48,7 +48,7 @@ class ViewAllArrivalsControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
-  implicit val frontendAppConfig           = FakeFrontendAppConfig()
+  implicit val frontendAppConfig = FakeFrontendAppConfig()
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -89,12 +89,12 @@ class ViewAllArrivalsControllerSpec
     Nil
   )
 
-  private val expectedJson: JsValue =
+  private val expectedJson =
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
       "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl"                   -> "/manage-transit-movements/what-do-you-want-to-do" // TODO use controller url
+      "homePageUrl" -> "/manage-transit-movements/what-do-you-want-to-do" // TODO use controller url
     )
 
   "ViewAllArrivals Controller" - {
@@ -103,7 +103,7 @@ class ViewAllArrivalsControllerSpec
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockArrivalMovementConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
         .thenReturn(Future.successful(Some(mockArrivalResponse)))
 
       val request = FakeRequest(
@@ -112,7 +112,7 @@ class ViewAllArrivalsControllerSpec
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -123,7 +123,7 @@ class ViewAllArrivalsControllerSpec
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewAllArrivals.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson
+      jsonCaptorWithoutConfig must containJson(expectedJson)
     }
 
     "render technical difficulty" in {
@@ -132,7 +132,7 @@ class ViewAllArrivalsControllerSpec
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockArrivalMovementConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest(
@@ -141,7 +141,7 @@ class ViewAllArrivalsControllerSpec
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
