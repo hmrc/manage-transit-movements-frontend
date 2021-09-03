@@ -39,7 +39,7 @@ import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewAllArrivalsControllerSpec
-  extends SpecBase
+    extends SpecBase
     with MockitoSugar
     with JsonMatchers
     with Generators
@@ -48,7 +48,7 @@ class ViewAllArrivalsControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
-  implicit val frontendAppConfig = FakeFrontendAppConfig()
+  implicit val frontendAppConfig           = FakeFrontendAppConfig()
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -94,7 +94,7 @@ class ViewAllArrivalsControllerSpec
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
       "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl" -> "/manage-transit-movements/what-do-you-want-to-do" // TODO use controller url
+      "homePageUrl"                   -> "/manage-transit-movements/what-do-you-want-to-do" // TODO use controller url
     )
 
   "ViewAllArrivals Controller" - {
@@ -112,7 +112,7 @@ class ViewAllArrivalsControllerSpec
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -141,7 +141,7 @@ class ViewAllArrivalsControllerSpec
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
