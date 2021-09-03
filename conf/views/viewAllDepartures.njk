@@ -19,7 +19,7 @@
 
         <p class="govuk-body"><a id = "make-departure-notification" href={{ declareDepartureNotificationUrl }} > {{ messages("viewDepartures.makeDepartureNotification") }}</a></p>
 
-        {%- if results.totalPages > 1 %}
+        {%- if results.totalPages != 1 %}
             {{ pagination(results, previous, next, items) }}
         {% endif -%}
 
