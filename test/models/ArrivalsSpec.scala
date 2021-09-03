@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import play.api.libs.json.{JsArray, JsValue, Json}
+import play.api.libs.json.{JsArray, Json}
 
 import java.time.LocalDateTime
 
