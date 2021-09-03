@@ -22,12 +22,12 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
 
 case class Arrival(
-                    arrivalId: ArrivalId,
-                    created: LocalDateTime,
-                    updated: LocalDateTime,
-                    status: String,
-                    movementReferenceNumber: String
-                  )
+  arrivalId: ArrivalId,
+  created: LocalDateTime,
+  updated: LocalDateTime,
+  status: String,
+  movementReferenceNumber: String
+)
 
 object Arrival {
 
