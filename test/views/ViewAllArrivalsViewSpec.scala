@@ -25,8 +25,9 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{PaginationViewModel, ViewArrival, ViewArrivalMovements}
 import views.behaviours.MovementsTableViewBehaviours
-
 import java.time.LocalDateTime
+
+import controllers.testOnly.routes
 
 class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArrivals.njk") with Generators with ScalaCheckPropertyChecks {
 
@@ -58,7 +59,7 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArriv
 
   "must display pagination results when there are more than one page" in {
 
-    val paginationViewModel: JsObject = PaginationViewModel(101, 2, 50)
+    val paginationViewModel: JsObject = PaginationViewModel(101, 2, 50, routes.ViewAllArrivalsController.onPageLoad)
 
     val movementsViewModel: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
 
@@ -71,7 +72,7 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArriv
 
   "must display results when there are only one page" in {
 
-    val paginationViewModel: JsObject = PaginationViewModel(10, 1, 50)
+    val paginationViewModel: JsObject = PaginationViewModel(10, 1, 50, routes.ViewAllArrivalsController.onPageLoad)
 
     val movementsViewModel: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
 

@@ -57,7 +57,7 @@ class PaginationViewModelSpec extends SpecBase {
           )
         )
       )
-      PaginationViewModel(60, 1, 50) mustBe expectedResult
+      PaginationViewModel(60, 1, 50, routes.ViewAllArrivalsController.onPageLoad) mustBe expectedResult
     }
 
     "Must return paginated list with left and right dots when the current page is not the first 2 or last 2 pages" in {
@@ -115,7 +115,7 @@ class PaginationViewModelSpec extends SpecBase {
           )
         )
       )
-      PaginationViewModel(260, 4, 50) mustBe expectedResult
+      PaginationViewModel(260, 4, 50, routes.ViewAllArrivalsController.onPageLoad) mustBe expectedResult
     }
 
     "Must return paginated list with left dots when the current page is one of the last 2 pages" in {
@@ -166,7 +166,7 @@ class PaginationViewModelSpec extends SpecBase {
           )
         )
       )
-      PaginationViewModel(260, 6, 50) mustBe expectedResult
+      PaginationViewModel(260, 6, 50, routes.ViewAllArrivalsController.onPageLoad) mustBe expectedResult
     }
 
     "Must return paginated list with right dots when the current page is one of the first 2 pages and number of p[ages is greater than 5" in {
@@ -217,7 +217,7 @@ class PaginationViewModelSpec extends SpecBase {
           )
         )
       )
-      PaginationViewModel(260, 1, 50) mustBe expectedResult
+      PaginationViewModel(260, 1, 50, routes.ViewAllArrivalsController.onPageLoad) mustBe expectedResult
     }
 
   }
