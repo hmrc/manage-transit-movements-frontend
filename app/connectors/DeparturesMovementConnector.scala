@@ -57,8 +57,8 @@ class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: Ht
   def getDepartureSearchResults(mrn: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
     doGetDepartures(Seq("mrn" -> mrn, "pageSize" -> pageSize))
 
-  def getPagedDepartures(page: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
-    doGetDepartures(Seq("page" -> page, "pageSize" -> pageSize))
+  def getPagedDepartures(page: Int, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
+    doGetDepartures(Seq("page" -> page.toString, "pageSize" -> pageSize.toString))
 
   def getPDF(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[WSResponse] = {
     val serviceUrl: String = s"${config.departureUrl}/movements/departures/${departureId.index}/accompanying-document"

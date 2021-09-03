@@ -168,7 +168,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             .willReturn(okJson(departuresResponseJson.toString()))
         )
 
-        connector.getPagedDepartures("42", "100").futureValue mustBe Some(expectedResult)
+        connector.getPagedDepartures(42, 100).futureValue mustBe Some(expectedResult)
       }
 
       "must return a None when getArrivals returns an error response" in {
@@ -183,7 +183,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                     .withStatus(errorResponse)
                 )
             )
-            connector.getPagedDepartures("42", "100").futureValue mustBe None
+            connector.getPagedDepartures(42, 100).futureValue mustBe None
         }
       }
     }

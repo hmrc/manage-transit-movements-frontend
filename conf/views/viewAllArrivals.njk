@@ -21,7 +21,7 @@
         </a>
       </p>
 
-      {%- if results.totalPages != 1 %}
+      {%- if results.totalPages > 1 %}
           {{ pagination(results, previous, next, items) }}
       {% endif -%}
 

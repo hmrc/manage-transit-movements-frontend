@@ -16,7 +16,7 @@
 
 package controllers.testOnly
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
@@ -35,6 +35,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
                                            identify: IdentifierAction,
                                            cc: MessagesControllerComponents,
                                            val config: FrontendAppConfig,
+                                           val paginationAppConfig: PaginationAppConfig,
                                            arrivalMovementConnector: ArrivalMovementConnector
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
@@ -44,26 +45,21 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
   def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       val currentPage       = page.getOrElse(1)
-      val numberOfMovements = 10
 
-      arrivalMovementConnector.getPagedArrivals(page.getOrElse(1).toString, numberOfMovements.toString).flatMap {
+      arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.numberOfMovements).flatMap {
         case Some(filteredArrivals) =>
           val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
             (arrival: Arrival) => ViewArrival(arrival)
           )
 
-          val paginationViewModel = PaginationViewModel.apply(
-            filteredArrivals.totalArrivals,
-            currentPage,
-            numberOfMovements,
-            routes.ViewAllArrivalsController.onPageLoad)
+          val paginationViewModel = PaginationViewModel.apply(filteredArrivals.totalArrivals, currentPage, paginationAppConfig.numberOfMovements)
 
           val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
-          val mergeMyStuff = formatToJson.deepMerge(paginationViewModel)
+          val combineJson = formatToJson.deepMerge(paginationViewModel)
 
           renderer
-            .render("viewAllArrivals.njk", mergeMyStuff)
+            .render("viewAllArrivals.njk", combineJson)
             .map(Ok(_))
 
         case _ => renderTechnicalDifficultiesPage

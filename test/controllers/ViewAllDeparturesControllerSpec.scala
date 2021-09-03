@@ -24,7 +24,7 @@ import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, anyInt, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
@@ -69,7 +69,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with Js
 
     "return OK and the correct view for a GET" in {
 
-      when(mockDeparturesMovementConnector.getPagedDepartures(eqTo("1"), any())(any()))
+      when(mockDeparturesMovementConnector.getPagedDepartures(eqTo(1), anyInt())(any()))
         .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
       when(mockNunjucksRenderer.render(any(), any())(any()))
@@ -96,7 +96,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with Js
 
       when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-      when(mockDeparturesMovementConnector.getPagedDepartures(eqTo("1"), any())(any()))
+      when(mockDeparturesMovementConnector.getPagedDepartures(eqTo(1), anyInt())(any()))
         .thenReturn(Future.successful(None))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

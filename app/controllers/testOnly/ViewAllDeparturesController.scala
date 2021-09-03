@@ -16,13 +16,13 @@
 
 package controllers.testOnly
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DeparturesMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
 import javax.inject.Inject
 import models.Departure
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -31,24 +31,23 @@ import viewModels.{PaginationViewModel, ViewDeparture, ViewDepartureMovements}
 
 import scala.concurrent.ExecutionContext
 
-class ViewAllDeparturesController @Inject()(
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  cc: MessagesControllerComponents,
-  connector: DeparturesMovementConnector,
-  val config: FrontendAppConfig,
-  val renderer: Renderer
-)(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
+class ViewAllDeparturesController @Inject() (val renderer: Renderer,
+                                              identify: IdentifierAction,
+                                              cc: MessagesControllerComponents,
+                                              val config: FrontendAppConfig,
+                                              val paginationAppConfig: PaginationAppConfig,
+                                             departuresMovementConnector: DeparturesMovementConnector
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
-    with I18nSupport
-    with TechnicalDifficultiesPage {
+      with I18nSupport
+      with TechnicalDifficultiesPage {
 
   def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       val currentPage       = page.getOrElse(1)
-      val numberOfMovements = 50
 
-      connector.getPagedDepartures(page.getOrElse(1).toString, numberOfMovements.toString).flatMap {
+
+      departuresMovementConnector.getPagedDepartures(currentPage, paginationAppConfig.numberOfMovements).flatMap {
         case Some(filteredDepartures) =>
 
           val viewMovements: Seq[ViewDeparture] = filteredDepartures.departures.map(
@@ -58,8 +57,7 @@ class ViewAllDeparturesController @Inject()(
           val paginationViewModel = PaginationViewModel.apply(
             filteredDepartures.totalDepartures,
             currentPage,
-            numberOfMovements,
-            routes.ViewAllDeparturesController.onPageLoad
+            paginationAppConfig.numberOfMovements
           )
 
           val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))

@@ -27,14 +27,14 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class RedirectControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
+class IndexControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
 
   "return OK and the correct view for a GET" in {
 
     when(mockNunjucksRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    val request = FakeRequest(GET, routes.RedirectController.onPageLoad().url)
+    val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
     val result = route(app, request).value
 
