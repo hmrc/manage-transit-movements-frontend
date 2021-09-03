@@ -21,9 +21,9 @@
             <li class="pagination__item pagination__item--dots">...</li>
         {% endif -%}
         {%- if item.selected %}
-          <li class="pagination__item pagination__item--active">{{ item.pageNumber }}</li>
+          <li id="pagination-item-{{item.pageNumber}}" class="pagination__item pagination__item--active">{{ item.pageNumber }}</li>
         {% else %}
-          <li class="pagination__item"><a class="pagination__link" href="{{ item.href }}">{{ item.pageNumber }}</a></li>
+          <li id="pagination-item-{{item.pageNumber}}" class="pagination__item"><a class="pagination__link" href="{{ item.href }}">{{ item.pageNumber }}</a></li>
         {% endif -%}
 
         {%- if loop.first and not item.selected and item.dottedLeft %}
