@@ -31,14 +31,14 @@ import viewModels.{PaginationViewModel, ViewArrival, ViewArrivalMovements}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ViewAllArrivalsController @Inject()(val renderer: Renderer,
-                                          identify: IdentifierAction,
-                                          cc: MessagesControllerComponents,
-                                          val config: FrontendAppConfig,
-                                          val paginationAppConfig: PaginationAppConfig,
-                                          arrivalMovementConnector: ArrivalMovementConnector
-                                         )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendController(cc)
+class ViewAllArrivalsController @Inject() (val renderer: Renderer,
+                                           identify: IdentifierAction,
+                                           cc: MessagesControllerComponents,
+                                           val config: FrontendAppConfig,
+                                           val paginationAppConfig: PaginationAppConfig,
+                                           arrivalMovementConnector: ArrivalMovementConnector
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
 
@@ -52,11 +52,8 @@ class ViewAllArrivalsController @Inject()(val renderer: Renderer,
             (arrival: Arrival) => ViewArrival(arrival)
           )
 
-          val paginationViewModel = PaginationViewModel.apply(filteredArrivals.totalArrivals,
-            currentPage,
-            paginationAppConfig.numberOfMovements,
-            routes.ViewAllArrivalsController.onPageLoad
-          )
+          val paginationViewModel = PaginationViewModel
+            .apply(filteredArrivals.totalArrivals, currentPage, paginationAppConfig.numberOfMovements, routes.ViewAllArrivalsController.onPageLoad)
 
           val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 

@@ -16,19 +16,17 @@
 
 package views
 
-import base.SingleViewSpec
+import controllers.testOnly.routes
 import generators.Generators
 import models.Arrival
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
-import viewModels.{PaginationViewModel, ViewArrival, ViewArrivalMovements}
+import viewModels.{ViewArrival, ViewArrivalMovements}
 import views.behaviours.MovementsTableViewBehaviours
 
 import java.time.LocalDateTime
-import controllers.testOnly.routes
-import org.jsoup.select.Evaluator
 
 class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArrivals.njk") with Generators with ScalaCheckPropertyChecks {
 
@@ -58,110 +56,9 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArriv
 
   private val doc: Document = renderDocument(formatToJson).futureValue
 
-  "must display pagination results when there is more than one page" in {
-
-    val paginationViewModel: JsObject = PaginationViewModel(4, 2, 2, routes.ViewAllArrivalsController.onPageLoad)
-
-    val movementsViewModel: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
-
-    val combineJson = movementsViewModel.deepMerge(paginationViewModel)
-
-    val doc: Document = renderDocument(combineJson).futureValue
-
-    doc.getElementById("paginated-results-count").text mustBe "Showing 3 to 4 of 4 results"
-  }
-
-  "must display results when there is only one page" in {
-
-    val paginationViewModel: JsObject = PaginationViewModel(1, 1, 1, routes.ViewAllArrivalsController.onPageLoad)
-
-    val movementsViewModel: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
-
-    val combineJson = movementsViewModel.deepMerge(paginationViewModel)
-
-    val doc: Document = renderDocument(combineJson).futureValue
-
-    doc.getElementById("results-count").text mustBe "Showing 1 results" //TODO account for singular or plural
-  }
-
-  "must display previous button when not on the first page" in {
-
-    val paginationViewModel: JsObject = PaginationViewModel(4, 2, 2, routes.ViewAllArrivalsController.onPageLoad)
-
-    val movementsViewModel: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
-
-    val combineJson = movementsViewModel.deepMerge(paginationViewModel)
-
-    val doc: Document = renderDocument(combineJson).futureValue
-
-    doc.getElementById("previous").text mustBe "Previous set of pages"
-    doc.getElementById("previous").attr("href") mustBe routes.ViewAllArrivalsController.onPageLoad(Some(1)).url
-    doc.select(new Evaluator.Id("previous")).size() mustBe 1
-  }
-
-  "must not display previous button when on the first page" in {
-
-    val paginationViewModel: JsObject = PaginationViewModel(1, 1, 1, routes.ViewAllArrivalsController.onPageLoad)
-
-    val movementsViewModel: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
-
-    val combineJson = movementsViewModel.deepMerge(paginationViewModel)
-
-    val doc: Document = renderDocument(combineJson).futureValue
-
-    doc.select(new Evaluator.Id("previous")).size() mustBe 0
-  }
-
-  "must display next button when not on the last page" in {
-
-    val paginationViewModel: JsObject = PaginationViewModel(2, 1, 1, routes.ViewAllArrivalsController.onPageLoad)
-
-    val movementsViewModel: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
-
-    val combineJson = movementsViewModel.deepMerge(paginationViewModel)
-
-    val doc: Document = renderDocument(combineJson).futureValue
-
-    doc.getElementById("next").text() mustBe "Next set of pages"
-    doc.getElementById("next").attr("href") mustBe routes.ViewAllArrivalsController.onPageLoad(Some(2)).url
-    doc.select(new Evaluator.Id("next")).size() mustBe 1
-  }
-
-  "must not display next button when on the last page" in {
-
-    val paginationViewModel: JsObject = PaginationViewModel(2, 2, 1, routes.ViewAllArrivalsController.onPageLoad)
-
-    val movementsViewModel: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
-
-    val combineJson = movementsViewModel.deepMerge(paginationViewModel)
-
-    val doc: Document = renderDocument(combineJson).futureValue
-
-    doc.select(new Evaluator.Id("next")).size() mustBe 0
-  }
-
-  "must display correct amount of items" in {
-
-    val paginationViewModel: JsObject = PaginationViewModel(60, 4, 5, routes.ViewAllArrivalsController.onPageLoad)
-
-    val movementsViewModel: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
-
-    val combineJson = movementsViewModel.deepMerge(paginationViewModel)
-
-    val doc: Document = renderDocument(combineJson).futureValue
-
-    doc.select(new Evaluator.Id("pagination-item-1")).size() mustBe 1
-    doc.select(new Evaluator.Id("pagination-item-2")).size() mustBe 0
-    doc.select(new Evaluator.Id("pagination-item-3")).size() mustBe 1
-    doc.select(new Evaluator.Id("pagination-item-4")).size() mustBe 1
-    doc.select(new Evaluator.Id("pagination-item-5")).size() mustBe 1
-    doc.select(new Evaluator.Id("pagination-item-6")).size() mustBe 0
-    doc.select(new Evaluator.Id("pagination-item-12")).size() mustBe 1
-  }
-
-
-
   behave like pageWithHeading(doc, messageKeyPrefix)
+
+  behave like pageWithPagination(routes.ViewAllArrivalsController.onPageLoad)
 
   behave like pageWithMovementsData[ViewArrival](
     doc = doc,
