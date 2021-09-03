@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 
 class PaginationViewModelSpec extends SpecBase {
 
-  "ViewAllArrivalsController" - {
+  "PaginationViewModel" - {
     "Must return paginated list without dots when the number of pages is less than 6" in {
       val expectedResult = Json.obj(
         "results" -> Json.obj(
