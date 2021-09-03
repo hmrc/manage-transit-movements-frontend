@@ -31,20 +31,20 @@ import viewModels.{PaginationViewModel, ViewArrival, ViewArrivalMovements}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ViewAllArrivalsController @Inject() (val renderer: Renderer,
-                                           identify: IdentifierAction,
-                                           cc: MessagesControllerComponents,
-                                           val config: FrontendAppConfig,
-                                           val paginationAppConfig: PaginationAppConfig,
-                                           arrivalMovementConnector: ArrivalMovementConnector
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-    extends FrontendController(cc)
+class ViewAllArrivalsController @Inject()(val renderer: Renderer,
+                                          identify: IdentifierAction,
+                                          cc: MessagesControllerComponents,
+                                          val config: FrontendAppConfig,
+                                          val paginationAppConfig: PaginationAppConfig,
+                                          arrivalMovementConnector: ArrivalMovementConnector
+                                         )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
 
   def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      val currentPage       = page.getOrElse(1)
+      val currentPage = page.getOrElse(1)
 
       arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.numberOfMovements).flatMap {
         case Some(filteredArrivals) =>
