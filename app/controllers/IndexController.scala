@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package controllers
 
-import java.time.LocalDateTime
+import controllers.actions.IdentifierAction
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+import javax.inject.Inject
 
-case class Arrival(
-  arrivalId: ArrivalId,
-  created: LocalDateTime,
-  updated: LocalDateTime,
-  status: String,
-  movementReferenceNumber: String
-)
+class IndexController @Inject() (identify: IdentifierAction, cc: MessagesControllerComponents) extends FrontendController(cc) with I18nSupport {
 
-object Arrival {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify) {
 
-  implicit val reads: Reads[Arrival] = (
-    (__ \ "arrivalId").read[ArrivalId] and
-      (__ \ "created").read[LocalDateTime] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "status").read[String] and
-      (__ \ "movementReferenceNumber").read[String]
-  )(Arrival.apply _)
+    Redirect(routes.WhatDoYouWantToDoController.onPageLoad())
+  }
+
 }

@@ -16,6 +16,7 @@
 
 package views
 
+import controllers.testOnly.routes
 import generators.Generators
 import models.Arrival
 import org.jsoup.nodes.Document
@@ -27,7 +28,7 @@ import views.behaviours.MovementsTableViewBehaviours
 
 import java.time.LocalDateTime
 
-class ViewArrivalsSpec extends MovementsTableViewBehaviours("viewArrivals.njk") with Generators with ScalaCheckPropertyChecks {
+class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArrivals.njk") with Generators with ScalaCheckPropertyChecks {
 
   private val messageKeyPrefix: String = "viewArrivalNotifications"
 
@@ -56,6 +57,8 @@ class ViewArrivalsSpec extends MovementsTableViewBehaviours("viewArrivals.njk") 
   private val doc: Document = renderDocument(formatToJson).futureValue
 
   behave like pageWithHeading(doc, messageKeyPrefix)
+
+  behave like pageWithPagination(routes.ViewAllArrivalsController.onPageLoad)
 
   behave like pageWithMovementsData[ViewArrival](
     doc = doc,

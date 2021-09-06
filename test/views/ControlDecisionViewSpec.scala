@@ -17,15 +17,14 @@
 package views
 
 import base.SingleViewSpec
-import generators.Generators
 import models.departure.ControlDecision
 import org.jsoup.nodes.Document
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import utils.Format
+
 import java.time.LocalDate
 
-class ControlDecisionViewSpec extends SingleViewSpec("controlDecision.njk") with Generators with ScalaCheckPropertyChecks {
+class ControlDecisionViewSpec extends SingleViewSpec("controlDecision.njk") {
 
   "ControlDecisionView" - {
 
