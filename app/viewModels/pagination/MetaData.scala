@@ -32,12 +32,7 @@ object MetaData {
       numberOfPagesFloat.toInt + 1
     }
 
-    val from = currentPage match {
-      case 1    => 1
-      case 2    => numberOfMovementsPerPage + 1
-      case page => numberOfMovementsPerPage * (page - 1) + 1
-
-    }
+    val from = numberOfMovementsPerPage * (currentPage - 1) + 1
 
     val to = if (currentPage == 1) {
       numberOfMovementsPerPage
