@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package viewModels
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalTime}
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
-
-case class Arrival(
-  arrivalId: ArrivalId,
-  created: LocalDateTime,
-  updated: LocalDateTime,
-  status: String,
-  movementReferenceNumber: String
-)
-
-object Arrival {
-
-  implicit val reads: Reads[Arrival] = (
-    (__ \ "arrivalId").read[ArrivalId] and
-      (__ \ "created").read[LocalDateTime] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "status").read[String] and
-      (__ \ "movementReferenceNumber").read[String]
-  )(Arrival.apply _)
+trait ViewMovement {
+  val updatedDate: LocalDate
+  val updatedTime: LocalTime
+  val referenceNumber: String
+  val status: String
+  val actions: Seq[ViewMovementAction]
 }

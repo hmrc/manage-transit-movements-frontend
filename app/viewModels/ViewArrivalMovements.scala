@@ -40,7 +40,7 @@ object ViewArrivalMovements {
 
   private def format(movements: Seq[ViewArrival]): Seq[(String, Seq[ViewArrival])] = {
     val groupMovements: Map[LocalDate, Seq[ViewArrival]] =
-      movements.groupBy(_.date)
+      movements.groupBy(_.updatedDate)
     val sortByDate: Seq[(LocalDate, Seq[ViewArrival])] =
       groupMovements.toSeq.sortBy(_._1).reverse
 
@@ -48,7 +48,7 @@ object ViewArrivalMovements {
       result =>
         val dateFormatter: DateTimeFormatter =
           DateTimeFormatter.ofPattern("d MMMM yyyy")
-        (result._1.format(dateFormatter), result._2.sortBy(_.time).reverse)
+        (result._1.format(dateFormatter), result._2.sortBy(_.updatedTime).reverse)
     }
   }
 

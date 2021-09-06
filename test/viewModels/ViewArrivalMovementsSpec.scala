@@ -42,7 +42,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
         seqWithMaxLength(1) {
           Arbitrary {
             arbitrary[ViewArrival].map(
-              _.copy(date = date, time = localTime)
+              _.copy(updatedDate = date, updatedTime = localTime)
             )
           }
         }
@@ -68,7 +68,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
       time =>
         Arbitrary {
           arbitrary[ViewArrival].map(
-            _.copy(date = localDateToday, time = time)
+            _.copy(updatedDate = localDateToday, updatedTime = time)
           )
         }
     }

@@ -69,6 +69,9 @@ class ViewArrivalsControllerSpec
 
   private val mockArrivalResponse: Arrivals =
     Arrivals(
+      1,
+      2,
+      Some(3),
       Seq(
         Arrival(
           ArrivalId(1),
