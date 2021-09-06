@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package config
 
-import java.time.LocalDateTime
+import com.google.inject.{Inject, Singleton}
+import play.api.Configuration
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+@Singleton
+class PaginationAppConfig @Inject() (configuration: Configuration) {
 
-case class Arrival(
-  arrivalId: ArrivalId,
-  created: LocalDateTime,
-  updated: LocalDateTime,
-  status: String,
-  movementReferenceNumber: String
-)
+  val arrivalsNumberOfMovements: Int = configuration.get[Int]("pagination.arrival.numberOfMovements")
 
-object Arrival {
-
-  implicit val reads: Reads[Arrival] = (
-    (__ \ "arrivalId").read[ArrivalId] and
-      (__ \ "created").read[LocalDateTime] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "status").read[String] and
-      (__ \ "movementReferenceNumber").read[String]
-  )(Arrival.apply _)
 }

@@ -16,42 +16,51 @@
 
 package controllers.testOnly
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
 import models.Arrival
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.{ViewArrival, ViewArrivalMovements}
-import javax.inject.Inject
+import viewModels.{PaginationViewModel, ViewArrival, ViewArrivalMovements}
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ViewAllArrivalsController @Inject() (val renderer: Renderer,
                                            identify: IdentifierAction,
                                            cc: MessagesControllerComponents,
                                            val config: FrontendAppConfig,
+                                           val paginationAppConfig: PaginationAppConfig,
                                            arrivalMovementConnector: ArrivalMovementConnector
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad: Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      arrivalMovementConnector.getArrivals().flatMap {
-        case Some(allArrivals) =>
-          val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
+      val currentPage = page.getOrElse(1)
+
+      arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
+        case Some(filteredArrivals) =>
+          val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
             (arrival: Arrival) => ViewArrival(arrival)
           )
+
+          val paginationViewModel = PaginationViewModel
+            .apply(filteredArrivals.totalArrivals, currentPage, paginationAppConfig.arrivalsNumberOfMovements, routes.ViewAllArrivalsController.onPageLoad)
+
           val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
+          val combineJson = formatToJson.deepMerge(paginationViewModel)
+
           renderer
-            .render("viewAllArrivals.njk", formatToJson)
+            .render("viewAllArrivals.njk", combineJson)
             .map(Ok(_))
 
         case _ => renderTechnicalDifficultiesPage
