@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
-import viewModels.{ViewArrival, ViewArrivalMovements}
+import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival, ViewArrivalMovements}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -49,6 +49,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
 
       arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.numberOfMovements).flatMap {
         case Some(filteredArrivals) =>
+
           val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
             (arrival: Arrival) => ViewArrival(arrival)
           )
@@ -60,12 +61,10 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
             routes.ViewAllArrivalsController.onPageLoad(None).url
           )
 
-          val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements(viewMovements))
-
-          val combineJson = formatToJson.deepMerge(Json.toJsObject(paginationViewModel))
+          val formatToJson: JsObject = Json.toJsObject(ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel))
 
           renderer
-            .render("viewAllArrivals.njk", combineJson)
+            .render("viewAllArrivals.njk", formatToJson)
             .map(Ok(_))
 
         case _ => renderTechnicalDifficultiesPage

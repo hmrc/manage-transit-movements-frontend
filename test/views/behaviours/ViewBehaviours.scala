@@ -19,7 +19,6 @@ package views.behaviours
 import base.SingleViewSpec
 import org.jsoup.nodes.Document
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import viewModels.pagination.PaginationViewModel
 
 abstract class ViewBehaviours(override protected val viewUnderTest: String) extends SingleViewSpec(viewUnderTest) {
