@@ -21,9 +21,13 @@
         </a>
       </p>
 
-      {{ movementSearch( messages('movement.search.title'), mrn, "mrn", routes.controllers.arrival.ViewDeparturesController.onPageLoad().url) }}
-      {{ showMovementsByDate("Departures notifications table", messages("viewDepartures.table.updated"), messages("viewDepartures.table.lrn"), messages("viewDepartures.table.status"), messages("viewDepartures.table.action"), dataRows) }}
 
+      {{ movementSearch( messages('movement.search.title'), lrn, "lrn", routes.controllers.arrival.ViewDeparturesController.onPageLoad().url) }}
+      {% if dataRows|length %}
+        {{ showMovementsByDate("Departures notifications table", messages("viewDepartures.table.updated"), messages("viewDepartures.table.lrn"), messages("viewDepartures.table.status"), messages("viewDepartures.table.action"), dataRows) }}
+      {% else %}
+        <p class="govuk-body">{{ messages("search.noResultsFound") }}</p>
+      {% endif %}
     </div>
   </div>
 

@@ -1,6 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "macros/title.njk"                         import title %}
+{% from "macros/movementSearch.njk"                import movementSearch %}
 {% from "macros/showMovementsByDate.njk"           import showMovementsByDate %}
 
 
@@ -18,6 +19,8 @@
         </h1>
 
         <p class="govuk-body"><a id = "make-departure-notification" href={{ declareDepartureNotificationUrl }} > {{ messages("viewDepartures.makeDepartureNotification") }}</a></p>
+
+        {{ movementSearch( messages('movement.search.title'), lrn, "lrn", routes.controllers.departure.ViewDeparturesController.onPageLoad().url) }}
 
         {{ showMovementsByDate("Departures notifications table", messages("viewDepartures.table.updated"), messages("viewDepartures.table.lrn"), messages("viewDepartures.table.status"), messages("viewDepartures.table.action"), dataRows) }}
 
