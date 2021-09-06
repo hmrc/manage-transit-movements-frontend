@@ -3,8 +3,7 @@
 
 {% macro movementSearch() %}
 
-       <form action="{{ routes.controllers.arrival.ViewArrivalsController.onPageLoad().url }}" method="GET">
-
+       <form action="{{ routes.controllers.arrival.ViewArrivalsController.onPageLoad().url }}" method="GET" class="movement-search">
           {{ govukInput({
             label: {
               text: messages('movement.search.title')
@@ -13,7 +12,9 @@
             name: "mrn",
             value: form.mrn.value,
             errorMessage: form.mrn.error,
-            classes: "govuk-!-width-one-half"
+            formGroup: {
+                classes: "govuk-!-width-one-half"
+            }
           }) }}
 
           {{ govukButton({
