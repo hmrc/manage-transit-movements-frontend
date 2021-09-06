@@ -67,6 +67,9 @@ class ViewAllArrivalsControllerSpec
 
   private val mockArrivalResponse: Arrivals =
     Arrivals(
+      1,
+      2,
+      Some(3),
       Seq(
         Arrival(
           ArrivalId(1),
@@ -86,7 +89,7 @@ class ViewAllArrivalsControllerSpec
     Nil
   )
 
-  private val expectedJson: JsValue =
+  private val expectedJson =
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
@@ -100,12 +103,12 @@ class ViewAllArrivalsControllerSpec
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockArrivalMovementConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
         .thenReturn(Future.successful(Some(mockArrivalResponse)))
 
       val request = FakeRequest(
         GET,
-        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad().url
+        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad(Some(1)).url
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -120,7 +123,7 @@ class ViewAllArrivalsControllerSpec
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewAllArrivals.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson
+      jsonCaptorWithoutConfig must containJson(expectedJson)
     }
 
     "render technical difficulty" in {
@@ -129,12 +132,12 @@ class ViewAllArrivalsControllerSpec
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockArrivalMovementConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest(
         GET,
-        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad().url
+        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad(None).url
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
