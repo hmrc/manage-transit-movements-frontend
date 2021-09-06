@@ -1,17 +1,16 @@
 {% from "govuk/components/input/macro.njk"  import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% macro movementSearch() %}
+{% macro movementSearch(labelText, searchText, field, action) %}
 
-       <form action="{{ routes.controllers.arrival.ViewArrivalsController.onPageLoad().url }}" method="GET" class="movement-search">
+       <form action={{ action }} method="GET" class="movement-search">
           {{ govukInput({
             label: {
-              text: messages('movement.search.title')
+              text: labelText
             },
-            id: "mrn",
-            name: "mrn",
-            value: form.mrn.value,
-            errorMessage: form.mrn.error,
+            id: field,
+            name: field,
+            value: searchText,
             formGroup: {
                 classes: "govuk-!-width-one-half"
             }

@@ -16,19 +16,14 @@
         {{ messages("viewArrivalNotifications.heading") }}
       </h1>
       <p class="govuk-body">
-        <a id = "make-arrival-notification" href={{ declareArrivalNotificationUrl }} >
-          {{ messages("viewArrivalNotifications.makeArrivalNotification") }}
+        &lt; <a id = "go-to-view-all-movements" href="{{ routes.controllers.arrival.ViewArrivalsController.onPageLoad().url }}">
+          {{ messages("viewAllMovements.link.title") }}
         </a>
       </p>
 
-      {{ movementSearch() }}
+      {{ movementSearch( messages('movement.search.title'), mrn, "mrn", routes.controllers.arrival.ViewArrivalsController.onPageLoad().url) }}
       {{ showMovementsByDate("Arrival notifications table", messages("viewArrivalNotifications.table.updated"), messages("viewArrivalNotifications.table.mrn"), messages("viewArrivalNotifications.table.status"), messages("viewArrivalNotifications.table.action"), dataRows) }}
 
-      <p class="govuk-body govuk-!-margin-top-3">
-        <a id = "go-to-manage-transit-movements" href="{{ homePageUrl }}">
-          {{ messages("viewArrivalNotifications.goToManageTransitMovements") }}
-        </a>
-      </p>
     </div>
   </div>
 

@@ -51,19 +51,20 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
         case Some(mrnValue) =>
           renderResults(
             arrivalMovementConnector.getArrivalSearchResults(mrnValue, pageSize),
-            "viewArrivalsSearchResults.njk"
+            "viewArrivalsSearchResults.njk",
+            mrnValue
           )
-        case _ => renderResults(arrivalMovementConnector.getArrivals(), "viewArrivals.njk")
+        case _ => renderResults(arrivalMovementConnector.getArrivals(), "viewArrivals.njk", "")
       }
   }
 
-  private def renderResults(results: Future[Option[Arrivals]], template: String)(implicit request: IdentifierRequest[AnyContent]) =
+  private def renderResults(results: Future[Option[Arrivals]], template: String, mrn: String)(implicit request: IdentifierRequest[AnyContent]) =
     results.flatMap {
       case Some(allArrivals) =>
         val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
           (arrival: Arrival) => ViewArrival(arrival)
         )
-        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
+        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements)) ++ Json.obj("mrn" -> mrn)
 
         renderer
           .render(template, formatToJson)

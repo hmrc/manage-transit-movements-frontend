@@ -16,6 +16,8 @@
 
 package controllers.arrival
 
+import java.time.LocalDateTime
+
 import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
@@ -28,14 +30,14 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.{ViewArrival, ViewArrivalMovements}
 
-import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewArrivalsControllerSpec
@@ -48,7 +50,7 @@ class ViewArrivalsControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
-  implicit val frontendAppConfig           = FakeFrontendAppConfig()
+  implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -57,7 +59,7 @@ class ViewArrivalsControllerSpec
     super.beforeEach
   }
 
-  override def guiceApplicationBuilder() =
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
@@ -86,12 +88,13 @@ class ViewArrivalsControllerSpec
     Nil
   )
 
-  private lazy val expectedJson: JsValue =
+  private def expectedJson(expectedMrn: String): JsObject =
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
       "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
+      "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url,
+      "mrn" -> expectedMrn
     )
 
   "ViewArrivalNotifications Controller" - {
@@ -120,7 +123,7 @@ class ViewArrivalsControllerSpec
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivals.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson
+      jsonCaptorWithoutConfig mustBe expectedJson(expectedMrn = "")
     }
 
     "return OK and the correct view for a GET when displaying search results" in {
@@ -153,7 +156,7 @@ class ViewArrivalsControllerSpec
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson
+      jsonCaptorWithoutConfig mustBe expectedJson(expectedMrn = "theMrn")
     }
 
     "render technical difficulty" in {
