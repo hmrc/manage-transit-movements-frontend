@@ -1,8 +1,9 @@
-{% macro pagination(results, previous, next, items) %}
+{% macro pagination(results, previous, next, items, firstItemDotted, lastItemDotted) %}
 
  <nav class="pagination {{- ' ' + classes if classes}}" id="pagination-label">
 
   <p class="govuk-visually-hidden" aria-labelledby="pagination-label">Pagination navigation</p>
+
 
   {%- if results %}
     <p id="paginated-results-count" class="pagination__results">Showing <b>{{ results.from }}</b> to <b>{{ results.to }}</b> of <b>{{results.count}}</b> results</p>
@@ -10,14 +11,15 @@
 
   <ul class="pagination__list">
 
-    {%- if previous and results.currentPage != 1 %}
+    {%- if previous %}
       <li class="pagination__item  pagination__item--prev">
         <a id="previous" class="pagination__link" href="{{ previous.href }}">Previous<span class="govuk-visually-hidden"> set of pages</span></a>
       </li>
     {% endif -%}
 
     {%- for item in items %}
-        {%- if loop.last and not item.selected and item.dottedRight %}
+
+        {%- if lastItemDotted and loop.last %}
             <li class="pagination__item pagination__item--dots">...</li>
         {% endif -%}
         {%- if item.selected %}
@@ -26,12 +28,12 @@
           <li id="pagination-item-{{item.pageNumber}}" class="pagination__item"><a class="pagination__link" href="{{ item.href }}">{{ item.pageNumber }}</a></li>
         {% endif -%}
 
-        {%- if loop.first and not item.selected and item.dottedLeft %}
+        {%- if firstItemDotted and loop.first %}
             <li class="pagination__item pagination__item--dots">...</li>
         {% endif -%}
     {% endfor -%}
 
-    {%- if next and results.currentPage != results.totalPages  %}
+    {%- if next %}
       <li class="pagination__item  pagination__item--next">
         <a id="next" class="pagination__link" href="{{ next.href }}">Next <span class="govuk-visually-hidden"> set of pages</span></a>
       </li>

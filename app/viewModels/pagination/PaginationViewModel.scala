@@ -51,8 +51,8 @@ object PaginationViewModel {
 
   implicit val writes: OWrites[PaginationViewModel] = (
       (__ \ "results").write[MetaData] and
-        (__ \ "previous").write[Option[Previous]] and
-        (__ \ "next").write[Option[Next]] and
+        (__ \ "previous").writeNullable[Previous] and
+        (__ \ "next").writeNullable[Next] and
         (__).write[Items]
     )(o => (o.results, o.previous, o.next, o.items))
 }

@@ -18,39 +18,41 @@ package viewModels.pagination
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Items(items: Seq[Item])
+case class Items(items: Seq[Item], firstItemDotted: Boolean, lastItemDotted: Boolean)
 
 object Items {
 
   def apply(metaData: MetaData, href: String): Items =
     metaData match {
       case MetaData(_, _, _, currentPage, totalNumberOfPages) =>
-        Items(
-          if (totalNumberOfPages < 6) {
-            val range = (1 to totalNumberOfPages).take(5)
 
-            range.map(Item(_, href, currentPage, dottedLeft = false, dottedRight = false))
-          } else if (currentPage == 1 | currentPage == 2) {
+        val itemList: Seq[Item] =
+          if (currentPage == 1 | currentPage == 2) {
 
             val head  = (1 to totalNumberOfPages).take(3)
-            val tail  = totalNumberOfPages
-            val range = head ++ Seq(tail)
+            val tail  = if (totalNumberOfPages >= 6) Seq(totalNumberOfPages) else Seq.empty
+            val range = head ++ tail
 
-            range.map(Item(_, href, currentPage, dottedLeft = false, dottedRight = true))
+            range.map(Item(_, href, currentPage))
 
           } else if (currentPage == totalNumberOfPages | currentPage == totalNumberOfPages - 1) {
 
             val range = Seq(1, totalNumberOfPages - 2, totalNumberOfPages - 1, totalNumberOfPages)
 
-            range.map(Item(_, href, currentPage, dottedLeft = true, dottedRight = false))
+            range.map(Item(_, href, currentPage))
 
           } else {
 
             val range = Seq(1, currentPage - 1, currentPage, currentPage + 1, totalNumberOfPages)
 
-            range.map(Item(_, href, currentPage, dottedLeft = true, dottedRight = true))
+            range.map(Item(_, href, currentPage))
           }
-        )
+
+        val firstItemDotted = currentPage > 2 && totalNumberOfPages > 5
+
+        val lastItemDotted =  currentPage < totalNumberOfPages - 1 && totalNumberOfPages > 5
+
+        Items(itemList, firstItemDotted, lastItemDotted)
     }
 
   implicit val writes: OFormat[Items] = Json.format[Items]

@@ -26,7 +26,8 @@ import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.{PaginationViewModel, ViewArrival, ViewArrivalMovements}
+import viewModels.pagination.PaginationViewModel
+import viewModels.{ViewArrival, ViewArrivalMovements}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -42,7 +43,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       val currentPage = page.getOrElse(1)
 
@@ -52,11 +53,16 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
             (arrival: Arrival) => ViewArrival(arrival)
           )
 
-          val paginationViewModel = Json.toJsObject(viewModels.pagination.PaginationViewModel.apply(filteredArrivals.totalArrivals, currentPage, paginationAppConfig.numberOfMovements, routes.ViewAllArrivalsController.onPageLoad(None).url))
+          val paginationViewModel = PaginationViewModel(
+            filteredArrivals.totalArrivals,
+            currentPage,
+            paginationAppConfig.numberOfMovements,
+            routes.ViewAllArrivalsController.onPageLoad(None).url
+          )
 
-          val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
+          val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements(viewMovements))
 
-          val combineJson = formatToJson.deepMerge(paginationViewModel)
+          val combineJson = formatToJson.deepMerge(Json.toJsObject(paginationViewModel))
 
           renderer
             .render("viewAllArrivals.njk", combineJson)

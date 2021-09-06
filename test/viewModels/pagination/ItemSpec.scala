@@ -24,19 +24,19 @@ class ItemSpec extends SpecBase  {
     "apply" - {
       "must format href" in {
 
-        Item(1, "testHref", 1, dottedLeft = false, dottedRight = false).href mustBe "testHref?page=1"
+        Item(1, "testHref", 1).href mustBe "testHref?page=1"
       }
 
       "selected" - {
 
         "must be true if current page is the same as page number" in {
 
-          Item(1, "testHref", 1, dottedLeft = false, dottedRight = false).selected mustBe true
+          Item(1, "testHref", 1).selected mustBe true
         }
 
         "must be false if current page is not the same as page number" in {
 
-          Item(2, "testHref", 1, dottedLeft = false, dottedRight = false).selected mustBe false
+          Item(2, "testHref", 1).selected mustBe false
         }
       }
     }

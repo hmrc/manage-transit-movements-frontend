@@ -18,9 +18,9 @@ package views.behaviours
 
 import base.SingleViewSpec
 import org.jsoup.nodes.Document
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
-import viewModels.PaginationViewModel
+import viewModels.pagination.PaginationViewModel
 
 abstract class ViewBehaviours(override protected val viewUnderTest: String) extends SingleViewSpec(viewUnderTest) {
 
@@ -34,12 +34,12 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
       assertPageHasLink(doc, id, expectedText, expectedHref)
     }
 
-  def pageWithPagination(expectedCall: Option[Int] => Call): Unit =
+  def pageWithPagination(href: String): Unit =
     "Pagination" - {
 
       "must display pagination results when there is more than one page" in {
 
-        val json: JsObject = PaginationViewModel(4, 2, 2, expectedCall)
+        val json: JsObject = Json.toJsObject(PaginationViewModel(4, 2, 2, href))
 
         val doc: Document = renderDocument(json).futureValue
 
@@ -48,7 +48,7 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
 
       "must display results when there is only one page" in {
 
-        val json: JsObject = PaginationViewModel(1, 1, 1, expectedCall)
+        val json: JsObject = Json.toJsObject(PaginationViewModel(1, 1, 1, href))
 
         val doc: Document = renderDocument(json).futureValue
 
@@ -57,17 +57,17 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
 
       "must display previous button when not on the first page" in {
 
-        val json: JsObject = PaginationViewModel(4, 2, 2, expectedCall)
+        val json: JsObject = Json.toJsObject(PaginationViewModel(4, 2, 2, href))
 
         val doc: Document = renderDocument(json).futureValue
 
         assertRenderedById(doc, "previous")
-        doc.getElementById("previous").attr("href") mustBe expectedCall(Some(1)).url
+        doc.getElementById("previous").attr("href") mustBe s"$href?page=1"
       }
 
       "must not display previous button when on the first page" in {
 
-        val json: JsObject = PaginationViewModel(1, 1, 1, expectedCall)
+        val json: JsObject = Json.toJsObject(PaginationViewModel(1, 1, 1, href))
 
         val doc: Document = renderDocument(json).futureValue
 
@@ -76,17 +76,17 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
 
       "must display next button when not on the last page" in {
 
-        val json: JsObject = PaginationViewModel(2, 1, 1, expectedCall)
+        val json: JsObject = Json.toJsObject(PaginationViewModel(2, 1, 1, href))
 
         val doc: Document = renderDocument(json).futureValue
 
         assertRenderedById(doc, "next")
-        doc.getElementById("next").attr("href") mustBe expectedCall(Some(2)).url
+        doc.getElementById("next").attr("href") mustBe s"$href?page=2"
       }
 
       "must not display next button when on the last page" in {
 
-        val json: JsObject = PaginationViewModel(2, 2, 1, expectedCall)
+        val json: JsObject = Json.toJsObject(PaginationViewModel(2, 2, 1, href))
 
         val doc: Document = renderDocument(json).futureValue
 
@@ -95,7 +95,7 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
 
       "must display correct amount of items" in {
 
-        val json: JsObject = PaginationViewModel(60, 4, 5, expectedCall)
+        val json: JsObject = Json.toJsObject(PaginationViewModel(60, 4, 5, href))
 
         val doc: Document = renderDocument(json).futureValue
 

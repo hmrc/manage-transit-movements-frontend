@@ -29,17 +29,21 @@ class ItemsSpec extends SpecBase {
 
         val expectedResult1 = Items(
           Seq(
-            Item(1, "testHref?page=1", selected = true, dottedLeft = false, dottedRight = false),
-            Item(2, "testHref?page=2", selected = false, dottedLeft = false, dottedRight = false)
-          )
+            Item(1, "testHref?page=1", selected = true),
+            Item(2, "testHref?page=2", selected = false)
+          ),
+          firstItemDotted = false,
+          lastItemDotted = false
         )
 
         val expectedResult2 = Items(
           Seq(
-            Item(1, "testHref?page=1", selected = false, dottedLeft = false, dottedRight = false),
-            Item(2, "testHref?page=2", selected = true, dottedLeft = false, dottedRight = false),
-            Item(3, "testHref?page=3", selected = false, dottedLeft = false, dottedRight = false)
-          )
+            Item(1, "testHref?page=1", selected = false),
+            Item(2, "testHref?page=2", selected = true),
+            Item(3, "testHref?page=3", selected = false)
+          ),
+          firstItemDotted = false,
+          lastItemDotted = false
         )
 
         val result1 = Items(MetaData(10, 5, 1), "testHref")
@@ -55,20 +59,24 @@ class ItemsSpec extends SpecBase {
 
         val expectedResult1 = Items(
           Seq(
-            Item(1, "testHref?page=1", selected = true, dottedLeft = false, dottedRight = true),
-            Item(2, "testHref?page=2", selected = false, dottedLeft = false, dottedRight = true),
-            Item(3, "testHref?page=3", selected = false, dottedLeft = false, dottedRight = true),
-            Item(6, "testHref?page=6", selected = false, dottedLeft = false, dottedRight = true)
-          )
+            Item(1, "testHref?page=1", selected = true),
+            Item(2, "testHref?page=2", selected = false),
+            Item(3, "testHref?page=3", selected = false),
+            Item(6, "testHref?page=6", selected = false)
+          ),
+          firstItemDotted = false,
+          lastItemDotted = true
         )
 
         val expectedResult2 = Items(
           Seq(
-            Item(1, "testHref?page=1", selected = false, dottedLeft = false, dottedRight = true),
-            Item(2, "testHref?page=2", selected = true, dottedLeft = false, dottedRight = true),
-            Item(3, "testHref?page=3", selected = false, dottedLeft = false, dottedRight = true),
-            Item(10, "testHref?page=10", selected = false, dottedLeft = false, dottedRight = true)
-          )
+            Item(1, "testHref?page=1", selected = false),
+            Item(2, "testHref?page=2", selected = true),
+            Item(3, "testHref?page=3", selected = false),
+            Item(10, "testHref?page=10", selected = false)
+          ),
+          firstItemDotted = false,
+          lastItemDotted = true
         )
 
         val result1 = Items(MetaData(12, 2, 1), "testHref")
@@ -85,20 +93,24 @@ class ItemsSpec extends SpecBase {
 
         val expectedResult1 = Items(
           Seq(
-            Item(1, "testHref?page=1", selected = false, dottedLeft = true, dottedRight = false),
-            Item(4, "testHref?page=4", selected = false, dottedLeft = true, dottedRight = false),
-            Item(5, "testHref?page=5", selected = false, dottedLeft = true, dottedRight = false),
-            Item(6, "testHref?page=6", selected = true, dottedLeft = true, dottedRight = false),
-          )
+            Item(1, "testHref?page=1", selected = false),
+            Item(4, "testHref?page=4", selected = false),
+            Item(5, "testHref?page=5", selected = false),
+            Item(6, "testHref?page=6", selected = true),
+          ),
+          firstItemDotted = true,
+          lastItemDotted = false
         )
 
         val expectedResult2 = Items(
           Seq(
-            Item(1, "testHref?page=1", selected = false, dottedLeft = true, dottedRight = false),
-            Item(8, "testHref?page=8", selected = false, dottedLeft = true, dottedRight = false),
-            Item(9, "testHref?page=9", selected = true, dottedLeft = true, dottedRight = false),
-            Item(10, "testHref?page=10", selected = false, dottedLeft = true, dottedRight = false),
-          )
+            Item(1, "testHref?page=1", selected = false),
+            Item(8, "testHref?page=8", selected = false),
+            Item(9, "testHref?page=9", selected = true),
+            Item(10, "testHref?page=10", selected = false),
+          ),
+          firstItemDotted = true,
+          lastItemDotted = false
         )
 
         val result1 = Items(MetaData(12, 2, 6), "testHref")
@@ -114,22 +126,26 @@ class ItemsSpec extends SpecBase {
 
         val expectedResult1 = Items(
           Seq(
-            Item(1, "testHref?page=1", selected = false, dottedLeft = true, dottedRight = true),
-            Item(3, "testHref?page=3", selected = false, dottedLeft = true, dottedRight = true),
-            Item(4, "testHref?page=4", selected = true, dottedLeft = true, dottedRight = true),
-            Item(5, "testHref?page=5", selected = false, dottedLeft = true, dottedRight = true),
-            Item(6, "testHref?page=6", selected = false, dottedLeft = true, dottedRight = true),
-          )
+            Item(1, "testHref?page=1", selected = false),
+            Item(3, "testHref?page=3", selected = false),
+            Item(4, "testHref?page=4", selected = true),
+            Item(5, "testHref?page=5", selected = false),
+            Item(6, "testHref?page=6", selected = false),
+          ),
+          firstItemDotted = true,
+          lastItemDotted = true
         )
 
         val expectedResult2 = Items(
           Seq(
-            Item(1, "testHref?page=1", selected = false, dottedLeft = true, dottedRight = true),
-            Item(5, "testHref?page=5", selected = false, dottedLeft = true, dottedRight = true),
-            Item(6, "testHref?page=6", selected = true, dottedLeft = true, dottedRight = true),
-            Item(7, "testHref?page=7", selected = false, dottedLeft = true, dottedRight = true),
-            Item(10, "testHref?page=10", selected = false, dottedLeft = true, dottedRight = true),
-          )
+            Item(1, "testHref?page=1", selected = false),
+            Item(5, "testHref?page=5", selected = false),
+            Item(6, "testHref?page=6", selected = true),
+            Item(7, "testHref?page=7", selected = false),
+            Item(10, "testHref?page=10", selected = false),
+          ),
+          firstItemDotted = true,
+          lastItemDotted = true
         )
 
         val result1 = Items(MetaData(12, 2, 4), "testHref")

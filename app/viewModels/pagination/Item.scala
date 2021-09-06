@@ -18,17 +18,15 @@ package viewModels.pagination
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Item(pageNumber: Int, href: String, selected: Boolean, dottedLeft: Boolean, dottedRight: Boolean)
+case class Item(pageNumber: Int, href: String, selected: Boolean)
 
 object Item {
 
-  def apply(pageNumber: Int, href: String, currentPage: Int, dottedLeft: Boolean, dottedRight: Boolean): Item =
+  def apply(pageNumber: Int, href: String, currentPage: Int): Item =
     Item(
       pageNumber = pageNumber,
       href = s"$href?page=$pageNumber",
-      selected = pageNumber == currentPage,
-      dottedLeft = dottedLeft,
-      dottedRight = dottedRight
+      selected = pageNumber == currentPage
     )
 
   implicit val format: OFormat[Item] = Json.format[Item]
