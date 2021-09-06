@@ -47,7 +47,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
     implicit request =>
       val currentPage = page.getOrElse(1)
 
-      arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.numberOfMovements).flatMap {
+      arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
         case Some(filteredArrivals) =>
 
           val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
@@ -57,7 +57,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
           val paginationViewModel = PaginationViewModel(
             filteredArrivals.totalArrivals,
             currentPage,
-            paginationAppConfig.numberOfMovements,
+            paginationAppConfig.arrivalsNumberOfMovements,
             routes.ViewAllArrivalsController.onPageLoad(None).url
           )
 
