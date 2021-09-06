@@ -51,6 +51,9 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
   private val departuresResponseJson =
     Json.obj(
+      "retrievedDepartures" -> 1,
+      "totalDepartures" -> 2,
+      "totalMatched"->  3,
       "departures" ->
         Json.arr(
           Json.obj(
@@ -102,6 +105,76 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                 )
             )
             connector.getDepartures().futureValue mustBe None
+        }
+      }
+    }
+
+    "getDepartureSearchResults" - {
+      "must return a successful future response" in {
+        val expectedResult =
+          Departures(
+            Seq(
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/departures?lrn=theLrn&pageSize=100"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(departuresResponseJson.toString()))
+        )
+
+        connector.getDepartureSearchResults("theLrn", 100).futureValue mustBe Some(expectedResult)
+      }
+
+      "must return a None when arrivals API returns an error response" in {
+
+        forAll(errorResponses) {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/movements/departures?lrn=theLrn&pageSize=100"))
+                .withHeader("Channel", containing("web"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+            connector.getDepartureSearchResults("theLrn", 100).futureValue mustBe None
+        }
+      }
+    }
+
+    "getPagedDepartures" - {
+      "must return a successful future response" in {
+        val expectedResult =
+          Departures(
+            Seq(
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/departures?page=42&pageSize=100"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(departuresResponseJson.toString()))
+        )
+
+        connector.getPagedDepartures(42, 100).futureValue mustBe Some(expectedResult)
+      }
+
+      "must return a None when getArrivals returns an error response" in {
+
+        forAll(errorResponses) {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/movements/departures?page=42&pageSize=100"))
+                .withHeader("Channel", containing("web"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+            connector.getPagedDepartures(42, 100).futureValue mustBe None
         }
       }
     }
@@ -172,15 +245,15 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
         val xml: NodeSeq = <CC051B>
           <HEAHEA>
-          <DocNumHEA5>{noReleaseMessage.mrn}</DocNumHEA5>
-          {
-          noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
-            noReleaseMotivation =>
-              <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>
-          }
-        }
-          <TotNumOfIteHEA305>{noReleaseMessage.totalNumberOfItems}</TotNumOfIteHEA305>
-        </HEAHEA>
+            <DocNumHEA5>{noReleaseMessage.mrn}</DocNumHEA5>
+            {
+            noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
+              noReleaseMotivation =>
+                <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>
+            }
+            }
+            <TotNumOfIteHEA305>{noReleaseMessage.totalNumberOfItems}</TotNumOfIteHEA305>
+          </HEAHEA>
           <CUSOFFDEPEPT><RefNumEPT1>{noReleaseMessage.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>
           <CONRESERS>
             <ConResCodERS16>{noReleaseMessage.controlResult.code}</ConResCodERS16>

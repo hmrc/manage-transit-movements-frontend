@@ -20,16 +20,17 @@ import config.FrontendAppConfig
 import connectors.DeparturesMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
-import models.Departure
+import models.{Departure, Departures}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewDeparture, ViewDepartureMovements}
-
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import models.requests.IdentifierRequest
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewDeparturesController @Inject() (
   override val messagesApi: MessagesApi,
@@ -43,17 +44,33 @@ class ViewDeparturesController @Inject() (
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
-    implicit request =>
-      connector.getDepartures().flatMap {
-        case Some(allDepartures) =>
-          val viewDepartures: Seq[ViewDeparture] = allDepartures.departures.map(
-            (departure: Departure) => ViewDeparture(departure)(config)
-          )
-          val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewDepartures))
+  private val pageSize = config.maxSearchResults
 
-          renderer.render("viewDepartures.njk", formatToJson).map(Ok(_))
-        case None => renderTechnicalDifficultiesPage
+  def onPageLoad(lrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
+    implicit request: IdentifierRequest[AnyContent] =>
+      lrn match {
+        case Some(lrnValue) =>
+          renderResults(
+            connector.getDepartureSearchResults(lrnValue, pageSize),
+            "viewDeparturesSearchResults.njk",
+            lrnValue
+          )
+        case _ => renderResults(connector.getDepartures(), "viewDepartures.njk", "")
       }
   }
+
+  private def renderResults(results: Future[Option[Departures]], template: String, lrn: String)(implicit request: IdentifierRequest[AnyContent]) =
+    results.flatMap {
+      case Some(allDepartures) =>
+        val viewMovements: Seq[ViewDeparture] = allDepartures.departures.map(
+          (departure: Departure) => ViewDeparture(departure)
+        )
+        val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements)) ++ Json.obj("lrn" -> lrn)
+
+        renderer
+          .render(template, formatToJson)
+          .map(Ok(_))
+
+      case _ => renderTechnicalDifficultiesPage
+    }
 }

@@ -35,12 +35,12 @@ import scala.xml.NodeSeq
 class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) extends Logging {
   private val channel: String = "web"
 
-  def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] = {
+  private def doGetDepartures(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[Departures]] = {
     val serviceUrl: String = s"${config.departureUrl}/movements/departures"
     val header             = hc.withExtraHeaders(ChannelHeader(channel))
 
     http
-      .GET[Departures](serviceUrl)(HttpReads[Departures], header, ec)
+      .GET[Departures](serviceUrl, queryParams)(HttpReads[Departures], header, ec)
       .map(
         departures => Some(departures)
       )
@@ -50,6 +50,15 @@ class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: Ht
           None
       }
   }
+
+  def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] =
+    doGetDepartures(Seq.empty)
+
+  def getDepartureSearchResults(lrn: String, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
+    doGetDepartures(Seq("lrn" -> lrn, "pageSize" -> pageSize.toString))
+
+  def getPagedDepartures(page: Int, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
+    doGetDepartures(Seq("page" -> page.toString, "pageSize" -> pageSize.toString))
 
   def getPDF(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[WSResponse] = {
     val serviceUrl: String = s"${config.departureUrl}/movements/departures/${departureId.index}/accompanying-document"

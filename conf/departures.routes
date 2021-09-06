@@ -2,7 +2,7 @@
 
 GET         /:departureId/no-release-for-transit                    controllers.departure.NoReleaseForTransitController.onPageLoad(departureId: DepartureId)
 
-GET         /view-departures                                        controllers.departure.ViewDeparturesController.onPageLoad
+GET         /view-departures                                        controllers.departure.ViewDeparturesController.onPageLoad(lrn: Option[String]?=None)
 
 GET         /departures/:departureId/accompanying-document-pdf      controllers.departure.AccompanyingDocumentPDFController.getPDF(departureId: DepartureId)
 
