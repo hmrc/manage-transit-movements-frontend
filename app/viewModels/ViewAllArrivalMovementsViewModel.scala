@@ -30,9 +30,11 @@ import java.time.format.DateTimeFormatter
 case class ViewAllArrivalMovementsViewModel(
                                  dataRows: Seq[(String, Seq[ViewArrival])],
                                  paginationViewModel: PaginationViewModel
-                                )
+                                ) {
+  val singularOrPlural = if(paginationViewModel.results.count == 1){"numberOfMovements.singular"} else {"numberOfMovements.plural"}
 
-object ViewAllArrivalMovementsViewModel {
+}
+  object ViewAllArrivalMovementsViewModel {
 
   implicit val localDateOrdering: Ordering[LocalDate] =
     Ordering.by(identity[ChronoLocalDate])
@@ -55,17 +57,20 @@ object ViewAllArrivalMovementsViewModel {
           DateTimeFormatter.ofPattern("d MMMM yyyy")
         (result._1.format(dateFormatter), result._2.sortBy(_.updatedTime).reverse)
     }
+
   }
 
   implicit def writes(implicit frontendAppConfig: FrontendAppConfig): OWrites[ViewAllArrivalMovementsViewModel] = (
     (__ \ "dataRows").write[Seq[(String, Seq[ViewArrival])]] and
       (__ \ "declareArrivalNotificationUrl").write[String] and
       (__ \ "homePageUrl").write[String] and
+      (__ \ "singularOrPlural").write[String] and
       (__).write[PaginationViewModel]
     ) (o => (
     o.dataRows,
     frontendAppConfig.declareArrivalNotificationStartUrl,
     routes.WhatDoYouWantToDoController.onPageLoad().url,
+    o.singularOrPlural,
     o.paginationViewModel
   ))
 

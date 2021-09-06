@@ -22,7 +22,7 @@
       </p>
 
       {%-  if results and results.totalPages == 1  %}
-        <p id="results-count" class="govuk-body">Showing <b>{{results.count}}</b> results</p>
+        <p id="results-count" class="govuk-body">Showing <b>{{results.count}}</b> {{messages(singularOrPlural)}}</p>
       {% endif -%}
 
       {%- if results.totalPages > 1 %}

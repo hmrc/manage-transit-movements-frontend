@@ -25,7 +25,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import viewModels.pagination.PaginationViewModel
+import viewModels.pagination._
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
@@ -138,6 +138,59 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
           val result = (testJson \ "homePageUrl").validate[String].asOpt.value
 
           result mustBe controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
+      }
+    }
+
+    "adds the pagination" in {
+
+      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
+
+      forAll(arbitrary[ViewArrival]) {
+        arrival =>
+          val paginationViewModel = PaginationViewModel(10, 2, 2, "testHref")
+          val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
+          val result1 = (testJson \ "results").validate[MetaData].asOpt
+          val result2 = (testJson \ "previous").validate[Previous].asOpt
+          val result3 = (testJson \ "next").validate[Next].asOpt
+          val result4 = (testJson \ "items").validate[Seq[Item]].asOpt
+          result1 mustBe defined
+          result2 mustBe defined
+          result3 mustBe defined
+          result4 mustBe defined
+
+      }
+    }
+
+    "must show correct message for a singular movement" in {
+
+      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
+
+      forAll(arbitrary[ViewArrival]) {
+        arrival =>
+          val paginationViewModel = PaginationViewModel(1, 1, 2, "testHref")
+          val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
+          val result = (testJson \ "singularOrPlural").validate[String].asOpt.value
+
+          result mustBe  "numberOfMovements.singular"
+
+      }
+    }
+
+    "must show correct message for multiple movements" in {
+
+      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
+
+      forAll(arbitrary[ViewArrival]) {
+        arrival =>
+          val paginationViewModel = PaginationViewModel(2, 1, 2, "testHref")
+          val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
+          val result = (testJson \ "singularOrPlural").validate[String].asOpt.value
+
+          result mustBe  "numberOfMovements.plural"
+
       }
     }
   }
