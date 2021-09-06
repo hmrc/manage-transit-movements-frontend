@@ -48,9 +48,6 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
   private val arrivalsResponseJson =
     Json.obj(
-      "retrievedArrivals" -> 1,
-      "totalArrivals"     -> 2,
-      "totalMatched"      -> 3,
       "arrivals" ->
         Json.arr(
           Json.obj(
@@ -71,9 +68,6 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
       "must return a successful future response" in {
         val expectedResult =
           Arrivals(
-            1,
-            2,
-            Some(3),
             Seq(
               Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
             )
@@ -109,9 +103,6 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
       "must return a successful future response" in {
         val expectedResult =
           Arrivals(
-            1,
-            2,
-            Some(3),
             Seq(
               Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
             )
@@ -147,9 +138,6 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
       "must return a successful future response" in {
         val expectedResult =
           Arrivals(
-            1,
-            2,
-            Some(3),
             Seq(
               Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
             )
@@ -161,7 +149,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             .willReturn(okJson(arrivalsResponseJson.toString()))
         )
 
-        connector.getPagedArrivals(42, 100).futureValue mustBe Some(expectedResult)
+        connector.getPagedArrivals("42", "100").futureValue mustBe Some(expectedResult)
       }
 
       "must return a None when getArrivals returns an error response" in {
@@ -176,7 +164,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
                     .withStatus(errorResponse)
                 )
             )
-            connector.getPagedArrivals(42, 100).futureValue mustBe None
+            connector.getPagedArrivals("42", "100").futureValue mustBe None
         }
       }
     }
@@ -271,15 +259,15 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         val genRejectionError = arbitrary[ErrorType].sample.value
         val rejectionXml: NodeSeq =
           <CC917A>
-            <HEAHEA>
-              <DocNumHEA5>19IT021300100075E9</DocNumHEA5>
-            </HEAHEA>
-            <FUNERRER1>
-              <ErrTypER11>{genRejectionError.code}</ErrTypER11>
-              <ErrPoiER12>Message type</ErrPoiER12>
-              <OriAttValER14>GB007A</OriAttValER14>
-            </FUNERRER1>
-          </CC917A>
+          <HEAHEA>
+            <DocNumHEA5>19IT021300100075E9</DocNumHEA5>
+          </HEAHEA>
+          <FUNERRER1>
+            <ErrTypER11>{genRejectionError.code}</ErrTypER11>
+            <ErrPoiER12>Message type</ErrPoiER12>
+            <OriAttValER14>GB007A</OriAttValER14>
+          </FUNERRER1>
+        </CC917A>
 
         val json = Json.obj("message" -> rejectionXml.toString())
 
@@ -303,10 +291,9 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         val rejectionLocation = s"/transit-movements-trader-at-destination/movements/arrivals/${arrivalId.value}/messages/1"
         val rejectionXml: NodeSeq =
           <CC917A>
-            <HEAHEA>
-              <DocNumHEA5>19IT021300100075E9</DocNumHEA5>
-            </HEAHEA>
-          </CC917A>
+          <HEAHEA><DocNumHEA5>19IT021300100075E9</DocNumHEA5>
+          </HEAHEA>
+        </CC917A>
 
         val json = Json.obj("message" -> rejectionXml.toString())
 
