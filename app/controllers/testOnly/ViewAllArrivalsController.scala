@@ -46,14 +46,14 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
     implicit request =>
       val currentPage = page.getOrElse(1)
 
-      arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.numberOfMovements).flatMap {
+      arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
         case Some(filteredArrivals) =>
           val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
             (arrival: Arrival) => ViewArrival(arrival)
           )
 
           val paginationViewModel = PaginationViewModel
-            .apply(filteredArrivals.totalArrivals, currentPage, paginationAppConfig.numberOfMovements, routes.ViewAllArrivalsController.onPageLoad)
+            .apply(filteredArrivals.totalArrivals, currentPage, paginationAppConfig.arrivalsNumberOfMovements, routes.ViewAllArrivalsController.onPageLoad)
 
           val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
