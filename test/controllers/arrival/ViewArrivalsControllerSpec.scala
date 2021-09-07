@@ -142,8 +142,8 @@ class ViewArrivalsControllerSpec
         routes.ViewArrivalsController.onPageLoad().url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -170,8 +170,8 @@ class ViewArrivalsControllerSpec
         routes.ViewArrivalsController.onPageLoadSearch("theMrn").url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -204,8 +204,8 @@ class ViewArrivalsControllerSpec
         routes.ViewArrivalsController.onPageLoadSearch("theMrn").url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -238,8 +238,8 @@ class ViewArrivalsControllerSpec
         routes.ViewArrivalsController.onPageLoadSearch("theMrn").url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -276,8 +276,8 @@ class ViewArrivalsControllerSpec
         routes.ViewArrivalsController.onPageLoadSearch(" theMrn ").url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -322,8 +322,8 @@ class ViewArrivalsControllerSpec
         routes.ViewArrivalsController.onPageLoad().url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
