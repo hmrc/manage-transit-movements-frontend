@@ -263,6 +263,41 @@ class ViewArrivalsControllerSpec
         )
     }
 
+    "trim search string" in {
+
+      when(mockNunjucksRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
+        .thenReturn(Future.successful(Some(mockArrivalSearchResponse(someSearchMatches, someSearchMatches))))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewArrivalsController.onPageLoadSearch(" theMrn ").url
+      )
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
+      status(result) mustEqual OK
+
+      verify(mockArrivalMovementConnector).getArrivalSearchResults(
+        meq("theMrn"),
+        meq(frontendAppConfig.maxSearchResults)
+      )(any())
+
+      verify(mockNunjucksRenderer, times(1))
+        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+      templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson ++
+        expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches, tooManyResults = false)
+    }
+
+
     "render technical difficulty" in {
 
       val config = app.injector.instanceOf[FrontendAppConfig]

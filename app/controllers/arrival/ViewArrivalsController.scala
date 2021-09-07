@@ -53,9 +53,9 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
   def onPageLoadSearch(mrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
       renderSearchResults(
-        arrivalMovementConnector.getArrivalSearchResults(mrn, pageSize),
+        arrivalMovementConnector.getArrivalSearchResults(mrn.trim, pageSize),
         "viewArrivalsSearchResults.njk",
-        mrn
+        mrn.trim
       )
   }
 
