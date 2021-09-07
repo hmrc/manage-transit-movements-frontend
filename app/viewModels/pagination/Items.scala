@@ -27,17 +27,22 @@ object Items {
       case MetaData(_, _, _, currentPage, totalNumberOfPages) =>
 
         val itemList: Seq[Item] =
-          if (currentPage == 1 | currentPage == 2) {
+          if (totalNumberOfPages < 6) {
 
-            val head  = (1 to totalNumberOfPages).take(3)
-            val tail  = if (totalNumberOfPages >= 6) Seq(totalNumberOfPages) else Seq.empty
+            val head = (1 to totalNumberOfPages).take(5)
+
+            head.map(Item(_, href, currentPage))
+          }
+          else if (currentPage < 4) {
+            val head = (1 to totalNumberOfPages).take(4)
+            val tail = if (totalNumberOfPages >= 6) Seq(totalNumberOfPages) else Seq.empty
             val range = head ++ tail
-
             range.map(Item(_, href, currentPage))
+          }
 
-          } else if (currentPage == totalNumberOfPages | currentPage == totalNumberOfPages - 1) {
+          else if (currentPage == totalNumberOfPages | currentPage == totalNumberOfPages - 1) {
 
-            val range = Seq(1, totalNumberOfPages - 2, totalNumberOfPages - 1, totalNumberOfPages)
+            val range = Seq(1, totalNumberOfPages - 3, totalNumberOfPages - 2, totalNumberOfPages - 1, totalNumberOfPages)
 
             range.map(Item(_, href, currentPage))
 
@@ -48,9 +53,10 @@ object Items {
             range.map(Item(_, href, currentPage))
           }
 
-        val firstItemDotted = currentPage > 2 && totalNumberOfPages > 5
+        val firstItemDotted = currentPage > 3 && totalNumberOfPages > 5
 
-        val lastItemDotted =  currentPage < totalNumberOfPages - 1 && totalNumberOfPages > 5
+        val lastItemDotted = currentPage < totalNumberOfPages - 2 && totalNumberOfPages > 5
+        println(s"\n\n\nlast$lastItemDotted\n\n\n")
 
         Items(itemList, firstItemDotted, lastItemDotted)
     }

@@ -45,15 +45,6 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
         doc.getElementById("paginated-results-count").text mustBe "Showing 3 to 4 of 4 results"
       }
 
-      "must display results when there is only one page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(1, 1, 1, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        doc.getElementById("results-count").text mustBe "Showing 1 results" //TODO account for singular or plural
-      }
-
       "must display previous button when not on the first page" in {
 
         val json: JsObject = Json.toJsObject(PaginationViewModel(4, 2, 2, href))
