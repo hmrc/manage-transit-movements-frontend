@@ -80,5 +80,5 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 
   private val defaultMaxSearchResults = 100
-  lazy val maxSearchResults: Int      = configuration.getOptional[Int]("ux.maxSearchResults").getOrElse(defaultMaxSearchResults)
+  lazy val maxSearchResults: Int      = configuration.getOptional[Int]("search.maxSearchResults").getOrElse(defaultMaxSearchResults)
 }
