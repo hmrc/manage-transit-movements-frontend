@@ -23,6 +23,7 @@
 
       {{ movementSearch( messages('movement.search.title'), mrn, "mrn", routes.controllers.arrival.ViewArrivalsController.onPageLoadSearch().url) }}
       {% if dataRows|length %}
+        <p class="govuk-body">{{ resultsText }} {% if tooManyResults %} {{ messages("search.tooManyResults") }} {% endif %}</p>
         {{ showMovementsByDate("Arrival notifications table", messages("viewArrivalNotifications.table.updated"), messages("viewArrivalNotifications.table.mrn"), messages("viewArrivalNotifications.table.status"), messages("viewArrivalNotifications.table.action"), dataRows) }}
       {% else %}
         <p class="govuk-body">{{ messages("search.noResultsFound") }}</p>

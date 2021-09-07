@@ -52,23 +52,51 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
 
   def onPageLoadSearch(mrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
-      renderResults(
+      renderSearchResults(
         arrivalMovementConnector.getArrivalSearchResults(mrn, pageSize),
         "viewArrivalsSearchResults.njk",
-        Json.obj("mrn" -> mrn)
+        mrn
       )
   }
 
-  private def renderResults(
+  private def searchParams(mrn: String, retrieved: Int, matchedOption: Option[Int]) = {
+    matchedOption match {
+      case Some(matched) => Json.obj(
+        "mrn" -> mrn,
+        "resultsText" -> s"Showing $retrieved results matching $mrn.",
+        "tooManyResults" -> (retrieved < matched)
+      )
+    }
+  }
+
+  private def renderSearchResults(
                              results: Future[Option[Arrivals]],
                              template: String,
-                             viewParams: JsObject = Json.obj())(implicit request: IdentifierRequest[AnyContent]) =
+                             mrn: String)(implicit request: IdentifierRequest[AnyContent]) =
     results.flatMap {
       case Some(allArrivals) =>
         val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
           (arrival: Arrival) => ViewArrival(arrival)
         )
-        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements)) ++ viewParams
+        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements)) ++
+          searchParams(mrn, allArrivals.retrievedArrivals, allArrivals.totalMatched)
+
+        renderer
+          .render(template, formatToJson)
+          .map(Ok(_))
+
+      case _ => renderTechnicalDifficultiesPage
+    }
+
+  private def renderResults(
+                             results: Future[Option[Arrivals]],
+                             template: String)(implicit request: IdentifierRequest[AnyContent]) =
+    results.flatMap {
+      case Some(allArrivals) =>
+        val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
+          (arrival: Arrival) => ViewArrival(arrival)
+        )
+        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
         renderer
           .render(template, formatToJson)
