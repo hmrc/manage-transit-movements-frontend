@@ -56,7 +56,6 @@ object Items {
         val firstItemDotted = currentPage > 3 && totalNumberOfPages > 5
 
         val lastItemDotted = currentPage < totalNumberOfPages - 2 && totalNumberOfPages > 5
-        println(s"\n\n\nlast$lastItemDotted\n\n\n")
 
         Items(itemList, firstItemDotted, lastItemDotted)
     }
