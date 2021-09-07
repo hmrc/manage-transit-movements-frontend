@@ -109,7 +109,7 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
     "adds the homepage url" in {
 
       implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
+      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDepartureMovements]) {
         viewDepartureMovement =>

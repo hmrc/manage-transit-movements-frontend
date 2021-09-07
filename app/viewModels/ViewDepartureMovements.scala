@@ -54,7 +54,7 @@ object ViewDepartureMovements {
     (o: ViewDepartureMovements) =>
       Json.obj(
         "dataRows"                      -> o.dataRows,
-        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
+        "declareDepartureNotificationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
         "homePageUrl"                   -> routes.WhatDoYouWantToDoController.onPageLoad().url
       )
 }

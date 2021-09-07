@@ -106,7 +106,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
       val testUrl = "declareDepartureNotificationUrl"
 
       implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureNotificationStartUrl).thenReturn(testUrl)
+      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn(testUrl)
 
       val paginationViewModel = PaginationViewModel(10, 1, 2, "testHref")
 
@@ -123,7 +123,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
     "adds the homePageUrl" in {
 
       implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureNotificationStartUrl).thenReturn("")
+      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDeparture]) {
         departure =>
@@ -140,7 +140,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
     "adds the pagination" in {
 
       implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureNotificationStartUrl).thenReturn("")
+      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDeparture]) {
         departure =>
@@ -161,7 +161,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
     "must show correct message for a singular movement" in {
 
       implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureNotificationStartUrl).thenReturn("")
+      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDeparture]) {
         departure =>
@@ -177,7 +177,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
     "must show correct message for multiple movements" in {
 
       implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureNotificationStartUrl).thenReturn("")
+      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDeparture]) {
         departure =>

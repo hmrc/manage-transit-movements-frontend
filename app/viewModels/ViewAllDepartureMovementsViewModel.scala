@@ -72,7 +72,7 @@ object ViewAllDepartureMovementsViewModel {
     o =>
       (
         o.dataRows,
-        frontendAppConfig.declareDepartureNotificationStartUrl,
+        frontendAppConfig.declareDepartureStartWithLRNUrl,
         routes.WhatDoYouWantToDoController.onPageLoad().url,
         o.singularOrPlural,
         o.paginationViewModel

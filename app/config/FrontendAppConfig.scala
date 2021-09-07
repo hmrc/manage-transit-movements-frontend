@@ -70,9 +70,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   private val departureFrontendUrl: String                               = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
   private val cancellationFrontendUrl: String                            = configuration.get[String]("urls.declareTransitMovementCancellationFrontend")
 
-  private val declareDepartureNotificationUrlBase: String = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
-  val declareDepartureNotificationStartUrl: String        = s"$declareDepartureNotificationUrlBase/movement-reference-number"
-
   val declareDepartureStartWithLRNUrl: String                            = s"$departureFrontendUrl/local-reference-number"
   def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
