@@ -297,7 +297,6 @@ class ViewArrivalsControllerSpec
         expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches, tooManyResults = false)
     }
 
-
     "render technical difficulty" in {
 
       val config = app.injector.instanceOf[FrontendAppConfig]
