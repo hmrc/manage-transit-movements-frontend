@@ -89,6 +89,7 @@ viewArrivalNotifications.table.action.viewPDF                 = Unloading Permis
 viewArrivalNotifications.table.action.viewPDF.hidden          = Unloading Permission PDF for {0}
 
 movement.search.title = Search by movement reference number
+movement.search.departure.title = Search by local reference number
 
 movement.status.arrivalSubmitted = Arrival notification sent
 movement.status.arrivalRejected = Arrival notification rejected
