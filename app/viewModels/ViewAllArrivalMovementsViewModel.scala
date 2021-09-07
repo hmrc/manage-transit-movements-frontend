@@ -19,30 +19,32 @@ package viewModels
 import config.FrontendAppConfig
 import controllers.routes
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{OWrites, __}
+import play.api.libs.json.{__, OWrites}
 import viewModels.pagination.PaginationViewModel
 
 import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 
-
 case class ViewAllArrivalMovementsViewModel(
-                                 dataRows: Seq[(String, Seq[ViewArrival])],
-                                 paginationViewModel: PaginationViewModel
-                                ) {
-  val singularOrPlural = if(paginationViewModel.results.count == 1){"numberOfMovements.singular"} else {"numberOfMovements.plural"}
+  dataRows: Seq[(String, Seq[ViewArrival])],
+  paginationViewModel: PaginationViewModel
+) {
+
+  val singularOrPlural = if (paginationViewModel.results.count == 1) { "numberOfMovements.singular" }
+  else { "numberOfMovements.plural" }
 
 }
-  object ViewAllArrivalMovementsViewModel {
+
+object ViewAllArrivalMovementsViewModel {
 
   implicit val localDateOrdering: Ordering[LocalDate] =
     Ordering.by(identity[ChronoLocalDate])
 
   def apply(
-             movements: Seq[ViewArrival],
-             paginationViewModel: PaginationViewModel
-           )(implicit d: DummyImplicit): ViewAllArrivalMovementsViewModel =
+    movements: Seq[ViewArrival],
+    paginationViewModel: PaginationViewModel
+  )(implicit d: DummyImplicit): ViewAllArrivalMovementsViewModel =
     ViewAllArrivalMovementsViewModel(format(movements), paginationViewModel)
 
   private def format(movements: Seq[ViewArrival]): Seq[(String, Seq[ViewArrival])] = {
@@ -65,13 +67,16 @@ case class ViewAllArrivalMovementsViewModel(
       (__ \ "declareArrivalNotificationUrl").write[String] and
       (__ \ "homePageUrl").write[String] and
       (__ \ "singularOrPlural").write[String] and
-      (__).write[PaginationViewModel]
-    ) (o => (
-    o.dataRows,
-    frontendAppConfig.declareArrivalNotificationStartUrl,
-    routes.WhatDoYouWantToDoController.onPageLoad().url,
-    o.singularOrPlural,
-    o.paginationViewModel
-  ))
+      __.write[PaginationViewModel]
+  )(
+    o =>
+      (
+        o.dataRows,
+        frontendAppConfig.declareArrivalNotificationStartUrl,
+        routes.WhatDoYouWantToDoController.onPageLoad().url,
+        o.singularOrPlural,
+        o.paginationViewModel
+      )
+  )
 
 }

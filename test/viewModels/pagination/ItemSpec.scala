@@ -18,7 +18,7 @@ package viewModels.pagination
 
 import base.SpecBase
 
-class ItemSpec extends SpecBase  {
+class ItemSpec extends SpecBase {
 
   "Item" - {
     "apply" - {

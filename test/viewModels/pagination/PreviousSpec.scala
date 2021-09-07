@@ -18,7 +18,7 @@ package viewModels.pagination
 
 import base.SpecBase
 
-class PreviousSpec extends SpecBase  {
+class PreviousSpec extends SpecBase {
 
   "Previous" - {
     "apply" - {

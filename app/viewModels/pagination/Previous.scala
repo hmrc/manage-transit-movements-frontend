@@ -25,4 +25,3 @@ object Previous {
 
   implicit val format: OFormat[Previous] = Json.format[Previous]
 }
-

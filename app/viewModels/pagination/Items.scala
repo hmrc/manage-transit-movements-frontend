@@ -25,22 +25,18 @@ object Items {
   def apply(metaData: MetaData, href: String): Items =
     metaData match {
       case MetaData(_, _, _, currentPage, totalNumberOfPages) =>
-
         val itemList: Seq[Item] =
           if (totalNumberOfPages < 6) {
 
             val head = (1 to totalNumberOfPages).take(5)
 
             head.map(Item(_, href, currentPage))
-          }
-          else if (currentPage < 4) {
-            val head = (1 to totalNumberOfPages).take(4)
-            val tail = if (totalNumberOfPages >= 6) Seq(totalNumberOfPages) else Seq.empty
+          } else if (currentPage < 4) {
+            val head  = (1 to totalNumberOfPages).take(4)
+            val tail  = if (totalNumberOfPages >= 6) Seq(totalNumberOfPages) else Seq.empty
             val range = head ++ tail
             range.map(Item(_, href, currentPage))
-          }
-
-          else if (currentPage == totalNumberOfPages | currentPage == totalNumberOfPages - 1) {
+          } else if (currentPage == totalNumberOfPages | currentPage == totalNumberOfPages - 1) {
 
             val range = Seq(1, totalNumberOfPages - 3, totalNumberOfPages - 2, totalNumberOfPages - 1, totalNumberOfPages)
 

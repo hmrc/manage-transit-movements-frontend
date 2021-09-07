@@ -49,7 +49,6 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
 
       arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
         case Some(filteredArrivals) =>
-
           val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
             (arrival: Arrival) => ViewArrival(arrival)
           )

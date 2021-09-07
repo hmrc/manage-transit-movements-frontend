@@ -110,10 +110,8 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
 
       val paginationViewModel = PaginationViewModel(10, 1, 2, "testHref")
 
-
       forAll(arbitrary[ViewArrival]) {
         arrival =>
-
           val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
 
           val result = (testJson \ "declareArrivalNotificationUrl").validate[String].asOpt.value
@@ -129,9 +127,7 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
 
       forAll(arbitrary[ViewArrival]) {
         arrival =>
-
           val paginationViewModel = PaginationViewModel(10, 1, 2, "testHref")
-
 
           val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
 
@@ -149,11 +145,11 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
       forAll(arbitrary[ViewArrival]) {
         arrival =>
           val paginationViewModel = PaginationViewModel(10, 2, 2, "testHref")
-          val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
-          val result1 = (testJson \ "results").validate[MetaData].asOpt
-          val result2 = (testJson \ "previous").validate[Previous].asOpt
-          val result3 = (testJson \ "next").validate[Next].asOpt
-          val result4 = (testJson \ "items").validate[Seq[Item]].asOpt
+          val testJson: JsValue   = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
+          val result1             = (testJson \ "results").validate[MetaData].asOpt
+          val result2             = (testJson \ "previous").validate[Previous].asOpt
+          val result3             = (testJson \ "next").validate[Next].asOpt
+          val result4             = (testJson \ "items").validate[Seq[Item]].asOpt
           result1 mustBe defined
           result2 mustBe defined
           result3 mustBe defined
@@ -170,10 +166,10 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
       forAll(arbitrary[ViewArrival]) {
         arrival =>
           val paginationViewModel = PaginationViewModel(1, 1, 2, "testHref")
-          val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
-          val result = (testJson \ "singularOrPlural").validate[String].asOpt.value
+          val testJson: JsValue   = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
+          val result              = (testJson \ "singularOrPlural").validate[String].asOpt.value
 
-          result mustBe  "numberOfMovements.singular"
+          result mustBe "numberOfMovements.singular"
 
       }
     }
@@ -186,10 +182,10 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
       forAll(arbitrary[ViewArrival]) {
         arrival =>
           val paginationViewModel = PaginationViewModel(2, 1, 2, "testHref")
-          val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
-          val result = (testJson \ "singularOrPlural").validate[String].asOpt.value
+          val testJson: JsValue   = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
+          val result              = (testJson \ "singularOrPlural").validate[String].asOpt.value
 
-          result mustBe  "numberOfMovements.plural"
+          result mustBe "numberOfMovements.plural"
 
       }
     }

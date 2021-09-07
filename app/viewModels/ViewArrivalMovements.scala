@@ -55,9 +55,10 @@ object ViewArrivalMovements {
   implicit def writes(implicit
     frontendAppConfig: FrontendAppConfig
   ): OWrites[ViewArrivalMovements] =
-    (o: ViewArrivalMovements) => Json.obj(
-      "dataRows" -> o.dataRows,
-      "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl" -> routes.WhatDoYouWantToDoController.onPageLoad().url
-    )
+    (o: ViewArrivalMovements) =>
+      Json.obj(
+        "dataRows"                      -> o.dataRows,
+        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
+        "homePageUrl"                   -> routes.WhatDoYouWantToDoController.onPageLoad().url
+      )
 }
