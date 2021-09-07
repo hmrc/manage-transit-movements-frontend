@@ -52,8 +52,8 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
   private val departuresResponseJson =
     Json.obj(
       "retrievedDepartures" -> 1,
-      "totalDepartures" -> 2,
-      "totalMatched"->  3,
+      "totalDepartures"     -> 2,
+      "totalMatched"        -> 3,
       "departures" ->
         Json.arr(
           Json.obj(
@@ -256,11 +256,11 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
           <HEAHEA>
             <DocNumHEA5>{noReleaseMessage.mrn}</DocNumHEA5>
             {
-            noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
-              noReleaseMotivation =>
-                <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>
-            }
-            }
+          noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
+            noReleaseMotivation =>
+              <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>
+          }
+        }
             <TotNumOfIteHEA305>{noReleaseMessage.totalNumberOfItems}</TotNumOfIteHEA305>
           </HEAHEA>
           <CUSOFFDEPEPT><RefNumEPT1>{noReleaseMessage.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>

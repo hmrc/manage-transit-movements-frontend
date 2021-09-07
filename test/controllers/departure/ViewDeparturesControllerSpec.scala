@@ -40,12 +40,10 @@ import scala.concurrent.Future
 
 class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
 
-
   private val totalSearchDepartures = 8
-  private val someSearchMatches = 5
+  private val someSearchMatches     = 5
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
-
 
   private val mockDepartureResponse: Departures =
     Departures(
@@ -90,16 +88,16 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
       ViewDepartureMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
       "declareDepartureNotificationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
-      "homePageUrl" -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
+      "homePageUrl"                     -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
     )
 
   private def expectedSearchJson(
-                                  lrn: String,
-                                  resultCount: Int,
-                                  tooManyResults: Boolean
-                                ): JsObject = Json.obj(
-    "lrn" -> lrn,
-    "resultsText" -> s"Showing $resultCount results matching $lrn.",
+    lrn: String,
+    resultCount: Int,
+    tooManyResults: Boolean
+  ): JsObject = Json.obj(
+    "lrn"            -> lrn,
+    "resultsText"    -> s"Showing $resultCount results matching $lrn.",
     "tooManyResults" -> tooManyResults
   )
 
@@ -108,9 +106,8 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
     reset(mockDepartureMovementsConnector)
   }
 
-  val mockDepartureMovementsConnector = mock[DeparturesMovementConnector]
+  val mockDepartureMovementsConnector               = mock[DeparturesMovementConnector]
   implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
-
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -118,7 +115,6 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
       .overrides(
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementsConnector)
       )
-
 
   "ViewDepartures Controller" - {
 
@@ -164,7 +160,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -198,7 +194,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -226,7 +222,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
         .thenReturn(Future.successful(None))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
 

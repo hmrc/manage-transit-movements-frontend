@@ -19,11 +19,11 @@ package models
 import play.api.libs.json.{Json, Reads}
 
 case class Departures(
-                     retrievedDepartures: Int,
-                     totalDepartures: Int,
-                     totalMatched: Option[Int],
-                     departures: Seq[Departure]
-                   )
+  retrievedDepartures: Int,
+  totalDepartures: Int,
+  totalMatched: Option[Int],
+  departures: Seq[Departure]
+)
 
 object Departures {
   implicit val format: Reads[Departures] = Json.reads[Departures]
