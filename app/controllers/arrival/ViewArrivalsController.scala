@@ -61,12 +61,14 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
 
   private def searchParams(mrn: String, retrieved: Int, matchedOption: Option[Int]) =
     matchedOption match {
-      case Some(matched) =>
+      case Some(matched) if matched > 0 =>
         Json.obj(
           "mrn"            -> mrn,
           "resultsText"    -> s"Showing $retrieved results matching $mrn.",
           "tooManyResults" -> (retrieved < matched)
         )
+      case _ => Json.obj("mrn" -> mrn, "resultsText" -> "", "tooManyResults" -> false)
+
     }
 
   private def renderSearchResults(results: Future[Option[Arrivals]], template: String, mrn: String)(implicit request: IdentifierRequest[AnyContent]) =
