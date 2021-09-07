@@ -26,7 +26,8 @@ import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.{PaginationViewModel, ViewArrival, ViewArrivalMovements}
+import viewModels.pagination.PaginationViewModel
+import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival, ViewArrivalMovements}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -42,7 +43,7 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       val currentPage = page.getOrElse(1)
 
@@ -52,15 +53,17 @@ class ViewAllArrivalsController @Inject() (val renderer: Renderer,
             (arrival: Arrival) => ViewArrival(arrival)
           )
 
-          val paginationViewModel = PaginationViewModel
-            .apply(filteredArrivals.totalArrivals, currentPage, paginationAppConfig.arrivalsNumberOfMovements, routes.ViewAllArrivalsController.onPageLoad)
+          val paginationViewModel = PaginationViewModel(
+            filteredArrivals.totalArrivals,
+            currentPage,
+            paginationAppConfig.arrivalsNumberOfMovements,
+            routes.ViewAllArrivalsController.onPageLoad(None).url
+          )
 
-          val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
-
-          val combineJson = formatToJson.deepMerge(paginationViewModel)
+          val formatToJson: JsObject = Json.toJsObject(ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel))
 
           renderer
-            .render("viewAllArrivals.njk", combineJson)
+            .render("viewAllArrivals.njk", formatToJson)
             .map(Ok(_))
 
         case _ => renderTechnicalDifficultiesPage

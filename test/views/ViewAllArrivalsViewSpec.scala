@@ -58,7 +58,7 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArriv
 
   behave like pageWithHeading(doc, messageKeyPrefix)
 
-  behave like pageWithPagination(routes.ViewAllArrivalsController.onPageLoad)
+  behave like pageWithPagination(routes.ViewAllArrivalsController.onPageLoad(None).url)
 
   behave like pageWithMovementsData[ViewArrival](
     doc = doc,
