@@ -73,7 +73,10 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
       "must return a successful future response" in {
         val expectedResult =
           Departures(
-            Seq(
+            retrievedDepartures = 1,
+            totalDepartures = 2,
+            totalMatched = Some(3),
+            departures = Seq(
               Departure(
                 DepartureId(22),
                 localDateTime,
@@ -113,6 +116,9 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
       "must return a successful future response" in {
         val expectedResult =
           Departures(
+            retrievedDepartures = 1,
+            totalDepartures = 2,
+            totalMatched = Some(3),
             Seq(
               Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
             )
@@ -148,6 +154,9 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
       "must return a successful future response" in {
         val expectedResult =
           Departures(
+            retrievedDepartures = 1,
+            totalDepartures = 2,
+            totalMatched = Some(3),
             Seq(
               Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
             )

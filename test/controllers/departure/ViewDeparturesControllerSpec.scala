@@ -16,14 +16,13 @@
 
 package controllers.departure
 
-import base.SpecBase
-import base.MockNunjucksRendererApp
+import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
@@ -32,74 +31,202 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-
 import java.time.LocalDateTime
+
+import config.FrontendAppConfig
+import viewModels.{ViewDeparture, ViewDepartureMovements}
+
 import scala.concurrent.Future
 
 class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
 
+
+  private val totalSearchDepartures = 8
+  private val someSearchMatches = 5
+
+  val localDateTime: LocalDateTime = LocalDateTime.now()
+
+
   private val mockDepartureResponse: Departures =
     Departures(
-      Seq(
+      retrievedDepartures = 1,
+      totalDepartures = 2,
+      totalMatched = None,
+      departures = Seq(
         Departure(
           DepartureId(1),
           LocalDateTime.now(),
-          LocalReferenceNumber("lrn"),
+          LocalReferenceNumber("test lrn"),
           DepartureSubmitted
         )
       )
     )
 
+  private def mockDepartureSearchResponse(retrievedDepartures: Int, totalMatched: Int): Departures =
+    Departures(
+      retrievedDepartures = retrievedDepartures,
+      totalDepartures = totalSearchDepartures,
+      totalMatched = Some(totalMatched),
+      departures = Seq(
+        Departure(
+          DepartureId(1),
+          LocalDateTime.now(),
+          LocalReferenceNumber("test lrn"),
+          DepartureSubmitted
+        )
+      )
+    )
+
+  private val mockViewMovement = ViewDeparture(
+    localDateTime.toLocalDate,
+    localDateTime.toLocalTime,
+    LocalReferenceNumber("test lrn"),
+    "departure.status.submitted",
+    Nil
+  )
+
+  private lazy val expectedJson: JsObject =
+    Json.toJsObject(
+      ViewDepartureMovements(Seq(mockViewMovement))
+    ) ++ Json.obj(
+      "declareDepartureNotificationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
+      "homePageUrl" -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
+    )
+
+  private def expectedSearchJson(
+                                  lrn: String,
+                                  resultCount: Int,
+                                  tooManyResults: Boolean
+                                ): JsObject = Json.obj(
+    "lrn" -> lrn,
+    "resultsText" -> s"Showing $resultCount results matching $lrn.",
+    "tooManyResults" -> tooManyResults
+  )
+
   override def beforeEach: Unit = {
     super.beforeEach
-    reset(mockDeparturesMovementConnector)
+    reset(mockDepartureMovementsConnector)
   }
 
-  val mockDeparturesMovementConnector = mock[DeparturesMovementConnector]
+  val mockDepartureMovementsConnector = mock[DeparturesMovementConnector]
+  implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
+
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector)
+        bind[DeparturesMovementConnector].toInstance(mockDepartureMovementsConnector)
       )
+
 
   "ViewDepartures Controller" - {
 
-    "return OK and the correct view for a GET" in {
-
-      when(mockDeparturesMovementConnector.getDepartures()(any()))
-        .thenReturn(Future.successful(Some(mockDepartureResponse)))
+    "return OK and the correct view for a GET when not displaying search results" in {
 
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
+      when(mockDepartureMovementsConnector.getDepartures()(any()))
+        .thenReturn(Future.successful(Some(mockDepartureResponse)))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewDeparturesController.onPageLoad().url
+      )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
-
       status(result) mustEqual OK
 
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockNunjucksRenderer, times(1))
+        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj()
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewDepartures.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      jsonCaptorWithoutConfig mustBe expectedJson
+    }
+
+    "return OK and the correct view for a GET when displaying search results with results" in {
+
+      when(mockNunjucksRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockDepartureMovementsConnector.getDepartureSearchResults(any(), any())(any()))
+        .thenReturn(Future.successful(Some(mockDepartureSearchResponse(someSearchMatches, someSearchMatches))))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewDeparturesController.onPageLoadSearch("theLrn").url
+      )
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
+      status(result) mustEqual OK
+
+      verify(mockDepartureMovementsConnector).getDepartureSearchResults(
+        eqTo("theLrn"),
+        eqTo(frontendAppConfig.maxSearchResults)
+      )(any())
+
+      verify(mockNunjucksRenderer, times(1))
+        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+      templateCaptor.getValue mustEqual "viewDeparturesSearchResults.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson ++
+        expectedSearchJson(lrn = "theLrn", resultCount = someSearchMatches, tooManyResults = false)
+    }
+
+    "return OK and the correct view for a GET when displaying search results with too many results" in {
+
+      when(mockNunjucksRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockDepartureMovementsConnector.getDepartureSearchResults(any(), any())(any()))
+        .thenReturn(Future.successful(Some(mockDepartureSearchResponse(someSearchMatches - 1, someSearchMatches))))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewDeparturesController.onPageLoadSearch("theLrn").url
+      )
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
+      status(result) mustEqual OK
+
+      verify(mockDepartureMovementsConnector).getDepartureSearchResults(
+        eqTo("theLrn"),
+        eqTo(frontendAppConfig.maxSearchResults)
+      )(any())
+
+      verify(mockNunjucksRenderer, times(1))
+        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+      templateCaptor.getValue mustEqual "viewDeparturesSearchResults.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson ++
+        expectedSearchJson(lrn = "theLrn", resultCount = someSearchMatches - 1, tooManyResults = true)
     }
 
     "render Technical difficulties page on failing to fetch departures" in {
 
       when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-      when(mockDeparturesMovementConnector.getDepartures()(any()))
+      when(mockDepartureMovementsConnector.getDepartures()(any()))
         .thenReturn(Future.successful(None))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
 

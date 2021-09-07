@@ -63,4 +63,18 @@ class ViewDeparturesSearchResultsSpec extends MovementsTableViewBehaviours("view
     messageKeyPrefix = messageKeyPrefix,
     refType = "lrn"
   )
+
+  behave like pageWithLink(
+    doc = doc,
+    id = "make-departure-notification",
+    expectedText = s"$messageKeyPrefix.makeDepartureNotification",
+    expectedHref = frontendAppConfig.declareDepartureStartWithLRNUrl
+  )
+
+  behave like pageWithLink(
+    doc = doc,
+    id = "go-to-manage-transit-movements",
+    expectedText = s"$messageKeyPrefix.goToManageTransitMovements",
+    expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
+  )
 }

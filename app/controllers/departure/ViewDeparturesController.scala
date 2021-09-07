@@ -46,26 +46,55 @@ class ViewDeparturesController @Inject() (
 
   private val pageSize = config.maxSearchResults
 
-  def onPageLoad(lrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
-      lrn match {
-        case Some(lrnValue) =>
-          renderResults(
-            connector.getDepartureSearchResults(lrnValue, pageSize),
-            "viewDeparturesSearchResults.njk",
-            lrnValue
-          )
-        case _ => renderResults(connector.getDepartures(), "viewDepartures.njk", "")
-      }
+      renderResults(connector.getDepartures(), "viewDepartures.njk")
   }
 
-  private def renderResults(results: Future[Option[Departures]], template: String, lrn: String)(implicit request: IdentifierRequest[AnyContent]) =
+  def onPageLoadSearch(lrn: String): Action[AnyContent] = (Action andThen identify).async {
+    implicit request: IdentifierRequest[AnyContent] =>
+      renderSearchResults(
+        connector.getDepartureSearchResults(lrn, pageSize),
+        "viewDeparturesSearchResults.njk",
+        lrn
+      )
+  }
+
+  private def searchParams(lrn: String, retrieved: Int, matchedOption: Option[Int]) =
+    matchedOption match {
+      case Some(matched) if matched > 0 =>
+        Json.obj(
+          "lrn"            -> lrn,
+          "resultsText"    -> s"Showing $retrieved results matching $lrn.",
+          "tooManyResults" -> (retrieved < matched)
+        )
+      case _ => Json.obj("lrn" -> lrn, "resultsText" -> "", "tooManyResults" -> false)
+
+    }
+
+  private def renderSearchResults(results: Future[Option[Departures]], template: String, lrn: String)(implicit request: IdentifierRequest[AnyContent]) =
     results.flatMap {
       case Some(allDepartures) =>
         val viewMovements: Seq[ViewDeparture] = allDepartures.departures.map(
           (departure: Departure) => ViewDeparture(departure)
         )
-        val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements)) ++ Json.obj("lrn" -> lrn)
+        val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements)) ++
+          searchParams(lrn, allDepartures.retrievedDepartures, allDepartures.totalMatched)
+
+        renderer
+          .render(template, formatToJson)
+          .map(Ok(_))
+
+      case _ => renderTechnicalDifficultiesPage
+    }
+
+  private def renderResults(results: Future[Option[Departures]], template: String)(implicit request: IdentifierRequest[AnyContent]) =
+    results.flatMap {
+      case Some(allDepartures) =>
+        val viewMovements: Seq[ViewDeparture] = allDepartures.departures.map(
+          (departure: Departure) => ViewDeparture(departure)
+        )
+        val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))
 
         renderer
           .render(template, formatToJson)

@@ -1,8 +1,9 @@
 {% extends "includes/layout.njk" %}
 
-{% from "macros/title.njk"                  import title %}
-{% from "macros/movementSearch.njk"         import movementSearch %}
-{% from "macros/showMovementsByDate.njk"    import showMovementsByDate %}
+{% from "macros/title.njk"                         import title %}
+{% from "macros/movementSearch.njk"                import movementSearch %}
+{% from "macros/showMovementsByDate.njk"           import showMovementsByDate %}
+
 
 {% block pageTitle %}
   {{ title(messages("viewDepartures.title")) }}
@@ -12,22 +13,22 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <h1 class="govuk-heading-xl">
-        {{ messages("viewDepartures.heading") }}
-      </h1>
-      <p class="govuk-body">
-        &lt; <a id = "go-to-view-all-movements" href="{{ routes.controllers.departure.ViewDeparturesController.onPageLoad().url }}">
-          {{ messages("viewAllMovements.link.title") }}
-        </a>
-      </p>
 
+        <h1 class="govuk-heading-xl">
+          {{ messages("viewDepartures.heading") }}
+        </h1>
 
-      {{ movementSearch( messages('movement.search.title'), lrn, "lrn", routes.controllers.departure.ViewDeparturesController.onPageLoad().url) }}
-      {% if dataRows|length %}
-        {{ showMovementsByDate("Departures notifications table", messages("viewDepartures.table.updated"), messages("viewDepartures.table.lrn"), messages("viewDepartures.table.status"), messages("viewDepartures.table.action"), dataRows) }}
-      {% else %}
-        <p class="govuk-body">{{ messages("search.noResultsFound") }}</p>
-      {% endif %}
+        <p class="govuk-body"><a id = "make-departure-notification" href={{ declareDepartureNotificationUrl }} > {{ messages("viewDepartures.makeDepartureNotification") }}</a></p>
+
+        {{ movementSearch( messages('movement.search.title'), lrn, "lrn", routes.controllers.departure.ViewDeparturesController.onPageLoadSearch().url) }}
+        {% if dataRows|length %}
+          <p class="govuk-body">{{ resultsText }} {% if tooManyResults %} {{ messages("search.tooManyResults") }} {% endif %}</p>
+          {{ showMovementsByDate("Departures notifications table", messages("viewDepartures.table.updated"), messages("viewDepartures.table.lrn"), messages("viewDepartures.table.status"), messages("viewDepartures.table.action"), dataRows) }}
+        {% else %}
+          <p class="govuk-body">{{ messages("search.noResultsFound") }}</p>
+        {% endif %}
+        <p class="govuk-body govuk-!-margin-top-3"><a id = "go-to-manage-transit-movements" href="{{ homePageUrl }}"> {{ messages("viewDepartures.goToManageTransitMovements") }} </a></p>
+
     </div>
   </div>
 

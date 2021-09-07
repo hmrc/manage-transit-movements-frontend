@@ -16,20 +16,15 @@
 
 package models
 
-import java.time.LocalDateTime
+import play.api.libs.json.{Json, Reads}
 
-import models.departure.DepartureStatus
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Json, Reads}
+case class Departures(
+                     retrievedDepartures: Int,
+                     totalDepartures: Int,
+                     totalMatched: Option[Int],
+                     departures: Seq[Departure]
+                   )
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
-
-object Departure {
-
-  implicit val reads: Reads[Departure] = (
-    (__ \ "departureId").read[DepartureId] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "status").read[DepartureStatus]
-  )(Departure.apply _)
+object Departures {
+  implicit val format: Reads[Departures] = Json.reads[Departures]
 }
