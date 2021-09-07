@@ -32,24 +32,22 @@ import viewModels.{PaginationViewModel, ViewDeparture, ViewDepartureMovements}
 import scala.concurrent.ExecutionContext
 
 class ViewAllDeparturesController @Inject() (val renderer: Renderer,
-                                              identify: IdentifierAction,
-                                              cc: MessagesControllerComponents,
-                                              val config: FrontendAppConfig,
-                                              val paginationAppConfig: PaginationAppConfig,
+                                             identify: IdentifierAction,
+                                             cc: MessagesControllerComponents,
+                                             val config: FrontendAppConfig,
+                                             val paginationAppConfig: PaginationAppConfig,
                                              departuresMovementConnector: DeparturesMovementConnector
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
-      with I18nSupport
-      with TechnicalDifficultiesPage {
+    with I18nSupport
+    with TechnicalDifficultiesPage {
 
   def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      val currentPage       = page.getOrElse(1)
-
+      val currentPage = page.getOrElse(1)
 
       departuresMovementConnector.getPagedDepartures(currentPage, paginationAppConfig.departuresNumberOfMovements).flatMap {
         case Some(filteredDepartures) =>
-
           val viewMovements: Seq[ViewDeparture] = filteredDepartures.departures.map(
             (departure: Departure) => ViewDeparture(departure)
           )

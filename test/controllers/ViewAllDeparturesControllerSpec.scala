@@ -40,7 +40,9 @@ class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with Js
 
   private val mockDepartureResponse: Departures =
     Departures(
-      1, 2, Some(3),
+      1,
+      2,
+      Some(3),
       Seq(
         Departure(
           DepartureId(1),

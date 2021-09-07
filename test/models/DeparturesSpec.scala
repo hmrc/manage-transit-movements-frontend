@@ -34,15 +34,14 @@ class DeparturesSpec extends SpecBase {
       val json = Json.obj(
         "retrievedDepartures" -> 1,
         "totalDepartures"     -> 2,
-        "totalMatched"      -> 3,
+        "totalMatched"        -> 3,
         "departures" -> JsArray(
           Seq(
             Json.obj(
-              "arrivalId"               -> 123,
-              "updated"                 -> dateNow,
-              "referenceNumber"         -> "lrn123",
-              "status"                  -> DepartureSubmitted.toString,
-
+              "arrivalId"       -> 123,
+              "updated"         -> dateNow,
+              "referenceNumber" -> "lrn123",
+              "status"          -> DepartureSubmitted.toString
             )
           )
         )
