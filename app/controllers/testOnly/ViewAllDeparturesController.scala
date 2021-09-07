@@ -27,7 +27,8 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.{PaginationViewModel, ViewDeparture, ViewDepartureMovements}
+import viewModels.pagination.PaginationViewModel
+import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 
 import scala.concurrent.ExecutionContext
 
@@ -56,15 +57,13 @@ class ViewAllDeparturesController @Inject() (val renderer: Renderer,
             filteredDepartures.totalDepartures,
             currentPage,
             paginationAppConfig.departuresNumberOfMovements,
-            routes.ViewAllDeparturesController.onPageLoad
+            routes.ViewAllDeparturesController.onPageLoad(None).url
           )
 
-          val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))
-
-          val mergeMyStuff = formatToJson.deepMerge(paginationViewModel)
+          val formatToJson: JsObject = Json.toJsObject(ViewAllDepartureMovementsViewModel(viewMovements, paginationViewModel))
 
           renderer
-            .render("viewAllDepartures.njk", mergeMyStuff)
+            .render("viewAllDepartures.njk", formatToJson)
             .map(Ok(_))
 
         case None => renderTechnicalDifficultiesPage
