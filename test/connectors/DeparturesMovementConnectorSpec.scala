@@ -52,15 +52,15 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
   private val departuresResponseJson =
     Json.obj(
       "retrievedDepartures" -> 1,
-      "totalDepartures" -> 2,
-      "totalMatched"->  3,
+      "totalDepartures"     -> 2,
+      "totalMatched"        -> 3,
       "departures" ->
         Json.arr(
           Json.obj(
             "departureId"     -> 22,
             "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
-            "status" -> DepartureSubmitted.toString
+            "status"          -> DepartureSubmitted.toString
           )
         )
     )

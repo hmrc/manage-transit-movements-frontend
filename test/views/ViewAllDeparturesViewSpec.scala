@@ -158,8 +158,6 @@ class ViewAllDeparturesViewSpec extends MovementsTableViewBehaviours("viewAllDep
     doc.select(new Evaluator.Id("pagination-item-12")).size() mustBe 1
   }
 
-
-
   behave like pageWithHeading(doc, messageKeyPrefix)
 
   behave like pageWithMovementsData[ViewDeparture](
