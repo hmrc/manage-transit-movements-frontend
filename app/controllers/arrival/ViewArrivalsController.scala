@@ -59,20 +59,17 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
       )
   }
 
-  private def searchParams(mrn: String, retrieved: Int, matchedOption: Option[Int]) = {
+  private def searchParams(mrn: String, retrieved: Int, matchedOption: Option[Int]) =
     matchedOption match {
-      case Some(matched) => Json.obj(
-        "mrn" -> mrn,
-        "resultsText" -> s"Showing $retrieved results matching $mrn.",
-        "tooManyResults" -> (retrieved < matched)
-      )
+      case Some(matched) =>
+        Json.obj(
+          "mrn"            -> mrn,
+          "resultsText"    -> s"Showing $retrieved results matching $mrn.",
+          "tooManyResults" -> (retrieved < matched)
+        )
     }
-  }
 
-  private def renderSearchResults(
-                             results: Future[Option[Arrivals]],
-                             template: String,
-                             mrn: String)(implicit request: IdentifierRequest[AnyContent]) =
+  private def renderSearchResults(results: Future[Option[Arrivals]], template: String, mrn: String)(implicit request: IdentifierRequest[AnyContent]) =
     results.flatMap {
       case Some(allArrivals) =>
         val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
@@ -88,9 +85,7 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
       case _ => renderTechnicalDifficultiesPage
     }
 
-  private def renderResults(
-                             results: Future[Option[Arrivals]],
-                             template: String)(implicit request: IdentifierRequest[AnyContent]) =
+  private def renderResults(results: Future[Option[Arrivals]], template: String)(implicit request: IdentifierRequest[AnyContent]) =
     results.flatMap {
       case Some(allArrivals) =>
         val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(

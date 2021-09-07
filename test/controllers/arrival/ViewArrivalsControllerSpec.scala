@@ -49,11 +49,11 @@ class ViewArrivalsControllerSpec
     with BeforeAndAfterEach
     with MockNunjucksRendererApp {
 
-  private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
+  private val mockArrivalMovementConnector          = mock[ArrivalMovementConnector]
   implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
 
   private val totalSearchArrivals = 8
-  private val someSearchMatches = 5
+  private val someSearchMatches   = 5
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -119,12 +119,12 @@ class ViewArrivalsControllerSpec
     )
 
   private def expectedSearchJson(
-                                  mrn: String,
-                                  resultCount: Int,
-                                  tooManyResults: Boolean
-                                ): JsObject = Json.obj(
-    "mrn" -> mrn,
-    "resultsText" -> s"Showing $resultCount results matching $mrn.",
+    mrn: String,
+    resultCount: Int,
+    tooManyResults: Boolean
+  ): JsObject = Json.obj(
+    "mrn"            -> mrn,
+    "resultsText"    -> s"Showing $resultCount results matching $mrn.",
     "tooManyResults" -> tooManyResults
   )
 
@@ -197,7 +197,7 @@ class ViewArrivalsControllerSpec
         .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
-        .thenReturn(Future.successful(Some(mockArrivalSearchResponse(someSearchMatches-1, someSearchMatches))))
+        .thenReturn(Future.successful(Some(mockArrivalSearchResponse(someSearchMatches - 1, someSearchMatches))))
 
       val request = FakeRequest(
         GET,
@@ -222,7 +222,7 @@ class ViewArrivalsControllerSpec
 
       templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
       jsonCaptorWithoutConfig mustBe expectedJson ++
-        expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches-1, tooManyResults = true)
+        expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches - 1, tooManyResults = true)
     }
 
     "render technical difficulty" in {
