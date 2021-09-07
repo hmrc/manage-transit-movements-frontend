@@ -23,5 +23,5 @@ import play.api.Configuration
 class PaginationAppConfig @Inject() (configuration: Configuration) {
 
   val arrivalsNumberOfMovements: Int = configuration.get[Int]("pagination.arrival.numberOfMovements")
-
+  val departuresNumberOfMovements: Int = configuration.get[Int]("pagination.departure.numberOfMovements")
 }

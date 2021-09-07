@@ -47,7 +47,7 @@ class ViewAllDeparturesController @Inject() (val renderer: Renderer,
       val currentPage       = page.getOrElse(1)
 
 
-      departuresMovementConnector.getPagedDepartures(currentPage, paginationAppConfig.numberOfMovements).flatMap {
+      departuresMovementConnector.getPagedDepartures(currentPage, paginationAppConfig.departuresNumberOfMovements).flatMap {
         case Some(filteredDepartures) =>
 
           val viewMovements: Seq[ViewDeparture] = filteredDepartures.departures.map(
@@ -57,7 +57,7 @@ class ViewAllDeparturesController @Inject() (val renderer: Renderer,
           val paginationViewModel = PaginationViewModel.apply(
             filteredDepartures.totalDepartures,
             currentPage,
-            paginationAppConfig.numberOfMovements,
+            paginationAppConfig.departuresNumberOfMovements,
             routes.ViewAllDeparturesController.onPageLoad
           )
 
