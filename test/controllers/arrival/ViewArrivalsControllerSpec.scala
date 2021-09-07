@@ -297,6 +297,17 @@ class ViewArrivalsControllerSpec
         expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches, tooManyResults = false)
     }
 
+    "redirects to all arrivals on empty string" in {
+      val request = FakeRequest(
+        GET,
+        routes.ViewArrivalsController.onPageLoadSearch("").url
+      )
+
+      val result = route(app, request).value
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.ViewArrivalsController.onPageLoad().url
+    }
+
     "render technical difficulty" in {
 
       val config = app.injector.instanceOf[FrontendAppConfig]

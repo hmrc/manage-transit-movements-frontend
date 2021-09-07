@@ -52,11 +52,16 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
 
   def onPageLoadSearch(mrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
-      renderSearchResults(
-        arrivalMovementConnector.getArrivalSearchResults(mrn.trim, pageSize),
-        "viewArrivalsSearchResults.njk",
-        mrn.trim
-      )
+      val trimmedMrn = mrn.trim
+      if (trimmedMrn.isEmpty) {
+        Future.successful(Redirect(routes.ViewArrivalsController.onPageLoad()))
+      } else {
+        renderSearchResults(
+          arrivalMovementConnector.getArrivalSearchResults(trimmedMrn, pageSize),
+          "viewArrivalsSearchResults.njk",
+          trimmedMrn
+        )
+      }
   }
 
   private def searchParams(mrn: String, retrieved: Int, matchedOption: Option[Int]) =
