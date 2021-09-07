@@ -49,8 +49,11 @@ class ViewArrivalsControllerSpec
     with BeforeAndAfterEach
     with MockNunjucksRendererApp {
 
-  private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
+  private val mockArrivalMovementConnector          = mock[ArrivalMovementConnector]
   implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
+
+  private val totalSearchArrivals = 8
+  private val someSearchMatches   = 5
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -69,10 +72,26 @@ class ViewArrivalsControllerSpec
 
   private val mockArrivalResponse: Arrivals =
     Arrivals(
-      1,
-      2,
-      Some(3),
-      Seq(
+      retrievedArrivals = 1,
+      totalArrivals = 2,
+      totalMatched = None,
+      arrivals = Seq(
+        Arrival(
+          ArrivalId(1),
+          localDateTime,
+          localDateTime,
+          "Submitted",
+          "test mrn"
+        )
+      )
+    )
+
+  private def mockArrivalSearchResponse(retrievedArrivals: Int, totalMatched: Int): Arrivals =
+    Arrivals(
+      retrievedArrivals = retrievedArrivals,
+      totalArrivals = totalSearchArrivals,
+      totalMatched = Some(totalMatched),
+      arrivals = Seq(
         Arrival(
           ArrivalId(1),
           localDateTime,
@@ -91,7 +110,7 @@ class ViewArrivalsControllerSpec
     Nil
   )
 
-  private val expectedJson: JsObject =
+  private lazy val expectedJson: JsObject =
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
@@ -99,7 +118,15 @@ class ViewArrivalsControllerSpec
       "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
     )
 
-  private def expectedSearchJson(expectedMrn: String): JsObject = Json.obj("mrn" -> expectedMrn)
+  private def expectedSearchJson(
+    mrn: String,
+    resultCount: Int,
+    tooManyResults: Boolean
+  ): JsObject = Json.obj(
+    "mrn"            -> mrn,
+    "resultsText"    -> s"Showing $resultCount results matching $mrn.",
+    "tooManyResults" -> tooManyResults
+  )
 
   "ViewArrivalNotifications Controller" - {
     "return OK and the correct view for a GET when not displaying search results" in {
@@ -130,13 +157,13 @@ class ViewArrivalsControllerSpec
       jsonCaptorWithoutConfig mustBe expectedJson
     }
 
-    "return OK and the correct view for a GET when displaying search results" in {
+    "return OK and the correct view for a GET when displaying search results with results" in {
 
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
-        .thenReturn(Future.successful(Some(mockArrivalResponse)))
+        .thenReturn(Future.successful(Some(mockArrivalSearchResponse(someSearchMatches, someSearchMatches))))
 
       val request = FakeRequest(
         GET,
@@ -160,7 +187,80 @@ class ViewArrivalsControllerSpec
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson ++ expectedSearchJson(expectedMrn = "theMrn")
+      jsonCaptorWithoutConfig mustBe expectedJson ++
+        expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches, tooManyResults = false)
+    }
+
+    "return OK and the correct view for a GET when displaying search results with too many results" in {
+
+      when(mockNunjucksRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
+        .thenReturn(Future.successful(Some(mockArrivalSearchResponse(someSearchMatches - 1, someSearchMatches))))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewArrivalsController.onPageLoadSearch("theMrn").url
+      )
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
+      status(result) mustEqual OK
+
+      verify(mockArrivalMovementConnector).getArrivalSearchResults(
+        meq("theMrn"),
+        meq(frontendAppConfig.maxSearchResults)
+      )(any())
+
+      verify(mockNunjucksRenderer, times(1))
+        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+      templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson ++
+        expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches - 1, tooManyResults = true)
+    }
+
+    "return OK and the correct view for a GET when displaying search results with 0 results" in {
+
+      when(mockNunjucksRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
+        .thenReturn(Future.successful(Some(mockArrivalSearchResponse(0, 0))))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewArrivalsController.onPageLoadSearch("theMrn").url
+      )
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
+      status(result) mustEqual OK
+
+      verify(mockArrivalMovementConnector).getArrivalSearchResults(
+        meq("theMrn"),
+        meq(frontendAppConfig.maxSearchResults)
+      )(any())
+
+      verify(mockNunjucksRenderer, times(1))
+        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+      templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson ++
+        Json.obj(
+          "mrn"            -> "theMrn",
+          "resultsText"    -> "",
+          "tooManyResults" -> false
+        )
     }
 
     "render technical difficulty" in {
