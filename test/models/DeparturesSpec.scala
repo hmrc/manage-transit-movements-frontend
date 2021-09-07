@@ -20,8 +20,7 @@ import java.time.LocalDateTime
 
 import base.SpecBase
 import models.departure.DepartureStatus.DepartureSubmitted
-import play.api.libs.json.{JsArray, Json}
-import viewModels.DepartureStatus
+import play.api.libs.json.Json
 
 class DeparturesSpec extends SpecBase {
 
@@ -29,39 +28,40 @@ class DeparturesSpec extends SpecBase {
 
     "must deserialize" in {
 
-      val dateNow = LocalDateTime.now()
+      val localDateTime: LocalDateTime = LocalDateTime.now()
 
-      val json = Json.obj(
-        "retrievedDepartures" -> 1,
-        "totalDepartures"     -> 2,
-        "totalMatched"        -> 3,
-        "departures" -> JsArray(
+      val departuresResponseJson =
+        Json.obj(
+          "retrievedDepartures" -> 1,
+          "totalDepartures"     -> 2,
+          "totalMatched"        -> 3,
+          "departures" ->
+            Json.arr(
+              Json.obj(
+                "departureId"     -> 22,
+                "updated"         -> localDateTime,
+                "referenceNumber" -> "lrn",
+                "status"          -> DepartureSubmitted.toString
+              )
+            )
+        )
+
+      val expectedResult =
+        Departures(
+          1,
+          2,
+          Some(3),
           Seq(
-            Json.obj(
-              "arrivalId"       -> 123,
-              "updated"         -> dateNow,
-              "referenceNumber" -> "lrn123",
-              "status"          -> DepartureSubmitted.toString
+            Departure(
+              DepartureId(22),
+              localDateTime,
+              LocalReferenceNumber("lrn"),
+              DepartureSubmitted
             )
           )
         )
-      )
 
-      val expectedResult = Departures(
-        1,
-        2,
-        Some(3),
-        Seq(
-          Departure(
-            DepartureId(123),
-            dateNow,
-            LocalReferenceNumber("lrn123"),
-            DepartureSubmitted
-          )
-        )
-      )
-
-      json.validate[Departures].asOpt.value mustEqual expectedResult
+      departuresResponseJson.validate[Departures].asOpt.value mustEqual expectedResult
     }
   }
 }
