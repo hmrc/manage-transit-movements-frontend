@@ -91,14 +91,15 @@ class ViewArrivalsControllerSpec
     Nil
   )
 
-  private def expectedJson(expectedMrn: String): JsObject =
+  private val expectedJson: JsObject =
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
       "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url,
-      "mrn" -> expectedMrn
+      "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
     )
+
+  private def expectedSearchJson(expectedMrn: String): JsObject = Json.obj("mrn" -> expectedMrn)
 
   "ViewArrivalNotifications Controller" - {
     "return OK and the correct view for a GET when not displaying search results" in {
@@ -126,7 +127,7 @@ class ViewArrivalsControllerSpec
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivals.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson(expectedMrn = "")
+      jsonCaptorWithoutConfig mustBe expectedJson
     }
 
     "return OK and the correct view for a GET when displaying search results" in {
@@ -139,7 +140,7 @@ class ViewArrivalsControllerSpec
 
       val request = FakeRequest(
         GET,
-        routes.ViewArrivalsController.onPageLoad(Some("theMrn")).url
+        routes.ViewArrivalsController.onPageLoadSearch("theMrn").url
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -159,7 +160,7 @@ class ViewArrivalsControllerSpec
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson(expectedMrn = "theMrn")
+      jsonCaptorWithoutConfig mustBe expectedJson ++ expectedSearchJson(expectedMrn = "theMrn")
     }
 
     "render technical difficulty" in {
