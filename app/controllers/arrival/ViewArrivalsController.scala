@@ -47,7 +47,7 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
-      renderResults(arrivalMovementConnector.getArrivals(), "viewArrivals.njk", "")
+      renderResults(arrivalMovementConnector.getArrivals(), "viewArrivals.njk")
   }
 
   def onPageLoadSearch(mrn: String): Action[AnyContent] = (Action andThen identify).async {
@@ -55,18 +55,20 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
       renderResults(
         arrivalMovementConnector.getArrivalSearchResults(mrn, pageSize),
         "viewArrivalsSearchResults.njk",
-        mrn
+        Json.obj("mrn" -> mrn)
       )
   }
 
-  private def renderResults(results: Future[Option[Arrivals]], template: String, mrn: String)(implicit request: IdentifierRequest[AnyContent]) =
+  private def renderResults(
+                             results: Future[Option[Arrivals]],
+                             template: String,
+                             viewParams: JsObject = Json.obj())(implicit request: IdentifierRequest[AnyContent]) =
     results.flatMap {
       case Some(allArrivals) =>
         val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
           (arrival: Arrival) => ViewArrival(arrival)
         )
-        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements)) ++
-          Json.obj("mrn" -> mrn)
+        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements)) ++ viewParams
 
         renderer
           .render(template, formatToJson)
