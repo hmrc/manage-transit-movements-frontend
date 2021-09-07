@@ -139,7 +139,7 @@ class ViewArrivalsControllerSpec
 
       val request = FakeRequest(
         GET,
-        routes.ViewArrivalsController.onPageLoad(Some("theMrn")).url
+        routes.ViewArrivalsController.onPageLoadSearch("theMrn").url
       )
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
