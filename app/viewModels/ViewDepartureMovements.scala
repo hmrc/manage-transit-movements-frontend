@@ -53,8 +53,8 @@ object ViewDepartureMovements {
   ): OWrites[ViewDepartureMovements] =
     (o: ViewDepartureMovements) =>
       Json.obj(
-        "dataRows"                      -> o.dataRows,
+        "dataRows"                        -> o.dataRows,
         "declareDepartureNotificationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
-        "homePageUrl"                   -> routes.WhatDoYouWantToDoController.onPageLoad().url
+        "homePageUrl"                     -> routes.WhatDoYouWantToDoController.onPageLoad().url
       )
 }

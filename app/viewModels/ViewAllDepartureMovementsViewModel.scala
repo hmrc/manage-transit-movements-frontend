@@ -27,9 +27,9 @@ import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 
 case class ViewAllDepartureMovementsViewModel(
-                                             dataRows: Seq[(String, Seq[ViewDeparture])],
-                                             paginationViewModel: PaginationViewModel
-                                           ) {
+  dataRows: Seq[(String, Seq[ViewDeparture])],
+  paginationViewModel: PaginationViewModel
+) {
 
   val singularOrPlural = if (paginationViewModel.results.count == 1) { "numberOfMovements.singular" }
   else { "numberOfMovements.plural" }
@@ -42,9 +42,9 @@ object ViewAllDepartureMovementsViewModel {
     Ordering.by(identity[ChronoLocalDate])
 
   def apply(
-             movements: Seq[ViewDeparture],
-             paginationViewModel: PaginationViewModel
-           )(implicit d: DummyImplicit): ViewAllDepartureMovementsViewModel =
+    movements: Seq[ViewDeparture],
+    paginationViewModel: PaginationViewModel
+  )(implicit d: DummyImplicit): ViewAllDepartureMovementsViewModel =
     ViewAllDepartureMovementsViewModel(format(movements), paginationViewModel)
 
   private def format(movements: Seq[ViewDeparture]): Seq[(String, Seq[ViewDeparture])] = {
@@ -68,7 +68,7 @@ object ViewAllDepartureMovementsViewModel {
       (__ \ "homePageUrl").write[String] and
       (__ \ "singularOrPlural").write[String] and
       __.write[PaginationViewModel]
-    )(
+  )(
     o =>
       (
         o.dataRows,
