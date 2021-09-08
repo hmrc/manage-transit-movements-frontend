@@ -56,7 +56,7 @@ class WhatDoYouWantToDoController @Inject() (appConfig: FrontendAppConfig,
         "whatDoYouWantToDo.njk",
         Json.obj(
           "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
-          "viewArrivalNotificationUrl"     -> controllers.arrival.routes.ViewArrivalsController.onPageLoad().url,
+          "viewArrivalNotificationUrl"     -> controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url,
           "arrivalsAvailable"              -> arrivals.nonEmpty,
           "hasArrivals"                    -> arrivals.exists(_.arrivals.nonEmpty),
           "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,

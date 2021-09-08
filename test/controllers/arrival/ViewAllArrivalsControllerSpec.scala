@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.arrival
+
+import java.time.LocalDateTime
 
 import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.FrontendAppConfig
@@ -33,8 +35,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewArrival, ViewArrivalMovements}
-import java.time.LocalDateTime
 
 import scala.concurrent.Future
 
@@ -67,10 +69,10 @@ class ViewAllArrivalsControllerSpec
 
   private val mockArrivalResponse: Arrivals =
     Arrivals(
-      1,
-      2,
-      Some(3),
-      Seq(
+      retrievedArrivals = 1,
+      totalArrivals = 1,
+      totalMatched = None,
+      arrivals = Seq(
         Arrival(
           ArrivalId(1),
           localDateTime,
@@ -89,12 +91,15 @@ class ViewAllArrivalsControllerSpec
     Nil
   )
 
-  private val expectedJson =
+  private lazy val expectedJson =
     Json.toJsObject(
       ViewArrivalMovements(Seq(mockViewMovement))
     ) ++ Json.obj(
       "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl"                   -> "/manage-transit-movements/what-do-you-want-to-do" // TODO use controller url
+      "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url,
+      "singularOrPlural"              -> "numberOfMovements.singular"
+    ) ++ Json.toJsObject(
+      PaginationViewModel(1, 1, 20, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
     )
 
   "ViewAllArrivals Controller" - {
@@ -108,11 +113,11 @@ class ViewAllArrivalsControllerSpec
 
       val request = FakeRequest(
         GET,
-        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad(Some(1)).url
+        controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(Some(1)).url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -123,7 +128,7 @@ class ViewAllArrivalsControllerSpec
       val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
 
       templateCaptor.getValue mustEqual "viewAllArrivals.njk"
-      jsonCaptorWithoutConfig must containJson(expectedJson)
+      jsonCaptorWithoutConfig mustBe expectedJson
     }
 
     "render technical difficulty" in {
@@ -137,11 +142,11 @@ class ViewAllArrivalsControllerSpec
 
       val request = FakeRequest(
         GET,
-        controllers.testOnly.routes.ViewAllArrivalsController.onPageLoad(None).url
+        controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -153,8 +158,10 @@ class ViewAllArrivalsControllerSpec
         "contactUrl" -> config.nctsEnquiriesUrl
       }
 
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      jsonCaptorWithoutConfig mustBe expectedJson
     }
   }
 }

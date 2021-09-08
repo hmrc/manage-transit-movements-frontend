@@ -16,14 +16,14 @@
         {{ messages("viewArrivalNotifications.heading") }}
       </h1>
       <p class="govuk-body">
-        &lt; <a id = "go-to-view-all-movements" href="{{ routes.controllers.arrival.ViewArrivalsController.onPageLoad().url }}">
+        &lt; <a id = "go-to-view-all-movements" href="{{ routes.controllers.arrival.ViewAllArrivalsController.onPageLoad(None).url }}">
           {{ messages("viewAllMovements.link.title") }}
         </a>
       </p>
 
-      {{ movementSearch( messages('movement.search.title'), mrn, "mrn", routes.controllers.arrival.ViewArrivalsController.onPageLoadSearch().url) }}
+      {{ movementSearch( messages('movement.search.title'), mrn, "mrn", routes.controllers.arrival.ViewArrivalsSearchResultsController.onPageLoad("").url) }}
       {% if dataRows|length %}
-        <p class="govuk-body">{{ resultsText }} {% if tooManyResults %} {{ messages("search.tooManyResults") }} {% endif %}</p>
+        <p class="govuk-body">Showing <b>{{ retrieved }}</b> results matching {{ mrn }}. {% if tooManyResults %} {{ messages("search.tooManyResults") }} {% endif %}</p>
         {{ showMovementsByDate("Arrival notifications table", messages("viewArrivalNotifications.table.updated"), messages("viewArrivalNotifications.table.mrn"), messages("viewArrivalNotifications.table.status"), messages("viewArrivalNotifications.table.action"), dataRows) }}
       {% else %}
         <p class="govuk-body">{{ messages("search.noResultsFound") }}</p>
