@@ -32,7 +32,7 @@ import models.requests.IdentifierRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ViewDeparturesController @Inject() (
+class ViewDeparturesSearchResultsController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
@@ -46,7 +46,7 @@ class ViewDeparturesController @Inject() (
 
   private val pageSize = config.maxSearchResults
 
-  def onPageLoadSearch(lrn: String): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(lrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
       renderSearchResults(
         connector.getDepartureSearchResults(lrn, pageSize),
@@ -75,21 +75,6 @@ class ViewDeparturesController @Inject() (
         )
         val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements)) ++
           searchParams(lrn, allDepartures.retrievedDepartures, allDepartures.totalMatched)
-
-        renderer
-          .render(template, formatToJson)
-          .map(Ok(_))
-
-      case _ => renderTechnicalDifficultiesPage
-    }
-
-  private def renderResults(results: Future[Option[Departures]], template: String)(implicit request: IdentifierRequest[AnyContent]) =
-    results.flatMap {
-      case Some(allDepartures) =>
-        val viewMovements: Seq[ViewDeparture] = allDepartures.departures.map(
-          (departure: Departure) => ViewDeparture(departure)
-        )
-        val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements))
 
         renderer
           .render(template, formatToJson)

@@ -38,27 +38,12 @@ import viewModels.{ViewDeparture, ViewDepartureMovements}
 
 import scala.concurrent.Future
 
-class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
+class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
 
   private val totalSearchDepartures = 8
   private val someSearchMatches     = 5
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
-
-  private val mockDepartureResponse: Departures =
-    Departures(
-      retrievedDepartures = 1,
-      totalDepartures = 2,
-      totalMatched = None,
-      departures = Seq(
-        Departure(
-          DepartureId(1),
-          LocalDateTime.now(),
-          LocalReferenceNumber("test lrn"),
-          DepartureSubmitted
-        )
-      )
-    )
 
   private def mockDepartureSearchResponse(retrievedDepartures: Int, totalMatched: Int): Departures =
     Departures(
@@ -128,11 +113,11 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       val request = FakeRequest(
         GET,
-        routes.ViewDeparturesController.onPageLoadSearch("theLrn").url
+        routes.ViewDeparturesSearchResultsController.onPageLoad("theLrn").url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -162,11 +147,11 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       val request = FakeRequest(
         GET,
-        routes.ViewDeparturesController.onPageLoadSearch("theLrn").url
+        routes.ViewDeparturesSearchResultsController.onPageLoad("theLrn").url
       )
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
       status(result) mustEqual OK
@@ -186,25 +171,32 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
         expectedSearchJson(lrn = "theLrn", resultCount = someSearchMatches - 1, tooManyResults = true)
     }
 
-    "render Technical difficulties page on failing to fetch departures" in {
+    "render technical difficulty" in {
 
-      when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      val config = app.injector.instanceOf[FrontendAppConfig]
+      when(mockNunjucksRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
-      when(mockDepartureMovementsConnector.getDepartures()(any()))
+      when(mockDepartureMovementsConnector.getDepartureSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request = FakeRequest(
+        GET,
+        routes.ViewDeparturesSearchResultsController.onPageLoad("theLrn").url
+      )
 
-      val request = FakeRequest(GET, routes.ViewAllDeparturesController.onPageLoad().url)
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
-      status(result) mustBe INTERNAL_SERVER_ERROR
+      status(result) mustEqual INTERNAL_SERVER_ERROR
 
       verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj()
+      val expectedJson = Json.obj {
+        "contactUrl" -> config.nctsEnquiriesUrl
+      }
 
       templateCaptor.getValue mustEqual "technicalDifficulties.njk"
       jsonCaptor.getValue must containJson(expectedJson)

@@ -29,7 +29,5 @@ POST        /manage-transit-movements/test-only/declaration-to-core             
 + nocsrf
 POST        /manage-transit-movements/test-only/declaration-cancellation-request-to-core    controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
-GET         /manage-transit-movements/test-only/view-all-departures                         controllers.departure.ViewAllDeparturesController.onPageLoad(page: Option[Int])
-
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes

@@ -18,7 +18,7 @@ package views
 
 import java.time.LocalDateTime
 
-import controllers.testOnly.routes
+import controllers.departure.routes
 import generators.Generators
 import models.Departure
 import org.jsoup.nodes.Document

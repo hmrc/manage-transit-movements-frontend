@@ -77,10 +77,10 @@ class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with Js
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesController.onPageLoad(Some(1)).url)
+      val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(Some(1)).url)
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -101,10 +101,10 @@ class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with Js
       when(mockDeparturesMovementConnector.getPagedDepartures(eqTo(1), anyInt())(any()))
         .thenReturn(Future.successful(None))
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesController.onPageLoad(Some(1)).url)
+      val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(Some(1)).url)
 
       val result = route(app, request).value
 

@@ -68,7 +68,7 @@ class ViewDeparturesSearchResultsSpec extends MovementsTableViewBehaviours("view
     doc = doc,
     id = "go-to-view-all-movements",
     expectedText = "viewAllMovements.link.title",
-    expectedHref = controllers.departure.routes.ViewAllDeparturesController.onPageLoad().url
+    expectedHref = controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
   )
 
 }
