@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter
 
 import config.FrontendAppConfig
 import controllers.routes
-import play.api.libs.json.{JsObject, Json, OWrites}
+import play.api.libs.json.{Json, OWrites}
 
 case class ViewDepartureMovements(dataRows: Seq[(String, Seq[ViewDeparture])])
 
@@ -48,13 +48,13 @@ object ViewDepartureMovements {
     }
   }
 
-  implicit def writes(implicit frontendAppConfig: FrontendAppConfig): OWrites[ViewDepartureMovements] =
-    new OWrites[ViewDepartureMovements] {
-
-      override def writes(o: ViewDepartureMovements): JsObject = Json.obj(
+  implicit def writes(implicit
+    frontendAppConfig: FrontendAppConfig
+  ): OWrites[ViewDepartureMovements] =
+    (o: ViewDepartureMovements) =>
+      Json.obj(
         "dataRows"                        -> o.dataRows,
         "declareDepartureNotificationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
         "homePageUrl"                     -> routes.WhatDoYouWantToDoController.onPageLoad().url
       )
-    }
 }
