@@ -108,7 +108,7 @@ class ViewArrivalsSearchResultsControllerSpec
     tooManyResults: Boolean
   ): JsObject = Json.obj(
     "mrn"            -> mrn,
-    "retrieved"    -> retrieved,
+    "retrieved"      -> retrieved,
     "tooManyResults" -> tooManyResults
   )
 
@@ -214,8 +214,8 @@ class ViewArrivalsSearchResultsControllerSpec
       templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
       jsonCaptorWithoutConfig mustBe expectedJson ++
         Json.obj(
-          "mrn" -> "theMrn",
-          "retrieved" -> 0,
+          "mrn"            -> "theMrn",
+          "retrieved"      -> 0,
           "tooManyResults" -> false
         )
     }
