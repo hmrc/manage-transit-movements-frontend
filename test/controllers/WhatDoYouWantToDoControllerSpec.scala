@@ -51,7 +51,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
     Arrivals(1, 2, Some(3), Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, "Submitted", "test mrn")))
 
   private val mockDepartureResponse =
-
     Departures(
       retrievedDepartures = 1,
       totalDepartures = 2,
