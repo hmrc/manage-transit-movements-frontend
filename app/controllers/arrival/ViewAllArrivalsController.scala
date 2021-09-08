@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package controllers.arrival
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
+import javax.inject.Inject
 import models.Arrival
 import play.api.i18n.I18nSupport
 import play.api.libs.json._
@@ -29,7 +30,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
 
-import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ViewAllArrivalsController @Inject() (val renderer: Renderer,

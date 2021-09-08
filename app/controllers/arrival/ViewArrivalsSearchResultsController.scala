@@ -20,6 +20,8 @@ import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
+import javax.inject.Inject
+import models.requests.IdentifierRequest
 import models.{Arrival, Arrivals}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsObject, Json}
@@ -28,16 +30,13 @@ import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrival, ViewArrivalMovements}
 
-import javax.inject.Inject
-import models.requests.IdentifierRequest
-
 import scala.concurrent.{ExecutionContext, Future}
 
-class ViewArrivalsController @Inject() (val renderer: Renderer,
-                                        identify: IdentifierAction,
-                                        cc: MessagesControllerComponents,
-                                        val config: FrontendAppConfig,
-                                        arrivalMovementConnector: ArrivalMovementConnector
+class ViewArrivalsSearchResultsController @Inject() (val renderer: Renderer,
+                                                     identify: IdentifierAction,
+                                                     cc: MessagesControllerComponents,
+                                                     val config: FrontendAppConfig,
+                                                     arrivalMovementConnector: ArrivalMovementConnector
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport
@@ -45,16 +44,11 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
 
   private val pageSize = config.maxSearchResults
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
-    implicit request: IdentifierRequest[AnyContent] =>
-      renderResults(arrivalMovementConnector.getArrivals(), "viewArrivals.njk")
-  }
-
-  def onPageLoadSearch(mrn: String): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(mrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
       val trimmedMrn = mrn.trim
       if (trimmedMrn.isEmpty) {
-        Future.successful(Redirect(routes.ViewArrivalsController.onPageLoad()))
+        Future.successful(Redirect(routes.ViewAllArrivalsController.onPageLoad(None)))
       } else {
         renderSearchResults(
           arrivalMovementConnector.getArrivalSearchResults(trimmedMrn, pageSize),
@@ -84,21 +78,6 @@ class ViewArrivalsController @Inject() (val renderer: Renderer,
         )
         val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements)) ++
           searchParams(mrn, allArrivals.retrievedArrivals, allArrivals.totalMatched)
-
-        renderer
-          .render(template, formatToJson)
-          .map(Ok(_))
-
-      case _ => renderTechnicalDifficultiesPage
-    }
-
-  private def renderResults(results: Future[Option[Arrivals]], template: String)(implicit request: IdentifierRequest[AnyContent]) =
-    results.flatMap {
-      case Some(allArrivals) =>
-        val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
-          (arrival: Arrival) => ViewArrival(arrival)
-        )
-        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))
 
         renderer
           .render(template, formatToJson)
