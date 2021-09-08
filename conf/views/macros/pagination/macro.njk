@@ -1,9 +1,6 @@
 {% macro pagination(results, previous, next, items, firstItemDotted, lastItemDotted) %}
 
- <nav class="pagination {{- ' ' + classes if classes}}" id="pagination-label">
-
-  <p class="govuk-visually-hidden" aria-labelledby="pagination-label">Pagination navigation</p>
-
+ <nav class="pagination {{- ' ' + classes if classes}}" id="page-pagination" aria-label="Pagination">
 
   {%- if results %}
     <p id="paginated-results-count" class="pagination__results">Showing <b>{{ results.from }}</b> to <b>{{ results.to }}</b> of <b>{{results.count}}</b> results</p>
@@ -13,7 +10,10 @@
 
     {%- if previous %}
       <li class="pagination__item  pagination__item--prev">
-        <a id="previous" class="pagination__link" href="{{ previous.href }}">Previous<span class="govuk-visually-hidden"> set of pages</span></a>
+        <a id="previous"
+           class="pagination__link"
+           href="{{ previous.href }}"
+           aria-describedby="page-pagination">Previous</span></a>
       </li>
     {% endif -%}
 
@@ -23,9 +23,15 @@
             <li class="pagination__item pagination__item--dots">...</li>
         {% endif -%}
         {%- if item.selected %}
-          <li id="pagination-item-{{item.pageNumber}}" class="pagination__item pagination__item--active">{{ item.pageNumber }}</li>
+          <li id="pagination-item-{{item.pageNumber}}" class="pagination__item pagination__item--active">
+            <span aria-current="page">{{ item.pageNumber }}</span>
+          </li>
         {% else %}
-          <li id="pagination-item-{{item.pageNumber}}" class="pagination__item"><a class="pagination__link" href="{{ item.href }}">{{ item.pageNumber }}</a></li>
+          <li id="pagination-item-{{item.pageNumber}}" class="pagination__item">
+            <a class="pagination__link"
+               href="{{ item.href }}"
+               aria-describedby="page-pagination">{{ item.pageNumber }}</a>
+          </li>
         {% endif -%}
 
         {%- if firstItemDotted and loop.first %}
@@ -35,7 +41,10 @@
 
     {%- if next %}
       <li class="pagination__item  pagination__item--next">
-        <a id="next" class="pagination__link" href="{{ next.href }}">Next <span class="govuk-visually-hidden"> set of pages</span></a>
+        <a id="next"
+           class="pagination__link"
+           href="{{ next.href }}"
+           aria-describedby="page-pagination">Next</span></a>
       </li>
     {% endif -%}
   </ul>
