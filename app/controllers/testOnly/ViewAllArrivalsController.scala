@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
-import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival, ViewArrivalMovements}
+import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext

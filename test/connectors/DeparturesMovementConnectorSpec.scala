@@ -51,6 +51,9 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
   private val departuresResponseJson =
     Json.obj(
+      "retrievedDepartures" -> 1,
+      "totalDepartures"     -> 2,
+      "totalMatched"        -> 3,
       "departures" ->
         Json.arr(
           Json.obj(
@@ -70,6 +73,9 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
       "must return a successful future response" in {
         val expectedResult =
           Departures(
+            1,
+            2,
+            Some(3),
             Seq(
               Departure(
                 DepartureId(22),
@@ -102,6 +108,82 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                 )
             )
             connector.getDepartures().futureValue mustBe None
+        }
+      }
+    }
+
+    "getDepartureSearchResults" - {
+      "must return a successful future response" in {
+        val expectedResult =
+          Departures(
+            1,
+            2,
+            Some(3),
+            Seq(
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/departures?mrn=theMrn&pageSize=100"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(departuresResponseJson.toString()))
+        )
+
+        connector.getDepartureSearchResults("theMrn", "100").futureValue mustBe Some(expectedResult)
+      }
+
+      "must return a None when arrivals API returns an error response" in {
+
+        forAll(errorResponses) {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/movements/departures?mrn=theMrn&pageSize=100"))
+                .withHeader("Channel", containing("web"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+            connector.getDepartureSearchResults("theMrn", "100").futureValue mustBe None
+        }
+      }
+    }
+
+    "getPagedDepartures" - {
+      "must return a successful future response" in {
+        val expectedResult =
+          Departures(
+            1,
+            2,
+            Some(3),
+            Seq(
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/departures?page=42&pageSize=100"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(departuresResponseJson.toString()))
+        )
+
+        connector.getPagedDepartures(42, 100).futureValue mustBe Some(expectedResult)
+      }
+
+      "must return a None when getArrivals returns an error response" in {
+
+        forAll(errorResponses) {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/movements/departures?page=42&pageSize=100"))
+                .withHeader("Channel", containing("web"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+            connector.getPagedDepartures(42, 100).futureValue mustBe None
         }
       }
     }

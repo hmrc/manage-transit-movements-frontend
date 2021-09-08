@@ -34,7 +34,12 @@ object Departure {
   )(Departure.apply _)
 }
 
-case class Departures(departures: Seq[Departure])
+case class Departures(
+  retrievedDepartures: Int,
+  totalDepartures: Int,
+  totalMatched: Option[Int],
+  departures: Seq[Departure]
+)
 
 object Departures {
   implicit val reads: Reads[Departures] = Json.reads[Departures]
