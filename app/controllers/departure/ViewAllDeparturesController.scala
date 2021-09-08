@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package controllers.departure
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DeparturesMovementConnector

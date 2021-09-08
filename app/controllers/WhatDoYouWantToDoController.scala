@@ -60,7 +60,7 @@ class WhatDoYouWantToDoController @Inject() (appConfig: FrontendAppConfig,
           "arrivalsAvailable"              -> arrivals.nonEmpty,
           "hasArrivals"                    -> arrivals.exists(_.arrivals.nonEmpty),
           "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
-          "viewDepartureNotificationUrl"   -> departureRoutes.ViewDeparturesController.onPageLoad().url,
+          "viewDepartureNotificationUrl"   -> departureRoutes.ViewAllDeparturesController.onPageLoad().url,
           "departuresAvailable"            -> departures.nonEmpty,
           "hasDepartures"                  -> departures.exists(_.departures.nonEmpty)
         )

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.departure
 
 import java.time.LocalDateTime
 

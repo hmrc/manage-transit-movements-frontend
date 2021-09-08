@@ -46,11 +46,6 @@ class ViewDeparturesController @Inject() (
 
   private val pageSize = config.maxSearchResults
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
-    implicit request: IdentifierRequest[AnyContent] =>
-      renderResults(connector.getDepartures(), "viewDepartures.njk")
-  }
-
   def onPageLoadSearch(lrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
       renderSearchResults(
