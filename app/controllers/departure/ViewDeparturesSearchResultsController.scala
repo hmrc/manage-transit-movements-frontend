@@ -48,11 +48,16 @@ class ViewDeparturesSearchResultsController @Inject() (
 
   def onPageLoad(lrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
-      renderSearchResults(
-        connector.getDepartureSearchResults(lrn, pageSize),
-        "viewDeparturesSearchResults.njk",
-        lrn
-      )
+      val trimmedLrn = lrn.trim
+      if (trimmedLrn.isEmpty) {
+        Future.successful(Redirect(routes.ViewAllDeparturesController.onPageLoad(None)))
+      } else {
+        renderSearchResults(
+          connector.getDepartureSearchResults(trimmedLrn, pageSize),
+          "viewDeparturesSearchResults.njk",
+          trimmedLrn
+        )
+      }
   }
 
   private def searchParams(lrn: String, retrieved: Int, matchedOption: Option[Int]) =

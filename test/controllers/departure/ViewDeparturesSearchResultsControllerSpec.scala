@@ -171,6 +171,51 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
         expectedSearchJson(lrn = "theLrn", resultCount = someSearchMatches - 1, tooManyResults = true)
     }
 
+    "trim search string" in {
+
+      when(mockNunjucksRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockDepartureMovementsConnector.getDepartureSearchResults(any(), any())(any()))
+        .thenReturn(Future.successful(Some(mockDepartureSearchResponse(someSearchMatches, someSearchMatches))))
+
+      val request = FakeRequest(
+        GET,
+        routes.ViewDeparturesSearchResultsController.onPageLoad(" theLrn ").url
+      )
+
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
+      status(result) mustEqual OK
+
+      verify(mockDepartureMovementsConnector).getDepartureSearchResults(
+        eqTo("theLrn"),
+        eqTo(frontendAppConfig.maxSearchResults)
+      )(any())
+
+      verify(mockNunjucksRenderer, times(1))
+        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
+
+      templateCaptor.getValue mustEqual "viewDeparturesSearchResults.njk"
+      jsonCaptorWithoutConfig mustBe expectedJson ++
+        expectedSearchJson(lrn = "theLrn", resultCount = someSearchMatches, tooManyResults = false)
+    }
+
+    "redirects to all departures on empty string" in {
+      val request = FakeRequest(
+        GET,
+        routes.ViewDeparturesSearchResultsController.onPageLoad("").url
+      )
+
+      val result = route(app, request).value
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.ViewAllDeparturesController.onPageLoad(None).url
+    }
+
     "render technical difficulty" in {
 
       val config = app.injector.instanceOf[FrontendAppConfig]
