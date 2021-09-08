@@ -104,11 +104,11 @@ class ViewArrivalsSearchResultsControllerSpec
 
   private def expectedSearchJson(
     mrn: String,
-    resultCount: Int,
+    retrieved: Int,
     tooManyResults: Boolean
   ): JsObject = Json.obj(
     "mrn"            -> mrn,
-    "resultsText"    -> s"Showing $resultCount results matching $mrn.",
+    "retrieved"    -> retrieved,
     "tooManyResults" -> tooManyResults
   )
 
@@ -145,7 +145,7 @@ class ViewArrivalsSearchResultsControllerSpec
 
       templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
       jsonCaptorWithoutConfig mustBe expectedJson ++
-        expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches, tooManyResults = false)
+        expectedSearchJson(mrn = "theMrn", retrieved = someSearchMatches, tooManyResults = false)
     }
 
     "return OK and the correct view for a GET when displaying search results with too many results" in {
@@ -179,7 +179,7 @@ class ViewArrivalsSearchResultsControllerSpec
 
       templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
       jsonCaptorWithoutConfig mustBe expectedJson ++
-        expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches - 1, tooManyResults = true)
+        expectedSearchJson(mrn = "theMrn", retrieved = someSearchMatches - 1, tooManyResults = true)
     }
 
     "return OK and the correct view for a GET when displaying search results with 0 results" in {
@@ -214,8 +214,8 @@ class ViewArrivalsSearchResultsControllerSpec
       templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
       jsonCaptorWithoutConfig mustBe expectedJson ++
         Json.obj(
-          "mrn"            -> "theMrn",
-          "resultsText"    -> "",
+          "mrn" -> "theMrn",
+          "retrieved" -> 0,
           "tooManyResults" -> false
         )
     }
@@ -251,7 +251,7 @@ class ViewArrivalsSearchResultsControllerSpec
 
       templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
       jsonCaptorWithoutConfig mustBe expectedJson ++
-        expectedSearchJson(mrn = "theMrn", resultCount = someSearchMatches, tooManyResults = false)
+        expectedSearchJson(mrn = "theMrn", retrieved = someSearchMatches, tooManyResults = false)
     }
 
     "redirects to all arrivals on empty string" in {

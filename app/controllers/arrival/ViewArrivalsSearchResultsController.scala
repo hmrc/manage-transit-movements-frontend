@@ -63,10 +63,10 @@ class ViewArrivalsSearchResultsController @Inject() (val renderer: Renderer,
       case Some(matched) if matched > 0 =>
         Json.obj(
           "mrn"            -> mrn,
-          "resultsText"    -> s"Showing $retrieved results matching $mrn.",
+          "retrieved"    -> retrieved,
           "tooManyResults" -> (retrieved < matched)
         )
-      case _ => Json.obj("mrn" -> mrn, "resultsText" -> "", "tooManyResults" -> false)
+      case _ => Json.obj("mrn" -> mrn, "retrieved" -> 0, "tooManyResults" -> false)
 
     }
 
