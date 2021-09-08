@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package viewModels.pagination
 
-import java.time.LocalDateTime
+import play.api.libs.json.{Json, OFormat}
 
-import models.departure.DepartureStatus
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+case class Item(pageNumber: Int, href: String, selected: Boolean)
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
+object Item {
 
-object Departure {
+  def apply(pageNumber: Int, href: String, currentPage: Int): Item =
+    Item(
+      pageNumber = pageNumber,
+      href = s"$href?page=$pageNumber",
+      selected = pageNumber == currentPage
+    )
 
-  implicit val reads: Reads[Departure] = (
-    (__ \ "departureId").read[DepartureId] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "status").read[DepartureStatus]
-  )(Departure.apply _)
+  implicit val format: OFormat[Item] = Json.format[Item]
 }

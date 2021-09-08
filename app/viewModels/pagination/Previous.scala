@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package viewModels.pagination
 
-import java.time.LocalDateTime
+import play.api.libs.json.{Json, OFormat}
 
-import models.departure.DepartureStatus
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+case class Previous(href: String)
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
+object Previous {
+  def apply(href: String, currentPage: Int): Previous = Previous(s"$href?page=${currentPage - 1}")
 
-object Departure {
-
-  implicit val reads: Reads[Departure] = (
-    (__ \ "departureId").read[DepartureId] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "status").read[DepartureStatus]
-  )(Departure.apply _)
+  implicit val format: OFormat[Previous] = Json.format[Previous]
 }

@@ -22,11 +22,11 @@
       </p>
 
       {%-  if results and results.totalPages == 1  %}
-        <p id="results-count" class="govuk-body">Showing <b>{{results.count}}</b> results</p>
+        <p id="results-count" class="govuk-body">Showing <b>{{results.count}}</b> {{messages(singularOrPlural)}}</p>
       {% endif -%}
 
       {%- if results and results.totalPages > 1 %}
-          {{ pagination(results, previous, next, items) }}
+          {{ pagination(results, previous, next, items, firstItemDotted, lastItemDotted) }}
       {% endif -%}
 
       {{ showMovementsByDate("Arrival notifications table", messages("viewArrivalNotifications.table.updated"), messages("viewArrivalNotifications.table.mrn"), messages("viewArrivalNotifications.table.status"), messages("viewArrivalNotifications.table.action"), dataRows) }}

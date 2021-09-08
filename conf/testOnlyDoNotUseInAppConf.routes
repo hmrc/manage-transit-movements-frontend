@@ -31,5 +31,7 @@ POST        /manage-transit-movements/test-only/declaration-cancellation-request
 
 GET         /manage-transit-movements/test-only/view-all-arrivals                           controllers.testOnly.ViewAllArrivalsController.onPageLoad(page: Option[Int])
 
+GET         /manage-transit-movements/test-only/view-all-departures                         controllers.testOnly.ViewAllDeparturesController.onPageLoad(page: Option[Int])
+
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes

@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
-package models
+package viewModels.pagination
 
-import java.time.LocalDateTime
+import base.SpecBase
 
-import models.departure.DepartureStatus
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+class ItemSpec extends SpecBase {
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
+  "Item" - {
+    "apply" - {
+      "must format href" in {
 
-object Departure {
+        Item(1, "testHref", 1).href mustBe "testHref?page=1"
+      }
 
-  implicit val reads: Reads[Departure] = (
-    (__ \ "departureId").read[DepartureId] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "status").read[DepartureStatus]
-  )(Departure.apply _)
+      "selected" - {
+
+        "must be true if current page is the same as page number" in {
+
+          Item(1, "testHref", 1).selected mustBe true
+        }
+
+        "must be false if current page is not the same as page number" in {
+
+          Item(2, "testHref", 1).selected mustBe false
+        }
+      }
+    }
+  }
 }

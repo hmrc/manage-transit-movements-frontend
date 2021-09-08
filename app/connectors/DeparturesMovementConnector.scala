@@ -26,9 +26,9 @@ import models.{DepartureId, Departures, ResponseMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, HeaderNames => HMRCHeaderNames, HttpClient}
-
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, HeaderNames => HMRCHeaderNames}
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 

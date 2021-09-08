@@ -68,6 +68,9 @@ unauthorised.you.must.have.an.account = If you are waiting for an EORI number to
 unauthorised.sign.in.to.HMRC.services = sign in to HMRC services
 unauthorised.again.later = again later.
 
+numberOfMovements.singular = result
+numberOfMovements.plural = results
+
 viewArrivalNotifications.title                      = Arrival notifications
 viewArrivalNotifications.heading                    = Arrival notifications
 viewArrivalNotifications.makeArrivalNotification    = Make an arrival notification

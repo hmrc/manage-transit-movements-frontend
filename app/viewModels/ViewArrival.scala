@@ -18,7 +18,7 @@ package viewModels
 
 import config.FrontendAppConfig
 import models.Arrival
-import play.api.libs.json.{JsObject, Json, OWrites}
+import play.api.libs.json.{Json, OWrites}
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
@@ -45,9 +45,8 @@ object ViewArrival {
   }
 
   implicit val writes: OWrites[ViewArrival] =
-    new OWrites[ViewArrival] {
-
-      override def writes(o: ViewArrival): JsObject = Json.obj(
+    (o: ViewArrival) =>
+      Json.obj(
         "updated" -> o.updatedTime
           .format(DateTimeFormatter.ofPattern("h:mma"))
           .toLowerCase,
@@ -55,5 +54,4 @@ object ViewArrival {
         "status"          -> o.status,
         "actions"         -> o.actions
       )
-    }
 }

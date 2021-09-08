@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package viewModels.pagination
 
-import java.time.LocalDateTime
+import base.SpecBase
 
-import models.departure.DepartureStatus
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+class NextSpec extends SpecBase {
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
-
-object Departure {
-
-  implicit val reads: Reads[Departure] = (
-    (__ \ "departureId").read[DepartureId] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "status").read[DepartureStatus]
-  )(Departure.apply _)
+  "Next" - {
+    "apply" - {
+      "must format href" in {
+        Next.apply("testHref", 1).href mustBe "testHref?page=2"
+      }
+    }
+  }
 }
