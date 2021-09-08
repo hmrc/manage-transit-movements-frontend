@@ -32,7 +32,7 @@ import models.requests.IdentifierRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ViewDeparturesSearchResultsController @Inject()(
+class ViewDeparturesSearchResultsController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,

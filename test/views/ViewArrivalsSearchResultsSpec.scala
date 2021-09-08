@@ -16,6 +16,8 @@
 
 package views
 
+import java.time.LocalDateTime
+
 import generators.Generators
 import models.Arrival
 import org.jsoup.nodes.Document
@@ -25,9 +27,7 @@ import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewArrival, ViewArrivalMovements}
 import views.behaviours.MovementsTableViewBehaviours
 
-import java.time.LocalDateTime
-
-class ViewArrivalsSpec extends MovementsTableViewBehaviours("viewArrivals.njk") with Generators with ScalaCheckPropertyChecks {
+class ViewArrivalsSearchResultsSpec extends MovementsTableViewBehaviours("viewArrivalsSearchResults.njk") with Generators with ScalaCheckPropertyChecks {
 
   private val messageKeyPrefix: String = "viewArrivalNotifications"
 
@@ -66,16 +66,9 @@ class ViewArrivalsSpec extends MovementsTableViewBehaviours("viewArrivals.njk") 
 
   behave like pageWithLink(
     doc = doc,
-    id = "make-arrival-notification",
-    expectedText = s"$messageKeyPrefix.makeArrivalNotification",
-    expectedHref = frontendAppConfig.declareArrivalNotificationStartUrl
-  )
-
-  behave like pageWithLink(
-    doc = doc,
-    id = "go-to-manage-transit-movements",
-    expectedText = s"$messageKeyPrefix.goToManageTransitMovements",
-    expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
+    id = "go-to-view-all-movements",
+    expectedText = "viewAllMovements.link.title",
+    expectedHref = controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
   )
 
 }

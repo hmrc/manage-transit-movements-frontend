@@ -2,6 +2,7 @@
 
 {% from "macros/title.njk"                         import title %}
 {% from "macros/showMovementsByDate.njk"           import showMovementsByDate %}
+{% from "macros/movementSearch.njk"                import movementSearch %}
 {% from "macros/pagination/macro.njk"              import pagination %}
 
 {% block pageTitle %}
@@ -18,6 +19,8 @@
       </h1>
 
       <p class="govuk-body"><a id = "make-departure-notification" href={{ declareDepartureNotificationUrl }} > {{ messages("viewDepartures.makeDepartureNotification") }}</a></p>
+
+      {{ movementSearch( messages('movement.search.departure.title'), lrn, "lrn", routes.controllers.departure.ViewDeparturesSearchResultsController.onPageLoad("").url) }}
 
       {%-  if results and results.totalPages == 1  %}
         <p id="results-count" class="govuk-body">Showing <b>{{results.count}}</b> {{messages(singularOrPlural)}}</p>
