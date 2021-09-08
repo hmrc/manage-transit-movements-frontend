@@ -28,7 +28,7 @@ class DepartureIdSpec extends SpecBase with EitherValues {
       val departureId  = DepartureId(12)
 
       val bind: Either[String, DepartureId] = pathBindable.bind("departureId", "12")
-      bind.right.value mustBe departureId
+      bind.value mustBe departureId
     }
 
     "unbind to path value" in {

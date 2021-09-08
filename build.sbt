@@ -6,6 +6,8 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "manage-transit-movements-frontend"
 
+val silencerVersion = "1.7.0"
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin, SbtArtifactory)
   .disablePlugins(JUnitXmlReportPlugin)
@@ -33,8 +35,14 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageMinimum       := 60,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting  := true,
-    scalacOptions ++= Seq("-feature"),
-    libraryDependencies ++= AppDependencies(),
+    scalacOptions ++= Seq(
+      "-feature",
+      "-P:silencer:pathFilters=routes"
+    ),
+    libraryDependencies ++= AppDependencies() ++ Seq(
+      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
+      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
+    ),
     retrieveManaged := true,
     evictionWarningOptions in update :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
