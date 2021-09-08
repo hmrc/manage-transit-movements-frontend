@@ -265,13 +265,13 @@ class ViewArrivalsSearchResultsControllerSpec
       redirectLocation(result).value mustEqual routes.ViewAllArrivalsController.onPageLoad(None).url
     }
 
-    "render technical difficulty" ignore {
+    "render technical difficulty" in {
 
       val config = app.injector.instanceOf[FrontendAppConfig]
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockArrivalMovementConnector.getArrivals()(any()))
+      when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest(
