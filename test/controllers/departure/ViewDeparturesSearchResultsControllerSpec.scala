@@ -91,8 +91,8 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
     reset(mockDepartureMovementsConnector)
   }
 
-  val mockDepartureMovementsConnector               = mock[DeparturesMovementConnector]
-  implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
+  val mockDepartureMovementsConnector                         = mock[DeparturesMovementConnector]
+  implicit val frontendAppConfig: FrontendAppConfig           = FakeFrontendAppConfig()
   implicit val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -102,7 +102,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementsConnector)
       )
 
-  "ViewDepartures Controller" - {
+  "ViewDeparturesSearchResultsController" - {
 
     "return OK and the correct view for a GET when displaying search results with results" in {
 

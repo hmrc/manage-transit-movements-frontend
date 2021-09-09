@@ -112,7 +112,7 @@ class ViewArrivalsSearchResultsControllerSpec
     "tooManyResults" -> tooManyResults
   )
 
-  "ViewArrivalNotifications Controller" - {
+  "ViewArrivalsSearchResultsController" - {
 
     "return OK and the correct view for a GET when displaying search results with results" in {
 
