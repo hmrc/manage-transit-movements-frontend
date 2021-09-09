@@ -57,6 +57,12 @@ class ViewArrivalsSearchResultsSpec extends MovementsTableViewBehaviours("viewAr
 
   behave like pageWithHeading(doc, messageKeyPrefix)
 
+  behave like pageWithMovementSearch(
+    doc = doc,
+    id = "mrn",
+    expectedText = "movement.search.title"
+  )
+
   behave like pageWithMovementsData[ViewArrival](
     doc = doc,
     viewMovements = viewMovements,

@@ -66,6 +66,12 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArriv
     refType = "mrn"
   )
 
+  behave like pageWithMovementSearch(
+    doc = doc,
+    id = "mrn",
+    expectedText = "movement.search.title"
+  )
+
   behave like pageWithLink(
     doc = doc,
     id = "make-arrival-notification",

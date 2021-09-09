@@ -17,11 +17,15 @@
 package views.behaviours
 
 import base.SingleViewSpec
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.json.{JsObject, Json}
+import play.twirl.api.Html
 import viewModels.pagination.PaginationViewModel
 
 abstract class ViewBehaviours(override protected val viewUnderTest: String) extends SingleViewSpec(viewUnderTest) {
+
+  def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
   def pageWithHeading(doc: Document, messageKeyPrefix: String): Unit =
     "display page heading" in {
@@ -96,6 +100,21 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
         assertRenderedById(doc, "pagination-item-5")
         assertNotRenderedById(doc, "pagination-item-6")
         assertRenderedById(doc, "pagination-item-12")
+      }
+    }
+
+  def pageWithMovementSearch(doc: Document, id: String, expectedText: String): Unit =
+    "displays search box" - {
+      s"display search box $id" in {
+        assertRenderedById(doc, id)
+      }
+
+      "contain a label for the search" in {
+        assertContainsLabel(doc, id, expectedText, None)
+      }
+
+      "have a submit button" in {
+        assertRenderedById(doc, "submit")
       }
     }
 }

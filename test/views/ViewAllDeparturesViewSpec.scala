@@ -58,6 +58,12 @@ class ViewAllDeparturesViewSpec extends MovementsTableViewBehaviours("viewAllDep
 
   behave like pageWithHeading(doc, messageKeyPrefix)
 
+  behave like pageWithMovementSearch(
+    doc = doc,
+    id = "lrn",
+    expectedText = "movement.search.departure.title"
+  )
+
   behave like pageWithPagination(routes.ViewAllDeparturesController.onPageLoad(None).url)
 
   behave like pageWithMovementsData[ViewDeparture](
