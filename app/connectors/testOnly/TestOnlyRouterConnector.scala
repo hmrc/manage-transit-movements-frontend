@@ -17,12 +17,11 @@
 package connectors.testOnly
 
 import config.FrontendAppConfig
+import play.api.mvc.Headers
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
-import play.api.mvc.Headers
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
@@ -39,7 +38,7 @@ class TestOnlyRouterConnector @Inject() (val http: HttpClient, config: FrontendA
     http.POSTString[HttpResponse](routerUrl, requestData.toString, header)
   }
 
-  private def addHeaders()(implicit headerCarrier: HeaderCarrier): Seq[(String, String)] = Seq("Content-Type" -> "application/xml", "Channel" -> "web")
+  private def addHeaders(): Seq[(String, String)] = Seq("Content-Type" -> "application/xml", "Channel" -> "web")
 
   def createArrivalNotificationMessage(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
@@ -49,7 +48,7 @@ class TestOnlyRouterConnector @Inject() (val http: HttpClient, config: FrontendA
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
       .withExtraHeaders(addHeaders(): _*)
 
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 
   def resubmitArrivalNotificationMessage(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit
@@ -62,7 +61,7 @@ class TestOnlyRouterConnector @Inject() (val http: HttpClient, config: FrontendA
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
       .withExtraHeaders(addHeaders(): _*)
 
-    http.PUTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
+    http.PUTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 
   def submitMessageToCore(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
@@ -73,6 +72,6 @@ class TestOnlyRouterConnector @Inject() (val http: HttpClient, config: FrontendA
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
       .withExtraHeaders(addHeaders(): _*)
 
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 }

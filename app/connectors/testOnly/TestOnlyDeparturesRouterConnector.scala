@@ -17,13 +17,12 @@
 package connectors.testOnly
 
 import config.FrontendAppConfig
-
-import javax.inject.Inject
 import logging.Logging
 import play.api.mvc.Headers
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
@@ -39,7 +38,7 @@ class TestOnlyDeparturesRouterConnector @Inject() (val http: HttpClient, config:
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
       .withExtraHeaders(addHeaders(): _*)
 
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 
   def createDeclarationCancellationMessage(requestData: NodeSeq, departureId: String, headers: Headers)(implicit
@@ -52,7 +51,7 @@ class TestOnlyDeparturesRouterConnector @Inject() (val http: HttpClient, config:
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
       .withExtraHeaders(addHeaders(): _*)
 
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads.readRaw, hc = newHeaders, ec = ec)
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 
   //TODO: Not yet implemented (needs updating when we need to get inbound messages - see TestOnlyRouterConnector)

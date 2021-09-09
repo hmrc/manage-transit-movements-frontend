@@ -17,11 +17,11 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class KeepAliveController @Inject() (
@@ -32,7 +32,7 @@ class KeepAliveController @Inject() (
 
   def keepAlive: Action[AnyContent] =
     (Action andThen identify).async {
-      implicit request =>
+      _ =>
         Future.successful(NoContent)
     }
 }
