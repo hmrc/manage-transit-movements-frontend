@@ -16,7 +16,7 @@
 
 package controllers.departure
 
-import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{FakeFrontendAppConfig, FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
@@ -33,7 +33,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import java.time.LocalDateTime
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, SearchResultsAppConfig}
 import viewModels.{ViewDeparture, ViewDepartureMovements}
 
 import scala.concurrent.Future
@@ -93,6 +93,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
 
   val mockDepartureMovementsConnector               = mock[DeparturesMovementConnector]
   implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
+  implicit val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -124,7 +125,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
 
       verify(mockDepartureMovementsConnector).getDepartureSearchResults(
         eqTo("theLrn"),
-        eqTo(frontendAppConfig.maxSearchResults)
+        eqTo(searchResultsAppConfig.maxSearchResults)
       )(any())
 
       verify(mockNunjucksRenderer, times(1))
@@ -158,7 +159,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
 
       verify(mockDepartureMovementsConnector).getDepartureSearchResults(
         eqTo("theLrn"),
-        eqTo(frontendAppConfig.maxSearchResults)
+        eqTo(searchResultsAppConfig.maxSearchResults)
       )(any())
 
       verify(mockNunjucksRenderer, times(1))
@@ -192,7 +193,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
 
       verify(mockDepartureMovementsConnector).getDepartureSearchResults(
         eqTo("theLrn"),
-        eqTo(frontendAppConfig.maxSearchResults)
+        eqTo(searchResultsAppConfig.maxSearchResults)
       )(any())
 
       verify(mockNunjucksRenderer, times(1))

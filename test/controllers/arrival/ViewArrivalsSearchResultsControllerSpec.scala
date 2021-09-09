@@ -18,8 +18,8 @@ package controllers.arrival
 
 import java.time.LocalDateTime
 
-import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
-import config.FrontendAppConfig
+import base.{FakeFrontendAppConfig, FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
+import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
@@ -51,7 +51,7 @@ class ViewArrivalsSearchResultsControllerSpec
 
   private val mockArrivalMovementConnector          = mock[ArrivalMovementConnector]
   implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
-
+  implicit val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
   private val totalSearchArrivals = 8
   private val someSearchMatches   = 5
 
@@ -135,7 +135,7 @@ class ViewArrivalsSearchResultsControllerSpec
 
       verify(mockArrivalMovementConnector).getArrivalSearchResults(
         meq("theMrn"),
-        meq(frontendAppConfig.maxSearchResults)
+        meq(searchResultsAppConfig.maxSearchResults)
       )(any())
 
       verify(mockNunjucksRenderer, times(1))
@@ -169,7 +169,7 @@ class ViewArrivalsSearchResultsControllerSpec
 
       verify(mockArrivalMovementConnector).getArrivalSearchResults(
         meq("theMrn"),
-        meq(frontendAppConfig.maxSearchResults)
+        meq(searchResultsAppConfig.maxSearchResults)
       )(any())
 
       verify(mockNunjucksRenderer, times(1))
@@ -203,7 +203,7 @@ class ViewArrivalsSearchResultsControllerSpec
 
       verify(mockArrivalMovementConnector).getArrivalSearchResults(
         meq("theMrn"),
-        meq(frontendAppConfig.maxSearchResults)
+        meq(searchResultsAppConfig.maxSearchResults)
       )(any())
 
       verify(mockNunjucksRenderer, times(1))
@@ -241,7 +241,7 @@ class ViewArrivalsSearchResultsControllerSpec
 
       verify(mockArrivalMovementConnector).getArrivalSearchResults(
         meq("theMrn"),
-        meq(frontendAppConfig.maxSearchResults)
+        meq(searchResultsAppConfig.maxSearchResults)
       )(any())
 
       verify(mockNunjucksRenderer, times(1))

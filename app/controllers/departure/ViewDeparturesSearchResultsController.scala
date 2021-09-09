@@ -16,7 +16,7 @@
 
 package controllers.departure
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
@@ -38,13 +38,14 @@ class ViewDeparturesSearchResultsController @Inject() (
   cc: MessagesControllerComponents,
   connector: DeparturesMovementConnector,
   val config: FrontendAppConfig,
+  val searchResultsAppConfig: SearchResultsAppConfig,
   val renderer: Renderer
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
 
-  private val pageSize = config.maxSearchResults
+  private val pageSize = searchResultsAppConfig.maxSearchResults
 
   def onPageLoad(lrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
