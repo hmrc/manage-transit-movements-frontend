@@ -49,11 +49,11 @@ class ViewArrivalsSearchResultsControllerSpec
     with BeforeAndAfterEach
     with MockNunjucksRendererApp {
 
-  private val mockArrivalMovementConnector          = mock[ArrivalMovementConnector]
-  implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
+  private val mockArrivalMovementConnector                    = mock[ArrivalMovementConnector]
+  implicit val frontendAppConfig: FrontendAppConfig           = FakeFrontendAppConfig()
   implicit val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
-  private val totalSearchArrivals = 8
-  private val someSearchMatches   = 5
+  private val totalSearchArrivals                             = 8
+  private val someSearchMatches                               = 5
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 

@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
 
 @Singleton
-class SearchResultsAppConfig @Inject()(configuration: Configuration) {
+class SearchResultsAppConfig @Inject() (configuration: Configuration) {
 
   private val defaultMaxSearchResults = 100
   lazy val maxSearchResults: Int      = configuration.getOptional[Int]("search.maxSearchResults").getOrElse(defaultMaxSearchResults)

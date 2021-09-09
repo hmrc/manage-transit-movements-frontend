@@ -23,7 +23,7 @@ object FakeSearchResultsAppConfig {
 
   def apply(configMapping: (String, Any)*) = {
     val default = Map(
-      "search.maxSearchResults"           -> "100"
+      "search.maxSearchResults" -> "100"
     )
 
     new SearchResultsAppConfig(Configuration.from(default ++ configMapping.toMap))
