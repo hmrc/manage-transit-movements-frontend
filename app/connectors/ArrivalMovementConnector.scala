@@ -24,6 +24,7 @@ import models.arrival.{MessagesSummary, XMLSubmissionNegativeAcknowledgementMess
 import models.{ArrivalId, Arrivals, ResponseMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
 
