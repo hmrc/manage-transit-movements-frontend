@@ -18,7 +18,7 @@ package views
 
 import java.time.LocalDateTime
 
-import controllers.testOnly.routes
+import controllers.departure.routes
 import generators.Generators
 import models.Departure
 import org.jsoup.nodes.Document
@@ -57,6 +57,12 @@ class ViewAllDeparturesViewSpec extends MovementsTableViewBehaviours("viewAllDep
   private val doc: Document = renderDocument(formatToJson).futureValue
 
   behave like pageWithHeading(doc, messageKeyPrefix)
+
+  behave like pageWithMovementSearch(
+    doc = doc,
+    id = "lrn",
+    expectedText = "movement.search.departure.title"
+  )
 
   behave like pageWithPagination(routes.ViewAllDeparturesController.onPageLoad(None).url)
 

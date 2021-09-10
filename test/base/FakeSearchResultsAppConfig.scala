@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package base
 
-import java.time.LocalDateTime
+import config.SearchResultsAppConfig
+import play.api.Configuration
 
-import models.departure.DepartureStatus
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+object FakeSearchResultsAppConfig {
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
+  def apply(configMapping: (String, Any)*) = {
+    val default = Map(
+      "search.maxSearchResults" -> "100"
+    )
 
-object Departure {
+    new SearchResultsAppConfig(Configuration.from(default ++ configMapping.toMap))
+  }
 
-  implicit val reads: Reads[Departure] = (
-    (__ \ "departureId").read[DepartureId] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "status").read[DepartureStatus]
-  )(Departure.apply _)
 }

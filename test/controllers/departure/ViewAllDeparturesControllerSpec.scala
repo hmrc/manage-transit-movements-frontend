@@ -16,14 +16,15 @@
 
 package controllers.departure
 
-import base.SpecBase
-import base.MockNunjucksRendererApp
+import java.time.LocalDateTime
+
+import base.{MockNunjucksRendererApp, SpecBase}
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, anyInt, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
@@ -33,10 +34,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
-import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
+class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
 
   private val mockDepartureResponse: Departures =
     Departures(
@@ -67,20 +67,20 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
         bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector)
       )
 
-  "ViewDepartures Controller" - {
+  "ViewAllDepartures Controller" - {
 
     "return OK and the correct view for a GET" in {
 
-      when(mockDeparturesMovementConnector.getDepartures()(any()))
+      when(mockDeparturesMovementConnector.getPagedDepartures(eqTo(1), anyInt())(any()))
         .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
       when(mockNunjucksRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(Some(1)).url)
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -90,7 +90,7 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       val expectedJson = Json.obj()
 
-      templateCaptor.getValue mustEqual "viewDepartures.njk"
+      templateCaptor.getValue mustEqual "viewAllDepartures.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
@@ -98,13 +98,13 @@ class ViewDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonM
 
       when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-      when(mockDeparturesMovementConnector.getDepartures()(any()))
+      when(mockDeparturesMovementConnector.getPagedDepartures(eqTo(1), anyInt())(any()))
         .thenReturn(Future.successful(None))
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val request = FakeRequest(GET, routes.ViewDeparturesController.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(Some(1)).url)
 
       val result = route(app, request).value
 

@@ -123,7 +123,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             .willReturn(okJson(arrivalsResponseJson.toString()))
         )
 
-        connector.getArrivalSearchResults("theMrn", "100").futureValue mustBe Some(expectedResult)
+        connector.getArrivalSearchResults("theMrn", 100).futureValue mustBe Some(expectedResult)
       }
 
       "must return a None when arrivals API returns an error response" in {
@@ -138,7 +138,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
                     .withStatus(errorResponse)
                 )
             )
-            connector.getArrivalSearchResults("theMrn", "100").futureValue mustBe None
+            connector.getArrivalSearchResults("theMrn", 100).futureValue mustBe None
         }
       }
     }
@@ -164,7 +164,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         connector.getPagedArrivals(42, 100).futureValue mustBe Some(expectedResult)
       }
 
-      "must return a None when getArrivals returns an error response" in {
+      "must return a None when getPagedArrivals returns an error response" in {
 
         forAll(errorResponses) {
           errorResponse =>

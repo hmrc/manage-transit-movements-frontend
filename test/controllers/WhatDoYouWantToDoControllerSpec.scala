@@ -51,7 +51,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
     Arrivals(1, 2, Some(3), Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, "Submitted", "test mrn")))
 
   private val mockDepartureResponse =
-    Departures(1, 2, Some(3), Seq(Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted)))
+    Departures(
+      retrievedDepartures = 1,
+      totalDepartures = 2,
+      totalMatched = None,
+      departures = Seq(
+        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted)
+      )
+    )
 
   override def beforeEach: Unit = {
     reset(mockArrivalMovementConnector)

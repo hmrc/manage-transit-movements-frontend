@@ -16,7 +16,8 @@
 
 package views
 
-import controllers.testOnly.routes
+import java.time.LocalDateTime
+
 import generators.Generators
 import models.Arrival
 import org.jsoup.nodes.Document
@@ -25,8 +26,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewArrival, ViewArrivalMovements}
 import views.behaviours.MovementsTableViewBehaviours
-
-import java.time.LocalDateTime
 
 class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArrivals.njk") with Generators with ScalaCheckPropertyChecks {
 
@@ -58,13 +57,19 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArriv
 
   behave like pageWithHeading(doc, messageKeyPrefix)
 
-  behave like pageWithPagination(routes.ViewAllArrivalsController.onPageLoad(None).url)
+  behave like pageWithPagination(controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
 
   behave like pageWithMovementsData[ViewArrival](
     doc = doc,
     viewMovements = viewMovements,
     messageKeyPrefix = messageKeyPrefix,
     refType = "mrn"
+  )
+
+  behave like pageWithMovementSearch(
+    doc = doc,
+    id = "mrn",
+    expectedText = "movement.search.title"
   )
 
   behave like pageWithLink(

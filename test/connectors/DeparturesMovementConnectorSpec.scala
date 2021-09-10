@@ -73,10 +73,10 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
       "must return a successful future response" in {
         val expectedResult =
           Departures(
-            1,
-            2,
-            Some(3),
-            Seq(
+            retrievedDepartures = 1,
+            totalDepartures = 2,
+            totalMatched = Some(3),
+            departures = Seq(
               Departure(
                 DepartureId(22),
                 localDateTime,
@@ -116,21 +116,21 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
       "must return a successful future response" in {
         val expectedResult =
           Departures(
-            1,
-            2,
-            Some(3),
+            retrievedDepartures = 1,
+            totalDepartures = 2,
+            totalMatched = Some(3),
             Seq(
               Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
             )
           )
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/movements/departures?mrn=theMrn&pageSize=100"))
+          get(urlEqualTo(s"/$startUrl/movements/departures?lrn=theLrn&pageSize=100"))
             .withHeader("Channel", containing("web"))
             .willReturn(okJson(departuresResponseJson.toString()))
         )
 
-        connector.getDepartureSearchResults("theMrn", "100").futureValue mustBe Some(expectedResult)
+        connector.getDepartureSearchResults("theLrn", 100).futureValue mustBe Some(expectedResult)
       }
 
       "must return a None when arrivals API returns an error response" in {
@@ -138,14 +138,14 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
         forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
-              get(urlEqualTo(s"/$startUrl/movements/departures?mrn=theMrn&pageSize=100"))
+              get(urlEqualTo(s"/$startUrl/movements/departures?lrn=theLrn&pageSize=100"))
                 .withHeader("Channel", containing("web"))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)
                 )
             )
-            connector.getDepartureSearchResults("theMrn", "100").futureValue mustBe None
+            connector.getDepartureSearchResults("theLrn", 100).futureValue mustBe None
         }
       }
     }
@@ -154,9 +154,9 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
       "must return a successful future response" in {
         val expectedResult =
           Departures(
-            1,
-            2,
-            Some(3),
+            retrievedDepartures = 1,
+            totalDepartures = 2,
+            totalMatched = Some(3),
             Seq(
               Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
             )
@@ -254,15 +254,15 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
         val xml: NodeSeq = <CC051B>
           <HEAHEA>
-          <DocNumHEA5>{noReleaseMessage.mrn}</DocNumHEA5>
-          {
+            <DocNumHEA5>{noReleaseMessage.mrn}</DocNumHEA5>
+            {
           noReleaseMessage.noReleaseMotivation.fold(NodeSeq.Empty) {
             noReleaseMotivation =>
               <NoRelMotHEA272>{noReleaseMotivation}</NoRelMotHEA272>
           }
         }
-          <TotNumOfIteHEA305>{noReleaseMessage.totalNumberOfItems}</TotNumOfIteHEA305>
-        </HEAHEA>
+            <TotNumOfIteHEA305>{noReleaseMessage.totalNumberOfItems}</TotNumOfIteHEA305>
+          </HEAHEA>
           <CUSOFFDEPEPT><RefNumEPT1>{noReleaseMessage.officeOfDepartureRefNumber}</RefNumEPT1></CUSOFFDEPEPT>
           <CONRESERS>
             <ConResCodERS16>{noReleaseMessage.controlResult.code}</ConResCodERS16>

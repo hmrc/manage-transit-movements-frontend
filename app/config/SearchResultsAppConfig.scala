@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package config
 
-import java.time.LocalDateTime
+import com.google.inject.{Inject, Singleton}
+import play.api.Configuration
 
-import models.departure.DepartureStatus
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+@Singleton
+class SearchResultsAppConfig @Inject() (configuration: Configuration) {
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
-
-object Departure {
-
-  implicit val reads: Reads[Departure] = (
-    (__ \ "departureId").read[DepartureId] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "status").read[DepartureStatus]
-  )(Departure.apply _)
+  private val defaultMaxSearchResults = 100
+  lazy val maxSearchResults: Int      = configuration.getOptional[Int]("search.maxSearchResults").getOrElse(defaultMaxSearchResults)
 }

@@ -55,8 +55,8 @@ class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: Ht
   def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] =
     doGetDepartures(Seq.empty)
 
-  def getDepartureSearchResults(mrn: String, pageSize: String)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
-    doGetDepartures(Seq("mrn" -> mrn, "pageSize" -> pageSize))
+  def getDepartureSearchResults(lrn: String, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
+    doGetDepartures(Seq("lrn" -> lrn, "pageSize" -> pageSize.toString))
 
   def getPagedDepartures(page: Int, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
     doGetDepartures(Seq("page" -> page.toString, "pageSize" -> pageSize.toString))

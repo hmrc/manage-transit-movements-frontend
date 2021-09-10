@@ -16,6 +16,8 @@
 
 package views
 
+import java.time.LocalDateTime
+
 import generators.Generators
 import models.Departure
 import org.jsoup.nodes.Document
@@ -25,9 +27,7 @@ import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewDeparture, ViewDepartureMovements}
 import views.behaviours.MovementsTableViewBehaviours
 
-import java.time.LocalDateTime
-
-class ViewDeparturesSpec extends MovementsTableViewBehaviours("viewDepartures.njk") with Generators with ScalaCheckPropertyChecks {
+class ViewDeparturesSearchResultsSpec extends MovementsTableViewBehaviours("viewDeparturesSearchResults.njk") with Generators with ScalaCheckPropertyChecks {
 
   private val messageKeyPrefix: String = "viewDepartures"
 
@@ -57,6 +57,12 @@ class ViewDeparturesSpec extends MovementsTableViewBehaviours("viewDepartures.nj
 
   behave like pageWithHeading(doc, messageKeyPrefix)
 
+  behave like pageWithMovementSearch(
+    doc = doc,
+    id = "lrn",
+    expectedText = "movement.search.departure.title"
+  )
+
   behave like pageWithMovementsData[ViewDeparture](
     doc = doc,
     viewMovements = viewMovements,
@@ -66,16 +72,9 @@ class ViewDeparturesSpec extends MovementsTableViewBehaviours("viewDepartures.nj
 
   behave like pageWithLink(
     doc = doc,
-    id = "make-departure-notification",
-    expectedText = s"$messageKeyPrefix.makeDepartureNotification",
-    expectedHref = frontendAppConfig.declareDepartureStartWithLRNUrl
-  )
-
-  behave like pageWithLink(
-    doc = doc,
-    id = "go-to-manage-transit-movements",
-    expectedText = s"$messageKeyPrefix.goToManageTransitMovements",
-    expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
+    id = "go-to-view-all-movements",
+    expectedText = "viewAllMovements.link.title",
+    expectedHref = controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
   )
 
 }
