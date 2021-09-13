@@ -94,7 +94,6 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
     }
   }
 
-
   "Json writes" - {
     "adds url from FrontendAppConfig" in {
       val testUrl = "testUrl"
