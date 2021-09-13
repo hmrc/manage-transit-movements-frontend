@@ -35,15 +35,15 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
     date.format(formatter)
   }
 
-  "apply groups Departures by dates and reformat date to 'd MMMM yyyy'" in {
+  "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
     val localDateToday     = LocalDate.now()
     val localDateYesterday = LocalDate.now().minusDays(1)
     val localTime          = LocalTime.now()
 
-    val departuresGen: LocalDate => Gen[Seq[ViewDeparture]] =
+    val movementsGen: LocalDate => Gen[Seq[ViewDeparture]] =
       date =>
-        seqWithMaxLength(10) {
+        seqWithMaxLength(1) {
           Arbitrary {
             arbitrary[ViewDeparture].map(
               _.copy(updatedDate = date, updatedTime = localTime)
@@ -51,22 +51,24 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
           }
         }
 
-    forAll(departuresGen(localDateToday).suchThat(_.nonEmpty), departuresGen(localDateYesterday).suchThat(_.nonEmpty)) {
-      (todaysDepartures: Seq[ViewDeparture], yesterdaysDepartures: Seq[ViewDeparture]) =>
-        val result: ViewDepartureMovements = ViewDepartureMovements(todaysDepartures ++ yesterdaysDepartures)
+    forAll(movementsGen(localDateToday).suchThat(_.nonEmpty), movementsGen(localDateYesterday).suchThat(_.nonEmpty)) {
+      (todayMovements: Seq[ViewDeparture], yesterdayMovements: Seq[ViewDeparture]) =>
+        val result: ViewDepartureMovements =
+          ViewDepartureMovements(todayMovements ++ yesterdayMovements)
 
-        result.dataRows(0)._2 mustEqual todaysDepartures
-        result.dataRows(1)._2 mustEqual yesterdaysDepartures
+        result.dataRows(0)._2 mustEqual todayMovements
+        result.dataRows(1)._2 mustEqual yesterdayMovements
     }
   }
 
-  "apply ordering to DepartureMovements by descending time in the same date" in {
-    val localDateToday  = LocalDate.now
+  "apply ordering to Movements by descending time in the same date" in {
+    val localDateToday = LocalDate.now
+
     val localTime       = LocalTime.now
     val localTimeMinus1 = LocalTime.now.minusHours(1)
     val localTimeMinus2 = LocalTime.now.minusHours(2)
 
-    val departureMovementsGen: LocalTime => Arbitrary[ViewDeparture] = {
+    val movementsGen: LocalTime => Arbitrary[ViewDeparture] = {
       time =>
         Arbitrary {
           arbitrary[ViewDeparture].map(
@@ -76,19 +78,22 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
     }
 
     forAll(
-      departureMovementsGen(localTime).arbitrary,
-      departureMovementsGen(localTimeMinus1).arbitrary,
-      departureMovementsGen(localTimeMinus2).arbitrary
+      movementsGen(localTime).arbitrary,
+      movementsGen(localTimeMinus1).arbitrary,
+      movementsGen(localTimeMinus2).arbitrary
     ) {
-      (currentDeparture, departureMinus1, departureMinus2) =>
-        val departureInWrongOrder = Seq(departureMinus1, departureMinus2, currentDeparture)
-        val result                = ViewDepartureMovements(departureInWrongOrder)
+      (movement, movementMinus1, movementMinus2) =>
+        val movementsInWrongOrder: Seq[ViewDeparture] =
+          Seq(movementMinus1, movementMinus2, movement)
+        val result: ViewDepartureMovements =
+          ViewDepartureMovements(movementsInWrongOrder)
 
-        val expectedResult = Seq(departureMinus2, departureMinus1, currentDeparture)
-
-        result.dataRows(0)._2 mustEqual expectedResult
+        val expectedResult: Seq[ViewDeparture] =
+          Seq(movement, movementMinus1, movementMinus2)
+        result.dataRows.head._2 mustEqual expectedResult
     }
   }
+
 
   "Json writes" - {
     "adds url from FrontendAppConfig" in {
