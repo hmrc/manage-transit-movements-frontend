@@ -37,8 +37,8 @@ class ViewAllDeparturesViewSpec extends MovementsTableViewBehaviours("viewAllDep
   private val day3: LocalDateTime   = LocalDateTime.parse("2020-08-14 04:04:04", dateTimeFormat)
   private val day4: LocalDateTime   = LocalDateTime.parse("2020-08-13 03:03:03", dateTimeFormat)
   private val day5: LocalDateTime   = LocalDateTime.parse("2020-08-12 02:02:02", dateTimeFormat)
-  private val day6_1: LocalDateTime = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
-  private val day6_2: LocalDateTime = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
+  private val day6_1: LocalDateTime = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
+  private val day6_2: LocalDateTime = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
 
   private val departure1 = arbitrary[Departure].sample.value.copy(updated = day1)
   private val departure2 = arbitrary[Departure].sample.value.copy(updated = day2)

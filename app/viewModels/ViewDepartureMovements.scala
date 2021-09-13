@@ -44,7 +44,7 @@ object ViewDepartureMovements {
       result =>
         val dateFormater: DateTimeFormatter =
           DateTimeFormatter.ofPattern("d MMMM yyyy")
-        (result._1.format(dateFormater), result._2.sortBy(_.updatedTime))
+        (result._1.format(dateFormater), result._2.sortBy(_.updatedTime).reverse)
     }
   }
 
