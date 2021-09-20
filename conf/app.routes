@@ -20,9 +20,5 @@ GET        /view-arrivals-search-results                                      co
 
 GET        /arrivals/:arrivalId/unloading-permission-pdf                      controllers.arrival.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
 
-GET        /cannot-use-this-service-northern-ireland                          controllers.NorthernIrelandInterstitialController.onPageLoad
-
-GET        /cannot-use-this-service                                           controllers.OldServiceInterstitialController.onPageLoad
-
 GET        /:arrivalId/negative-acknowledgement                               controllers.arrival.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId: ArrivalId)
 GET        /:arrivalId/unloading-remarks-negative-acknowledgement             controllers.arrival.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId: ArrivalId)
