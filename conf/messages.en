@@ -239,17 +239,6 @@ pageNotFound.paragraph2 = If you pasted the web address, check you copied the en
 pageNotFound.paragraph3Start = If the web address is correct or you selected a link or button,
 pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpdesk if you need to speak to someone about your transit movement (opens in a new tab)
 
-northernIrelandInterstitial.title = You cannot use this service
-northernIrelandInterstitial.heading = You cannot use this service
-northernIrelandInterstitial.youMust = You must:
-northernIrelandInterstitial.viewOldTransit = view old transit movements on the original NCTS service (opens in a new tab)
-northernIrelandInterstitial.readAboutMakingDeparture = read about making departure declarations or arrival notifications for Northern Ireland movements (opens in a new tab)
-
-oldServiceInterstitial.title = You cannot use this service
-oldServiceInterstitial.heading = You cannot use this service
-oldServiceInterstitial.youMust = You must
-oldServiceInterstitial.ntcsSerivice = use the original NCTS service (opens in a new tab)
-
 noReleaseForTransit.title = There is a problem with this departure declaration
 noReleaseForTransit.heading = There is a problem with this departure declaration
 noReleaseForTransit.mrn = Movement reference number
