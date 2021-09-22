@@ -17,7 +17,6 @@
 package models.departure
 
 import models.{Enumerable, WithName}
-import play.api.libs.json.{Reads, __}
 
 sealed trait MessageType
 
@@ -27,24 +26,25 @@ object MessageType extends Enumerable.Implicits {
 
   case object DepartureSubmitted extends WithName("IE015") with MessageType
 
-  case object PositiveAcknowledgement extends WithName("IE028") with MessageType
+  case object PositiveAcknowledgement extends WithName("IE928") with MessageType
 
   case object ReleaseForTransit extends WithName("IE029") with MessageType
 
   case object DepartureRejected extends WithName("IE016") with MessageType
 
-  //case object DepartureDeclarationReceived  extends WithName("IE028") with MessageType
-  // case object GuaranteeNotValid  extends WithName("IE028") with MessageType
-  // case object TransitDeclarationSent  extends WithName("IE028") with MessageType
+  //case object DepartureDeclarationReceived extends WithName("IE028") with MessageType
+  case object GuaranteeNotValid extends WithName("IE055") with MessageType
+
+  // case object TransitDeclarationSent extends WithName("IE028") with MessageType
   case object WriteOffNotification extends WithName("IE045") with MessageType
 
   case object DeclarationCancellationRequest extends WithName("IE014") with MessageType
 
-  //  case object CancellationSubmitted  extends WithName("IE028") with MessageType
-  // case object DepartureCancelled  extends WithName("IE028") with MessageType
+  //  case object CancellationSubmitted extends WithName("IE028") with MessageType
+  // case object DepartureCancelled extends WithName("IE028") with MessageType
   case object CancellationDecision extends WithName("IE009") with MessageType
 
-  case object NoReleaseForTransit extends WithName("IE029") with MessageType
+  case object NoReleaseForTransit extends WithName("IE051") with MessageType
 
   case object ControlDecisionNotification extends WithName("IE060") with MessageType
   //  case object DepartureSubmittedNegativeAcknowledgement  extends WithName("IE028") with MessageType
@@ -59,7 +59,7 @@ object MessageType extends Enumerable.Implicits {
       ReleaseForTransit,
       DepartureRejected,
       //      DepartureDeclarationReceived,
-      //      GuaranteeNotValid,
+      GuaranteeNotValid,
       //      TransitDeclarationSent,
       WriteOffNotification,
       DeclarationCancellationRequest,
@@ -69,10 +69,11 @@ object MessageType extends Enumerable.Implicits {
       NoReleaseForTransit,
       ControlDecisionNotification
       //      DepartureSubmittedNegativeAcknowledgement,
+      //        DeclarationCancellationRequestNegativeAcknowledgement
       //      InvalidStatus
     )
 
-   implicit val enumerable: Enumerable[MessageType] =
+  implicit val enumerable: Enumerable[MessageType] =
     Enumerable(
       values.map(
         v => v.toString -> v

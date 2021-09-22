@@ -17,106 +17,20 @@
 package models.departure
 
 import base.SpecBase
-import models.departure.DepartureStatus._
+import models.departure.MessageType._
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.libs.json.JsString
 
 class MessageTypeSpec extends SpecBase {
 
-  "Deserialization" - {
-    "is successful for MrnAllocated" in {
-      val json = JsString(MrnAllocated.toString)
+  "Must Deserialize"  in {
 
-      json.validate[MessageType] mustEqual MrnAllocated
+      val gen = Gen.oneOf(MessageType.values)
+
+      forAll(gen) {
+        messageType =>
+          JsString(messageType.toString).validate[MessageType].asOpt.value mustEqual messageType
+      }
     }
-
-    "is successful for DepartureSubmitted" in {
-      val json = JsString("DepartureSubmitted")
-
-      json.as[MessageType] mustEqual DepartureSubmitted
-    }
-
-    "is successful for PositiveAcknowledgement" in {
-      val json = JsString("PositiveAcknowledgement")
-
-      json.as[MessageType] mustEqual PositiveAcknowledgement
-    }
-
-    "is successful for ReleaseForTransit" in {
-      val json = JsString("ReleaseForTransit")
-
-      json.as[MessageType] mustEqual ReleaseForTransit
-    }
-
-    "is successful for DepartureRejected" in {
-      val json = JsString("DepartureRejected")
-
-      json.as[MessageType] mustEqual DepartureRejected
-    }
-
-    "is successful for DepartureDeclarationReceived" in {
-      val json = JsString("DepartureDeclarationReceived")
-
-      json.as[MessageType] mustEqual DepartureDeclarationReceived
-    }
-
-    "is successful for GuaranteeNotValid" in {
-      val json = JsString("GuaranteeNotValid")
-
-      json.as[MessageType] mustEqual GuaranteeNotValid
-    }
-
-    "is successful for TransitDeclarationSent" in {
-      val json = JsString("TransitDeclarationSent")
-
-      json.as[MessageType] mustEqual TransitDeclarationSent
-    }
-
-    "is successful for WriteOffNotification" in {
-      val json = JsString("WriteOffNotification")
-
-      json.as[MessageType] mustEqual WriteOffNotification
-    }
-
-    "is successful for DeclarationCancellationRequest" in {
-      val json = JsString("DeclarationCancellationRequest")
-
-      json.as[MessageType] mustEqual DeclarationCancellationRequest
-    }
-
-    "is successful for CancellationSubmitted" in {
-      val json = JsString("CancellationSubmitted")
-
-      json.as[MessageType] mustEqual CancellationSubmitted
-    }
-
-    "is successful for DepartureCancelled" in {
-      val json = JsString("DepartureCancelled")
-
-      json.as[MessageType] mustEqual DepartureCancelled
-    }
-
-    "is successful for CancellationDecision" in {
-      val json = JsString("CancellationDecision")
-
-      json.as[MessageType] mustEqual CancellationDecision
-    }
-
-    "is successful for NoReleaseForTransit" in {
-      val json = JsString("NoReleaseForTransit")
-
-      json.as[MessageType] mustEqual NoReleaseForTransit
-    }
-
-    "is successful for ControlDecisionNotification" in {
-      val json = JsString("ControlDecisionNotification")
-
-      json.as[MessageType] mustEqual ControlDecisionNotification
-    }
-
-    "is successful for InvalidStatus" in {
-      val json = JsString("invalid")
-
-      json.as[MessageType] mustEqual InvalidStatus
-    }
-  }
 }
