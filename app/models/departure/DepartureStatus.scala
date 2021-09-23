@@ -16,30 +16,30 @@
 
 package models.departure
 
-import play.api.libs.json.{__, Reads}
+import models.{Enumerable, WithName}
 
 sealed trait DepartureStatus
 
-object DepartureStatus {
+object DepartureStatus extends Enumerable.Implicits {
 
-  case object MrnAllocated extends DepartureStatus
-  case object DepartureSubmitted extends DepartureStatus
-  case object PositiveAcknowledgement extends DepartureStatus
-  case object ReleaseForTransit extends DepartureStatus
-  case object DepartureRejected extends DepartureStatus
-  case object DepartureDeclarationReceived extends DepartureStatus
-  case object GuaranteeNotValid extends DepartureStatus
-  case object TransitDeclarationSent extends DepartureStatus
-  case object WriteOffNotification extends DepartureStatus
-  case object DeclarationCancellationRequest extends DepartureStatus
-  case object CancellationSubmitted extends DepartureStatus
-  case object DepartureCancelled extends DepartureStatus
-  case object CancellationDecision extends DepartureStatus
-  case object NoReleaseForTransit extends DepartureStatus
-  case object ControlDecisionNotification extends DepartureStatus
-  case object DepartureSubmittedNegativeAcknowledgement extends DepartureStatus
-  case object DeclarationCancellationRequestNegativeAcknowledgement extends DepartureStatus
-  case object InvalidStatus extends DepartureStatus
+  case object MrnAllocated extends WithName("IE028") with DepartureStatus
+  case object DepartureSubmitted extends WithName("IE015") with DepartureStatus
+  case object PositiveAcknowledgement extends WithName("IE928") with DepartureStatus
+  case object ReleaseForTransit extends WithName("IE029") with DepartureStatus
+  case object DepartureRejected extends WithName("IE016") with DepartureStatus
+  case object GuaranteeNotValid extends WithName("IE055") with DepartureStatus
+  case object WriteOffNotification extends WithName("IE045") with DepartureStatus
+  case object DeclarationCancellationRequest extends WithName("IE014") with DepartureStatus
+  case object CancellationDecision extends WithName("IE009") with DepartureStatus
+  case object NoReleaseForTransit extends WithName("IE051") with DepartureStatus
+  case object ControlDecisionNotification extends WithName("IE060") with DepartureStatus
+  case object DepartureSubmittedNegativeAcknowledgement  extends WithName("IE917") with DepartureStatus
+  // case object DepartureCancelled extends WithName("IE016") with DepartureStatus
+  // case object DepartureDeclarationReceived extends WithName("IE028") with DepartureStatus
+  // case object TransitDeclarationSent extends WithName("IE028") with DepartureStatus
+  // case object CancellationSubmitted extends WithName("IE028") with DepartureStatus
+  // case object DeclarationCancellationRequestNegativeAcknowledgement  extends WithName("IE028") with DepartureStatus
+  // case object InvalidStatus  extends WithName("IE028") with DepartureStatus
 
   val values: Seq[DepartureStatus] =
     Seq(
@@ -48,38 +48,26 @@ object DepartureStatus {
       PositiveAcknowledgement,
       ReleaseForTransit,
       DepartureRejected,
-      DepartureDeclarationReceived,
+      //      DepartureDeclarationReceived,
       GuaranteeNotValid,
-      TransitDeclarationSent,
+      //      TransitDeclarationSent,
       WriteOffNotification,
       DeclarationCancellationRequest,
-      CancellationSubmitted,
-      DepartureCancelled,
+      //      CancellationSubmitted,
+      //      DepartureCancelled,
       CancellationDecision,
       NoReleaseForTransit,
-      ControlDecisionNotification,
-      DepartureSubmittedNegativeAcknowledgement,
-      InvalidStatus
+      ControlDecisionNotification
+      //      DepartureSubmittedNegativeAcknowledgement,
+      //        DeclarationCancellationRequestNegativeAcknowledgement
+      //      InvalidStatus
     )
 
-  implicit val reads: Reads[DepartureStatus] = __.read[String].map {
-    case "MrnAllocated"                                          => MrnAllocated
-    case "DepartureSubmitted"                                    => DepartureSubmitted
-    case "PositiveAcknowledgement"                               => PositiveAcknowledgement
-    case "ReleaseForTransit"                                     => ReleaseForTransit
-    case "DepartureRejected"                                     => DepartureRejected
-    case "DepartureDeclarationReceived"                          => DepartureDeclarationReceived
-    case "GuaranteeNotValid"                                     => GuaranteeNotValid
-    case "TransitDeclarationSent"                                => TransitDeclarationSent
-    case "WriteOffNotification"                                  => WriteOffNotification
-    case "DeclarationCancellationRequest"                        => DeclarationCancellationRequest
-    case "CancellationSubmitted"                                 => CancellationSubmitted
-    case "DepartureCancelled"                                    => DepartureCancelled
-    case "CancellationDecision"                                  => CancellationDecision
-    case "NoReleaseForTransit"                                   => NoReleaseForTransit
-    case "ControlDecisionNotification"                           => ControlDecisionNotification
-    case "DepartureSubmittedNegativeAcknowledgement"             => DepartureSubmittedNegativeAcknowledgement
-    case "DeclarationCancellationRequestNegativeAcknowledgement" => DeclarationCancellationRequestNegativeAcknowledgement
-    case _                                                       => InvalidStatus
-  }
+  implicit val enumerable: Enumerable[DepartureStatus] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
+
 }

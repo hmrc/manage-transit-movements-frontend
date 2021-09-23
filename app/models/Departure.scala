@@ -30,6 +30,6 @@ object Departure {
     (__ \ "departureId").read[DepartureId] and
       (__ \ "updated").read[LocalDateTime] and
       (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "latestMessage").read[DepartureStatus]
+      (__ \ "latestMessageType").read[DepartureStatus]
   )(Departure.apply _)
 }
