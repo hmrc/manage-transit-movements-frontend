@@ -20,17 +20,25 @@ import base.SpecBase
 import models.departure.DepartureStatus._
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsString, JsSuccess}
 
 class DepartureStatusSpec extends SpecBase {
 
-  "must deserialize"  in {
+  "must deserialize" - {
+
+    "when given a valid message type" in {
 
       val gen = Gen.oneOf(DepartureStatus.values)
 
       forAll(gen) {
         departureStatus =>
-          JsString(departureStatus.toString).validate[DepartureStatus].asOpt.value mustEqual departureStatus
+          JsString(departureStatus.toString).validate[DepartureStatus] mustEqual JsSuccess(departureStatus)
       }
     }
+
+    "when given an invalid message type" in {
+
+      JsString("Something else").validate[DepartureStatus] mustEqual JsSuccess(InvalidStatus)
+    }
+  }
 }

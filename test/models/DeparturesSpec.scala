@@ -41,7 +41,7 @@ class DeparturesSpec extends SpecBase {
                 "departureId"     -> 22,
                 "updated"         -> localDateTime,
                 "referenceNumber" -> "lrn",
-                "latestMessage"          -> DepartureSubmitted.toString
+                "latestMessageType"          -> DepartureSubmitted.toString
               )
             )
         )

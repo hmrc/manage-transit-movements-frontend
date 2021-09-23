@@ -17,29 +17,32 @@
 package models.departure
 
 import models.{Enumerable, WithName}
+import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
 
 sealed trait DepartureStatus
 
-object DepartureStatus extends Enumerable.Implicits {
+object DepartureStatus {
 
-  case object MrnAllocated extends WithName("IE028") with DepartureStatus
-  case object DepartureSubmitted extends WithName("IE015") with DepartureStatus
-  case object PositiveAcknowledgement extends WithName("IE928") with DepartureStatus
-  case object ReleaseForTransit extends WithName("IE029") with DepartureStatus
-  case object DepartureRejected extends WithName("IE016") with DepartureStatus
-  case object GuaranteeNotValid extends WithName("IE055") with DepartureStatus
-  case object WriteOffNotification extends WithName("IE045") with DepartureStatus
-  case object DeclarationCancellationRequest extends WithName("IE014") with DepartureStatus
-  case object CancellationDecision extends WithName("IE009") with DepartureStatus
-  case object NoReleaseForTransit extends WithName("IE051") with DepartureStatus
-  case object ControlDecisionNotification extends WithName("IE060") with DepartureStatus
-  case object DepartureSubmittedNegativeAcknowledgement  extends WithName("IE917") with DepartureStatus
-  // case object DepartureCancelled extends WithName("IE016") with DepartureStatus
-  // case object DepartureDeclarationReceived extends WithName("IE028") with DepartureStatus
-  // case object TransitDeclarationSent extends WithName("IE028") with DepartureStatus
-  // case object CancellationSubmitted extends WithName("IE028") with DepartureStatus
-  // case object DeclarationCancellationRequestNegativeAcknowledgement  extends WithName("IE028") with DepartureStatus
-  // case object InvalidStatus  extends WithName("IE028") with DepartureStatus
+  case object CancellationDecision                      extends WithName("IE009") with DepartureStatus
+  case object DeclarationCancellationRequest            extends WithName("IE014") with DepartureStatus
+  case object DepartureSubmitted                        extends WithName("IE015") with DepartureStatus
+  case object DepartureRejected                         extends WithName("IE016") with DepartureStatus
+  case object MrnAllocated                              extends WithName("IE028") with DepartureStatus
+  case object ReleaseForTransit                         extends WithName("IE029") with DepartureStatus
+  case object WriteOffNotification                      extends WithName("IE045") with DepartureStatus
+  case object NoReleaseForTransit                       extends WithName("IE051") with DepartureStatus
+  case object GuaranteeNotValid                         extends WithName("IE055") with DepartureStatus
+  case object ControlDecisionNotification               extends WithName("IE060") with DepartureStatus
+  case object DepartureSubmittedNegativeAcknowledgement extends WithName("IE917") with DepartureStatus
+  case object PositiveAcknowledgement                   extends WithName("IE928") with DepartureStatus
+  case object InvalidStatus                             extends DepartureStatus
+
+  // case object DepartureCancelled extends WithName("") with DepartureStatus
+  // case object DepartureDeclarationReceived extends WithName("") with DepartureStatus
+  // case object TransitDeclarationSent extends WithName("") with DepartureStatus
+  // case object CancellationSubmitted extends WithName("") with DepartureStatus
+  // case object DeclarationCancellationRequestNegativeAcknowledgement  extends WithName("") with DepartureStatus
+  // case object InvalidStatus  extends WithName("") with DepartureStatus
 
   val values: Seq[DepartureStatus] =
     Seq(
@@ -48,16 +51,16 @@ object DepartureStatus extends Enumerable.Implicits {
       PositiveAcknowledgement,
       ReleaseForTransit,
       DepartureRejected,
-      //      DepartureDeclarationReceived,
       GuaranteeNotValid,
-      //      TransitDeclarationSent,
       WriteOffNotification,
       DeclarationCancellationRequest,
-      //      CancellationSubmitted,
-      //      DepartureCancelled,
       CancellationDecision,
       NoReleaseForTransit,
       ControlDecisionNotification
+      //      DepartureDeclarationReceived,
+      //      TransitDeclarationSent,
+      //      CancellationSubmitted,
+      //      DepartureCancelled,
       //      DepartureSubmittedNegativeAcknowledgement,
       //        DeclarationCancellationRequestNegativeAcknowledgement
       //      InvalidStatus
@@ -70,4 +73,12 @@ object DepartureStatus extends Enumerable.Implicits {
       ): _*
     )
 
+  implicit def reads(implicit ev: Enumerable[DepartureStatus]): Reads[DepartureStatus] = {
+    Reads {
+      case JsString(str) =>
+        ev.withName(str).map(JsSuccess(_)).getOrElse(JsSuccess(InvalidStatus))
+      case _ =>
+        JsError("error.invalid")
+    }
+  }
 }

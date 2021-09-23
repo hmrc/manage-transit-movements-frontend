@@ -60,7 +60,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             "departureId"     -> 22,
             "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
-            "latestMessage"          -> DepartureSubmitted.toString
+            "latestMessageType" -> DepartureSubmitted.toString
           )
         )
     )
