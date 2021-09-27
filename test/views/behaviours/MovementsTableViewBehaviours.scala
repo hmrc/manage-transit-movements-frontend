@@ -92,7 +92,7 @@ abstract class MovementsTableViewBehaviours(override protected val viewUnderTest
                   s"action ${y._2 + 1}" - {
 
                     "display correct text" in {
-                      y._1.text() mustBe s"${viewMovements(x._2).actions(y._2).key} ${s"${viewMovements(x._2).actions(y._2).key}.hidden"}"
+                      y._1.text() mustBe s"${viewMovements(x._2).actions(y._2).key} viewArrivalNotifications.table.action.hidden"
                     }
 
                     "have correct id" in {

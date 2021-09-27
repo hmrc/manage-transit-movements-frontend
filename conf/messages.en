@@ -83,13 +83,10 @@ viewArrivalNotifications.table.procedure   = Procedure
 viewArrivalNotifications.table.status      = Status
 viewArrivalNotifications.table.action      = Action
 viewArrivalNotifications.table.action.viewErrors              = View errors
-viewArrivalNotifications.table.action.viewErrors.hidden       = View errors for {0}
 viewArrivalNotifications.table.action.unloadingRemarks        = Make unloading remarks
-viewArrivalNotifications.table.action.unloadingRemarks.hidden = Make unloading remarks for {0}
 viewArrivalNotifications.table.action.viewHistory             = View history
-viewArrivalNotifications.table.action.viewHistory.hidden      = View history for {0}
 viewArrivalNotifications.table.action.viewPDF                 = Unloading Permission PDF
-viewArrivalNotifications.table.action.viewPDF.hidden          = Unloading Permission PDF for {0}
+viewArrivalNotifications.table.action.hidden                  = for {0}
 
 movement.search.title = Search by movement reference number
 movement.search.departure.title = Search by local reference number
