@@ -49,34 +49,38 @@ abstract class MovementsTableViewBehaviours(override protected val viewUnderTest
       ls.eq(5).text() mustBe "11 August 2020"
     }
 
-    "generate a row for each movement" - {
-      val rows: Elements = doc.getElementsByAttributeValue("role", "row")
+    val rows: Elements = doc.select("tr[data-testrole^=movements-list_row]")
+
+    "generate a row for each movement" in {
       rows.size() mustEqual 7
+    }
+
+    "generate correct data in each row" - {
       rows.toList.zipWithIndex.forEach {
         x =>
           s"row ${x._2 + 1}" - {
 
             "display correct time" in {
-              val updated = x._1.selectFirst("[data-testrole*=updated]")
+              val updated = x._1.selectFirst("td[data-testrole*=-updated]")
               val time    = Json.toJson(viewMovements(x._2)).transform((JsPath \ "updated").json.pick[JsString]).get.value
               updated.ownText() mustBe time
               updated.text() mustBe s"$messageKeyPrefix.table.updated $time"
             }
 
             "display correct reference number" in {
-              val ref = x._1.selectFirst("[data-testrole*=ref]")
+              val ref = x._1.selectFirst("td[data-testrole*=-ref]")
               ref.ownText() mustBe viewMovements(x._2).referenceNumber
               ref.text() mustBe s"$messageKeyPrefix.table.$refType ${viewMovements(x._2).referenceNumber}"
             }
 
             "display correct status" in {
-              val status = x._1.selectFirst("[data-testrole*=status]")
+              val status = x._1.selectFirst("td[data-testrole*=-status]")
               status.ownText() mustBe viewMovements(x._2).status
               status.text() mustBe s"$messageKeyPrefix.table.status ${viewMovements(x._2).status}"
             }
 
             "display actions" - {
-              val actions = x._1.selectFirst("[data-testrole*=actions]")
+              val actions = x._1.selectFirst("td[data-testrole*=-actions]")
 
               "include hidden content" in {
                 actions.text() must include(s"$messageKeyPrefix.table.action")

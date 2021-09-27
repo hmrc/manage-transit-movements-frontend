@@ -18,20 +18,20 @@
       <tbody class="hmrc-responsive-table__data">
         {% for row in rows %}
           {% set rowIndex = loop.index %}
-          <tr role="row">
-            <td role="cell" data-testrole="movements-list_row{{ rowIndex }}-updated">
+          <tr data-testrole="movements-list_row{{ rowIndex }}">
+            <td data-testrole="movements-list_row{{ rowIndex }}-updated">
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingUpdated }}</span>
               {{ row.updated }}
             </td>
-            <td role="cell" data-testrole="movements-list_row{{ rowIndex }}-ref">
+            <td data-testrole="movements-list_row{{ rowIndex }}-ref">
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingMrn }}</span>
               {{ row.referenceNumber }}
             </td>
-            <td role="cell" data-testrole="movements-list_row{{ rowIndex }}-status">
+            <td data-testrole="movements-list_row{{ rowIndex }}-status">
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingStatus }}</span>
               {{ messages(row.status) }}
             </td>
-            <td role="cell" data-testrole="movements-list_row{{ rowIndex }}-actions">
+            <td data-testrole="movements-list_row{{ rowIndex }}-actions">
               <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingAction }}</span>
 
               {% for action in row.actions %}
