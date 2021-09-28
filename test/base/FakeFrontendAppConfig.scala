@@ -46,7 +46,14 @@ object FakeFrontendAppConfig {
         "loginContinue"                              -> "urls.loginContinue"
       ),
       "session" -> Map("timeoutSeconds" -> "1", "countdownSeconds" -> "2"),
-      "keys"    -> Map("enrolmentKey" -> "HMCE-NCTS-ORG", "enrolmentIdentifierKey" -> "VATRegNoTURN")
+      "keys"    -> Map(
+        "enrolmentKey" -> "HMRC-CTC-ORG",
+        "enrolmentIdentifierKey" -> "EORINumber",
+        "legacy"  -> Map(
+           "enrolmentKey" -> "HMCE-NCTS-ORG",
+           "enrolmentIdentifierKey" -> "VATRegNoTURN"
+        )
+      )
     )
 
     new FrontendAppConfig(Configuration.from(default ++ configMapping.toMap))

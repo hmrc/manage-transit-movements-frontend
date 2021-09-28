@@ -52,12 +52,11 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(EmptyPredicate)
       .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
-          (for {
-            enrolment <- enrolments.enrolments.filter(_.isActivated).find(_.key.equals(config.enrolmentKey))
-          } yield enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
-            case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
-            case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
-          }).getOrElse(checkForGroupEnrolment(maybeGroupId, config)(hc, request))
+          val newEnrolment         = getEnrolment(enrolments, config.newEnrolmentKey, config.newEnrolmentIdentifierKey, request, block)
+          lazy val legacyEnrolment = getEnrolment(enrolments, config.legacyEnrolmentKey, config.legacyEnrolmentIdentifierKey, request, block)
+
+          val enrolment = newEnrolment orElse legacyEnrolment
+          enrolment.getOrElse(checkForGroupEnrolment(config.newEnrolmentKey, maybeGroupId, config)(hc, request))
       }
   } recover {
     case _: NoActiveSession =>
@@ -66,7 +65,20 @@ class AuthenticatedIdentifierAction @Inject() (
       Redirect(routes.UnauthorisedController.onPageLoad())
   }
 
-  private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit
+  private def getEnrolment[A](enrolments: Enrolments,
+                              enrolmentKey: String,
+                              enrolmentIdKey: String,
+                              request: Request[A],
+                              block: IdentifierRequest[A] => Future[Result]
+  ): Option[Future[Result]] =
+    for {
+      enrolment <- enrolments.enrolments.filter(_.isActivated).find(_.key.equals(enrolmentKey))
+    } yield enrolment.getIdentifier(enrolmentIdKey) match {
+      case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
+      case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+    }
+
+  private def checkForGroupEnrolment[A](enrolmentKey: String, maybeGroupId: Option[String], config: FrontendAppConfig)(implicit
     hc: HeaderCarrier,
     request: Request[A]
   ): Future[Result] = {
@@ -74,7 +86,7 @@ class AuthenticatedIdentifierAction @Inject() (
 
     maybeGroupId match {
       case Some(groupId) =>
-        enrolmentStoreConnector.checkGroupEnrolments(groupId, config.enrolmentKey) flatMap {
+        enrolmentStoreConnector.checkGroupEnrolments(groupId, enrolmentKey) flatMap {
           case true  => renderer.render("unauthorisedWithGroupAccess.njk").map(Unauthorized(_))
           case false => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
         }

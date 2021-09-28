@@ -24,7 +24,7 @@ import controllers.actions.AuthActionSpec._
 import controllers.routes
 import matchers.JsonMatchers.containJson
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results
@@ -55,7 +55,12 @@ class IdentifierActionSpec extends SpecBase {
   val mockUIRender: Renderer                               = mock[Renderer]
   val frontendAppConfig                                    = FakeFrontendAppConfig()
 
-  val enrolmentsWithoutEori: Enrolments = Enrolments(
+  val LEGACY_ENROLMENT_KEY = "HMCE-NCTS-ORG"
+  val LEGACY_ENROLMENT_ID_KEY = "VATRegNoTURN"
+  val NEW_ENROLMENT_KEY = "HMRC-CTC-ORG"
+  val NEW_ENROLMENT_ID_KEY = "EORINumber"
+
+  val legacyEnrolmentsWithoutEori: Enrolments = Enrolments(
     Set(
       Enrolment(
         key = "IR-SA",
@@ -85,7 +90,7 @@ class IdentifierActionSpec extends SpecBase {
     )
   )
 
-  val enrolmentsWithEori: Enrolments = Enrolments(
+  val legacyEnrolmentsWithEori: Enrolments = Enrolments(
     Set(
       Enrolment(
         key = "IR-SA",
@@ -98,20 +103,20 @@ class IdentifierActionSpec extends SpecBase {
         state = "Activated"
       ),
       Enrolment(
-        key = "HMCE-NCTS-ORG",
+        key = LEGACY_ENROLMENT_KEY,
         identifiers = Seq(
           EnrolmentIdentifier(
-            "VATRegNoTURN",
+            LEGACY_ENROLMENT_ID_KEY,
             "123"
           )
         ),
         state = "NotYetActivated"
       ),
       Enrolment(
-        key = "HMCE-NCTS-ORG",
+        key = LEGACY_ENROLMENT_KEY,
         identifiers = Seq(
           EnrolmentIdentifier(
-            "VATRegNoTURN",
+            LEGACY_ENROLMENT_ID_KEY,
             "456"
           )
         ),
@@ -120,7 +125,7 @@ class IdentifierActionSpec extends SpecBase {
     )
   )
 
-  val enrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
+  val legacyEnrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
     Set(
       Enrolment(
         key = "IR-SA",
@@ -133,10 +138,100 @@ class IdentifierActionSpec extends SpecBase {
         state = "Activated"
       ),
       Enrolment(
-        key = "HMCE-NCTS-ORG",
+        key = LEGACY_ENROLMENT_KEY,
         identifiers = Seq(
           EnrolmentIdentifier(
-            "VATRegNoTURN",
+            LEGACY_ENROLMENT_ID_KEY,
+            "123"
+          )
+        ),
+        state = "NotYetActivated"
+      )
+    )
+  )
+
+  val newEnrolmentsWithoutEori: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "IR-SA",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "UTR",
+            "123"
+          )
+        ),
+        state = "Activated"
+      ),
+      Enrolment(
+        key = NEW_ENROLMENT_KEY,
+        identifiers = Seq.empty,
+        state = "Activated"
+      ),
+      Enrolment(
+        key = "IR-CT",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "UTR",
+            "456"
+          )
+        ),
+        state = "Activated"
+      )
+    )
+  )
+
+  val newEnrolmentsWithEori: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "IR-SA",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "UTR",
+            "123"
+          )
+        ),
+        state = "Activated"
+      ),
+      Enrolment(
+        key = NEW_ENROLMENT_KEY,
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            NEW_ENROLMENT_ID_KEY,
+            "123"
+          )
+        ),
+        state = "NotYetActivated"
+      ),
+      Enrolment(
+        key = NEW_ENROLMENT_KEY,
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            NEW_ENROLMENT_ID_KEY,
+            "456"
+          )
+        ),
+        state = "Activated"
+      )
+    )
+  )
+
+  val newEnrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "IR-SA",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "UTR",
+            "123"
+          )
+        ),
+        state = "Activated"
+      ),
+      Enrolment(
+        key = NEW_ENROLMENT_KEY,
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            NEW_ENROLMENT_ID_KEY,
             "123"
           )
         ),
@@ -267,9 +362,9 @@ class IdentifierActionSpec extends SpecBase {
     }
 
     "AuthAction" - {
-      "must redirect to unauthorised page when given enrolments without eori" in {
+      "must redirect to unauthorised page when given legacy enrolments without eori" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
-          .thenReturn(Future.successful(enrolmentsWithoutEori ~ Some("testName")))
+          .thenReturn(Future.successful(legacyEnrolmentsWithoutEori ~ Some("testName")))
 
         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
@@ -280,13 +375,44 @@ class IdentifierActionSpec extends SpecBase {
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
       }
 
-      "must redirect to unauthorised page with group access when given user has no active enrolments but group has" in {
+      "must redirect to unauthorised page when given new enrolments without eori" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
-          .thenReturn(Future.successful(enrolmentsWithEoriButNoActivated ~ Some("testName")))
-        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(true))
+          .thenReturn(Future.successful(newEnrolmentsWithoutEori ~ Some("testName")))
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+      }
+
+      "must redirect to unauthorised page with group access when given user has no active legacy enrolments but group has" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(legacyEnrolmentsWithEoriButNoActivated ~ Some("testName")))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
         when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe UNAUTHORIZED
+
+        verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
+        templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
+      }
+
+      "must redirect to unauthorised page with group access when given user has no active new enrolments but group has" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(newEnrolmentsWithEoriButNoActivated ~ Some("testName")))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
+        when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
+
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
@@ -301,10 +427,10 @@ class IdentifierActionSpec extends SpecBase {
       "must redirect to unauthorised page with group access when given user has no enrolments but group has" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ Some("testName")))
-        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(true))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
         when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
@@ -320,11 +446,11 @@ class IdentifierActionSpec extends SpecBase {
       "must redirect to unauthorised page without group access when given both user and group has no enrolments" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ Some("testName")))
-        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(false))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockUIRender.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor: ArgumentCaptor[JsObject]     = ArgumentCaptor.forClass(classOf[JsObject])
 
         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
@@ -345,10 +471,10 @@ class IdentifierActionSpec extends SpecBase {
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ None))
 
         when(mockUIRender.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), any())(any())).thenReturn(Future.successful(false))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor: ArgumentCaptor[JsObject]     = ArgumentCaptor.forClass(classOf[JsObject])
 
         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
@@ -364,9 +490,9 @@ class IdentifierActionSpec extends SpecBase {
 
       }
 
-      "must return Ok when given enrolments with eori" in {
+      "must return Ok when given legacy enrolments with eori" in {
         when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
-          .thenReturn(Future.successful(enrolmentsWithEori ~ Some("testName")))
+          .thenReturn(Future.successful(legacyEnrolmentsWithEori ~ Some("testName")))
 
         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
@@ -375,6 +501,16 @@ class IdentifierActionSpec extends SpecBase {
         status(result) mustBe OK
       }
 
+      "must return Ok when given new enrolments with eori" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(newEnrolmentsWithEori ~ Some("testName")))
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+      }
     }
   }
 

@@ -55,8 +55,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val referenceDataUrl: String                    = configuration.get[Service]("microservice.services.reference-data").fullServiceUrl
   lazy val routerUrl: String                           = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
   lazy val enrolmentProxyUrl: String                   = configuration.get[Service]("microservice.services.enrolment-store-proxy").fullServiceUrl
-  lazy val enrolmentKey: String                        = configuration.get[String]("keys.enrolmentKey")
-  lazy val enrolmentIdentifierKey: String              = configuration.get[String]("keys.enrolmentIdentifierKey")
+  lazy val legacyEnrolmentKey: String                  = configuration.get[String]("keys.legacy.enrolmentKey")
+  lazy val legacyEnrolmentIdentifierKey: String        = configuration.get[String]("keys.legacy.enrolmentIdentifierKey")
+  lazy val newEnrolmentKey: String                     = configuration.get[String]("keys.enrolmentKey")
+  lazy val newEnrolmentIdentifierKey: String           = configuration.get[String]("keys.enrolmentIdentifierKey")
   lazy val manageService: String                       = configuration.get[String]("appName")
   lazy val betaAuthorizationUrl: String                = configuration.get[Service]("microservice.services.transit-movements-trader-authorization").fullServiceUrl
 
