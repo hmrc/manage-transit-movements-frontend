@@ -73,6 +73,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       }
     }
 
+    //TODO this is broken
     "include tad link on ReleasedForTransit status" in {
       forAll(arbitrary[Departure]) {
         departure =>
@@ -200,7 +201,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is DepartureSubmittedNegativeAcknowledgement show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure      = departure.copy(status = DepartureSubmittedNegativeAcknowledgement)
+          val updatedDeparture: Departure      = departure.copy(status = XMLSubmissionNegativeAcknowledgement)
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.XMLSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1

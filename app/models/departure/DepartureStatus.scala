@@ -23,26 +23,22 @@ sealed trait DepartureStatus
 
 object DepartureStatus {
 
-  case object CancellationDecision                      extends WithName("IE009") with DepartureStatus
-  case object DeclarationCancellationRequest            extends WithName("IE014") with DepartureStatus
-  case object DepartureSubmitted                        extends WithName("IE015") with DepartureStatus
-  case object DepartureRejected                         extends WithName("IE016") with DepartureStatus
-  case object MrnAllocated                              extends WithName("IE028") with DepartureStatus
-  case object ReleaseForTransit                         extends WithName("IE029") with DepartureStatus
-  case object WriteOffNotification                      extends WithName("IE045") with DepartureStatus
-  case object NoReleaseForTransit                       extends WithName("IE051") with DepartureStatus
-  case object GuaranteeNotValid                         extends WithName("IE055") with DepartureStatus
-  case object ControlDecisionNotification               extends WithName("IE060") with DepartureStatus
-  case object DepartureSubmittedNegativeAcknowledgement extends WithName("IE917") with DepartureStatus
-  case object PositiveAcknowledgement                   extends WithName("IE928") with DepartureStatus
-  case object InvalidStatus                             extends DepartureStatus
+  case object PositiveAcknowledgement              extends WithName("IE928") with DepartureStatus
+  case object DepartureSubmitted                   extends WithName("IE015") with DepartureStatus
+  case object MrnAllocated                         extends WithName("IE028") with DepartureStatus
+  case object DepartureRejected                    extends WithName("IE016") with DepartureStatus
+  case object ControlDecisionNotification          extends WithName("IE060") with DepartureStatus
+  case object NoReleaseForTransit                  extends WithName("IE051") with DepartureStatus
+  case object ReleaseForTransit                    extends WithName("IE029") with DepartureStatus
+  case object DeclarationCancellationRequest       extends WithName("IE014") with DepartureStatus
+  case object CancellationDecision                 extends WithName("IE009") with DepartureStatus
+  case object WriteOffNotification                 extends WithName("IE045") with DepartureStatus
+  case object GuaranteeNotValid                    extends WithName("IE055") with DepartureStatus
+  case object XMLSubmissionNegativeAcknowledgement extends WithName("IE917") with DepartureStatus
 
-  // case object DepartureCancelled extends WithName("") with DepartureStatus
-  // case object DepartureDeclarationReceived extends WithName("") with DepartureStatus
-  // case object TransitDeclarationSent extends WithName("") with DepartureStatus
-  // case object CancellationSubmitted extends WithName("") with DepartureStatus
-  // case object DeclarationCancellationRequestNegativeAcknowledgement  extends WithName("") with DepartureStatus
-  // case object InvalidStatus  extends WithName("") with DepartureStatus
+  case object InvalidStatus                        extends DepartureStatus {
+    override def toString: String = "Invalid status"
+  }
 
   val values: Seq[DepartureStatus] =
     Seq(
@@ -56,14 +52,8 @@ object DepartureStatus {
       DeclarationCancellationRequest,
       CancellationDecision,
       NoReleaseForTransit,
-      ControlDecisionNotification
-      //      DepartureDeclarationReceived,
-      //      TransitDeclarationSent,
-      //      CancellationSubmitted,
-      //      DepartureCancelled,
-      //      DepartureSubmittedNegativeAcknowledgement,
-      //        DeclarationCancellationRequestNegativeAcknowledgement
-      //      InvalidStatus
+      ControlDecisionNotification,
+      InvalidStatus
     )
 
   implicit val enumerable: Enumerable[DepartureStatus] =

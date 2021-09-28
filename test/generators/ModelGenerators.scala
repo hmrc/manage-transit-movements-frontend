@@ -17,7 +17,7 @@
 package generators
 
 import models.ErrorType.GenericError
-import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
+import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.departure._
 import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
@@ -51,7 +51,7 @@ trait ModelGenerators {
         year <- Gen.chooseNum(1111, 3000)
       } yield LocalDate.of(year, month, day)
     }
-  XMLSubmissionNegativeAcknowledgementMessage
+
 
   implicit val arbitraryLocalTime: Arbitrary[LocalTime] = Arbitrary {
     for {
@@ -98,7 +98,7 @@ trait ModelGenerators {
         arrivalId <- arbitrary[ArrivalId]
         date      <- arbitrary[LocalDateTime]
         time      <- arbitrary[LocalDateTime]
-        status    <- Gen.oneOf(Seq("GoodsReleased", "UnloadingPermission", "ArrivalSubmitted", "Rejection"))
+        status    <- Gen.oneOf(ArrivalStatus.values)
         mrn       <- stringsWithMaxLength(17)
       } yield Arrival(arrivalId, date, time, status, mrn)
     }

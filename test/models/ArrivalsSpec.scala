@@ -17,6 +17,7 @@
 package models
 
 import base.SpecBase
+import models.arrival.ArrivalStatus.GoodsReleased
 import play.api.libs.json.{JsArray, Json}
 
 import java.time.LocalDateTime
@@ -39,7 +40,7 @@ class ArrivalsSpec extends SpecBase {
               "arrivalId"               -> 123,
               "created"                 -> dateNow,
               "updated"                 -> dateNow,
-              "status"                  -> "GoodsReleased",
+              "latestMessageType"       -> "IE025",
               "movementReferenceNumber" -> "mrn123"
             )
           )
@@ -55,7 +56,7 @@ class ArrivalsSpec extends SpecBase {
             ArrivalId(123),
             dateNow,
             dateNow,
-            "GoodsReleased",
+            GoodsReleased,
             "mrn123"
           )
         )

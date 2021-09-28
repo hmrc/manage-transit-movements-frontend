@@ -22,6 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models._
+import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
 import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -57,7 +58,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             "arrivalId"               -> 22,
             "created"                 -> localDateTime,
             "updated"                 -> localDateTime,
-            "status"                  -> "Submitted",
+            "latestMessageType"       -> "IE007",
             "movementReferenceNumber" -> "test mrn"
           )
         )
@@ -75,7 +76,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, ArrivalNotificationSubmitted, "test mrn")
             )
           )
 
@@ -113,7 +114,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, ArrivalNotificationSubmitted, "test mrn")
             )
           )
 
@@ -151,7 +152,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, ArrivalNotificationSubmitted, "test mrn")
             )
           )
 

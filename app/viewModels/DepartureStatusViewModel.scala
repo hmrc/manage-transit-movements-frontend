@@ -33,18 +33,13 @@ object DepartureStatusViewModel {
         positiveAcknowledgement,
         releasedForTransit,
         departureDeclarationRejected,
-//        departureDeclarationReceived,
         guaranteeValidationFail,
-//        transitDeclarationSent,
         writeOffNotification,
-//        cancellationSubmitted,
-//        departureCancelled,
         declarationCancellationRequest,
         cancellationDecision,
         noReleasedForTransit,
         controlDecision,
         departureXmlNegativeAcknowledgement,
-//        cancellationXmlNegativeAcknowledgement,
         invalidStatus
       ).reduce(_ orElse _)
     partialFunctions.apply(departure)
@@ -99,31 +94,10 @@ object DepartureStatusViewModel {
       )
   }
 
-//  private def departureDeclarationReceived: PartialFunction[Departure, DepartureStatus] = {
-//    case departure if departure.status == DepartureDeclarationReceived =>
-//      DepartureStatus("departure.status.departureDeclarationReceived", actions = Nil)
-//  }
-//
-//  private def transitDeclarationSent: PartialFunction[Departure, DepartureStatus] = {
-//    case departure if departure.status == TransitDeclarationSent =>
-//      DepartureStatus("departure.status.transitDeclarationSent", actions = Nil)
-//  }
-
   private def writeOffNotification: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == WriteOffNotification =>
       DepartureStatusViewModel("departure.status.writeOffNotification", actions = Nil)
   }
-
-//  private def cancellationSubmitted: PartialFunction[Departure, DepartureStatus] = {
-//    case departure if departure.status == CancellationSubmitted =>
-//      DepartureStatus("departure.status.cancellationSubmitted", actions = Nil)
-//  }
-//
-
-//  private def departureCancelled: PartialFunction[Departure, DepartureStatus] = {
-//    case departure if departure.status == DepartureCancelled =>
-//      DepartureStatus("departure.status.departureCancelled", actions = Nil)
-//  }
 
   private def declarationCancellationRequest: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == DeclarationCancellationRequest =>
@@ -164,7 +138,7 @@ object DepartureStatusViewModel {
   }
 
   private def departureXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.status == DepartureSubmittedNegativeAcknowledgement =>
+    case departure if departure.status == XMLSubmissionNegativeAcknowledgement =>
       DepartureStatusViewModel(
         "departure.status.XMLSubmissionNegativeAcknowledgement",
         actions = Seq(
@@ -174,6 +148,9 @@ object DepartureStatusViewModel {
         )
       )
   }
+
+  // TODO how do I tell the difference????
+
 //
 //  private def cancellationXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatus] = {
 //    case departure if departure.status == DeclarationCancellationRequestNegativeAcknowledgement =>
