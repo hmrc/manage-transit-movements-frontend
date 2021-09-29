@@ -501,7 +501,7 @@ class IdentifierActionSpec extends SpecBase {
 
         verify(mockUIRender, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-        val expectedJson = Json.obj("requestAccessToNCTSUrl" -> frontendAppConfig.enrolmentManagementFrontendEnrolUrl)
+        val expectedJson = Json.obj("requestAccessToECCUrl" -> frontendAppConfig.enrolmentManagementFrontendEnrolUrl)
 
         templateCaptor.getValue mustEqual "unauthorisedWithoutGroupAccess.njk"
         jsonCaptor.getValue must containJson(expectedJson)
@@ -525,7 +525,7 @@ class IdentifierActionSpec extends SpecBase {
         status(result) mustBe UNAUTHORIZED
         verify(mockUIRender, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-        val expectedJson = Json.obj("requestAccessToNCTSUrl" -> frontendAppConfig.enrolmentManagementFrontendEnrolUrl)
+        val expectedJson = Json.obj("requestAccessToECCUrl" -> frontendAppConfig.enrolmentManagementFrontendEnrolUrl)
 
         templateCaptor.getValue mustEqual "unauthorisedWithoutGroupAccess.njk"
         jsonCaptor.getValue must containJson(expectedJson)

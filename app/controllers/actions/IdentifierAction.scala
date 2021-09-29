@@ -82,7 +82,7 @@ class AuthenticatedIdentifierAction @Inject() (
     hc: HeaderCarrier,
     request: Request[A]
   ): Future[Result] = {
-    val nctsJson: JsObject = Json.obj("requestAccessToNCTSUrl" -> config.enrolmentManagementFrontendEnrolUrl)
+    val nctsJson: JsObject = Json.obj("requestAccessToECCUrl" -> config.enrolmentManagementFrontendEnrolUrl)
 
     maybeGroupId match {
       case Some(groupId) =>
