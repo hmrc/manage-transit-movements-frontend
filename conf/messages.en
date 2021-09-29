@@ -283,5 +283,5 @@ unauthorisedWithGroupAccess.p = If you already have access, you must contact you
 
 unauthorisedWithoutGroupAccess.title = You cannot use this service group authorisation
 unauthorisedWithoutGroupAccess.heading = You cannot use this service
-unauthorisedWithoutGroupAccess.requestAccess = request access to NCTS
+unauthorisedWithoutGroupAccess.requestAccess = request access to ECC
 unauthorisedWithoutGroupAccess.beforeUseThisService =  before you can use this service.
