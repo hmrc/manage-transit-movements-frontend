@@ -53,10 +53,10 @@ class IdentifierActionSpec extends SpecBase {
   val mockUIRender: Renderer                               = mock[Renderer]
   val frontendAppConfig                                    = FakeFrontendAppConfig()
 
-  val LEGACY_ENROLMENT_KEY = "HMCE-NCTS-ORG"
+  val LEGACY_ENROLMENT_KEY    = "HMCE-NCTS-ORG"
   val LEGACY_ENROLMENT_ID_KEY = "VATRegNoTURN"
-  val NEW_ENROLMENT_KEY = "HMRC-CTC-ORG"
-  val NEW_ENROLMENT_ID_KEY = "EORINumber"
+  val NEW_ENROLMENT_KEY       = "HMRC-CTC-ORG"
+  val NEW_ENROLMENT_ID_KEY    = "EORINumber"
 
   val legacyEnrolmentsWithoutEori: Enrolments = Enrolments(
     Set(
@@ -504,7 +504,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
 
-         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
