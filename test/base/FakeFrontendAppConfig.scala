@@ -41,7 +41,7 @@ object FakeFrontendAppConfig {
         "declareTransitMovementDepartureFrontend"    -> "http://localhost:9489/manage-transit-movements-departures",
         "declareTransitMovementCancellationFrontend" -> "urls.declareTransitMovementCancellationFrontend",
         "nctsEnquiries"                              -> "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/new-computerised-transit-system-enquiries",
-        "enrolmentManagementFrontendEnrolUrl"        -> "urls.enrolmentManagementFrontendEnrolUrl",
+        "eccEnrolmentSplashPage"                     -> "https://www.gov.uk/placeholder-for-ecc-splash-page",
         "login"                                      -> "urls.login",
         "loginContinue"                              -> "urls.loginContinue"
       ),

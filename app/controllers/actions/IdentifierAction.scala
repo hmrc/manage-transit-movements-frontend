@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import connectors.EnrolmentStoreConnector
 import controllers.routes
 import models.requests.IdentifierRequest
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.mvc._
 import renderer.Renderer
@@ -81,9 +80,7 @@ class AuthenticatedIdentifierAction @Inject() (
   private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit
     hc: HeaderCarrier,
     request: Request[A]
-  ): Future[Result] = {
-    val eccJson: JsObject = Json.obj("requestAccessToECCUrl" -> config.enrolmentManagementFrontendEnrolUrl)
-
+  ): Future[Result] =
     maybeGroupId match {
       case Some(groupId) =>
         val hasGroupEnrolment = for {
@@ -95,10 +92,9 @@ class AuthenticatedIdentifierAction @Inject() (
 
         hasGroupEnrolment flatMap {
           case true  => renderer.render("unauthorisedWithGroupAccess.njk").map(Unauthorized(_))
-          case false => renderer.render("unauthorisedWithoutGroupAccess.njk", eccJson).map(Unauthorized(_))
+          case false => Future.successful(Redirect(config.eccEnrolmentSplashPage))
         }
-      case _ => renderer.render("unauthorisedWithoutGroupAccess.njk", eccJson).map(Unauthorized(_))
+      case _ => Future.successful(Redirect(config.eccEnrolmentSplashPage))
     }
-  }
 
 }

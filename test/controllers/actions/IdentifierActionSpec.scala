@@ -22,11 +22,9 @@ import com.google.inject.Inject
 import connectors.EnrolmentStoreConnector
 import controllers.actions.AuthActionSpec._
 import controllers.routes
-import matchers.JsonMatchers.containJson
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -490,21 +488,12 @@ class IdentifierActionSpec extends SpecBase {
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockUIRender.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor: ArgumentCaptor[JsObject]     = ArgumentCaptor.forClass(classOf[JsObject])
-
         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe UNAUTHORIZED
-
-        verify(mockUIRender, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val expectedJson = Json.obj("requestAccessToECCUrl" -> frontendAppConfig.enrolmentManagementFrontendEnrolUrl)
-
-        templateCaptor.getValue mustEqual "unauthorisedWithoutGroupAccess.njk"
-        jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(frontendAppConfig.eccEnrolmentSplashPage)
       }
 
       "must redirect to unauthorised page without group access when given user has no enrolments and there is no group" in {
@@ -515,21 +504,12 @@ class IdentifierActionSpec extends SpecBase {
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
 
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor: ArgumentCaptor[JsObject]     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe UNAUTHORIZED
-        verify(mockUIRender, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val expectedJson = Json.obj("requestAccessToECCUrl" -> frontendAppConfig.enrolmentManagementFrontendEnrolUrl)
-
-        templateCaptor.getValue mustEqual "unauthorisedWithoutGroupAccess.njk"
-        jsonCaptor.getValue must containJson(expectedJson)
-
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(frontendAppConfig.eccEnrolmentSplashPage)
       }
 
       "must return Ok when given legacy enrolments with eori" in {
