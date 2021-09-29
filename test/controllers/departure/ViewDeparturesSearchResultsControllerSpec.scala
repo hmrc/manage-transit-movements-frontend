@@ -31,9 +31,10 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import java.time.LocalDateTime
 
+import java.time.LocalDateTime
 import config.{FrontendAppConfig, SearchResultsAppConfig}
+import models.departure.{DepartureMessageMetaData, DepartureLatestMessages}
 import viewModels.{ViewDeparture, ViewDepartureMovements}
 
 import scala.concurrent.Future
@@ -55,7 +56,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
           DepartureId(1),
           LocalDateTime.now(),
           LocalReferenceNumber("test lrn"),
-          DepartureSubmitted
+          DepartureLatestMessages(DepartureMessageMetaData(DepartureSubmitted, LocalDateTime.now()), None)
         )
       )
     )

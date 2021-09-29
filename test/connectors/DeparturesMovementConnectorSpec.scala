@@ -32,7 +32,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.Format
-import models.departure.DepartureStatus.DepartureSubmitted
+import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted}
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
@@ -60,7 +60,14 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             "departureId"     -> 22,
             "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
-            "latestMessageType" -> DepartureSubmitted.toString
+            "latestMessages" -> {
+              Json.obj(
+                "current" -> Json.obj(
+                  "messageType" -> DepartureSubmitted.toString,
+                  "dateTime"    -> localDateTime
+                )
+              )
+            }
           )
         )
     )
@@ -81,7 +88,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                 DepartureId(22),
                 localDateTime,
                 LocalReferenceNumber("lrn"),
-                DepartureSubmitted
+                DepartureLatestMessages(DepartureMessageMetaData(DepartureSubmitted, localDateTime), None)
               )
             )
           )
@@ -120,7 +127,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureLatestMessages(DepartureMessageMetaData(DepartureSubmitted, localDateTime), None))
             )
           )
 
@@ -158,7 +165,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureLatestMessages(DepartureMessageMetaData(DepartureSubmitted, localDateTime), None))
             )
           )
 

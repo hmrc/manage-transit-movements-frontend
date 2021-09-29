@@ -16,17 +16,18 @@
 
 package models
 
-import java.time.LocalDateTime
-
 import base.SpecBase
-import models.departure.DepartureStatus.DepartureSubmitted
+import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted}
+import models.departure.{DepartureLatestMessages, DepartureMessageMetaData}
 import play.api.libs.json.Json
+
+import java.time.LocalDateTime
 
 class DeparturesSpec extends SpecBase {
 
   "Departures" - {
 
-    "must deserialize" in {
+    "must deserialize when there is a current and previous message" in {
 
       val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -41,7 +42,18 @@ class DeparturesSpec extends SpecBase {
                 "departureId"     -> 22,
                 "updated"         -> localDateTime,
                 "referenceNumber" -> "lrn",
-                "latestMessageType"          -> DepartureSubmitted.toString
+                "latestMessages" -> {
+                  Json.obj(
+                    "current" -> Json.obj(
+                      "messageType" -> DeclarationCancellationRequest.toString,
+                      "dateTime"    -> localDateTime
+                    ),
+                    "previous" -> Json.obj(
+                      "messageType" -> DepartureSubmitted.toString,
+                      "dateTime"    -> localDateTime
+                    )
+                  )
+                }
               )
             )
         )
@@ -56,12 +68,86 @@ class DeparturesSpec extends SpecBase {
               DepartureId(22),
               localDateTime,
               LocalReferenceNumber("lrn"),
-              DepartureSubmitted
+              DepartureLatestMessages(
+                current  = DepartureMessageMetaData(DeclarationCancellationRequest, localDateTime),
+                previous = Some(DepartureMessageMetaData(DepartureSubmitted, localDateTime))
+              )
             )
           )
         )
 
       departuresResponseJson.validate[Departures].asOpt.value mustEqual expectedResult
+    }
+
+    "must deserialize when there is only a current message" in {
+
+      val localDateTime: LocalDateTime = LocalDateTime.now()
+
+      val departuresResponseJson =
+        Json.obj(
+          "retrievedDepartures" -> 1,
+          "totalDepartures"     -> 2,
+          "totalMatched"        -> 3,
+          "departures" ->
+            Json.arr(
+              Json.obj(
+                "departureId"     -> 22,
+                "updated"         -> localDateTime,
+                "referenceNumber" -> "lrn",
+                "latestMessages" -> {
+                  Json.obj(
+                    "current" -> Json.obj(
+                      "messageType" -> DepartureSubmitted.toString,
+                      "dateTime"    -> localDateTime
+                    )
+                  )
+                }
+              )
+            )
+        )
+
+      val expectedResult =
+        Departures(
+          1,
+          2,
+          Some(3),
+          Seq(
+            Departure(
+              DepartureId(22),
+              localDateTime,
+              LocalReferenceNumber("lrn"),
+              DepartureLatestMessages(
+                current  = DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+                previous = None
+              )
+            )
+          )
+        )
+
+      departuresResponseJson.validate[Departures].asOpt.value mustEqual expectedResult
+    }
+
+    "must fail to deserialize if there is no current message" in {
+
+      val localDateTime: LocalDateTime = LocalDateTime.now()
+
+      val departuresResponseJson =
+        Json.obj(
+          "retrievedDepartures" -> 1,
+          "totalDepartures"     -> 2,
+          "totalMatched"        -> 3,
+          "departures" ->
+            Json.arr(
+              Json.obj(
+                "departureId"     -> 22,
+                "updated"         -> localDateTime,
+                "referenceNumber" -> "lrn",
+                "latestMessages" -> "foo"
+              )
+            )
+        )
+
+      departuresResponseJson.validate[Departures].asOpt mustBe None
     }
   }
 }

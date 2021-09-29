@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package models.departure
 
-import models.departure.DepartureLatestMessages
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Reads, __}
+import play.api.libs.json.{Json, Reads}
 
 import java.time.LocalDateTime
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, latestMessages: DepartureLatestMessages)
+case class DepartureMessageMetaData(messageType: DepartureStatus, dateTime: LocalDateTime)
 
-object Departure {
+object DepartureMessageMetaData {
 
-  implicit val reads: Reads[Departure] = (
-    (__ \ "departureId").read[DepartureId] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "latestMessages").read[DepartureLatestMessages]
-  )(Departure.apply _)
+  implicit val reads: Reads[DepartureMessageMetaData] = Json.reads[DepartureMessageMetaData]
+
 }

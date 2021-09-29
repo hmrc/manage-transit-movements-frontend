@@ -35,6 +35,7 @@ import play.twirl.api.Html
 import scala.concurrent.Future
 import base.MockNunjucksRendererApp
 import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
+import models.departure.{DepartureMessageMetaData, DepartureLatestMessages}
 
 class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRendererApp {
   val frontendAppConfig = FakeFrontendAppConfig()
@@ -57,7 +58,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
       totalDepartures = 2,
       totalMatched = None,
       departures = Seq(
-        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted)
+        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureLatestMessages(DepartureMessageMetaData(DepartureSubmitted, LocalDateTime.now()), None))
       )
     )
 
