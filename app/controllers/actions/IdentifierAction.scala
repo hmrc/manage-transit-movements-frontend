@@ -82,7 +82,7 @@ class AuthenticatedIdentifierAction @Inject() (
     hc: HeaderCarrier,
     request: Request[A]
   ): Future[Result] = {
-    val nctsJson: JsObject = Json.obj("requestAccessToECCUrl" -> config.enrolmentManagementFrontendEnrolUrl)
+    val eccJson: JsObject = Json.obj("requestAccessToECCUrl" -> config.enrolmentManagementFrontendEnrolUrl)
 
     maybeGroupId match {
       case Some(groupId) =>
@@ -95,9 +95,9 @@ class AuthenticatedIdentifierAction @Inject() (
 
         hasGroupEnrolment flatMap {
           case true  => renderer.render("unauthorisedWithGroupAccess.njk").map(Unauthorized(_))
-          case false => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
+          case false => renderer.render("unauthorisedWithoutGroupAccess.njk", eccJson).map(Unauthorized(_))
         }
-      case _ => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
+      case _ => renderer.render("unauthorisedWithoutGroupAccess.njk", eccJson).map(Unauthorized(_))
     }
   }
 
