@@ -58,185 +58,15 @@ class IdentifierActionSpec extends SpecBase {
   val NEW_ENROLMENT_KEY       = "HMRC-CTC-ORG"
   val NEW_ENROLMENT_ID_KEY    = "EORINumber"
 
-  val legacyEnrolmentsWithoutEori: Enrolments = Enrolments(
-    Set(
-      Enrolment(
-        key = "IR-SA",
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            "UTR",
-            "123"
-          )
-        ),
-        state = "Activated"
-      ),
-      Enrolment(
-        key = "HMCE-NCTS-ORG",
-        identifiers = Seq.empty,
-        state = "Activated"
-      ),
-      Enrolment(
-        key = "IR-CT",
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            "UTR",
-            "456"
-          )
-        ),
-        state = "Activated"
-      )
+  private def createEnrolment(key: String, identifierKey: Option[String], id: String, state: String) =
+    Enrolment(
+      key = key,
+      identifiers = identifierKey match {
+        case Some(idKey) => Seq(EnrolmentIdentifier(idKey, id))
+        case None        => Seq.empty
+      },
+      state = state
     )
-  )
-
-  val legacyEnrolmentsWithEori: Enrolments = Enrolments(
-    Set(
-      Enrolment(
-        key = "IR-SA",
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            "UTR",
-            "123"
-          )
-        ),
-        state = "Activated"
-      ),
-      Enrolment(
-        key = LEGACY_ENROLMENT_KEY,
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            LEGACY_ENROLMENT_ID_KEY,
-            "123"
-          )
-        ),
-        state = "NotYetActivated"
-      ),
-      Enrolment(
-        key = LEGACY_ENROLMENT_KEY,
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            LEGACY_ENROLMENT_ID_KEY,
-            "456"
-          )
-        ),
-        state = "Activated"
-      )
-    )
-  )
-
-  val legacyEnrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
-    Set(
-      Enrolment(
-        key = "IR-SA",
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            "UTR",
-            "123"
-          )
-        ),
-        state = "Activated"
-      ),
-      Enrolment(
-        key = LEGACY_ENROLMENT_KEY,
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            LEGACY_ENROLMENT_ID_KEY,
-            "123"
-          )
-        ),
-        state = "NotYetActivated"
-      )
-    )
-  )
-
-  val newEnrolmentsWithoutEori: Enrolments = Enrolments(
-    Set(
-      Enrolment(
-        key = "IR-SA",
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            "UTR",
-            "123"
-          )
-        ),
-        state = "Activated"
-      ),
-      Enrolment(
-        key = NEW_ENROLMENT_KEY,
-        identifiers = Seq.empty,
-        state = "Activated"
-      ),
-      Enrolment(
-        key = "IR-CT",
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            "UTR",
-            "456"
-          )
-        ),
-        state = "Activated"
-      )
-    )
-  )
-
-  val newEnrolmentsWithEori: Enrolments = Enrolments(
-    Set(
-      Enrolment(
-        key = "IR-SA",
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            "UTR",
-            "123"
-          )
-        ),
-        state = "Activated"
-      ),
-      Enrolment(
-        key = NEW_ENROLMENT_KEY,
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            NEW_ENROLMENT_ID_KEY,
-            "123"
-          )
-        ),
-        state = "NotYetActivated"
-      ),
-      Enrolment(
-        key = NEW_ENROLMENT_KEY,
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            NEW_ENROLMENT_ID_KEY,
-            "456"
-          )
-        ),
-        state = "Activated"
-      )
-    )
-  )
-
-  val newEnrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
-    Set(
-      Enrolment(
-        key = "IR-SA",
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            "UTR",
-            "123"
-          )
-        ),
-        state = "Activated"
-      ),
-      Enrolment(
-        key = NEW_ENROLMENT_KEY,
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            NEW_ENROLMENT_ID_KEY,
-            "123"
-          )
-        ),
-        state = "NotYetActivated"
-      )
-    )
-  )
 
   "Auth Action" - {
 
@@ -361,6 +191,14 @@ class IdentifierActionSpec extends SpecBase {
 
     "AuthAction" - {
       "must redirect to unauthorised page when given legacy enrolments without eori" in {
+        val legacyEnrolmentsWithoutEori: Enrolments = Enrolments(
+          Set(
+            createEnrolment("IR-CT", Some("UTR"), "456", "Activated"),
+            createEnrolment(LEGACY_ENROLMENT_KEY, None, "123", "Activated"),
+            createEnrolment("IR-SA", Some("UTR"), "123", "Activated")
+          )
+        )
+
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(legacyEnrolmentsWithoutEori ~ Some("testName")))
 
@@ -374,6 +212,14 @@ class IdentifierActionSpec extends SpecBase {
       }
 
       "must redirect to unauthorised page when given new enrolments without eori" in {
+        val newEnrolmentsWithoutEori: Enrolments = Enrolments(
+          Set(
+            createEnrolment("IR-SA", Some("UTR"), "123", "Activated"),
+            createEnrolment(NEW_ENROLMENT_KEY, None, "999", "Activated"),
+            createEnrolment("IR-CT", Some("UTR"), "456", "Activated")
+          )
+        )
+
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newEnrolmentsWithoutEori ~ Some("testName")))
 
@@ -387,6 +233,13 @@ class IdentifierActionSpec extends SpecBase {
       }
 
       "must redirect to unauthorised page with group access when given user has no active legacy enrolments but new group has" in {
+        val legacyEnrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
+          Set(
+            createEnrolment("IR-CT", Some("UTR"), "456", "Activated"),
+            createEnrolment(LEGACY_ENROLMENT_KEY, Some(LEGACY_ENROLMENT_ID_KEY), "999", "NotYetActivated")
+          )
+        )
+
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(legacyEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
@@ -406,6 +259,13 @@ class IdentifierActionSpec extends SpecBase {
       }
 
       "must redirect to unauthorised page with group access when given user has no active legacy enrolments but legacy group has" in {
+        val legacyEnrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
+          Set(
+            createEnrolment("IR-CT", Some("UTR"), "456", "Activated"),
+            createEnrolment(LEGACY_ENROLMENT_KEY, Some(LEGACY_ENROLMENT_ID_KEY), "999", "NotYetActivated")
+          )
+        )
+
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(legacyEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
@@ -425,6 +285,13 @@ class IdentifierActionSpec extends SpecBase {
       }
 
       "must redirect to unauthorised page with group access when given user has no active new enrolments but new group has" in {
+        val newEnrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
+          Set(
+            createEnrolment("IR-SA", Some("UTR"), "123", "Activated"),
+            createEnrolment(NEW_ENROLMENT_KEY, Some(NEW_ENROLMENT_ID_KEY), "123", "NotYetActivated")
+          )
+        )
+
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
@@ -444,6 +311,13 @@ class IdentifierActionSpec extends SpecBase {
       }
 
       "must redirect to unauthorised page with group access when given user has no active new enrolments but legacy group has" in {
+        val newEnrolmentsWithEoriButNoActivated: Enrolments = Enrolments(
+          Set(
+            createEnrolment("IR-SA", Some("UTR"), "123", "Activated"),
+            createEnrolment(NEW_ENROLMENT_KEY, Some(NEW_ENROLMENT_ID_KEY), "123", "NotYetActivated")
+          )
+        )
+
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
@@ -513,6 +387,15 @@ class IdentifierActionSpec extends SpecBase {
       }
 
       "must return Ok when given legacy enrolments with eori" in {
+        val legacyEnrolmentsWithEori: Enrolments = Enrolments(
+          Set(
+            createEnrolment("IR-CT", Some("UTR"), "456", "Activated"),
+            createEnrolment(LEGACY_ENROLMENT_KEY, Some(LEGACY_ENROLMENT_ID_KEY), "123", "NotYetActivated"),
+            createEnrolment(LEGACY_ENROLMENT_KEY, Some(LEGACY_ENROLMENT_ID_KEY), "999", "Activated"),
+            createEnrolment("IR-SA", Some("UTR"), "123", "Activated")
+          )
+        )
+
         when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(legacyEnrolmentsWithEori ~ Some("testName")))
 
@@ -523,7 +406,69 @@ class IdentifierActionSpec extends SpecBase {
         status(result) mustBe OK
       }
 
+      "must return Ok when given both new and legacy enrolments with eori" in {
+        val newAndLegacyEnrolmentsWithEori: Enrolments = Enrolments(
+          Set(
+            createEnrolment(LEGACY_ENROLMENT_KEY, Some(LEGACY_ENROLMENT_ID_KEY), "123", "Activated"),
+            createEnrolment(NEW_ENROLMENT_KEY, Some(NEW_ENROLMENT_ID_KEY), "456", "Activated")
+          )
+        )
+
+        when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(newAndLegacyEnrolmentsWithEori ~ Some("testName")))
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+      }
+
+      "must return Ok when given a new enrolment without a key, and a legacy enrolment with eori" in {
+        val newWithoutEoriLegacyWithEori: Enrolments = Enrolments(
+          Set(
+            createEnrolment(LEGACY_ENROLMENT_KEY, Some(LEGACY_ENROLMENT_ID_KEY), "123", "Activated"),
+            createEnrolment(NEW_ENROLMENT_KEY, None, "456", "Activated")
+          )
+        )
+
+        when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(newWithoutEoriLegacyWithEori ~ Some("testName")))
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+      }
+
+      "must return Ok when given a legacy enrolment without a key, and a new enrolment with eori" in {
+        val newWithEoriLegacyWithoutEori: Enrolments = Enrolments(
+          Set(
+            createEnrolment(LEGACY_ENROLMENT_KEY, None, "123", "Activated"),
+            createEnrolment(NEW_ENROLMENT_KEY, Some(NEW_ENROLMENT_ID_KEY), "456", "Activated")
+          )
+        )
+
+        when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(newWithEoriLegacyWithoutEori ~ Some("testName")))
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+      }
+
       "must return Ok when given new enrolments with eori" in {
+        val newEnrolmentsWithEori: Enrolments = Enrolments(
+          Set(
+            createEnrolment("IR-SA", Some("UTR"), "123", "Activated"),
+            createEnrolment(NEW_ENROLMENT_KEY, Some(NEW_ENROLMENT_ID_KEY), "123", "NotYetActivated"),
+            createEnrolment(NEW_ENROLMENT_KEY, Some(NEW_ENROLMENT_ID_KEY), "456", "Activated")
+          )
+        )
+
         when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newEnrolmentsWithEori ~ Some("testName")))
 
