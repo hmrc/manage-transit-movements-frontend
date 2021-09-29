@@ -388,10 +388,11 @@ class IdentifierActionSpec extends SpecBase {
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
       }
 
-      "must redirect to unauthorised page with group access when given user has no active legacy enrolments but group has" in {
+      "must redirect to unauthorised page with group access when given user has no active legacy enrolments but new group has" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(legacyEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
         val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
@@ -406,10 +407,30 @@ class IdentifierActionSpec extends SpecBase {
         templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
       }
 
-      "must redirect to unauthorised page with group access when given user has no active new enrolments but group has" in {
+      "must redirect to unauthorised page with group access when given user has no active legacy enrolments but legacy group has" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(legacyEnrolmentsWithEoriButNoActivated ~ Some("testName")))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
+        when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
+
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe UNAUTHORIZED
+
+        verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
+        templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
+      }
+
+      "must redirect to unauthorised page with group access when given user has no active new enrolments but new group has" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
         val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
@@ -424,10 +445,29 @@ class IdentifierActionSpec extends SpecBase {
         templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
       }
 
+      "must redirect to unauthorised page with group access when given user has no active new enrolments but legacy group has" in {
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .thenReturn(Future.successful(newEnrolmentsWithEoriButNoActivated ~ Some("testName")))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
+        when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
+
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val controller = new Harness(authAction)
+        val result     = controller.onPageLoad()(fakeRequest)
+
+        status(result) mustBe UNAUTHORIZED
+
+        verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
+        templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
+      }
       "must redirect to unauthorised page with group access when given user has no enrolments but group has" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
         val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
@@ -447,6 +487,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockUIRender.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
         val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
@@ -472,6 +513,7 @@ class IdentifierActionSpec extends SpecBase {
 
         when(mockUIRender.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
+        when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
 
         val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor: ArgumentCaptor[JsObject]     = ArgumentCaptor.forClass(classOf[JsObject])

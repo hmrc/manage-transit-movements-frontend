@@ -52,11 +52,11 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(EmptyPredicate)
       .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
-          val newEnrolment         = getEnrolment(enrolments, config.newEnrolmentKey, config.newEnrolmentIdentifierKey, request, block)
+          lazy val newEnrolment    = getEnrolment(enrolments, config.newEnrolmentKey, config.newEnrolmentIdentifierKey, request, block)
           lazy val legacyEnrolment = getEnrolment(enrolments, config.legacyEnrolmentKey, config.legacyEnrolmentIdentifierKey, request, block)
 
           val enrolment = newEnrolment orElse legacyEnrolment
-          enrolment.getOrElse(checkForGroupEnrolment(config.newEnrolmentKey, maybeGroupId, config)(hc, request))
+          enrolment.getOrElse(checkForGroupEnrolment(maybeGroupId, config)(hc, request))
       }
   } recover {
     case _: NoActiveSession =>
@@ -78,7 +78,7 @@ class AuthenticatedIdentifierAction @Inject() (
       case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
     }
 
-  private def checkForGroupEnrolment[A](enrolmentKey: String, maybeGroupId: Option[String], config: FrontendAppConfig)(implicit
+  private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit
     hc: HeaderCarrier,
     request: Request[A]
   ): Future[Result] = {
@@ -86,7 +86,14 @@ class AuthenticatedIdentifierAction @Inject() (
 
     maybeGroupId match {
       case Some(groupId) =>
-        enrolmentStoreConnector.checkGroupEnrolments(groupId, enrolmentKey) flatMap {
+        val hasGroupEnrolment = for {
+          newGroupEnrolment <- enrolmentStoreConnector.checkGroupEnrolments(groupId, config.newEnrolmentKey)
+          legacyGroupEnrolment <-
+            if (newGroupEnrolment) { Future.successful(newGroupEnrolment) }
+            else { enrolmentStoreConnector.checkGroupEnrolments(groupId, config.legacyEnrolmentKey) }
+        } yield newGroupEnrolment || legacyGroupEnrolment
+
+        hasGroupEnrolment flatMap {
           case true  => renderer.render("unauthorisedWithGroupAccess.njk").map(Unauthorized(_))
           case false => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
         }
