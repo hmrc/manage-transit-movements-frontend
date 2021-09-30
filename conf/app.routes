@@ -6,11 +6,11 @@ GET        /                                                                  co
 
 GET        /index                                                             controllers.IndexController.onPageLoad()
 
-GET        /what-do-you-want-to-do                                            controllers.WhatDoYouWantToDoController.onPageLoad
+GET        /what-do-you-want-to-do                                            controllers.WhatDoYouWantToDoController.onPageLoad()
 
-GET        /this-service-has-been-reset                                       controllers.SessionExpiredController.onPageLoad
+GET        /this-service-has-been-reset                                       controllers.SessionExpiredController.onPageLoad()
 
-GET        /cannot-use-service-no-eori                                        controllers.UnauthorisedController.onPageLoad
+GET        /cannot-use-service-no-eori                                        controllers.UnauthorisedController.onPageLoad()
 
 GET        /keep-alive                                                        controllers.KeepAliveController.keepAlive()
 

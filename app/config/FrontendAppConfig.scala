@@ -58,7 +58,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val enrolmentKey: String                        = configuration.get[String]("keys.enrolmentKey")
   lazy val enrolmentIdentifierKey: String              = configuration.get[String]("keys.enrolmentIdentifierKey")
   lazy val manageService: String                       = configuration.get[String]("appName")
-  lazy val betaAuthorizationUrl: String                = configuration.get[Service]("microservice.services.transit-movements-trader-authorization").fullServiceUrl
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")

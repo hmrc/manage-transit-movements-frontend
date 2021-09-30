@@ -31,7 +31,7 @@ class UnauthorisedController @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
+  def onPageLoad(): Action[AnyContent] = Action.async {
     implicit request =>
       renderer.render("unauthorised.njk").map(Ok(_))
   }
