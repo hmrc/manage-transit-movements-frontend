@@ -53,6 +53,7 @@ object DepartureStatus {
       CancellationDecision,
       NoReleaseForTransit,
       ControlDecisionNotification,
+      XMLSubmissionNegativeAcknowledgement,
       InvalidStatus
     )
 

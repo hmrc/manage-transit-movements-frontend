@@ -58,7 +58,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
       totalDepartures = 2,
       totalMatched = None,
       departures = Seq(
-        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureLatestMessages(DepartureMessageMetaData(DepartureSubmitted, LocalDateTime.now()), None))
+        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), Seq(DepartureMessageMetaData(DepartureSubmitted, LocalDateTime.now())))
       )
     )
 

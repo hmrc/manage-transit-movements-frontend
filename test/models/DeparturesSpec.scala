@@ -17,8 +17,8 @@
 package models
 
 import base.SpecBase
-import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted}
-import models.departure.{DepartureLatestMessages, DepartureMessageMetaData}
+import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted, WriteOffNotification, XMLSubmissionNegativeAcknowledgement}
+import models.departure.DepartureMessageMetaData
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime
@@ -42,18 +42,24 @@ class DeparturesSpec extends SpecBase {
                 "departureId"     -> 22,
                 "updated"         -> localDateTime,
                 "referenceNumber" -> "lrn",
-                "latestMessages" -> {
+                "latestMessages" -> Json.arr(
                   Json.obj(
-                    "current" -> Json.obj(
-                      "messageType" -> DeclarationCancellationRequest.toString,
-                      "dateTime"    -> localDateTime
-                    ),
-                    "previous" -> Json.obj(
-                      "messageType" -> DepartureSubmitted.toString,
-                      "dateTime"    -> localDateTime
-                    )
+                    "messageType" -> DeclarationCancellationRequest.toString,
+                    "dateTime"    -> localDateTime
+                  ),
+                  Json.obj(
+                    "messageType" -> DepartureSubmitted.toString,
+                    "dateTime"    -> localDateTime.minusSeconds(10)
+                  ),
+                  Json.obj(
+                    "messageType" -> WriteOffNotification.toString,
+                    "dateTime"    -> localDateTime.minusMinutes(10)
+                  ),
+                  Json.obj(
+                    "messageType" -> XMLSubmissionNegativeAcknowledgement.toString,
+                    "dateTime"    -> localDateTime.minusDays(10)
                   )
-                }
+                )
               )
             )
         )
@@ -68,63 +74,17 @@ class DeparturesSpec extends SpecBase {
               DepartureId(22),
               localDateTime,
               LocalReferenceNumber("lrn"),
-              DepartureLatestMessages(
-                current  = DepartureMessageMetaData(DeclarationCancellationRequest, localDateTime),
-                previous = Some(DepartureMessageMetaData(DepartureSubmitted, localDateTime))
+              Seq(
+                DepartureMessageMetaData(DeclarationCancellationRequest, localDateTime),
+                DepartureMessageMetaData(DepartureSubmitted, localDateTime.minusSeconds(10)),
+                DepartureMessageMetaData(WriteOffNotification, localDateTime.minusMinutes(10)),
+                DepartureMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime.minusDays(10))
               )
             )
           )
         )
 
-      departuresResponseJson.validate[Departures].asOpt.value mustEqual expectedResult
-    }
-
-    "must deserialize when there is only a current message" in {
-
-      val localDateTime: LocalDateTime = LocalDateTime.now()
-
-      val departuresResponseJson =
-        Json.obj(
-          "retrievedDepartures" -> 1,
-          "totalDepartures"     -> 2,
-          "totalMatched"        -> 3,
-          "departures" ->
-            Json.arr(
-              Json.obj(
-                "departureId"     -> 22,
-                "updated"         -> localDateTime,
-                "referenceNumber" -> "lrn",
-                "latestMessages" -> {
-                  Json.obj(
-                    "current" -> Json.obj(
-                      "messageType" -> DepartureSubmitted.toString,
-                      "dateTime"    -> localDateTime
-                    )
-                  )
-                }
-              )
-            )
-        )
-
-      val expectedResult =
-        Departures(
-          1,
-          2,
-          Some(3),
-          Seq(
-            Departure(
-              DepartureId(22),
-              localDateTime,
-              LocalReferenceNumber("lrn"),
-              DepartureLatestMessages(
-                current  = DepartureMessageMetaData(DepartureSubmitted, localDateTime),
-                previous = None
-              )
-            )
-          )
-        )
-
-      departuresResponseJson.validate[Departures].asOpt.value mustEqual expectedResult
+      departuresResponseJson.as[Departures] mustEqual expectedResult
     }
 
     "must fail to deserialize if there is no current message" in {
@@ -141,8 +101,7 @@ class DeparturesSpec extends SpecBase {
               Json.obj(
                 "departureId"     -> 22,
                 "updated"         -> localDateTime,
-                "referenceNumber" -> "lrn",
-                "latestMessages" -> "foo"
+                "referenceNumber" -> "lrn"
               )
             )
         )

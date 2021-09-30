@@ -16,13 +16,16 @@
 
 package models
 
-import models.departure.DepartureLatestMessages
+import models.departure.{DepartureMessageMetaData, DepartureStatus}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, __}
 
 import java.time.LocalDateTime
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, latestMessages: DepartureLatestMessages)
+case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, latestMessages: Seq[DepartureMessageMetaData]) {
+  def currentStatus: DepartureStatus = ???
+  def previousStatus: DepartureStatus = ???
+}
 
 object Departure {
 
@@ -30,6 +33,6 @@ object Departure {
     (__ \ "departureId").read[DepartureId] and
       (__ \ "updated").read[LocalDateTime] and
       (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "latestMessages").read[DepartureLatestMessages]
+      (__ \ "latestMessages").read[Seq[DepartureMessageMetaData]]
   )(Departure.apply _)
 }

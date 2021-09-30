@@ -109,7 +109,7 @@ trait ModelGenerators {
         departureID          <- arbitrary[DepartureId]
         updated              <- arbitrary[LocalDateTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        latestMessage        <- arbitrary[DepartureLatestMessages]
+        latestMessage        <- arbitrary[Seq[DepartureMessageMetaData]]
       } yield Departure(departureID, updated, localReferenceNumber, latestMessage)
     }
 
@@ -122,12 +122,12 @@ trait ModelGenerators {
     }
   }
 
+  // TODO remove
   implicit val arbitraryLatestMessage: Arbitrary[DepartureLatestMessages] = {
     Arbitrary {
       for {
-        current   <- arbitrary[DepartureMessageMetaData]
-        previous  <- Gen.option(arbitrary[DepartureMessageMetaData])
-      } yield DepartureLatestMessages(current, previous)
+        message <- Gen.nonEmptyListOf(arbitrary[DepartureMessageMetaData])
+      } yield DepartureLatestMessages(message)
     }
   }
 

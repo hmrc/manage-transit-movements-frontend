@@ -18,13 +18,13 @@ package models.departure
 
 import play.api.libs.json.{Json, Reads}
 
-case class DepartureLatestMessages(current: DepartureMessageMetaData, previous: Option[DepartureMessageMetaData])
+// TODO Remove
+case class DepartureLatestMessages(messages: Seq[DepartureMessageMetaData])
 
 object DepartureLatestMessages {
 
   implicit val reads: Reads[DepartureLatestMessages] = Json.reads[DepartureLatestMessages]
 
 }
-
 
 

@@ -50,7 +50,7 @@ object DepartureStatusViewModel {
     ViewMovementAction(departureRoutes.AccompanyingDocumentPDFController.getPDF(departure.departureId).url, "viewDepartures.table.action.viewPDF")
 
   private def mrnAllocated(implicit config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == MrnAllocated =>
+    case departure if departure.currentStatus == MrnAllocated =>
       DepartureStatusViewModel(
         "departure.status.mrnAllocated",
         actions =
@@ -62,7 +62,7 @@ object DepartureStatusViewModel {
     ViewMovementAction(config.departureFrontendRejectedUrl(departureId), "viewDepartures.table.action.viewErrors")
 
   private def guaranteeValidationFail(implicit config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == GuaranteeNotValid =>
+    case departure if departure.currentStatus == GuaranteeNotValid =>
       DepartureStatusViewModel(
         "departure.status.guaranteeValidationFail",
         actions = Seq(
@@ -73,22 +73,22 @@ object DepartureStatusViewModel {
   }
 
   private def departureSubmitted: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == DepartureSubmitted =>
+    case departure if departure.currentStatus == DepartureSubmitted =>
       DepartureStatusViewModel("departure.status.submitted", actions = Nil)
   }
 
   private def positiveAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == PositiveAcknowledgement =>
+    case departure if departure.currentStatus == PositiveAcknowledgement =>
       DepartureStatusViewModel("departure.status.positiveAcknowledgement", actions = Nil)
   }
 
   private def releasedForTransit: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == ReleaseForTransit =>
+    case departure if departure.currentStatus == ReleaseForTransit =>
       DepartureStatusViewModel("departure.status.releasedForTransit", actions = Seq(downloadTADAction(departure)))
   }
 
   private def departureDeclarationRejected(implicit config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == DepartureRejected =>
+    case departure if departure.currentStatus == DepartureRejected =>
       DepartureStatusViewModel(
         "departure.status.departureDeclarationRejected",
         actions = Seq(ViewMovementAction(config.departureFrontendDeclarationFailUrl(departure.departureId), "viewDepartures.table.action.viewErrors"))
@@ -96,17 +96,17 @@ object DepartureStatusViewModel {
   }
 
   private def writeOffNotification: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == WriteOffNotification =>
+    case departure if departure.currentStatus == WriteOffNotification =>
       DepartureStatusViewModel("departure.status.writeOffNotification", actions = Nil)
   }
 
   private def declarationCancellationRequest: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == DeclarationCancellationRequest =>
+    case departure if departure.currentStatus == DeclarationCancellationRequest =>
       DepartureStatusViewModel("departure.status.declarationCancellationRequest", actions = Nil)
   }
 
   private def cancellationDecision(implicit config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == CancellationDecision =>
+    case departure if departure.currentStatus == CancellationDecision =>
       DepartureStatusViewModel(
         "departure.status.declarationCancellationDecision",
         actions =
@@ -115,7 +115,7 @@ object DepartureStatusViewModel {
   }
 
   private def noReleasedForTransit(implicit config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == NoReleaseForTransit =>
+    case departure if departure.currentStatus == NoReleaseForTransit =>
       DepartureStatusViewModel(
         "departure.status.noReleaseForTransit",
         actions = Seq(
@@ -126,7 +126,7 @@ object DepartureStatusViewModel {
   }
 
   private def controlDecision(implicit config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == ControlDecisionNotification =>
+    case departure if departure.currentStatus == ControlDecisionNotification =>
       DepartureStatusViewModel(
         "departure.status.controlDecision",
         actions = Seq(
@@ -139,8 +139,8 @@ object DepartureStatusViewModel {
   }
 
   private def departureXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == XMLSubmissionNegativeAcknowledgement &&
-      departure.latestMessages.previous.map(_.messageType).contains(DepartureSubmitted) =>
+    case departure if departure.currentStatus == XMLSubmissionNegativeAcknowledgement &&
+      departure.previousStatus == DepartureSubmitted =>
 
       DepartureStatusViewModel(
         "departure.status.XMLSubmissionNegativeAcknowledgement",
@@ -153,8 +153,8 @@ object DepartureStatusViewModel {
   }
 
   private def cancellationXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.latestMessages.current.messageType == XMLSubmissionNegativeAcknowledgement &&
-      departure.latestMessages.previous.map(_.messageType).contains(DeclarationCancellationRequest) =>
+    case departure if departure.currentStatus == XMLSubmissionNegativeAcknowledgement &&
+      departure.previousStatus == DeclarationCancellationRequest =>
 
       DepartureStatusViewModel(
         "departure.status.XMLCancellationSubmissionNegativeAcknowledgement",
@@ -167,6 +167,6 @@ object DepartureStatusViewModel {
   }
 
   private def invalidStatus: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure => DepartureStatusViewModel(departure.latestMessages.current.messageType.toString, actions = Nil)
+    case departure => DepartureStatusViewModel(departure.currentStatus.toString, actions = Nil)
   }
 }
