@@ -24,13 +24,16 @@ import play.api.libs.json.{JsString, JsSuccess}
 
 class DepartureStatusSpec extends SpecBase {
 
+  def departureStatusesExcluding(exclude: DepartureStatus*): Seq[DepartureStatus] =
+      DepartureStatus.values.filterNot(
+        x => exclude.toSet.contains(x)
+      )
+
   "must deserialize" - {
 
     "when given a valid message type" in {
 
-      val gen = Gen.oneOf(DepartureStatus.values)
-
-      forAll(gen) {
+      DepartureStatus.values.foreach {
         departureStatus =>
           JsString(departureStatus.toString).validate[DepartureStatus] mustEqual JsSuccess(departureStatus)
       }
@@ -39,6 +42,68 @@ class DepartureStatusSpec extends SpecBase {
     "when given an invalid message type" in {
 
       JsString("Something else").validate[DepartureStatus] mustEqual JsSuccess(InvalidStatus)
+    }
+  }
+
+  "ordering" - {
+    "comparing to DepartureSubmitted" - {
+      "all status must have greater order" in {
+
+        departureStatusesExcluding(DepartureSubmitted).foreach {
+          status =>
+            val result = Ordering[DepartureStatus].max(DepartureSubmitted, status)
+
+            result mustBe status
+        }
+      }
+    }
+
+    "comparing to DepartureRejected" - {
+      "all status must have greater order except for DepartureSubmitted" in {
+
+        departureStatusesExcluding(DepartureRejected, DepartureSubmitted, PositiveAcknowledgement).foreach {
+          status =>
+            val result = Ordering[DepartureStatus].max(DepartureRejected, status)
+
+            result mustBe status
+        }
+      }
+
+      "then it should have great order than PositiveAcknowledgement" in {
+        val result = Ordering[DepartureStatus].max(DepartureRejected, PositiveAcknowledgement)
+
+        result mustBe DepartureRejected
+      }
+    }
+
+    "comparing to PositiveAcknowledgement" - {
+      "all status must have greater order except for DepartureSubmitted" in {
+
+        departureStatusesExcluding(PositiveAcknowledgement, DepartureSubmitted).foreach {
+          status =>
+            val result = Ordering[DepartureStatus].max(PositiveAcknowledgement, status)
+
+            result mustBe status
+        }
+      }
+    }
+
+    "comparing to MrnAllocated" ignore {
+      val values = Seq(
+        DepartureSubmitted,
+        PositiveAcknowledgement,
+        DepartureRejected
+      )
+
+      "is greater order than DepartureSubmitted, PositiveAcknowledgement, DepartureRejected" in {
+
+        forAll(Gen.oneOf(values)) {
+          status =>
+            val result = Ordering[DepartureStatus].max(MrnAllocated, status)
+
+            result mustBe MrnAllocated
+        }
+      }
     }
   }
 }

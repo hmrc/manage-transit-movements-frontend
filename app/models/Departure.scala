@@ -16,14 +16,33 @@
 
 package models
 
+import models.departure.DepartureStatus.DepartureSubmitted
 import models.departure.{DepartureMessageMetaData, DepartureStatus}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, __}
 
 import java.time.LocalDateTime
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, latestMessages: Seq[DepartureMessageMetaData]) {
-  def currentStatus: DepartureStatus = ???
+case class Departure(departureId: DepartureId,
+                     updated: LocalDateTime,
+                     localReferenceNumber: LocalReferenceNumber,
+                     latestMessages: Seq[DepartureMessageMetaData]
+) {
+
+  def currentStatus: DepartureStatus = {
+
+    implicit val localDateOrdering: Ordering[LocalDateTime] = _ compareTo _
+
+    val latestMessage = latestMessages.maxBy(_.dateTime)
+    val anyTheSameTime = latestMessages.filter(_.dateTime == latestMessage.dateTime)
+
+    if (anyTheSameTime.size == 1) {
+      latestMessage.messageType
+    } else {
+      anyTheSameTime.map(_.messageType).max
+    }
+  }
+
   def previousStatus: DepartureStatus = ???
 }
 

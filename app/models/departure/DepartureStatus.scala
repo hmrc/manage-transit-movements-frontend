@@ -23,10 +23,11 @@ sealed trait DepartureStatus
 
 object DepartureStatus {
 
-  case object PositiveAcknowledgement              extends WithName("IE928") with DepartureStatus
   case object DepartureSubmitted                   extends WithName("IE015") with DepartureStatus
-  case object MrnAllocated                         extends WithName("IE028") with DepartureStatus
+  case object PositiveAcknowledgement              extends WithName("IE928") with DepartureStatus
   case object DepartureRejected                    extends WithName("IE016") with DepartureStatus
+  case object MrnAllocated                         extends WithName("IE028") with DepartureStatus
+
   case object ControlDecisionNotification          extends WithName("IE060") with DepartureStatus
   case object NoReleaseForTransit                  extends WithName("IE051") with DepartureStatus
   case object ReleaseForTransit                    extends WithName("IE029") with DepartureStatus
@@ -35,6 +36,18 @@ object DepartureStatus {
   case object WriteOffNotification                 extends WithName("IE045") with DepartureStatus
   case object GuaranteeNotValid                    extends WithName("IE055") with DepartureStatus
   case object XMLSubmissionNegativeAcknowledgement extends WithName("IE917") with DepartureStatus
+
+  implicit val ordering: Ordering[DepartureStatus] = (x: DepartureStatus, y: DepartureStatus) => {
+    (x, y) match {
+      case (DepartureSubmitted, _)      => -1
+      case (DepartureRejected, PositiveAcknowledgement) => 1
+      case (PositiveAcknowledgement, DepartureRejected) => -1
+      case (DepartureRejected, _)       => -1
+      case (PositiveAcknowledgement, _) => -1
+      //      case (MrnAllocated, _)            => -1
+    }
+
+  }
 
   case object InvalidStatus                        extends DepartureStatus {
     override def toString: String = "Invalid status"
