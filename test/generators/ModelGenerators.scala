@@ -51,7 +51,6 @@ trait ModelGenerators {
         year <- Gen.chooseNum(1111, 3000)
       } yield LocalDate.of(year, month, day)
     }
-  XMLSubmissionNegativeAcknowledgementMessage
 
   implicit val arbitraryLocalTime: Arbitrary[LocalTime] = Arbitrary {
     for {

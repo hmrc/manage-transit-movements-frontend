@@ -21,13 +21,13 @@ import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
 import models.ArrivalId
-import play.api.Logger.logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UnloadingPermissionPDFController @Inject() (
@@ -39,7 +39,8 @@ class UnloadingPermissionPDFController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
-    with TechnicalDifficultiesPage {
+    with TechnicalDifficultiesPage
+    with Logging {
 
   def getPDF(arrivalId: ArrivalId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>

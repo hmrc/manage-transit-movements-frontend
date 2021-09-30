@@ -20,11 +20,11 @@ import config.FrontendAppConfig
 import connectors.DeparturesMovementConnector
 import controllers.actions.IdentifierAction
 import models.DepartureId
-import play.api.Logger.logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import renderer.Renderer
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -35,7 +35,8 @@ class AccompanyingDocumentPDFController @Inject() (identify: IdentifierAction,
                                                    departuresMovementConnector: DeparturesMovementConnector
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, renderer: Renderer)
     extends FrontendController(cc)
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def getPDF(departureId: DepartureId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
