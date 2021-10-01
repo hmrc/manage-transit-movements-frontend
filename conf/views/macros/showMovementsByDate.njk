@@ -20,19 +20,19 @@
           {% set rowIndex = loop.index %}
           <tr data-testrole="movements-list_row{{ rowIndex }}">
             <td data-testrole="movements-list_row{{ rowIndex }}-updated">
-              <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingUpdated }}</span>
+              <span class="govuk-visually-hidden">{{ rowHeadingUpdated }}</span>
               {{ row.updated }}
             </td>
             <td data-testrole="movements-list_row{{ rowIndex }}-ref">
-              <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingMrn }}</span>
+              <span class="govuk-visually-hidden">{{ rowHeadingMrn }}</span>
               {{ row.referenceNumber }}
             </td>
             <td data-testrole="movements-list_row{{ rowIndex }}-status">
-              <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingStatus }}</span>
+              <span class="govuk-visually-hidden">{{ rowHeadingStatus }}</span>
               {{ messages(row.status) }}
             </td>
             <td data-testrole="movements-list_row{{ rowIndex }}-actions">
-              <span class="responsive-table__heading" aria-hidden="true">{{ rowHeadingAction }}</span>
+              <span class="govuk-visually-hidden">{{ rowHeadingAction }}</span>
 
               {% for action in row.actions %}
                 {% set actionIndex = loop.index %}

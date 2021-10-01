@@ -32,9 +32,9 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*Routes.*;.*GuiceInjector;" +
       ".*ControllerConfiguration",
-    ScoverageKeys.coverageMinimum       := 60,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting  := true,
+    ScoverageKeys.coverageMinimumStmtTotal := 75,
+    ScoverageKeys.coverageFailOnMinimum    := true,
+    ScoverageKeys.coverageHighlighting     := true,
     scalacOptions ++= Seq(
       "-feature",
       "-P:silencer:pathFilters=routes"
@@ -66,5 +66,3 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
     "-Dlogger.resource=logback-test.xml"
   )
 )
-
-dependencyOverrides ++= AppDependencies.overrides
