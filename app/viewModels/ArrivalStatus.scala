@@ -26,11 +26,11 @@ object ArrivalStatus {
   def apply(arrival: Arrival)(implicit config: FrontendAppConfig): ArrivalStatus = {
     val allPfs: PartialFunction[Arrival, ArrivalStatus] =
       Seq(unloadingPermission,
-        arrivalRejected,
-        unloadingRemarksRejected,
-        arrivalNegativeAcknowledgement,
-        unloadingRemarksNegativeAcknowledgement,
-        displayStatus
+          arrivalRejected,
+          unloadingRemarksRejected,
+          arrivalNegativeAcknowledgement,
+          unloadingRemarksNegativeAcknowledgement,
+          displayStatus
       ).reduce(_ orElse _)
 
     allPfs.apply(arrival)
