@@ -60,14 +60,12 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             "departureId"     -> 22,
             "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
-            "latestMessages" -> {
+            "messagesMetaData" -> Json.arr(
               Json.obj(
-                "current" -> Json.obj(
-                  "messageType" -> DepartureSubmitted.toString,
-                  "dateTime"    -> localDateTime
-                )
+                "messageType" -> DepartureSubmitted.toString,
+                "dateTime"    -> localDateTime
               )
-            }
+            )
           )
         )
     )

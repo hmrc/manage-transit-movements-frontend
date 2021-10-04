@@ -16,7 +16,6 @@
 
 package models
 
-import models.departure.DepartureStatus.DepartureSubmitted
 import models.departure.{DepartureMessageMetaData, DepartureStatus}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, __}
@@ -26,15 +25,15 @@ import java.time.LocalDateTime
 case class Departure(departureId: DepartureId,
                      updated: LocalDateTime,
                      localReferenceNumber: LocalReferenceNumber,
-                     latestMessages: Seq[DepartureMessageMetaData]
+                     messagesMetaData: Seq[DepartureMessageMetaData]
 ) {
 
   def currentStatus: DepartureStatus = {
 
     implicit val localDateOrdering: Ordering[LocalDateTime] = _ compareTo _
 
-    val latestMessage = latestMessages.maxBy(_.dateTime)
-    val anyTheSameTime = latestMessages.filter(_.dateTime == latestMessage.dateTime)
+    val latestMessage = messagesMetaData.maxBy(_.dateTime)
+    val anyTheSameTime = messagesMetaData.filter(_.dateTime == latestMessage.dateTime)
 
     if (anyTheSameTime.size == 1) {
       latestMessage.messageType
@@ -43,7 +42,20 @@ case class Departure(departureId: DepartureId,
     }
   }
 
-  def previousStatus: DepartureStatus = ???
+  def previousStatus: DepartureStatus = {
+
+    implicit val localDateOrdering: Ordering[LocalDateTime] = _ compareTo _
+
+    val previousMessage = messagesMetaData.sortBy(_.dateTime).takeRight(2).head
+
+    val anyTheSameTime = messagesMetaData.filter(_.dateTime == previousMessage.dateTime)
+
+    if (anyTheSameTime.size == 1) {
+      previousMessage.messageType
+    } else {
+      anyTheSameTime.map(_.messageType).max
+    }
+  }
 }
 
 object Departure {
@@ -52,6 +64,6 @@ object Departure {
     (__ \ "departureId").read[DepartureId] and
       (__ \ "updated").read[LocalDateTime] and
       (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "latestMessages").read[Seq[DepartureMessageMetaData]]
+      (__ \ "messagesMetaData").read[Seq[DepartureMessageMetaData]]
   )(Departure.apply _)
 }

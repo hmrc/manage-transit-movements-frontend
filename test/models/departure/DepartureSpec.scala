@@ -17,7 +17,7 @@
 package models.departure
 
 import base.SpecBase
-import models.departure.DepartureStatus.{CancellationDecision, DeclarationCancellationRequest, DepartureSubmitted, GuaranteeNotValid, MrnAllocated, NoReleaseForTransit, PositiveAcknowledgement}
+import models.departure.DepartureStatus._
 import models.{Departure, DepartureId, LocalReferenceNumber}
 
 import java.time.LocalDateTime
@@ -41,31 +41,9 @@ class DepartureSpec extends SpecBase {
         departure.currentStatus mustBe DepartureSubmitted
       }
     }
-  }
 
-  "when there are responses from NCTS for the departure" - {
-    "when there is a single response from NCTS" - {
-      "must return the messageType for the latest NCTS message" in {
-
-        val localDateTime: LocalDateTime = LocalDateTime.now()
-
-        val departure =
-          Departure(
-            DepartureId(22),
-            localDateTime,
-            LocalReferenceNumber("lrn"),
-            Seq(
-              DepartureMessageMetaData(DepartureSubmitted, localDateTime),
-              DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10))
-            )
-          )
-
-        departure.currentStatus mustBe PositiveAcknowledgement
-      }
-    }
-
-    "when there are multiple responses from NCTS" - {
-      "when messages are well ordered" - {
+    "when there are responses from NCTS for the departure" - {
+      "when there is a single response from NCTS" - {
         "must return the messageType for the latest NCTS message" in {
 
           val localDateTime: LocalDateTime = LocalDateTime.now()
@@ -77,19 +55,17 @@ class DepartureSpec extends SpecBase {
               LocalReferenceNumber("lrn"),
               Seq(
                 DepartureMessageMetaData(DepartureSubmitted, localDateTime),
-                DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10)),
-                DepartureMessageMetaData(MrnAllocated, localDateTime.plusSeconds(20))
+                DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10))
               )
             )
 
-          departure.currentStatus mustBe MrnAllocated
+          departure.currentStatus mustBe PositiveAcknowledgement
         }
       }
 
-      "when messages are not well ordered" - {
-        "must return the messageType for the message with the latest dateTime" - {
-
-          "Scenario 1" in {
+      "when there are multiple responses from NCTS" - {
+        "when messages are well ordered" - {
+          "must return the messageType for the latest NCTS message" in {
 
             val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -100,36 +76,84 @@ class DepartureSpec extends SpecBase {
                 LocalReferenceNumber("lrn"),
                 Seq(
                   DepartureMessageMetaData(DepartureSubmitted, localDateTime),
-                  DepartureMessageMetaData(MrnAllocated, localDateTime.plusSeconds(20)),
                   DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10)),
+                  DepartureMessageMetaData(MrnAllocated, localDateTime.plusSeconds(20))
                 )
               )
 
             departure.currentStatus mustBe MrnAllocated
           }
+        }
 
-          "Scenario 2" in {
+        "when messages are not well ordered" - {
+          "must return the messageType for the message with the latest dateTime" - {
 
-            val localDateTime: LocalDateTime = LocalDateTime.now()
+            "Scenario 1" in {
 
-            val departure =
-              Departure(
-                DepartureId(22),
-                localDateTime,
-                LocalReferenceNumber("lrn"),
-                Seq(
-                  DepartureMessageMetaData(GuaranteeNotValid, localDateTime.plusDays(3)),
-                  DepartureMessageMetaData(NoReleaseForTransit, localDateTime.plusDays(4)),
-                  DepartureMessageMetaData(DepartureSubmitted, localDateTime),
-                  DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
-                  DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusDays(1)),
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val departure =
+                Departure(
+                  DepartureId(22),
+                  localDateTime,
+                  LocalReferenceNumber("lrn"),
+                  Seq(
+                    DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+                    DepartureMessageMetaData(MrnAllocated, localDateTime.plusSeconds(20)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10)),
+                  )
                 )
-              )
 
-            departure.currentStatus mustBe NoReleaseForTransit
+              departure.currentStatus mustBe MrnAllocated
+            }
+
+            "Scenario 2" in {
+
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val departure =
+                Departure(
+                  DepartureId(22),
+                  localDateTime,
+                  LocalReferenceNumber("lrn"),
+                  Seq(
+                    DepartureMessageMetaData(GuaranteeNotValid, localDateTime.plusDays(3)),
+                    DepartureMessageMetaData(NoReleaseForTransit, localDateTime.plusDays(4)),
+                    DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+                    DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusDays(1)),
+                  )
+                )
+
+              departure.currentStatus mustBe NoReleaseForTransit
+            }
+
+            "Scenario 3" in {
+
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val departure =
+                Departure(
+                  DepartureId(22),
+                  localDateTime,
+                  LocalReferenceNumber("lrn"),
+                  Seq(
+                    DepartureMessageMetaData(DeclarationCancellationRequest, localDateTime.plusWeeks(3)),
+                    DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+                    DepartureMessageMetaData(CancellationDecision, localDateTime.plusMonths(4)),
+                    DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(1)),
+                  )
+                )
+
+              departure.currentStatus mustBe CancellationDecision
+            }
           }
+        }
 
-          "Scenario 3" in {
+        "when messages have the same latest dateTime" - {
+
+          "must return the latest messageType" in {
 
             val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -139,22 +163,41 @@ class DepartureSpec extends SpecBase {
                 localDateTime,
                 LocalReferenceNumber("lrn"),
                 Seq(
-                  DepartureMessageMetaData(DeclarationCancellationRequest, localDateTime.plusWeeks(3)),
                   DepartureMessageMetaData(DepartureSubmitted, localDateTime),
-                  DepartureMessageMetaData(CancellationDecision, localDateTime.plusMonths(4)),
-                  DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
-                  DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(1)),
+                  DepartureMessageMetaData(MrnAllocated, localDateTime.plusMinutes(10)),
+                  DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusMinutes(10))
                 )
               )
 
-            departure.currentStatus mustBe CancellationDecision
+            departure.currentStatus mustBe MrnAllocated
           }
         }
       }
+    }
+  }
 
-      "when messages have the same latest dateTime" - {
+  "previousStatus" - {
 
-        "must return the latest messageType" in {
+    "when there is only the message from the user" - {
+
+      "must return messageType" in {
+        val localDateTime: LocalDateTime = LocalDateTime.now()
+
+        val departure =
+          Departure(
+            DepartureId(22),
+            localDateTime,
+            LocalReferenceNumber("lrn"),
+            Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime.minusSeconds(10)))
+          )
+
+        departure.previousStatus mustBe DepartureSubmitted
+      }
+    }
+
+    "when there are responses from NCTS for the departure" - {
+      "when there is a single response from NCTS" - {
+        "must return the messageType for the second latest NCTS message" in {
 
           val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -165,12 +208,122 @@ class DepartureSpec extends SpecBase {
               LocalReferenceNumber("lrn"),
               Seq(
                 DepartureMessageMetaData(DepartureSubmitted, localDateTime),
-                DepartureMessageMetaData(MrnAllocated, localDateTime.plusMinutes(10)),
-                DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusMinutes(10))
+                DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10))
               )
             )
 
-          departure.currentStatus mustBe MrnAllocated
+          departure.previousStatus mustBe DepartureSubmitted
+        }
+      }
+
+      "when there are multiple responses from NCTS" - {
+        "when messages are well ordered" - {
+          "must return the messageType for the second latest NCTS message" in {
+
+            val localDateTime: LocalDateTime = LocalDateTime.now()
+
+            val departure =
+              Departure(
+                DepartureId(22),
+                localDateTime,
+                LocalReferenceNumber("lrn"),
+                Seq(
+                  DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+                  DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10)),
+                  DepartureMessageMetaData(MrnAllocated, localDateTime.plusSeconds(20))
+                )
+              )
+
+            departure.previousStatus mustBe PositiveAcknowledgement
+          }
+        }
+
+        "when messages are not well ordered" - {
+          "must return the messageType for the message with the second latest dateTime" - {
+
+            "Scenario 1" in {
+
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val departure =
+                Departure(
+                  DepartureId(22),
+                  localDateTime,
+                  LocalReferenceNumber("lrn"),
+                  Seq(
+                    DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+                    DepartureMessageMetaData(MrnAllocated, localDateTime.plusSeconds(20)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10)),
+                  )
+                )
+
+              departure.previousStatus mustBe PositiveAcknowledgement
+            }
+
+            "Scenario 2" in {
+
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val departure =
+                Departure(
+                  DepartureId(22),
+                  localDateTime,
+                  LocalReferenceNumber("lrn"),
+                  Seq(
+                    DepartureMessageMetaData(GuaranteeNotValid, localDateTime.plusDays(3)),
+                    DepartureMessageMetaData(NoReleaseForTransit, localDateTime.plusDays(4)),
+                    DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+                    DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusDays(1)),
+                  )
+                )
+
+              departure.previousStatus mustBe GuaranteeNotValid
+            }
+
+            "Scenario 3" in {
+
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val departure =
+                Departure(
+                  DepartureId(22),
+                  localDateTime,
+                  LocalReferenceNumber("lrn"),
+                  Seq(
+                    DepartureMessageMetaData(DeclarationCancellationRequest, localDateTime.plusWeeks(3)),
+                    DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+                    DepartureMessageMetaData(CancellationDecision, localDateTime.plusMonths(4)),
+                    DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(1)),
+                  )
+                )
+
+              departure.previousStatus mustBe DeclarationCancellationRequest
+            }
+          }
+        }
+
+        "when messages have the same latest dateTime" - {
+
+          "must return the second latest messageType" in {
+
+            val localDateTime: LocalDateTime = LocalDateTime.now()
+
+            val departure =
+              Departure(
+                DepartureId(22),
+                localDateTime,
+                LocalReferenceNumber("lrn"),
+                Seq(
+                  DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+                  DepartureMessageMetaData(MrnAllocated, localDateTime),
+                  DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusMinutes(10))
+                )
+              )
+
+            departure.previousStatus mustBe MrnAllocated
+          }
         }
       }
     }

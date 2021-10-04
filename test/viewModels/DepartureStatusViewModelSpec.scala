@@ -16,15 +16,14 @@
 
 package viewModels
 
-import base.SpecBase
-import base.FakeFrontendAppConfig
+import base.{FakeFrontendAppConfig, SpecBase}
+import controllers.departure.{routes => departureRoutes}
 import generators.Generators
 import models.Departure
+import models.departure.DepartureMessageMetaData
 import models.departure.DepartureStatus._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import controllers.departure.{routes => departureRoutes}
-import models.departure.{DepartureLatestMessages, DepartureMessageMetaData}
 
 import java.time.LocalDateTime
 
@@ -38,7 +37,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(DepartureRejected, LocalDateTime.now()))
           )
 
@@ -55,7 +54,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(WriteOffNotification, LocalDateTime.now()))
           )
 
@@ -69,7 +68,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(ReleaseForTransit, LocalDateTime.now()))
           )
 
@@ -85,7 +84,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(GuaranteeNotValid, LocalDateTime.now()))
           )
 
@@ -102,7 +101,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(DeclarationCancellationRequest, LocalDateTime.now()))
           )
 
@@ -116,7 +115,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(CancellationDecision, LocalDateTime.now()))
           )
 
@@ -132,7 +131,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq( DepartureMessageMetaData(NoReleaseForTransit, LocalDateTime.now()))
           )
 
@@ -148,7 +147,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(ControlDecisionNotification, LocalDateTime.now()))
           )
 
@@ -166,7 +165,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(MrnAllocated, LocalDateTime.now()))
           )
 
@@ -182,7 +181,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(PositiveAcknowledgement, LocalDateTime.now()))
           )
 
@@ -196,7 +195,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
 
-          val updatedDeparture: Departure      = departure.copy(latestMessages =
+          val updatedDeparture: Departure      = departure.copy(messagesMetaData =
             Seq(DepartureMessageMetaData(DepartureSubmitted, LocalDateTime.now()))
           )
 
@@ -211,9 +210,9 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
         departure =>
 
           val updatedDeparture: Departure = departure.copy(
-            latestMessages =
+            messagesMetaData =
               Seq(
-                DepartureMessageMetaData(XMLSubmissionNegativeAcknowledgement, LocalDateTime.now()),
+                DepartureMessageMetaData(XMLSubmissionNegativeAcknowledgement, LocalDateTime.now().plusSeconds(10)),
                 DepartureMessageMetaData(DepartureSubmitted, LocalDateTime.now())
               )
           )
@@ -229,12 +228,12 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
         departure =>
 
           val updatedDeparture: Departure = departure.copy(
-            latestMessages =
+            messagesMetaData =
               Seq(
-                DepartureMessageMetaData(XMLSubmissionNegativeAcknowledgement, LocalDateTime.now()),
+                DepartureMessageMetaData(XMLSubmissionNegativeAcknowledgement, LocalDateTime.now().plusSeconds(10)),
                 DepartureMessageMetaData(DeclarationCancellationRequest, LocalDateTime.now())
               )
-          )
+            )
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.XMLCancellationSubmissionNegativeAcknowledgement"

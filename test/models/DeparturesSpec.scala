@@ -42,7 +42,7 @@ class DeparturesSpec extends SpecBase {
                 "departureId"     -> 22,
                 "updated"         -> localDateTime,
                 "referenceNumber" -> "lrn",
-                "latestMessages" -> Json.arr(
+                "messagesMetaData" -> Json.arr(
                   Json.obj(
                     "messageType" -> DeclarationCancellationRequest.toString,
                     "dateTime"    -> localDateTime

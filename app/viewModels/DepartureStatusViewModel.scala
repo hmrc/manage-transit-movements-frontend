@@ -21,7 +21,7 @@ import controllers.departure.{routes => departureRoutes}
 import models.departure.DepartureStatus._
 import models.{Departure, DepartureId}
 
-case class DepartureStatusViewModel(status: String, actions: Seq[ViewMovementAction])
+case class  DepartureStatusViewModel(status: String, actions: Seq[ViewMovementAction])
 
 object DepartureStatusViewModel {
 
