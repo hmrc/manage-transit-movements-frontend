@@ -18,7 +18,7 @@ package views.behaviours
 
 import base.FakeFrontendAppConfig
 import config.FrontendAppConfig
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.libs.json._
 import viewModels.ViewMovement
@@ -57,50 +57,67 @@ abstract class MovementsTableViewBehaviours(override protected val viewUnderTest
 
     "generate correct data in each row" - {
       rows.toList.zipWithIndex.forEach {
-        x =>
-          s"row ${x._2 + 1}" - {
+        case (row, rowIndex) =>
+          s"row ${rowIndex + 1}" - {
+
+            def elementWithVisibleText(element: Element, text: String): Unit =
+              element.ownText() mustBe text.trim
+
+            def elementWithHiddenText(element: Element, text: String): Unit = {
+              val heading = element.getElementsByClass("responsive-table__heading").head
+              heading.attr("aria-hidden").toBoolean mustBe true
+              heading.text() mustBe text
+            }
 
             "display correct time" in {
-              val updated = x._1.selectFirst("td[data-testrole*=-updated]")
-              val time    = Json.toJson(viewMovements(x._2)).transform((JsPath \ "updated").json.pick[JsString]).get.value
-              updated.ownText() mustBe time
-              updated.text() mustBe s"$messageKeyPrefix.table.updated $time"
+              val updated = row.selectFirst("td[data-testrole*=-updated]")
+              val time    = Json.toJson(viewMovements(rowIndex)).transform((JsPath \ "updated").json.pick[JsString]).get.value
+
+              behave like elementWithVisibleText(updated, time)
+              behave like elementWithHiddenText(updated, s"$messageKeyPrefix.table.updated")
             }
 
             "display correct reference number" in {
-              val ref = x._1.selectFirst("td[data-testrole*=-ref]")
-              ref.ownText() mustBe viewMovements(x._2).referenceNumber
-              ref.text() mustBe s"$messageKeyPrefix.table.$refType ${viewMovements(x._2).referenceNumber}"
+              val ref = row.selectFirst("td[data-testrole*=-ref]")
+
+              behave like elementWithVisibleText(ref, viewMovements(rowIndex).referenceNumber)
+              behave like elementWithHiddenText(ref, s"$messageKeyPrefix.table.$refType")
             }
 
             "display correct status" in {
-              val status = x._1.selectFirst("td[data-testrole*=-status]")
-              status.ownText() mustBe viewMovements(x._2).status
-              status.text() mustBe s"$messageKeyPrefix.table.status ${viewMovements(x._2).status}"
+              val status = row.selectFirst("td[data-testrole*=-status]")
+
+              behave like elementWithVisibleText(status, viewMovements(rowIndex).status)
+              behave like elementWithHiddenText(status, s"$messageKeyPrefix.table.status")
             }
 
             "display actions" - {
-              val actions = x._1.selectFirst("td[data-testrole*=-actions]")
+              val actions = row.selectFirst("td[data-testrole*=-actions]")
 
               "include hidden content" in {
-                actions.text() must include(s"$messageKeyPrefix.table.action")
+                behave like elementWithHiddenText(actions, s"$messageKeyPrefix.table.action")
               }
 
-              val actionLinks = actions.getElementsByTag("a")
+              val actionLinks = actions.getElementsByClass("action-link")
               actionLinks.zipWithIndex.forEach {
-                y =>
-                  s"action ${y._2 + 1}" - {
+                case (link, linkIndex) =>
+                  s"action ${linkIndex + 1}" - {
 
                     "display correct text" in {
-                      y._1.text() mustBe s"${viewMovements(x._2).actions(y._2).key} viewArrivalNotifications.table.action.hidden"
+                      link.text() mustBe s"${viewMovements(rowIndex).actions(linkIndex).key} viewArrivalNotifications.table.action.hidden"
+
+                      behave like elementWithVisibleText(link, s"${viewMovements(rowIndex).actions(linkIndex).key}")
+
+                      val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
+                      hiddenText.text() mustBe "viewArrivalNotifications.table.action.hidden"
                     }
 
                     "have correct id" in {
-                      y._1.attr("id") mustBe s"${viewMovements(x._2).actions(y._2).key}-${viewMovements(x._2).referenceNumber}"
+                      link.attr("id") mustBe s"${viewMovements(rowIndex).actions(linkIndex).key}-${viewMovements(rowIndex).referenceNumber}"
                     }
 
                     "have correct href" in {
-                      y._1.attr("href") mustBe viewMovements(x._2).actions(y._2).href
+                      link.attr("href") mustBe viewMovements(rowIndex).actions(linkIndex).href
                     }
                   }
               }
