@@ -9,7 +9,7 @@ lazy val appName: String = "manage-transit-movements-frontend"
 val silencerVersion = "1.7.0"
 
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(DefaultBuildSettings.scalaSettings: _*)
   .settings(DefaultBuildSettings.defaultSettings(): _*)
@@ -32,9 +32,9 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*Routes.*;.*GuiceInjector;" +
       ".*ControllerConfiguration",
-    ScoverageKeys.coverageMinimum       := 60,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting  := true,
+    ScoverageKeys.coverageMinimumStmtTotal := 75,
+    ScoverageKeys.coverageFailOnMinimum    := true,
+    ScoverageKeys.coverageHighlighting     := true,
     scalacOptions ++= Seq(
       "-feature",
       "-P:silencer:pathFilters=routes"
@@ -66,5 +66,3 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
     "-Dlogger.resource=logback-test.xml"
   )
 )
-
-dependencyOverrides ++= AppDependencies.overrides

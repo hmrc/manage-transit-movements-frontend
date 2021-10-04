@@ -83,13 +83,10 @@ viewArrivalNotifications.table.procedure   = Procedure
 viewArrivalNotifications.table.status      = Status
 viewArrivalNotifications.table.action      = Action
 viewArrivalNotifications.table.action.viewErrors              = View errors
-viewArrivalNotifications.table.action.viewErrors.hidden       = View errors for {0}
 viewArrivalNotifications.table.action.unloadingRemarks        = Make unloading remarks
-viewArrivalNotifications.table.action.unloadingRemarks.hidden = Make unloading remarks for {0}
 viewArrivalNotifications.table.action.viewHistory             = View history
-viewArrivalNotifications.table.action.viewHistory.hidden      = View history for {0}
 viewArrivalNotifications.table.action.viewPDF                 = Unloading Permission PDF
-viewArrivalNotifications.table.action.viewPDF.hidden          = Unloading Permission PDF for {0}
+viewArrivalNotifications.table.action.hidden                  = for {0}
 
 movement.search.title = Search by movement reference number
 movement.search.departure.title = Search by local reference number
@@ -238,17 +235,6 @@ pageNotFound.paragraph1 = If you typed the web address, check it is correct.
 pageNotFound.paragraph2 = If you pasted the web address, check you copied the entire address.
 pageNotFound.paragraph3Start = If the web address is correct or you selected a link or button,
 pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpdesk if you need to speak to someone about your transit movement (opens in a new tab)
-
-northernIrelandInterstitial.title = You cannot use this service
-northernIrelandInterstitial.heading = You cannot use this service
-northernIrelandInterstitial.youMust = You must:
-northernIrelandInterstitial.viewOldTransit = view old transit movements on the original NCTS service (opens in a new tab)
-northernIrelandInterstitial.readAboutMakingDeparture = read about making departure declarations or arrival notifications for Northern Ireland movements (opens in a new tab)
-
-oldServiceInterstitial.title = You cannot use this service
-oldServiceInterstitial.heading = You cannot use this service
-oldServiceInterstitial.youMust = You must
-oldServiceInterstitial.ntcsSerivice = use the original NCTS service (opens in a new tab)
 
 noReleaseForTransit.title = There is a problem with this departure declaration
 noReleaseForTransit.heading = There is a problem with this departure declaration

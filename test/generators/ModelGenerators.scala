@@ -122,15 +122,6 @@ trait ModelGenerators {
     }
   }
 
-  // TODO remove
-  implicit val arbitraryLatestMessage: Arbitrary[DepartureLatestMessages] = {
-    Arbitrary {
-      for {
-        message <- Gen.nonEmptyListOf(arbitrary[DepartureMessageMetaData])
-      } yield DepartureLatestMessages(message)
-    }
-  }
-
   implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] =
     Arbitrary {
       Gen.oneOf(DepartureStatus.values)

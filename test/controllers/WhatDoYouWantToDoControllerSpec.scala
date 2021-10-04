@@ -25,7 +25,6 @@ import models.departure.DepartureStatus.DepartureSubmitted
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import play.api.Configuration
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -83,7 +82,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
   override def guiceApplicationBuilder() =
     super
       .guiceApplicationBuilder()
-      .configure(Configuration("microservice.services.features.departureJourney" -> true))
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector)
