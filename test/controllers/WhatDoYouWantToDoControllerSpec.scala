@@ -19,7 +19,6 @@ package controllers
 import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
-import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
 import models.departure.DepartureMessageMetaData
 import models.departure.DepartureStatus.DepartureSubmitted
 import org.mockito.ArgumentCaptor

@@ -31,8 +31,42 @@ object ArrivalStatus {
   case object GoodsReleased extends WithName("IE025") with ArrivalStatus
   case object XMLSubmissionNegativeAcknowledgement extends WithName("IE917") with ArrivalStatus
 
-  case object InvalidStatus extends ArrivalStatus {
-    override def toString: String = "Invalid status"
+  case class InvalidStatus(status: String) extends ArrivalStatus {
+    override def toString: String = status
+  }
+
+  implicit val ordering: Ordering[ArrivalStatus] = (x: ArrivalStatus, y: ArrivalStatus) => {
+    (x, y) match {
+      case (ArrivalNotificationSubmitted, _)                                    => -1
+
+      case (ArrivalRejection, ArrivalNotificationSubmitted)                     => 1
+      case (ArrivalRejection, _)                                                => -1
+
+      case (XMLSubmissionNegativeAcknowledgement, ArrivalNotificationSubmitted) => 1
+      case (XMLSubmissionNegativeAcknowledgement, UnloadingRemarksSubmitted)    => 1
+      case (XMLSubmissionNegativeAcknowledgement, _)                            => -1
+
+      case (UnloadingPermission, ArrivalNotificationSubmitted)                  => 1
+      case (UnloadingPermission, ArrivalRejection)                              => 1
+      case (UnloadingPermission, XMLSubmissionNegativeAcknowledgement)          => 1
+      case (UnloadingPermission, _)                                             => -1
+
+      case (UnloadingRemarksSubmitted, ArrivalNotificationSubmitted)            => 1
+      case (UnloadingRemarksSubmitted, UnloadingPermission)                     => 1
+      case (UnloadingRemarksSubmitted, ArrivalRejection)                        => 1
+      case (UnloadingRemarksSubmitted, _)                                       => -1
+
+      case (UnloadingRemarksRejection, ArrivalNotificationSubmitted)            => 1
+      case (UnloadingRemarksRejection, UnloadingPermission)                     => 1
+      case (UnloadingRemarksRejection, UnloadingRemarksSubmitted)               => 1
+      case (UnloadingRemarksRejection, ArrivalRejection)                        => 1
+      case (UnloadingRemarksRejection, XMLSubmissionNegativeAcknowledgement)    => 1
+      case (UnloadingRemarksRejection, _)                                       => -1
+
+      case (GoodsReleased, _)                                                   => 1
+
+      case (_, _)                                                              => -1
+    }
   }
 
   val values: Seq[ArrivalStatus] =
@@ -43,8 +77,7 @@ object ArrivalStatus {
       UnloadingRemarksSubmitted,
       UnloadingRemarksRejection,
       GoodsReleased,
-      XMLSubmissionNegativeAcknowledgement,
-      InvalidStatus
+      XMLSubmissionNegativeAcknowledgement
     )
 
   implicit val enumerable: Enumerable[ArrivalStatus] =
@@ -57,7 +90,11 @@ object ArrivalStatus {
   implicit def reads(implicit ev: Enumerable[ArrivalStatus]): Reads[ArrivalStatus] =
     Reads {
       case JsString(str) =>
-        ev.withName(str).map(JsSuccess(_)).getOrElse(JsSuccess(InvalidStatus))
+        ev.withName(str)
+          .map(JsSuccess(_))
+          .getOrElse(
+            JsSuccess(InvalidStatus(s"Invalid status: $str"))
+          )
       case _ =>
         JsError("error.invalid")
     }
