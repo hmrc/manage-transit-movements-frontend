@@ -37,6 +37,7 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
       assertPageHasLink(doc, id, expectedText, expectedHref)
     }
 
+  // scalastyle:off method.length
   def pageWithPagination(href: String): Unit =
     "Pagination" - {
 
@@ -102,6 +103,7 @@ abstract class ViewBehaviours(override protected val viewUnderTest: String) exte
         assertRenderedById(doc, "pagination-item-12")
       }
     }
+  // scalastyle:on method.length
 
   def pageWithMovementSearch(doc: Document, id: String, expectedText: String): Unit =
     "displays search box" - {
