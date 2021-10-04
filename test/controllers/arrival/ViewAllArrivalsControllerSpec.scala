@@ -41,7 +41,7 @@ import viewModels.{ViewArrival, ViewArrivalMovements}
 import scala.concurrent.Future
 
 class ViewAllArrivalsControllerSpec
-  extends SpecBase
+    extends SpecBase
     with MockitoSugar
     with JsonMatchers
     with Generators

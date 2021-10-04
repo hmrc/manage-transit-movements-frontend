@@ -95,10 +95,10 @@ trait ModelGenerators {
     Arbitrary {
       for {
         arrivalId <- arbitrary[ArrivalId]
-        date <- arbitrary[LocalDateTime]
-        time <- arbitrary[LocalDateTime]
-        status <- Gen.oneOf(Seq("GoodsReleased", "UnloadingPermission", "ArrivalSubmitted", "Rejection"))
-        mrn <- stringsWithMaxLength(17)
+        date      <- arbitrary[LocalDateTime]
+        time      <- arbitrary[LocalDateTime]
+        status    <- Gen.oneOf(Seq("GoodsReleased", "UnloadingPermission", "ArrivalSubmitted", "Rejection"))
+        mrn       <- stringsWithMaxLength(17)
       } yield Arrival(arrivalId, date, time, status, mrn)
     }
 

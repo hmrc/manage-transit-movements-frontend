@@ -42,4 +42,3 @@ class ArrivalStatusSpec extends SpecBase {
     }
   }
 }
-

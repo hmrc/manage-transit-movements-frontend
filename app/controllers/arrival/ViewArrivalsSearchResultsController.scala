@@ -38,8 +38,8 @@ class ViewArrivalsSearchResultsController @Inject() (val renderer: Renderer,
                                                      val config: FrontendAppConfig,
                                                      val searchResultsAppConfig: SearchResultsAppConfig,
                                                      arrivalMovementConnector: ArrivalMovementConnector
-                                                    )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendController(cc)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
 

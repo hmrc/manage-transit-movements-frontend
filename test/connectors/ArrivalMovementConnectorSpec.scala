@@ -233,10 +233,10 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         val messageAction =
           MessagesSummary(arrivalId,
-            MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3",
-              None,
-              Some(s"/movements/arrivals/${arrivalId.value}/messages/5")
-            )
+                          MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3",
+                                           None,
+                                           Some(s"/movements/arrivals/${arrivalId.value}/messages/5")
+                          )
           )
 
         server.stubFor(

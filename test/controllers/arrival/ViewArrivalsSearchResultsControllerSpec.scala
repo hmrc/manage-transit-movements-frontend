@@ -41,7 +41,7 @@ import viewModels.{ViewArrival, ViewArrivalMovements}
 import scala.concurrent.Future
 
 class ViewArrivalsSearchResultsControllerSpec
-  extends SpecBase
+    extends SpecBase
     with MockitoSugar
     with JsonMatchers
     with Generators
@@ -103,10 +103,10 @@ class ViewArrivalsSearchResultsControllerSpec
     )
 
   private def expectedSearchJson(
-                                  mrn: String,
-                                  retrieved: Int,
-                                  tooManyResults: Boolean
-                                ): JsObject = Json.obj(
+    mrn: String,
+    retrieved: Int,
+    tooManyResults: Boolean
+  ): JsObject = Json.obj(
     "mrn"            -> mrn,
     "retrieved"      -> retrieved,
     "tooManyResults" -> tooManyResults
