@@ -17,12 +17,12 @@
 package controllers.arrival
 
 import java.time.LocalDateTime
+
 import base.{FakeFrontendAppConfig, FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
-import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
 import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -41,7 +41,7 @@ import viewModels.{ViewArrival, ViewArrivalMovements}
 import scala.concurrent.Future
 
 class ViewArrivalsSearchResultsControllerSpec
-    extends SpecBase
+  extends SpecBase
     with MockitoSugar
     with JsonMatchers
     with Generators
@@ -80,7 +80,7 @@ class ViewArrivalsSearchResultsControllerSpec
           ArrivalId(1),
           localDateTime,
           localDateTime,
-          ArrivalNotificationSubmitted,
+          "Submitted",
           "test mrn"
         )
       )
@@ -90,7 +90,7 @@ class ViewArrivalsSearchResultsControllerSpec
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
     "test mrn",
-    "movement.status.arrivalSubmitted",
+    "Submitted",
     Nil
   )
 
@@ -103,10 +103,10 @@ class ViewArrivalsSearchResultsControllerSpec
     )
 
   private def expectedSearchJson(
-    mrn: String,
-    retrieved: Int,
-    tooManyResults: Boolean
-  ): JsObject = Json.obj(
+                                  mrn: String,
+                                  retrieved: Int,
+                                  tooManyResults: Boolean
+                                ): JsObject = Json.obj(
     "mrn"            -> mrn,
     "retrieved"      -> retrieved,
     "tooManyResults" -> tooManyResults

@@ -18,7 +18,6 @@ package viewModels
 
 import config.FrontendAppConfig
 import models.Arrival
-import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingPermission, UnloadingRemarksRejection, UnloadingRemarksSubmitted, XMLSubmissionNegativeAcknowledgement}
 
 case class ArrivalStatus(status: String, actions: Seq[ViewMovementAction])
 
@@ -27,18 +26,18 @@ object ArrivalStatus {
   def apply(arrival: Arrival)(implicit config: FrontendAppConfig): ArrivalStatus = {
     val allPfs: PartialFunction[Arrival, ArrivalStatus] =
       Seq(unloadingPermission,
-          arrivalRejected,
-          unloadingRemarksRejected,
-          arrivalNegativeAcknowledgement,
-          unloadingRemarksNegativeAcknowledgement,
-          displayStatus
+        arrivalRejected,
+        unloadingRemarksRejected,
+        arrivalNegativeAcknowledgement,
+        unloadingRemarksNegativeAcknowledgement,
+        displayStatus
       ).reduce(_ orElse _)
 
     allPfs.apply(arrival)
   }
 
   private def unloadingPermission(implicit config: FrontendAppConfig): PartialFunction[Arrival, ArrivalStatus] = {
-    case arrival if arrival.status == UnloadingPermission =>
+    case arrival if arrival.status == "UnloadingPermission" =>
       ArrivalStatus(
         "movement.status.unloadingPermission",
         Seq(
@@ -52,7 +51,7 @@ object ArrivalStatus {
   }
 
   private def arrivalRejected(implicit config: FrontendAppConfig): PartialFunction[Arrival, ArrivalStatus] = {
-    case arrival if arrival.status == ArrivalRejection =>
+    case arrival if arrival.status == "ArrivalRejected" =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(config.arrivalFrontendRejectedUrl(arrival.arrivalId), "viewArrivalNotifications.table.action.viewErrors")
       )
@@ -60,16 +59,15 @@ object ArrivalStatus {
   }
 
   private def unloadingRemarksRejected(implicit config: FrontendAppConfig): PartialFunction[Arrival, ArrivalStatus] = {
-    case arrival if arrival.status == UnloadingRemarksRejection =>
+    case arrival if arrival.status == "UnloadingRemarksRejected" =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(config.unloadingRemarksRejectedUrl(arrival.arrivalId), "viewArrivalNotifications.table.action.viewErrors")
       )
       ArrivalStatus("movement.status.unloadingRemarksRejected", action)
   }
 
-  // TODO how do I tell the difference???
   private def arrivalNegativeAcknowledgement: PartialFunction[Arrival, ArrivalStatus] = {
-    case arrival if arrival.status == XMLSubmissionNegativeAcknowledgement =>
+    case arrival if arrival.status == "ArrivalXMLSubmissionNegativeAcknowledgement" =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(
           controllers.arrival.routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
@@ -79,9 +77,8 @@ object ArrivalStatus {
       ArrivalStatus("movement.status.XMLSubmissionNegativeAcknowledgement", action)
   }
 
-  // TODO how do I tell the difference???
   private def unloadingRemarksNegativeAcknowledgement: PartialFunction[Arrival, ArrivalStatus] = {
-    case arrival if arrival.status == XMLSubmissionNegativeAcknowledgement =>
+    case arrival if arrival.status == "UnloadingRemarksXMLSubmissionNegativeAcknowledgement" =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(
           controllers.arrival.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
@@ -92,14 +89,14 @@ object ArrivalStatus {
   }
 
   private def displayStatus: PartialFunction[Arrival, ArrivalStatus] = {
-    case arrival if arrival.status == ArrivalNotificationSubmitted          => ArrivalStatus("movement.status.arrivalSubmitted", actions = Nil)
-    case arrival if arrival.status == ArrivalRejection                      => ArrivalStatus("movement.status.arrivalRejected", actions = Nil)
-    case arrival if arrival.status == UnloadingPermission                   => ArrivalStatus("movement.status.unloadingPermission", actions = Nil)
-    case arrival if arrival.status == UnloadingRemarksSubmitted             => ArrivalStatus("movement.status.unloadingRemarksSubmitted", actions = Nil)
-    case arrival if arrival.status == UnloadingRemarksRejection             => ArrivalStatus("movement.status.unloadingRemarksRejected", actions = Nil)
-    case arrival if arrival.status == GoodsReleased                         => ArrivalStatus("movement.status.goodsReleased", actions = Nil)
-    case arrival if arrival.status == XMLSubmissionNegativeAcknowledgement =>
+    case arrival if arrival.status == "ArrivalSubmitted"          => ArrivalStatus("movement.status.arrivalSubmitted", actions = Nil)
+    case arrival if arrival.status == "ArrivalRejected"           => ArrivalStatus("movement.status.arrivalRejected", actions = Nil)
+    case arrival if arrival.status == "UnloadingPermission"       => ArrivalStatus("movement.status.unloadingPermission", actions = Nil)
+    case arrival if arrival.status == "UnloadingRemarksSubmitted" => ArrivalStatus("movement.status.unloadingRemarksSubmitted", actions = Nil)
+    case arrival if arrival.status == "UnloadingRemarksRejected"  => ArrivalStatus("movement.status.unloadingRemarksRejected", actions = Nil)
+    case arrival if arrival.status == "GoodsReleased"             => ArrivalStatus("movement.status.goodsReleased", actions = Nil)
+    case arrival if arrival.status == "XMLSubmissionNegativeAcknowledgement" =>
       ArrivalStatus("movement.status.XMLSubmissionNegativeAcknowledgement", actions = Nil)
-    case arrival => ArrivalStatus(arrival.status.toString, actions = Nil)
+    case arrival => ArrivalStatus(arrival.status, actions = Nil)
   }
 }

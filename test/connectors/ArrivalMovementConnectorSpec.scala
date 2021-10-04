@@ -22,7 +22,6 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models._
-import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
 import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -58,7 +57,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             "arrivalId"               -> 22,
             "created"                 -> localDateTime,
             "updated"                 -> localDateTime,
-            "latestMessageType"       -> "IE007",
+            "status"                  -> "Submitted",
             "movementReferenceNumber" -> "test mrn"
           )
         )
@@ -76,7 +75,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, ArrivalNotificationSubmitted, "test mrn")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
             )
           )
 
@@ -114,7 +113,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, ArrivalNotificationSubmitted, "test mrn")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
             )
           )
 
@@ -152,7 +151,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, ArrivalNotificationSubmitted, "test mrn")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
             )
           )
 
@@ -234,10 +233,10 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
         val messageAction =
           MessagesSummary(arrivalId,
-                          MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3",
-                                           None,
-                                           Some(s"/movements/arrivals/${arrivalId.value}/messages/5")
-                          )
+            MessagesLocation(s"/movements/arrivals/${arrivalId.value}/messages/3",
+              None,
+              Some(s"/movements/arrivals/${arrivalId.value}/messages/5")
+            )
           )
 
         server.stubFor(

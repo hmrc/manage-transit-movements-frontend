@@ -16,17 +16,16 @@
 
 package models
 
-import models.arrival.ArrivalStatus
+import java.time.LocalDateTime
+
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
-
-import java.time.LocalDateTime
 
 case class Arrival(
   arrivalId: ArrivalId,
   created: LocalDateTime,
   updated: LocalDateTime,
-  status: ArrivalStatus,
+  status: String,
   movementReferenceNumber: String
 )
 
@@ -36,7 +35,7 @@ object Arrival {
     (__ \ "arrivalId").read[ArrivalId] and
       (__ \ "created").read[LocalDateTime] and
       (__ \ "updated").read[LocalDateTime] and
-      (__ \ "latestMessageType").read[ArrivalStatus] and
+      (__ \ "status").read[String] and
       (__ \ "movementReferenceNumber").read[String]
   )(Arrival.apply _)
 }

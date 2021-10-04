@@ -17,12 +17,12 @@
 package controllers.arrival
 
 import java.time.LocalDateTime
+
 import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
-import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
 import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -41,7 +41,7 @@ import viewModels.{ViewArrival, ViewArrivalMovements}
 import scala.concurrent.Future
 
 class ViewAllArrivalsControllerSpec
-    extends SpecBase
+  extends SpecBase
     with MockitoSugar
     with JsonMatchers
     with Generators
@@ -77,7 +77,7 @@ class ViewAllArrivalsControllerSpec
           ArrivalId(1),
           localDateTime,
           localDateTime,
-          ArrivalNotificationSubmitted,
+          "Submitted",
           "test mrn"
         )
       )
@@ -87,7 +87,7 @@ class ViewAllArrivalsControllerSpec
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
     "test mrn",
-    "movement.status.arrivalSubmitted",
+    "Submitted",
     Nil
   )
 

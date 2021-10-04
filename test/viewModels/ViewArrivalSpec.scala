@@ -19,12 +19,10 @@ package viewModels
 import base.{FakeFrontendAppConfig, SpecBase}
 import generators.Generators
 import models.Arrival
-import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingPermission, UnloadingRemarksSubmitted}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
 import play.api.libs.json.Json
-import org.scalacheck.Gen
 
 import java.time.format.DateTimeFormatter
 
@@ -53,7 +51,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival = arrival.copy(status = UnloadingPermission)
+        val unloadingArrival: Arrival = arrival.copy(status = "UnloadingPermission")
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
@@ -64,7 +62,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display rejection" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival = arrival.copy(status = ArrivalRejection)
+        val unloadingArrival: Arrival = arrival.copy(status = "ArrivalRejected")
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
@@ -76,20 +74,19 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
 
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival = arrival.copy(status = UnloadingPermission)
+        val unloadingArrival: Arrival = arrival.copy(status = "")
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
-        viewMovement.status mustBe "movement.status.unloadingPermission"
+        viewMovement.status mustBe unloadingArrival.status
     }
+
   }
 
   "must not display action when status is not unloading permission or rejection" in {
 
-    val noActionStatus = Seq(ArrivalNotificationSubmitted, GoodsReleased, UnloadingRemarksSubmitted)
-
-    forAll(arbitrary[Arrival], Gen.oneOf(noActionStatus)) {
-      (arrival, status) =>
-        val unloadingArrival: Arrival = arrival.copy(status = status)
+    forAll(arbitrary[Arrival]) {
+      arrival =>
+        val unloadingArrival: Arrival = arrival.copy(status = "")
         val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
 
         viewMovement.actions mustBe Nil
