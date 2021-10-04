@@ -327,5 +327,47 @@ class DepartureSpec extends SpecBase {
         }
       }
     }
+
+    "when currentStatus is XMLSubmissionNegativeAcknowledgement" - {
+
+      "must not weight previous messages when messageType is DepartureSubmitted" in {
+
+        val localDateTime: LocalDateTime = LocalDateTime.now()
+
+        val departure =
+          Departure(
+            DepartureId(22),
+            localDateTime,
+            LocalReferenceNumber("lrn"),
+            Seq(
+              DepartureMessageMetaData(DepartureSubmitted, localDateTime),
+              DepartureMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime)
+            )
+          )
+
+        departure.currentStatus mustBe XMLSubmissionNegativeAcknowledgement
+        departure.previousStatus mustBe DepartureSubmitted
+      }
+
+      "must not weight previous messages when messageType is DepartureCancellation" in {
+
+
+        val localDateTime: LocalDateTime = LocalDateTime.now()
+
+        val departure =
+          Departure(
+            DepartureId(22),
+            localDateTime,
+            LocalReferenceNumber("lrn"),
+            Seq(
+              DepartureMessageMetaData(DeclarationCancellationRequest, localDateTime),
+              DepartureMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime)
+            )
+          )
+
+        departure.currentStatus mustBe XMLSubmissionNegativeAcknowledgement
+        departure.previousStatus mustBe DeclarationCancellationRequest
+      }
+    }
   }
 }

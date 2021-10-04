@@ -16,6 +16,7 @@
 
 package models
 
+import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted}
 import models.departure.{DepartureMessageMetaData, DepartureStatus}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, __}
@@ -32,13 +33,13 @@ case class Departure(departureId: DepartureId,
 
     implicit val localDateOrdering: Ordering[LocalDateTime] = _ compareTo _
 
-    val latestMessage = messagesMetaData.maxBy(_.dateTime)
-    val anyTheSameTime = messagesMetaData.filter(_.dateTime == latestMessage.dateTime)
+    val latestMessage            = messagesMetaData.maxBy(_.dateTime)
+    val messagesWithSameDateTime = messagesMetaData.filter(_.dateTime == latestMessage.dateTime)
 
-    if (anyTheSameTime.size == 1) {
+    if (messagesWithSameDateTime.size == 1) {
       latestMessage.messageType
     } else {
-      anyTheSameTime.map(_.messageType).max
+      messagesWithSameDateTime.map(_.messageType).max
     }
   }
 
@@ -48,12 +49,21 @@ case class Departure(departureId: DepartureId,
 
     val previousMessage = messagesMetaData.sortBy(_.dateTime).takeRight(2).head
 
-    val anyTheSameTime = messagesMetaData.filter(_.dateTime == previousMessage.dateTime)
+    val messagesWithSameDateTime = messagesMetaData.filter(_.dateTime == previousMessage.dateTime)
 
-    if (anyTheSameTime.size == 1) {
+    if (messagesWithSameDateTime.size == 1) {
       previousMessage.messageType
     } else {
-      anyTheSameTime.map(_.messageType).max
+
+      currentStatus match {
+        case DepartureStatus.XMLSubmissionNegativeAcknowledgement =>
+          if (previousMessage.messageType == DepartureSubmitted | previousMessage.messageType == DeclarationCancellationRequest) {
+            previousMessage.messageType
+          } else {
+            messagesWithSameDateTime.map(_.messageType).max
+          }
+        case _ => messagesWithSameDateTime.map(_.messageType).max
+      }
     }
   }
 }
