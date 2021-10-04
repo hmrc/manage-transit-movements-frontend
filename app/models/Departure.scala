@@ -19,7 +19,7 @@ package models
 import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted}
 import models.departure.{DepartureMessageMetaData, DepartureStatus}
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{Reads, __}
+import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime
 

@@ -315,13 +315,13 @@ class DepartureStatusSpec extends SpecBase {
         "ReleaseForTransit, " +
         "WriteOffNotification" in {
 
-        forAll(Gen.oneOf(lesserOrderValues)) {
-          status =>
-            val result = Ordering[DepartureStatus].max(DeclarationCancellationRequest, status)
+          forAll(Gen.oneOf(lesserOrderValues)) {
+            status =>
+              val result = Ordering[DepartureStatus].max(DeclarationCancellationRequest, status)
 
-            result mustBe DeclarationCancellationRequest
+              result mustBe DeclarationCancellationRequest
+          }
         }
-      }
 
       "in lesser order than any other status" in {
 
@@ -364,13 +364,13 @@ class DepartureStatusSpec extends SpecBase {
         "WriteOffNotification ," +
         "DeclarationCancellationRequest" in {
 
-        forAll(Gen.oneOf(lesserOrderValues)) {
-          status =>
-            val result = Ordering[DepartureStatus].max(CancellationDecision, status)
+          forAll(Gen.oneOf(lesserOrderValues)) {
+            status =>
+              val result = Ordering[DepartureStatus].max(CancellationDecision, status)
 
-            result mustBe CancellationDecision
+              result mustBe CancellationDecision
+          }
         }
-      }
 
       "in lesser order than any other status" in {
 
@@ -405,13 +405,13 @@ class DepartureStatusSpec extends SpecBase {
         "DepartureSubmitted, " +
         "DeclarationCancellationRequest" in {
 
-        forAll(Gen.oneOf(lesserOrderValues)) {
-          status =>
-            val result = Ordering[DepartureStatus].max(XMLSubmissionNegativeAcknowledgement, status)
+          forAll(Gen.oneOf(lesserOrderValues)) {
+            status =>
+              val result = Ordering[DepartureStatus].max(XMLSubmissionNegativeAcknowledgement, status)
 
-            result mustBe XMLSubmissionNegativeAcknowledgement
+              result mustBe XMLSubmissionNegativeAcknowledgement
+          }
         }
-      }
 
       "in lesser order than any other status" in {
 

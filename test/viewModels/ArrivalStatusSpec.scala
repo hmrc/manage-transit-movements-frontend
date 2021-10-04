@@ -21,7 +21,14 @@ import base.FakeFrontendAppConfig
 import generators.Generators
 import models.Arrival
 import controllers.arrival.{routes => arrivalRoute}
-import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingRemarksRejection, UnloadingRemarksSubmitted, XMLSubmissionNegativeAcknowledgement}
+import models.arrival.ArrivalStatus.{
+  ArrivalNotificationSubmitted,
+  ArrivalRejection,
+  GoodsReleased,
+  UnloadingRemarksRejection,
+  UnloadingRemarksSubmitted,
+  XMLSubmissionNegativeAcknowledgement
+}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages

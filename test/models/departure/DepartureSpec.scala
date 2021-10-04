@@ -100,7 +100,7 @@ class DepartureSpec extends SpecBase {
                   Seq(
                     DepartureMessageMetaData(DepartureSubmitted, localDateTime),
                     DepartureMessageMetaData(MrnAllocated, localDateTime.plusSeconds(20)),
-                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10))
                   )
                 )
 
@@ -121,7 +121,7 @@ class DepartureSpec extends SpecBase {
                     DepartureMessageMetaData(NoReleaseForTransit, localDateTime.plusDays(4)),
                     DepartureMessageMetaData(DepartureSubmitted, localDateTime),
                     DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
-                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusDays(1)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusDays(1))
                   )
                 )
 
@@ -142,7 +142,7 @@ class DepartureSpec extends SpecBase {
                     DepartureMessageMetaData(DepartureSubmitted, localDateTime),
                     DepartureMessageMetaData(CancellationDecision, localDateTime.plusMonths(4)),
                     DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
-                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(1)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(1))
                   )
                 )
 
@@ -253,7 +253,7 @@ class DepartureSpec extends SpecBase {
                   Seq(
                     DepartureMessageMetaData(DepartureSubmitted, localDateTime),
                     DepartureMessageMetaData(MrnAllocated, localDateTime.plusSeconds(20)),
-                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(10))
                   )
                 )
 
@@ -274,7 +274,7 @@ class DepartureSpec extends SpecBase {
                     DepartureMessageMetaData(NoReleaseForTransit, localDateTime.plusDays(4)),
                     DepartureMessageMetaData(DepartureSubmitted, localDateTime),
                     DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
-                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusDays(1)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusDays(1))
                   )
                 )
 
@@ -295,7 +295,7 @@ class DepartureSpec extends SpecBase {
                     DepartureMessageMetaData(DepartureSubmitted, localDateTime),
                     DepartureMessageMetaData(CancellationDecision, localDateTime.plusMonths(4)),
                     DepartureMessageMetaData(MrnAllocated, localDateTime.plusDays(2)),
-                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(1)),
+                    DepartureMessageMetaData(PositiveAcknowledgement, localDateTime.plusSeconds(1))
                   )
                 )
 
@@ -350,7 +350,6 @@ class DepartureSpec extends SpecBase {
       }
 
       "must not weight previous messages when messageType is DepartureCancellation" in {
-
 
         val localDateTime: LocalDateTime = LocalDateTime.now()
 

@@ -16,11 +16,11 @@
 
 package controllers
 
-import java.time.LocalDateTime
-import base.FakeFrontendAppConfig
-import base.SpecBase
+import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
+import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
+import models.departure.DepartureMessageMetaData
 import models.departure.DepartureStatus.DepartureSubmitted
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -31,10 +31,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
-import base.MockNunjucksRendererApp
-import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
-import models.departure.{DepartureMessageMetaData, DepartureLatestMessages}
 
 class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRendererApp {
   val frontendAppConfig = FakeFrontendAppConfig()

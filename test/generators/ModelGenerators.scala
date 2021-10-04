@@ -52,7 +52,6 @@ trait ModelGenerators {
       } yield LocalDate.of(year, month, day)
     }
 
-
   implicit val arbitraryLocalTime: Arbitrary[LocalTime] = Arbitrary {
     for {
       hours   <- Gen.chooseNum(0, 23)
@@ -113,14 +112,13 @@ trait ModelGenerators {
       } yield Departure(departureID, updated, localReferenceNumber, latestMessage)
     }
 
-  implicit val arbitraryDepartureMessageMetaData: Arbitrary[DepartureMessageMetaData] = {
+  implicit val arbitraryDepartureMessageMetaData: Arbitrary[DepartureMessageMetaData] =
     Arbitrary {
       for {
         status   <- arbitrary[DepartureStatus]
         dateTime <- arbitrary[LocalDateTime]
       } yield DepartureMessageMetaData(status, dateTime)
     }
-  }
 
   implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] =
     Arbitrary {

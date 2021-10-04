@@ -21,7 +21,7 @@ import controllers.departure.{routes => departureRoutes}
 import models.departure.DepartureStatus._
 import models.{Departure, DepartureId}
 
-case class  DepartureStatusViewModel(status: String, actions: Seq[ViewMovementAction])
+case class DepartureStatusViewModel(status: String, actions: Seq[ViewMovementAction])
 
 object DepartureStatusViewModel {
 
@@ -139,9 +139,9 @@ object DepartureStatusViewModel {
   }
 
   private def departureXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.currentStatus == XMLSubmissionNegativeAcknowledgement &&
-      departure.previousStatus == DepartureSubmitted =>
-
+    case departure
+        if departure.currentStatus == XMLSubmissionNegativeAcknowledgement &&
+          departure.previousStatus == DepartureSubmitted =>
       DepartureStatusViewModel(
         "departure.status.XMLSubmissionNegativeAcknowledgement",
         actions = Seq(
@@ -153,9 +153,9 @@ object DepartureStatusViewModel {
   }
 
   private def cancellationXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
-    case departure if departure.currentStatus == XMLSubmissionNegativeAcknowledgement &&
-      departure.previousStatus == DeclarationCancellationRequest =>
-
+    case departure
+        if departure.currentStatus == XMLSubmissionNegativeAcknowledgement &&
+          departure.previousStatus == DeclarationCancellationRequest =>
       DepartureStatusViewModel(
         "departure.status.XMLCancellationSubmissionNegativeAcknowledgement",
         actions = Seq(

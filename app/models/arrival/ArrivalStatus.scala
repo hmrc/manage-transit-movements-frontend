@@ -23,18 +23,17 @@ sealed trait ArrivalStatus
 
 object ArrivalStatus {
 
-  case object ArrivalNotificationSubmitted         extends WithName("IE007") with ArrivalStatus
-  case object ArrivalRejection                     extends WithName("IE008") with ArrivalStatus
-  case object UnloadingPermission                  extends WithName("IE043") with ArrivalStatus
-  case object UnloadingRemarksSubmitted            extends WithName("IE044") with ArrivalStatus
-  case object UnloadingRemarksRejection            extends WithName("IE058") with ArrivalStatus
-  case object GoodsReleased                        extends WithName("IE025") with ArrivalStatus
+  case object ArrivalNotificationSubmitted extends WithName("IE007") with ArrivalStatus
+  case object ArrivalRejection extends WithName("IE008") with ArrivalStatus
+  case object UnloadingPermission extends WithName("IE043") with ArrivalStatus
+  case object UnloadingRemarksSubmitted extends WithName("IE044") with ArrivalStatus
+  case object UnloadingRemarksRejection extends WithName("IE058") with ArrivalStatus
+  case object GoodsReleased extends WithName("IE025") with ArrivalStatus
   case object XMLSubmissionNegativeAcknowledgement extends WithName("IE917") with ArrivalStatus
 
-  case object InvalidStatus                        extends ArrivalStatus {
+  case object InvalidStatus extends ArrivalStatus {
     override def toString: String = "Invalid status"
   }
-
 
   val values: Seq[ArrivalStatus] =
     Seq(
@@ -55,12 +54,11 @@ object ArrivalStatus {
       ): _*
     )
 
-  implicit def reads(implicit ev: Enumerable[ArrivalStatus]): Reads[ArrivalStatus] = {
+  implicit def reads(implicit ev: Enumerable[ArrivalStatus]): Reads[ArrivalStatus] =
     Reads {
       case JsString(str) =>
         ev.withName(str).map(JsSuccess(_)).getOrElse(JsSuccess(InvalidStatus))
       case _ =>
         JsError("error.invalid")
     }
-  }
 }

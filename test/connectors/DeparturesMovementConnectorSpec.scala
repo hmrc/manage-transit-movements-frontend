@@ -125,8 +125,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime))
-              )
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime)))
             )
           )
 
@@ -164,8 +163,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime))
-              )
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime)))
             )
           )
 
