@@ -16,14 +16,17 @@
 
 package viewModels
 
-import base.SpecBase
-import base.FakeFrontendAppConfig
+import base.{FakeFrontendAppConfig, SpecBase}
+import controllers.arrival.{routes => arrivalRoute}
 import generators.Generators
 import models.Arrival
-import controllers.arrival.{routes => arrivalRoute}
+import models.arrival.ArrivalMessageMetaData
+import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingRemarksRejection, UnloadingRemarksSubmitted, XMLSubmissionNegativeAcknowledgement}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
+
+import java.time.LocalDateTime
 
 class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
@@ -35,56 +38,61 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival = arrival.copy(status = "ArrivalSubmitted")
-            ArrivalStatusViewModel(arr)(frontendAppConfig).status mustBe Messages("movement.status.arrivalSubmitted")
+            val updatedArrival: Arrival = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, LocalDateTime.now())))
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.arrivalSubmitted")
         }
       }
       "When status is ArrivalRejected show correct message" in {
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival = arrival.copy(status = "ArrivalRejected")
-            ArrivalStatusViewModel(arr)(frontendAppConfig).status mustBe Messages("movement.status.arrivalRejected")
+            val updatedArrival: Arrival = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(ArrivalRejection, LocalDateTime.now())))
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.arrivalRejected")
         }
       }
       "When status is UnloadingRemarksSubmitted show correct message" in {
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival = arrival.copy(status = "UnloadingRemarksSubmitted")
-            ArrivalStatusViewModel(arr)(frontendAppConfig).status mustBe Messages("movement.status.unloadingRemarksSubmitted")
+            val updatedArrival: Arrival = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(UnloadingRemarksSubmitted, LocalDateTime.now())))
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.unloadingRemarksSubmitted")
         }
       }
       "When status is UnloadingRemarksRejected show correct message" in {
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival                  = arrival.copy(status = "UnloadingRemarksRejected")
-            val movementStatus: ArrivalStatusViewModel = ArrivalStatusViewModel(arr)(frontendAppConfig)
+            val updatedArrival: Arrival = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(UnloadingRemarksRejection, LocalDateTime.now())))
+            val movementStatus: ArrivalStatusViewModel = ArrivalStatusViewModel(updatedArrival)(frontendAppConfig)
             movementStatus.status mustBe Messages("movement.status.unloadingRemarksRejected")
-            movementStatus.actions.head.href mustBe frontendAppConfig.unloadingRemarksRejectedUrl(arr.arrivalId)
+            movementStatus.actions.head.href mustBe frontendAppConfig.unloadingRemarksRejectedUrl(updatedArrival.arrivalId)
         }
       }
       "When status is GoodsReleased show correct message" in {
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival = arrival.copy(status = "GoodsReleased")
-            ArrivalStatusViewModel(arr)(frontendAppConfig).status mustBe Messages("movement.status.goodsReleased")
+            val updatedArrival: Arrival = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(GoodsReleased, LocalDateTime.now())))
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.goodsReleased")
         }
       }
       "When status is XMLSubmissionNegativeAcknowledgement show correct message" in {
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival = arrival.copy(status = "ArrivalXMLSubmissionNegativeAcknowledgement")
+            val updatedArrival: Arrival = arrival.copy(messagesMetaData =
+              Seq(
+                ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, LocalDateTime.now().plusSeconds(10)),
+                ArrivalMessageMetaData(ArrivalNotificationSubmitted, LocalDateTime.now()),
+              )
+            )
             val expectedAction = ViewMovementAction(
               arrivalRoute.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
               Messages("viewArrivalNotifications.table.action.viewErrors")
             )
 
-            ArrivalStatusViewModel(arr)(frontendAppConfig).status mustBe Messages("movement.status.XMLSubmissionNegativeAcknowledgement")
-            ArrivalStatusViewModel(arr)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.XMLSubmissionNegativeAcknowledgement")
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }
 
@@ -92,14 +100,19 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val arr: Arrival = arrival.copy(status = "UnloadingRemarksXMLSubmissionNegativeAcknowledgement")
+            val updatedArrival: Arrival = arrival.copy(messagesMetaData =
+              Seq(
+                ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, LocalDateTime.now().plusSeconds(10)),
+                ArrivalMessageMetaData(UnloadingRemarksSubmitted, LocalDateTime.now()),
+              )
+            )
             val expectedAction = ViewMovementAction(
               controllers.arrival.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
               Messages("viewArrivalNotifications.table.action.viewErrors")
             )
 
-            ArrivalStatusViewModel(arr)(frontendAppConfig).status mustBe Messages("movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement")
-            ArrivalStatusViewModel(arr)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement")
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }
     }

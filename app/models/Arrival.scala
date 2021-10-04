@@ -16,26 +16,59 @@
 
 package models
 
+import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, UnloadingRemarksSubmitted}
+import models.arrival.{ArrivalMessageMetaData, ArrivalStatus}
+import play.api.libs.json.{Json, Reads}
+
 import java.time.LocalDateTime
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
-
 case class Arrival(
-  arrivalId: ArrivalId,
-  created: LocalDateTime,
-  updated: LocalDateTime,
-  status: String,
-  movementReferenceNumber: String
-)
+                    arrivalId: ArrivalId,
+                    created: LocalDateTime,
+                    updated: LocalDateTime,
+                    messagesMetaData: Seq[ArrivalMessageMetaData],
+                    movementReferenceNumber: String) {
+
+  def currentStatus: ArrivalStatus = {
+
+    implicit val localDateOrdering: Ordering[LocalDateTime] = _ compareTo _
+
+    val latestMessage            = messagesMetaData.maxBy(_.dateTime)
+    val messagesWithSameDateTime = messagesMetaData.filter(_.dateTime == latestMessage.dateTime)
+
+    if (messagesWithSameDateTime.size == 1) {
+      latestMessage.messageType
+    } else {
+      messagesWithSameDateTime.map(_.messageType).max
+    }
+  }
+
+  def previousStatus: ArrivalStatus = {
+
+    implicit val localDateOrdering: Ordering[LocalDateTime] = _ compareTo _
+
+    val previousMessage = messagesMetaData.sortBy(_.dateTime).takeRight(2).head
+
+    val messagesWithSameDateTime = messagesMetaData.filter(_.dateTime == previousMessage.dateTime)
+
+    if (messagesWithSameDateTime.size == 1) {
+      previousMessage.messageType
+    } else {
+
+      currentStatus match {
+        case ArrivalStatus.XMLSubmissionNegativeAcknowledgement =>
+          if (previousMessage.messageType == ArrivalNotificationSubmitted | previousMessage.messageType == UnloadingRemarksSubmitted) {
+            previousMessage.messageType
+          } else {
+            messagesWithSameDateTime.map(_.messageType).max
+          }
+        case _ => messagesWithSameDateTime.map(_.messageType).max
+      }
+    }
+  }
+}
 
 object Arrival {
 
-  implicit val reads: Reads[Arrival] = (
-    (__ \ "arrivalId").read[ArrivalId] and
-      (__ \ "created").read[LocalDateTime] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "status").read[String] and
-      (__ \ "movementReferenceNumber").read[String]
-  )(Arrival.apply _)
+  implicit val reads: Reads[Arrival] = Json.reads[Arrival]
 }
