@@ -35,7 +35,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val betaFeedbackUrl                = s"$contactFrontendUrl/beta-feedback"
   val betaFeedbackUnauthenticatedUrl = s"$contactFrontendUrl/beta-feedback-unauthenticated"
   val signOutUrl: String             = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
-  val signInUrl: String              = configuration.get[String]("urls.login") + "?continue=" + configuration.get[String]("urls.loginContinue")
 
   private val declareUnloadingRemarksUrlBase            = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
   def declareUnloadingRemarksUrl(arrivalId: ArrivalId)  = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}"
