@@ -17,7 +17,7 @@
 package models.arrival
 
 import base.SpecBase
-import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingPermission, UnloadingRemarksSubmitted}
+import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingPermission, UnloadingRemarksSubmitted, XMLSubmissionNegativeAcknowledgement}
 import models.{Arrival, ArrivalId, Departure, DepartureId, LocalReferenceNumber}
 
 import java.time.LocalDateTime
@@ -307,6 +307,49 @@ class ArrivalSpec extends SpecBase {
             }
           }
         }
+      }
+    }
+
+    "when currentStatus is XMLSubmissionNegativeAcknowledgement" - {
+
+      "must not weight previous messages when messageType is ArrivalNotificationSubmitted" in {
+
+        val localDateTime: LocalDateTime = LocalDateTime.now()
+
+        val arrival =
+          Arrival(
+            ArrivalId(22),
+            localDateTime,
+            localDateTime,
+            Seq(
+              ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime.minusSeconds(20)),
+              ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime.minusSeconds(20))
+            ),
+            "mrn123"
+          )
+
+        arrival.currentStatus mustBe XMLSubmissionNegativeAcknowledgement
+        arrival.previousStatus mustBe ArrivalNotificationSubmitted
+      }
+
+      "must not weight previous messages when messageType is UnloadingRemarksSubmitted" in {
+
+        val localDateTime: LocalDateTime = LocalDateTime.now()
+
+        val arrival =
+          Arrival(
+            ArrivalId(22),
+            localDateTime,
+            localDateTime,
+            Seq(
+              ArrivalMessageMetaData(UnloadingRemarksSubmitted, localDateTime.minusSeconds(20)),
+              ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime.minusSeconds(20))
+            ),
+            "mrn123"
+          )
+
+        arrival.currentStatus mustBe XMLSubmissionNegativeAcknowledgement
+        arrival.previousStatus mustBe UnloadingRemarksSubmitted
       }
     }
   }
