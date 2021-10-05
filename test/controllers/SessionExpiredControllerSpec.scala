@@ -42,7 +42,7 @@ class SessionExpiredControllerSpec extends SpecBase with JsonMatchers with MockN
 
       val controller = new SessionExpiredController(Helpers.stubMessagesControllerComponents(), mockRenderer)
 
-      val request        = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
+      val request                                = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 

@@ -16,7 +16,6 @@
 
 package views
 
-
 import base.SingleViewSpec
 import org.jsoup.nodes.Document
 import play.api.libs.json.Json
