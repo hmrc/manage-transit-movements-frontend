@@ -21,7 +21,14 @@ import controllers.arrival.{routes => arrivalRoute}
 import generators.Generators
 import models.Arrival
 import models.arrival.ArrivalMessageMetaData
-import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingRemarksRejection, UnloadingRemarksSubmitted, XMLSubmissionNegativeAcknowledgement}
+import models.arrival.ArrivalStatus.{
+  ArrivalNotificationSubmitted,
+  ArrivalRejection,
+  GoodsReleased,
+  UnloadingRemarksRejection,
+  UnloadingRemarksSubmitted,
+  XMLSubmissionNegativeAcknowledgement
+}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
@@ -62,7 +69,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(UnloadingRemarksRejection, LocalDateTime.now())))
+            val updatedArrival: Arrival                = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(UnloadingRemarksRejection, LocalDateTime.now())))
             val movementStatus: ArrivalStatusViewModel = ArrivalStatusViewModel(updatedArrival)(frontendAppConfig)
             movementStatus.status mustBe Messages("movement.status.unloadingRemarksRejected")
             movementStatus.actions.head.href mustBe frontendAppConfig.unloadingRemarksRejectedUrl(updatedArrival.arrivalId)
@@ -83,7 +90,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
             val updatedArrival: Arrival = arrival.copy(messagesMetaData =
               Seq(
                 ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, LocalDateTime.now().plusSeconds(10)),
-                ArrivalMessageMetaData(ArrivalNotificationSubmitted, LocalDateTime.now()),
+                ArrivalMessageMetaData(ArrivalNotificationSubmitted, LocalDateTime.now())
               )
             )
             val expectedAction = ViewMovementAction(
@@ -103,7 +110,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
             val updatedArrival: Arrival = arrival.copy(messagesMetaData =
               Seq(
                 ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, LocalDateTime.now().plusSeconds(10)),
-                ArrivalMessageMetaData(UnloadingRemarksSubmitted, LocalDateTime.now()),
+                ArrivalMessageMetaData(UnloadingRemarksSubmitted, LocalDateTime.now())
               )
             )
             val expectedAction = ViewMovementAction(
@@ -111,7 +118,9 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
               Messages("viewArrivalNotifications.table.action.viewErrors")
             )
 
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement")
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages(
+              "movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement"
+            )
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }

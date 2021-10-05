@@ -94,11 +94,11 @@ trait ModelGenerators {
   implicit val arbitraryArrival: Arbitrary[Arrival] =
     Arbitrary {
       for {
-        arrivalId         <- arbitrary[ArrivalId]
-        date              <- arbitrary[LocalDateTime]
-        time              <- arbitrary[LocalDateTime]
-        messageMetaData   <- arbitrary[Seq[ArrivalMessageMetaData]]
-        mrn               <- stringsWithMaxLength(17)
+        arrivalId       <- arbitrary[ArrivalId]
+        date            <- arbitrary[LocalDateTime]
+        time            <- arbitrary[LocalDateTime]
+        messageMetaData <- arbitrary[Seq[ArrivalMessageMetaData]]
+        mrn             <- stringsWithMaxLength(17)
       } yield Arrival(arrivalId, date, time, messageMetaData, mrn)
     }
 
@@ -127,7 +127,6 @@ trait ModelGenerators {
         dateTime <- arbitrary[LocalDateTime]
       } yield ArrivalMessageMetaData(status, dateTime)
     }
-
 
   implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] =
     Arbitrary {

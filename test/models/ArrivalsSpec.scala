@@ -38,9 +38,9 @@ class ArrivalsSpec extends SpecBase {
         "arrivals" -> JsArray(
           Seq(
             Json.obj(
-              "arrivalId"               -> 123,
-              "created"                 -> dateNow,
-              "updated"                 -> dateNow,
+              "arrivalId" -> 123,
+              "created"   -> dateNow,
+              "updated"   -> dateNow,
               "messagesMetaData" -> Json.arr(
                 Json.obj(
                   "messageType" -> ArrivalNotificationSubmitted.toString,
@@ -95,7 +95,7 @@ class ArrivalsSpec extends SpecBase {
         "retrievedArrivals" -> 1,
         "totalArrivals"     -> 2,
         "totalMatched"      -> 3,
-        "arrivals" -> ""
+        "arrivals"          -> ""
       )
 
       json.validate[Departures].asOpt mustBe None

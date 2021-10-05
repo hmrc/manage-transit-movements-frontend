@@ -37,35 +37,35 @@ object ArrivalStatus {
 
   implicit val ordering: Ordering[ArrivalStatus] = (x: ArrivalStatus, y: ArrivalStatus) => {
     (x, y) match {
-      case (ArrivalNotificationSubmitted, _)                                    => -1
+      case (ArrivalNotificationSubmitted, _) => -1
 
-      case (ArrivalRejection, ArrivalNotificationSubmitted)                     => 1
-      case (ArrivalRejection, _)                                                => -1
+      case (ArrivalRejection, ArrivalNotificationSubmitted) => 1
+      case (ArrivalRejection, _)                            => -1
 
       case (XMLSubmissionNegativeAcknowledgement, ArrivalNotificationSubmitted) => 1
       case (XMLSubmissionNegativeAcknowledgement, UnloadingRemarksSubmitted)    => 1
       case (XMLSubmissionNegativeAcknowledgement, _)                            => -1
 
-      case (UnloadingPermission, ArrivalNotificationSubmitted)                  => 1
-      case (UnloadingPermission, ArrivalRejection)                              => 1
-      case (UnloadingPermission, XMLSubmissionNegativeAcknowledgement)          => 1
-      case (UnloadingPermission, _)                                             => -1
+      case (UnloadingPermission, ArrivalNotificationSubmitted)         => 1
+      case (UnloadingPermission, ArrivalRejection)                     => 1
+      case (UnloadingPermission, XMLSubmissionNegativeAcknowledgement) => 1
+      case (UnloadingPermission, _)                                    => -1
 
-      case (UnloadingRemarksSubmitted, ArrivalNotificationSubmitted)            => 1
-      case (UnloadingRemarksSubmitted, UnloadingPermission)                     => 1
-      case (UnloadingRemarksSubmitted, ArrivalRejection)                        => 1
-      case (UnloadingRemarksSubmitted, _)                                       => -1
+      case (UnloadingRemarksSubmitted, ArrivalNotificationSubmitted) => 1
+      case (UnloadingRemarksSubmitted, UnloadingPermission)          => 1
+      case (UnloadingRemarksSubmitted, ArrivalRejection)             => 1
+      case (UnloadingRemarksSubmitted, _)                            => -1
 
-      case (UnloadingRemarksRejection, ArrivalNotificationSubmitted)            => 1
-      case (UnloadingRemarksRejection, UnloadingPermission)                     => 1
-      case (UnloadingRemarksRejection, UnloadingRemarksSubmitted)               => 1
-      case (UnloadingRemarksRejection, ArrivalRejection)                        => 1
-      case (UnloadingRemarksRejection, XMLSubmissionNegativeAcknowledgement)    => 1
-      case (UnloadingRemarksRejection, _)                                       => -1
+      case (UnloadingRemarksRejection, ArrivalNotificationSubmitted)         => 1
+      case (UnloadingRemarksRejection, UnloadingPermission)                  => 1
+      case (UnloadingRemarksRejection, UnloadingRemarksSubmitted)            => 1
+      case (UnloadingRemarksRejection, ArrivalRejection)                     => 1
+      case (UnloadingRemarksRejection, XMLSubmissionNegativeAcknowledgement) => 1
+      case (UnloadingRemarksRejection, _)                                    => -1
 
-      case (GoodsReleased, _)                                                   => 1
+      case (GoodsReleased, _) => 1
 
-      case (_, _)                                                              => -1
+      case (_, _) => -1
     }
   }
 

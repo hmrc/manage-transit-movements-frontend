@@ -173,7 +173,7 @@ class ArrivalStatusSpec extends SpecBase {
       val lesserOrderValues = Seq(
         ArrivalNotificationSubmitted,
         UnloadingPermission,
-        ArrivalRejection,
+        ArrivalRejection
       )
 
       val greaterOrderValues = Seq(

@@ -60,13 +60,18 @@ case class Arrival(arrivalId: ArrivalId,
             UnloadingRemarksRejection
           }
         case XMLSubmissionNegativeAcknowledgement if messagesMetaData.count(_.messageType == UnloadingRemarksSubmitted) >= 1 =>
-          if (messagesMetaData.count(_.messageType == UnloadingRemarksSubmitted) > messagesMetaData.count(_.messageType == XMLSubmissionNegativeAcknowledgement)) {
+          if (
+            messagesMetaData.count(_.messageType == UnloadingRemarksSubmitted) > messagesMetaData.count(_.messageType == XMLSubmissionNegativeAcknowledgement)
+          ) {
             UnloadingRemarksSubmitted
           } else {
             XMLSubmissionNegativeAcknowledgement
           }
         case XMLSubmissionNegativeAcknowledgement =>
-          if (messagesMetaData.count(_.messageType == ArrivalNotificationSubmitted) > messagesMetaData.count(_.messageType == XMLSubmissionNegativeAcknowledgement)) {  
+          if (
+            messagesMetaData
+              .count(_.messageType == ArrivalNotificationSubmitted) > messagesMetaData.count(_.messageType == XMLSubmissionNegativeAcknowledgement)
+          ) {
             ArrivalNotificationSubmitted
           } else {
             XMLSubmissionNegativeAcknowledgement

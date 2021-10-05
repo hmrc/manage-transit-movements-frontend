@@ -54,9 +54,9 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
     "arrivals" -> JsArray(
       Seq(
         Json.obj(
-          "arrivalId"               -> 22,
-          "created"                 -> localDateTime,
-          "updated"                 -> localDateTime,
+          "arrivalId" -> 22,
+          "created"   -> localDateTime,
+          "updated"   -> localDateTime,
           "messagesMetaData" -> Json.arr(
             Json.obj(
               "messageType" -> ArrivalNotificationSubmitted.toString,

@@ -17,7 +17,15 @@
 package models.arrival
 
 import base.SpecBase
-import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingPermission, UnloadingRemarksRejection, UnloadingRemarksSubmitted, XMLSubmissionNegativeAcknowledgement}
+import models.arrival.ArrivalStatus.{
+  ArrivalNotificationSubmitted,
+  ArrivalRejection,
+  GoodsReleased,
+  UnloadingPermission,
+  UnloadingRemarksRejection,
+  UnloadingRemarksSubmitted,
+  XMLSubmissionNegativeAcknowledgement
+}
 import models.{Arrival, ArrivalId, Departure, DepartureId, LocalReferenceNumber}
 
 import java.time.LocalDateTime
@@ -176,7 +184,6 @@ class ArrivalSpec extends SpecBase {
               arrival.currentStatus mustBe ArrivalRejection
             }
 
-
             "must return ArrivalNotificationSubmitted when there are less ArrivalRejections" in {
 
               val localDateTime: LocalDateTime = LocalDateTime.now()
@@ -218,7 +225,6 @@ class ArrivalSpec extends SpecBase {
 
               arrival.currentStatus mustBe UnloadingRemarksRejection
             }
-
 
             "must return UnloadingRemarksSubmitted when there are less UnloadingRemarksRejection" in {
 

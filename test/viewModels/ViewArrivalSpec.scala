@@ -55,7 +55,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val updatedArrival: Arrival = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(UnloadingPermission, LocalDateTime.now())))
+        val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(UnloadingPermission, LocalDateTime.now())))
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
@@ -66,7 +66,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display rejection" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val updatedArrival: Arrival = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(ArrivalRejection, LocalDateTime.now())))
+        val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(ArrivalRejection, LocalDateTime.now())))
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
@@ -74,15 +74,13 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     }
   }
 
-
   "must not display action when status is not unloading permission, rejection or negative acknowledgment" in {
-
 
     val genArrivalStatus = Gen.oneOf(Seq(ArrivalNotificationSubmitted, GoodsReleased, UnloadingRemarksSubmitted))
 
     forAll(arbitrary[Arrival], genArrivalStatus) {
       (arrival, arrivalStatus) =>
-        val updatedArrival: Arrival = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(arrivalStatus, LocalDateTime.now())))
+        val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(arrivalStatus, LocalDateTime.now())))
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)(frontendAppConfig)
 
         viewMovement.actions mustBe Nil
