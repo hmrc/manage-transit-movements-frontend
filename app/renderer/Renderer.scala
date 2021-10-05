@@ -44,6 +44,7 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, renderer: NunjucksRender
     "serviceIdentifier"              -> appConfig.contactFormServiceIdentifier,
     "contactHost"                    -> appConfig.contactHost,
     "signOutUrl"                     -> appConfig.signOutUrl,
+    "signInUrl"                      -> appConfig.signInUrl,
     "timeout"                        -> appConfig.timeoutSeconds,
     "countdown"                      -> appConfig.countdownSeconds,
     "trackingConsentUrl"             -> appConfig.trackingConsentUrl,

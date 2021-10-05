@@ -89,10 +89,16 @@
                     </nav>
                 {% endif %}
 
-                {% if params.signOutHref %}
+                {% if params.signOutHref and params.isLoggedIn %}
                     <nav class="hmrc-sign-out-nav">
-                    <a class="govuk-link hmrc-sign-out-nav__link" href="{{ params.signOutHref }}">
+                    <a class="govuk-link hmrc-sign-out-nav__link" href="{{ params.signOutHref }}" id="nav-sign-out">
                     {% if language == 'cy' %}Allgofnodi{% else %}Sign out{% endif %}
+                    </a>
+                    </nav>
+                {% elseif params.signInUrl %}
+                    <nav class="hmrc-sign-out-nav" >
+                    <a class="govuk-link hmrc-sign-out-nav__link" href="{{ params.signInUrl }}" id="nav-sign-in">
+                    {% if language == 'cy' %}Mewngofnodi{% else %}Sign in{% endif %}
                     </a>
                     </nav>
                 {% endif %}

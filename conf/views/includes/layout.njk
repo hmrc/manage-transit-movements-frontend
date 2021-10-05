@@ -32,7 +32,9 @@
       text: 'beta',
       html: phaseBanner()
     },
-    signOutHref: config.signOutUrl
+    signOutHref: config.signOutUrl,
+    signInUrl: config.signInUrl,
+    isLoggedIn: isLoggedIn | default(true)
   }) }}
 
 {% endblock %}

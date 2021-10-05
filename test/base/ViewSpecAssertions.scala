@@ -96,4 +96,8 @@ private[base] trait ViewSpecAssertions {
     link.text() mustBe expectedText
     link.attr("href") mustBe expectedHref
   }
+
+  def assertPageHasNoLink(doc: Document, id: String): Assertion = {
+    doc.select(s"a[id=$id]").isEmpty mustBe true
+  }
 }
