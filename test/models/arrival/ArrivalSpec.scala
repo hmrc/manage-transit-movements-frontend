@@ -17,7 +17,7 @@
 package models.arrival
 
 import base.SpecBase
-import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingPermission, UnloadingRemarksSubmitted, XMLSubmissionNegativeAcknowledgement}
+import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingPermission, UnloadingRemarksRejection, UnloadingRemarksSubmitted, XMLSubmissionNegativeAcknowledgement}
 import models.{Arrival, ArrivalId, Departure, DepartureId, LocalReferenceNumber}
 
 import java.time.LocalDateTime
@@ -154,6 +154,181 @@ class ArrivalSpec extends SpecBase {
         }
 
         "when messages have the same latest dateTime" - {
+
+          "and the current weighted message is ArrivalRejection" - {
+
+            "must return ArrivalRejection when there are equal ArrivalNotificationSubmitted" in {
+
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val arrival =
+                Arrival(
+                  ArrivalId(22),
+                  localDateTime,
+                  localDateTime,
+                  Seq(
+                    ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime),
+                    ArrivalMessageMetaData(ArrivalRejection, localDateTime)
+                  ),
+                  "mrn123"
+                )
+
+              arrival.currentStatus mustBe ArrivalRejection
+            }
+
+
+            "must return ArrivalNotificationSubmitted when there are less ArrivalRejections" in {
+
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val arrival =
+                Arrival(
+                  ArrivalId(22),
+                  localDateTime,
+                  localDateTime,
+                  Seq(
+                    ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime),
+                    ArrivalMessageMetaData(ArrivalRejection, localDateTime.plusSeconds(10)),
+                    ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime.plusSeconds(10))
+                  ),
+                  "mrn123"
+                )
+
+              arrival.currentStatus mustBe ArrivalNotificationSubmitted
+            }
+          }
+
+          "and the current weighted message is UnloadingRemarksRejection" - {
+
+            "must return UnloadingRemarksRejection when there are equal UnloadingRemarksSubmitted" in {
+
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val arrival =
+                Arrival(
+                  ArrivalId(22),
+                  localDateTime,
+                  localDateTime,
+                  Seq(
+                    ArrivalMessageMetaData(UnloadingRemarksRejection, localDateTime),
+                    ArrivalMessageMetaData(UnloadingRemarksSubmitted, localDateTime)
+                  ),
+                  "mrn123"
+                )
+
+              arrival.currentStatus mustBe UnloadingRemarksRejection
+            }
+
+
+            "must return UnloadingRemarksSubmitted when there are less UnloadingRemarksRejection" in {
+
+              val localDateTime: LocalDateTime = LocalDateTime.now()
+
+              val arrival =
+                Arrival(
+                  ArrivalId(22),
+                  localDateTime,
+                  localDateTime,
+                  Seq(
+                    ArrivalMessageMetaData(UnloadingRemarksSubmitted, localDateTime),
+                    ArrivalMessageMetaData(UnloadingRemarksRejection, localDateTime.plusSeconds(10)),
+                    ArrivalMessageMetaData(UnloadingRemarksSubmitted, localDateTime.plusSeconds(10))
+                  ),
+                  "mrn123"
+                )
+
+              arrival.currentStatus mustBe UnloadingRemarksSubmitted
+            }
+
+          }
+
+          "and the current weighted message is XMLSubmissionNegativeAcknowledgement" - {
+
+            "and there are previous unloading remarks" - {
+
+              "must return XMLSubmissionNegativeAcknowledgement when there are equal UnloadingRemarksSubmitted" in {
+
+                val localDateTime: LocalDateTime = LocalDateTime.now()
+
+                val arrival =
+                  Arrival(
+                    ArrivalId(22),
+                    localDateTime,
+                    localDateTime,
+                    Seq(
+                      ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime),
+                      ArrivalMessageMetaData(UnloadingRemarksSubmitted, localDateTime)
+                    ),
+                    "mrn123"
+                  )
+
+                arrival.currentStatus mustBe XMLSubmissionNegativeAcknowledgement
+              }
+
+              "must return UnloadingRemarksSubmitted when there are less XMLSubmissionNegativeAcknowledgement" in {
+
+                val localDateTime: LocalDateTime = LocalDateTime.now()
+
+                val arrival =
+                  Arrival(
+                    ArrivalId(22),
+                    localDateTime,
+                    localDateTime,
+                    Seq(
+                      ArrivalMessageMetaData(UnloadingRemarksSubmitted, localDateTime),
+                      ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime.plusSeconds(10)),
+                      ArrivalMessageMetaData(UnloadingRemarksSubmitted, localDateTime.plusSeconds(10))
+                    ),
+                    "mrn123"
+                  )
+
+                arrival.currentStatus mustBe UnloadingRemarksSubmitted
+              }
+            }
+
+            "and there are previous arrivals ArrivalNotificationSubmitted" - {
+
+              "must return XMLSubmissionNegativeAcknowledgement when there are equal ArrivalNotificationSubmitted" in {
+
+                val localDateTime: LocalDateTime = LocalDateTime.now()
+
+                val arrival =
+                  Arrival(
+                    ArrivalId(22),
+                    localDateTime,
+                    localDateTime,
+                    Seq(
+                      ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime),
+                      ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime)
+                    ),
+                    "mrn123"
+                  )
+
+                arrival.currentStatus mustBe XMLSubmissionNegativeAcknowledgement
+              }
+
+              "must return ArrivalNotificationSubmitted when there are less XMLSubmissionNegativeAcknowledgement" in {
+
+                val localDateTime: LocalDateTime = LocalDateTime.now()
+
+                val arrival =
+                  Arrival(
+                    ArrivalId(22),
+                    localDateTime,
+                    localDateTime,
+                    Seq(
+                      ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime),
+                      ArrivalMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime.plusSeconds(10)),
+                      ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime.plusSeconds(10))
+                    ),
+                    "mrn123"
+                  )
+
+                arrival.currentStatus mustBe ArrivalNotificationSubmitted
+              }
+
+            }
+          }
 
           "must return the latest messageType" in {
 

@@ -16,18 +16,24 @@
 
 package models
 
-import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, UnloadingRemarksSubmitted}
+import models.arrival.ArrivalStatus.{
+  ArrivalNotificationSubmitted,
+  ArrivalRejection,
+  UnloadingRemarksRejection,
+  UnloadingRemarksSubmitted,
+  XMLSubmissionNegativeAcknowledgement
+}
 import models.arrival.{ArrivalMessageMetaData, ArrivalStatus}
 import play.api.libs.json.{Json, Reads}
 
 import java.time.LocalDateTime
 
-case class Arrival(
-                    arrivalId: ArrivalId,
-                    created: LocalDateTime,
-                    updated: LocalDateTime,
-                    messagesMetaData: Seq[ArrivalMessageMetaData],
-                    movementReferenceNumber: String) {
+case class Arrival(arrivalId: ArrivalId,
+                   created: LocalDateTime,
+                   updated: LocalDateTime,
+                   messagesMetaData: Seq[ArrivalMessageMetaData],
+                   movementReferenceNumber: String
+) {
 
   def currentStatus: ArrivalStatus = {
 
@@ -39,7 +45,34 @@ case class Arrival(
     if (messagesWithSameDateTime.size == 1) {
       latestMessage.messageType
     } else {
-      messagesWithSameDateTime.map(_.messageType).max
+
+      messagesWithSameDateTime.map(_.messageType).max match {
+        case ArrivalRejection =>
+          if (messagesMetaData.count(_.messageType == ArrivalNotificationSubmitted) > messagesMetaData.count(_.messageType == ArrivalRejection)) {
+            ArrivalNotificationSubmitted
+          } else {
+            ArrivalRejection
+          }
+        case UnloadingRemarksRejection =>
+          if (messagesMetaData.count(_.messageType == UnloadingRemarksSubmitted) > messagesMetaData.count(_.messageType == UnloadingRemarksRejection)) {
+            UnloadingRemarksSubmitted
+          } else {
+            UnloadingRemarksRejection
+          }
+        case XMLSubmissionNegativeAcknowledgement if messagesMetaData.count(_.messageType == UnloadingRemarksSubmitted) >= 1 =>
+          if (messagesMetaData.count(_.messageType == UnloadingRemarksSubmitted) > messagesMetaData.count(_.messageType == XMLSubmissionNegativeAcknowledgement)) {
+            UnloadingRemarksSubmitted
+          } else {
+            XMLSubmissionNegativeAcknowledgement
+          }
+        case XMLSubmissionNegativeAcknowledgement =>
+          if (messagesMetaData.count(_.messageType == ArrivalNotificationSubmitted) > messagesMetaData.count(_.messageType == XMLSubmissionNegativeAcknowledgement)) {  
+            ArrivalNotificationSubmitted
+          } else {
+            XMLSubmissionNegativeAcknowledgement
+          }
+        case value => value
+      }
     }
   }
 
