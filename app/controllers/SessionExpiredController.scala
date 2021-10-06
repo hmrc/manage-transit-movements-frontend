@@ -37,6 +37,6 @@ class SessionExpiredController @Inject() (
       val json = Json.obj(
         "signInUrl" -> routes.WhatDoYouWantToDoController.onPageLoad().url
       )
-      renderer.render("session-expired.njk", json).map(Ok(_))
+      renderer.render("session-expired.njk", json).map(Ok(_).withNewSession)
   }
 }
