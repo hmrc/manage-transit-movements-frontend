@@ -57,9 +57,10 @@ whatDoYouWantToDo.link.departure.viewDepartures = View departure declarations
 whatDoYouWantToDo.departure.noDepartures = You have no departure declarations.
 whatDoYouWantToDo.departure.departuresUnavailable = View departure notifications is currently unavailable.
 
-session_expired.title = For your security, this service has been reset
-session_expired.heading = For your security, this service has been reset
-session_expired.guidance = The details you have given have been deleted because you did not continue the service for 15 minutes.
+session_expired.title = For your security, we signed you out
+session_expired.heading = For your security, we signed you out
+session_expired.guidance = We did not save your answers.
+session_expired.button = Sign in
 
 unauthorised.title = You cannot use this service
 unauthorised.heading = You cannot use this service
