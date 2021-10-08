@@ -17,38 +17,5 @@
 package views
 
 import base.SingleViewSpec
-import org.jsoup.nodes.Document
-import play.api.libs.json.Json
 
-class SessionExpiredViewSpec extends SingleViewSpec("session-expired.njk") {
-
-  "SessionExpiredView" - {
-
-    "must have the sign in link if pass one in" in {
-      val doc: Document = renderDocument(
-        Json.obj("signInUrl" -> "/manage-transit-movements/what-do-you-want-to-do")
-      ).futureValue
-
-      assertPageHasLink(
-        doc,
-        "nav-sign-in",
-        "Sign in",
-        "/manage-transit-movements/what-do-you-want-to-do"
-      )
-      assertPageHasNoLink(doc, "nav-sign-out")
-    }
-
-    "must have the sign out link if the Document signInUrl is not populated" in {
-      val doc: Document = renderDocument().futureValue
-
-      assertPageHasLink(
-        doc,
-        "nav-sign-out",
-        "Sign out",
-        "urls.logoutContinueurls.feedback"
-      )
-      assertPageHasNoLink(doc, "nav-sign-in")
-    }
-  }
-
-}
+class SessionExpiredViewSpec extends SingleViewSpec("session-expired.njk", hasSignOutLink = false)

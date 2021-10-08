@@ -16,8 +16,6 @@
 
 package views.behaviours
 
-import base.FakeFrontendAppConfig
-import config.FrontendAppConfig
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.libs.json._
@@ -27,8 +25,6 @@ import java.time.format.DateTimeFormatter
 import scala.collection.convert.ImplicitConversions._
 
 abstract class MovementsTableViewBehaviours(override protected val viewUnderTest: String) extends ViewBehaviours(viewUnderTest) {
-
-  implicit val frontendAppConfig: FrontendAppConfig = FakeFrontendAppConfig()
 
   val dateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 

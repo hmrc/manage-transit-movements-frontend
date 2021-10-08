@@ -16,24 +16,20 @@
 
 package viewModels
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalTime}
-
 import base.SpecBase
 import config.FrontendAppConfig
 import generators.Generators
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.mockito.Mockito.when
 import play.api.libs.json.Json
+
+import java.time.{LocalDate, LocalTime}
 
 class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  def formatter(date: LocalDate): String = {
-    val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-    date.format(formatter)
-  }
+  implicit override val frontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
@@ -98,8 +94,7 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
     "adds url from FrontendAppConfig" in {
       val testUrl = "testUrl"
 
-      implicit val mockFrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn(testUrl)
+      when(frontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn(testUrl)
 
       forAll(arbitrary[ViewDepartureMovements]) {
         viewDepartureMovements =>
@@ -112,8 +107,7 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
 
     "adds the homepage url" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
+      when(frontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDepartureMovements]) {
         viewDepartureMovement =>

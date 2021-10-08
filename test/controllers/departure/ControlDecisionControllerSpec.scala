@@ -16,13 +16,11 @@
 
 package controllers.departure
 
-import base.SpecBase
-import base.FakeFrontendAppConfig
-import base.MockNunjucksRendererApp
+import base.{MockNunjucksRendererApp, SpecBase}
 import generators.Generators
 import matchers.JsonMatchers
-import models.departure.ControlDecision
 import models.LocalReferenceNumber
+import models.departure.ControlDecision
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -41,7 +39,6 @@ import scala.concurrent.Future
 class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
-  val frontendAppConfig                   = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(

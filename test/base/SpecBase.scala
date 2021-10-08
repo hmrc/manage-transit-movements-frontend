@@ -16,6 +16,7 @@
 
 package base
 
+import config.FrontendAppConfig
 import models.{DepartureId, LocalReferenceNumber}
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -24,8 +25,8 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
-import play.api.test.Helpers
+import play.api.test.{FakeRequest, Helpers}
+import play.api.test.Helpers.baseApplicationBuilder.injector
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 trait SpecBase
@@ -52,5 +53,7 @@ trait SpecBase
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
+
+  implicit val frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
 
 }

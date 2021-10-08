@@ -30,7 +30,9 @@ import viewModels.pagination._
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
-class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
+class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
+
+  implicit override val frontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
@@ -105,8 +107,7 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
     "adds the declareArrivalNotificationUrl from FrontendAppConfig" in {
       val testUrl = "declareArrivalNotificationUrl"
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn(testUrl)
+      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn(testUrl)
 
       val paginationViewModel = PaginationViewModel(10, 1, 2, "testHref")
 
@@ -122,8 +123,7 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
 
     "adds the homePageUrl" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
+      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
 
       forAll(arbitrary[ViewArrival]) {
         arrival =>
@@ -139,8 +139,7 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
 
     "adds the pagination" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
+      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
 
       forAll(arbitrary[ViewArrival]) {
         arrival =>
@@ -160,8 +159,7 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
 
     "must show correct message for a singular movement" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
+      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
 
       forAll(arbitrary[ViewArrival]) {
         arrival =>
@@ -176,8 +174,7 @@ class ViewAllArrivalMovementsSpec extends SpecBase with Generators with ScalaChe
 
     "must show correct message for multiple movements" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
+      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
 
       forAll(arbitrary[ViewArrival]) {
         arrival =>

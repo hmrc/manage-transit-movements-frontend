@@ -17,17 +17,14 @@
 package viewModels
 
 import base.SpecBase
-import base.FakeFrontendAppConfig
+import controllers.arrival.{routes => arrivalRoute}
 import generators.Generators
 import models.Arrival
-import controllers.arrival.{routes => arrivalRoute}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
 
 class ArrivalStatusSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  val frontendAppConfig = FakeFrontendAppConfig()
 
   "Movement status" - {
     "display correct status" - {
