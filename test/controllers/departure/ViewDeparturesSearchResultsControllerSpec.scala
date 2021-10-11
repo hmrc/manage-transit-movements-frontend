@@ -17,8 +17,10 @@
 package controllers.departure
 
 import base.{FakeFrontendAppConfig, FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
+import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
+import models.departure.DepartureMessageMetaData
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
@@ -31,11 +33,9 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import java.time.LocalDateTime
-
-import config.{FrontendAppConfig, SearchResultsAppConfig}
 import viewModels.{ViewDeparture, ViewDepartureMovements}
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
@@ -55,7 +55,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
           DepartureId(1),
           LocalDateTime.now(),
           LocalReferenceNumber("test lrn"),
-          DepartureSubmitted
+          Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime))
         )
       )
     )
