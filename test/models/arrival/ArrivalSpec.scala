@@ -16,6 +16,8 @@
 
 package models.arrival
 
+import java.time.LocalDateTime
+
 import base.SpecBase
 import models.arrival.ArrivalStatus.{
   ArrivalNotificationSubmitted,
@@ -26,9 +28,7 @@ import models.arrival.ArrivalStatus.{
   UnloadingRemarksSubmitted,
   XMLSubmissionNegativeAcknowledgement
 }
-import models.{Arrival, ArrivalId, Departure, DepartureId, LocalReferenceNumber}
-
-import java.time.LocalDateTime
+import models.{Arrival, ArrivalId}
 
 class ArrivalSpec extends SpecBase {
 

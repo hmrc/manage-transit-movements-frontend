@@ -31,8 +31,8 @@ lazy val root = (project in file("."))
     PlayKeys.playDefaultPort := 9485,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*Routes.*;.*GuiceInjector;" +
-      ".*ControllerConfiguration",
-    ScoverageKeys.coverageMinimumStmtTotal := 75,
+      ".*ControllerConfiguration;.*TestOnly.*",
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum    := true,
     ScoverageKeys.coverageHighlighting     := true,
     scalacOptions ++= Seq(
@@ -53,10 +53,10 @@ lazy val root = (project in file("."))
     Concat.groups := Seq(
       "javascripts/application.js" -> group(Seq("lib/govuk-frontend/govuk/all.js", "lib/hmrc-frontend/hmrc/all.js", "javascripts/ctc.js"))
     ),
-    uglifyCompressOptions          := Seq("unused=false", "dead_code=false"),
+    uglifyCompressOptions          := Seq("unused=false", "dead_code=false", "warnings=false"),
     pipelineStages in Assets       := Seq(concat, uglify),
     useSuperShell in ThisBuild     := false,
-    scalafmtOnCompile in ThisBuild := false
+    scalafmtOnCompile in ThisBuild := true
   )
 
 lazy val testSettings: Seq[Def.Setting[_]] = Seq(
