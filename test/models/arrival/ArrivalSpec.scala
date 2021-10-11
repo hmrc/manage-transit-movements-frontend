@@ -16,11 +16,19 @@
 
 package models.arrival
 
-import base.SpecBase
-import models.arrival.ArrivalStatus._
-import models.{Arrival, ArrivalId}
-
 import java.time.LocalDateTime
+
+import base.SpecBase
+import models.arrival.ArrivalStatus.{
+  ArrivalNotificationSubmitted,
+  ArrivalRejection,
+  GoodsReleased,
+  UnloadingPermission,
+  UnloadingRemarksRejection,
+  UnloadingRemarksSubmitted,
+  XMLSubmissionNegativeAcknowledgement
+}
+import models.{Arrival, ArrivalId}
 
 class ArrivalSpec extends SpecBase {
 
