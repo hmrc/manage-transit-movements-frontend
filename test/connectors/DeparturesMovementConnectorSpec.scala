@@ -32,7 +32,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.Format
-import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted}
+import models.departure.DepartureStatus.DepartureSubmitted
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
