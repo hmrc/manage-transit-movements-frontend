@@ -97,7 +97,7 @@ trait ModelGenerators {
         arrivalId       <- arbitrary[ArrivalId]
         date            <- arbitrary[LocalDateTime]
         time            <- arbitrary[LocalDateTime]
-        messageMetaData <- arbitrary[Seq[ArrivalMessageMetaData]]
+        messageMetaData <- Gen.nonEmptyListOf(arbitrary[ArrivalMessageMetaData])
         mrn             <- stringsWithMaxLength(17)
       } yield Arrival(arrivalId, date, time, messageMetaData, mrn)
     }
@@ -108,7 +108,7 @@ trait ModelGenerators {
         departureID          <- arbitrary[DepartureId]
         updated              <- arbitrary[LocalDateTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        messageMetaData      <- arbitrary[Seq[DepartureMessageMetaData]]
+        messageMetaData      <- Gen.nonEmptyListOf(arbitrary[DepartureMessageMetaData])
       } yield Departure(departureID, updated, localReferenceNumber, messageMetaData)
     }
 
