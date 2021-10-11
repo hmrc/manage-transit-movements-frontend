@@ -16,8 +16,7 @@
 
 package controllers.arrival
 
-import java.time.LocalDateTime
-import base.{FakeFrontendAppConfig, FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
 import generators.Generators
@@ -39,6 +38,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.{ViewArrival, ViewArrivalMovements}
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewArrivalsSearchResultsControllerSpec
@@ -51,7 +51,6 @@ class ViewArrivalsSearchResultsControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector                    = mock[ArrivalMovementConnector]
-  implicit val frontendAppConfig: FrontendAppConfig           = FakeFrontendAppConfig()
   implicit val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
   private val totalSearchArrivals                             = 8
   private val someSearchMatches                               = 5

@@ -16,7 +16,7 @@
 
 package viewModels
 
-import base.{FakeFrontendAppConfig, SpecBase}
+import base.SpecBase
 import generators.Generators
 import models.Arrival
 import models.arrival.ArrivalMessageMetaData
@@ -31,8 +31,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  val frontendAppConfig = FakeFrontendAppConfig()
 
   "must serialise to Json" in {
 

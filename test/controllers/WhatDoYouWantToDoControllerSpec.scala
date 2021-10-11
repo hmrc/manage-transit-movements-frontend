@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{MockNunjucksRendererApp, SpecBase}
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
 import models.arrival.ArrivalMessageMetaData
@@ -36,7 +36,6 @@ import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRendererApp {
-  val frontendAppConfig = FakeFrontendAppConfig()
 
   private val manageTransitMovementRoute   = "manage-transit-movements"
   private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"

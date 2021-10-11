@@ -16,8 +16,7 @@
 
 package controllers.arrival
 
-import java.time.LocalDateTime
-import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{MockNunjucksRendererApp, SpecBase}
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
@@ -39,6 +38,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewArrival, ViewArrivalMovements}
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewAllArrivalsControllerSpec
@@ -51,7 +51,6 @@ class ViewAllArrivalsControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
-  implicit val frontendAppConfig           = FakeFrontendAppConfig()
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 

@@ -16,19 +16,12 @@
 
 package viewModels
 
-import base.{FakeFrontendAppConfig, SpecBase}
+import base.SpecBase
 import controllers.arrival.{routes => arrivalRoute}
 import generators.Generators
 import models.Arrival
 import models.arrival.ArrivalMessageMetaData
-import models.arrival.ArrivalStatus.{
-  ArrivalNotificationSubmitted,
-  ArrivalRejection,
-  GoodsReleased,
-  UnloadingRemarksRejection,
-  UnloadingRemarksSubmitted,
-  XMLSubmissionNegativeAcknowledgement
-}
+import models.arrival.ArrivalStatus._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
@@ -36,8 +29,6 @@ import play.api.i18n.Messages
 import java.time.LocalDateTime
 
 class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  val frontendAppConfig = FakeFrontendAppConfig()
 
   "Movement status" - {
     "display correct status" - {

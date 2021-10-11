@@ -16,7 +16,7 @@
 
 package controllers.departure
 
-import base.{FakeFrontendAppConfig, FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
@@ -92,7 +92,6 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
   }
 
   val mockDepartureMovementsConnector                         = mock[DeparturesMovementConnector]
-  implicit val frontendAppConfig: FrontendAppConfig           = FakeFrontendAppConfig()
   implicit val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =

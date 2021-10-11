@@ -16,9 +16,6 @@
 
 package viewModels
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalTime}
-
 import base.SpecBase
 import config.FrontendAppConfig
 import generators.Generators
@@ -30,7 +27,12 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.pagination._
 
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalTime}
+
 class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
+
+  implicit override val frontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
@@ -105,8 +107,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
     "adds the declareDepartureNotificationUrl from FrontendAppConfig" in {
       val testUrl = "declareDepartureNotificationUrl"
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn(testUrl)
+      when(frontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn(testUrl)
 
       val paginationViewModel = PaginationViewModel(10, 1, 2, "testHref")
 
@@ -122,8 +123,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
 
     "adds the homePageUrl" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
+      when(frontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDeparture]) {
         departure =>
@@ -139,8 +139,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
 
     "adds the pagination" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
+      when(frontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDeparture]) {
         departure =>
@@ -160,8 +159,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
 
     "must show correct message for a singular movement" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
+      when(frontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDeparture]) {
         departure =>
@@ -176,8 +174,7 @@ class ViewAllDepartureMovementsSpec extends SpecBase with Generators with ScalaC
 
     "must show correct message for multiple movements" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
+      when(frontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
 
       forAll(arbitrary[ViewDeparture]) {
         departure =>
