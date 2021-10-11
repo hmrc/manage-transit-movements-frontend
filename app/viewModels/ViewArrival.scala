@@ -33,7 +33,7 @@ object ViewArrival {
 
   def apply(arrival: Arrival)(implicit frontendAppConfig: FrontendAppConfig): ViewArrival = {
 
-    val movementStatus: ArrivalStatus = ArrivalStatus(arrival)
+    val movementStatus: ArrivalStatusViewModel = ArrivalStatusViewModel(arrival)
 
     ViewArrival(
       arrival.updated.toLocalDate,

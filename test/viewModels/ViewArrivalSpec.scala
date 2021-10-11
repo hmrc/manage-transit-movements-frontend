@@ -19,11 +19,15 @@ package viewModels
 import base.SpecBase
 import generators.Generators
 import models.Arrival
+import models.arrival.ArrivalMessageMetaData
+import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingPermission, UnloadingRemarksSubmitted}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
@@ -49,8 +53,8 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival = arrival.copy(status = "UnloadingPermission")
-        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
+        val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(UnloadingPermission, LocalDateTime.now())))
+        val viewMovement: ViewArrival = ViewArrival(updatedArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
         viewMovement.actions.head.href mustBe s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrival.arrivalId.index}"
@@ -60,32 +64,22 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display rejection" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val unloadingArrival: Arrival = arrival.copy(status = "ArrivalRejected")
-        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
+        val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(ArrivalRejection, LocalDateTime.now())))
+        val viewMovement: ViewArrival = ViewArrival(updatedArrival)(frontendAppConfig)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
         viewMovement.actions.head.href mustBe s"http://localhost:9483/manage-transit-movements-arrivals/${arrival.arrivalId.index}/arrival-rejection"
     }
   }
 
-  "must display correct status" in {
+  "must not display action when status is not unloading permission, rejection or negative acknowledgment" in {
 
-    forAll(arbitrary[Arrival]) {
-      arrival =>
-        val unloadingArrival: Arrival = arrival.copy(status = "")
-        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
+    val genArrivalStatus = Gen.oneOf(Seq(ArrivalNotificationSubmitted, GoodsReleased, UnloadingRemarksSubmitted))
 
-        viewMovement.status mustBe unloadingArrival.status
-    }
-
-  }
-
-  "must not display action when status is not unloading permission or rejection" in {
-
-    forAll(arbitrary[Arrival]) {
-      arrival =>
-        val unloadingArrival: Arrival = arrival.copy(status = "")
-        val viewMovement: ViewArrival = ViewArrival(unloadingArrival)(frontendAppConfig)
+    forAll(arbitrary[Arrival], genArrivalStatus) {
+      (arrival, arrivalStatus) =>
+        val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(arrivalStatus, LocalDateTime.now())))
+        val viewMovement: ViewArrival = ViewArrival(updatedArrival)(frontendAppConfig)
 
         viewMovement.actions mustBe Nil
     }

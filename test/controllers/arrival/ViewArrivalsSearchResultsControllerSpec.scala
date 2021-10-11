@@ -21,6 +21,8 @@ import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
+import models.arrival.ArrivalMessageMetaData
+import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
 import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -74,13 +76,7 @@ class ViewArrivalsSearchResultsControllerSpec
       totalArrivals = totalSearchArrivals,
       totalMatched = Some(totalMatched),
       arrivals = Seq(
-        Arrival(
-          ArrivalId(1),
-          localDateTime,
-          localDateTime,
-          "Submitted",
-          "test mrn"
-        )
+        Arrival(ArrivalId(1), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "test mrn")
       )
     )
 
@@ -88,7 +84,7 @@ class ViewArrivalsSearchResultsControllerSpec
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
     "test mrn",
-    "Submitted",
+    "movement.status.arrivalSubmitted",
     Nil
   )
 
