@@ -16,17 +16,18 @@
 
 package models
 
-import java.time.LocalDateTime
-
 import base.SpecBase
-import models.departure.DepartureStatus.DepartureSubmitted
+import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted, WriteOffNotification, XMLSubmissionNegativeAcknowledgement}
+import models.departure.DepartureMessageMetaData
 import play.api.libs.json.Json
+
+import java.time.LocalDateTime
 
 class DeparturesSpec extends SpecBase {
 
   "Departures" - {
 
-    "must deserialize" in {
+    "must deserialize when there is a current and previous message" in {
 
       val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -41,7 +42,24 @@ class DeparturesSpec extends SpecBase {
                 "departureId"     -> 22,
                 "updated"         -> localDateTime,
                 "referenceNumber" -> "lrn",
-                "status"          -> DepartureSubmitted.toString
+                "messagesMetaData" -> Json.arr(
+                  Json.obj(
+                    "messageType" -> DeclarationCancellationRequest.toString,
+                    "dateTime"    -> localDateTime
+                  ),
+                  Json.obj(
+                    "messageType" -> DepartureSubmitted.toString,
+                    "dateTime"    -> localDateTime.minusSeconds(10)
+                  ),
+                  Json.obj(
+                    "messageType" -> WriteOffNotification.toString,
+                    "dateTime"    -> localDateTime.minusMinutes(10)
+                  ),
+                  Json.obj(
+                    "messageType" -> XMLSubmissionNegativeAcknowledgement.toString,
+                    "dateTime"    -> localDateTime.minusDays(10)
+                  )
+                )
               )
             )
         )
@@ -56,12 +74,39 @@ class DeparturesSpec extends SpecBase {
               DepartureId(22),
               localDateTime,
               LocalReferenceNumber("lrn"),
-              DepartureSubmitted
+              Seq(
+                DepartureMessageMetaData(DeclarationCancellationRequest, localDateTime),
+                DepartureMessageMetaData(DepartureSubmitted, localDateTime.minusSeconds(10)),
+                DepartureMessageMetaData(WriteOffNotification, localDateTime.minusMinutes(10)),
+                DepartureMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime.minusDays(10))
+              )
             )
           )
         )
 
-      departuresResponseJson.validate[Departures].asOpt.value mustEqual expectedResult
+      departuresResponseJson.as[Departures] mustEqual expectedResult
+    }
+
+    "must fail to deserialize if there is no current message" in {
+
+      val localDateTime: LocalDateTime = LocalDateTime.now()
+
+      val departuresResponseJson =
+        Json.obj(
+          "retrievedDepartures" -> 1,
+          "totalDepartures"     -> 2,
+          "totalMatched"        -> 3,
+          "departures" ->
+            Json.arr(
+              Json.obj(
+                "departureId"     -> 22,
+                "updated"         -> localDateTime,
+                "referenceNumber" -> "lrn"
+              )
+            )
+        )
+
+      departuresResponseJson.validate[Departures].asOpt mustBe None
     }
   }
 }

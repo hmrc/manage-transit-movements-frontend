@@ -16,9 +16,6 @@
 
 package viewModels
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalTime}
-
 import base.SpecBase
 import config.FrontendAppConfig
 import generators.Generators
@@ -29,7 +26,12 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalTime}
+
 class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
+
+  implicit override val frontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
@@ -100,8 +102,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
     "adds the declareArrivalNotificationUrl from FrontendAppConfig" in {
       val testUrl = "declareArrivalNotificationUrl"
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn(testUrl)
+      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn(testUrl)
 
       forAll(arbitrary[ViewArrivalMovements]) {
         viewArrivalMovements =>
@@ -115,8 +116,7 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
 
     "adds the homePageUrl" in {
 
-      implicit val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-      when(mockFrontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
+      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
 
       forAll(arbitrary[ViewArrivalMovements]) {
         viewArrivalMovements =>

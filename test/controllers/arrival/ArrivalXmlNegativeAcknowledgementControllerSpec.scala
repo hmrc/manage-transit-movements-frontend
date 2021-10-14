@@ -16,9 +16,7 @@
 
 package controllers.arrival
 
-import base.SpecBase
-import base.FakeFrontendAppConfig
-import base.MockNunjucksRendererApp
+import base.{MockNunjucksRendererApp, SpecBase}
 import generators.Generators
 import matchers.JsonMatchers
 import models.ArrivalId
@@ -29,6 +27,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,11 +35,9 @@ import play.twirl.api.Html
 import services.ArrivalMessageService
 
 import scala.concurrent.Future
-import play.api.inject.guice.GuiceApplicationBuilder
 
 class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp with Generators {
   private val mockArrivalMessageService = mock[ArrivalMessageService]
-  val frontendAppConfig                 = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(mockArrivalMessageService)

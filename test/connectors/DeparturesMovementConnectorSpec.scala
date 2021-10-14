@@ -60,7 +60,12 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             "departureId"     -> 22,
             "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
-            "status"          -> DepartureSubmitted.toString
+            "messagesMetaData" -> Json.arr(
+              Json.obj(
+                "messageType" -> DepartureSubmitted.toString,
+                "dateTime"    -> localDateTime
+              )
+            )
           )
         )
     )
@@ -81,7 +86,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                 DepartureId(22),
                 localDateTime,
                 LocalReferenceNumber("lrn"),
-                DepartureSubmitted
+                Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime))
               )
             )
           )
@@ -120,7 +125,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime)))
             )
           )
 
@@ -158,7 +163,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), DepartureSubmitted)
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime)))
             )
           )
 

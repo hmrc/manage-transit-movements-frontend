@@ -16,13 +16,57 @@
 
 package models
 
-import java.time.LocalDateTime
-
-import models.departure.DepartureStatus
+import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted}
+import models.departure.{DepartureMessageMetaData, DepartureStatus}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
 
-case class Departure(departureId: DepartureId, updated: LocalDateTime, localReferenceNumber: LocalReferenceNumber, status: DepartureStatus)
+import java.time.LocalDateTime
+
+case class Departure(departureId: DepartureId,
+                     updated: LocalDateTime,
+                     localReferenceNumber: LocalReferenceNumber,
+                     messagesMetaData: Seq[DepartureMessageMetaData]
+) {
+
+  def currentStatus: DepartureStatus = {
+
+    implicit val localDateOrdering: Ordering[LocalDateTime] = _ compareTo _
+
+    val latestMessage            = messagesMetaData.maxBy(_.dateTime)
+    val messagesWithSameDateTime = messagesMetaData.filter(_.dateTime == latestMessage.dateTime)
+
+    if (messagesWithSameDateTime.size == 1) {
+      latestMessage.messageType
+    } else {
+      messagesWithSameDateTime.map(_.messageType).max
+    }
+  }
+
+  def previousStatus: DepartureStatus = {
+
+    implicit val localDateOrdering: Ordering[LocalDateTime] = _ compareTo _
+
+    val previousMessage = messagesMetaData.sortBy(_.dateTime).takeRight(2).head
+
+    val messagesWithSameDateTime = messagesMetaData.filter(_.dateTime == previousMessage.dateTime)
+
+    if (messagesWithSameDateTime.size == 1) {
+      previousMessage.messageType
+    } else {
+
+      currentStatus match {
+        case DepartureStatus.XMLSubmissionNegativeAcknowledgement =>
+          if (previousMessage.messageType == DepartureSubmitted | previousMessage.messageType == DeclarationCancellationRequest) {
+            previousMessage.messageType
+          } else {
+            messagesWithSameDateTime.map(_.messageType).max
+          }
+        case _ => messagesWithSameDateTime.map(_.messageType).max
+      }
+    }
+  }
+}
 
 object Departure {
 
@@ -30,6 +74,6 @@ object Departure {
     (__ \ "departureId").read[DepartureId] and
       (__ \ "updated").read[LocalDateTime] and
       (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "status").read[DepartureStatus]
+      (__ \ "messagesMetaData").read[Seq[DepartureMessageMetaData]]
   )(Departure.apply _)
 }

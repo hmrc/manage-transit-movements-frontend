@@ -31,7 +31,10 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecBase with ViewSpecAssertions with NunjucksSupport {
+abstract class SingleViewSpec(protected val viewUnderTest: String, hasSignOutLink: Boolean = true)
+    extends SpecBase
+    with ViewSpecAssertions
+    with NunjucksSupport {
 
   require(viewUnderTest.endsWith(".njk"), "Expected view with file extension of `.njk`")
 
@@ -53,7 +56,7 @@ abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecB
       Helpers.stubMessagesApi()
     )
 
-    new Renderer(FakeFrontendAppConfig(), nunjucksRenderer)
+    new Renderer(frontendAppConfig, nunjucksRenderer)
   }
 
   def renderDocument(json: JsObject = Json.obj()): Future[Document] = {
@@ -64,6 +67,26 @@ abstract class SingleViewSpec(protected val viewUnderTest: String) extends SpecB
     renderer
       .render(viewUnderTest, json)
       .map(asDocument)
+  }
+
+  if (hasSignOutLink) {
+    "must render sign out link in header" in {
+      val doc: Document = renderDocument().futureValue
+
+      assertPageHasSignOutLink(
+        doc = doc,
+        expectedText = "Sign out",
+        expectedHref = "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:9514/feedback/manage-transit-movements"
+      )
+    }
+  } else {
+    "must not render sign out link in header" in {
+      val doc: Document = renderDocument(
+        Json.obj("signInUrl" -> "/manage-transit-movements/what-do-you-want-to-do")
+      ).futureValue
+
+      assertPageHasNoSignOutLink(doc)
+    }
   }
 
 }

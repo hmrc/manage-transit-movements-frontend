@@ -16,13 +16,13 @@
 
 package controllers.arrival
 
-import java.time.LocalDateTime
-
-import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{MockNunjucksRendererApp, SpecBase}
 import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
+import models.arrival.ArrivalMessageMetaData
+import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
 import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -38,6 +38,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewArrival, ViewArrivalMovements}
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewAllArrivalsControllerSpec
@@ -50,7 +51,6 @@ class ViewAllArrivalsControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
-  implicit val frontendAppConfig           = FakeFrontendAppConfig()
 
   val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -73,13 +73,7 @@ class ViewAllArrivalsControllerSpec
       totalArrivals = 1,
       totalMatched = None,
       arrivals = Seq(
-        Arrival(
-          ArrivalId(1),
-          localDateTime,
-          localDateTime,
-          "Submitted",
-          "test mrn"
-        )
+        Arrival(ArrivalId(1), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "test mrn")
       )
     )
 
@@ -87,7 +81,7 @@ class ViewAllArrivalsControllerSpec
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
     "test mrn",
-    "Submitted",
+    "movement.status.arrivalSubmitted",
     Nil
   )
 

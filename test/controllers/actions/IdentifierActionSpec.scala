@@ -17,7 +17,6 @@
 package controllers.actions
 
 import base.SpecBase
-import base.FakeFrontendAppConfig
 import com.google.inject.Inject
 import connectors.EnrolmentStoreConnector
 import controllers.actions.AuthActionSpec._
@@ -51,7 +50,6 @@ class IdentifierActionSpec extends SpecBase {
   val mockAuthConnector: AuthConnector                     = mock[AuthConnector]
   val mockEnrolmentStoreConnector: EnrolmentStoreConnector = mock[EnrolmentStoreConnector]
   val mockUIRender: Renderer                               = mock[Renderer]
-  val frontendAppConfig                                    = FakeFrontendAppConfig()
 
   val LEGACY_ENROLMENT_KEY    = "HMCE-NCTS-ORG"
   val LEGACY_ENROLMENT_ID_KEY = "VATRegNoTURN"

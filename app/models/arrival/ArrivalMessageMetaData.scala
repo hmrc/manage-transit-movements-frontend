@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package views
+package models.arrival
 
-import base.SingleViewSpec
+import play.api.libs.json.{Json, Reads}
 
-class SessionExpiredViewSpec extends SingleViewSpec("session-expired.njk", hasSignOutLink = false)
+import java.time.LocalDateTime
+
+case class ArrivalMessageMetaData(messageType: ArrivalStatus, dateTime: LocalDateTime)
+
+object ArrivalMessageMetaData {
+
+  implicit val reads: Reads[ArrivalMessageMetaData] = Json.reads[ArrivalMessageMetaData]
+
+}

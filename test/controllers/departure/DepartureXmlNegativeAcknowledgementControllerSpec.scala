@@ -16,9 +16,7 @@
 
 package controllers.departure
 
-import base.SpecBase
-import base.FakeFrontendAppConfig
-import base.MockNunjucksRendererApp
+import base.{MockNunjucksRendererApp, SpecBase}
 import generators.Generators
 import matchers.JsonMatchers
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
@@ -39,7 +37,6 @@ import scala.concurrent.Future
 class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
-  private val fakeFrontendAppConfig       = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(
@@ -78,7 +75,7 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
       verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "contactUrl"      -> fakeFrontendAppConfig.nctsEnquiriesUrl,
+        "contactUrl"      -> frontendAppConfig.nctsEnquiriesUrl,
         "functionalError" -> negativeAcknowledgementMessage.error
       )
 
@@ -95,7 +92,7 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val expectedJson = Json.obj("nctsEnquiries" -> fakeFrontendAppConfig.nctsEnquiriesUrl)
+      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
       val request = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
 

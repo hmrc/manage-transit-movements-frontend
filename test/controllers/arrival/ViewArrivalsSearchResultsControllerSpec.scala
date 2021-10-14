@@ -16,13 +16,13 @@
 
 package controllers.arrival
 
-import java.time.LocalDateTime
-
-import base.{FakeFrontendAppConfig, FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
+import models.arrival.ArrivalMessageMetaData
+import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
 import models.{Arrival, ArrivalId, Arrivals}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -38,6 +38,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.{ViewArrival, ViewArrivalMovements}
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewArrivalsSearchResultsControllerSpec
@@ -50,7 +51,6 @@ class ViewArrivalsSearchResultsControllerSpec
     with MockNunjucksRendererApp {
 
   private val mockArrivalMovementConnector                    = mock[ArrivalMovementConnector]
-  implicit val frontendAppConfig: FrontendAppConfig           = FakeFrontendAppConfig()
   implicit val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
   private val totalSearchArrivals                             = 8
   private val someSearchMatches                               = 5
@@ -76,13 +76,7 @@ class ViewArrivalsSearchResultsControllerSpec
       totalArrivals = totalSearchArrivals,
       totalMatched = Some(totalMatched),
       arrivals = Seq(
-        Arrival(
-          ArrivalId(1),
-          localDateTime,
-          localDateTime,
-          "Submitted",
-          "test mrn"
-        )
+        Arrival(ArrivalId(1), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "test mrn")
       )
     )
 
@@ -90,7 +84,7 @@ class ViewArrivalsSearchResultsControllerSpec
     localDateTime.toLocalDate,
     localDateTime.toLocalTime,
     "test mrn",
-    "Submitted",
+    "movement.status.arrivalSubmitted",
     Nil
   )
 

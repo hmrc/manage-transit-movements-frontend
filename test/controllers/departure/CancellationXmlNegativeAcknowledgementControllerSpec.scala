@@ -16,7 +16,7 @@
 
 package controllers.departure
 
-import base.{FakeFrontendAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{MockNunjucksRendererApp, SpecBase}
 import config.FrontendAppConfig
 import generators.Generators
 import matchers.JsonMatchers
@@ -39,7 +39,6 @@ import scala.concurrent.Future
 class CancellationXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
-  private val frontendAppConfig           = FakeFrontendAppConfig()
 
   override def beforeEach: Unit = {
     reset(

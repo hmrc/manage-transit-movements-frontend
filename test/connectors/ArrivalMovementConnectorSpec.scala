@@ -22,13 +22,14 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models._
-import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
+import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
+import models.arrival.{ArrivalMessageMetaData, MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{JsArray, Json}
 import play.api.libs.ws.WSResponse
 
 import scala.concurrent.Future
@@ -46,22 +47,27 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
   private val arrivalId                    = ArrivalId(1)
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 
-  private val arrivalsResponseJson =
-    Json.obj(
-      "retrievedArrivals" -> 1,
-      "totalArrivals"     -> 2,
-      "totalMatched"      -> 3,
-      "arrivals" ->
-        Json.arr(
-          Json.obj(
-            "arrivalId"               -> 22,
-            "created"                 -> localDateTime,
-            "updated"                 -> localDateTime,
-            "status"                  -> "Submitted",
-            "movementReferenceNumber" -> "test mrn"
-          )
+  private val arrivalsResponseJson = Json.obj(
+    "retrievedArrivals" -> 1,
+    "totalArrivals"     -> 2,
+    "totalMatched"      -> 3,
+    "arrivals" -> JsArray(
+      Seq(
+        Json.obj(
+          "arrivalId" -> 22,
+          "created"   -> localDateTime,
+          "updated"   -> localDateTime,
+          "messagesMetaData" -> Json.arr(
+            Json.obj(
+              "messageType" -> ArrivalNotificationSubmitted.toString,
+              "dateTime"    -> localDateTime
+            )
+          ),
+          "movementReferenceNumber" -> "mrn123"
         )
+      )
     )
+  )
 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
@@ -75,7 +81,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "mrn123")
             )
           )
 
@@ -113,7 +119,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "mrn123")
             )
           )
 
@@ -151,7 +157,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "Submitted", "test mrn")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "mrn123")
             )
           )
 
