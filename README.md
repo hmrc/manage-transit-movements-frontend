@@ -1,7 +1,7 @@
 
 # manage-transit-movements-frontend
 
-This service allows a user to create a transit movement departure.
+This service allows a user to view and manage their transit arrivals and departures.
 
 Service manager port: 9485
 
