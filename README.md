@@ -12,7 +12,8 @@ Service manager port: 9485
 ### Testing
 
 Run unit tests:
-<pre>sbt test</pre>
+
+    sbt test
 
 
 ### Running manually or for journey tests
