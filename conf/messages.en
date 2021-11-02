@@ -56,6 +56,8 @@ whatDoYouWantToDo.link.departure.makeDeparture = Make a departure declaration
 whatDoYouWantToDo.link.departure.viewDepartures = View departure declarations
 whatDoYouWantToDo.departure.noDepartures = You have no departure declarations.
 whatDoYouWantToDo.departure.departuresUnavailable = View departure notifications is currently unavailable.
+whatDoYouWantToDo.subHeading.guarantee = Guarantees
+whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance = Check your guarantee balance
 
 session_expired.title = For your security, we signed you out
 session_expired.heading = For your security, we signed you out

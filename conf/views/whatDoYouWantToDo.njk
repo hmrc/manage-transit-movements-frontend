@@ -57,6 +57,17 @@
             {% endif %}
         {% endif %}
         </p>
+
+        {% if isGuaranteeBalanceEnabled %}
+        <h2 class="govuk-heading-m">
+          {{ messages("whatDoYouWantToDo.subHeading.guarantee") }}
+        </h2>
+        <p class="govuk-body">
+            <a id= "check-guarantee-balance" href={{ checkGuaranteeBalanceUrl }}>
+                {{ messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance") }}
+            </a>
+        </p>
+        {% endif %}
       </div>
     </div>
   </div>
