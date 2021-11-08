@@ -17,6 +17,7 @@
 package controllers
 
 import base.{MockNunjucksRendererApp, SpecBase}
+import config.FrontendAppConfig
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
 import models.arrival.ArrivalMessageMetaData
@@ -69,7 +70,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
     super.beforeEach
   }
 
-  private def expectedJson(arrivalsAvailable: Boolean, hasArrivals: Boolean, departuresAvailable: Boolean, hasDepartures: Boolean) =
+  private def expectedJson(arrivalsAvailable: Boolean, hasArrivals: Boolean, departuresAvailable: Boolean, hasDepartures: Boolean): JsObject =
     Json.obj(
       "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
       "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
@@ -78,7 +79,9 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
       "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
       "viewDepartureNotificationUrl"   -> viewDepartureNotificationUrl,
       "departuresAvailable"            -> departuresAvailable,
-      "hasDepartures"                  -> hasDepartures
+      "hasDepartures"                  -> hasDepartures,
+      "isGuaranteeBalanceEnabled"      -> frontendAppConfig.isGuaranteeBalanceEnabled,
+      "checkGuaranteeBalanceUrl"       -> frontendAppConfig.checkGuaranteeBalanceUrl
     )
 
   override def guiceApplicationBuilder() =

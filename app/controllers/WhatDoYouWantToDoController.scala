@@ -62,7 +62,9 @@ class WhatDoYouWantToDoController @Inject() (appConfig: FrontendAppConfig,
           "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
           "viewDepartureNotificationUrl"   -> departureRoutes.ViewAllDeparturesController.onPageLoad(None).url,
           "departuresAvailable"            -> departures.nonEmpty,
-          "hasDepartures"                  -> departures.exists(_.departures.nonEmpty)
+          "hasDepartures"                  -> departures.exists(_.departures.nonEmpty),
+          "isGuaranteeBalanceEnabled"      -> appConfig.isGuaranteeBalanceEnabled,
+          "checkGuaranteeBalanceUrl"       -> appConfig.checkGuaranteeBalanceUrl
         )
       )
 }
