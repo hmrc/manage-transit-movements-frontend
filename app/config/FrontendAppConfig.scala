@@ -49,7 +49,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def unloadingRemarksRejectedUrl(arrivalId: ArrivalId) = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}/unloading-rejection"
 
   private val guaranteeBalanceUrlBase    = configuration.get[String]("urls.guaranteeBalanceFrontend")
-  def checkGuaranteeBalanceUrl           = s"$guaranteeBalanceUrlBase/start?referral=ncts"
+  def checkGuaranteeBalanceUrl           = s"$guaranteeBalanceUrlBase/start"
   val isGuaranteeBalanceEnabled: Boolean = configuration.get[Boolean]("microservice.services.features.isGuaranteeBalanceEnabled")
 
   lazy val authUrl: String                      = configuration.get[Service]("auth").fullServiceUrl
