@@ -29,6 +29,8 @@ import play.api.test.{FakeRequest, Helpers}
 import play.api.test.Helpers.baseApplicationBuilder.injector
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
+import java.time.Clock
+
 trait SpecBase
     extends AnyFreeSpec
     with Matchers
@@ -55,5 +57,7 @@ trait SpecBase
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
 
   implicit val frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
+  implicit val clock: Clock = Clock.systemDefaultZone()
 
 }

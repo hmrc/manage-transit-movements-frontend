@@ -20,6 +20,7 @@ import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
+
 import javax.inject.Inject
 import models.requests.IdentifierRequest
 import models.{Arrival, Arrivals}
@@ -30,6 +31,7 @@ import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrival, ViewArrivalMovements}
 
+import java.time.Clock
 import scala.concurrent.{ExecutionContext, Future}
 
 class ViewArrivalsSearchResultsController @Inject() (val renderer: Renderer,
@@ -38,7 +40,7 @@ class ViewArrivalsSearchResultsController @Inject() (val renderer: Renderer,
                                                      val config: FrontendAppConfig,
                                                      val searchResultsAppConfig: SearchResultsAppConfig,
                                                      arrivalMovementConnector: ArrivalMovementConnector
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {
