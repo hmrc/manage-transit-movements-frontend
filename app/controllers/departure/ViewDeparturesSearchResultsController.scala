@@ -20,6 +20,7 @@ import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
+import models.requests.IdentifierRequest
 import models.{Departure, Departures}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
@@ -27,9 +28,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewDeparture, ViewDepartureMovements}
-import javax.inject.Inject
-import models.requests.IdentifierRequest
 
+import java.time.Clock
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ViewDeparturesSearchResultsController @Inject() (
@@ -40,7 +41,7 @@ class ViewDeparturesSearchResultsController @Inject() (
   val config: FrontendAppConfig,
   val searchResultsAppConfig: SearchResultsAppConfig,
   val renderer: Renderer
-)(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {

@@ -27,7 +27,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 
-import java.time.LocalDateTime
+import java.time.{Clock, LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
 
 class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
@@ -54,7 +54,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     forAll(arbitrary[Arrival]) {
       arrival =>
         val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(UnloadingPermission, LocalDateTime.now())))
-        val viewMovement: ViewArrival = ViewArrival(updatedArrival)(frontendAppConfig)
+        val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
         viewMovement.actions.head.href mustBe s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrival.arrivalId.index}"
@@ -65,7 +65,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     forAll(arbitrary[Arrival]) {
       arrival =>
         val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(ArrivalRejection, LocalDateTime.now())))
-        val viewMovement: ViewArrival = ViewArrival(updatedArrival)(frontendAppConfig)
+        val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
         viewMovement.actions.head.href mustBe s"http://localhost:9483/manage-transit-movements-arrivals/${arrival.arrivalId.index}/arrival-rejection"
@@ -79,9 +79,63 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     forAll(arbitrary[Arrival], genArrivalStatus) {
       (arrival, arrivalStatus) =>
         val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(arrivalStatus, LocalDateTime.now())))
-        val viewMovement: ViewArrival = ViewArrival(updatedArrival)(frontendAppConfig)
+        val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
         viewMovement.actions mustBe Nil
+    }
+  }
+
+  "must convert incoming UTC time to system time" - {
+
+    val utcDateTime = LocalDateTime.of(2020, 2, 3, 21, 0, 0)
+
+    // user in London updates movement at 9pm. UTC time is also 9pm.
+    "when system time is UTC" in {
+      forAll(arbitrary[Arrival]) {
+        arrival =>
+          val utcArrival            = arrival.copy(updated = utcDateTime)
+          implicit val clock: Clock = Clock.systemUTC()
+          val viewArrival           = ViewArrival(utcArrival)
+          viewArrival.updatedDate mustEqual utcArrival.updated.toLocalDate
+          viewArrival.updatedTime mustEqual utcArrival.updated.toLocalTime
+      }
+    }
+
+    // user in New York updates movement in mid-afternoon. UTC time is 9pm.
+    "when time changes and date stays the same" in {
+      forAll(arbitrary[Arrival]) {
+        arrival =>
+          val utcArrival            = arrival.copy(updated = utcDateTime)
+          implicit val clock: Clock = Clock.system(ZoneId.of("America/New_York"))
+          val viewArrival           = ViewArrival(utcArrival)
+          viewArrival.updatedDate mustEqual utcArrival.updated.toLocalDate
+          viewArrival.updatedTime mustNot equal(utcArrival.updated.toLocalTime)
+      }
+    }
+
+    // user in Australia updates movement in the morning. UTC time is 9pm the previous night.
+    "when time changes such that date changes to following day" in {
+      forAll(arbitrary[Arrival]) {
+        arrival =>
+          val utcArrival            = arrival.copy(updated = utcDateTime)
+          implicit val clock: Clock = Clock.system(ZoneId.of("Australia/Darwin"))
+          val viewArrival           = ViewArrival(utcArrival)
+          viewArrival.updatedDate.isAfter(utcArrival.updated.toLocalDate) mustBe true
+          viewArrival.updatedTime mustNot equal(utcArrival.updated.toLocalTime)
+      }
+    }
+
+    // user in New York updates movement late at night. UTC time is 2am the following morning.
+    "when time changes such that date changes to previous day" in {
+      val utcDateTime = LocalDateTime.of(2020, 2, 3, 2, 0, 0)
+      forAll(arbitrary[Arrival]) {
+        arrival =>
+          val utcArrival            = arrival.copy(updated = utcDateTime)
+          implicit val clock: Clock = Clock.system(ZoneId.of("America/New_York"))
+          val viewArrival           = ViewArrival(utcArrival)
+          viewArrival.updatedDate.isBefore(utcArrival.updated.toLocalDate) mustBe true
+          viewArrival.updatedTime mustNot equal(utcArrival.updated.toLocalTime)
+      }
     }
   }
 }

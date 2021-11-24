@@ -17,7 +17,6 @@
 package controllers
 
 import base.{MockNunjucksRendererApp, SpecBase}
-import config.FrontendAppConfig
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
 import models.arrival.ArrivalMessageMetaData

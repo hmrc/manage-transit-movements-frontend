@@ -17,11 +17,11 @@
 package viewModels
 
 import config.FrontendAppConfig
-import models.Arrival
+import models.{Arrival, RichLocalDateTime}
 import play.api.libs.json.{Json, OWrites}
 
+import java.time._
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalTime}
 
 final case class ViewArrival(updatedDate: LocalDate, updatedTime: LocalTime, movementReferenceNumber: String, status: String, actions: Seq[ViewMovementAction])
     extends ViewMovement {
@@ -31,16 +31,18 @@ final case class ViewArrival(updatedDate: LocalDate, updatedTime: LocalTime, mov
 
 object ViewArrival {
 
-  def apply(arrival: Arrival)(implicit frontendAppConfig: FrontendAppConfig): ViewArrival = {
+  def apply(arrival: Arrival)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewArrival = {
 
-    val movementStatus: ArrivalStatusViewModel = ArrivalStatusViewModel(arrival)
+    val arrivalStatus: ArrivalStatusViewModel = ArrivalStatusViewModel(arrival)
+
+    val systemTime = arrival.updated.toSystemDefaultTime
 
     ViewArrival(
-      arrival.updated.toLocalDate,
-      arrival.updated.toLocalTime,
+      systemTime.toLocalDate,
+      systemTime.toLocalTime,
       arrival.movementReferenceNumber,
-      movementStatus.status,
-      movementStatus.actions
+      arrivalStatus.status,
+      arrivalStatus.actions
     )
   }
 
