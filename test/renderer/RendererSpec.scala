@@ -58,8 +58,8 @@ class RendererSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite wi
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
         val application = applicationBuilder.build()
 
@@ -84,8 +84,8 @@ class RendererSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite wi
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
         val application = applicationBuilder.build()
 
@@ -110,8 +110,8 @@ class RendererSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite wi
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
         val application = applicationBuilder.build()
 

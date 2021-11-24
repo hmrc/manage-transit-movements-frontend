@@ -64,9 +64,9 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
 
-      val request        = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request                                = FakeRequest(GET, routes.DepartureXmlNegativeAcknowledgementController.onPageLoad(departureId).url)
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -89,8 +89,8 @@ class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with Mo
       when(mockDepartureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 
