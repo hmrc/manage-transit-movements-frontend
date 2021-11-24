@@ -41,8 +41,8 @@ class UnauthorisedControllerSpec extends SpecBase with JsonMatchers with MockNun
 
       val controller = new UnauthorisedController(Helpers.stubMessagesControllerComponents(), mockRenderer)
 
-      val request        = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val request                                = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
       val result = controller.onPageLoad.apply(request)
 

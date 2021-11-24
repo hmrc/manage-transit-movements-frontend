@@ -98,9 +98,9 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         val departureId = DepartureId(0)
 
-        val request        = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        val request                                = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
         val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
 

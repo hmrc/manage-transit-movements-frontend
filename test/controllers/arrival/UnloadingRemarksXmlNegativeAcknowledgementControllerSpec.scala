@@ -65,9 +65,9 @@ class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
 
-      val request        = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request                                = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -91,8 +91,8 @@ class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
 
