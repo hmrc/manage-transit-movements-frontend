@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import connectors.EnrolmentStoreConnector
 import controllers.routes
 import models.requests.IdentifierRequest
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.mvc._
 import renderer.Renderer
@@ -52,12 +51,23 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(EmptyPredicate)
       .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
-          (for {
-            enrolment <- enrolments.enrolments.filter(_.isActivated).find(_.key.equals(config.enrolmentKey))
-          } yield enrolment.getIdentifier(config.enrolmentIdentifierKey) match {
-            case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
-            case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
-          }).getOrElse(checkForGroupEnrolment(maybeGroupId, config)(hc, request))
+          val newEnrolment: Option[Enrolment]    = enrolments.enrolments.filter(_.isActivated).find(_.key.equals(config.newEnrolmentKey))
+          val legacyEnrolment: Option[Enrolment] = enrolments.enrolments.filter(_.isActivated).find(_.key.equals(config.legacyEnrolmentKey))
+
+          val enrolment = newEnrolment orElse legacyEnrolment
+          enrolment match {
+            case Some(_) =>
+              val newEnrolmentId: Option[EnrolmentIdentifier]    = newEnrolment.flatMap(_.getIdentifier(config.newEnrolmentIdentifierKey))
+              val legacyEnrolmentId: Option[EnrolmentIdentifier] = legacyEnrolment.flatMap(_.getIdentifier(config.legacyEnrolmentIdentifierKey))
+
+              val identifier = newEnrolmentId orElse legacyEnrolmentId
+              identifier match {
+                case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
+                case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+              }
+            case None => checkForGroupEnrolment(maybeGroupId, config)(hc, request)
+          }
+
       }
   } recover {
     case _: NoActiveSession =>
@@ -69,17 +79,21 @@ class AuthenticatedIdentifierAction @Inject() (
   private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit
     hc: HeaderCarrier,
     request: Request[A]
-  ): Future[Result] = {
-    val nctsJson: JsObject = Json.obj("requestAccessToNCTSUrl" -> config.enrolmentManagementFrontendEnrolUrl)
-
+  ): Future[Result] =
     maybeGroupId match {
       case Some(groupId) =>
-        enrolmentStoreConnector.checkGroupEnrolments(groupId, config.enrolmentKey) flatMap {
+        val hasGroupEnrolment = for {
+          newGroupEnrolment <- enrolmentStoreConnector.checkGroupEnrolments(groupId, config.newEnrolmentKey)
+          legacyGroupEnrolment <-
+            if (newGroupEnrolment) { Future.successful(newGroupEnrolment) }
+            else { enrolmentStoreConnector.checkGroupEnrolments(groupId, config.legacyEnrolmentKey) }
+        } yield newGroupEnrolment || legacyGroupEnrolment
+
+        hasGroupEnrolment flatMap {
           case true  => renderer.render("unauthorisedWithGroupAccess.njk").map(Unauthorized(_))
-          case false => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
+          case false => Future.successful(Redirect(config.eccEnrolmentSplashPage))
         }
-      case _ => renderer.render("unauthorisedWithoutGroupAccess.njk", nctsJson).map(Unauthorized(_))
+      case _ => Future.successful(Redirect(config.eccEnrolmentSplashPage))
     }
-  }
 
 }

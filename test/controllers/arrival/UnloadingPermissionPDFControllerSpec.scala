@@ -111,9 +111,9 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
         when(mockArrivalMovementConnector.getPDF(any(), any()))
           .thenReturn(Future.successful(wsResponse))
 
-        val arrivalId      = ArrivalId(0)
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+        val arrivalId                              = ArrivalId(0)
+        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
         val request = FakeRequest(GET, routes.UnloadingPermissionPDFController.getPDF(arrivalId).url)
           .withSession(("authToken" -> "BearerToken"))

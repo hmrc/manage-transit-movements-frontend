@@ -67,9 +67,9 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
         .thenReturn(Future.successful(Some(transitMessage)))
 
-      val request        = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request                                = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -90,8 +90,8 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
 

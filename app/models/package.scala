@@ -16,6 +16,8 @@
 
 import play.api.libs.json._
 
+import java.time.{Clock, LocalDateTime, ZoneId}
+
 package object models {
 
   implicit class RichJsObject(jsObject: JsObject) {
@@ -146,5 +148,18 @@ package object models {
                   }
             }
       }
+  }
+
+  implicit class RichLocalDateTime(localDateTime: LocalDateTime) {
+
+    /**
+      * Converts a UTC time to the time at the system default time zone
+      * @param clock implicitly bound as `systemDefaultZone()` in Module
+      * @return the time at the time zone as set by `clock`
+      */
+    def toSystemDefaultTime(implicit clock: Clock): LocalDateTime = {
+      val utcTime = localDateTime.atZone(ZoneId.of("UTC"))
+      utcTime.withZoneSameInstant(clock.getZone).toLocalDateTime
+    }
   }
 }

@@ -20,6 +20,7 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DeparturesMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
+
 import javax.inject.Inject
 import models.Departure
 import play.api.i18n.I18nSupport
@@ -30,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 
+import java.time.Clock
 import scala.concurrent.ExecutionContext
 
 class ViewAllDeparturesController @Inject() (val renderer: Renderer,
@@ -38,7 +40,7 @@ class ViewAllDeparturesController @Inject() (val renderer: Renderer,
                                              val config: FrontendAppConfig,
                                              val paginationAppConfig: PaginationAppConfig,
                                              departuresMovementConnector: DeparturesMovementConnector
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport
     with TechnicalDifficultiesPage {

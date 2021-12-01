@@ -4,6 +4,9 @@
 {% macro movementSearch(labelText, searchText, field, action) %}
 
        <form action={{ action }} method="GET" class="movement-search">
+  
+          {{ csrf() | safe }}
+
           {{ govukInput({
             label: {
               text: labelText
