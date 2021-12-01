@@ -36,7 +36,7 @@
 
               {% for action in row.actions %}
                 {% set actionIndex = loop.index %}
-                <a id="{{ messages(action.key) | replace(" ", "-")  }}-{{ row.referenceNumber }}" href="{{ action.href }}" class="action-link" data-testrole="movements-list_row{{ rowIndex }}-action{{ actionIndex }}">
+                <a id="{{ messages(action.key) | replace(" ", "-")  }}-{{ row.referenceNumber }}" href="{{ action.href }}" class="govuk-link action-link" data-testrole="movements-list_row{{ rowIndex }}-action{{ actionIndex }}">
                   {{ messages(action.key) }}
                   <span class="govuk-visually-hidden">{{ messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber) }}</span>
                 </a>
