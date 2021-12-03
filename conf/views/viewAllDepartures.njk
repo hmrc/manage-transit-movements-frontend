@@ -18,7 +18,7 @@
         {{ messages("viewDepartures.heading") }}
       </h1>
 
-      <p class="govuk-body"><a id = "make-departure-notification" href={{ declareDepartureNotificationUrl }} > {{ messages("viewDepartures.makeDepartureNotification") }}</a></p>
+      <p class="govuk-body"><a id="make-departure-notification" class="govuk-link" href={{ declareDepartureNotificationUrl }} > {{ messages("viewDepartures.makeDepartureNotification") }}</a></p>
 
       {{ movementSearch( messages('movement.search.departure.title'), lrn, "lrn", routes.controllers.departure.ViewDeparturesSearchResultsController.onPageLoad("").url) }}
 
@@ -33,7 +33,7 @@
       {{ showMovementsByDate("Departures notifications table", messages("viewDepartures.table.updated"), messages("viewDepartures.table.lrn"), messages("viewDepartures.table.status"), messages("viewDepartures.table.action"), dataRows) }}
 
       <p class="govuk-body govuk-!-margin-top-3">
-        <a id = "go-to-manage-transit-movements" href="{{ homePageUrl }}"> {{ messages("viewDepartures.goToManageTransitMovements") }} </a>
+        <a id="go-to-manage-transit-movements" class="govuk-link" href="{{ homePageUrl }}"> {{ messages("viewDepartures.goToManageTransitMovements") }} </a>
       </p>
 
 
