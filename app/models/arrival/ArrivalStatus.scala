@@ -16,57 +16,22 @@
 
 package models.arrival
 
-import models.{Enumerable, WithName}
-import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
+import play.api.libs.json.{__, Reads}
 
 sealed trait ArrivalStatus
 
 object ArrivalStatus {
 
-  case object ArrivalNotificationSubmitted extends WithName("IE007") with ArrivalStatus
-  case object ArrivalRejection extends WithName("IE008") with ArrivalStatus
-  case object UnloadingPermission extends WithName("IE043") with ArrivalStatus
-  case object UnloadingRemarksSubmitted extends WithName("IE044") with ArrivalStatus
-  case object UnloadingRemarksRejection extends WithName("IE058") with ArrivalStatus
-  case object GoodsReleased extends WithName("IE025") with ArrivalStatus
-  case object XMLSubmissionNegativeAcknowledgement extends WithName("IE917") with ArrivalStatus
+  case object ArrivalNotificationSubmitted extends ArrivalStatus
+  case object ArrivalRejection extends ArrivalStatus
+  case object UnloadingPermission extends ArrivalStatus
+  case object UnloadingRemarksSubmitted extends ArrivalStatus
+  case object UnloadingRemarksRejection extends ArrivalStatus
+  case object GoodsReleased extends ArrivalStatus
+  case object XMLSubmissionNegativeAcknowledgement extends ArrivalStatus
 
   case class InvalidStatus(status: String) extends ArrivalStatus {
     override def toString: String = status
-  }
-
-  implicit val ordering: Ordering[ArrivalStatus] = (x: ArrivalStatus, y: ArrivalStatus) => {
-    (x, y) match {
-      case (ArrivalNotificationSubmitted, _) => -1
-
-      case (ArrivalRejection, ArrivalNotificationSubmitted) => 1
-      case (ArrivalRejection, _)                            => -1
-
-      case (XMLSubmissionNegativeAcknowledgement, ArrivalNotificationSubmitted) => 1
-      case (XMLSubmissionNegativeAcknowledgement, UnloadingRemarksSubmitted)    => 1
-      case (XMLSubmissionNegativeAcknowledgement, _)                            => -1
-
-      case (UnloadingPermission, ArrivalNotificationSubmitted)         => 1
-      case (UnloadingPermission, ArrivalRejection)                     => 1
-      case (UnloadingPermission, XMLSubmissionNegativeAcknowledgement) => 1
-      case (UnloadingPermission, _)                                    => -1
-
-      case (UnloadingRemarksSubmitted, ArrivalNotificationSubmitted) => 1
-      case (UnloadingRemarksSubmitted, UnloadingPermission)          => 1
-      case (UnloadingRemarksSubmitted, ArrivalRejection)             => 1
-      case (UnloadingRemarksSubmitted, _)                            => -1
-
-      case (UnloadingRemarksRejection, ArrivalNotificationSubmitted)         => 1
-      case (UnloadingRemarksRejection, UnloadingPermission)                  => 1
-      case (UnloadingRemarksRejection, UnloadingRemarksSubmitted)            => 1
-      case (UnloadingRemarksRejection, ArrivalRejection)                     => 1
-      case (UnloadingRemarksRejection, XMLSubmissionNegativeAcknowledgement) => 1
-      case (UnloadingRemarksRejection, _)                                    => -1
-
-      case (GoodsReleased, _) => 1
-
-      case (_, _) => -1
-    }
   }
 
   val values: Seq[ArrivalStatus] =
@@ -80,22 +45,14 @@ object ArrivalStatus {
       XMLSubmissionNegativeAcknowledgement
     )
 
-  implicit val enumerable: Enumerable[ArrivalStatus] =
-    Enumerable(
-      values.map(
-        v => v.toString -> v
-      ): _*
-    )
-
-  implicit def reads(implicit ev: Enumerable[ArrivalStatus]): Reads[ArrivalStatus] =
-    Reads {
-      case JsString(str) =>
-        ev.withName(str)
-          .map(JsSuccess(_))
-          .getOrElse(
-            JsSuccess(InvalidStatus(s"Invalid status: $str"))
-          )
-      case _ =>
-        JsError("error.invalid")
-    }
+  implicit val reads: Reads[ArrivalStatus] = __.read[String].map {
+    case "ArrivalSubmitted"                     => ArrivalNotificationSubmitted
+    case "ArrivalRejected"                      => ArrivalRejection
+    case "UnloadingPermission"                  => UnloadingPermission
+    case "UnloadingRemarksSubmitted"            => UnloadingRemarksSubmitted
+    case "UnloadingRemarksRejected"             => UnloadingRemarksRejection
+    case "GoodsReleased"                        => GoodsReleased
+    case "XMLSubmissionNegativeAcknowledgement" => XMLSubmissionNegativeAcknowledgement
+    case status                                 => InvalidStatus(status)
+  }
 }
