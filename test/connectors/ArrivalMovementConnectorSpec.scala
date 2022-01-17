@@ -17,13 +17,14 @@
 package connectors
 
 import java.time.LocalDateTime
+
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models._
-import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
-import models.arrival.{ArrivalMessageMetaData, MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
+import models.arrival.ArrivalStatus.{ArrivalSubmitted, GoodsReleased}
+import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -54,16 +55,12 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
     "arrivals" -> JsArray(
       Seq(
         Json.obj(
-          "arrivalId" -> 22,
-          "created"   -> localDateTime,
-          "updated"   -> localDateTime,
-          "messagesMetaData" -> Json.arr(
-            Json.obj(
-              "messageType" -> ArrivalNotificationSubmitted.toString,
-              "dateTime"    -> localDateTime
-            )
-          ),
-          "movementReferenceNumber" -> "mrn123"
+          "arrivalId"               -> 22,
+          "created"                 -> localDateTime,
+          "updated"                 -> localDateTime,
+          "movementReferenceNumber" -> "mrn123",
+          "status"                  -> "GoodsReleased",
+          "previousStatus"          -> "ArrivalSubmitted"
         )
       )
     )
@@ -81,7 +78,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "mrn123")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased, ArrivalSubmitted)
             )
           )
 
@@ -92,6 +89,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
         )
 
         connector.getArrivals().futureValue mustBe Some(expectedResult)
+
       }
 
       "must return a None when getArrivals returns an error response" in {
@@ -119,7 +117,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "mrn123")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased, ArrivalSubmitted)
             )
           )
 
@@ -157,7 +155,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "mrn123")
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased, ArrivalSubmitted)
             )
           )
 

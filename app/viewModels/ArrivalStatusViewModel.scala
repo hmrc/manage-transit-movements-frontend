@@ -19,11 +19,11 @@ package viewModels
 import config.FrontendAppConfig
 import models.Arrival
 import models.arrival.ArrivalStatus.{
-  ArrivalNotificationSubmitted,
-  ArrivalRejection,
+  ArrivalRejected,
+  ArrivalSubmitted,
   GoodsReleased,
   UnloadingPermission,
-  UnloadingRemarksRejection,
+  UnloadingRemarksRejected,
   UnloadingRemarksSubmitted,
   XMLSubmissionNegativeAcknowledgement
 }
@@ -60,7 +60,7 @@ object ArrivalStatusViewModel {
   }
 
   private def arrivalRejected(implicit config: FrontendAppConfig): PartialFunction[Arrival, ArrivalStatusViewModel] = {
-    case arrival if arrival.currentStatus == ArrivalRejection =>
+    case arrival if arrival.currentStatus == ArrivalRejected =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(config.arrivalFrontendRejectedUrl(arrival.arrivalId), "viewArrivalNotifications.table.action.viewErrors")
       )
@@ -68,7 +68,7 @@ object ArrivalStatusViewModel {
   }
 
   private def unloadingRemarksRejected(implicit config: FrontendAppConfig): PartialFunction[Arrival, ArrivalStatusViewModel] = {
-    case arrival if arrival.currentStatus == UnloadingRemarksRejection =>
+    case arrival if arrival.currentStatus == UnloadingRemarksRejected =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(config.unloadingRemarksRejectedUrl(arrival.arrivalId), "viewArrivalNotifications.table.action.viewErrors")
       )
@@ -76,7 +76,7 @@ object ArrivalStatusViewModel {
   }
 
   private def arrivalNegativeAcknowledgement: PartialFunction[Arrival, ArrivalStatusViewModel] = {
-    case arrival if arrival.currentStatus == XMLSubmissionNegativeAcknowledgement && arrival.previousStatus == ArrivalNotificationSubmitted =>
+    case arrival if arrival.currentStatus == XMLSubmissionNegativeAcknowledgement && arrival.previousStatus == ArrivalSubmitted =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(
           controllers.arrival.routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
@@ -98,12 +98,12 @@ object ArrivalStatusViewModel {
   }
 
   private def displayStatus: PartialFunction[Arrival, ArrivalStatusViewModel] = {
-    case arrival if arrival.currentStatus == ArrivalNotificationSubmitted => ArrivalStatusViewModel("movement.status.arrivalSubmitted", actions = Nil)
-    case arrival if arrival.currentStatus == ArrivalRejection             => ArrivalStatusViewModel("movement.status.arrivalRejected", actions = Nil)
-    case arrival if arrival.currentStatus == UnloadingPermission          => ArrivalStatusViewModel("movement.status.unloadingPermission", actions = Nil)
-    case arrival if arrival.currentStatus == UnloadingRemarksSubmitted    => ArrivalStatusViewModel("movement.status.unloadingRemarksSubmitted", actions = Nil)
-    case arrival if arrival.currentStatus == UnloadingRemarksRejection    => ArrivalStatusViewModel("movement.status.unloadingRemarksRejected", actions = Nil)
-    case arrival if arrival.currentStatus == GoodsReleased                => ArrivalStatusViewModel("movement.status.goodsReleased", actions = Nil)
+    case arrival if arrival.currentStatus == ArrivalSubmitted          => ArrivalStatusViewModel("movement.status.arrivalSubmitted", actions = Nil)
+    case arrival if arrival.currentStatus == ArrivalRejected           => ArrivalStatusViewModel("movement.status.arrivalRejected", actions = Nil)
+    case arrival if arrival.currentStatus == UnloadingPermission       => ArrivalStatusViewModel("movement.status.unloadingPermission", actions = Nil)
+    case arrival if arrival.currentStatus == UnloadingRemarksSubmitted => ArrivalStatusViewModel("movement.status.unloadingRemarksSubmitted", actions = Nil)
+    case arrival if arrival.currentStatus == UnloadingRemarksRejected  => ArrivalStatusViewModel("movement.status.unloadingRemarksRejected", actions = Nil)
+    case arrival if arrival.currentStatus == GoodsReleased             => ArrivalStatusViewModel("movement.status.goodsReleased", actions = Nil)
     case arrival if arrival.currentStatus == XMLSubmissionNegativeAcknowledgement =>
       ArrivalStatusViewModel("movement.status.XMLSubmissionNegativeAcknowledgement", actions = Nil)
     case arrival => ArrivalStatusViewModel(arrival.currentStatus.toString, actions = Nil)

@@ -19,8 +19,7 @@ package controllers
 import base.{MockNunjucksRendererApp, SpecBase}
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
-import models.arrival.ArrivalMessageMetaData
-import models.arrival.ArrivalStatus.ArrivalNotificationSubmitted
+import models.arrival.ArrivalStatus.ArrivalSubmitted
 import models.departure.DepartureMessageMetaData
 import models.departure.DepartureStatus.DepartureSubmitted
 import org.mockito.ArgumentCaptor
@@ -47,11 +46,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 
   private val mockDestinationResponse =
-    Arrivals(1,
-             2,
-             Some(3),
-             Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, Seq(ArrivalMessageMetaData(ArrivalNotificationSubmitted, localDateTime)), "test mrn"))
-    )
+    Arrivals(1, 2, Some(3), Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted, ArrivalSubmitted)))
 
   private val mockDepartureResponse =
     Departures(

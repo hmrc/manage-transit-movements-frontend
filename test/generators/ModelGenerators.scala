@@ -17,7 +17,7 @@
 package generators
 
 import models.ErrorType.GenericError
-import models.arrival.{ArrivalMessageMetaData, ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
+import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.departure._
 import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
@@ -94,12 +94,13 @@ trait ModelGenerators {
   implicit val arbitraryArrival: Arbitrary[Arrival] =
     Arbitrary {
       for {
-        arrivalId       <- arbitrary[ArrivalId]
-        date            <- arbitrary[LocalDateTime]
-        time            <- arbitrary[LocalDateTime]
-        messageMetaData <- Gen.nonEmptyListOf(arbitrary[ArrivalMessageMetaData])
-        mrn             <- stringsWithMaxLength(17)
-      } yield Arrival(arrivalId, date, time, messageMetaData, mrn)
+        arrivalId      <- arbitrary[ArrivalId]
+        date           <- arbitrary[LocalDateTime]
+        time           <- arbitrary[LocalDateTime]
+        mrn            <- stringsWithMaxLength(17)
+        currentStatus  <- arbitrary[ArrivalStatus]
+        previousStatus <- arbitrary[ArrivalStatus]
+      } yield Arrival(arrivalId, date, time, mrn, currentStatus, previousStatus)
     }
 
   implicit val arbitraryDeparture: Arbitrary[Departure] =
@@ -118,14 +119,6 @@ trait ModelGenerators {
         status   <- arbitrary[DepartureStatus]
         dateTime <- arbitrary[LocalDateTime]
       } yield DepartureMessageMetaData(status, dateTime)
-    }
-
-  implicit val arbitraryArrivalMessageMetaData: Arbitrary[ArrivalMessageMetaData] =
-    Arbitrary {
-      for {
-        status   <- arbitrary[ArrivalStatus]
-        dateTime <- arbitrary[LocalDateTime]
-      } yield ArrivalMessageMetaData(status, dateTime)
     }
 
   implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] =
