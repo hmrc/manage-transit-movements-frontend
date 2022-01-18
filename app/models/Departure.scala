@@ -24,8 +24,8 @@ import java.time.LocalDateTime
 case class Departure(departureId: DepartureId,
                      updated: LocalDateTime,
                      localReferenceNumber: LocalReferenceNumber,
-                     currentStatus: DepartureStatus,
-                     previousStatus: DepartureStatus
+                     status: DepartureStatus,
+                     previousStatus: Option[DepartureStatus] = None
 )
 
 object Departure {
@@ -35,6 +35,6 @@ object Departure {
       (__ \ "updated").read[LocalDateTime] and
       (__ \ "referenceNumber").read[LocalReferenceNumber] and
       (__ \ "status").read[DepartureStatus] and
-      (__ \ "previousStatus").read[DepartureStatus]
+      (__ \ "previousStatus").readNullable[DepartureStatus]
   )(Departure.apply _)
 }

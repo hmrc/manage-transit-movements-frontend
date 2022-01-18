@@ -33,7 +33,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival = arrival.copy(currentStatus = ArrivalSubmitted)
+            val updatedArrival: Arrival = arrival.copy(status = ArrivalSubmitted)
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.arrivalSubmitted")
         }
       }
@@ -41,7 +41,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival = arrival.copy(currentStatus = ArrivalRejected)
+            val updatedArrival: Arrival = arrival.copy(status = ArrivalRejected)
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.arrivalRejected")
         }
       }
@@ -49,7 +49,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival = arrival.copy(currentStatus = UnloadingRemarksSubmitted)
+            val updatedArrival: Arrival = arrival.copy(status = UnloadingRemarksSubmitted)
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.unloadingRemarksSubmitted")
         }
       }
@@ -57,7 +57,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival                = arrival.copy(currentStatus = UnloadingRemarksRejected)
+            val updatedArrival: Arrival                = arrival.copy(status = UnloadingRemarksRejected)
             val movementStatus: ArrivalStatusViewModel = ArrivalStatusViewModel(updatedArrival)(frontendAppConfig)
             movementStatus.status mustBe Messages("movement.status.unloadingRemarksRejected")
             movementStatus.actions.head.href mustBe frontendAppConfig.unloadingRemarksRejectedUrl(updatedArrival.arrivalId)
@@ -67,7 +67,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival = arrival.copy(currentStatus = GoodsReleased)
+            val updatedArrival: Arrival = arrival.copy(status = GoodsReleased)
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.goodsReleased")
         }
       }
@@ -75,7 +75,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival = arrival.copy(currentStatus = XMLSubmissionNegativeAcknowledgement, previousStatus = ArrivalSubmitted)
+            val updatedArrival: Arrival = arrival.copy(status = XMLSubmissionNegativeAcknowledgement, previousStatus = Some(ArrivalSubmitted))
             val expectedAction = ViewMovementAction(
               arrivalRoute.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
               Messages("viewArrivalNotifications.table.action.viewErrors")
@@ -90,7 +90,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival = arrival.copy(currentStatus = XMLSubmissionNegativeAcknowledgement, previousStatus = UnloadingRemarksSubmitted)
+            val updatedArrival: Arrival = arrival.copy(status = XMLSubmissionNegativeAcknowledgement, previousStatus = Some(UnloadingRemarksSubmitted))
             val expectedAction = ViewMovementAction(
               controllers.arrival.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
               Messages("viewArrivalNotifications.table.action.viewErrors")

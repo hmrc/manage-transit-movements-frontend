@@ -37,6 +37,10 @@ class DepartureStatusSpec extends SpecBase {
       }
     }
 
+    "when given a DeclarationCancellationRequestNegativeAcknowledgement" in {
+      JsString("DeclarationCancellationRequestNegativeAcknowledgement").validate[DepartureStatus] mustEqual JsSuccess(XMLSubmissionNegativeAcknowledgement)
+    }
+
     "when given an invalid message type" in {
 
       JsString("Different status").validate[DepartureStatus] mustEqual JsSuccess(InvalidStatus(s"Invalid status: Different status"))

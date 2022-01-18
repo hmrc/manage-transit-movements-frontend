@@ -25,7 +25,7 @@ class ArrivalsSpec extends SpecBase {
 
   "Arrivals" - {
 
-    "must deserialize when there is a current and previous message" in {
+    "must deserialize when there is a current and previous status" in {
 
       val dateNow = LocalDateTime.now()
 
@@ -59,7 +59,48 @@ class ArrivalsSpec extends SpecBase {
               dateNow,
               "mrn123",
               GoodsReleased,
-              ArrivalSubmitted
+              Some(ArrivalSubmitted)
+            )
+          )
+        )
+
+      json.validate[Arrivals].asOpt.value mustEqual expectedResult
+    }
+
+    "must deserialize when there is a no previous status" in {
+
+      val dateNow = LocalDateTime.now()
+
+      val json = Json.obj(
+        "retrievedArrivals" -> 1,
+        "totalArrivals"     -> 2,
+        "totalMatched"      -> 3,
+        "arrivals" -> JsArray(
+          Seq(
+            Json.obj(
+              "arrivalId"               -> 123,
+              "created"                 -> dateNow,
+              "updated"                 -> dateNow,
+              "status"                  -> GoodsReleased.toString,
+              "movementReferenceNumber" -> "mrn123"
+            )
+          )
+        )
+      )
+
+      val expectedResult =
+        Arrivals(
+          1,
+          2,
+          Some(3),
+          Seq(
+            Arrival(
+              ArrivalId(123),
+              dateNow,
+              dateNow,
+              "mrn123",
+              GoodsReleased,
+              None
             )
           )
         )

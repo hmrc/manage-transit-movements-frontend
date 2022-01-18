@@ -25,8 +25,8 @@ case class Arrival(arrivalId: ArrivalId,
                    created: LocalDateTime,
                    updated: LocalDateTime,
                    movementReferenceNumber: String,
-                   currentStatus: ArrivalStatus,
-                   previousStatus: ArrivalStatus
+                   status: ArrivalStatus,
+                   previousStatus: Option[ArrivalStatus] = None
 )
 
 object Arrival {
@@ -37,6 +37,6 @@ object Arrival {
       (__ \ "updated").read[LocalDateTime] and
       (__ \ "movementReferenceNumber").read[String] and
       (__ \ "status").read[ArrivalStatus] and
-      (__ \ "previousStatus").read[ArrivalStatus]
+      (__ \ "previousStatus").readNullable[ArrivalStatus]
   )(Arrival.apply _)
 }

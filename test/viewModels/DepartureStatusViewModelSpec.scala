@@ -31,7 +31,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is TransitDeclarationRejected show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = DepartureRejected)
+          val updatedDeparture: Departure = departure.copy(status = DepartureRejected)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.departureDeclarationRejected"
@@ -44,7 +44,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is WriteOffNotification show correct status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = WriteOffNotification)
+          val updatedDeparture: Departure = departure.copy(status = WriteOffNotification)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.writeOffNotification"
@@ -55,7 +55,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "include tad link on ReleasedForTransit status" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = ReleaseForTransit)
+          val updatedDeparture: Departure = departure.copy(status = ReleaseForTransit)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.releasedForTransit"
@@ -68,7 +68,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is GuaranteeValidationFail show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = GuaranteeNotValid)
+          val updatedDeparture: Departure = departure.copy(status = GuaranteeNotValid)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.guaranteeValidationFail"
@@ -82,7 +82,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
           val updatedDeparture: Departure =
-            departure.copy(currentStatus = DeclarationCancellationRequest)
+            departure.copy(status = DeclarationCancellationRequest)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.declarationCancellationRequest"
@@ -93,7 +93,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is CancellationDecision show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = CancellationDecision)
+          val updatedDeparture: Departure = departure.copy(status = CancellationDecision)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.declarationCancellationDecision"
@@ -106,7 +106,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is NoReleasedForTransit show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = NoReleaseForTransit)
+          val updatedDeparture: Departure = departure.copy(status = NoReleaseForTransit)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.noReleaseForTransit"
@@ -119,7 +119,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is ControlDecision show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = ControlDecisionNotification)
+          val updatedDeparture: Departure = departure.copy(status = ControlDecisionNotification)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.controlDecision"
@@ -134,7 +134,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is MrnAllocated show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = MrnAllocated)
+          val updatedDeparture: Departure = departure.copy(status = MrnAllocated)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.mrnAllocated"
@@ -147,7 +147,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is PositiveAcknowledgement show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = PositiveAcknowledgement)
+          val updatedDeparture: Departure = departure.copy(status = PositiveAcknowledgement)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.positiveAcknowledgement"
@@ -158,7 +158,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
     "When status is DepartureSubmitted show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
-          val updatedDeparture: Departure = departure.copy(currentStatus = DepartureSubmitted)
+          val updatedDeparture: Departure = departure.copy(status = DepartureSubmitted)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.submitted"
@@ -170,8 +170,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
           val updatedDeparture: Departure = departure.copy(
-            currentStatus = DeclarationCancellationRequestNegativeAcknowledgement,
-            previousStatus = DepartureSubmitted
+            status = XMLSubmissionNegativeAcknowledgement,
+            previousStatus = Some(DepartureSubmitted)
           )
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
@@ -184,8 +184,8 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       forAll(arbitrary[Departure]) {
         departure =>
           val updatedDeparture: Departure = departure.copy(
-            currentStatus = DeclarationCancellationRequestNegativeAcknowledgement,
-            previousStatus = DeclarationCancellationRequest
+            status = XMLSubmissionNegativeAcknowledgement,
+            previousStatus = Some(DeclarationCancellationRequest)
           )
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)

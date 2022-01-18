@@ -98,9 +98,9 @@ trait ModelGenerators {
         date           <- arbitrary[LocalDateTime]
         time           <- arbitrary[LocalDateTime]
         mrn            <- stringsWithMaxLength(17)
-        currentStatus  <- arbitrary[ArrivalStatus]
-        previousStatus <- arbitrary[ArrivalStatus]
-      } yield Arrival(arrivalId, date, time, mrn, currentStatus, previousStatus)
+        status         <- arbitrary[ArrivalStatus]
+        previousStatus <- arbitrary[Option[ArrivalStatus]]
+      } yield Arrival(arrivalId, date, time, mrn, status, previousStatus)
     }
 
   implicit val arbitraryDeparture: Arbitrary[Departure] =
@@ -109,9 +109,9 @@ trait ModelGenerators {
         departureID          <- arbitrary[DepartureId]
         updated              <- arbitrary[LocalDateTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        currentStatus        <- arbitrary[DepartureStatus]
-        previousStatus       <- arbitrary[DepartureStatus]
-      } yield Departure(departureID, updated, localReferenceNumber, currentStatus, previousStatus)
+        status               <- arbitrary[DepartureStatus]
+        previousStatus       <- arbitrary[Option[DepartureStatus]]
+      } yield Departure(departureID, updated, localReferenceNumber, status, previousStatus)
     }
 
   implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] =

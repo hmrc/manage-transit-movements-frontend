@@ -52,7 +52,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val updatedArrival: Arrival   = arrival.copy(currentStatus = UnloadingPermission)
+        val updatedArrival: Arrival   = arrival.copy(status = UnloadingPermission)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
@@ -63,7 +63,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display rejection" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val updatedArrival: Arrival   = arrival.copy(currentStatus = ArrivalRejected)
+        val updatedArrival: Arrival   = arrival.copy(status = ArrivalRejected)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
@@ -77,7 +77,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
 
     forAll(arbitrary[Arrival], genArrivalStatus) {
       (arrival, arrivalStatus) =>
-        val updatedArrival: Arrival   = arrival.copy(currentStatus = arrivalStatus)
+        val updatedArrival: Arrival   = arrival.copy(status = arrivalStatus)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
         viewMovement.actions mustBe Nil

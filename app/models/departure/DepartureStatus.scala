@@ -16,40 +16,30 @@
 
 package models.departure
 
-import models.Enumerable
+import models.{Enumerable, WithName}
 import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
 
 sealed trait DepartureStatus
 
 object DepartureStatus {
 
-  case object Initialized extends DepartureStatus
-
   case object DepartureSubmitted extends DepartureStatus
-
   case object PositiveAcknowledgement extends DepartureStatus
-
-  case object MrnAllocated extends DepartureStatus
-
   case object DepartureRejected extends DepartureStatus
-
-  case object ControlDecisionNotification extends DepartureStatus
-
-  case object NoReleaseForTransit extends DepartureStatus
-
+  case object MrnAllocated extends DepartureStatus
   case object ReleaseForTransit extends DepartureStatus
-
-  case object DeclarationCancellationRequest extends DepartureStatus
-
-  case object CancellationDecision extends DepartureStatus
-
+  case object NoReleaseForTransit extends DepartureStatus
+  case object ControlDecisionNotification extends DepartureStatus
   case object WriteOffNotification extends DepartureStatus
-
   case object GuaranteeNotValid extends DepartureStatus
-
-  case object DepartureSubmittedNegativeAcknowledgement extends DepartureStatus
-
-  case object DeclarationCancellationRequestNegativeAcknowledgement extends DepartureStatus
+  case object DeclarationCancellationRequest extends DepartureStatus
+  case object CancellationDecision extends DepartureStatus
+  //ToDo Remove XMLSubmissionNegativeAcknowledgement and replace
+  // with DeclarationCancellationRequestNegativeAcknowledgement and DepartureSubmittedNegativeAcknowledgement
+  // after logic has been moved to the back end
+  //case object DepartureSubmittedNegativeAcknowledgement extends DepartureStatus
+  //case object DeclarationCancellationRequestNegativeAcknowledgement extends DepartureStatus
+  case object XMLSubmissionNegativeAcknowledgement extends WithName("DeclarationCancellationRequestNegativeAcknowledgement") with DepartureStatus
 
   case class InvalidStatus(status: String) extends DepartureStatus {
     override def toString: String = status
@@ -68,7 +58,7 @@ object DepartureStatus {
       CancellationDecision,
       NoReleaseForTransit,
       ControlDecisionNotification,
-      DeclarationCancellationRequestNegativeAcknowledgement
+      XMLSubmissionNegativeAcknowledgement
     )
 
   implicit val enumerable: Enumerable[DepartureStatus] =

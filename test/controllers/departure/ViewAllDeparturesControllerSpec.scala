@@ -47,7 +47,6 @@ class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with Js
           DepartureId(1),
           LocalDateTime.now(),
           LocalReferenceNumber("lrn"),
-          DepartureSubmitted,
           DepartureSubmitted
         )
       )

@@ -33,7 +33,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.Format
-import models.departure.DepartureStatus.{DepartureSubmitted, PositiveAcknowledgement}
+import models.departure.DepartureStatus.PositiveAcknowledgement
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
@@ -61,8 +61,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             "departureId"     -> 22,
             "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
-            "status"          -> "PositiveAcknowledgement",
-            "previousStatus"  -> "DepartureSubmitted"
+            "status"          -> "PositiveAcknowledgement"
           )
         )
     )
@@ -83,8 +82,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                 DepartureId(22),
                 localDateTime,
                 LocalReferenceNumber("lrn"),
-                PositiveAcknowledgement,
-                DepartureSubmitted
+                PositiveAcknowledgement
               )
             )
           )
@@ -127,8 +125,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                 DepartureId(22),
                 localDateTime,
                 LocalReferenceNumber("lrn"),
-                PositiveAcknowledgement,
-                DepartureSubmitted
+                PositiveAcknowledgement
               )
             )
           )
@@ -167,7 +164,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), PositiveAcknowledgement, DepartureSubmitted)
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), PositiveAcknowledgement)
             )
           )
 

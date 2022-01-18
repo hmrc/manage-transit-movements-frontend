@@ -72,7 +72,7 @@ class ViewAllArrivalsControllerSpec
       totalArrivals = 1,
       totalMatched = None,
       arrivals = Seq(
-        Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted, ArrivalSubmitted)
+        Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted)
       )
     )
 

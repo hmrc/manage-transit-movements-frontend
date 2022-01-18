@@ -23,7 +23,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models._
-import models.arrival.ArrivalStatus.{ArrivalSubmitted, GoodsReleased}
+import models.arrival.ArrivalStatus.GoodsReleased
 import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -59,8 +59,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
           "created"                 -> localDateTime,
           "updated"                 -> localDateTime,
           "movementReferenceNumber" -> "mrn123",
-          "status"                  -> "GoodsReleased",
-          "previousStatus"          -> "ArrivalSubmitted"
+          "status"                  -> "GoodsReleased"
         )
       )
     )
@@ -78,7 +77,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased, ArrivalSubmitted)
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased)
             )
           )
 
@@ -117,7 +116,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased, ArrivalSubmitted)
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased)
             )
           )
 
@@ -155,7 +154,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             2,
             Some(3),
             Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased, ArrivalSubmitted)
+              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased)
             )
           )
 

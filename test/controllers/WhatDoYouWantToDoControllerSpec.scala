@@ -45,7 +45,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 
   private val mockDestinationResponse =
-    Arrivals(1, 2, Some(3), Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted, ArrivalSubmitted)))
+    Arrivals(1, 2, Some(3), Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted)))
 
   private val mockDepartureResponse =
     Departures(
@@ -53,7 +53,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
       totalDepartures = 2,
       totalMatched = None,
       departures = Seq(
-        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted, DepartureSubmitted)
+        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted)
       )
     )
 

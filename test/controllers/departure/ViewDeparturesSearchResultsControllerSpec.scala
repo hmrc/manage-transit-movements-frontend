@@ -54,7 +54,6 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
           DepartureId(1),
           LocalDateTime.now(),
           LocalReferenceNumber("test lrn"),
-          DepartureSubmitted,
           DepartureSubmitted
         )
       )

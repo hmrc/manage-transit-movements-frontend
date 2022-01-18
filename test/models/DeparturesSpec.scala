@@ -26,7 +26,7 @@ class DeparturesSpec extends SpecBase {
 
   "Departures" - {
 
-    "must deserialize when there is a current and previous message" in {
+    "must deserialize when there is a current and previous status" in {
 
       val localDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -57,8 +57,8 @@ class DeparturesSpec extends SpecBase {
               DepartureId(22),
               localDateTime,
               LocalReferenceNumber("lrn"),
-              currentStatus = DeclarationCancellationRequest,
-              previousStatus = DepartureSubmitted
+              status = DeclarationCancellationRequest,
+              previousStatus = Some(DepartureSubmitted)
             )
           )
         )
@@ -66,7 +66,46 @@ class DeparturesSpec extends SpecBase {
       departuresResponseJson.as[Departures] mustEqual expectedResult
     }
 
-    "must fail to deserialize if there is no current message" in {
+    "must deserialize if there is no previous status" in {
+
+      val localDateTime: LocalDateTime = LocalDateTime.now()
+
+      val departuresResponseJson =
+        Json.obj(
+          "retrievedDepartures" -> 1,
+          "totalDepartures"     -> 2,
+          "totalMatched"        -> 3,
+          "departures" ->
+            Json.arr(
+              Json.obj(
+                "departureId"     -> 22,
+                "updated"         -> localDateTime,
+                "referenceNumber" -> "lrn",
+                "status"          -> "DeclarationCancellationRequest"
+              )
+            )
+        )
+
+      val expectedResult =
+        Departures(
+          1,
+          2,
+          Some(3),
+          Seq(
+            Departure(
+              DepartureId(22),
+              localDateTime,
+              LocalReferenceNumber("lrn"),
+              status = DeclarationCancellationRequest,
+              previousStatus = None
+            )
+          )
+        )
+
+      departuresResponseJson.as[Departures] mustEqual expectedResult
+    }
+
+    "must fail to deserialize if there is no status" in {
 
       val localDateTime: LocalDateTime = LocalDateTime.now()
 

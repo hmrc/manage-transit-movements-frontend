@@ -75,7 +75,7 @@ class ViewArrivalsSearchResultsControllerSpec
       totalArrivals = totalSearchArrivals,
       totalMatched = Some(totalMatched),
       arrivals = Seq(
-        Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted, ArrivalSubmitted)
+        Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted)
       )
     )
 
