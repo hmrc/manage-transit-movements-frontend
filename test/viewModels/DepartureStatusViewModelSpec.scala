@@ -78,6 +78,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           departureStatus.actions.size mustBe 2
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
+          departureStatus.actions(1).key mustBe "viewDepartures.table.action.cancelDeclaration"
       }
     }
 
@@ -113,7 +114,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.noReleaseForTransit"
-          departureStatus.actions.size mustBe 2
+          departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe departureRoutes.NoReleaseForTransitController.onPageLoad(updatedDeparture.departureId).url
           departureStatus.actions.head.key mustBe "departure.viewDetails"
       }
@@ -131,6 +132,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
             .onPageLoad(updatedDeparture.departureId, updatedDeparture.localReferenceNumber)
             .url
           departureStatus.actions.head.key mustBe "departure.viewDetails"
+          departureStatus.actions(1).key mustBe "viewDepartures.table.action.cancelDeclaration"
       }
     }
 
@@ -182,6 +184,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.XMLSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1
+          departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
       }
     }
 
@@ -198,6 +201,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.XMLCancellationSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1
+          departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
       }
     }
   }
