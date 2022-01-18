@@ -17,8 +17,7 @@
 package models
 
 import models.arrival.ArrivalStatus
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Reads}
+import play.api.libs.json.{Json, Reads}
 import java.time.LocalDateTime
 
 case class Arrival(arrivalId: ArrivalId,
@@ -31,12 +30,6 @@ case class Arrival(arrivalId: ArrivalId,
 
 object Arrival {
 
-  implicit val reads: Reads[Arrival] = (
-    (__ \ "arrivalId").read[ArrivalId] and
-      (__ \ "created").read[LocalDateTime] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "movementReferenceNumber").read[String] and
-      (__ \ "status").read[ArrivalStatus] and
-      (__ \ "previousStatus").readNullable[ArrivalStatus]
-  )(Arrival.apply _)
+  implicit val reads: Reads[Arrival] = Json.reads[Arrival]
+
 }
