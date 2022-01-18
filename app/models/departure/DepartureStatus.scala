@@ -34,11 +34,6 @@ object DepartureStatus {
   case object GuaranteeNotValid extends DepartureStatus
   case object DeclarationCancellationRequest extends DepartureStatus
   case object CancellationDecision extends DepartureStatus
-  //ToDo Remove XMLSubmissionNegativeAcknowledgement and replace
-  // with DeclarationCancellationRequestNegativeAcknowledgement and DepartureSubmittedNegativeAcknowledgement
-  // after logic has been moved to the back end
-  //case object DepartureSubmittedNegativeAcknowledgement extends DepartureStatus
-  //case object DeclarationCancellationRequestNegativeAcknowledgement extends DepartureStatus
   case object XMLSubmissionNegativeAcknowledgement extends WithName("DeclarationCancellationRequestNegativeAcknowledgement") with DepartureStatus
 
   case class InvalidStatus(status: String) extends DepartureStatus {
