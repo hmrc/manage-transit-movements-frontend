@@ -17,6 +17,7 @@
 package connectors
 
 import java.time.{LocalDate, LocalDateTime}
+
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
@@ -32,7 +33,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.Format
-import models.departure.DepartureStatus.DepartureSubmitted
+import models.departure.DepartureStatus.{DepartureSubmitted, PositiveAcknowledgement}
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
@@ -60,12 +61,8 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             "departureId"     -> 22,
             "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
-            "messagesMetaData" -> Json.arr(
-              Json.obj(
-                "messageType" -> DepartureSubmitted.toString,
-                "dateTime"    -> localDateTime
-              )
-            )
+            "status"          -> "PositiveAcknowledgement",
+            "previousStatus"  -> "DepartureSubmitted"
           )
         )
     )
@@ -86,7 +83,8 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                 DepartureId(22),
                 localDateTime,
                 LocalReferenceNumber("lrn"),
-                Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime))
+                PositiveAcknowledgement,
+                DepartureSubmitted
               )
             )
           )
@@ -125,7 +123,13 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime)))
+              Departure(
+                DepartureId(22),
+                localDateTime,
+                LocalReferenceNumber("lrn"),
+                PositiveAcknowledgement,
+                DepartureSubmitted
+              )
             )
           )
 
@@ -163,7 +167,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime)))
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), PositiveAcknowledgement, DepartureSubmitted)
             )
           )
 

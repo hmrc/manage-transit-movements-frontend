@@ -109,16 +109,9 @@ trait ModelGenerators {
         departureID          <- arbitrary[DepartureId]
         updated              <- arbitrary[LocalDateTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        messageMetaData      <- Gen.nonEmptyListOf(arbitrary[DepartureMessageMetaData])
-      } yield Departure(departureID, updated, localReferenceNumber, messageMetaData)
-    }
-
-  implicit val arbitraryDepartureMessageMetaData: Arbitrary[DepartureMessageMetaData] =
-    Arbitrary {
-      for {
-        status   <- arbitrary[DepartureStatus]
-        dateTime <- arbitrary[LocalDateTime]
-      } yield DepartureMessageMetaData(status, dateTime)
+        currentStatus        <- arbitrary[DepartureStatus]
+        previousStatus       <- arbitrary[DepartureStatus]
+      } yield Departure(departureID, updated, localReferenceNumber, currentStatus, previousStatus)
     }
 
   implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] =

@@ -17,8 +17,7 @@
 package models
 
 import base.SpecBase
-import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted, WriteOffNotification, XMLSubmissionNegativeAcknowledgement}
-import models.departure.DepartureMessageMetaData
+import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted}
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime
@@ -42,24 +41,8 @@ class DeparturesSpec extends SpecBase {
                 "departureId"     -> 22,
                 "updated"         -> localDateTime,
                 "referenceNumber" -> "lrn",
-                "messagesMetaData" -> Json.arr(
-                  Json.obj(
-                    "messageType" -> DeclarationCancellationRequest.toString,
-                    "dateTime"    -> localDateTime
-                  ),
-                  Json.obj(
-                    "messageType" -> DepartureSubmitted.toString,
-                    "dateTime"    -> localDateTime.minusSeconds(10)
-                  ),
-                  Json.obj(
-                    "messageType" -> WriteOffNotification.toString,
-                    "dateTime"    -> localDateTime.minusMinutes(10)
-                  ),
-                  Json.obj(
-                    "messageType" -> XMLSubmissionNegativeAcknowledgement.toString,
-                    "dateTime"    -> localDateTime.minusDays(10)
-                  )
-                )
+                "status"          -> "DeclarationCancellationRequest",
+                "previousStatus"  -> "DepartureSubmitted"
               )
             )
         )
@@ -74,12 +57,8 @@ class DeparturesSpec extends SpecBase {
               DepartureId(22),
               localDateTime,
               LocalReferenceNumber("lrn"),
-              Seq(
-                DepartureMessageMetaData(DeclarationCancellationRequest, localDateTime),
-                DepartureMessageMetaData(DepartureSubmitted, localDateTime.minusSeconds(10)),
-                DepartureMessageMetaData(WriteOffNotification, localDateTime.minusMinutes(10)),
-                DepartureMessageMetaData(XMLSubmissionNegativeAcknowledgement, localDateTime.minusDays(10))
-              )
+              currentStatus = DeclarationCancellationRequest,
+              previousStatus = DepartureSubmitted
             )
           )
         )

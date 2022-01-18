@@ -20,7 +20,6 @@ import base.{MockNunjucksRendererApp, SpecBase}
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
 import models.arrival.ArrivalStatus.ArrivalSubmitted
-import models.departure.DepartureMessageMetaData
 import models.departure.DepartureStatus.DepartureSubmitted
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -54,7 +53,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
       totalDepartures = 2,
       totalMatched = None,
       departures = Seq(
-        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), Seq(DepartureMessageMetaData(DepartureSubmitted, LocalDateTime.now())))
+        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted, DepartureSubmitted)
       )
     )
 

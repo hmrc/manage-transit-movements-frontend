@@ -140,7 +140,7 @@ object DepartureStatusViewModel {
 
   private def departureXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure
-        if departure.currentStatus == XMLSubmissionNegativeAcknowledgement &&
+        if departure.currentStatus == DeclarationCancellationRequestNegativeAcknowledgement &&
           departure.previousStatus == DepartureSubmitted =>
       DepartureStatusViewModel(
         "departure.status.XMLSubmissionNegativeAcknowledgement",
@@ -154,7 +154,7 @@ object DepartureStatusViewModel {
 
   private def cancellationXmlNegativeAcknowledgement: PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure
-        if departure.currentStatus == XMLSubmissionNegativeAcknowledgement &&
+        if departure.currentStatus == DeclarationCancellationRequestNegativeAcknowledgement &&
           departure.previousStatus == DeclarationCancellationRequest =>
       DepartureStatusViewModel(
         "departure.status.XMLCancellationSubmissionNegativeAcknowledgement",
