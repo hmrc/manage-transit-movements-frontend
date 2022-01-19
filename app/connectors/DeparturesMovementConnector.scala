@@ -53,11 +53,7 @@ class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: Ht
   }
 
   def departuresAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
-    doGetDepartures(Seq("pageSize" -> "1")) map {
-      case Some(value) if value.departures.nonEmpty => Availability.NonEmpty
-      case Some(_)                                  => Availability.Empty
-      case None                                     => Availability.Unavailable
-    }
+    doGetDepartures(Seq("pageSize" -> "1")).map(Availability(_))
 
   def getDepartureSearchResults(lrn: String, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
     doGetDepartures(Seq("lrn" -> lrn, "pageSize" -> pageSize.toString))

@@ -24,7 +24,14 @@ sealed trait Availability {
 }
 
 object Availability {
-  trait Available extends Availability
+
+  def apply[T <: Movements](movements: Option[T]): Availability = movements match {
+    case Some(value) if value.movements.nonEmpty => NonEmpty
+    case Some(_)                                 => Empty
+    case None                                    => Unavailable
+  }
+
+  sealed trait Available extends Availability
 
   case object Unavailable extends Availability
   case object Empty extends Available

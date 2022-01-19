@@ -23,7 +23,9 @@ case class Departures(
   totalDepartures: Int,
   totalMatched: Option[Int],
   departures: Seq[Departure]
-)
+) extends Movements {
+  override val movements: Seq[Movement] = departures
+}
 
 object Departures {
   implicit val format: Reads[Departures] = Json.reads[Departures]

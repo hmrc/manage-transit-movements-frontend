@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
 import models.arrival.{MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
-import models._
+import models.{ArrivalId, Arrivals, Availability, ResponseMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -56,11 +56,7 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
   }
 
   def arrivalsAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
-    doGetArrivals(Seq("pageSize" -> "1")) map {
-      case Some(value) if value.arrivals.nonEmpty => Availability.NonEmpty
-      case Some(_)                                => Availability.Empty
-      case None                                   => Availability.Unavailable
-    }
+    doGetArrivals(Seq("pageSize" -> "1")).map(Availability(_))
 
   def getArrivalSearchResults(mrn: String, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Arrivals]] =
     doGetArrivals(Seq("mrn" -> mrn, "pageSize" -> pageSize.toString))

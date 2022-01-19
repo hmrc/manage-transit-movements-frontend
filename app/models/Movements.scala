@@ -16,17 +16,6 @@
 
 package models
 
-import play.api.libs.json.{Json, Reads}
-
-case class Arrivals(
-  retrievedArrivals: Int,
-  totalArrivals: Int,
-  totalMatched: Option[Int],
-  arrivals: Seq[Arrival]
-) extends Movements {
-  override val movements: Seq[Movement] = arrivals
-}
-
-object Arrivals {
-  implicit val format: Reads[Arrivals] = Json.reads[Arrivals]
+trait Movements {
+  val movements: Seq[Movement]
 }

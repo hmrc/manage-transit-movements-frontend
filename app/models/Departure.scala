@@ -23,11 +23,12 @@ import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime
 
-case class Departure(departureId: DepartureId,
-                     updated: LocalDateTime,
-                     localReferenceNumber: LocalReferenceNumber,
-                     messagesMetaData: Seq[DepartureMessageMetaData]
-) {
+case class Departure(
+  departureId: DepartureId,
+  updated: LocalDateTime,
+  localReferenceNumber: LocalReferenceNumber,
+  messagesMetaData: Seq[DepartureMessageMetaData]
+) extends Movement {
 
   def currentStatus: DepartureStatus = {
 
