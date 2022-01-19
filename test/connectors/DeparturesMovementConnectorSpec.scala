@@ -16,14 +16,14 @@
 
 package connectors
 
-import java.time.{LocalDate, LocalDateTime}
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
+import models.departure.DepartureStatus.DepartureSubmitted
 import models.departure._
-import models.{Departure, DepartureId, Departures, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
+import models.{Availability, Departure, DepartureId, Departures, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -32,8 +32,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.Format
-import models.departure.DepartureStatus.DepartureSubmitted
 
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 import scala.xml.NodeSeq
 
@@ -70,49 +70,52 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
         )
     )
 
+  private val emptyDeparturesResponseJson =
+    Json.obj(
+      "retrievedDepartures" -> 0,
+      "totalDepartures"     -> 0,
+      "totalMatched"        -> 0,
+      "departures"          -> Json.arr()
+    )
+
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
   "DeparturesMovementConnector" - {
 
-    "getDepartures" - {
-      "must return a successful future response" in {
-        val expectedResult =
-          Departures(
-            retrievedDepartures = 1,
-            totalDepartures = 2,
-            totalMatched = Some(3),
-            departures = Seq(
-              Departure(
-                DepartureId(22),
-                localDateTime,
-                LocalReferenceNumber("lrn"),
-                Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime))
-              )
-            )
-          )
-
+    "departuresAvailability" - {
+      "must return NonEmpty when response contains a departure" in {
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/movements/departures"))
+          get(urlEqualTo(s"/$startUrl/movements/departures?pageSize=1"))
             .withHeader("Channel", containing("web"))
             .willReturn(okJson(departuresResponseJson.toString()))
         )
 
-        connector.getDepartures().futureValue mustBe Some(expectedResult)
+        connector.departuresAvailability().futureValue mustBe Availability.NonEmpty
       }
 
-      "must return a None when an error response is returned from getDepartures" in {
+      "must return Empty when response contains no departures" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/departures?pageSize=1"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(emptyDeparturesResponseJson.toString()))
+        )
+
+        connector.departuresAvailability().futureValue mustBe Availability.Empty
+      }
+
+      "must return Unavailable when an error response is returned from getDepartures" in {
 
         forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
-              get(urlEqualTo(s"/$startUrl/movements/departures"))
+              get(urlEqualTo(s"/$startUrl/movements/departures?pageSize=1"))
                 .withHeader("Channel", containing("web"))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)
                 )
             )
-            connector.getDepartures().futureValue mustBe None
+            connector.departuresAvailability().futureValue mustBe Availability.Unavailable
         }
       }
     }
