@@ -80,7 +80,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
 
   "arrivalMovementConnector" - {
 
-    "hasArrivals" - {
+    "getArrivalsAvailability" - {
       "must return NonEmpty when response contains an arrival" in {
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/arrivals?pageSize=1"))
@@ -88,7 +88,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             .willReturn(okJson(arrivalsResponseJson.toString()))
         )
 
-        connector.arrivalsAvailability().futureValue mustBe Availability.NonEmpty
+        connector.getArrivalsAvailability().futureValue mustBe Availability.NonEmpty
       }
 
       "must return Empty when response contains no arrivals" in {
@@ -98,7 +98,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
             .willReturn(okJson(emptyArrivalsResponseJson.toString()))
         )
 
-        connector.arrivalsAvailability().futureValue mustBe Availability.Empty
+        connector.getArrivalsAvailability().futureValue mustBe Availability.Empty
       }
 
       "must return Unavailable when getArrivals returns an error response" in {
@@ -113,7 +113,7 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
                     .withStatus(errorResponse)
                 )
             )
-            connector.arrivalsAvailability().futureValue mustBe Availability.Unavailable
+            connector.getArrivalsAvailability().futureValue mustBe Availability.Unavailable
         }
       }
     }

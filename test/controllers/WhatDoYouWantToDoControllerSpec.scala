@@ -75,10 +75,10 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.arrivalsAvailability()(any()))
+        when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
           .thenReturn(Future.successful(Availability.NonEmpty))
 
-        when(mockDepartureMovementConnector.departuresAvailability()(any()))
+        when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
           .thenReturn(Future.successful(Availability.NonEmpty))
 
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
@@ -101,10 +101,10 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.arrivalsAvailability()(any()))
+        when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
           .thenReturn(Future.successful(Availability.Empty))
 
-        when(mockDepartureMovementConnector.departuresAvailability()(any()))
+        when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
           .thenReturn(Future.successful(Availability.Empty))
 
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
@@ -130,10 +130,10 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.arrivalsAvailability()(any()))
+        when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
           .thenReturn(Future.successful(Availability.Unavailable))
 
-        when(mockDepartureMovementConnector.departuresAvailability()(any()))
+        when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
           .thenReturn(Future.successful(Availability.Unavailable))
 
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)

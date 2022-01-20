@@ -52,7 +52,7 @@ class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: Ht
       }
   }
 
-  def departuresAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
+  def getDeparturesAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
     doGetDepartures(Seq("pageSize" -> "1")).map(Availability(_))
 
   def getDepartureSearchResults(lrn: String, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Departures]] =

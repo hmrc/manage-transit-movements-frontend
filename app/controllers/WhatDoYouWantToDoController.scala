@@ -44,8 +44,8 @@ class WhatDoYouWantToDoController @Inject() (appConfig: FrontendAppConfig,
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
-        arrivalsAvailability   <- arrivalMovementConnector.arrivalsAvailability()
-        departuresAvailability <- departuresMovementConnector.departuresAvailability()
+        arrivalsAvailability   <- arrivalMovementConnector.getArrivalsAvailability()
+        departuresAvailability <- departuresMovementConnector.getDeparturesAvailability()
         html                   <- renderPage(arrivalsAvailability, departuresAvailability)
       } yield Ok(html)
   }

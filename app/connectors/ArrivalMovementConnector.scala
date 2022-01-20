@@ -55,7 +55,7 @@ class ArrivalMovementConnector @Inject() (config: FrontendAppConfig, http: HttpC
       }
   }
 
-  def arrivalsAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
+  def getArrivalsAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
     doGetArrivals(Seq("pageSize" -> "1")).map(Availability(_))
 
   def getArrivalSearchResults(mrn: String, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Arrivals]] =

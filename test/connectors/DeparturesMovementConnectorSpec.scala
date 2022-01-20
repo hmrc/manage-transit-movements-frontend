@@ -82,7 +82,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
 
   "DeparturesMovementConnector" - {
 
-    "departuresAvailability" - {
+    "getDeparturesAvailability" - {
       "must return NonEmpty when response contains a departure" in {
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/movements/departures?pageSize=1"))
@@ -90,7 +90,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             .willReturn(okJson(departuresResponseJson.toString()))
         )
 
-        connector.departuresAvailability().futureValue mustBe Availability.NonEmpty
+        connector.getDeparturesAvailability().futureValue mustBe Availability.NonEmpty
       }
 
       "must return Empty when response contains no departures" in {
@@ -100,7 +100,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             .willReturn(okJson(emptyDeparturesResponseJson.toString()))
         )
 
-        connector.departuresAvailability().futureValue mustBe Availability.Empty
+        connector.getDeparturesAvailability().futureValue mustBe Availability.Empty
       }
 
       "must return Unavailable when an error response is returned from getDepartures" in {
@@ -115,7 +115,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
                     .withStatus(errorResponse)
                 )
             )
-            connector.departuresAvailability().futureValue mustBe Availability.Unavailable
+            connector.getDeparturesAvailability().futureValue mustBe Availability.Unavailable
         }
       }
     }
