@@ -19,7 +19,6 @@ package controllers.departure
 import base.{MockNunjucksRendererApp, SpecBase}
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
-import models.departure.DepartureMessageMetaData
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
@@ -48,7 +47,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with Js
           DepartureId(1),
           LocalDateTime.now(),
           LocalReferenceNumber("lrn"),
-          Seq(DepartureMessageMetaData(DepartureSubmitted, LocalDateTime.now()))
+          DepartureSubmitted
         )
       )
     )

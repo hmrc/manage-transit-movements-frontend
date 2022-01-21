@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
-import models.departure.DepartureStatus.DepartureSubmitted
+import models.departure.DepartureStatus.PositiveAcknowledgement
 import models.departure._
 import models.{Availability, Departure, DepartureId, Departures, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
@@ -60,12 +60,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             "departureId"     -> 22,
             "updated"         -> localDateTime,
             "referenceNumber" -> "lrn",
-            "messagesMetaData" -> Json.arr(
-              Json.obj(
-                "messageType" -> DepartureSubmitted.toString,
-                "dateTime"    -> localDateTime
-              )
-            )
+            "status"          -> "PositiveAcknowledgement"
           )
         )
     )
@@ -128,7 +123,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime)))
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), PositiveAcknowledgement)
             )
           )
 
@@ -166,7 +161,7 @@ class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandle
             totalDepartures = 2,
             totalMatched = Some(3),
             Seq(
-              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime)))
+              Departure(DepartureId(22), localDateTime, LocalReferenceNumber("lrn"), PositiveAcknowledgement)
             )
           )
 

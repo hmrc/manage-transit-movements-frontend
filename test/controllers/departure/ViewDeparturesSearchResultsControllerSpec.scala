@@ -20,7 +20,6 @@ import base.{FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
-import models.departure.DepartureMessageMetaData
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
@@ -55,7 +54,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
           DepartureId(1),
           LocalDateTime.now(),
           LocalReferenceNumber("test lrn"),
-          Seq(DepartureMessageMetaData(DepartureSubmitted, localDateTime))
+          DepartureSubmitted
         )
       )
     )

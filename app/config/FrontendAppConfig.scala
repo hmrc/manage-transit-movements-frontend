@@ -23,9 +23,8 @@ import play.api.Configuration
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
-  lazy val contactHost: String        = configuration.get[Service]("microservice.services.contact-frontend").baseUrl
-  lazy val contactFrontendUrl: String = configuration.get[Service]("microservice.services.contact-frontend").fullServiceUrl
-  val contactFormServiceIdentifier    = "CTCTraders"
+  lazy val contactHost: String     = configuration.get[String]("contact-frontend.host")
+  val contactFormServiceIdentifier = "CTCTraders"
 
   val trackingConsentUrl: String = configuration.get[String]("microservice.services.tracking-consent-frontend.url")
   val gtmContainer: String       = configuration.get[String]("microservice.services.tracking-consent-frontend.gtm.container")
@@ -34,11 +33,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
   val showUserResearchBanner: Boolean = configuration.get[Boolean]("banners.showUserResearch")
 
-  val analyticsToken: String         = configuration.get[String](s"google-analytics.token")
-  val analyticsHost: String          = configuration.get[String](s"google-analytics.host")
-  val betaFeedbackUrl                = s"$contactFrontendUrl/beta-feedback"
-  val betaFeedbackUnauthenticatedUrl = s"$contactFrontendUrl/beta-feedback-unauthenticated"
-  val signOutUrl: String             = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
+  val analyticsToken: String = configuration.get[String](s"google-analytics.token")
+  val analyticsHost: String  = configuration.get[String](s"google-analytics.host")
+
+  val betaFeedbackUrl                = s"$contactHost/contact/beta-feedback"
+  val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
+
+  val signOutUrl: String = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
 
   private val declareUnloadingRemarksUrlBase            = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
   def declareUnloadingRemarksUrl(arrivalId: ArrivalId)  = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}"
