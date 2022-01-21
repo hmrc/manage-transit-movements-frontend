@@ -17,7 +17,7 @@
 package generators
 
 import models.ErrorType.GenericError
-import models.arrival.{ArrivalMessageMetaData, ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
+import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.departure._
 import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
@@ -94,12 +94,13 @@ trait ModelGenerators {
   implicit val arbitraryArrival: Arbitrary[Arrival] =
     Arbitrary {
       for {
-        arrivalId       <- arbitrary[ArrivalId]
-        date            <- arbitrary[LocalDateTime]
-        time            <- arbitrary[LocalDateTime]
-        messageMetaData <- Gen.nonEmptyListOf(arbitrary[ArrivalMessageMetaData])
-        mrn             <- stringsWithMaxLength(17)
-      } yield Arrival(arrivalId, date, time, messageMetaData, mrn)
+        arrivalId      <- arbitrary[ArrivalId]
+        date           <- arbitrary[LocalDateTime]
+        time           <- arbitrary[LocalDateTime]
+        mrn            <- stringsWithMaxLength(17)
+        status         <- arbitrary[ArrivalStatus]
+        previousStatus <- arbitrary[Option[ArrivalStatus]]
+      } yield Arrival(arrivalId, date, time, mrn, status, previousStatus)
     }
 
   implicit val arbitraryDeparture: Arbitrary[Departure] =
@@ -108,24 +109,9 @@ trait ModelGenerators {
         departureID          <- arbitrary[DepartureId]
         updated              <- arbitrary[LocalDateTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        messageMetaData      <- Gen.nonEmptyListOf(arbitrary[DepartureMessageMetaData])
-      } yield Departure(departureID, updated, localReferenceNumber, messageMetaData)
-    }
-
-  implicit val arbitraryDepartureMessageMetaData: Arbitrary[DepartureMessageMetaData] =
-    Arbitrary {
-      for {
-        status   <- arbitrary[DepartureStatus]
-        dateTime <- arbitrary[LocalDateTime]
-      } yield DepartureMessageMetaData(status, dateTime)
-    }
-
-  implicit val arbitraryArrivalMessageMetaData: Arbitrary[ArrivalMessageMetaData] =
-    Arbitrary {
-      for {
-        status   <- arbitrary[ArrivalStatus]
-        dateTime <- arbitrary[LocalDateTime]
-      } yield ArrivalMessageMetaData(status, dateTime)
+        status               <- arbitrary[DepartureStatus]
+        previousStatus       <- arbitrary[Option[DepartureStatus]]
+      } yield Departure(departureID, updated, localReferenceNumber, status, previousStatus)
     }
 
   implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] =

@@ -19,8 +19,7 @@ package viewModels
 import base.SpecBase
 import generators.Generators
 import models.Arrival
-import models.arrival.ArrivalMessageMetaData
-import models.arrival.ArrivalStatus.{ArrivalNotificationSubmitted, ArrivalRejection, GoodsReleased, UnloadingPermission, UnloadingRemarksSubmitted}
+import models.arrival.ArrivalStatus.{ArrivalRejected, ArrivalSubmitted, GoodsReleased, UnloadingPermission, UnloadingRemarksSubmitted}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -53,7 +52,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(UnloadingPermission, LocalDateTime.now())))
+        val updatedArrival: Arrival   = arrival.copy(status = UnloadingPermission)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
         viewMovement.status mustBe Messages("movement.status.unloadingPermission")
@@ -64,7 +63,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "must display rejection" in {
     forAll(arbitrary[Arrival]) {
       arrival =>
-        val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(ArrivalRejection, LocalDateTime.now())))
+        val updatedArrival: Arrival   = arrival.copy(status = ArrivalRejected)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
         viewMovement.status mustBe Messages("movement.status.arrivalRejected")
@@ -74,11 +73,11 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
 
   "must not display action when status is not unloading permission, rejection or negative acknowledgment" in {
 
-    val genArrivalStatus = Gen.oneOf(Seq(ArrivalNotificationSubmitted, GoodsReleased, UnloadingRemarksSubmitted))
+    val genArrivalStatus = Gen.oneOf(Seq(ArrivalSubmitted, GoodsReleased, UnloadingRemarksSubmitted))
 
     forAll(arbitrary[Arrival], genArrivalStatus) {
       (arrival, arrivalStatus) =>
-        val updatedArrival: Arrival   = arrival.copy(messagesMetaData = Seq(ArrivalMessageMetaData(arrivalStatus, LocalDateTime.now())))
+        val updatedArrival: Arrival   = arrival.copy(status = arrivalStatus)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
         viewMovement.actions mustBe Nil
