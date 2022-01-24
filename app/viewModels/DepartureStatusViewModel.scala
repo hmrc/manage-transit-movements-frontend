@@ -119,8 +119,7 @@ object DepartureStatusViewModel {
       DepartureStatusViewModel(
         "departure.status.noReleaseForTransit",
         actions = Seq(
-          ViewMovementAction(departureRoutes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails"),
-          ViewMovementAction(config.departureFrontendConfirmCancellationUrl(departure.departureId), "viewDepartures.table.action.cancelDeclaration")
+          ViewMovementAction(departureRoutes.NoReleaseForTransitController.onPageLoad(departure.departureId).url, "departure.viewDetails")
         )
       )
   }
