@@ -23,7 +23,9 @@ case class Arrivals(
   totalArrivals: Int,
   totalMatched: Option[Int],
   arrivals: Seq[Arrival]
-)
+) extends Movements {
+  override val movements: Seq[Movement] = arrivals
+}
 
 object Arrivals {
   implicit val format: Reads[Arrivals] = Json.reads[Arrivals]

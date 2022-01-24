@@ -22,7 +22,7 @@ import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import models.departure.{ControlDecision, MessagesSummary, NoReleaseForTransitMessage}
-import models.{DepartureId, Departures, ResponseMessage}
+import models.{Availability, DepartureId, Departures, ResponseMessage}
 import play.api.http.HeaderNames
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -52,8 +52,8 @@ class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: Ht
       }
   }
 
-  def getDepartures()(implicit hc: HeaderCarrier): Future[Option[Departures]] =
-    doGetDepartures(Seq.empty)
+  def getDeparturesAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
+    doGetDepartures(Seq("pageSize" -> "1")).map(Availability(_))
 
   def getDepartureSearchResults(lrn: String, pageSize: Int)(implicit hc: HeaderCarrier): Future[Option[Departures]] =
     doGetDepartures(Seq("lrn" -> lrn, "pageSize" -> pageSize.toString))

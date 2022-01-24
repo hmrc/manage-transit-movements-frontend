@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import controllers.actions.IdentifierAction
 import controllers.departure.{routes => departureRoutes}
-import models.{Arrivals, Departures}
+import models.Availability
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
@@ -44,25 +44,25 @@ class WhatDoYouWantToDoController @Inject() (appConfig: FrontendAppConfig,
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
-        arrivals   <- arrivalMovementConnector.getArrivals()
-        departures <- departuresMovementConnector.getDepartures()
-        html       <- renderPage(arrivals, departures)
+        arrivalsAvailability   <- arrivalMovementConnector.getArrivalsAvailability()
+        departuresAvailability <- departuresMovementConnector.getDeparturesAvailability()
+        html                   <- renderPage(arrivalsAvailability, departuresAvailability)
       } yield Ok(html)
   }
 
-  private def renderPage(arrivals: Option[Arrivals], departures: Option[Departures])(implicit requestHeader: RequestHeader): Future[Html] =
+  private def renderPage(arrivalsAvailability: Availability, departuresAvailability: Availability)(implicit requestHeader: RequestHeader): Future[Html] =
     renderer
       .render(
         "whatDoYouWantToDo.njk",
         Json.obj(
           "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
           "viewArrivalNotificationUrl"     -> controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url,
-          "arrivalsAvailable"              -> arrivals.nonEmpty,
-          "hasArrivals"                    -> arrivals.exists(_.arrivals.nonEmpty),
+          "arrivalsAvailable"              -> arrivalsAvailability.isAvailable,
+          "hasArrivals"                    -> arrivalsAvailability.isAvailableAndNonEmpty,
           "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
           "viewDepartureNotificationUrl"   -> departureRoutes.ViewAllDeparturesController.onPageLoad(None).url,
-          "departuresAvailable"            -> departures.nonEmpty,
-          "hasDepartures"                  -> departures.exists(_.departures.nonEmpty),
+          "departuresAvailable"            -> departuresAvailability.isAvailable,
+          "hasDepartures"                  -> departuresAvailability.isAvailableAndNonEmpty,
           "isGuaranteeBalanceEnabled"      -> appConfig.isGuaranteeBalanceEnabled,
           "checkGuaranteeBalanceUrl"       -> appConfig.checkGuaranteeBalanceUrl
         )

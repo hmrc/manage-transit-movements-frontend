@@ -16,21 +16,4 @@
 
 package models
 
-import models.arrival.ArrivalStatus
-import play.api.libs.json.{Json, Reads}
-import java.time.LocalDateTime
-
-case class Arrival(
-  arrivalId: ArrivalId,
-  created: LocalDateTime,
-  updated: LocalDateTime,
-  movementReferenceNumber: String,
-  status: ArrivalStatus,
-  previousStatus: Option[ArrivalStatus] = None
-) extends Movement
-
-object Arrival {
-
-  implicit val reads: Reads[Arrival] = Json.reads[Arrival]
-
-}
+trait Movement

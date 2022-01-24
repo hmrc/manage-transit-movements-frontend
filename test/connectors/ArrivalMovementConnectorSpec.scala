@@ -16,8 +16,6 @@
 
 package connectors
 
-import java.time.LocalDateTime
-
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
@@ -33,6 +31,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, Json}
 import play.api.libs.ws.WSResponse
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 import scala.xml.NodeSeq
 
@@ -65,45 +64,51 @@ class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler w
     )
   )
 
+  private val emptyArrivalsResponseJson = Json.obj(
+    "retrievedArrivals" -> 0,
+    "totalArrivals"     -> 0,
+    "totalMatched"      -> 0,
+    "arrivals"          -> JsArray()
+  )
+
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
   "arrivalMovementConnector" - {
 
-    "getArrivals" - {
-      "must return a successful future response" in {
-        val expectedResult =
-          Arrivals(
-            1,
-            2,
-            Some(3),
-            Seq(
-              Arrival(ArrivalId(22), localDateTime, localDateTime, "mrn123", GoodsReleased)
-            )
-          )
-
+    "getArrivalsAvailability" - {
+      "must return NonEmpty when response contains an arrival" in {
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/movements/arrivals"))
+          get(urlEqualTo(s"/$startUrl/movements/arrivals?pageSize=1"))
             .withHeader("Channel", containing("web"))
             .willReturn(okJson(arrivalsResponseJson.toString()))
         )
 
-        connector.getArrivals().futureValue mustBe Some(expectedResult)
-
+        connector.getArrivalsAvailability().futureValue mustBe Availability.NonEmpty
       }
 
-      "must return a None when getArrivals returns an error response" in {
+      "must return Empty when response contains no arrivals" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/movements/arrivals?pageSize=1"))
+            .withHeader("Channel", containing("web"))
+            .willReturn(okJson(emptyArrivalsResponseJson.toString()))
+        )
+
+        connector.getArrivalsAvailability().futureValue mustBe Availability.Empty
+      }
+
+      "must return Unavailable when getArrivals returns an error response" in {
 
         forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
-              get(urlEqualTo(s"/$startUrl/movements/arrivals"))
+              get(urlEqualTo(s"/$startUrl/movements/arrivals?pageSize=1"))
                 .withHeader("Channel", containing("web"))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)
                 )
             )
-            connector.getArrivals().futureValue mustBe None
+            connector.getArrivalsAvailability().futureValue mustBe Availability.Unavailable
         }
       }
     }

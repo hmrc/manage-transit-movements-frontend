@@ -19,18 +19,16 @@ package controllers
 import base.{MockNunjucksRendererApp, SpecBase}
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
-import models.arrival.ArrivalStatus.ArrivalSubmitted
-import models.departure.DepartureStatus.DepartureSubmitted
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
-import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRendererApp {
@@ -41,21 +39,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
-
-  private val localDateTime: LocalDateTime = LocalDateTime.now()
-
-  private val mockDestinationResponse =
-    Arrivals(1, 2, Some(3), Seq(Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted)))
-
-  private val mockDepartureResponse =
-    Departures(
-      retrievedDepartures = 1,
-      totalDepartures = 2,
-      totalMatched = None,
-      departures = Seq(
-        Departure(DepartureId(1), localDateTime, LocalReferenceNumber("GB12345"), DepartureSubmitted)
-      )
-    )
 
   override def beforeEach: Unit = {
     reset(mockArrivalMovementConnector)
@@ -77,7 +60,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
       "checkGuaranteeBalanceUrl"       -> frontendAppConfig.checkGuaranteeBalanceUrl
     )
 
-  override def guiceApplicationBuilder() =
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
@@ -88,15 +71,16 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
   "WhatDoYouWantToDo Controller" - {
 
     "must return OK and the correct view for a GET with" - {
-      "Arrivals and Departures when both respond" in {
+
+      "Arrivals and departures" in {
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.getArrivals()(any()))
-          .thenReturn(Future.successful(Some(mockDestinationResponse)))
+        when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
+          .thenReturn(Future.successful(Availability.NonEmpty))
 
-        when(mockDepartureMovementConnector.getDepartures()(any()))
-          .thenReturn(Future.successful(Some(mockDepartureResponse)))
+        when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
+          .thenReturn(Future.successful(Availability.NonEmpty))
 
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
@@ -114,15 +98,15 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
         jsonCaptorWithoutConfig mustBe expectedJson(true, true, true, true)
       }
 
-      "Arrivals and no departures when display departures services returns false" in {
+      "No arrivals and no departures" in {
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.getArrivals()(any()))
-          .thenReturn(Future.successful(Some(mockDestinationResponse)))
+        when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
+          .thenReturn(Future.successful(Availability.Empty))
 
-        when(mockDepartureMovementConnector.getDepartures()(any()))
-          .thenReturn(Future.successful(Some(mockDepartureResponse)))
+        when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
+          .thenReturn(Future.successful(Availability.Empty))
 
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
@@ -138,47 +122,20 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
 
         templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
         jsonCaptorWithoutConfig mustBe
-          expectedJson(true, true, true, true)
+          expectedJson(true, false, true, false)
 
       }
 
-      "Arrivals when Departures does not respond" in {
+      "No response from arrivals and departures" in {
 
         when(mockNunjucksRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("foo")))
 
-        when(mockArrivalMovementConnector.getArrivals()(any()))
-          .thenReturn(Future.successful(Some(mockDestinationResponse)))
+        when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
+          .thenReturn(Future.successful(Availability.Unavailable))
 
-        when(mockDepartureMovementConnector.getDepartures()(any()))
-          .thenReturn(Future.successful(None))
-
-        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result  = route(app, request).value
-
-        status(result) mustEqual OK
-
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
-        jsonCaptorWithoutConfig mustBe expectedJson(true, true, false, false)
-
-      }
-
-      "no Arrivals and Departures" in {
-        when(mockNunjucksRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("foo")))
-
-        when(mockArrivalMovementConnector.getArrivals()(any()))
-          .thenReturn(Future.successful(None))
-
-        when(mockDepartureMovementConnector.getDepartures()(any()))
-          .thenReturn(Future.successful(None))
+        when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
+          .thenReturn(Future.successful(Availability.Unavailable))
 
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
