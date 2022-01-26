@@ -26,7 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  "Departure Status" - {
+  "Departure Status View Model" - {
 
     "When status is TransitDeclarationRejected show correct status and action" in {
       forAll(arbitrary[Departure]) {
@@ -193,6 +193,19 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           departureStatus.status mustBe "departure.status.XMLCancellationSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
+      }
+    }
+
+    "When status is InvalidStatus show correct status and action" in {
+      forAll(arbitrary[Departure], arbitrary[String]) {
+        (departure, status) =>
+          val updatedDeparture: Departure = departure.copy(
+            status = InvalidStatus(status)
+          )
+
+          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
+          departureStatus.status mustBe status
+          departureStatus.actions.size mustBe 0
       }
     }
   }
