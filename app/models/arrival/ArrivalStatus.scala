@@ -45,6 +45,8 @@ object ArrivalStatus {
       UnloadingRemarksSubmitted,
       UnloadingRemarksRejected,
       GoodsReleased,
+      ArrivalSubmittedNegativeAcknowledgement,
+      UnloadingRemarksSubmittedNegativeAcknowledgement,
       XMLSubmissionNegativeAcknowledgement
     )
 
