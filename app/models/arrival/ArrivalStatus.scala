@@ -29,6 +29,8 @@ object ArrivalStatus {
   case object UnloadingRemarksSubmitted extends ArrivalStatus
   case object UnloadingRemarksRejected extends ArrivalStatus
   case object GoodsReleased extends ArrivalStatus
+  case object ArrivalSubmittedNegativeAcknowledgement extends ArrivalStatus
+  case object UnloadingRemarksSubmittedNegativeAcknowledgement extends ArrivalStatus
   case object XMLSubmissionNegativeAcknowledgement extends ArrivalStatus
 
   case class InvalidStatus(status: String) extends ArrivalStatus {

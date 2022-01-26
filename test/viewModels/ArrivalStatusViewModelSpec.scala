@@ -71,11 +71,11 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.goodsReleased")
         }
       }
-      "When status is XMLSubmissionNegativeAcknowledgement show correct message" in {
+      "When status is ArrivalSubmittedNegativeAcknowledgement show correct message" in {
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival = arrival.copy(status = XMLSubmissionNegativeAcknowledgement, previousStatus = Some(ArrivalSubmitted))
+            val updatedArrival: Arrival = arrival.copy(status = ArrivalSubmittedNegativeAcknowledgement)
             val expectedAction = ViewMovementAction(
               arrivalRoute.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
               Messages("viewArrivalNotifications.table.action.viewErrors")
@@ -90,7 +90,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
 
         forAll(arbitrary[Arrival]) {
           arrival =>
-            val updatedArrival: Arrival = arrival.copy(status = XMLSubmissionNegativeAcknowledgement, previousStatus = Some(UnloadingRemarksSubmitted))
+            val updatedArrival: Arrival = arrival.copy(status = UnloadingRemarksSubmittedNegativeAcknowledgement)
             val expectedAction = ViewMovementAction(
               controllers.arrival.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
               Messages("viewArrivalNotifications.table.action.viewErrors")
@@ -100,6 +100,17 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
               "movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement"
             )
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
+        }
+      }
+
+      "When status is XMLSubmissionNegativeAcknowledgement show correct message" in {
+
+        forAll(arbitrary[Arrival]) {
+          arrival =>
+            val updatedArrival: Arrival = arrival.copy(status = XMLSubmissionNegativeAcknowledgement)
+
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.XMLSubmissionNegativeAcknowledgement")
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.isEmpty mustBe true
         }
       }
     }

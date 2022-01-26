@@ -18,16 +18,7 @@ package viewModels
 
 import config.FrontendAppConfig
 import models.Arrival
-import models.arrival.ArrivalStatus.{
-  ArrivalRejected,
-  ArrivalSubmitted,
-  GoodsReleased,
-  UnloadingPermission,
-  UnloadingRemarksRejected,
-  UnloadingRemarksSubmitted,
-  XMLSubmissionNegativeAcknowledgement
-}
-
+import models.arrival.ArrivalStatus._
 case class ArrivalStatusViewModel(status: String, actions: Seq[ViewMovementAction])
 
 object ArrivalStatusViewModel {
@@ -76,7 +67,7 @@ object ArrivalStatusViewModel {
   }
 
   private def arrivalNegativeAcknowledgement: PartialFunction[Arrival, ArrivalStatusViewModel] = {
-    case arrival if arrival.status == XMLSubmissionNegativeAcknowledgement && arrival.previousStatus == Some(ArrivalSubmitted) =>
+    case arrival if arrival.status == ArrivalSubmittedNegativeAcknowledgement =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(
           controllers.arrival.routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
@@ -87,7 +78,7 @@ object ArrivalStatusViewModel {
   }
 
   private def unloadingRemarksNegativeAcknowledgement: PartialFunction[Arrival, ArrivalStatusViewModel] = {
-    case arrival if arrival.status == XMLSubmissionNegativeAcknowledgement && arrival.previousStatus == Some(UnloadingRemarksSubmitted) =>
+    case arrival if arrival.status == UnloadingRemarksSubmittedNegativeAcknowledgement =>
       val action: Seq[ViewMovementAction] = Seq(
         ViewMovementAction(
           controllers.arrival.routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrival.arrivalId).url,
