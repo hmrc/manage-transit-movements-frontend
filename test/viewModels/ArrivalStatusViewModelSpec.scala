@@ -81,7 +81,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
               Messages("viewArrivalNotifications.table.action.viewErrors")
             )
 
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.XMLSubmissionNegativeAcknowledgement")
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.ArrivalSubmittedNegativeAcknowledgement")
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }

@@ -96,12 +96,13 @@ movement.search.departure.title = Search by local reference number
 
 movement.status.arrivalSubmitted = Arrival notification sent
 movement.status.arrivalRejected = Arrival notification rejected
+movement.status.ArrivalSubmittedNegativeAcknowledgement = Arrival notification rejected
 movement.status.unloadingPermission = Unloading permission granted
 movement.status.unloadingRemarksSubmitted = Unloading remarks sent
 movement.status.unloadingRemarksRejected = Unloading remarks rejected
+movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement = Unloading remarks rejected
 movement.status.goodsReleased = Goods Released
 movement.status.XMLSubmissionNegativeAcknowledgement = Arrival notification rejected
-movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement = Unloading remarks rejected
 
 technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service

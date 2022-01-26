@@ -74,7 +74,7 @@ object ArrivalStatusViewModel {
           "viewArrivalNotifications.table.action.viewErrors"
         )
       )
-      ArrivalStatusViewModel("movement.status.XMLSubmissionNegativeAcknowledgement", action)
+      ArrivalStatusViewModel("movement.status.ArrivalSubmittedNegativeAcknowledgement", action)
   }
 
   private def unloadingRemarksNegativeAcknowledgement: PartialFunction[Arrival, ArrivalStatusViewModel] = {
@@ -95,6 +95,10 @@ object ArrivalStatusViewModel {
     case arrival if arrival.status == UnloadingRemarksSubmitted => ArrivalStatusViewModel("movement.status.unloadingRemarksSubmitted", actions = Nil)
     case arrival if arrival.status == UnloadingRemarksRejected  => ArrivalStatusViewModel("movement.status.unloadingRemarksRejected", actions = Nil)
     case arrival if arrival.status == GoodsReleased             => ArrivalStatusViewModel("movement.status.goodsReleased", actions = Nil)
+    case arrival if arrival.status == UnloadingRemarksSubmittedNegativeAcknowledgement =>
+      ArrivalStatusViewModel("movement.status.UnloadingRemarksSubmittedNegativeAcknowledgement", actions = Nil)
+    case arrival if arrival.status == ArrivalSubmittedNegativeAcknowledgement =>
+      ArrivalStatusViewModel("movement.status.ArrivalSubmittedNegativeAcknowledgement", actions = Nil)
     case arrival if arrival.status == XMLSubmissionNegativeAcknowledgement =>
       ArrivalStatusViewModel("movement.status.XMLSubmissionNegativeAcknowledgement", actions = Nil)
     case arrival => ArrivalStatusViewModel(arrival.status.toString, actions = Nil)
