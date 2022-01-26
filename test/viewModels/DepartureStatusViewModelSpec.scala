@@ -168,12 +168,11 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       }
     }
 
-    "When status is XMLSubmissionNegativeAcknowledgement and previous message was DepartureSubmitted show correct status and action" in {
+    "When status is DepartureSubmittedNegativeAcknowledgement show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
           val updatedDeparture: Departure = departure.copy(
-            status = XMLSubmissionNegativeAcknowledgement,
-            previousStatus = Some(DepartureSubmitted)
+            status = DepartureSubmittedNegativeAcknowledgement
           )
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
@@ -183,12 +182,11 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       }
     }
 
-    "When status is XMLSubmissionNegativeAcknowledgement and previous message was DeclarationCancellationRequest show correct status and action" in {
+    "When status is DeclarationCancellationRequestNegativeAcknowledgement show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
           val updatedDeparture: Departure = departure.copy(
-            status = XMLSubmissionNegativeAcknowledgement,
-            previousStatus = Some(DeclarationCancellationRequest)
+            status = DeclarationCancellationRequestNegativeAcknowledgement
           )
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
