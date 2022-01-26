@@ -114,7 +114,7 @@ object DepartureStatusViewModel {
       )
   }
 
-  private def noReleasedForTransit(implicit config: FrontendAppConfig): PartialFunction[Departure, DepartureStatusViewModel] = {
+  private def noReleasedForTransit(): PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == NoReleaseForTransit =>
       DepartureStatusViewModel(
         "departure.status.noReleaseForTransit",

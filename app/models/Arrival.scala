@@ -18,6 +18,7 @@ package models
 
 import models.arrival.ArrivalStatus
 import play.api.libs.json.{Json, Reads}
+
 import java.time.LocalDateTime
 
 case class Arrival(
@@ -25,8 +26,7 @@ case class Arrival(
   created: LocalDateTime,
   updated: LocalDateTime,
   movementReferenceNumber: String,
-  status: ArrivalStatus,
-  previousStatus: Option[ArrivalStatus] = None
+  status: ArrivalStatus
 ) extends Movement
 
 object Arrival {
