@@ -102,17 +102,6 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }
-
-      "When status is XMLSubmissionNegativeAcknowledgement show correct message" in {
-
-        forAll(arbitrary[Arrival]) {
-          arrival =>
-            val updatedArrival: Arrival = arrival.copy(status = XMLSubmissionNegativeAcknowledgement)
-
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe Messages("movement.status.XMLSubmissionNegativeAcknowledgement")
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.isEmpty mustBe true
-        }
-      }
     }
   }
 
