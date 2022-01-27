@@ -25,12 +25,13 @@ object ArrivalStatusViewModel {
 
   def apply(arrival: Arrival)(implicit config: FrontendAppConfig): ArrivalStatusViewModel = {
     val allPfs: PartialFunction[Arrival, ArrivalStatusViewModel] =
-      Seq(unloadingPermission,
-          arrivalRejected,
-          unloadingRemarksRejected,
-          arrivalNegativeAcknowledgement,
-          unloadingRemarksNegativeAcknowledgement,
-          displayStatus
+      Seq(
+        unloadingPermission,
+        arrivalRejected,
+        unloadingRemarksRejected,
+        arrivalNegativeAcknowledgement,
+        unloadingRemarksNegativeAcknowledgement,
+        displayStatus
       ).reduce(_ orElse _)
 
     allPfs.apply(arrival)

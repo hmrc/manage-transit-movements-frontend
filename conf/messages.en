@@ -102,7 +102,7 @@ movement.status.unloadingRemarksSubmitted = Unloading remarks sent
 movement.status.unloadingRemarksRejected = Unloading remarks rejected
 movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement = Unloading remarks rejected
 movement.status.goodsReleased = Goods Released
-movement.status.XMLSubmissionNegativeAcknowledgement = Arrival notification rejected
+movement.status.XMLSubmissionNegativeAcknowledgement = XML submission rejected
 
 technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service
