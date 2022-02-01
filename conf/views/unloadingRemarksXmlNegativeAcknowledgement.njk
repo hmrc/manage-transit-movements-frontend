@@ -4,7 +4,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("xmlNegativeAcknowledgement.title")) }}
+  {{ title(messages("unloadingRemarksNegativeAcknowledgement.title")) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -18,14 +18,14 @@
       <div class="govuk-grid-column-two-thirds">
 
         <h1 class="govuk-heading-xl">
-          {{ messages("xmlNegativeAcknowledgement.heading") }}
+          {{ messages("unloadingRemarksNegativeAcknowledgement.heading") }}
         </h1>
 
         <dl class="govuk-summary-list">
 
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key" style="width: 48%">
-              {{ messages("xmlNegativeAcknowledgement.errorType") }}
+              {{ messages("unloadingRemarksNegativeAcknowledgement.errorType") }}
             </dt>
             <dd class="govuk-summary-list__value" style="width: 62%">
               {{functionalError.errorType}}
@@ -34,7 +34,7 @@
 
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key" style="width: 48%">
-              {{ messages("xmlNegativeAcknowledgement.errorPointer") }}
+              {{ messages("unloadingRemarksNegativeAcknowledgement.errorPointer") }}
             </dt>
             <dd class="govuk-summary-list__value" style="width: 62%">
               {{functionalError.pointer.value}}
@@ -44,7 +44,7 @@
           {% if functionalError.reason %}
             <div class="govuk-summary-list__row">
               <dt class="govuk-summary-list__key" style="width: 48%">
-                {{ messages("xmlNegativeAcknowledgement.errorReason") }}
+                {{ messages("unloadingRemarksNegativeAcknowledgement.errorReason") }}
               </dt>
               <dd class="govuk-summary-list__value" style="width: 62%">
                 {{functionalError.reason}}
@@ -55,7 +55,7 @@
           {% if functionalError.originalAttributeValue %}
             <div class="govuk-summary-list__row">
               <dt class="govuk-summary-list__key" style="width: 48%">
-                {{ messages("xmlNegativeAcknowledgement.originalAttributeValue") }}
+                {{ messages("unloadingRemarksNegativeAcknowledgement.originalAttributeValue") }}
               </dt>
               <dd class="govuk-summary-list__value" style="width: 62%">
                 {{functionalError.originalAttributeValue}}
@@ -68,13 +68,13 @@
       </div>
     </div>
 
-    <p class="govuk-body">{{ messages("xmlNegativeAcknowledgement.paragraph") }}:</p>
+    <p class="govuk-body">{{ messages("unloadingRemarksNegativeAcknowledgement.paragraph") }}:</p>
       <ol class="govuk-list govuk-list--bullet">
         <li>
-          <a id ="create-new-unloading-remarks" class="govuk-link" href={{ declareUnloadingRemarksUrl }}>{{ messages("xmlNegativeAcknowledgement.create.unloadingRemarks") }}</a>
+          <a id ="create-new-unloading-remarks" class="govuk-link" href={{ declareUnloadingRemarksUrl }}>{{ messages("unloadingRemarksNegativeAcknowledgement.create.unloadingRemarks") }}</a>
         </li>
         <li>
-          <a class="govuk-link" target="_blank" href={{ contactUrl }} rel="noopener noreferrer">{{ messages("xmlNegativeAcknowledgement.linktext") }}</a>
+          <a class="govuk-link" target="_blank" href={{ contactUrl }} rel="noopener noreferrer">{{ messages("unloadingRemarksNegativeAcknowledgement.linktext") }}</a>
         </li>
       </ol>
   </div>

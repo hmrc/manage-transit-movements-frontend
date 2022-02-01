@@ -96,12 +96,12 @@ movement.search.departure.title = Search by local reference number
 
 movement.status.arrivalSubmitted = Arrival notification sent
 movement.status.arrivalRejected = Arrival notification rejected
+movement.status.ArrivalSubmittedNegativeAcknowledgement = Arrival notification rejected
 movement.status.unloadingPermission = Unloading permission granted
 movement.status.unloadingRemarksSubmitted = Unloading remarks sent
 movement.status.unloadingRemarksRejected = Unloading remarks rejected
-movement.status.goodsReleased = Goods Released
-movement.status.XMLSubmissionNegativeAcknowledgement = Arrival notification rejected
 movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement = Unloading remarks rejected
+movement.status.goodsReleased = Goods Released
 
 technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service
@@ -176,7 +176,16 @@ xmlNegativeAcknowledgement.errorType = Error type
 xmlNegativeAcknowledgement.errorPointer = Error pointer
 xmlNegativeAcknowledgement.errorReason = Error reason
 xmlNegativeAcknowledgement.originalAttributeValue = Original attribute value
-xmlNegativeAcknowledgement.create.unloadingRemarks = create new unloading remarks
+
+unloadingRemarksNegativeAcknowledgement.title = There is a problem with these unloading remarks
+unloadingRemarksNegativeAcknowledgement.heading = There is a problem with these unloading remarks
+unloadingRemarksNegativeAcknowledgement.paragraph = You must
+unloadingRemarksNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab)
+unloadingRemarksNegativeAcknowledgement.errorType = Error type
+unloadingRemarksNegativeAcknowledgement.errorPointer = Error pointer
+unloadingRemarksNegativeAcknowledgement.errorReason = Error reason
+unloadingRemarksNegativeAcknowledgement.originalAttributeValue = Original attribute value
+unloadingRemarksNegativeAcknowledgement.create.unloadingRemarks = create new unloading remarks
 
 controlDecision.title = Your goods have been selected for control
 controlDecision.heading = Your goods have been selected for control
