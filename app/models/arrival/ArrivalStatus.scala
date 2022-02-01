@@ -29,7 +29,8 @@ object ArrivalStatus {
   case object UnloadingRemarksSubmitted extends ArrivalStatus
   case object UnloadingRemarksRejected extends ArrivalStatus
   case object GoodsReleased extends ArrivalStatus
-  case object XMLSubmissionNegativeAcknowledgement extends ArrivalStatus
+  case object ArrivalSubmittedNegativeAcknowledgement extends ArrivalStatus
+  case object UnloadingRemarksSubmittedNegativeAcknowledgement extends ArrivalStatus
 
   case class InvalidStatus(status: String) extends ArrivalStatus {
     override def toString: String = status
@@ -43,7 +44,8 @@ object ArrivalStatus {
       UnloadingRemarksSubmitted,
       UnloadingRemarksRejected,
       GoodsReleased,
-      XMLSubmissionNegativeAcknowledgement
+      ArrivalSubmittedNegativeAcknowledgement,
+      UnloadingRemarksSubmittedNegativeAcknowledgement
     )
 
   implicit val enumerable: Enumerable[ArrivalStatus] =
