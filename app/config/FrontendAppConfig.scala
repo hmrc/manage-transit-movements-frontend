@@ -33,9 +33,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
   val showUserResearchBanner: Boolean = configuration.get[Boolean]("banners.showUserResearch")
 
-  val analyticsToken: String = configuration.get[String](s"google-analytics.token")
-  val analyticsHost: String  = configuration.get[String](s"google-analytics.host")
-
   val betaFeedbackUrl                = s"$contactHost/contact/beta-feedback"
   val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
 
