@@ -19,14 +19,14 @@ package models
 import models.departure.DepartureStatus
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
+
 import java.time.LocalDateTime
 
 case class Departure(
   departureId: DepartureId,
   updated: LocalDateTime,
   localReferenceNumber: LocalReferenceNumber,
-  status: DepartureStatus,
-  previousStatus: Option[DepartureStatus] = None
+  status: DepartureStatus
 ) extends Movement
 
 object Departure {
@@ -35,7 +35,6 @@ object Departure {
     (__ \ "departureId").read[DepartureId] and
       (__ \ "updated").read[LocalDateTime] and
       (__ \ "referenceNumber").read[LocalReferenceNumber] and
-      (__ \ "status").read[DepartureStatus] and
-      (__ \ "previousStatus").readNullable[DepartureStatus]
+      (__ \ "status").read[DepartureStatus]
   )(Departure.apply _)
 }

@@ -16,7 +16,7 @@
 
 package models.departure
 
-import models.{Enumerable, WithName}
+import models.Enumerable
 import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
 
 sealed trait DepartureStatus
@@ -34,7 +34,8 @@ object DepartureStatus {
   case object GuaranteeNotValid extends DepartureStatus
   case object DeclarationCancellationRequest extends DepartureStatus
   case object CancellationDecision extends DepartureStatus
-  case object XMLSubmissionNegativeAcknowledgement extends WithName("DeclarationCancellationRequestNegativeAcknowledgement") with DepartureStatus
+  case object DepartureSubmittedNegativeAcknowledgement extends DepartureStatus
+  case object DeclarationCancellationRequestNegativeAcknowledgement extends DepartureStatus
 
   case class InvalidStatus(status: String) extends DepartureStatus {
     override def toString: String = status
@@ -53,7 +54,8 @@ object DepartureStatus {
       CancellationDecision,
       NoReleaseForTransit,
       ControlDecisionNotification,
-      XMLSubmissionNegativeAcknowledgement
+      DepartureSubmittedNegativeAcknowledgement,
+      DeclarationCancellationRequestNegativeAcknowledgement
     )
 
   implicit val enumerable: Enumerable[DepartureStatus] =

@@ -26,7 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  "Departure Status" - {
+  "Departure Status View Model" - {
 
     "When status is TransitDeclarationRejected show correct status and action" in {
       forAll(arbitrary[Departure]) {
@@ -168,12 +168,11 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       }
     }
 
-    "When status is XMLSubmissionNegativeAcknowledgement and previous message was DepartureSubmitted show correct status and action" in {
+    "When status is DepartureSubmittedNegativeAcknowledgement show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
           val updatedDeparture: Departure = departure.copy(
-            status = XMLSubmissionNegativeAcknowledgement,
-            previousStatus = Some(DepartureSubmitted)
+            status = DepartureSubmittedNegativeAcknowledgement
           )
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
@@ -183,18 +182,30 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
       }
     }
 
-    "When status is XMLSubmissionNegativeAcknowledgement and previous message was DeclarationCancellationRequest show correct status and action" in {
+    "When status is DeclarationCancellationRequestNegativeAcknowledgement show correct status and action" in {
       forAll(arbitrary[Departure]) {
         departure =>
           val updatedDeparture: Departure = departure.copy(
-            status = XMLSubmissionNegativeAcknowledgement,
-            previousStatus = Some(DeclarationCancellationRequest)
+            status = DeclarationCancellationRequestNegativeAcknowledgement
           )
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
           departureStatus.status mustBe "departure.status.XMLCancellationSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
+      }
+    }
+
+    "When status is InvalidStatus show correct status and action" in {
+      forAll(arbitrary[Departure], arbitrary[String]) {
+        (departure, status) =>
+          val updatedDeparture: Departure = departure.copy(
+            status = InvalidStatus(status)
+          )
+
+          val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
+          departureStatus.status mustBe status
+          departureStatus.actions.size mustBe 0
       }
     }
   }

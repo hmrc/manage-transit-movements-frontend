@@ -17,10 +17,13 @@
 package models.departure
 
 import base.SpecBase
+import generators.Generators
 import models.departure.DepartureStatus._
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsString, JsSuccess}
+import org.scalacheck.Arbitrary.arbitrary
 
-class DepartureStatusSpec extends SpecBase {
+class DepartureStatusSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   def departureStatusesExcluding(exclude: DepartureStatus*): Seq[DepartureStatus] =
     DepartureStatus.values.filterNot(
@@ -31,14 +34,10 @@ class DepartureStatusSpec extends SpecBase {
 
     "when given a valid message type" in {
 
-      DepartureStatus.values.foreach {
+      forAll(arbitrary[DepartureStatus]) {
         departureStatus =>
           JsString(departureStatus.toString).validate[DepartureStatus] mustEqual JsSuccess(departureStatus)
       }
-    }
-
-    "when given a DeclarationCancellationRequestNegativeAcknowledgement" in {
-      JsString("DeclarationCancellationRequestNegativeAcknowledgement").validate[DepartureStatus] mustEqual JsSuccess(XMLSubmissionNegativeAcknowledgement)
     }
 
     "when given an invalid message type" in {

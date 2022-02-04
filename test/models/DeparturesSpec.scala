@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import models.departure.DepartureStatus.{DeclarationCancellationRequest, DepartureSubmitted}
+import models.departure.DepartureStatus.DeclarationCancellationRequest
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime
@@ -57,8 +57,7 @@ class DeparturesSpec extends SpecBase {
               DepartureId(22),
               localDateTime,
               LocalReferenceNumber("lrn"),
-              status = DeclarationCancellationRequest,
-              previousStatus = Some(DepartureSubmitted)
+              status = DeclarationCancellationRequest
             )
           )
         )
@@ -96,8 +95,7 @@ class DeparturesSpec extends SpecBase {
               DepartureId(22),
               localDateTime,
               LocalReferenceNumber("lrn"),
-              status = DeclarationCancellationRequest,
-              previousStatus = None
+              status = DeclarationCancellationRequest
             )
           )
         )
