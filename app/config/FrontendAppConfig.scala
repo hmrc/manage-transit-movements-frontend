@@ -37,9 +37,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val signOutUrl: String = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
 
-  private val declareUnloadingRemarksUrlBase            = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
+  private val declareUnloadingRemarksUrlBase            = getFrontendUrl("Unloading")
   def declareUnloadingRemarksUrl(arrivalId: ArrivalId)  = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}"
-  private val declareArrivalNotificationUrlBase: String = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
+  private val declareArrivalNotificationUrlBase: String = getFrontendUrl("Arrival")
   val declareArrivalNotificationStartUrl: String        = s"$declareArrivalNotificationUrlBase/movement-reference-number"
 
   def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$declareArrivalNotificationUrlBase/${arrivalId.index}/arrival-rejection"
@@ -71,8 +71,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val timeoutSeconds: String   = configuration.get[String]("session.timeoutSeconds")
   lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
 
-  private val departureFrontendUrl: String    = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
-  private val cancellationFrontendUrl: String = configuration.get[String]("urls.declareTransitMovementCancellationFrontend")
+  private val departureFrontendUrl: String    = getFrontendUrl("Departure")
+  private val cancellationFrontendUrl: String = getFrontendUrl("Cancellation")
 
   val declareDepartureStartWithLRNUrl: String                            = s"$departureFrontendUrl/local-reference-number"
   def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
@@ -81,6 +81,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def departureTadPdfUrl(departureId: DepartureId)                       = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
   def departureFrontendConfirmCancellationUrl(departureId: DepartureId)  = s"$cancellationFrontendUrl/${departureId.index}/confirm-cancellation"
 
-  lazy val languageTranslationEnabled: Boolean =
-    configuration.get[Boolean]("microservice.services.features.welsh-translation")
+  private lazy val isPhase5Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isPhase5Enabled")
+
+  private def getFrontendUrl(frontend: String): String = {
+    val url = if (isPhase5Enabled) s"manageTransitMovements${frontend}Frontend" else s"declareTransitMovement${frontend}Frontend"
+    configuration.get[String](s"urls.$url")
+  }
 }
