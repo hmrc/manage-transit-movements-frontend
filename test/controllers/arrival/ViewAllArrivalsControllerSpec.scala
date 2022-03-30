@@ -22,13 +22,14 @@ import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
 import models.arrival.ArrivalStatus.ArrivalSubmitted
-import models.{Arrival, ArrivalId, Arrivals}
+import models.{Arrival, ArrivalId, Arrivals, RichLocalDateTime}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -51,14 +52,15 @@ class ViewAllArrivalsControllerSpec
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
 
-  val localDateTime: LocalDateTime = LocalDateTime.now()
+  val time: LocalDateTime              = LocalDateTime.now()
+  val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
   override def beforeEach: Unit = {
     reset(mockArrivalMovementConnector)
     super.beforeEach
   }
 
-  override def guiceApplicationBuilder() =
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
@@ -72,13 +74,13 @@ class ViewAllArrivalsControllerSpec
       totalArrivals = 1,
       totalMatched = None,
       arrivals = Seq(
-        Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted)
+        Arrival(ArrivalId(1), time, time, "test mrn", ArrivalSubmitted)
       )
     )
 
   private val mockViewMovement = ViewArrival(
-    localDateTime.toLocalDate,
-    localDateTime.toLocalTime,
+    systemDefaultTime.toLocalDate,
+    systemDefaultTime.toLocalTime,
     "test mrn",
     "movement.status.arrivalSubmitted",
     Nil

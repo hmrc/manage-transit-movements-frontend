@@ -1,185 +1,148 @@
 $mobile: 769px;
 table {
-    paddin-left: -15px;
-    font-family:   "GDS Transport",arial,sans-serif;
-    border-collapse: collapse;
-    border-spacing: 0;
+	paddin-left: -15px;
+	font-family: "GDS Transport", arial, sans-serif;
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 
 caption {
-  font-size: 24px;
-  font-weight: 700;
-  text-align: left;
+	font-size: 24px;
+	font-weight: 700;
+	text-align: left;
 }
 
 th {
-  border-bottom: 1px solid #bfc1c3;
-  font-size: 19px;
-  padding: 0.5em 1em 0.5em 0;
-  text-align: left;
+	border-bottom: 1px solid #bfc1c3;
+	font-size: 19px;
+	padding: 0.5em 1em 0.5em 0;
+	text-align: left;
 }
 
 td {
-  border-bottom: 1px solid #bfc1c3;
-  font-size: 19px;
-  padding: 0.5em 1em 0.5em 0;
+	border-bottom: 1px solid #bfc1c3;
+	font-size: 19px;
+	padding: 0.5em 1em 0.5em 0;
 }
-
-th.action-col {
-    padding-left: 3em;
-}
-
 
 // ------ thead
-
 .responsive-table {
-  margin-bottom: 3em;
-  width: 100%;
-
-
-  thead {
-        border: 0;
-        clip: rect(0 0 0 0);
-        -webkit-clip-path: inset(50%);
-        clip-path: inset(50%);
-        height: 1px;
-        margin: 0;
-        overflow: hidden;
-        padding: 0;
-        position: absolute;
-        width: 1px;
-
-        @media (min-width: $mobile) {
-          clip: auto;
-          -webkit-clip-path: none;
-          clip-path: none;
-          display: table-header-group;
-          height: auto;
-          overflow: auto;
-          position: relative;
-          width: auto;
-        }
-      }
-
-      tbody {
-
-            tr {
-              display: block;
-              margin-bottom: 1.5em;
-
-              &:last-child {
-                margin-bottom: 0;
-              }
-
-              @media (max-width: $mobile) {
-                background-color: #fff;
-                box-shadow: 0 4px 0 0 #d8dde0;
-                padding: 0 0.5em;
-              }
-
-              @media (min-width: $mobile) {
-                display: table-row;
-              }
-
-              th {
-                text-align: left;
-              }
-
-              td {
-                display: block; // For browsers that don't support flexbox
-                display: flex;
-                justify-content: space-between;
-                min-width: 1px;
-                text-align: right;
-
-                @media (min-width: $mobile) {
-                  display: table-cell;
-                  text-align: left;
-                }
-
-                @media (max-width: $mobile) {
-                  padding-right: 0;
-                  &:last-child {
-                    border-bottom: none;
-                  }
-                }
-
-              }
-            }
-          }
-
-
+	margin-bottom: 3em;
+	width: 100%;
+	thead {
+		border: 0;
+		clip: rect(0 0 0 0);
+		-webkit-clip-path: inset(50%);
+		clip-path: inset(50%);
+		height: 1px;
+		margin: 0;
+		overflow: hidden;
+		padding: 0;
+		position: absolute;
+		width: 1px;
+		@media (min-width: $mobile) {
+			clip: auto;
+			-webkit-clip-path: none;
+			clip-path: none;
+			display: table-header-group;
+			height: auto;
+			overflow: auto;
+			position: relative;
+			width: auto;
+		}
+	}
+	tbody {
+		tr {
+			display: block;
+			margin-bottom: 1.5em;
+			&:last-child {
+				margin-bottom: 0;
+			}
+			@media (max-width: $mobile) {
+				background-color: #fff;
+				box-shadow: 0 4px 0 0 #d8dde0;
+				padding: 0 0.5em;
+			}
+			@media (min-width: $mobile) {
+				display: table-row;
+			}
+			th {
+				text-align: left;
+			}
+			td {
+				display: block; // For browsers that don't support flexbox
+				display: flex;
+				justify-content: space-between;
+				min-width: 1px;
+				text-align: right;
+				@media (min-width: $mobile) {
+					display: table-cell;
+					text-align: left;
+				}
+				@media (max-width: $mobile) {
+					padding-right: 0;
+					&:last-child {
+						border-bottom: none;
+					}
+				}
+			}
+		}
+	}
 }
 
-
-
 tbody tr {
-  display: block;
-  margin-bottom: 1.5em;
-  padding: 0 0.5em;
+	display: block;
+	margin-bottom: 1.5em;
+	padding: 0 0.5em;
 }
 
 @media (min-width: 769px) {
-  tbody tr {
-    display: table-row;
-  }
+	tbody tr {
+		display: table-row;
+	}
 }
-
 
 //----------table cell
 tbody tr td {
-  display: flex;
-  justify-content: space-between;
-  min-width: 1px;
-  text-align: right;
-
-
-    a.action-link{
-        display: block;
-        margin-left: 3em;
-        clear: both;
-        margin-bottom: 20px;
-    }
+	display: flex;
+	justify-content: space-between;
+	min-width: 1px;
+	text-align: right;
 }
 
 @media (max-width: 768px) {
-  tbody tr td {
-    padding-right: 0;
-
-     a.action-link{
-            display: block;
-            margin-left: 3em;
-            clear: both;
-            margin-bottom: 20px;
-        }
-  }
-  tbody tr td:last-child {
-    border-bottom: 0
-  }
-  tbody tr {
-    border-bottom: 3px solid grey;
-  }
+	tbody tr td {
+		padding-right: 0;
+	}
+	tbody tr td:last-child {
+		border-bottom: 0
+	}
+	tbody tr {
+		border-bottom: 3px solid grey;
+	}
 }
 
 @media (min-width: 769px) {
-  tbody tr td {
-    display: table-cell;
-    text-align: left;
-  }
+	tbody tr td {
+		display: table-cell;
+		text-align: left;
+	}
 }
 
 //-----responsive table
-
 .responsive-table__heading {
-  font-weight: 700;
-  padding-right: 1em;
-  text-align: left;
-  word-break: initial;
+	font-weight: 700;
+	padding-right: 1em;
+	text-align: left;
+	word-break: initial;
 }
+
 @media (min-width: 769px) {
-  .responsive-table__heading {
-    display: none;
-  }
+	.responsive-table__heading {
+		display: none;
+	}
+}
 
-
+.responsive-table__list {
+    display: table-cell;
 }

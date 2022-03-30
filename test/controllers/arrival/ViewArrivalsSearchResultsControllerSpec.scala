@@ -22,7 +22,7 @@ import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
 import models.arrival.ArrivalStatus.ArrivalSubmitted
-import models.{Arrival, ArrivalId, Arrivals}
+import models.{Arrival, ArrivalId, Arrivals, RichLocalDateTime}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -36,8 +36,8 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.{ViewArrival, ViewArrivalMovements}
-import java.time.LocalDateTime
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ViewArrivalsSearchResultsControllerSpec
@@ -54,7 +54,8 @@ class ViewArrivalsSearchResultsControllerSpec
   private val totalSearchArrivals                             = 8
   private val someSearchMatches                               = 5
 
-  val localDateTime: LocalDateTime = LocalDateTime.now()
+  val time: LocalDateTime              = LocalDateTime.now()
+  val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
   override def beforeEach: Unit = {
     reset(mockArrivalMovementConnector)
@@ -75,13 +76,13 @@ class ViewArrivalsSearchResultsControllerSpec
       totalArrivals = totalSearchArrivals,
       totalMatched = Some(totalMatched),
       arrivals = Seq(
-        Arrival(ArrivalId(1), localDateTime, localDateTime, "test mrn", ArrivalSubmitted)
+        Arrival(ArrivalId(1), time, time, "test mrn", ArrivalSubmitted)
       )
     )
 
   private val mockViewMovement = ViewArrival(
-    localDateTime.toLocalDate,
-    localDateTime.toLocalTime,
+    systemDefaultTime.toLocalDate,
+    systemDefaultTime.toLocalTime,
     "test mrn",
     "movement.status.arrivalSubmitted",
     Nil
