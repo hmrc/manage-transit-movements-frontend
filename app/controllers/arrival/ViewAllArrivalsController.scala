@@ -34,12 +34,13 @@ import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
 import java.time.Clock
 import scala.concurrent.ExecutionContext
 
-class ViewAllArrivalsController @Inject() (val renderer: Renderer,
-                                           identify: IdentifierAction,
-                                           cc: MessagesControllerComponents,
-                                           val config: FrontendAppConfig,
-                                           val paginationAppConfig: PaginationAppConfig,
-                                           arrivalMovementConnector: ArrivalMovementConnector
+class ViewAllArrivalsController @Inject() (
+  val renderer: Renderer,
+  identify: IdentifierAction,
+  cc: MessagesControllerComponents,
+  val config: FrontendAppConfig,
+  val paginationAppConfig: PaginationAppConfig,
+  arrivalMovementConnector: ArrivalMovementConnector
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport

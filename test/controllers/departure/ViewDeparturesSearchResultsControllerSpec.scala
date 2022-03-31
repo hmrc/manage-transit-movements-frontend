@@ -21,7 +21,7 @@ import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
-import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
+import models.{Departure, DepartureId, Departures, LocalReferenceNumber, RichLocalDateTime}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -42,7 +42,8 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
   private val totalSearchDepartures = 8
   private val someSearchMatches     = 5
 
-  val localDateTime: LocalDateTime = LocalDateTime.now()
+  val time: LocalDateTime              = LocalDateTime.now()
+  val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
   private def mockDepartureSearchResponse(retrievedDepartures: Int, totalMatched: Int): Departures =
     Departures(
@@ -52,7 +53,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
       departures = Seq(
         Departure(
           DepartureId(1),
-          LocalDateTime.now(),
+          time,
           LocalReferenceNumber("test lrn"),
           DepartureSubmitted
         )
@@ -60,8 +61,8 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
     )
 
   private val mockViewMovement = ViewDeparture(
-    localDateTime.toLocalDate,
-    localDateTime.toLocalTime,
+    systemDefaultTime.toLocalDate,
+    systemDefaultTime.toLocalTime,
     LocalReferenceNumber("test lrn"),
     "departure.status.submitted",
     Nil
