@@ -96,7 +96,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks {
               s"http://localhost:10123/manage-transit-movements/unloading/$index/unloading-rejection"
 
             config.departureFrontendConfirmCancellationUrl(DepartureId(index)) mustEqual
-              s"http://localhost:10122/manage-transit-movements/cancellation/$index/confirm-cancellation"
+              s"http://localhost:10122/manage-transit-movements/cancellation/$index"
         }
       }
     }

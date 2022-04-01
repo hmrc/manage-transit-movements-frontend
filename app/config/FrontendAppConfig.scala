@@ -79,7 +79,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
   def departureTadPdfUrl(departureId: DepartureId)                       = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
-  def departureFrontendConfirmCancellationUrl(departureId: DepartureId)  = s"$cancellationFrontendUrl/${departureId.index}/confirm-cancellation"
+
+  def departureFrontendConfirmCancellationUrl(departureId: DepartureId) =
+    s"$cancellationFrontendUrl/${departureId.index}" + (if (isPhase5Enabled) "" else "/confirm-cancellation")
 
   private lazy val isPhase5Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isPhase5Enabled")
 
