@@ -82,7 +82,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   def departureTadPdfUrl(departureId: DepartureId)                       = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
 
   // Todo is there a new url for cancellation the departure in phase 5?, rollback?
-  def departureFrontendConfirmCancellationUrl(departureId: DepartureId) = if (phase5Switch.Departures.enabled) {
+  def departureFrontendConfirmCancellationUrl(departureId: DepartureId) = if (phase5Switch.Cancellations.enabled) {
     s"$cancellationFrontendUrl/${departureId.index}"
   } else {
     s"$cancellationFrontendUrl/${departureId.index}/confirm-cancellation"
