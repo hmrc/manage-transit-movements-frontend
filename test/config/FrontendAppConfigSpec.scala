@@ -30,7 +30,15 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks {
     "when phase 4" - {
       "must point to to phase 4 frontend urls" in {
         val app: Application = new GuiceApplicationBuilder()
-          .configure("microservice.services.features.isPhase5Enabled" -> false)
+          .configure(
+            "microservice.services.features.phase5Enabled" -> Map(
+              "departure"        -> false,
+              "unloading"        -> false,
+              "cancellation"     -> false,
+              "arrival"          -> false,
+              "guaranteeBalance" -> false
+            )
+          )
           .build()
 
         val config = app.injector.instanceOf[FrontendAppConfig]
@@ -67,7 +75,15 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks {
     "when phase 5" - {
       "must point to to phase 5 frontend urls" in {
         val app: Application = new GuiceApplicationBuilder()
-          .configure("microservice.services.features.isPhase5Enabled" -> true)
+          .configure(
+            "microservice.services.features.phase5Enabled" -> Map(
+              "departure"        -> true,
+              "unloading"        -> true,
+              "cancellation"     -> true,
+              "arrival"          -> true,
+              "guaranteeBalance" -> true
+            )
+          )
           .build()
 
         val config = app.injector.instanceOf[FrontendAppConfig]
