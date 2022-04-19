@@ -21,7 +21,7 @@ import models.{ArrivalId, DepartureId}
 import play.api.Configuration
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: Configuration) {
+class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: Phase5) {
 
   lazy val contactHost: String     = configuration.get[String]("contact-frontend.host")
   val contactFormServiceIdentifier = "CTCTraders"
@@ -37,9 +37,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val signOutUrl: String = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
 
-  private val declareUnloadingRemarksUrlBase            = getFrontendUrl("Unloading")
+  private val declareUnloadingRemarksUrlBase = phase5Switch.Unloading.getFrontendUrl
+
   def declareUnloadingRemarksUrl(arrivalId: ArrivalId)  = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}"
-  private val declareArrivalNotificationUrlBase: String = getFrontendUrl("Arrival")
+  private val declareArrivalNotificationUrlBase: String = phase5Switch.Arrivals.getFrontendUrl
   val declareArrivalNotificationStartUrl: String        = s"$declareArrivalNotificationUrlBase/movement-reference-number"
 
   def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$declareArrivalNotificationUrlBase/${arrivalId.index}/arrival-rejection"
@@ -71,8 +72,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val timeoutSeconds: String   = configuration.get[String]("session.timeoutSeconds")
   lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
 
-  private val departureFrontendUrl: String    = getFrontendUrl("Departure")
-  private val cancellationFrontendUrl: String = getFrontendUrl("Cancellation")
+  private val departureFrontendUrl: String    = phase5Switch.Departures.getFrontendUrl
+  private val cancellationFrontendUrl: String = phase5Switch.Cancellations.getFrontendUrl
 
   val declareDepartureStartWithLRNUrl: String                            = s"$departureFrontendUrl/local-reference-number"
   def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
@@ -80,13 +81,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
   def departureTadPdfUrl(departureId: DepartureId)                       = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
 
-  def departureFrontendConfirmCancellationUrl(departureId: DepartureId) =
-    s"$cancellationFrontendUrl/${departureId.index}" + (if (isPhase5Enabled) "" else "/confirm-cancellation")
-
-  private lazy val isPhase5Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isPhase5Enabled")
-
-  private def getFrontendUrl(frontend: String): String = {
-    val url = if (isPhase5Enabled) s"manageTransitMovements${frontend}Frontend" else s"declareTransitMovement${frontend}Frontend"
-    configuration.get[String](s"urls.$url")
+  // Todo is there a new url for cancellation the departure in phase 5?, rollback?
+  def departureFrontendConfirmCancellationUrl(departureId: DepartureId) = if (phase5Switch.Departures.enabled) {
+    s"$cancellationFrontendUrl/${departureId.index}"
+  } else {
+    s"$cancellationFrontendUrl/${departureId.index}/confirm-cancellation"
   }
 }
