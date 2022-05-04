@@ -4,6 +4,8 @@ GET        /assets/*file                                                      co
 
 GET        /                                                                  controllers.RedirectController.onPageLoad()
 
+->         /hmrc-frontend                                                     hmrcfrontend.Routes
+
 GET        /index                                                             controllers.IndexController.onPageLoad()
 
 GET        /what-do-you-want-to-do                                            controllers.WhatDoYouWantToDoController.onPageLoad()

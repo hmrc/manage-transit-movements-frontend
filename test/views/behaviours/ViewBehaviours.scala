@@ -16,107 +16,175 @@
 
 package views.behaviours
 
-import base.SingleViewSpec
+import base.SpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import play.api.libs.json.{JsObject, Json}
-import play.twirl.api.Html
-import viewModels.pagination.PaginationViewModel
+import org.jsoup.nodes.{Document, Element}
+import org.scalatest.Assertion
+import play.twirl.api.HtmlFormat
+import views.base.ViewSpecAssertions
 
-abstract class ViewBehaviours(override protected val viewUnderTest: String) extends SingleViewSpec(viewUnderTest) {
+import scala.collection.JavaConverters._
 
-  def asDocument(html: Html): Document = Jsoup.parse(html.toString())
+trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
 
-  def pageWithHeading(doc: Document, messageKeyPrefix: String): Unit =
-    "display page heading" in {
-      assertPageHasHeading(doc, s"$messageKeyPrefix.heading")
+  def view: HtmlFormat.Appendable
+
+  def parseView(view: HtmlFormat.Appendable): Document = Jsoup.parse(view.toString())
+
+  lazy val doc: Document = parseView(view)
+
+  val prefix: String
+
+  val hasSignOutLink: Boolean = true
+
+  if (hasSignOutLink) {
+    "must render sign out link in header" in {
+      val link = getElementByClass(doc, "hmrc-sign-out-nav__link")
+      assertElementContainsText(link, "Sign out")
+      assertElementContainsHref(
+        link,
+        "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:9514/feedback/manage-transit-movements"
+      )
     }
 
-  def pageWithLink(doc: Document, id: String, expectedText: String, expectedHref: String): Unit =
-    s"display link with id $id" in {
-      assertPageHasLink(doc, id, expectedText, expectedHref)
+    "must render timeout dialog" in {
+      val metas = getElementsByTag(doc, "meta")
+      assertElementExists(metas, _.attr("name") == "hmrc-timeout-dialog")
+      assertElementExists(metas, _.attr("data-keep-alive-url") == "/manage-transit-movements/keep-alive")
+    }
+  } else {
+    "must not render sign out link in header" in {
+      assertElementDoesNotExist(doc, "hmrc-sign-out-nav__link")
     }
 
-  // scalastyle:off method.length
-  def pageWithPagination(href: String): Unit =
-    "Pagination" - {
-
-      "must display pagination results when there is more than one page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(4, 2, 2, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        doc.getElementById("paginated-results-count").text mustBe "Showing 3 to 4 of 4 results"
-      }
-
-      "must display previous button when not on the first page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(4, 2, 2, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertRenderedById(doc, "previous")
-        doc.getElementById("previous").attr("href") mustBe s"$href?page=1"
-      }
-
-      "must not display previous button when on the first page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(1, 1, 1, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertNotRenderedById(doc, "previous")
-      }
-
-      "must display next button when not on the last page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(2, 1, 1, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertRenderedById(doc, "next")
-        doc.getElementById("next").attr("href") mustBe s"$href?page=2"
-      }
-
-      "must not display next button when on the last page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(2, 2, 1, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertNotRenderedById(doc, "next")
-      }
-
-      "must display correct amount of items" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(60, 4, 5, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertRenderedById(doc, "pagination-item-1")
-        assertNotRenderedById(doc, "pagination-item-2")
-        assertRenderedById(doc, "pagination-item-3")
-        assertRenderedById(doc, "pagination-item-4")
-        assertRenderedById(doc, "pagination-item-5")
-        assertNotRenderedById(doc, "pagination-item-6")
-        assertRenderedById(doc, "pagination-item-12")
-      }
+    "must not render timeout dialog" in {
+      val metas = getElementsByTag(doc, "meta")
+      assertElementDoesNotExist(metas, _.attr("name") == "hmrc-timeout-dialog")
     }
-  // scalastyle:on method.length
+  }
 
-  def pageWithMovementSearch(doc: Document, id: String, expectedText: String): Unit =
-    "displays search box" - {
-      s"display search box $id" in {
-        assertRenderedById(doc, id)
-      }
+  "must render service name link in header" in {
+    val link = getElementByClass(doc, "hmrc-header__service-name--linked")
+    assertElementContainsText(link, "Manage your transit movements")
+    assertElementContainsHref(link, "/manage-transit-movements/what-do-you-want-to-do")
+  }
 
-      "contain a label for the search" in {
-        assertContainsLabel(doc, id, expectedText, None)
-      }
+  "must append service to feedback link" in {
+    val link = getElementBySelector(doc, ".govuk-phase-banner__text > .govuk-link")
+    getElementHref(link) must endWith("?service=CTCTraders")
+  }
 
-      "have a submit button" in {
-        assertRenderedById(doc, "submit")
-      }
+  "must render accessibility statement link" in {
+    val link = doc
+      .select(".govuk-footer__inline-list-item > .govuk-footer__link")
+      .asScala
+      .find(_.text() == "Accessibility statement")
+      .get
+
+    getElementHref(link) must include("http://localhost:12346/accessibility-statement/manage-transit-movements?referrerUrl=")
+  }
+
+  "must not render language toggle" in {
+    assertElementDoesNotExist(doc, "hmrc-language-select")
+  }
+
+  def pageWithTitle(args: Any*): Unit =
+    pageWithTitle(doc, prefix, args: _*)
+
+  def pageWithTitle(doc: Document, prefix: String, args: Any*): Unit =
+    "must render title" in {
+      val title = doc.title()
+      title mustBe s"${messages(s"$prefix.title", args: _*)} - Manage your transit movements - GOV.UK"
+    }
+
+  def pageWithHeading(args: Any*): Unit =
+    pageWithHeading(doc, prefix, args: _*)
+
+  def pageWithHeading(doc: Document, prefix: String, args: Any*): Unit =
+    "must render heading" in {
+      val heading = getElementByTag(doc, "h1")
+      assertElementIncludesText(heading, messages(s"$prefix.heading", args: _*))
+    }
+
+  def pageWithCaption(expectedText: String): Unit =
+    "must render caption" in {
+      val caption = getElementByClass(doc, "govuk-caption-xl")
+      assertElementContainsText(caption, expectedText)
+    }
+
+  def pageWithHint(expectedText: String): Unit =
+    "must render hint" in {
+      val hint = getElementByClass(doc, "govuk-hint")
+      assertElementContainsText(hint, expectedText)
+    }
+
+  def pageWithoutHint(): Unit =
+    "must not render hint" in {
+      assertElementDoesNotExist(doc, "govuk-hint")
+    }
+
+  def pageWithSubmitButton(expectedText: String): Unit =
+    pageWithButton(expectedText) {
+      button => assertElementContainsId(button, "submit")
+    }
+
+  private def pageWithButton(expectedText: String)(additionalAssertions: Element => Assertion*): Unit =
+    s"must render $expectedText button" in {
+      val button = getElementByClass(doc, "govuk-button")
+      assertElementContainsText(button, expectedText)
+      additionalAssertions.map(_(button))
+    }
+
+  def pageWithLink(id: String, expectedText: String, expectedHref: String): Unit =
+    s"must render link with id $id" in {
+      val link = getElementById(doc, id)
+      assertElementContainsText(link, expectedText)
+      assertElementContainsHref(link, expectedHref)
+    }
+
+  def pageWithBackLink(): Unit =
+    "must render back link" in {
+      val link = getElementByClass(doc, "govuk-back-link")
+      assertElementContainsText(link, "Back")
+      assertElementContainsHref(link, "javascript:history.back()")
+    }
+
+  def pageWithoutBackLink(): Unit =
+    "must not render back link" in {
+      assertElementDoesNotExist(doc, "govuk-back-link")
+    }
+
+  def pageWithContent(tag: String, expectedText: String): Unit =
+    pageWithContent(doc, tag, expectedText)
+
+  def pageWithContent(doc: Document, tag: String, expectedText: String): Unit =
+    pageWithContent(doc, tag, expectedText, _ equals _)
+
+  def pageWithPartialContent(tag: String, expectedText: String): Unit =
+    pageWithContent(doc, tag, expectedText, _ contains _)
+
+  private def pageWithContent(doc: Document, tag: String, expectedText: String, condition: (String, String) => Boolean): Unit =
+    s"must render $tag with text $expectedText" in {
+      val elements = getElementsByTag(doc, tag)
+      assertElementExists(elements, element => condition(element.text, expectedText))
+    }
+
+  def pageWithoutContent(doc: Document, tag: String, expectedText: String): Unit =
+    s"must not render $tag with text $expectedText" in {
+      val elements = getElementsByTag(doc, tag)
+      assertElementDoesNotExist(elements, _.text == expectedText)
+    }
+
+  def pageWithList(listClass: String, expectedListItems: String*): Unit =
+    "must render list" in {
+      val list      = getElementByClass(doc, listClass)
+      val listItems = list.getElementsByTag("li")
+      listItems.asScala.map(_.text()) mustEqual expectedListItems
+    }
+
+  def pageWithFormAction(expectedUrl: String): Unit =
+    "must render form with action" in {
+      val formAction = getElementByTag(doc, "form").attr("action")
+      formAction mustBe expectedUrl
     }
 }

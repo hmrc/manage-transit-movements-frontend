@@ -25,9 +25,9 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewArrival, ViewArrivalMovements}
-import views.behaviours.MovementsTableViewBehaviours
+import views.behaviours.NunjucksMovementsTableViewBehaviours
 
-class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours("viewAllArrivals.njk") with Generators with ScalaCheckPropertyChecks {
+class ViewAllArrivalsViewSpec extends NunjucksMovementsTableViewBehaviours("viewAllArrivals.njk") with Generators with ScalaCheckPropertyChecks {
 
   private val messageKeyPrefix: String = "viewArrivalNotifications"
 

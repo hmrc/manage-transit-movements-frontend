@@ -16,11 +16,11 @@
 
 package views
 
+import _root_.utils.Format
 import base.SingleViewSpec
 import models.departure.ControlDecision
 import org.jsoup.nodes.Document
 import play.api.libs.json.Json
-import utils.Format
 
 import java.time.LocalDate
 

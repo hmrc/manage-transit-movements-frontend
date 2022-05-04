@@ -26,9 +26,9 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import viewModels.{ViewDeparture, ViewDepartureMovements}
-import views.behaviours.MovementsTableViewBehaviours
+import views.behaviours.NunjucksMovementsTableViewBehaviours
 
-class ViewAllDeparturesViewSpec extends MovementsTableViewBehaviours("viewAllDepartures.njk") with Generators with ScalaCheckPropertyChecks {
+class ViewAllDeparturesViewSpec extends NunjucksMovementsTableViewBehaviours("viewAllDepartures.njk") with Generators with ScalaCheckPropertyChecks {
 
   private val messageKeyPrefix: String = "viewDepartures"
 

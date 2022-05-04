@@ -24,7 +24,7 @@ import viewModels.ViewMovement
 import java.time.format.DateTimeFormatter
 import scala.collection.convert.ImplicitConversions._
 
-abstract class MovementsTableViewBehaviours(override protected val viewUnderTest: String) extends ViewBehaviours(viewUnderTest) {
+abstract class NunjucksMovementsTableViewBehaviours(override protected val viewUnderTest: String) extends NunjucksViewBehaviours(viewUnderTest) {
 
   val dateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
