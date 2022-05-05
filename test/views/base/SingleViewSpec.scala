@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package base
+package views.base
 
+import base.SpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
@@ -33,7 +34,7 @@ import scala.concurrent.Future
 
 abstract class SingleViewSpec(protected val viewUnderTest: String, hasSignOutLink: Boolean = true)
     extends SpecBase
-    with ViewSpecAssertions
+    with NunjucksViewSpecAssertions
     with NunjucksSupport {
 
   require(viewUnderTest.endsWith(".njk"), "Expected view with file extension of `.njk`")

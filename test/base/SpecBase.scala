@@ -25,7 +25,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.{FakeRequest, Helpers}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.baseApplicationBuilder.injector
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
@@ -44,15 +44,12 @@ trait SpecBase
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
 
-  val departureId = DepartureId(1)
-
-  // TODO: remove all references to this and use [[play.api.test.Helpers.stubMessagesApi]]
-  def messagesApi: MessagesApi = Helpers.stubMessagesApi()
-
-  // TODO: remove all references to this and explicitly use [[play.api.test.Helpers.stubMessages]]
-  implicit def messages: Messages = Helpers.stubMessages()
+  val departureId: DepartureId = DepartureId(1)
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
+
+  def messagesApi: MessagesApi    = injector.instanceOf[MessagesApi]
+  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
 

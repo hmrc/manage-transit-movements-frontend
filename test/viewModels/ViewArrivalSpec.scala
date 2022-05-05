@@ -23,11 +23,10 @@ import models.arrival.ArrivalStatus.{ArrivalRejected, ArrivalSubmitted, GoodsRel
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.i18n.Messages
 import play.api.libs.json.Json
 
-import java.time.{Clock, LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
+import java.time.{Clock, LocalDateTime, ZoneId}
 
 class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
@@ -55,7 +54,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         val updatedArrival: Arrival   = arrival.copy(status = UnloadingPermission)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
-        viewMovement.status mustBe Messages("movement.status.unloadingPermission")
+        viewMovement.status mustBe "movement.status.unloadingPermission"
         viewMovement.actions.head.href mustBe s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrival.arrivalId.index}"
     }
   }
@@ -66,7 +65,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         val updatedArrival: Arrival   = arrival.copy(status = ArrivalRejected)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
-        viewMovement.status mustBe Messages("movement.status.arrivalRejected")
+        viewMovement.status mustBe "movement.status.arrivalRejected"
         viewMovement.actions.head.href mustBe s"http://localhost:9483/manage-transit-movements-arrivals/${arrival.arrivalId.index}/arrival-rejection"
     }
   }

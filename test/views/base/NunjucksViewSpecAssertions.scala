@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package base
+package views.base
 
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import play.api.i18n.Messages
 
-private[base] trait ViewSpecAssertions {
+private[base] trait NunjucksViewSpecAssertions {
   self: Matchers =>
 
   def messages: Messages
