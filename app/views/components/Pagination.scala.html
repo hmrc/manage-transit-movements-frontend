@@ -41,9 +41,8 @@
              </span>
         }
 
-        @items.iterator.foreach { item =>
-            <p>Hello</p>
-            @if(items.lastItemDotted && !iterator.hasNext) {
+        @for(item <- items.iterator) {
+            @if(items.lastItemDotted && !items.iterator.hasNext) {
                 <span class="pagination__item pagination__item--dots" aria-hidden="true">@messages("pagination.ellipses")</span>
                 <span class="govuk-visually-hidden">@messages("pagination.ellipses.hidden")</span>
             }

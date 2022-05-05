@@ -19,13 +19,13 @@
 @import controllers.arrival.routes._
 @import viewModels.pagination._
 @import viewModels.ViewArrival
-@import views.html.components.{Heading, Pagination, ResponsiveTable, Search}
+@import views.html.components.{Heading, MovementsTable, Pagination, Search}
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
     pagination: Pagination,
-    responsiveTable: ResponsiveTable,
+    movementsTable: MovementsTable,
     search: Search,
     config: FrontendAppConfig
 )
@@ -73,7 +73,7 @@
         @pagination(results, previous, next, items)
     }
 
-    @responsiveTable(
+    @movementsTable(
         dataRows = dataRows,
         visuallyHiddenHeader = messages("viewArrivalNotifications.heading.hidden"),
         rowHeadingUpdated = messages("viewArrivalNotifications.table.updated"),
