@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.{MockNunjucksRendererApp, SpecBase}
+import base.SpecBase
 import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -29,7 +29,7 @@ import renderer.Renderer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class UnauthorisedControllerSpec extends SpecBase with JsonMatchers with MockNunjucksRendererApp {
+class UnauthorisedControllerSpec extends SpecBase with JsonMatchers {
 
   "Unauthorised Controller" - {
 

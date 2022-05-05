@@ -16,49 +16,31 @@
 
 package controllers
 
-import base.{MockNunjucksRendererApp, SpecBase}
-import matchers.JsonMatchers
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import play.api.libs.json.{JsObject, Json}
+import base.SpecBase
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.test.{FakeRequest, Helpers}
-import play.twirl.api.Html
-import renderer.Renderer
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
-class SessionExpiredControllerSpec extends SpecBase with JsonMatchers with MockNunjucksRendererApp {
+class SessionExpiredControllerSpec extends SpecBase {
 
   "Session Expired Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
 
-      val mockRenderer: Renderer = mock[Renderer]
-
-      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-
-      val controller = new SessionExpiredController(Helpers.stubMessagesControllerComponents(), mockRenderer)
-
-      val request                                = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = controller.onPageLoad.apply(request)
+      val result = route(app, request).value
 
       status(result) mustEqual OK
+    }
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+    "must redirect to a new page for a POST" in {
+      val request = FakeRequest(POST, routes.SessionExpiredController.onSubmit().url)
+        .withFormUrlEncodedBody()
 
-      val expectedJson = Json.obj {
-        "signInUrl" -> "/manage-transit-movements/what-do-you-want-to-do"
-      }
+      val result = route(app, request).value
 
-      templateCaptor.getValue mustEqual "session-expired.njk"
-      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-      jsonCaptorWithoutConfig mustBe expectedJson
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.WhatDoYouWantToDoController.onPageLoad().url
     }
   }
 }

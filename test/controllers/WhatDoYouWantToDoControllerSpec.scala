@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.{MockNunjucksRendererApp, SpecBase}
+import base.SpecBase
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
 import org.mockito.ArgumentCaptor
@@ -31,7 +31,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRendererApp {
+class WhatDoYouWantToDoControllerSpec extends SpecBase {
 
   private val manageTransitMovementRoute   = "manage-transit-movements"
   private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
@@ -40,10 +40,10 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with MockNunjucksRenderer
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
     reset(mockDepartureMovementConnector)
-    super.beforeEach
+    super.beforeEach()
   }
 
   private def expectedJson(arrivalsAvailable: Boolean, hasArrivals: Boolean, departuresAvailable: Boolean, hasDepartures: Boolean): JsObject =

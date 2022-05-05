@@ -17,7 +17,7 @@
 package controllers.departure
 
 import akka.util.ByteString
-import base.{MockNunjucksRendererApp, SpecBase}
+import base.SpecBase
 import connectors.DeparturesMovementConnector
 import controllers.departure.{routes => departureRoutes}
 import generators.Generators
@@ -38,13 +38,13 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with MockNunjucksRendererApp {
+class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   private val wsResponse: AhcWSResponse                            = mock[AhcWSResponse]
   val mockDeparturesMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
 
-  override def beforeEach: Unit = {
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(wsResponse)
     reset(mockDeparturesMovementConnector)
   }

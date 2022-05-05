@@ -16,7 +16,7 @@
 
 package controllers.departure
 
-import base.{MockNunjucksRendererApp, SpecBase}
+import base.SpecBase
 import generators.Generators
 import matchers.JsonMatchers
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
@@ -24,7 +24,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -34,18 +33,16 @@ import services.DepartureMessageService
 
 import scala.concurrent.Future
 
-class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
+class DepartureXmlNegativeAcknowledgementControllerSpec extends SpecBase with JsonMatchers with Generators {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
 
-  override def beforeEach: Unit = {
-    reset(
-      mockDepartureMessageService
-    )
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    reset(mockDepartureMessageService)
+    super.beforeEach()
   }
 
-  override def guiceApplicationBuilder =
+  override def guiceApplicationBuilder() =
     super
       .guiceApplicationBuilder()
       .overrides(

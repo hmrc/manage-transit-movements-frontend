@@ -479,8 +479,8 @@ class IdentifierActionSpec extends SpecBase {
     }
   }
 
-  override def beforeEach: Unit = {
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockAuthConnector)
     reset(mockEnrolmentStoreConnector)
     reset(mockUIRender)

@@ -22,30 +22,22 @@ import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.inject.Injector
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers.baseApplicationBuilder.injector
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 import java.time.Clock
 
-trait SpecBase
-    extends AnyFreeSpec
-    with Matchers
-    with OptionValues
-    with TryValues
-    with ScalaFutures
-    with IntegrationPatience
-    with MockitoSugar
-    with BeforeAndAfterEach {
+trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValues with ScalaFutures with IntegrationPatience with AppWithDefaultMockFixtures {
 
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
 
   val departureId: DepartureId = DepartureId(1)
 
+  def injector: Injector                               = app.injector
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
   def messagesApi: MessagesApi    = injector.instanceOf[MessagesApi]
@@ -53,7 +45,7 @@ trait SpecBase
 
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
 
-  implicit val frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+  implicit def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
 
   implicit val clock: Clock = Clock.systemDefaultZone()
 

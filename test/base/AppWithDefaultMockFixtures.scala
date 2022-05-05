@@ -17,26 +17,22 @@
 package base
 
 import controllers.actions._
-import org.mockito.Mockito
+import org.mockito.Mockito.reset
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
-trait MockNunjucksRendererApp extends GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar {
+trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar {
   self: TestSuite =>
 
   val mockNunjucksRenderer: NunjucksRenderer = mock[NunjucksRenderer]
 
-  override def beforeEach {
-    Mockito.reset(
-      mockNunjucksRenderer
-    )
+  override def beforeEach(): Unit = {
+    reset(mockNunjucksRenderer)
     super.beforeEach()
   }
 
@@ -49,7 +45,6 @@ trait MockNunjucksRendererApp extends GuiceOneAppPerSuite with BeforeAndAfterEac
     new GuiceApplicationBuilder()
       .overrides(
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[NunjucksRenderer].toInstance(mockNunjucksRenderer),
-        bind[MessagesApi].toInstance(Helpers.stubMessagesApi())
+        bind[NunjucksRenderer].toInstance(mockNunjucksRenderer)
       )
 }

@@ -16,7 +16,7 @@
 
 package controllers.departure
 
-import base.{FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{FakeSearchResultsAppConfig, SpecBase}
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
@@ -25,7 +25,6 @@ import models.{Departure, DepartureId, Departures, LocalReferenceNumber, RichLoc
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
@@ -37,7 +36,7 @@ import viewModels.{ViewDeparture, ViewDepartureMovements}
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
+class ViewDeparturesSearchResultsControllerSpec extends SpecBase with JsonMatchers {
 
   private val totalSearchDepartures = 8
   private val someSearchMatches     = 5
@@ -86,8 +85,8 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with MockitoSug
     "tooManyResults" -> tooManyResults
   )
 
-  override def beforeEach: Unit = {
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockDepartureMovementsConnector)
   }
 

@@ -22,17 +22,15 @@ import helper.WireMockServerHandler
 import models.referenceData.CustomsOffice
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 
 class ReferenceDataConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks {
 
-  lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(
-      conf = "microservice.services.reference-data.port" -> server.port()
-    )
-    .build()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .configure(conf = "microservice.services.reference-data.port" -> server.port())
 
   private val customsOfficeId  = "123"
   private val customsOfficeUrl = s"/transit-movements-trader-reference-data/customs-office/$customsOfficeId"

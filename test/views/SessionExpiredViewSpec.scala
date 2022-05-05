@@ -16,6 +16,26 @@
 
 package views
 
-import base.SingleViewSpec
+import play.twirl.api.HtmlFormat
+import views.behaviours.ViewBehaviours
+import views.html.SessionExpiredView
 
-class SessionExpiredViewSpec extends SingleViewSpec("session-expired.njk", hasSignOutLink = false)
+class SessionExpiredViewSpec extends ViewBehaviours {
+
+  override def view: HtmlFormat.Appendable =
+    injector.instanceOf[SessionExpiredView].apply()(fakeRequest, messages)
+
+  override val prefix: String = "session_expired"
+
+  override val hasSignOutLink: Boolean = false
+
+  behave like pageWithTitle()
+
+  behave like pageWithoutBackLink
+
+  behave like pageWithHeading()
+
+  behave like pageWithContent("p", "We did not save your answers.")
+
+  behave like pageWithSubmitButton("Sign in")
+}
