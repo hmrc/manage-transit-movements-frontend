@@ -70,7 +70,17 @@ class ViewAllArrivalsController @Inject() (
 
           //renderer.render("viewAllArrivals.njk", formatToJson).map(Ok(_))
 
-          Future.successful(Ok(view(paginationViewModel.results, viewAllArrivalMovementsViewModel.dataRows)))
+          Future.successful(
+            Ok(
+              view(
+                paginationViewModel.results,
+                viewAllArrivalMovementsViewModel.dataRows,
+                paginationViewModel.previous,
+                paginationViewModel.next,
+                paginationViewModel.items
+              )
+            )
+          )
 
         case _ => renderTechnicalDifficultiesPage
       }

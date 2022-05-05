@@ -19,23 +19,30 @@
 @import controllers.arrival.routes._
 @import viewModels.pagination._
 @import viewModels.ViewArrival
-@import views.html.components.{Heading, ResponsiveTable, Search}
+@import views.html.components.{Heading, Pagination, ResponsiveTable, Search}
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
+    pagination: Pagination,
     responsiveTable: ResponsiveTable,
     search: Search,
     config: FrontendAppConfig
 )
 
-@(results: MetaData, dataRows: Seq[(String, Seq[ViewArrival])])(implicit request: Request[_], messages: Messages)
+@(
+    results: MetaData,
+    dataRows: Seq[(String, Seq[ViewArrival])],
+    previous: Option[Previous],
+    next: Option[Next],
+    items: Items
+)(implicit request: Request[_], messages: Messages)
 
-@singularOrPlural = {
+@resultsCount = {
     @if(results.count == 1) {
-        @messages("numberOfMovements.singular")
+        @Html(messages("numberOfMovements.singular", s"<b>${results.count}</b>"))
     } else {
-        @messages("numberOfMovements.plural")
+        @Html(messages("numberOfMovements.plural", s"<b>${results.count}</b>"))
     }
 }
 
@@ -61,9 +68,9 @@
     )
 
     @if(results.totalPages == 1) {
-        <p id="results-count" class="govuk-body">@messages("numberOfMovements.showing") <b>@results.count</b> @singularOrPlural</p>
+        <p id="results-count" class="govuk-body">@resultsCount</p>
     } else if(results.totalPages > 1) {
-        <!-- TODO: Pagination -->
+        @pagination(results, previous, next, items)
     }
 
     @responsiveTable(
