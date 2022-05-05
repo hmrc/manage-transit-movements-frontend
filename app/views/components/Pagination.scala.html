@@ -19,20 +19,17 @@
 @this()
 
 @(
-    results: MetaData,
-    previous: Option[Previous],
-    next: Option[Next],
-    items: Items
+    viewModel: PaginationViewModel
 )(implicit messages: Messages)
 
 <nav class="pagination" aria-label=@messages("pagination.searchResults")>
     <div class="pagination__list">
 
         <p id="paginated-results-count" class="pagination__results">
-            @Html(messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>"))
+            @Html(messages("pagination.results", s"<b>${viewModel.results.from}</b>", s"<b>${viewModel.results.to}</b>", s"<b>${viewModel.results.count}</b>"))
         </p>
 
-        @previous.map { p =>
+        @viewModel.previous.map { p =>
             <span class="pagination__item pagination__item--prev" >
                 <a id="previous" class="pagination__link" href=@p.href>
                     <span aria-hidden="true">@messages("pagination.previous")</span>
@@ -41,8 +38,8 @@
              </span>
         }
 
-        @for(item <- items.iterator) {
-            @if(items.lastItemDotted && !items.iterator.hasNext) {
+        @for(item <- viewModel.items.iterator) {
+            @if(viewModel.items.lastItemDotted && !viewModel.items.iterator.hasNext) {
                 <span class="pagination__item pagination__item--dots" aria-hidden="true">@messages("pagination.ellipses")</span>
                 <span class="govuk-visually-hidden">@messages("pagination.ellipses.hidden")</span>
             }
@@ -61,7 +58,7 @@
             }
         }
 
-        @next.map { n =>
+        @viewModel.next.map { n =>
             <span class="pagination__item  pagination__item--next" >
                 <a id="next" class="pagination__link" href=@n.href>
                     <span aria-hidden="true">@messages("pagination.next")</span>

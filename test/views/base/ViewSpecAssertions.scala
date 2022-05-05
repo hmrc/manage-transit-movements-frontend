@@ -35,6 +35,13 @@ trait ViewSpecAssertions extends ViewSpecGetters {
   def assertRenderedByCssSelector(doc: Document, cssSelector: String): Assertion =
     assert(!doc.select(cssSelector).isEmpty, "Element " + cssSelector + " was not rendered on the page.")
 
+  def assertContainsLabel(doc: Document, forElement: String, expectedText: String): Assertion = {
+    val labels = doc.getElementsByAttributeValue("for", forElement)
+    assert(labels.size == 1, s"\n\nLabel for $forElement was not rendered on the page.")
+    val label = labels.first
+    assert(label.text().contains(expectedText), s"\n\nLabel for $forElement was not $expectedText")
+  }
+
   def assertElementContainsText(element: Element, expectedText: String): Assertion =
     element.text() mustBe expectedText
 

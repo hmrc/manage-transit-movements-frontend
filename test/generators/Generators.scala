@@ -22,7 +22,7 @@ import org.scalacheck.{Arbitrary, Gen, Shrink}
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-trait Generators extends ModelGenerators {
+trait Generators extends ModelGenerators with ViewModelGenerators {
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
@@ -83,7 +83,7 @@ trait Generators extends ModelGenerators {
       .suchThat(_ != "false")
 
   def nonEmptyString: Gen[String] =
-    arbitrary[String].map(
+    Gen.alphaNumStr.map(
       x =>
         if (x.nonEmpty) {
           x

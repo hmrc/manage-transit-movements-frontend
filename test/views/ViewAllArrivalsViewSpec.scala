@@ -20,7 +20,7 @@ import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
-import viewModels.pagination._
+import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
 import views.behaviours.MovementsTableViewBehaviours
 import views.html.ViewAllArrivalsView
@@ -31,17 +31,19 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours[ViewArrival] 
 
   override val referenceNumberType: String = "mrn"
 
-  override val viewMovements: Seq[ViewArrival] = listWithMaxLength[ViewArrival]().sample.value
+  override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfMovements
 
-  private val results: MetaData                = arbitrary[MetaData].sample.value
-  private val next: Option[Next]               = None
-  private val previous: Option[Previous]       = None
-  private val items: Items                     = Items(Nil, firstItemDotted = false, lastItemDotted = false)
-  private val paginationViewModel              = PaginationViewModel(results, previous, next, items)
-  private val viewAllArrivalMovementsViewModel = ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel)
+  private val viewAllArrivalMovementsViewModel = arbitrary[ViewAllArrivalMovementsViewModel].sample.value
+
+  override val viewMovements: Seq[ViewArrival] = viewAllArrivalMovementsViewModel.dataRows.flatMap(_._2)
 
   override def view: HtmlFormat.Appendable =
-    app.injector.instanceOf[ViewAllArrivalsView].apply(results, viewAllArrivalMovementsViewModel.dataRows, previous, next, items)(fakeRequest, messages)
+    injector.instanceOf[ViewAllArrivalsView].apply(viewAllArrivalMovementsViewModel)(fakeRequest, messages)
+
+  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
+    injector
+      .instanceOf[ViewAllArrivalsView]
+      .apply(ViewAllArrivalMovementsViewModel(Seq.empty[ViewArrival], paginationViewModel))(fakeRequest, messages)
 
   behave like pageWithTitle()
 
@@ -49,21 +51,17 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours[ViewArrival] 
 
   behave like pageWithHeading()
 
-  //behave like pageWithPagination(controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
-
-  behave like pageWithMovementsData
-
-  /*behave like pageWithMovementSearch(
-    doc = doc,
-    id = "mrn",
-    expectedText = "movement.search.title"
-  )*/
-
   behave like pageWithLink(
     id = "make-arrival-notification",
     expectedText = "Make an arrival notification",
     expectedHref = frontendAppConfig.declareArrivalNotificationStartUrl
   )
+
+  behave like pageWithMovementSearch()
+
+  behave like pageWithPagination(controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
+
+  behave like pageWithMovementsData()
 
   behave like pageWithLink(
     id = "go-to-manage-transit-movements",

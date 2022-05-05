@@ -22,7 +22,6 @@ import controllers.TechnicalDifficultiesPage
 import controllers.actions._
 import models.Arrival
 import play.api.i18n.I18nSupport
-import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -66,21 +65,11 @@ class ViewAllArrivalsController @Inject() (
 
           val viewAllArrivalMovementsViewModel = ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel)
 
-          val formatToJson: JsObject = Json.toJsObject(viewAllArrivalMovementsViewModel)
+          //val formatToJson: JsObject = Json.toJsObject(viewAllArrivalMovementsViewModel)
 
           //renderer.render("viewAllArrivals.njk", formatToJson).map(Ok(_))
 
-          Future.successful(
-            Ok(
-              view(
-                paginationViewModel.results,
-                viewAllArrivalMovementsViewModel.dataRows,
-                paginationViewModel.previous,
-                paginationViewModel.next,
-                paginationViewModel.items
-              )
-            )
-          )
+          Future.successful(Ok(view(viewAllArrivalMovementsViewModel)))
 
         case _ => renderTechnicalDifficultiesPage
       }

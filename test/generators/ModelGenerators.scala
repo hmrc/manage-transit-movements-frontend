@@ -126,7 +126,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         href <- Gen.alphaNumStr
-        key  <- Gen.alphaNumStr
+        key  <- nonEmptyString
       } yield ViewMovementAction(href, key)
     }
 

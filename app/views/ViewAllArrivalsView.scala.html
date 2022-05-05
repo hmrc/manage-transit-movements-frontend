@@ -17,8 +17,7 @@
 @import config.FrontendAppConfig
 @import controllers.routes._
 @import controllers.arrival.routes._
-@import viewModels.pagination._
-@import viewModels.ViewArrival
+@import viewModels.ViewAllArrivalMovementsViewModel
 @import views.html.components.{Heading, MovementsTable, Pagination, Search}
 
 @this(
@@ -31,18 +30,14 @@
 )
 
 @(
-    results: MetaData,
-    dataRows: Seq[(String, Seq[ViewArrival])],
-    previous: Option[Previous],
-    next: Option[Next],
-    items: Items
+    viewModel: ViewAllArrivalMovementsViewModel
 )(implicit request: Request[_], messages: Messages)
 
 @resultsCount = {
-    @if(results.count == 1) {
-        @Html(messages("numberOfMovements.singular", s"<b>${results.count}</b>"))
-    } else {
-        @Html(messages("numberOfMovements.plural", s"<b>${results.count}</b>"))
+    @viewModel.paginationViewModel.results.count match {
+        case x if x == 1 => { @Html(messages("numberOfMovements.singular", s"<b>$x</b>")) }
+        case x           => { @Html(messages("numberOfMovements.plural", s"<b>$x</b>")) }
+        case _           => { () }
     }
 }
 
@@ -67,14 +62,14 @@
         value = None
     )
 
-    @if(results.totalPages == 1) {
+    @if(viewModel.paginationViewModel.results.totalPages == 1) {
         <p id="results-count" class="govuk-body">@resultsCount</p>
-    } else if(results.totalPages > 1) {
-        @pagination(results, previous, next, items)
+    } else if(viewModel.paginationViewModel.results.totalPages > 1) {
+        @pagination(viewModel.paginationViewModel)
     }
 
     @movementsTable(
-        dataRows = dataRows,
+        dataRows = viewModel.dataRows,
         visuallyHiddenHeader = messages("viewArrivalNotifications.heading.hidden"),
         rowHeadingUpdated = messages("viewArrivalNotifications.table.updated"),
         rowHeadingReferenceNumber = messages("viewArrivalNotifications.table.mrn"),
