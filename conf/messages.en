@@ -73,9 +73,11 @@ unauthorised.again.later = again later.
 
 numberOfMovements.singular = result
 numberOfMovements.plural = results
+numberOfMovements.showing = Showing
 
 viewArrivalNotifications.title                      = Arrival notifications
 viewArrivalNotifications.heading                    = Arrival notifications
+viewArrivalNotifications.heading.hidden             = Arrival notifications table
 viewArrivalNotifications.makeArrivalNotification    = Make an arrival notification
 viewArrivalNotifications.goToManageTransitMovements = Go to manage transit movements
 viewArrivalNotifications.table.updated     = Updated
@@ -111,6 +113,7 @@ technicalDifficulties.contact.link = contact the New Computerised Transit System
 
 viewDepartures.title = Departure declarations
 viewDepartures.heading = Departure declarations
+viewDepartures.heading.hidden = Departures notifications table
 viewDepartures.makeDepartureNotification = Make a departure declaration
 viewDepartures.goToManageTransitMovements = Go to manage transit movements
 viewDepartures.table.updated = Updated

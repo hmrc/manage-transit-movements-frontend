@@ -30,7 +30,7 @@
           {{ pagination(results, previous, next, items, firstItemDotted, lastItemDotted) }}
       {% endif -%}
 
-      {{ showMovementsByDate("Departures notifications table", messages("viewDepartures.table.updated"), messages("viewDepartures.table.lrn"), messages("viewDepartures.table.status"), messages("viewDepartures.table.action"), dataRows) }}
+      {{ showMovementsByDate(messages("viewDepartures.heading.hidden"), messages("viewDepartures.table.updated"), messages("viewDepartures.table.lrn"), messages("viewDepartures.table.status"), messages("viewDepartures.table.action"), dataRows) }}
 
       <p class="govuk-body govuk-!-margin-top-3">
         <a id="go-to-manage-transit-movements" class="govuk-link" href="{{ homePageUrl }}"> {{ messages("viewDepartures.goToManageTransitMovements") }} </a>

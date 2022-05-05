@@ -20,8 +20,6 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
-
-import javax.inject.Inject
 import models.Arrival
 import play.api.i18n.I18nSupport
 import play.api.libs.json._
@@ -30,9 +28,11 @@ import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
+import views.html.ViewAllArrivalsView
 
 import java.time.Clock
-import scala.concurrent.ExecutionContext
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewAllArrivalsController @Inject() (
   val renderer: Renderer,
@@ -40,7 +40,8 @@ class ViewAllArrivalsController @Inject() (
   cc: MessagesControllerComponents,
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
-  arrivalMovementConnector: ArrivalMovementConnector
+  arrivalMovementConnector: ArrivalMovementConnector,
+  view: ViewAllArrivalsView
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport
@@ -57,17 +58,19 @@ class ViewAllArrivalsController @Inject() (
           )
 
           val paginationViewModel = PaginationViewModel(
-            filteredArrivals.totalArrivals,
-            currentPage,
-            paginationAppConfig.arrivalsNumberOfMovements,
-            routes.ViewAllArrivalsController.onPageLoad(None).url
+            totalNumberOfMovements = filteredArrivals.totalArrivals,
+            currentPage = currentPage,
+            numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+            href = routes.ViewAllArrivalsController.onPageLoad(None).url
           )
 
-          val formatToJson: JsObject = Json.toJsObject(ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel))
+          val viewAllArrivalMovementsViewModel = ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel)
 
-          renderer
-            .render("viewAllArrivals.njk", formatToJson)
-            .map(Ok(_))
+          val formatToJson: JsObject = Json.toJsObject(viewAllArrivalMovementsViewModel)
+
+          //renderer.render("viewAllArrivals.njk", formatToJson).map(Ok(_))
+
+          Future.successful(Ok(view(paginationViewModel.results, viewAllArrivalMovementsViewModel.dataRows)))
 
         case _ => renderTechnicalDifficultiesPage
       }

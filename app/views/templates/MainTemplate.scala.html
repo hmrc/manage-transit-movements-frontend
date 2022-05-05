@@ -15,11 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.TwoThirdsMainContent
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.timeoutdialog.TimeoutDialog
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.footer.{Footer, FooterItem, Meta}
 @import resources._
+@import views.html.components.FullWidthContent
 @import views.utils.ViewUtils._
 
 @this(
@@ -32,14 +34,17 @@
     stylesheets: Stylesheets,
     javascripts: Javascripts,
     govukBackLink: GovukBackLink,
-    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper
+    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+    twoThirdsMainContent: TwoThirdsMainContent,
+    fullWidthContent: FullWidthContent
 )
 
 @(
     title: String,
     timeoutEnabled: Boolean = true,
     canSignOut: Boolean = true,
-    showBackLink: Boolean = false
+    showBackLink: Boolean = false,
+    fullWidth: Boolean = false
 )(mainContent: Html)(implicit request: Request[_], messages: Messages)
 
 @headScripts = {
@@ -91,5 +96,6 @@
     phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUnauthenticatedUrl)),
     beforeContentBlock = Some(beforeContentBlock),
     nonce = nonce,
-    additionalScriptsBlock = Some(hmrcScripts(nonce = nonce, scriptsBlock = Some(javascripts())))
+    additionalScriptsBlock = Some(hmrcScripts(nonce = nonce, scriptsBlock = Some(javascripts()))),
+    mainContentLayout = if (fullWidth) Some(fullWidthContent(_)) else Some(twoThirdsMainContent(_))
 )(mainContentWithGetHelp)

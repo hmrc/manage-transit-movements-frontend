@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package viewModels
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalTime}
+@this(govukButton: GovukButton)
 
-trait ViewMovement {
-  val updatedDate: LocalDate
-  val updatedTime: LocalTime
-  val referenceNumber: String
-  val status: String
-  val actions: Seq[ViewMovementAction]
+@(
+    messageKey: String = "site.continue",
+    isStartButton: Boolean = false,
+    preventDoubleClick: Boolean = false,
+    attributes: Map[String, String] = Map.empty,
+    href: Option[String] = None
+)(implicit messages: Messages)
 
-  val updated: String = updatedTime
-    .format(DateTimeFormatter.ofPattern("h:mma"))
-    .toLowerCase
-}
+@govukButton(Button(
+    isStartButton = isStartButton,
+    preventDoubleClick = preventDoubleClick,
+    content = Text(messages(messageKey)),
+    attributes = attributes,
+    href = href
+))
