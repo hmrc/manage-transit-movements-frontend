@@ -20,12 +20,13 @@ import base.SpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.Assertion
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.twirl.api.HtmlFormat
 import views.base.ViewSpecAssertions
 
 import scala.collection.JavaConverters._
 
-trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
+trait ViewBehaviours extends SpecBase with ViewSpecAssertions with GuiceOneAppPerSuite {
 
   def view: HtmlFormat.Appendable
 

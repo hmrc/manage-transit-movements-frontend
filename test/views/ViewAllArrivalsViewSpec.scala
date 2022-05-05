@@ -17,77 +17,57 @@
 package views
 
 import generators.Generators
-import models.Arrival
-import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsObject, Json}
 import play.twirl.api.HtmlFormat
-import viewModels.{ViewArrival, ViewArrivalMovements}
+import viewModels.pagination._
+import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
 import views.behaviours.MovementsTableViewBehaviours
 import views.html.ViewAllArrivalsView
-
-import java.time.LocalDateTime
 
 class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours[ViewArrival] with Generators with ScalaCheckPropertyChecks {
 
   override val prefix: String = "viewArrivalNotifications"
 
+  override val referenceNumberType: String = "mrn"
+
+  override val viewMovements: Seq[ViewArrival] = listWithMaxLength[ViewArrival]().sample.value
+
+  private val results: MetaData                = arbitrary[MetaData].sample.value
+  private val next: Option[Next]               = None
+  private val previous: Option[Previous]       = None
+  private val items: Items                     = Items(Nil, firstItemDotted = false, lastItemDotted = false)
+  private val paginationViewModel              = PaginationViewModel(results, previous, next, items)
+  private val viewAllArrivalMovementsViewModel = ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel)
+
   override def view: HtmlFormat.Appendable =
-    injector.instanceOf[ViewAllArrivalsView].apply()(fakeRequest, messages)
+    app.injector.instanceOf[ViewAllArrivalsView].apply(results, viewAllArrivalMovementsViewModel.dataRows, previous, next, items)(fakeRequest, messages)
 
-  private val day1: LocalDateTime   = LocalDateTime.parse("2020-08-16 06:06:06", dateTimeFormat)
-  private val day2: LocalDateTime   = LocalDateTime.parse("2020-08-15 05:05:05", dateTimeFormat)
-  private val day3: LocalDateTime   = LocalDateTime.parse("2020-08-14 04:04:04", dateTimeFormat)
-  private val day4: LocalDateTime   = LocalDateTime.parse("2020-08-13 03:03:03", dateTimeFormat)
-  private val day5: LocalDateTime   = LocalDateTime.parse("2020-08-12 02:02:02", dateTimeFormat)
-  private val day6_1: LocalDateTime = LocalDateTime.parse("2020-08-11 01:01:01", dateTimeFormat)
-  private val day6_2: LocalDateTime = LocalDateTime.parse("2020-08-11 01:00:00", dateTimeFormat)
+  behave like pageWithTitle()
 
-  private val arrival1 = arbitrary[Arrival].sample.value.copy(updated = day1)
-  private val arrival2 = arbitrary[Arrival].sample.value.copy(updated = day2)
-  private val arrival3 = arbitrary[Arrival].sample.value.copy(updated = day3)
-  private val arrival4 = arbitrary[Arrival].sample.value.copy(updated = day4)
-  private val arrival5 = arbitrary[Arrival].sample.value.copy(updated = day5)
-  private val arrival6 = arbitrary[Arrival].sample.value.copy(updated = day6_1)
-  private val arrival7 = arbitrary[Arrival].sample.value.copy(updated = day6_2)
+  behave like pageWithoutBackLink()
 
-  private val arrivals = Seq(arrival1, arrival2, arrival3, arrival4, arrival5, arrival6, arrival7)
-
-  private val viewMovements: Seq[ViewArrival] = arrivals.map(ViewArrival(_))
-
-  private val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements))(ViewArrivalMovements.writes(frontendAppConfig))
-
-  private val doc: Document = renderDocument(formatToJson).futureValue
-
-  behave like pageWithHeading(doc, messageKeyPrefix)
+  behave like pageWithHeading()
 
   //behave like pageWithPagination(controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
 
-  behave like pageWithMovementsData[ViewArrival](
-    doc = doc,
-    viewMovements = viewMovements,
-    messageKeyPrefix = messageKeyPrefix,
-    refType = "mrn"
-  )
+  behave like pageWithMovementsData
 
-  behave like pageWithMovementSearch(
+  /*behave like pageWithMovementSearch(
     doc = doc,
     id = "mrn",
     expectedText = "movement.search.title"
-  )
+  )*/
 
   behave like pageWithLink(
-    doc = doc,
     id = "make-arrival-notification",
-    expectedText = s"$messageKeyPrefix.makeArrivalNotification",
+    expectedText = "Make an arrival notification",
     expectedHref = frontendAppConfig.declareArrivalNotificationStartUrl
   )
 
   behave like pageWithLink(
-    doc = doc,
     id = "go-to-manage-transit-movements",
-    expectedText = s"$messageKeyPrefix.goToManageTransitMovements",
+    expectedText = "Go to manage transit movements",
     expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
   )
 

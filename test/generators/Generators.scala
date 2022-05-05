@@ -133,11 +133,11 @@ trait Generators extends ModelGenerators {
       seq    <- listOfN(length, arbitrary[A])
     } yield seq
 
-  def listWithMaxLength[T](maxSize: Int, gen: Gen[T]): Gen[Seq[T]] =
+  def listWithMaxLength[A](maxLength: Int = 10)(implicit a: Arbitrary[A]): Gen[List[A]] =
     for {
-      size  <- Gen.choose(1, maxSize)
-      items <- Gen.listOfN(size, gen)
-    } yield items
+      length <- choose(1, maxLength)
+      seq    <- listOfN(length, arbitrary[A])
+    } yield seq
 
   def alphaNumericWithMaxLength(maxLength: Int): Gen[String] =
     for {
