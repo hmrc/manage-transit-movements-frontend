@@ -16,7 +16,7 @@
 
 package controllers.arrival
 
-import base.{FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
+import base.{FakeSearchResultsAppConfig, SpecBase}
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
 import generators.Generators
@@ -26,8 +26,6 @@ import models.{Arrival, ArrivalId, Arrivals, RichLocalDateTime}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
@@ -40,14 +38,7 @@ import viewModels.{ViewArrival, ViewArrivalMovements}
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewArrivalsSearchResultsControllerSpec
-    extends SpecBase
-    with MockitoSugar
-    with JsonMatchers
-    with Generators
-    with NunjucksSupport
-    with BeforeAndAfterEach
-    with MockNunjucksRendererApp {
+class ViewArrivalsSearchResultsControllerSpec extends SpecBase with JsonMatchers with Generators with NunjucksSupport {
 
   private val mockArrivalMovementConnector                    = mock[ArrivalMovementConnector]
   implicit val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
@@ -57,17 +48,16 @@ class ViewArrivalsSearchResultsControllerSpec
   val time: LocalDateTime              = LocalDateTime.now()
   val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
-    super.beforeEach
+    super.beforeEach()
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
-        bind[FrontendAppConfig].toInstance(frontendAppConfig)
+        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
 
   private def mockArrivalSearchResponse(retrievedArrivals: Int, totalMatched: Int): Arrivals =

@@ -29,6 +29,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.ahc.AhcWSResponse
 import play.api.test.FakeRequest
@@ -37,18 +38,18 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with MockNunjucksRendererApp {
+class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   private val wsResponse: AhcWSResponse                      = mock[AhcWSResponse]
   val mockArrivalMovementConnector: ArrivalMovementConnector = mock[ArrivalMovementConnector]
 
-  override def beforeEach: Unit = {
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(wsResponse)
     reset(mockArrivalMovementConnector)
   }
 
-  override def guiceApplicationBuilder() =
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(

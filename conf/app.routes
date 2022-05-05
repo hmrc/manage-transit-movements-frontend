@@ -11,6 +11,7 @@ GET        /index                                                             co
 GET        /what-do-you-want-to-do                                            controllers.WhatDoYouWantToDoController.onPageLoad()
 
 GET        /this-service-has-been-reset                                       controllers.SessionExpiredController.onPageLoad()
+POST       /this-service-has-been-reset                                       controllers.SessionExpiredController.onSubmit()
 
 GET        /cannot-use-service-no-eori                                        controllers.UnauthorisedController.onPageLoad()
 

@@ -24,13 +24,11 @@ import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeA
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ArrivalMessageServiceSpec extends SpecBase with BeforeAndAfterEach with Matchers with Generators {
+class ArrivalMessageServiceSpec extends SpecBase with Generators {
 
   val mockConnector: ArrivalMovementConnector = mock[ArrivalMovementConnector]
 

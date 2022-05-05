@@ -19,7 +19,6 @@ package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import helper.WireMockServerHandler
-import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 
@@ -27,11 +26,10 @@ import scala.concurrent.Future
 
 class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
 
-  val app: Application = new GuiceApplicationBuilder()
-    .configure(
-      conf = "microservice.services.enrolment-store-proxy.port" -> server.port()
-    )
-    .build()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .configure(conf = "microservice.services.enrolment-store-proxy.port" -> server.port())
 
   lazy val connector: EnrolmentStoreConnector = app.injector.instanceOf[EnrolmentStoreConnector]
 

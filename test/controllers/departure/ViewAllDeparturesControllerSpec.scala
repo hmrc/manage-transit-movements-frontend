@@ -16,7 +16,7 @@
 
 package controllers.departure
 
-import base.{MockNunjucksRendererApp, SpecBase}
+import base.SpecBase
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
@@ -24,7 +24,6 @@ import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyInt, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
@@ -35,7 +34,7 @@ import play.twirl.api.Html
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
+class ViewAllDeparturesControllerSpec extends SpecBase with JsonMatchers {
 
   private val mockDepartureResponse: Departures =
     Departures(
@@ -52,8 +51,8 @@ class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with Js
       )
     )
 
-  override def beforeEach: Unit = {
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockDeparturesMovementConnector)
   }
 
