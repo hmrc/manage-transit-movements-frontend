@@ -16,12 +16,12 @@
 
 package views.behaviours
 
-import base.SingleViewSpec
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.json.{JsObject, Json}
 import play.twirl.api.Html
 import viewModels.pagination.PaginationViewModel
+import views.base.SingleViewSpec
 
 abstract class NunjucksViewBehaviours(override protected val viewUnderTest: String) extends SingleViewSpec(viewUnderTest) {
 
