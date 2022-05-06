@@ -22,16 +22,16 @@
     viewModel: PaginationViewModel
 )(implicit messages: Messages)
 
-@resultsCount = {
+@resultsCountMessage = {
     @viewModel.results.count match {
-        case x if x == 1 => { @Html(messages("numberOfMovements.singular", s"<b>$x</b>")) }
-        case x           => { @Html(messages("numberOfMovements.plural", s"<b>$x</b>")) }
-        case _           => { () }
+        case 1 => { @Html(messages("numberOfMovements.singular", "<b>1</b>")) }
+        case x => { @Html(messages("numberOfMovements.plural", s"<b>$x</b>")) }
+        case _ => { () }
     }
 }
 
 @if(viewModel.results.totalPages == 1) {
-    <p id="results-count" class="govuk-body">@resultsCount</p>
+    <p id="results-count" class="govuk-body">@resultsCountMessage</p>
 } else if(viewModel.results.totalPages > 1) {
     <nav class="pagination" aria-label=@messages("pagination.searchResults")>
         <div class="pagination__list">

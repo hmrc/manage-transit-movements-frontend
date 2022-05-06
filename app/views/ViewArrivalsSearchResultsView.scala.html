@@ -33,6 +33,13 @@
     tooManyResults: Boolean
 )(implicit request: Request[_], messages: Messages)
 
+@searchResultsMessage = {
+    @retrieved match {
+        case 1 => { @Html(messages("search.results.singular", "<b>1</b>", mrn)) }
+        case x => { @Html(messages("search.results.plural", s"<b>$x</b>", mrn)) }
+    }
+}
+
 @mainTemplate(
     title = messages("viewArrivalNotifications.title"),
     showBackLink = false,
@@ -56,7 +63,7 @@
 
     @if(dataRows.nonEmpty) {
         <p class="govuk-body" id="results-found">
-            @Html(messages("search.results", s"<b>${retrieved}</b>", mrn))
+            @searchResultsMessage
             @if(tooManyResults) {
                 @messages("search.tooManyResults")
             }

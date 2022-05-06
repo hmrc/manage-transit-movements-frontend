@@ -50,8 +50,15 @@ trait SearchViewBehaviours[T <: ViewMovement] {
           p.text() mustBe "No results found"
         }
 
-        "when there are results" in {
-          forAll(arbitrary[Int]) {
+        "when there is a single result" in {
+          val doc = parseView(viewWithSpecificSearchResults(dataRows, 1, tooManyResults = false))
+          val p   = doc.getElementById("results-found")
+          p.text() mustBe s"Showing 1 result matching $referenceNumber."
+          boldWords(p) mustBe Seq("1")
+        }
+
+        "when there are multiple results" in {
+          forAll(arbitrary[Int].retryUntil(_ > 1)) {
             retrieved =>
               val doc = parseView(viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults = false))
               val p   = doc.getElementById("results-found")
@@ -61,7 +68,7 @@ trait SearchViewBehaviours[T <: ViewMovement] {
         }
 
         "when there are too many results" in {
-          forAll(arbitrary[Int]) {
+          forAll(arbitrary[Int].retryUntil(_ > 1)) {
             retrieved =>
               val doc = parseView(viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults = true))
               val p   = doc.getElementById("results-found")
