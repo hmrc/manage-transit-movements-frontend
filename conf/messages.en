@@ -17,7 +17,8 @@ site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - Manage your transit movements - GOV.UK
 
 viewAllMovements.link.title = View all movements
-search.results = Showing %s results matching %s.
+search.results.singular = Showing {0} result matching {1}.
+search.results.plural = Showing {0} results matching {1}.
 search.tooManyResults = There are too many results. Please refine your search.
 search.noResultsFound = No results found
 
@@ -68,11 +69,12 @@ unauthorised.title = You cannot use this service
 unauthorised.heading = You cannot use this service
 unauthorised.if.you.are.waiting.for.an.eori.number = You must have an account with an activated EORI number.
 
-numberOfMovements.singular = result
-numberOfMovements.plural = results
+numberOfMovements.singular = Showing {0} result
+numberOfMovements.plural = Showing {0} results
 
 viewArrivalNotifications.title                      = Arrival notifications
 viewArrivalNotifications.heading                    = Arrival notifications
+viewArrivalNotifications.heading.hidden             = Arrival notifications table
 viewArrivalNotifications.makeArrivalNotification    = Make an arrival notification
 viewArrivalNotifications.goToManageTransitMovements = Go to manage transit movements
 viewArrivalNotifications.table.updated     = Updated
@@ -108,6 +110,7 @@ technicalDifficulties.contact.link = contact the New Computerised Transit System
 
 viewDepartures.title = Departure declarations
 viewDepartures.heading = Departure declarations
+viewDepartures.heading.hidden = Departures notifications table
 viewDepartures.makeDepartureNotification = Make a departure declaration
 viewDepartures.goToManageTransitMovements = Go to manage transit movements
 viewDepartures.table.updated = Updated
@@ -125,6 +128,16 @@ viewDepartures.table.action.viewPDF                  = View and print accompanyi
 viewDepartures.table.action.viewPDF.hidden           = View and print accompanying document PDF for {0}
 viewDepartures.table.action.cancelDeclaration        = Cancel declaration
 viewDepartures.table.action.cancelDeclaration.hidden = Cancel declaration for {0}
+
+pagination.searchResults = Search results pagination
+pagination.results = Showing {0} to {1} of {2} results
+pagination.page = Page {0}
+pagination.next = Next
+pagination.next.hidden = Next page
+pagination.previous = Previous
+pagination.previous.hidden = Previous page
+pagination.ellipses = ...
+pagination.ellipses.hidden = Ellipses
 
 departure.status.submitted = Departure declaration sent
 departure.status.positiveAcknowledgement = Departure declaration sent

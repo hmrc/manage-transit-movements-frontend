@@ -16,13 +16,8 @@
 
 package viewModels.pagination
 
-import play.api.libs.json.{Json, OFormat}
-
 case class Next(href: String)
 
 object Next {
-
   def apply(href: String, currentPage: Int): Next = Next(s"$href?page=${currentPage + 1}")
-
-  implicit val format: OFormat[Next] = Json.format[Next]
 }

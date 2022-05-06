@@ -16,10 +16,6 @@
 
 package viewModels
 
-import config.FrontendAppConfig
-import controllers.routes
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, OWrites}
 import viewModels.pagination.PaginationViewModel
 
 import java.time.LocalDate
@@ -29,12 +25,7 @@ import java.time.format.DateTimeFormatter
 case class ViewAllArrivalMovementsViewModel(
   dataRows: Seq[(String, Seq[ViewArrival])],
   paginationViewModel: PaginationViewModel
-) {
-
-  val singularOrPlural = if (paginationViewModel.results.count == 1) { "numberOfMovements.singular" }
-  else { "numberOfMovements.plural" }
-
-}
+)
 
 object ViewAllArrivalMovementsViewModel {
 
@@ -45,7 +36,7 @@ object ViewAllArrivalMovementsViewModel {
     movements: Seq[ViewArrival],
     paginationViewModel: PaginationViewModel
   )(implicit d: DummyImplicit): ViewAllArrivalMovementsViewModel =
-    ViewAllArrivalMovementsViewModel(format(movements), paginationViewModel)
+    new ViewAllArrivalMovementsViewModel(format(movements), paginationViewModel)
 
   private def format(movements: Seq[ViewArrival]): Seq[(String, Seq[ViewArrival])] = {
     val groupMovements: Map[LocalDate, Seq[ViewArrival]] =
@@ -59,24 +50,6 @@ object ViewAllArrivalMovementsViewModel {
           DateTimeFormatter.ofPattern("d MMMM yyyy")
         (result._1.format(dateFormatter), result._2.sortBy(_.updatedTime).reverse)
     }
-
   }
-
-  implicit def writes(implicit frontendAppConfig: FrontendAppConfig): OWrites[ViewAllArrivalMovementsViewModel] = (
-    (__ \ "dataRows").write[Seq[(String, Seq[ViewArrival])]] and
-      (__ \ "declareArrivalNotificationUrl").write[String] and
-      (__ \ "homePageUrl").write[String] and
-      (__ \ "singularOrPlural").write[String] and
-      __.write[PaginationViewModel]
-  )(
-    o =>
-      (
-        o.dataRows,
-        frontendAppConfig.declareArrivalNotificationStartUrl,
-        routes.WhatDoYouWantToDoController.onPageLoad().url,
-        o.singularOrPlural,
-        o.paginationViewModel
-      )
-  )
 
 }

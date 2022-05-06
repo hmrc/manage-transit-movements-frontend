@@ -20,25 +20,24 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.actions._
 import handlers.ErrorHandler
-import models.Arrival
 import play.api.i18n.I18nSupport
-import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
+import views.html.ViewAllArrivalsView
 
 import java.time.Clock
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewAllArrivalsController @Inject() (
-  val renderer: Renderer,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  paginationAppConfig: PaginationAppConfig,
+  val config: FrontendAppConfig,
+  val paginationAppConfig: PaginationAppConfig,
   arrivalMovementConnector: ArrivalMovementConnector,
+  view: ViewAllArrivalsView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
@@ -50,22 +49,16 @@ class ViewAllArrivalsController @Inject() (
 
       arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
         case Some(filteredArrivals) =>
-          val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
-            (arrival: Arrival) => ViewArrival(arrival)
-          )
+          val movements: Seq[ViewArrival] = filteredArrivals.arrivals.map(ViewArrival(_))
 
           val paginationViewModel = PaginationViewModel(
-            filteredArrivals.totalArrivals,
-            currentPage,
-            paginationAppConfig.arrivalsNumberOfMovements,
-            routes.ViewAllArrivalsController.onPageLoad(None).url
+            totalNumberOfMovements = filteredArrivals.totalArrivals,
+            currentPage = currentPage,
+            numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+            href = routes.ViewAllArrivalsController.onPageLoad(None).url
           )
 
-          val formatToJson: JsObject = Json.toJsObject(ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel))
-
-          renderer
-            .render("viewAllArrivals.njk", formatToJson)
-            .map(Ok(_))
+          Future.successful(Ok(view(ViewAllArrivalMovementsViewModel(movements, paginationViewModel))))
 
         case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }

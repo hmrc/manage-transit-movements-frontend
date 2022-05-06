@@ -18,9 +18,7 @@ package views.behaviours
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.libs.json.{JsObject, Json}
 import play.twirl.api.Html
-import viewModels.pagination.PaginationViewModel
 import views.base.SingleViewSpec
 
 abstract class NunjucksViewBehaviours(override protected val viewUnderTest: String) extends SingleViewSpec(viewUnderTest) {
@@ -35,88 +33,5 @@ abstract class NunjucksViewBehaviours(override protected val viewUnderTest: Stri
   def pageWithLink(doc: Document, id: String, expectedText: String, expectedHref: String): Unit =
     s"display link with id $id" in {
       assertPageHasLink(doc, id, expectedText, expectedHref)
-    }
-
-  // scalastyle:off method.length
-  def pageWithPagination(href: String): Unit =
-    "Pagination" - {
-
-      "must display pagination results when there is more than one page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(4, 2, 2, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        doc.getElementById("paginated-results-count").text mustBe "Showing 3 to 4 of 4 results"
-      }
-
-      "must display previous button when not on the first page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(4, 2, 2, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertRenderedById(doc, "previous")
-        doc.getElementById("previous").attr("href") mustBe s"$href?page=1"
-      }
-
-      "must not display previous button when on the first page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(1, 1, 1, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertNotRenderedById(doc, "previous")
-      }
-
-      "must display next button when not on the last page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(2, 1, 1, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertRenderedById(doc, "next")
-        doc.getElementById("next").attr("href") mustBe s"$href?page=2"
-      }
-
-      "must not display next button when on the last page" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(2, 2, 1, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertNotRenderedById(doc, "next")
-      }
-
-      "must display correct amount of items" in {
-
-        val json: JsObject = Json.toJsObject(PaginationViewModel(60, 4, 5, href))
-
-        val doc: Document = renderDocument(json).futureValue
-
-        assertRenderedById(doc, "pagination-item-1")
-        assertNotRenderedById(doc, "pagination-item-2")
-        assertRenderedById(doc, "pagination-item-3")
-        assertRenderedById(doc, "pagination-item-4")
-        assertRenderedById(doc, "pagination-item-5")
-        assertNotRenderedById(doc, "pagination-item-6")
-        assertRenderedById(doc, "pagination-item-12")
-      }
-    }
-  // scalastyle:on method.length
-
-  def pageWithMovementSearch(doc: Document, id: String, expectedText: String): Unit =
-    "displays search box" - {
-      s"display search box $id" in {
-        assertRenderedById(doc, id)
-      }
-
-      "contain a label for the search" in {
-        assertContainsLabel(doc, id, expectedText, None)
-      }
-
-      "have a submit button" in {
-        assertRenderedById(doc, "submit")
-      }
     }
 }

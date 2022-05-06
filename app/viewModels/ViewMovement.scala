@@ -16,6 +16,7 @@
 
 package viewModels
 
+import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
 trait ViewMovement {
@@ -24,4 +25,8 @@ trait ViewMovement {
   val referenceNumber: String
   val status: String
   val actions: Seq[ViewMovementAction]
+
+  val updated: String = updatedTime
+    .format(DateTimeFormatter.ofPattern("h:mma"))
+    .toLowerCase
 }

@@ -20,15 +20,13 @@ import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
-import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
-import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
-import views.html.ViewAllDeparturesView
+import views.behaviours.{MovementsTableViewBehaviours, SearchViewBehaviours}
+import views.html.ViewDeparturesSearchResultsView
 
-class ViewAllDeparturesViewSpec
+class ViewDeparturesSearchResultsViewSpec
     extends MovementsTableViewBehaviours[ViewDeparture]
     with SearchViewBehaviours[ViewDeparture]
-    with PaginationViewBehaviours[ViewDeparture]
     with Generators
     with ScalaCheckPropertyChecks {
 
@@ -44,13 +42,16 @@ class ViewAllDeparturesViewSpec
 
   override val viewMovements: Seq[ViewDeparture] = dataRows.flatMap(_._2)
 
-  override def view: HtmlFormat.Appendable =
-    injector.instanceOf[ViewAllDeparturesView].apply(viewAllDepartureMovementsViewModel)(fakeRequest, messages)
+  private val retrieved: Int = arbitrary[Int].sample.value
 
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
+  private val tooManyResults: Boolean = arbitrary[Boolean].sample.value
+
+  override def view: HtmlFormat.Appendable = viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults)
+
+  override def viewWithSpecificSearchResults(dataRows: Seq[(String, Seq[ViewDeparture])], retrieved: Int, tooManyResults: Boolean): HtmlFormat.Appendable =
     injector
-      .instanceOf[ViewAllDeparturesView]
-      .apply(ViewAllDepartureMovementsViewModel(Seq.empty[ViewDeparture], paginationViewModel))(fakeRequest, messages)
+      .instanceOf[ViewDeparturesSearchResultsView]
+      .apply(lrn.toString, dataRows, retrieved, tooManyResults)(fakeRequest, messages)
 
   behave like pageWithFullWidth()
 
@@ -61,21 +62,15 @@ class ViewAllDeparturesViewSpec
   behave like pageWithHeading()
 
   behave like pageWithLink(
-    id = "make-departure-notification",
-    expectedText = "Make a departure declaration",
-    expectedHref = frontendAppConfig.declareDepartureStartWithLRNUrl
+    id = "go-to-view-all-movements",
+    expectedText = "View all movements",
+    expectedHref = controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
   )
 
   behave like pageWithMovementSearch("Search by local reference number")
 
-  behave like pageWithPagination(controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url)
+  behave like pageWithSearchResults(lrn.toString)
 
   behave like pageWithMovementsData()
-
-  behave like pageWithLink(
-    id = "go-to-manage-transit-movements",
-    expectedText = "Go to manage transit movements",
-    expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
-  )
 
 }

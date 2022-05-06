@@ -16,8 +16,6 @@
 
 package viewModels.pagination
 
-import play.api.libs.json.{Json, OFormat}
-
 case class Item(pageNumber: Int, href: String, selected: Boolean)
 
 object Item {
@@ -28,6 +26,4 @@ object Item {
       href = s"$href?page=$pageNumber",
       selected = pageNumber == currentPage
     )
-
-  implicit val format: OFormat[Item] = Json.format[Item]
 }

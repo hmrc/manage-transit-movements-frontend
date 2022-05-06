@@ -23,30 +23,10 @@ import models.arrival.ArrivalStatus.{ArrivalRejected, ArrivalSubmitted, GoodsRel
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
 
-import java.time.format.DateTimeFormatter
 import java.time.{Clock, LocalDateTime, ZoneId}
 
 class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  "must serialise to Json" in {
-
-    forAll(arbitrary[ViewArrival]) {
-      viewMovement =>
-        val formatTime =
-          viewMovement.updatedTime.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
-
-        val expectedJson = Json.obj(
-          "updated"         -> formatTime,
-          "referenceNumber" -> viewMovement.movementReferenceNumber,
-          "status"          -> viewMovement.status,
-          "actions"         -> viewMovement.actions
-        )
-
-        Json.toJson(viewMovement) mustBe expectedJson
-    }
-  }
 
   "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {

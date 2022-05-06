@@ -18,16 +18,15 @@ package viewModels
 
 import config.FrontendAppConfig
 import models.{Departure, LocalReferenceNumber, RichLocalDateTime}
-import play.api.libs.json.{Json, OWrites}
 
-import java.time.format.DateTimeFormatter
 import java.time.{Clock, LocalDate, LocalTime}
 
-final case class ViewDeparture(updatedDate: LocalDate,
-                               updatedTime: LocalTime,
-                               localReferenceNumber: LocalReferenceNumber,
-                               status: String,
-                               actions: Seq[ViewMovementAction]
+final case class ViewDeparture(
+  updatedDate: LocalDate,
+  updatedTime: LocalTime,
+  localReferenceNumber: LocalReferenceNumber,
+  status: String,
+  actions: Seq[ViewMovementAction]
 ) extends ViewMovement {
 
   override val referenceNumber: String = localReferenceNumber.value
@@ -49,15 +48,4 @@ object ViewDeparture {
       actions = departureStatus.actions
     )
   }
-
-  implicit val writes: OWrites[ViewDeparture] =
-    (o: ViewDeparture) =>
-      Json.obj(
-        "updated" -> o.updatedTime
-          .format(DateTimeFormatter.ofPattern("h:mma"))
-          .toLowerCase,
-        "referenceNumber" -> o.localReferenceNumber,
-        "status"          -> o.status,
-        "actions"         -> o.actions
-      )
 }

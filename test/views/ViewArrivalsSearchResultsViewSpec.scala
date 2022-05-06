@@ -20,15 +20,13 @@ import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
-import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
-import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
-import views.html.ViewAllArrivalsView
+import views.behaviours.{MovementsTableViewBehaviours, SearchViewBehaviours}
+import views.html.ViewArrivalsSearchResultsView
 
-class ViewAllArrivalsViewSpec
+class ViewArrivalsSearchResultsViewSpec
     extends MovementsTableViewBehaviours[ViewArrival]
     with SearchViewBehaviours[ViewArrival]
-    with PaginationViewBehaviours[ViewArrival]
     with Generators
     with ScalaCheckPropertyChecks {
 
@@ -44,13 +42,16 @@ class ViewAllArrivalsViewSpec
 
   override val viewMovements: Seq[ViewArrival] = dataRows.flatMap(_._2)
 
-  override def view: HtmlFormat.Appendable =
-    injector.instanceOf[ViewAllArrivalsView].apply(viewAllArrivalMovementsViewModel)(fakeRequest, messages)
+  private val retrieved: Int = arbitrary[Int].sample.value
 
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
+  private val tooManyResults: Boolean = arbitrary[Boolean].sample.value
+
+  override def view: HtmlFormat.Appendable = viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults)
+
+  override def viewWithSpecificSearchResults(dataRows: Seq[(String, Seq[ViewArrival])], retrieved: Int, tooManyResults: Boolean): HtmlFormat.Appendable =
     injector
-      .instanceOf[ViewAllArrivalsView]
-      .apply(ViewAllArrivalMovementsViewModel(Seq.empty[ViewArrival], paginationViewModel))(fakeRequest, messages)
+      .instanceOf[ViewArrivalsSearchResultsView]
+      .apply(mrn, dataRows, retrieved, tooManyResults)(fakeRequest, messages)
 
   behave like pageWithFullWidth()
 
@@ -61,21 +62,15 @@ class ViewAllArrivalsViewSpec
   behave like pageWithHeading()
 
   behave like pageWithLink(
-    id = "make-arrival-notification",
-    expectedText = "Make an arrival notification",
-    expectedHref = frontendAppConfig.declareArrivalNotificationStartUrl
+    id = "go-to-view-all-movements",
+    expectedText = "View all movements",
+    expectedHref = controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
   )
 
   behave like pageWithMovementSearch("Search by movement reference number")
 
-  behave like pageWithPagination(controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
+  behave like pageWithSearchResults(mrn)
 
   behave like pageWithMovementsData()
-
-  behave like pageWithLink(
-    id = "go-to-manage-transit-movements",
-    expectedText = "Go to manage transit movements",
-    expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
-  )
 
 }

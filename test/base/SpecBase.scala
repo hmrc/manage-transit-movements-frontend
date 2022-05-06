@@ -16,7 +16,7 @@
 
 package base
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PaginationAppConfig}
 import models.{DepartureId, LocalReferenceNumber}
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -34,6 +34,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
 
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
+  val mrn: String               = "mrn"
 
   val departureId: DepartureId = DepartureId(1)
 
@@ -46,6 +47,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
 
   implicit def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
+  def paginationAppConfig: PaginationAppConfig = injector.instanceOf[PaginationAppConfig]
 
   implicit val clock: Clock = Clock.systemDefaultZone()
 

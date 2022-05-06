@@ -1,0 +1,84 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import viewModels.ViewMovement
+
+@this()
+
+@(
+    dataRows: Seq[(String, Seq[ViewMovement])],
+    visuallyHiddenHeader: String,
+    rowHeadingUpdated: String,
+    rowHeadingReferenceNumber: String,
+    rowHeadingStatus: String,
+    rowHeadingAction: String
+)(implicit messages: Messages)
+
+@for((date, rows) <- dataRows) {
+
+    <h2 class="govuk-heading-m" data-testrole="movements-list_group-heading">@date</h2>
+
+    <table class="responsive-table">
+        <caption class="govuk-visually-hidden">@visuallyHiddenHeader</caption>
+
+        <thead>
+            <tr>
+                <th scope="col">@rowHeadingUpdated</th>
+                <th scope="col">@rowHeadingReferenceNumber</th>
+                <th scope="col">@rowHeadingStatus</th>
+                <th scope="col">@rowHeadingAction</th>
+            </tr>
+        </thead>
+
+        <tbody class="hmrc-responsive-table__data">
+            @for((row, rowIndex) <- rows.zip(Stream from 1)) {
+                <tr data-testrole="movements-list_row@rowIndex">
+
+                    <td data-testrole="movements-list_row@rowIndex-updated">
+                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingUpdated</span>
+                        @row.updated
+                    </td>
+
+                    <td data-testrole="movements-list_row@rowIndex-ref">
+                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
+                        @row.referenceNumber
+                    </td>
+
+                    <td data-testrole="movements-list_row@rowIndex-status">
+                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingStatus</span>
+                        @messages(row.status)
+                    </td>
+
+                    <td data-testrole="movements-list_row@rowIndex-actions">
+                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingAction</span>
+                        <ul class="govuk-list responsive-table__list">
+                            @for((action, actionIndex) <- row.actions.zip(Stream from 1)) {
+                                <li>
+                                    <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link" data-testrole="movements-list_row@rowIndex-action@actionIndex">
+                                        @messages(action.key)
+                                        <span class="govuk-visually-hidden">@messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}

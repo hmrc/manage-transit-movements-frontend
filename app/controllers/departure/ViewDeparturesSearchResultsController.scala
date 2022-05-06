@@ -21,13 +21,11 @@ import connectors.DeparturesMovementConnector
 import controllers.actions._
 import handlers.ErrorHandler
 import models.requests.IdentifierRequest
-import models.{Departure, Departures}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewDeparture, ViewDepartureMovements}
+import views.html.ViewDeparturesSearchResultsView
 
 import java.time.Clock
 import javax.inject.Inject
@@ -39,53 +37,37 @@ class ViewDeparturesSearchResultsController @Inject() (
   cc: MessagesControllerComponents,
   connector: DeparturesMovementConnector,
   searchResultsAppConfig: SearchResultsAppConfig,
-  val renderer: Renderer,
+  view: ViewDeparturesSearchResultsView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 
-  private val pageSize = searchResultsAppConfig.maxSearchResults
+  private lazy val pageSize = searchResultsAppConfig.maxSearchResults
 
   def onPageLoad(lrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
-      val trimmedLrn = lrn.trim
-      if (trimmedLrn.isEmpty) {
-        Future.successful(Redirect(routes.ViewAllDeparturesController.onPageLoad(None)))
-      } else {
-        renderSearchResults(
-          connector.getDepartureSearchResults(trimmedLrn, pageSize),
-          "viewDeparturesSearchResults.njk",
-          trimmedLrn
-        )
+      lrn.trim match {
+        case lrn if lrn.isEmpty =>
+          Future.successful(Redirect(routes.ViewAllDeparturesController.onPageLoad(None)))
+        case lrn =>
+          connector.getDepartureSearchResults(lrn, pageSize).flatMap {
+            case Some(allDepartures) =>
+              val viewMovements: Seq[ViewDeparture] = allDepartures.departures.map(ViewDeparture(_))
+
+              Future.successful(
+                Ok(
+                  view(
+                    lrn = lrn,
+                    dataRows = ViewDepartureMovements.apply(viewMovements).dataRows,
+                    retrieved = allDepartures.retrievedDepartures,
+                    tooManyResults = allDepartures.tooManyResults
+                  )
+                )
+              )
+
+            case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
+          }
       }
   }
-
-  private def searchParams(lrn: String, retrieved: Int, matchedOption: Option[Int]) =
-    matchedOption match {
-      case Some(matched) if matched > 0 =>
-        Json.obj(
-          "lrn"            -> lrn,
-          "resultsText"    -> s"Showing $retrieved results matching $lrn.",
-          "tooManyResults" -> (retrieved < matched)
-        )
-      case _ => Json.obj("lrn" -> lrn, "resultsText" -> "", "tooManyResults" -> false)
-
-    }
-
-  private def renderSearchResults(results: Future[Option[Departures]], template: String, lrn: String)(implicit request: IdentifierRequest[AnyContent]) =
-    results.flatMap {
-      case Some(allDepartures) =>
-        val viewMovements: Seq[ViewDeparture] = allDepartures.departures.map(
-          (departure: Departure) => ViewDeparture(departure)
-        )
-        val formatToJson: JsObject = Json.toJsObject(ViewDepartureMovements.apply(viewMovements)) ++
-          searchParams(lrn, allDepartures.retrievedDepartures, allDepartures.totalMatched)
-
-        renderer
-          .render(template, formatToJson)
-          .map(Ok(_))
-
-      case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
-    }
 }

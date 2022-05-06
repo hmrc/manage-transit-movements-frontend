@@ -22,7 +22,7 @@ import org.scalacheck.{Arbitrary, Gen, Shrink}
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-trait Generators extends ModelGenerators {
+trait Generators extends ModelGenerators with ViewModelGenerators {
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
@@ -83,7 +83,7 @@ trait Generators extends ModelGenerators {
       .suchThat(_ != "false")
 
   def nonEmptyString: Gen[String] =
-    arbitrary[String].map(
+    Gen.alphaNumStr.map(
       x =>
         if (x.nonEmpty) {
           x
@@ -92,17 +92,19 @@ trait Generators extends ModelGenerators {
         }
     )
 
+  def nonEmptyChar: Gen[Char] = arbitrary[Char].retryUntil(_ != ' ')
+
   def stringsWithMaxLength(maxLength: Int): Gen[String] =
     for {
       length <- choose(1, maxLength)
-      chars  <- listOfN(length, arbitrary[Char])
+      chars  <- listOfN(length, nonEmptyChar)
     } yield chars.mkString
 
   def stringsLongerThan(minLength: Int): Gen[String] =
     for {
       maxLength <- (minLength * 2).max(100)
       length    <- Gen.chooseNum(minLength + 1, maxLength)
-      chars     <- listOfN(length, arbitrary[Char])
+      chars     <- listOfN(length, nonEmptyChar)
     } yield chars.mkString
 
   def stringsExceptSpecificValues(excluded: Seq[String]): Gen[String] =
@@ -133,11 +135,11 @@ trait Generators extends ModelGenerators {
       seq    <- listOfN(length, arbitrary[A])
     } yield seq
 
-  def listWithMaxLength[T](maxSize: Int, gen: Gen[T]): Gen[Seq[T]] =
+  def listWithMaxLength[A](maxLength: Int = 10)(implicit a: Arbitrary[A]): Gen[List[A]] =
     for {
-      size  <- Gen.choose(1, maxSize)
-      items <- Gen.listOfN(size, gen)
-    } yield items
+      length <- choose(1, maxLength)
+      seq    <- listOfN(length, arbitrary[A])
+    } yield seq
 
   def alphaNumericWithMaxLength(maxLength: Int): Gen[String] =
     for {

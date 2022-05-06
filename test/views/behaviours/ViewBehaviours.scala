@@ -187,4 +187,9 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
       val formAction = getElementByTag(doc, "form").attr("action")
       formAction mustBe expectedUrl
     }
+
+  def pageWithFullWidth(): Unit =
+    "must have full width class" in {
+      assert(doc.getElementsByClass("govuk-grid-column-full").size() == 1)
+    }
 }

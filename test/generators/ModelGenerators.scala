@@ -40,7 +40,7 @@ trait ModelGenerators {
       } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)
     }
 
-  implicit val arbitrarylocalDate: Arbitrary[LocalDate] =
+  implicit val arbitraryLocalDate: Arbitrary[LocalDate] =
     Arbitrary {
       for {
         day <- Gen.choose(1, 28)
@@ -125,17 +125,17 @@ trait ModelGenerators {
   implicit val arbitraryViewMovementAction: Arbitrary[ViewMovementAction] =
     Arbitrary {
       for {
-        href <- arbitrary[String]
-        key  <- arbitrary[String]
+        href <- Gen.alphaNumStr
+        key  <- nonEmptyString
       } yield ViewMovementAction(href, key)
     }
 
-  implicit val arbitraryViewMovement: Arbitrary[ViewArrival] =
+  implicit val arbitraryViewArrival: Arbitrary[ViewArrival] =
     Arbitrary {
       for {
         date    <- arbitrary[LocalDate]
         time    <- arbitrary[LocalTime]
-        status  <- arbitrary[String]
+        status  <- Gen.alphaNumStr
         mrn     <- stringsWithMaxLength(17)
         actions <- listOfN(4, arbitrary[ViewMovementAction])
       } yield ViewArrival(date, time, status, mrn, actions)
@@ -147,7 +147,7 @@ trait ModelGenerators {
         updatedDate          <- arbitrary[LocalDate]
         updatedTime          <- arbitrary[LocalTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        status               <- arbitrary[String]
+        status               <- Gen.alphaNumStr
         actions              <- listOfN(4, arbitrary[ViewMovementAction])
       } yield new ViewDeparture(updatedDate, updatedTime, localReferenceNumber, status, actions)
     }
@@ -196,7 +196,7 @@ trait ModelGenerators {
       totalNumberOfItems         <- arbitrary[Int]
       officeOfDepartureRefNumber <- Gen.alphaNumStr
       controlResult              <- arbitrary[ControlResult]
-      resultsOfControl           <- Gen.option(listWithMaxLength(ResultsOfControl.maxResultsOfControl, arbitrary[ResultsOfControl]))
+      resultsOfControl           <- Gen.option(listWithMaxLength[ResultsOfControl](ResultsOfControl.maxResultsOfControl))
     } yield new NoReleaseForTransitMessage(
       mrn = mrn,
       noReleaseMotivation = noReleaseMotivation,
@@ -222,10 +222,9 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryRejectionError: Arbitrary[FunctionalError] =
     Arbitrary {
-
       for {
         errorType     <- arbitrary[ErrorType]
-        pointer       <- arbitrary[String]
+        pointer       <- Gen.alphaNumStr
         reason        <- arbitrary[Option[String]]
         originalValue <- arbitrary[Option[String]]
       } yield FunctionalError(errorType, ErrorPointer(pointer), reason, originalValue)
@@ -233,7 +232,6 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryXMLSubmissionNegativeAcknowledgementMessage: Arbitrary[XMLSubmissionNegativeAcknowledgementMessage] =
     Arbitrary {
-
       for {
         mrn   <- Gen.option(nonEmptyString)
         lrn   <- Gen.option(nonEmptyString)

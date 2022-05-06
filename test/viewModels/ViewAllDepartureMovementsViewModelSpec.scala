@@ -25,7 +25,7 @@ import viewModels.pagination._
 
 import java.time.{LocalDate, LocalTime}
 
-class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class ViewAllDepartureMovementsViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
@@ -33,11 +33,11 @@ class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with
     val localDateYesterday = LocalDate.now().minusDays(1)
     val localTime          = LocalTime.now()
 
-    val movementsGen: LocalDate => Gen[Seq[ViewArrival]] =
+    val movementsGen: LocalDate => Gen[Seq[ViewDeparture]] =
       date =>
         seqWithMaxLength(1) {
           Arbitrary {
-            arbitrary[ViewArrival].map(
+            arbitrary[ViewDeparture].map(
               _.copy(updatedDate = date, updatedTime = localTime)
             )
           }
@@ -46,9 +46,9 @@ class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with
     val paginationViewModel = PaginationViewModel(10, 1, 2, "testHref")
 
     forAll(movementsGen(localDateToday).suchThat(_.nonEmpty), movementsGen(localDateYesterday).suchThat(_.nonEmpty)) {
-      (todayMovements: Seq[ViewArrival], yesterdayMovements: Seq[ViewArrival]) =>
-        val result: ViewAllArrivalMovementsViewModel =
-          ViewAllArrivalMovementsViewModel(todayMovements ++ yesterdayMovements, paginationViewModel)
+      (todayMovements: Seq[ViewDeparture], yesterdayMovements: Seq[ViewDeparture]) =>
+        val result: ViewAllDepartureMovementsViewModel =
+          ViewAllDepartureMovementsViewModel(todayMovements ++ yesterdayMovements, paginationViewModel)
 
         result.dataRows(0)._2 mustEqual todayMovements
         result.dataRows(1)._2 mustEqual yesterdayMovements
@@ -62,10 +62,10 @@ class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with
     val localTimeMinus1 = LocalTime.now.minusHours(1)
     val localTimeMinus2 = LocalTime.now.minusHours(2)
 
-    val movementsGen: LocalTime => Arbitrary[ViewArrival] = {
+    val movementsGen: LocalTime => Arbitrary[ViewDeparture] = {
       time =>
         Arbitrary {
-          arbitrary[ViewArrival].map(
+          arbitrary[ViewDeparture].map(
             _.copy(updatedDate = localDateToday, updatedTime = time)
           )
         }
@@ -79,12 +79,12 @@ class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with
       movementsGen(localTimeMinus2).arbitrary
     ) {
       (movement, movementMinus1, movementMinus2) =>
-        val movementsInWrongOrder: Seq[ViewArrival] =
+        val movementsInWrongOrder: Seq[ViewDeparture] =
           Seq(movementMinus1, movementMinus2, movement)
-        val result: ViewAllArrivalMovementsViewModel =
-          ViewAllArrivalMovementsViewModel(movementsInWrongOrder, paginationViewModel)
+        val result: ViewAllDepartureMovementsViewModel =
+          ViewAllDepartureMovementsViewModel(movementsInWrongOrder, paginationViewModel)
 
-        val expectedResult: Seq[ViewArrival] =
+        val expectedResult: Seq[ViewDeparture] =
           Seq(movement, movementMinus1, movementMinus2)
         result.dataRows.head._2 mustEqual expectedResult
     }
