@@ -21,70 +21,57 @@ import connectors.ArrivalMovementConnector
 import controllers.actions.IdentifierAction
 import handlers.ErrorHandler
 import models.requests.IdentifierRequest
-import models.{Arrival, Arrivals}
-import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsObject, Json}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrival, ViewArrivalMovements}
+import views.html.ViewArrivalsSearchResultsView
 
 import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ViewArrivalsSearchResultsController @Inject() (
-  val renderer: Renderer,
+  override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
+  connector: ArrivalMovementConnector,
   searchResultsAppConfig: SearchResultsAppConfig,
-  arrivalMovementConnector: ArrivalMovementConnector,
+  view: ViewArrivalsSearchResultsView,
   errorHandler: ErrorHandler
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
+)(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 
-  private val pageSize = searchResultsAppConfig.maxSearchResults
+  private lazy val pageSize = searchResultsAppConfig.maxSearchResults
 
   def onPageLoad(mrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request: IdentifierRequest[AnyContent] =>
-      val trimmedMrn = mrn.trim
-      if (trimmedMrn.isEmpty) {
-        Future.successful(Redirect(routes.ViewAllArrivalsController.onPageLoad(None)))
-      } else {
-        renderSearchResults(
-          arrivalMovementConnector.getArrivalSearchResults(trimmedMrn, pageSize),
-          "viewArrivalsSearchResults.njk",
-          trimmedMrn
-        )
+      mrn.trim match {
+        case mrn if mrn.isEmpty =>
+          Future.successful(Redirect(routes.ViewAllArrivalsController.onPageLoad(None)))
+        case mrn =>
+          connector.getArrivalSearchResults(mrn, pageSize).flatMap {
+            case Some(allArrivals) =>
+              val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(ViewArrival(_))
+              val retrieved                       = allArrivals.retrievedArrivals
+
+              Future.successful(
+                Ok(
+                  view(
+                    mrn = mrn,
+                    dataRows = ViewArrivalMovements.apply(viewMovements).dataRows,
+                    retrieved = retrieved,
+                    tooManyResults = allArrivals.totalMatched match {
+                      case Some(matched) if matched > 0 => retrieved < matched
+                      case _                            => false
+                    }
+                  )
+                )
+              )
+
+            case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
+          }
       }
   }
-
-  private def searchParams(mrn: String, retrieved: Int, matchedOption: Option[Int]) =
-    matchedOption match {
-      case Some(matched) if matched > 0 =>
-        Json.obj(
-          "mrn"            -> mrn,
-          "retrieved"      -> retrieved,
-          "tooManyResults" -> (retrieved < matched)
-        )
-      case _ => Json.obj("mrn" -> mrn, "retrieved" -> 0, "tooManyResults" -> false)
-
-    }
-
-  private def renderSearchResults(results: Future[Option[Arrivals]], template: String, mrn: String)(implicit request: IdentifierRequest[AnyContent]) =
-    results.flatMap {
-      case Some(allArrivals) =>
-        val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
-          (arrival: Arrival) => ViewArrival(arrival)
-        )
-        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements)) ++
-          searchParams(mrn, allArrivals.retrievedArrivals, allArrivals.totalMatched)
-
-        renderer
-          .render(template, formatToJson)
-          .map(Ok(_))
-
-      case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
-    }
 }
