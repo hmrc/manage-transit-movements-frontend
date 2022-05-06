@@ -16,7 +16,6 @@
 
 package views.behaviours
 
-import config.PaginationAppConfig
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.scalacheck.Gen
@@ -29,8 +28,6 @@ import viewModels.pagination.PaginationViewModel
 import scala.collection.convert.ImplicitConversions._
 
 trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours with ScalaCheckPropertyChecks {
-
-  def paginationAppConfig: PaginationAppConfig = injector.instanceOf[PaginationAppConfig]
 
   val viewMovements: Seq[T]
 

@@ -17,34 +17,29 @@
 package controllers.arrival
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
-import matchers.JsonMatchers
 import models.arrival.ArrivalStatus.ArrivalSubmitted
 import models.{Arrival, ArrivalId, Arrivals, RichLocalDateTime}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.pagination.PaginationViewModel
-import viewModels.{ViewArrival, ViewArrivalMovements}
+import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
+import views.html.ViewAllArrivalsView
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewAllArrivalsControllerSpec extends SpecBase with JsonMatchers with Generators with NunjucksSupport {
+class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
 
-  val time: LocalDateTime              = LocalDateTime.now()
-  val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
+  private val time: LocalDateTime              = LocalDateTime.now()
+  private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
@@ -58,95 +53,67 @@ class ViewAllArrivalsControllerSpec extends SpecBase with JsonMatchers with Gene
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
 
-  private val mockArrivalResponse: Arrivals =
-    Arrivals(
+  private val mockArrivalResponse: Arrivals = Arrivals(
       retrievedArrivals = 1,
       totalArrivals = 1,
       totalMatched = None,
       arrivals = Seq(
-        Arrival(ArrivalId(1), time, time, "test mrn", ArrivalSubmitted)
+        Arrival(
+          arrivalId = ArrivalId(1),
+          created = time,
+          updated = time,
+          movementReferenceNumber = "test mrn",
+          status = ArrivalSubmitted
+        )
       )
     )
 
   private val mockViewMovement = ViewArrival(
-    systemDefaultTime.toLocalDate,
-    systemDefaultTime.toLocalTime,
-    "test mrn",
-    "movement.status.arrivalSubmitted",
-    Nil
+    updatedDate = systemDefaultTime.toLocalDate,
+    updatedTime = systemDefaultTime.toLocalTime,
+    movementReferenceNumber = "test mrn",
+    status = "movement.status.arrivalSubmitted",
+    actions = Nil
   )
-
-  private lazy val expectedJson =
-    Json.toJsObject(
-      ViewArrivalMovements(Seq(mockViewMovement))
-    ) ++ Json.obj(
-      "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url,
-      "singularOrPlural"              -> "numberOfMovements.singular"
-    ) ++ Json.toJsObject(
-      PaginationViewModel(1, 1, 20, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
-    )
 
   "ViewAllArrivals Controller" - {
     "return OK and the correct view for a GET" in {
 
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
         .thenReturn(Future.successful(Some(mockArrivalResponse)))
 
-      val request = FakeRequest(
-        GET,
-        controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(Some(1)).url
-      )
+      val currentPage = 1
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
+      val request = FakeRequest(GET, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(Some(currentPage)).url)
 
       val result = route(app, request).value
+
+      val view = injector.instanceOf[ViewAllArrivalsView]
+
       status(result) mustEqual OK
 
-      verify(mockNunjucksRenderer, times(1))
-        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val expectedPaginationViewModel = PaginationViewModel(
+        totalNumberOfMovements = mockArrivalResponse.totalArrivals,
+        currentPage = currentPage,
+        numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+        href = routes.ViewAllArrivalsController.onPageLoad(None).url
+      )
+      val expectedViewModel = ViewAllArrivalMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
-      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-      templateCaptor.getValue mustEqual "viewAllArrivals.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson
+      contentAsString(result) mustEqual
+        view(expectedViewModel)(request, messages).toString
     }
 
-    "render technical difficulty" in {
-
-      val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    "render technical difficulties when no paged arrivals retrieved" in {
 
       when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
-      val request = FakeRequest(
-        GET,
-        controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
-      )
-
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
+      val request = FakeRequest(GET, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
 
       val result = route(app, request).value
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj {
-        "contactUrl" -> config.nctsEnquiriesUrl
-      }
-
-      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson
     }
   }
 }

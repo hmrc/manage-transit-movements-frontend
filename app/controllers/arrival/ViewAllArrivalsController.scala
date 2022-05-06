@@ -20,7 +20,6 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.TechnicalDifficultiesPage
 import controllers.actions._
-import models.Arrival
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -52,9 +51,7 @@ class ViewAllArrivalsController @Inject() (
 
       arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
         case Some(filteredArrivals) =>
-          val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
-            (arrival: Arrival) => ViewArrival(arrival)
-          )
+          val movements: Seq[ViewArrival] = filteredArrivals.arrivals.map(ViewArrival(_))
 
           val paginationViewModel = PaginationViewModel(
             totalNumberOfMovements = filteredArrivals.totalArrivals,
@@ -63,11 +60,7 @@ class ViewAllArrivalsController @Inject() (
             href = routes.ViewAllArrivalsController.onPageLoad(None).url
           )
 
-          val viewAllArrivalMovementsViewModel = ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel)
-
-          //val formatToJson: JsObject = Json.toJsObject(viewAllArrivalMovementsViewModel)
-
-          //renderer.render("viewAllArrivals.njk", formatToJson).map(Ok(_))
+          val viewAllArrivalMovementsViewModel = ViewAllArrivalMovementsViewModel(movements, paginationViewModel)
 
           Future.successful(Ok(view(viewAllArrivalMovementsViewModel)))
 
