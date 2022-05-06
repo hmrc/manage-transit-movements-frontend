@@ -18,8 +18,8 @@ package controllers.arrival
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
-import controllers.TechnicalDifficultiesPage
 import controllers.actions._
+import handlers.ErrorHandler
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -39,11 +39,11 @@ class ViewAllArrivalsController @Inject() (
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
   arrivalMovementConnector: ArrivalMovementConnector,
-  view: ViewAllArrivalsView
+  view: ViewAllArrivalsView,
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
-    with I18nSupport
-    with TechnicalDifficultiesPage {
+    with I18nSupport {
 
   def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
@@ -64,7 +64,7 @@ class ViewAllArrivalsController @Inject() (
 
           Future.successful(Ok(view(viewAllArrivalMovementsViewModel)))
 
-        case _ => renderTechnicalDifficultiesPage
+        case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }
   }
 }

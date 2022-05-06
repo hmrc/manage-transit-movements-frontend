@@ -54,19 +54,19 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
       )
 
   private val mockArrivalResponse: Arrivals = Arrivals(
-      retrievedArrivals = 1,
-      totalArrivals = 1,
-      totalMatched = None,
-      arrivals = Seq(
-        Arrival(
-          arrivalId = ArrivalId(1),
-          created = time,
-          updated = time,
-          movementReferenceNumber = "test mrn",
-          status = ArrivalSubmitted
-        )
+    retrievedArrivals = 1,
+    totalArrivals = 1,
+    totalMatched = None,
+    arrivals = Seq(
+      Arrival(
+        arrivalId = ArrivalId(1),
+        created = time,
+        updated = time,
+        movementReferenceNumber = "test mrn",
+        status = ArrivalSubmitted
       )
     )
+  )
 
   private val mockViewMovement = ViewArrival(
     updatedDate = systemDefaultTime.toLocalDate,
@@ -113,7 +113,8 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
 
       val result = route(app, request).value
 
-      status(result) mustEqual INTERNAL_SERVER_ERROR
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

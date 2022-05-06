@@ -18,10 +18,8 @@ package controllers.departure
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DeparturesMovementConnector
-import controllers.TechnicalDifficultiesPage
 import controllers.actions._
-
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.Departure
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsObject, Json}
@@ -32,19 +30,19 @@ import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 
 import java.time.Clock
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ViewAllDeparturesController @Inject() (
   val renderer: Renderer,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  val config: FrontendAppConfig,
-  val paginationAppConfig: PaginationAppConfig,
-  departuresMovementConnector: DeparturesMovementConnector
+  paginationAppConfig: PaginationAppConfig,
+  departuresMovementConnector: DeparturesMovementConnector,
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
-    with I18nSupport
-    with TechnicalDifficultiesPage {
+    with I18nSupport {
 
   def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
@@ -69,7 +67,7 @@ class ViewAllDeparturesController @Inject() (
             .render("viewAllDepartures.njk", formatToJson)
             .map(Ok(_))
 
-        case None => renderTechnicalDifficultiesPage
+        case None => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }
   }
 }

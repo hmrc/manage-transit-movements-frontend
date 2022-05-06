@@ -17,7 +17,6 @@
 package controllers.departure
 
 import base.SpecBase
-import config.FrontendAppConfig
 import generators.Generators
 import matchers.JsonMatchers
 import models.departure.NoReleaseForTransitMessage
@@ -80,29 +79,16 @@ class NoReleaseForTransitControllerSpec extends SpecBase with JsonMatchers with 
     }
 
     "render Technical difficulties page on failing to fetch noReleaseForTransitMessage" in {
-      val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
         .thenReturn(Future.successful(None))
-
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
 
       val result = route(app, request).value
 
-      status(result) mustBe INTERNAL_SERVER_ERROR
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj {
-        "contactUrl" -> config.nctsEnquiriesUrl
-      }
-
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

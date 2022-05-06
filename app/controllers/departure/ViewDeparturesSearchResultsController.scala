@@ -18,8 +18,8 @@ package controllers.departure
 
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
-import controllers.TechnicalDifficultiesPage
 import controllers.actions._
+import handlers.ErrorHandler
 import models.requests.IdentifierRequest
 import models.{Departure, Departures}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -38,13 +38,12 @@ class ViewDeparturesSearchResultsController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   connector: DeparturesMovementConnector,
-  val config: FrontendAppConfig,
-  val searchResultsAppConfig: SearchResultsAppConfig,
-  val renderer: Renderer
+  searchResultsAppConfig: SearchResultsAppConfig,
+  val renderer: Renderer,
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
-    with I18nSupport
-    with TechnicalDifficultiesPage {
+    with I18nSupport {
 
   private val pageSize = searchResultsAppConfig.maxSearchResults
 
@@ -87,6 +86,6 @@ class ViewDeparturesSearchResultsController @Inject() (
           .render(template, formatToJson)
           .map(Ok(_))
 
-      case _ => renderTechnicalDifficultiesPage
+      case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
     }
 }

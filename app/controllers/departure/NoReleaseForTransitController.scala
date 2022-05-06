@@ -16,9 +16,8 @@
 
 package controllers.departure
 
-import config.FrontendAppConfig
-import controllers.TechnicalDifficultiesPage
 import controllers.actions._
+import handlers.ErrorHandler
 import models.DepartureId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -36,11 +35,10 @@ class NoReleaseForTransitController @Inject() (
   cc: MessagesControllerComponents,
   departureMessageService: DepartureMessageService,
   val renderer: Renderer,
-  val config: FrontendAppConfig
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
-    with I18nSupport
-    with TechnicalDifficultiesPage {
+    with I18nSupport {
 
   def onPageLoad(departureId: DepartureId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
@@ -48,7 +46,7 @@ class NoReleaseForTransitController @Inject() (
         case Some(message) =>
           val json = Json.obj("noReleaseForTransitMessage" -> Json.toJson(message))
           renderer.render("noReleaseForTransit.njk", json).map(Ok(_))
-        case _ => renderTechnicalDifficultiesPage
+        case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }
   }
 }
