@@ -33,14 +33,6 @@
     viewModel: ViewAllArrivalMovementsViewModel
 )(implicit request: Request[_], messages: Messages)
 
-@resultsCount = {
-    @viewModel.paginationViewModel.results.count match {
-        case x if x == 1 => { @Html(messages("numberOfMovements.singular", s"<b>$x</b>")) }
-        case x           => { @Html(messages("numberOfMovements.plural", s"<b>$x</b>")) }
-        case _           => { () }
-    }
-}
-
 @mainTemplate(
     title = messages("viewArrivalNotifications.title"),
     showBackLink = false,

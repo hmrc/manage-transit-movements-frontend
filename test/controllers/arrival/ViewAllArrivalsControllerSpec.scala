@@ -53,6 +53,8 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
 
+  private val mrn = "test mrn"
+
   private val mockArrivalResponse: Arrivals = Arrivals(
     retrievedArrivals = 1,
     totalArrivals = 1,
@@ -62,7 +64,7 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
         arrivalId = ArrivalId(1),
         created = time,
         updated = time,
-        movementReferenceNumber = "test mrn",
+        movementReferenceNumber = mrn,
         status = ArrivalSubmitted
       )
     )
@@ -71,40 +73,69 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
   private val mockViewMovement = ViewArrival(
     updatedDate = systemDefaultTime.toLocalDate,
     updatedTime = systemDefaultTime.toLocalTime,
-    movementReferenceNumber = "test mrn",
+    movementReferenceNumber = mrn,
     status = "movement.status.arrivalSubmitted",
     actions = Nil
   )
 
   "ViewAllArrivals Controller" - {
-    "return OK and the correct view for a GET" in {
 
-      when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
-        .thenReturn(Future.successful(Some(mockArrivalResponse)))
+    "return OK and the correct view for a GET" - {
 
-      val currentPage = 1
+      "when page provided" in {
 
-      val request = FakeRequest(GET, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(Some(currentPage)).url)
+        when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
+          .thenReturn(Future.successful(Some(mockArrivalResponse)))
 
-      val result = route(app, request).value
+        val currentPage = 1
 
-      val view = injector.instanceOf[ViewAllArrivalsView]
+        val request = FakeRequest(GET, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(Some(currentPage)).url)
 
-      status(result) mustEqual OK
+        val result = route(app, request).value
 
-      val expectedPaginationViewModel = PaginationViewModel(
-        totalNumberOfMovements = mockArrivalResponse.totalArrivals,
-        currentPage = currentPage,
-        numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
-        href = routes.ViewAllArrivalsController.onPageLoad(None).url
-      )
-      val expectedViewModel = ViewAllArrivalMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
+        val view = injector.instanceOf[ViewAllArrivalsView]
 
-      contentAsString(result) mustEqual
-        view(expectedViewModel)(request, messages).toString
+        status(result) mustEqual OK
+
+        val expectedPaginationViewModel = PaginationViewModel(
+          totalNumberOfMovements = mockArrivalResponse.totalArrivals,
+          currentPage = currentPage,
+          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          href = routes.ViewAllArrivalsController.onPageLoad(None).url
+        )
+        val expectedViewModel = ViewAllArrivalMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
+
+        contentAsString(result) mustEqual
+          view(expectedViewModel)(request, messages).toString
+      }
+
+      "when page not provided must default to 1" in {
+
+        when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
+          .thenReturn(Future.successful(Some(mockArrivalResponse)))
+
+        val request = FakeRequest(GET, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
+
+        val result = route(app, request).value
+
+        val view = injector.instanceOf[ViewAllArrivalsView]
+
+        status(result) mustEqual OK
+
+        val expectedPaginationViewModel = PaginationViewModel(
+          totalNumberOfMovements = mockArrivalResponse.totalArrivals,
+          currentPage = 1,
+          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          href = routes.ViewAllArrivalsController.onPageLoad(None).url
+        )
+        val expectedViewModel = ViewAllArrivalMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
+
+        contentAsString(result) mustEqual
+          view(expectedViewModel)(request, messages).toString
+      }
     }
 
-    "render technical difficulties when no paged arrivals retrieved" in {
+    "render technical difficulties page on failing to fetch arrivals" in {
 
       when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
         .thenReturn(Future.successful(None))
