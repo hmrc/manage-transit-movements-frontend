@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package controllers
+@import views.html.components.Heading
 
-import javax.inject.Inject
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.UnauthorisedView
+@this(
+    mainTemplate: MainTemplate,
+    heading: Heading
+)
 
-class UnauthorisedController @Inject() (
-  cc: MessagesControllerComponents,
-  view: UnauthorisedView
-) extends FrontendController(cc)
-    with I18nSupport {
+@()(implicit request: Request[_], messages: Messages)
 
-  def onPageLoad(): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(view())
-  }
+@mainTemplate(
+    title = messages("unauthorisedWithGroupAccess.title"),
+    showBackLink = true
+) {
+    @heading("unauthorisedWithGroupAccess.heading")
+
+    <p class="govuk-body">@messages("unauthorisedWithGroupAccess.p")</p>
 }

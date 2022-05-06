@@ -16,24 +16,24 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.UnauthorisedView
+import views.html.UnauthorisedWithGroupAccessView
 
-class UnauthorisedControllerSpec extends SpecBase {
+class UnauthorisedWithGroupAccessControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
-  "Unauthorised Controller" - {
+  "UnauthorisedWithGroupAccessController" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.UnauthorisedWithGroupAccessController.onPageLoad().url)
 
       val result = route(app, request).value
 
-      val view = injector.instanceOf[UnauthorisedView]
+      val view = injector.instanceOf[UnauthorisedWithGroupAccessView]
 
-      status(result) mustEqual OK
+      status(result) mustEqual UNAUTHORIZED
 
       contentAsString(result) mustEqual view()(request, messages).toString
     }

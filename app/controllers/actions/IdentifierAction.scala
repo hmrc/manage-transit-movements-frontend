@@ -23,7 +23,6 @@ import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
-import renderer.Renderer
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -38,8 +37,7 @@ trait IdentifierAction extends ActionFunction[Request, IdentifierRequest]
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config: FrontendAppConfig,
-  enrolmentStoreConnector: EnrolmentStoreConnector,
-  renderer: Renderer
+  enrolmentStoreConnector: EnrolmentStoreConnector
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions {
@@ -65,7 +63,7 @@ class AuthenticatedIdentifierAction @Inject() (
                 case Some(eoriNumber) => block(IdentifierRequest(request, eoriNumber.value))
                 case _                => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
               }
-            case None => checkForGroupEnrolment(maybeGroupId, config)(hc, request)
+            case None => checkForGroupEnrolment(maybeGroupId, config)(hc)
           }
 
       }
@@ -77,8 +75,7 @@ class AuthenticatedIdentifierAction @Inject() (
   }
 
   private def checkForGroupEnrolment[A](maybeGroupId: Option[String], config: FrontendAppConfig)(implicit
-    hc: HeaderCarrier,
-    request: Request[A]
+    hc: HeaderCarrier
   ): Future[Result] =
     maybeGroupId match {
       case Some(groupId) =>
@@ -89,9 +86,9 @@ class AuthenticatedIdentifierAction @Inject() (
             else { enrolmentStoreConnector.checkGroupEnrolments(groupId, config.legacyEnrolmentKey) }
         } yield newGroupEnrolment || legacyGroupEnrolment
 
-        hasGroupEnrolment flatMap {
-          case true  => renderer.render("unauthorisedWithGroupAccess.njk").map(Unauthorized(_))
-          case false => Future.successful(Redirect(config.eccEnrolmentSplashPage))
+        hasGroupEnrolment map {
+          case true  => Redirect(controllers.routes.UnauthorisedWithGroupAccessController.onPageLoad())
+          case false => Redirect(config.eccEnrolmentSplashPage)
         }
       case _ => Future.successful(Redirect(config.eccEnrolmentSplashPage))
     }

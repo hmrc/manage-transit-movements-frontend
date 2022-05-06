@@ -21,13 +21,10 @@ import com.google.inject.Inject
 import connectors.EnrolmentStoreConnector
 import controllers.actions.AuthActionSpec._
 import controllers.routes
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import play.api.mvc.Results
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import renderer.Renderer
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{~, Retrieval}
@@ -49,7 +46,6 @@ class IdentifierActionSpec extends SpecBase {
 
   val mockAuthConnector: AuthConnector                     = mock[AuthConnector]
   val mockEnrolmentStoreConnector: EnrolmentStoreConnector = mock[EnrolmentStoreConnector]
-  val mockUIRender: Renderer                               = mock[Renderer]
 
   val LEGACY_ENROLMENT_KEY    = "HMCE-NCTS-ORG"
   val LEGACY_ENROLMENT_ID_KEY = "VATRegNoTURN"
@@ -73,7 +69,7 @@ class IdentifierActionSpec extends SpecBase {
       "must redirect the user to log in " in {
 
         val authAction =
-          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -87,7 +83,7 @@ class IdentifierActionSpec extends SpecBase {
 
       "must redirect the user to log in " in {
         val authAction =
-          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -101,11 +97,8 @@ class IdentifierActionSpec extends SpecBase {
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments),
-                                                           frontendAppConfig,
-                                                           mockEnrolmentStoreConnector,
-                                                           mockUIRender
-        )
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -119,11 +112,8 @@ class IdentifierActionSpec extends SpecBase {
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel),
-                                                           frontendAppConfig,
-                                                           mockEnrolmentStoreConnector,
-                                                           mockUIRender
-        )
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel), frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -137,11 +127,8 @@ class IdentifierActionSpec extends SpecBase {
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider),
-                                                           frontendAppConfig,
-                                                           mockEnrolmentStoreConnector,
-                                                           mockUIRender
-        )
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider), frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -155,11 +142,8 @@ class IdentifierActionSpec extends SpecBase {
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup),
-                                                           frontendAppConfig,
-                                                           mockEnrolmentStoreConnector,
-                                                           mockUIRender
-        )
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup), frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -173,11 +157,8 @@ class IdentifierActionSpec extends SpecBase {
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole),
-                                                           frontendAppConfig,
-                                                           mockEnrolmentStoreConnector,
-                                                           mockUIRender
-        )
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole), frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -200,7 +181,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(legacyEnrolmentsWithoutEori ~ Some("testName")))
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -221,7 +202,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newEnrolmentsWithoutEori ~ Some("testName")))
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -242,18 +223,13 @@ class IdentifierActionSpec extends SpecBase {
           .thenReturn(Future.successful(legacyEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
-        when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe UNAUTHORIZED
-
-        verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
-        templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.UnauthorisedWithGroupAccessController.onPageLoad().url)
       }
 
       "must redirect to unauthorised page with group access when given user has no active legacy enrolments but legacy group has" in {
@@ -268,18 +244,13 @@ class IdentifierActionSpec extends SpecBase {
           .thenReturn(Future.successful(legacyEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
-        when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe UNAUTHORIZED
-
-        verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
-        templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.UnauthorisedWithGroupAccessController.onPageLoad().url)
       }
 
       "must redirect to unauthorised page with group access when given user has no active new enrolments but new group has" in {
@@ -294,18 +265,13 @@ class IdentifierActionSpec extends SpecBase {
           .thenReturn(Future.successful(newEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
-        when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe UNAUTHORIZED
-
-        verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
-        templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.UnauthorisedWithGroupAccessController.onPageLoad().url)
       }
 
       "must redirect to unauthorised page with group access when given user has no active new enrolments but legacy group has" in {
@@ -320,37 +286,27 @@ class IdentifierActionSpec extends SpecBase {
           .thenReturn(Future.successful(newEnrolmentsWithEoriButNoActivated ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
-        when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe UNAUTHORIZED
-
-        verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
-        templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.UnauthorisedWithGroupAccessController.onPageLoad().url)
       }
+
       "must redirect to unauthorised page with group access when given user has no enrolments but group has" in {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
-        when(mockUIRender.render(any())(any())).thenReturn(Future.successful(Html("")))
 
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe UNAUTHORIZED
-
-        verify(mockUIRender, times(1)).render(templateCaptor.capture())(any())
-
-        templateCaptor.getValue mustBe "unauthorisedWithGroupAccess.njk"
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.UnauthorisedWithGroupAccessController.onPageLoad().url)
       }
 
       "must redirect to unauthorised page without group access when given both user and group has no enrolments" in {
@@ -358,9 +314,8 @@ class IdentifierActionSpec extends SpecBase {
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ Some("testName")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
-        when(mockUIRender.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -372,11 +327,10 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(Enrolments(Set.empty) ~ None))
 
-        when(mockUIRender.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
         when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -397,7 +351,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(legacyEnrolmentsWithEori ~ Some("testName")))
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -415,7 +369,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newAndLegacyEnrolmentsWithEori ~ Some("testName")))
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -433,7 +387,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newWithoutEoriLegacyWithEori ~ Some("testName")))
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -451,7 +405,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newWithEoriLegacyWithoutEori ~ Some("testName")))
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -470,7 +424,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
           .thenReturn(Future.successful(newEnrolmentsWithEori ~ Some("testName")))
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector, mockUIRender)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, mockEnrolmentStoreConnector)
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(fakeRequest)
 
@@ -483,7 +437,6 @@ class IdentifierActionSpec extends SpecBase {
     super.beforeEach()
     reset(mockAuthConnector)
     reset(mockEnrolmentStoreConnector)
-    reset(mockUIRender)
   }
 }
 
