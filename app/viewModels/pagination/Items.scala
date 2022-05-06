@@ -16,8 +16,6 @@
 
 package viewModels.pagination
 
-import play.api.libs.json.{Json, OFormat}
-
 case class Items(items: Seq[Item], firstItemDotted: Boolean, lastItemDotted: Boolean) {
   lazy val iterator: Iterator[Item] = items.iterator
 }
@@ -57,6 +55,4 @@ object Items {
 
         Items(itemList, firstItemDotted, lastItemDotted)
     }
-
-  implicit val writes: OFormat[Items] = Json.format[Items]
 }

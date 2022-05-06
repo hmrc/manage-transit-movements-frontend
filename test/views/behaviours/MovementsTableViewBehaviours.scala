@@ -19,7 +19,6 @@ package views.behaviours
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json._
 import viewModels.ViewMovement
 
 import scala.collection.convert.ImplicitConversions._
@@ -34,7 +33,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
 
   val movementsPerPage: Int
 
-  def pageWithMovementsData()(implicit wts: Writes[T]): Unit =
+  def pageWithMovementsData(): Unit =
     "page with a movements data table" - {
 
       "must generate a heading for each unique day" in {
@@ -69,11 +68,10 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
                 heading.text() mustBe text
               }
 
-              "must display correct time" in {
-                val updated = row.selectFirst("td[data-testrole*=-updated]")
-                val time    = Json.toJson(viewMovements(rowIndex)).transform((JsPath \ "updated").json.pick[JsString]).get.value
-
-                behave like elementWithVisibleText(updated, time)
+              "must display time" in {
+                val updated   = row.selectFirst("td[data-testrole*=-updated]")
+                val timeRegex = "^(([1-9])|([1][0-2])):(([0][0-9])|([1-5][0-9]))(am|pm)$"
+                updated.ownText().matches(timeRegex) mustBe true
                 behave like elementWithHiddenText(updated, messages(s"$prefix.table.updated"))
               }
 

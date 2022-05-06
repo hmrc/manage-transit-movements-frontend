@@ -17,23 +17,18 @@
 package viewModels
 
 import base.SpecBase
-import generators.Generators
-import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
 
-class ViewMovementActionSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class ViewMovementActionSpec extends SpecBase with ScalaCheckPropertyChecks {
 
-  "must serialise to Json" in {
-
-    forAll(arbitrary[ViewMovementAction]) {
-      viewMovementAction =>
-        val expectedJson = Json.obj(
-          "href" -> viewMovementAction.href,
-          "key"  -> viewMovementAction.key
-        )
-
-        Json.toJson(viewMovementAction) mustBe expectedJson
+  "id" - {
+    "must replace spaces with hyphens and append a reference number" in {
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (href, ref) =>
+          val action = ViewMovementAction(href, "random message key")
+          action.id(ref) mustBe s"random-message-key-$ref"
+      }
     }
   }
 

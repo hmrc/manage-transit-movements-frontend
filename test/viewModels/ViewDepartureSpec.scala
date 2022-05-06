@@ -21,28 +21,10 @@ import generators.Generators
 import models.Departure
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
 
-import java.time.format.DateTimeFormatter
 import java.time.{Clock, LocalDateTime, ZoneId}
 
 class ViewDepartureSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  "must serialise to Json" in {
-    forAll(arbitrary[ViewDeparture]) {
-      viewDeparture =>
-        val expectedJson = Json.obj(
-          "updated" -> viewDeparture.updatedTime
-            .format(DateTimeFormatter.ofPattern("h:mma"))
-            .toLowerCase,
-          "referenceNumber" -> viewDeparture.localReferenceNumber,
-          "status"          -> viewDeparture.status,
-          "actions"         -> viewDeparture.actions
-        )
-
-        Json.toJson(viewDeparture) mustBe expectedJson
-    }
-  }
 
   "must convert incoming UTC time to system time" - {
 

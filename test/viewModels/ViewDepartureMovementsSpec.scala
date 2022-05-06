@@ -17,19 +17,14 @@
 package viewModels
 
 import base.SpecBase
-import config.FrontendAppConfig
 import generators.Generators
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
 
 import java.time.{LocalDate, LocalTime}
 
 class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  implicit override val frontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
@@ -87,35 +82,6 @@ class ViewDepartureMovementsSpec extends SpecBase with Generators with ScalaChec
         val expectedResult: Seq[ViewDeparture] =
           Seq(movement, movementMinus1, movementMinus2)
         result.dataRows.head._2 mustEqual expectedResult
-    }
-  }
-
-  "Json writes" - {
-    "adds url from FrontendAppConfig" in {
-      val testUrl = "testUrl"
-
-      when(frontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn(testUrl)
-
-      forAll(arbitrary[ViewDepartureMovements]) {
-        viewDepartureMovements =>
-          val testJson = Json.toJson(viewDepartureMovements)
-          val result   = (testJson \ "declareDepartureNotificationUrl").validate[String].asOpt.value
-
-          result mustBe testUrl
-      }
-    }
-
-    "adds the homepage url" in {
-
-      when(frontendAppConfig.declareDepartureStartWithLRNUrl).thenReturn("")
-
-      forAll(arbitrary[ViewDepartureMovements]) {
-        viewDepartureMovement =>
-          val testJson = Json.toJson(viewDepartureMovement)
-          val result   = (testJson \ "homePageUrl").validate[String].asOpt.value
-
-          result mustBe controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
-      }
     }
   }
 }
