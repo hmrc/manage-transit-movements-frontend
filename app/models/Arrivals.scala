@@ -25,6 +25,7 @@ case class Arrivals(
   arrivals: Seq[Arrival]
 ) extends Movements {
   override val movements: Seq[Movement] = arrivals
+  override val retrieved: Int           = retrievedArrivals
 }
 
 object Arrivals {

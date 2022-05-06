@@ -62,10 +62,7 @@ class ViewArrivalsSearchResultsController @Inject() (
                     mrn = mrn,
                     dataRows = ViewArrivalMovements.apply(viewMovements).dataRows,
                     retrieved = retrieved,
-                    tooManyResults = allArrivals.totalMatched match {
-                      case Some(matched) if matched > 0 => retrieved < matched
-                      case _                            => false
-                    }
+                    tooManyResults = allArrivals.tooManyResults
                   )
                 )
               )
