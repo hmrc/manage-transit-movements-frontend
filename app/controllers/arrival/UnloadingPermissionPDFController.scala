@@ -16,15 +16,13 @@
 
 package controllers.arrival
 
-import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
-import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
+import handlers.ErrorHandler
 import models.ArrivalId
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -34,12 +32,10 @@ class UnloadingPermissionPDFController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   arrivalMovementConnector: ArrivalMovementConnector,
-  val config: FrontendAppConfig,
-  val renderer: Renderer
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
-    with TechnicalDifficultiesPage
     with Logging {
 
   def getPDF(arrivalId: ArrivalId): Action[AnyContent] = (Action andThen identify).async {
@@ -70,7 +66,7 @@ class UnloadingPermissionPDFController @Inject() (
                     )
                   case _ =>
                     logger.error(s"[PDF][UP] Received downstream status code of ${result.status}")
-                    renderTechnicalDifficultiesPage
+                    errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
                 }
             }
         }

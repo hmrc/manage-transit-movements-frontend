@@ -13,6 +13,11 @@ GET        /what-do-you-want-to-do                                            co
 GET        /this-service-has-been-reset                                       controllers.SessionExpiredController.onPageLoad()
 POST       /this-service-has-been-reset                                       controllers.SessionExpiredController.onSubmit()
 
+GET        /bad-request                                                       controllers.ErrorController.badRequest()
+GET        /not-found                                                         controllers.ErrorController.notFound()
+GET        /technical-difficulties                                            controllers.ErrorController.technicalDifficulties()
+GET        /internal-server-error                                             controllers.ErrorController.internalServerError()
+
 GET        /cannot-use-service-no-eori                                        controllers.UnauthorisedController.onPageLoad()
 
 GET        /keep-alive                                                        controllers.KeepAliveController.keepAlive()

@@ -17,7 +17,7 @@
 package controllers.departure
 
 import base.{FakeSearchResultsAppConfig, SpecBase}
-import config.{FrontendAppConfig, SearchResultsAppConfig}
+import config.SearchResultsAppConfig
 import connectors.DeparturesMovementConnector
 import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
@@ -217,10 +217,6 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with JsonMatche
 
     "render technical difficulty" in {
 
-      val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       when(mockDepartureMovementsConnector.getDepartureSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
@@ -229,21 +225,10 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with JsonMatche
         routes.ViewDeparturesSearchResultsController.onPageLoad("theLrn").url
       )
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
       val result = route(app, request).value
 
-      status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj {
-        "contactUrl" -> config.nctsEnquiriesUrl
-      }
-
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

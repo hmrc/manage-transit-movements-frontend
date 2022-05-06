@@ -94,26 +94,15 @@ class ViewAllDeparturesControllerSpec extends SpecBase with JsonMatchers {
 
     "render Technical difficulties page on failing to fetch departures" in {
 
-      when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-
       when(mockDeparturesMovementConnector.getPagedDepartures(eqTo(1), anyInt())(any()))
         .thenReturn(Future.successful(None))
-
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(Some(1)).url)
 
       val result = route(app, request).value
 
-      status(result) mustBe INTERNAL_SERVER_ERROR
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj()
-
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

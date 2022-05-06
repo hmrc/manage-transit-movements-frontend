@@ -68,6 +68,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val manageService: String                = configuration.get[String]("appName")
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
+  lazy val nctsHelpdeskUrl: String  = configuration.get[String]("urls.nctsHelpdesk")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")
   lazy val timeoutSeconds: Int      = configuration.get[Int]("session.timeoutSeconds")
   lazy val countdownSeconds: Int    = configuration.get[Int]("session.countdownSeconds")

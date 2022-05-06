@@ -17,7 +17,6 @@
 package controllers.arrival
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
 import matchers.JsonMatchers
@@ -118,10 +117,6 @@ class ViewAllArrivalsControllerSpec extends SpecBase with JsonMatchers with Gene
 
     "render technical difficulty" in {
 
-      val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
@@ -130,23 +125,10 @@ class ViewAllArrivalsControllerSpec extends SpecBase with JsonMatchers with Gene
         controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
       )
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
       val result = route(app, request).value
 
-      status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj {
-        "contactUrl" -> config.nctsEnquiriesUrl
-      }
-
-      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

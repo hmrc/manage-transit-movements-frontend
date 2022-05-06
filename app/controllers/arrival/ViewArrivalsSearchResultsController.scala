@@ -18,10 +18,8 @@ package controllers.arrival
 
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
-import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
-
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.requests.IdentifierRequest
 import models.{Arrival, Arrivals}
 import play.api.i18n.I18nSupport
@@ -32,19 +30,19 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrival, ViewArrivalMovements}
 
 import java.time.Clock
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ViewArrivalsSearchResultsController @Inject() (
   val renderer: Renderer,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  val config: FrontendAppConfig,
-  val searchResultsAppConfig: SearchResultsAppConfig,
-  arrivalMovementConnector: ArrivalMovementConnector
+  searchResultsAppConfig: SearchResultsAppConfig,
+  arrivalMovementConnector: ArrivalMovementConnector,
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
-    with I18nSupport
-    with TechnicalDifficultiesPage {
+    with I18nSupport {
 
   private val pageSize = searchResultsAppConfig.maxSearchResults
 
@@ -87,6 +85,6 @@ class ViewArrivalsSearchResultsController @Inject() (
           .render(template, formatToJson)
           .map(Ok(_))
 
-      case _ => renderTechnicalDifficultiesPage
+      case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
     }
 }
