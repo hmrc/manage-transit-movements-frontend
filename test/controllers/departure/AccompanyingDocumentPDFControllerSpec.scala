@@ -21,20 +21,16 @@ import base.SpecBase
 import connectors.DeparturesMovementConnector
 import controllers.departure.{routes => departureRoutes}
 import generators.Generators
-import matchers.JsonMatchers.containJson
 import models.DepartureId
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.ahc.AhcWSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 
 import scala.concurrent.Future
 
@@ -90,28 +86,16 @@ class AccompanyingDocumentPDFControllerSpec extends SpecBase with Generators wit
 
         when(wsResponse.status) thenReturn errorCode
 
-        when(mockNunjucksRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
-
         when(mockDeparturesMovementConnector.getPDF(any())(any()))
           .thenReturn(Future.successful(wsResponse))
 
         val departureId = DepartureId(0)
 
-        val request                                = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
+        val request = FakeRequest(GET, departureRoutes.AccompanyingDocumentPDFController.getPDF(departureId).url)
+        val result  = route(app, request).value
 
-        val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
-
-        val result = route(app, request).value
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-
-        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-        jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
       }
     }
   }

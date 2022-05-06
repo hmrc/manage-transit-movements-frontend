@@ -16,24 +16,23 @@
 
 package controllers.departure
 
-import config.FrontendAppConfig
 import connectors.DeparturesMovementConnector
 import controllers.actions.IdentifierAction
+import handlers.ErrorHandler
+import javax.inject.Inject
 import models.DepartureId
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AccompanyingDocumentPDFController @Inject() (identify: IdentifierAction,
                                                    cc: MessagesControllerComponents,
-                                                   departuresMovementConnector: DeparturesMovementConnector
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, renderer: Renderer)
+                                                   departuresMovementConnector: DeparturesMovementConnector,
+                                                   errorHandler: ErrorHandler
+)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with Logging {
@@ -63,8 +62,7 @@ class AccompanyingDocumentPDFController @Inject() (identify: IdentifierAction,
               )
             case _ =>
               logger.error(s"[PDF][AD] Received downstream status code of ${result.status}")
-              val json = Json.obj("nctsEnquiries" -> appConfig.nctsEnquiriesUrl)
-              renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
+              errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
           }
       }
   }

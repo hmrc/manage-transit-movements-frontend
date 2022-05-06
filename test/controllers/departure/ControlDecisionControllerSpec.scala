@@ -86,27 +86,15 @@ class ControlDecisionControllerSpec extends SpecBase with JsonMatchers with Gene
     "return InternalServerError and the TechnicalDifficulties page for a failed GET " in {
       val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
 
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       when(mockDepartureMessageService.controlDecisionMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
       val result = route(app, request).value
 
-      status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
-
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }
