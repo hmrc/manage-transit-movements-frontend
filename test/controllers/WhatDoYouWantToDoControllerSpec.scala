@@ -19,23 +19,17 @@ package controllers
 import base.SpecBase
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import models._
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import views.html.WhatDoYouWantToDoView
 
 import scala.concurrent.Future
 
 class WhatDoYouWantToDoControllerSpec extends SpecBase {
-
-  private val manageTransitMovementRoute   = "manage-transit-movements"
-  private val viewArrivalNotificationUrl   = s"/$manageTransitMovementRoute/view-arrivals"
-  private val viewDepartureNotificationUrl = s"/$manageTransitMovementRoute/view-departures"
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector      = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
@@ -45,20 +39,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
     reset(mockDepartureMovementConnector)
     super.beforeEach()
   }
-
-  private def expectedJson(arrivalsAvailable: Boolean, hasArrivals: Boolean, departuresAvailable: Boolean, hasDepartures: Boolean): JsObject =
-    Json.obj(
-      "declareArrivalNotificationUrl"  -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "viewArrivalNotificationUrl"     -> viewArrivalNotificationUrl,
-      "arrivalsAvailable"              -> arrivalsAvailable,
-      "hasArrivals"                    -> hasArrivals,
-      "declareDepartureDeclarationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
-      "viewDepartureNotificationUrl"   -> viewDepartureNotificationUrl,
-      "departuresAvailable"            -> departuresAvailable,
-      "hasDepartures"                  -> hasDepartures,
-      "isGuaranteeBalanceEnabled"      -> frontendAppConfig.isGuaranteeBalanceEnabled,
-      "checkGuaranteeBalanceUrl"       -> frontendAppConfig.checkGuaranteeBalanceUrl
-    )
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -73,9 +53,6 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET with" - {
 
       "Arrivals and departures" in {
-        when(mockNunjucksRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("foo")))
-
         when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
           .thenReturn(Future.successful(Availability.NonEmpty))
 
@@ -85,23 +62,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
 
+        val view = injector.instanceOf[WhatDoYouWantToDoView]
+
         status(result) mustEqual OK
-
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
-        jsonCaptorWithoutConfig mustBe expectedJson(true, true, true, true)
+        contentAsString(result) mustEqual
+          view(Availability.NonEmpty, Availability.NonEmpty)(request, messages).toString
       }
 
       "No arrivals and no departures" in {
-        when(mockNunjucksRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("foo")))
-
         when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
           .thenReturn(Future.successful(Availability.Empty))
 
@@ -111,26 +79,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
 
+        val view = injector.instanceOf[WhatDoYouWantToDoView]
         status(result) mustEqual OK
-
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
-        jsonCaptorWithoutConfig mustBe
-          expectedJson(true, false, true, false)
+        contentAsString(result) mustEqual
+          view(Availability.Empty, Availability.Empty)(request, messages).toString
 
       }
 
       "No response from arrivals and departures" in {
-
-        when(mockNunjucksRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("foo")))
-
         when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
           .thenReturn(Future.successful(Availability.Unavailable))
 
@@ -140,18 +96,10 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
 
+        val view = injector.instanceOf[WhatDoYouWantToDoView]
         status(result) mustEqual OK
-
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-        templateCaptor.getValue mustEqual "whatDoYouWantToDo.njk"
-        jsonCaptorWithoutConfig mustBe expectedJson(false, false, false, false)
-
+        contentAsString(result) mustEqual
+          view(Availability.Unavailable, Availability.Unavailable)(request, messages).toString
       }
     }
   }
