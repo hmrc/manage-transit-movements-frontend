@@ -54,14 +54,13 @@ class ViewDeparturesSearchResultsController @Inject() (
           connector.getDepartureSearchResults(lrn, pageSize).flatMap {
             case Some(allDepartures) =>
               val viewMovements: Seq[ViewDeparture] = allDepartures.departures.map(ViewDeparture(_))
-              val retrieved                         = allDepartures.retrievedDepartures
 
               Future.successful(
                 Ok(
                   view(
                     lrn = lrn,
                     dataRows = ViewDepartureMovements.apply(viewMovements).dataRows,
-                    retrieved = retrieved,
+                    retrieved = allDepartures.retrievedDepartures,
                     tooManyResults = allDepartures.tooManyResults
                   )
                 )

@@ -54,14 +54,13 @@ class ViewArrivalsSearchResultsController @Inject() (
           connector.getArrivalSearchResults(mrn, pageSize).flatMap {
             case Some(allArrivals) =>
               val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(ViewArrival(_))
-              val retrieved                       = allArrivals.retrievedArrivals
 
               Future.successful(
                 Ok(
                   view(
                     mrn = mrn,
                     dataRows = ViewArrivalMovements.apply(viewMovements).dataRows,
-                    retrieved = retrieved,
+                    retrieved = allArrivals.retrievedArrivals,
                     tooManyResults = allArrivals.tooManyResults
                   )
                 )
