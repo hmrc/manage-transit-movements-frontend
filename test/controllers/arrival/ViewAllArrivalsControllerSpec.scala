@@ -53,8 +53,6 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
 
-  private val mrn = "test mrn"
-
   private val mockArrivalResponse: Arrivals = Arrivals(
     retrievedArrivals = 1,
     totalArrivals = 1,

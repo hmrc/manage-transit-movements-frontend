@@ -17,7 +17,7 @@ site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - Manage your transit movements - GOV.UK
 
 viewAllMovements.link.title = View all movements
-search.results = Showing %s results matching %s.
+search.results = Showing {0} results matching {1}.
 search.tooManyResults = There are too many results. Please refine your search.
 search.noResultsFound = No results found
 

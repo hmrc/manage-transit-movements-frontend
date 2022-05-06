@@ -16,17 +16,16 @@
 
 package views.behaviours
 
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
-import play.twirl.api.HtmlFormat
 import viewModels.ViewMovement
-import viewModels.pagination.PaginationViewModel
 
 import scala.collection.convert.ImplicitConversions._
 
+// scalastyle:off method.length
+// scalastyle:off magic.number
 trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours with ScalaCheckPropertyChecks {
 
   val viewMovements: Seq[T]
@@ -35,10 +34,6 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
 
   val movementsPerPage: Int
 
-  def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable
-
-  // scalastyle:off method.length
-  // scalastyle:off magic.number
   def pageWithMovementsData()(implicit wts: Writes[T]): Unit =
     "page with a movements data table" - {
 
@@ -132,109 +127,8 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
       }
     }
 
-  def pageWithPagination(href: String): Unit =
-    "page with pagination" - {
-
-      "must display previous button when not on the first page" in {
-        val paginationViewModel = PaginationViewModel(4, 2, 2, href)
-        val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
-
-        assertRenderedById(doc, "previous")
-        doc.getElementById("previous").attr("href") mustBe s"$href?page=1"
-      }
-
-      "must not display previous button when on the first page" in {
-        val paginationViewModel = PaginationViewModel(1, 1, 1, href)
-        val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
-
-        assertNotRenderedById(doc, "previous")
-      }
-
-      "must display next button when not on the last page" in {
-        val paginationViewModel = PaginationViewModel(2, 1, 1, href)
-        val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
-
-        assertRenderedById(doc, "next")
-        doc.getElementById("next").attr("href") mustBe s"$href?page=2"
-      }
-
-      "must not display next button when on the last page" in {
-        val paginationViewModel = PaginationViewModel(2, 2, 1, href)
-        val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
-
-        assertNotRenderedById(doc, "next")
-      }
-
-      "must display correct amount of items" in {
-        val paginationViewModel = PaginationViewModel(60, 4, 5, href)
-        val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
-
-        assertRenderedById(doc, "pagination-item-1")
-        assertNotRenderedById(doc, "pagination-item-2")
-        assertRenderedById(doc, "pagination-item-3")
-        assertRenderedById(doc, "pagination-item-4")
-        assertRenderedById(doc, "pagination-item-5")
-        assertNotRenderedById(doc, "pagination-item-6")
-        assertRenderedById(doc, "pagination-item-12")
-      }
-    }
-
-  def pageWithMovementSearch(expectedLabelText: String): Unit =
-    "page with a movements search box" - {
-      s"must display a search box for $referenceNumberType" in {
-        assertRenderedById(doc, referenceNumberType)
-      }
-
-      "must contain a label for the search" in {
-        assertContainsLabel(doc, referenceNumberType, expectedLabelText)
-      }
-
-      behave like pageWithSubmitButton("Search")
-
-      "must display correct count" - {
-
-        def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").map(_.text())
-
-        "when not paginated" - {
-          "when only one movement" in {
-            val paginationViewModel = PaginationViewModel(1, 1, movementsPerPage, "")
-            val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
-            val p                   = doc.getElementById("results-count")
-            p.text() mustBe "Showing 1 result"
-            boldWords(p) mustBe Seq("1")
-          }
-
-          "when multiple movements" in {
-            forAll(Gen.choose(2, movementsPerPage)) {
-              numberOfMovements =>
-                val paginationViewModel = PaginationViewModel(numberOfMovements, 1, movementsPerPage, "")
-                val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
-                val p                   = doc.getElementById("results-count")
-                p.text() mustBe s"Showing $numberOfMovements results"
-                boldWords(p) mustBe Seq(numberOfMovements.toString)
-            }
-          }
-        }
-
-        "when paginated" in {
-          forAll(Gen.choose(2, 10)) {
-            numberOfPages =>
-              val numberOfMovements = movementsPerPage * numberOfPages
-              forAll(Gen.choose(1, numberOfPages)) {
-                currentPage =>
-                  val to                  = currentPage * movementsPerPage
-                  val from                = to - movementsPerPage + 1
-                  val paginationViewModel = PaginationViewModel(numberOfMovements, currentPage, movementsPerPage, "")
-                  val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
-                  val p                   = doc.getElementById("paginated-results-count")
-                  p.text() mustBe s"Showing $from to $to of $numberOfMovements results"
-                  boldWords(p) mustBe Seq(from.toString, to.toString, numberOfMovements.toString)
-              }
-          }
-        }
-      }
-    }
-  // scalastyle:on method.length
-  // scalastyle:on magic.number
+  protected def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").map(_.text())
 
 }
+// scalastyle:on method.length
+// scalastyle:on magic.number

@@ -22,10 +22,15 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
-import views.behaviours.MovementsTableViewBehaviours
+import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.ViewAllDeparturesView
 
-class ViewAllDeparturesViewSpec extends MovementsTableViewBehaviours[ViewDeparture] with Generators with ScalaCheckPropertyChecks {
+class ViewAllDeparturesViewSpec
+    extends MovementsTableViewBehaviours[ViewDeparture]
+    with SearchViewBehaviours[ViewDeparture]
+    with PaginationViewBehaviours[ViewDeparture]
+    with Generators
+    with ScalaCheckPropertyChecks {
 
   override val prefix: String = "viewDepartures"
 
@@ -35,7 +40,9 @@ class ViewAllDeparturesViewSpec extends MovementsTableViewBehaviours[ViewDepartu
 
   private val viewAllDepartureMovementsViewModel = arbitrary[ViewAllDepartureMovementsViewModel].sample.value
 
-  override val viewMovements: Seq[ViewDeparture] = viewAllDepartureMovementsViewModel.dataRows.flatMap(_._2)
+  override val dataRows: Seq[(String, Seq[ViewDeparture])] = viewAllDepartureMovementsViewModel.dataRows
+
+  override val viewMovements: Seq[ViewDeparture] = dataRows.flatMap(_._2)
 
   override def view: HtmlFormat.Appendable =
     injector.instanceOf[ViewAllDeparturesView].apply(viewAllDepartureMovementsViewModel)(fakeRequest, messages)
