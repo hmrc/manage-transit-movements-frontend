@@ -16,8 +16,8 @@
 
 @import config.FrontendAppConfig
 @import controllers.routes._
-@import controllers.arrival.routes._
-@import viewModels.ViewAllArrivalMovementsViewModel
+@import controllers.departure.routes._
+@import viewModels.ViewAllDepartureMovementsViewModel
 @import views.html.components.{Heading, MovementsTable, Pagination, Search}
 
 @this(
@@ -30,35 +30,27 @@
 )
 
 @(
-    viewModel: ViewAllArrivalMovementsViewModel
+    viewModel: ViewAllDepartureMovementsViewModel
 )(implicit request: Request[_], messages: Messages)
 
-@resultsCount = {
-    @viewModel.paginationViewModel.results.count match {
-        case x if x == 1 => { @Html(messages("numberOfMovements.singular", s"<b>$x</b>")) }
-        case x           => { @Html(messages("numberOfMovements.plural", s"<b>$x</b>")) }
-        case _           => { () }
-    }
-}
-
 @mainTemplate(
-    title = messages("viewArrivalNotifications.title"),
+    title = messages("viewDepartures.title"),
     showBackLink = false,
     fullWidth = true
 ) {
 
-    @heading("viewArrivalNotifications.heading")
+    @heading("viewDepartures.heading")
 
     <p class="govuk-body">
-        <a id="make-arrival-notification" class="govuk-link" href=@config.declareArrivalNotificationStartUrl>
-            @messages("viewArrivalNotifications.makeArrivalNotification")
+        <a id="make-departure-notification" class="govuk-link" href=@config.declareDepartureStartWithLRNUrl>
+            @messages("viewDepartures.makeDepartureNotification")
         </a>
     </p>
 
     @search(
-        action = ViewArrivalsSearchResultsController.onPageLoad("").url,
-        label = "movement.search.title",
-        field = "mrn",
+        action = ViewDeparturesSearchResultsController.onPageLoad("").url,
+        label = "movement.search.departure.title",
+        field = "lrn",
         value = None
     )
 
@@ -66,16 +58,16 @@
 
     @movementsTable(
         dataRows = viewModel.dataRows,
-        visuallyHiddenHeader = messages("viewArrivalNotifications.heading.hidden"),
-        rowHeadingUpdated = messages("viewArrivalNotifications.table.updated"),
-        rowHeadingReferenceNumber = messages("viewArrivalNotifications.table.mrn"),
-        rowHeadingStatus = messages("viewArrivalNotifications.table.status"),
-        rowHeadingAction = messages("viewArrivalNotifications.table.action")
+        visuallyHiddenHeader = messages("viewDepartures.heading.hidden"),
+        rowHeadingUpdated = messages("viewDepartures.table.updated"),
+        rowHeadingReferenceNumber = messages("viewDepartures.table.lrn"),
+        rowHeadingStatus = messages("viewDepartures.table.status"),
+        rowHeadingAction = messages("viewDepartures.table.action")
     )
 
     <p class="govuk-body govuk-!-margin-top-3">
         <a id="go-to-manage-transit-movements" class="govuk-link" href=@WhatDoYouWantToDoController.onPageLoad()>
-            @messages("viewArrivalNotifications.goToManageTransitMovements")
+            @messages("viewDepartures.goToManageTransitMovements")
         </a>
     </p>
 }

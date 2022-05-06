@@ -45,6 +45,8 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours[ViewArrival] 
       .instanceOf[ViewAllArrivalsView]
       .apply(ViewAllArrivalMovementsViewModel(Seq.empty[ViewArrival], paginationViewModel))(fakeRequest, messages)
 
+  behave like pageWithFullWidth()
+
   behave like pageWithTitle()
 
   behave like pageWithoutBackLink()
@@ -57,7 +59,7 @@ class ViewAllArrivalsViewSpec extends MovementsTableViewBehaviours[ViewArrival] 
     expectedHref = frontendAppConfig.declareArrivalNotificationStartUrl
   )
 
-  behave like pageWithMovementSearch()
+  behave like pageWithMovementSearch("Search by movement reference number")
 
   behave like pageWithPagination(controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
 

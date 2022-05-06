@@ -19,7 +19,7 @@ package generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import viewModels.pagination._
-import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
+import viewModels.{ViewAllArrivalMovementsViewModel, ViewAllDepartureMovementsViewModel, ViewArrival, ViewDeparture}
 
 trait ViewModelGenerators {
   self: Generators =>
@@ -30,6 +30,14 @@ trait ViewModelGenerators {
         viewArrivals        <- listWithMaxLength[ViewArrival]()
         paginationViewModel <- arbitrary[PaginationViewModel]
       } yield ViewAllArrivalMovementsViewModel(viewArrivals, paginationViewModel)
+    }
+
+  implicit lazy val arbitraryViewAllDepartureMovementsViewModel: Arbitrary[ViewAllDepartureMovementsViewModel] =
+    Arbitrary {
+      for {
+        viewDepartures      <- listWithMaxLength[ViewDeparture]()
+        paginationViewModel <- arbitrary[PaginationViewModel]
+      } yield ViewAllDepartureMovementsViewModel(viewDepartures, paginationViewModel)
     }
 
   implicit lazy val arbitraryPaginationViewModel: Arbitrary[PaginationViewModel] =

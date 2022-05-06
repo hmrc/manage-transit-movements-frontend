@@ -66,7 +66,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
             s"when row ${rowIndex + 1}" - {
 
               def elementWithVisibleText(element: Element, text: String): Unit =
-                element.ownText() mustBe text.trim
+                element.ownText() mustBe text
 
               def elementWithHiddenText(element: Element, text: String): Unit = {
                 val heading = element.getElementsByClass("responsive-table__heading").head
@@ -179,25 +179,29 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
       }
     }
 
-  def pageWithMovementSearch(): Unit =
+  def pageWithMovementSearch(expectedLabelText: String): Unit =
     "page with a movements search box" - {
       s"must display a search box for $referenceNumberType" in {
         assertRenderedById(doc, referenceNumberType)
       }
 
       "must contain a label for the search" in {
-        assertContainsLabel(doc, referenceNumberType, "Search by movement reference number")
+        assertContainsLabel(doc, referenceNumberType, expectedLabelText)
       }
 
       behave like pageWithSubmitButton("Search")
 
       "must display correct count" - {
+
+        def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").map(_.text())
+
         "when not paginated" - {
           "when only one movement" in {
             val paginationViewModel = PaginationViewModel(1, 1, movementsPerPage, "")
             val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
             val p                   = doc.getElementById("results-count")
             p.text() mustBe "Showing 1 result"
+            boldWords(p) mustBe Seq("1")
           }
 
           "when multiple movements" in {
@@ -207,6 +211,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
                 val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
                 val p                   = doc.getElementById("results-count")
                 p.text() mustBe s"Showing $numberOfMovements results"
+                boldWords(p) mustBe Seq(numberOfMovements.toString)
             }
           }
         }
@@ -223,6 +228,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
                   val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
                   val p                   = doc.getElementById("paginated-results-count")
                   p.text() mustBe s"Showing $from to $to of $numberOfMovements results"
+                  boldWords(p) mustBe Seq(from.toString, to.toString, numberOfMovements.toString)
               }
           }
         }

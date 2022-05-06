@@ -22,50 +22,62 @@
     viewModel: PaginationViewModel
 )(implicit messages: Messages)
 
-<nav class="pagination" aria-label=@messages("pagination.searchResults")>
-    <div class="pagination__list">
+@resultsCount = {
+    @viewModel.results.count match {
+        case x if x == 1 => { @Html(messages("numberOfMovements.singular", s"<b>$x</b>")) }
+        case x           => { @Html(messages("numberOfMovements.plural", s"<b>$x</b>")) }
+        case _           => { () }
+    }
+}
 
-        <p id="paginated-results-count" class="pagination__results">
-            @Html(messages("pagination.results", s"<b>${viewModel.results.from}</b>", s"<b>${viewModel.results.to}</b>", s"<b>${viewModel.results.count}</b>"))
-        </p>
+@if(viewModel.results.totalPages == 1) {
+    <p id="results-count" class="govuk-body">@resultsCount</p>
+} else if(viewModel.results.totalPages > 1) {
+    <nav class="pagination" aria-label=@messages("pagination.searchResults")>
+        <div class="pagination__list">
 
-        @viewModel.previous.map { p =>
-            <span class="pagination__item pagination__item--prev" >
-                <a id="previous" class="pagination__link" href=@p.href>
-                    <span aria-hidden="true">@messages("pagination.previous")</span>
-                    <span class="govuk-visually-hidden">@messages("pagination.previous.hidden")</span>
-                </a>
-             </span>
-        }
+            <p id="paginated-results-count" class="pagination__results">
+                @Html(messages("pagination.results", s"<b>${viewModel.results.from}</b>", s"<b>${viewModel.results.to}</b>", s"<b>${viewModel.results.count}</b>"))
+            </p>
 
-        @for(item <- viewModel.items.iterator) {
-            @if(viewModel.items.lastItemDotted && !viewModel.items.iterator.hasNext) {
-                <span class="pagination__item pagination__item--dots" aria-hidden="true">@messages("pagination.ellipses")</span>
-                <span class="govuk-visually-hidden">@messages("pagination.ellipses.hidden")</span>
+            @viewModel.previous.map { p =>
+                <span class="pagination__item pagination__item--prev" >
+                    <a id="previous" class="pagination__link" href=@p.href>
+                        <span aria-hidden="true">@messages("pagination.previous")</span>
+                        <span class="govuk-visually-hidden">@messages("pagination.previous.hidden")</span>
+                    </a>
+                 </span>
             }
 
-            @if(item.selected) {
-                <span id="pagination-item-@item.pageNumber" class="pagination__item pagination__item--active" aria-current="page">
-                    @item.pageNumber
-                </span>
-            } else {
-                <span id="pagination-item-@item.pageNumber" class="pagination__item">
-                    <a class="pagination__link" href=@item.href>
-                        <span aria-hidden="true">@item.pageNumber</span>
-                        <span class="govuk-visually-hidden">@messages("pagination.page", item.pageNumber)</span>
+            @for(item <- viewModel.items.iterator) {
+                @if(viewModel.items.lastItemDotted && !viewModel.items.iterator.hasNext) {
+                    <span class="pagination__item pagination__item--dots" aria-hidden="true">@messages("pagination.ellipses")</span>
+                    <span class="govuk-visually-hidden">@messages("pagination.ellipses.hidden")</span>
+                }
+
+                @if(item.selected) {
+                    <span id="pagination-item-@item.pageNumber" class="pagination__item pagination__item--active" aria-current="page">
+                        @item.pageNumber
+                    </span>
+                } else {
+                    <span id="pagination-item-@item.pageNumber" class="pagination__item">
+                        <a class="pagination__link" href=@item.href>
+                            <span aria-hidden="true">@item.pageNumber</span>
+                            <span class="govuk-visually-hidden">@messages("pagination.page", item.pageNumber)</span>
+                        </a>
+                    </span>
+                }
+            }
+
+            @viewModel.next.map { n =>
+                <span class="pagination__item  pagination__item--next" >
+                    <a id="next" class="pagination__link" href=@n.href>
+                        <span aria-hidden="true">@messages("pagination.next")</span>
+                        <span class="govuk-visually-hidden">@messages("pagination.next.hidden")</span>
                     </a>
                 </span>
             }
-        }
 
-        @viewModel.next.map { n =>
-            <span class="pagination__item  pagination__item--next" >
-                <a id="next" class="pagination__link" href=@n.href>
-                    <span aria-hidden="true">@messages("pagination.next")</span>
-                    <span class="govuk-visually-hidden">@messages("pagination.next.hidden")</span>
-                </a>
-            </span>
-        }
-
-    </div>
-</nav>
+        </div>
+    </nav>
+}
