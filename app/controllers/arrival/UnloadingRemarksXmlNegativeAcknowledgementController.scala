@@ -18,6 +18,8 @@ package controllers.arrival
 
 import config.FrontendAppConfig
 import controllers.actions._
+import handlers.ErrorHandler
+import javax.inject.Inject
 import models.ArrivalId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -26,7 +28,6 @@ import renderer.Renderer
 import services.ArrivalMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class UnloadingRemarksXmlNegativeAcknowledgementController @Inject() (
@@ -35,7 +36,8 @@ class UnloadingRemarksXmlNegativeAcknowledgementController @Inject() (
   cc: MessagesControllerComponents,
   val frontendAppConfig: FrontendAppConfig,
   arrivalMessageService: ArrivalMessageService,
-  renderer: Renderer
+  renderer: Renderer,
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -52,8 +54,7 @@ class UnloadingRemarksXmlNegativeAcknowledgementController @Inject() (
 
           renderer.render("unloadingRemarksXmlNegativeAcknowledgement.njk", json).map(Ok(_))
         case _ =>
-          val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
-          renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
+          errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }
   }
 }

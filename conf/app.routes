@@ -19,6 +19,7 @@ GET        /technical-difficulties                                            co
 GET        /internal-server-error                                             controllers.ErrorController.internalServerError()
 
 GET        /cannot-use-service-no-eori                                        controllers.UnauthorisedController.onPageLoad()
+GET        /unauthorised-group-access                                         controllers.UnauthorisedWithGroupAccessController.onPageLoad()
 
 GET        /keep-alive                                                        controllers.KeepAliveController.keepAlive()
 

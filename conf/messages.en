@@ -67,9 +67,6 @@ session_expired.button = Sign in
 unauthorised.title = You cannot use this service
 unauthorised.heading = You cannot use this service
 unauthorised.if.you.are.waiting.for.an.eori.number = You must have an account with an activated EORI number.
-unauthorised.you.must.have.an.account = If you are waiting for an EORI number to be activated, you can try to
-unauthorised.sign.in.to.HMRC.services = sign in to HMRC services
-unauthorised.again.later = again later.
 
 numberOfMovements.singular = Showing {0} result
 numberOfMovements.plural = Showing {0} results

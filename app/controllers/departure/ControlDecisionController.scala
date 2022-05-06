@@ -16,8 +16,8 @@
 
 package controllers.departure
 
-import config.FrontendAppConfig
 import controllers.actions._
+import handlers.ErrorHandler
 import javax.inject.Inject
 import models.{DepartureId, LocalReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,7 +35,7 @@ class ControlDecisionController @Inject() (
   cc: MessagesControllerComponents,
   departureMessageService: DepartureMessageService,
   renderer: Renderer,
-  appConfig: FrontendAppConfig
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -47,8 +47,7 @@ class ControlDecisionController @Inject() (
           val json = Json.obj("controlDecisionMessage" -> Json.toJson(message), "lrn" -> lrn.value)
           renderer.render("controlDecision.njk", json).map(Ok(_))
         case _ =>
-          val json = Json.obj("nctsEnquiries" -> appConfig.nctsEnquiriesUrl)
-          renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
+          errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }
   }
 }
