@@ -28,8 +28,6 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours {
 
   override val prefix: String = "whatDoYouWantToDo"
 
-  private val contactUrl = "https://www.gov.uk/new-computerised-transit-system"
-
   behave like pageWithTitle()
 
   behave like pageWithBackLink

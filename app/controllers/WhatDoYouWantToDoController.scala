@@ -41,6 +41,8 @@ class WhatDoYouWantToDoController @Inject() (
       for {
         arrivalsAvailability   <- arrivalMovementConnector.getArrivalsAvailability()
         departuresAvailability <- departuresMovementConnector.getDeparturesAvailability()
-      } yield Ok(view(arrivalsAvailability, departuresAvailability))
+      } yield Ok(
+        view(arrivalsAvailability, departuresAvailability)
+      )
   }
 }

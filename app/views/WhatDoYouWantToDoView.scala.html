@@ -17,6 +17,7 @@
 @import views.html.components.Heading
 @import config.FrontendAppConfig
 @import models.Availability
+@import controllers.departure.{routes => departureRoutes}
 
 @this(
     mainTemplate: MainTemplate,
@@ -37,14 +38,39 @@
         <a href=@config.declareArrivalNotificationStartUrl class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.makeArrival")</a>
     </p>
 
+    @if(arrivalsAvailability.isAvailableAndNonEmpty) {
+        <p class="govuk-body">
+            <a href=@controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url class="govuk-link" id="view-arrival-notifications">
+                @messages("whatDoYouWantToDo.link.arrival.viewArrival")
+            </a>
+        </p>
+    } else if(arrivalsAvailability.isAvailable){
+        @messages("whatDoYouWantToDo.arrival.noArrivals")
+    } else {
+        @messages("whatDoYouWantToDo.arrival.arrivalsUnavailable")
+    }
+
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.departure")</h2>
     <p class="govuk-body">
-        <a href=@config.declareDepartureStartWithLRNUrl class="govuk-link" id="make-departure-notification">@messages("whatDoYouWantToDo.link.departure.makeDeparture")</a>
+        <a href=@config.declareDepartureStartWithLRNUrl class="govuk-link" id="make-departure-notification">
+            @messages("whatDoYouWantToDo.link.departure.makeDeparture")
+        </a>
     </p>
 
-    <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.guarantee")</h2>
-    <p class="govuk-body">
-        <a href=@config.checkGuaranteeBalanceUrl class="govuk-link" id="check-guarantee-balance">@messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance")</a>
-    </p>
+    @if(departuresAvailability.isAvailableAndNonEmpty) {
+        <p class="govuk-body">
+            <a href=@controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url class="govuk-link" id="view-departure-declarations">@messages("whatDoYouWantToDo.link.departure.viewDepartures")</a>
+        </p>
+    } else if(arrivalsAvailability.isAvailable){
+        @messages("whatDoYouWantToDo.departure.noDepartures")
+    } else {
+        @messages("whatDoYouWantToDo.departure.departuresUnavailable")
+    }
 
+    @if(config.isGuaranteeBalanceEnabled) {
+        <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.guarantee")</h2>
+        <p class="govuk-body">
+            <a href=@config.checkGuaranteeBalanceUrl class="govuk-link" id="check-guarantee-balance">@messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance")</a>
+        </p>
+    }
 }
