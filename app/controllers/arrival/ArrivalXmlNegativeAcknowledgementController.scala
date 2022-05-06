@@ -18,6 +18,7 @@ package controllers.arrival
 
 import config.FrontendAppConfig
 import controllers.actions._
+import handlers.ErrorHandler
 import javax.inject.Inject
 import models.ArrivalId
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,7 +36,8 @@ class ArrivalXmlNegativeAcknowledgementController @Inject() (
   cc: MessagesControllerComponents,
   val frontendAppConfig: FrontendAppConfig,
   arrivalMessageService: ArrivalMessageService,
-  renderer: Renderer
+  renderer: Renderer,
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -48,8 +50,7 @@ class ArrivalXmlNegativeAcknowledgementController @Inject() (
 
           renderer.render("xmlNegativeAcknowledgement.njk", json).map(Ok(_))
         case _ =>
-          val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
-          renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
+          errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }
   }
 }
