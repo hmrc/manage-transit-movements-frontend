@@ -56,7 +56,7 @@
 
     @if(dataRows.nonEmpty) {
         <p class="govuk-body" id="results-found">
-            @Html(messages("search.results", s"<b>${retrieved}</b>", s"<b>${mrn}</b>"))
+            @Html(messages("search.results", s"<b>${retrieved}</b>", mrn))
             @if(tooManyResults) {
                 @messages("search.tooManyResults")
             }

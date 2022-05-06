@@ -41,7 +41,7 @@ trait SearchViewBehaviours[T <: ViewMovement] {
       behave like pageWithSubmitButton("Search")
     }
 
-  def pageWithSearchResults(): Unit =
+  def pageWithSearchResults(referenceNumber: String): Unit =
     "page with search results" - {
       "must display correct text" - {
         "when there are no results" in {
@@ -55,7 +55,7 @@ trait SearchViewBehaviours[T <: ViewMovement] {
             retrieved =>
               val doc = parseView(viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults = false))
               val p   = doc.getElementById("results-found")
-              p.text() mustBe s"Showing $retrieved results matching $mrn."
+              p.text() mustBe s"Showing $retrieved results matching $referenceNumber."
               boldWords(p) mustBe Seq(retrieved.toString)
           }
         }
@@ -65,7 +65,7 @@ trait SearchViewBehaviours[T <: ViewMovement] {
             retrieved =>
               val doc = parseView(viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults = true))
               val p   = doc.getElementById("results-found")
-              p.text() mustBe s"Showing $retrieved results matching $mrn. There are too many results. Please refine your search."
+              p.text() mustBe s"Showing $retrieved results matching $referenceNumber. There are too many results. Please refine your search."
               boldWords(p) mustBe Seq(retrieved.toString)
           }
         }

@@ -69,6 +69,8 @@ class ViewArrivalsSearchResultsViewSpec
 
   behave like pageWithMovementSearch("Search by movement reference number")
 
+  behave like pageWithSearchResults(mrn)
+
   behave like pageWithMovementsData()
 
 }

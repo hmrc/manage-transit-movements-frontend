@@ -69,6 +69,8 @@ class ViewDeparturesSearchResultsViewSpec
 
   behave like pageWithMovementSearch("Search by local reference number")
 
+  behave like pageWithSearchResults(lrn.toString)
+
   behave like pageWithMovementsData()
 
 }
