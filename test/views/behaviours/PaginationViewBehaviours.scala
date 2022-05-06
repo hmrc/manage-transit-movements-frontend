@@ -75,6 +75,21 @@ trait PaginationViewBehaviours[T <: ViewMovement] {
         assertRenderedById(doc, "pagination-item-12")
       }
 
+      "must display correct page as active" in {
+        val activePage          = 4
+        val paginationViewModel = PaginationViewModel(60, activePage, 5, href)
+        val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
+        val element             = doc.getElementsByClass("pagination__item--active").first()
+        element.text() mustBe s"$activePage"
+      }
+
+      "must display ellipses when there's a sufficient number of pages" in {
+        val paginationViewModel = PaginationViewModel(60, 4, 5, href)
+        val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
+        val element             = doc.getElementsByClass("pagination__item--dots").first()
+        element.text() mustBe "..."
+      }
+
       "must display correct count" - {
 
         "when not paginated" - {
