@@ -61,7 +61,7 @@
     <p class="govuk-body">
         @if(departuresAvailability.isAvailableAndNonEmpty) {
             <a href=@controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url class="govuk-link" id="view-departure-declarations">@messages("whatDoYouWantToDo.link.departure.viewDepartures")</a>
-        } else if(arrivalsAvailability.isAvailable){
+        } else if(departuresAvailability.isAvailable){
             @messages("whatDoYouWantToDo.departure.noDepartures")
         } else {
             @messages("whatDoYouWantToDo.departure.departuresUnavailable")

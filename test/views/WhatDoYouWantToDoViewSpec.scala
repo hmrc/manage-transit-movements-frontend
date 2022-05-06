@@ -24,7 +24,7 @@ import views.html.WhatDoYouWantToDoView
 class WhatDoYouWantToDoViewSpec extends ViewBehaviours {
 
   override def view: HtmlFormat.Appendable =
-    injector.instanceOf[WhatDoYouWantToDoView].apply(Availability.NonEmpty, Availability.NonEmpty)(fakeRequest, messages)
+    injector.instanceOf[WhatDoYouWantToDoView].apply(Availability.Empty, Availability.Empty)(fakeRequest, messages)
 
   override val prefix: String = "whatDoYouWantToDo"
 
@@ -40,6 +40,19 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours {
     "Make an arrival notification",
     "http://localhost:9483/manage-transit-movements-arrivals/movement-reference-number"
   )
+  behave like pageWithContent("p", "You have no arrival notifications.")
+
+  val viewWithArrivalsUnavailable = injector.instanceOf[WhatDoYouWantToDoView].apply(Availability.Unavailable, Availability.Empty)(fakeRequest, messages)
+  val docWithArrivalsUnavailable  = parseView(viewWithArrivalsUnavailable)
+  behave like pageWithContent(docWithArrivalsUnavailable, "p", "View arrival notifications is currently unavailable.")
+
+  val viewWithArrivals = injector.instanceOf[WhatDoYouWantToDoView].apply(Availability.NonEmpty, Availability.Empty)(fakeRequest, messages)
+  val docWithArrivals  = parseView(viewWithArrivals)
+  "must render link when we have arrivals " in {
+    val link = getElementById(docWithArrivals, "view-arrival-notifications")
+    assertElementContainsText(link, "View arrival notifications")
+    assertElementContainsHref(link, "/manage-transit-movements/view-arrivals")
+  }
 
   behave like pageWithContent("h2", "Departures")
   behave like pageWithLink(
@@ -47,6 +60,19 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours {
     "Make a departure declaration",
     "http://localhost:9489/manage-transit-movements-departures/local-reference-number"
   )
+  behave like pageWithContent("p", "You have no departure declarations.")
+
+  val viewWithDeparturesUnavailable = injector.instanceOf[WhatDoYouWantToDoView].apply(Availability.Empty, Availability.Unavailable)(fakeRequest, messages)
+  val docWithDeparturesUnavailable  = parseView(viewWithDeparturesUnavailable)
+  behave like pageWithContent(docWithDeparturesUnavailable, "p", "View departure notifications is currently unavailable.")
+
+  val viewWithDepartures = injector.instanceOf[WhatDoYouWantToDoView].apply(Availability.Empty, Availability.NonEmpty)(fakeRequest, messages)
+  val docWithDepartures  = parseView(viewWithDepartures)
+  "must render link when we have departures " in {
+    val link = getElementById(docWithDepartures, "view-departure-declarations")
+    assertElementContainsText(link, "View departure declarations")
+    assertElementContainsHref(link, "/manage-transit-movements/view-departures")
+  }
 
   behave like pageWithContent("h2", "Guarantees")
   behave like pageWithLink(
@@ -54,4 +80,5 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours {
     "Check your guarantee balance",
     "http://localhost:9462/check-transit-guarantee-balance/start?referral=ncts"
   )
+
 }

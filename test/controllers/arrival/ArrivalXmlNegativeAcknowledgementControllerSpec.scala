@@ -84,8 +84,6 @@ class ArrivalXmlNegativeAcknowledgementControllerSpec extends SpecBase with Json
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
-
       val request = FakeRequest(GET, routes.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
 
       val result = route(app, request).value
