@@ -22,6 +22,8 @@ import play.twirl.api.HtmlFormat
 import viewModels.ViewMovement
 import viewModels.pagination.PaginationViewModel
 
+import scala.collection.JavaConverters._
+
 // scalastyle:off method.length
 // scalastyle:off magic.number
 trait PaginationViewBehaviours[T <: ViewMovement] {
@@ -83,11 +85,59 @@ trait PaginationViewBehaviours[T <: ViewMovement] {
         element.text() mustBe s"$activePage"
       }
 
-      "must display ellipses when there's a sufficient number of pages" in {
-        val paginationViewModel = PaginationViewModel(60, 4, 5, href)
-        val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
-        val element             = doc.getElementsByClass("pagination__item--dots").first()
-        element.text() mustBe "..."
+      "when there's a sufficient number of pages" - {
+        "must display ellipses" - {
+          "after the first page number" in {
+            val paginationViewModel = PaginationViewModel(101, 4, 20, href)
+            val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
+            // drop the Previous and Next pagination items so we're just left with the 1, 2, 3 etc.
+            val paginationItems = doc.getElementsByClass("pagination__item").asScala.drop(1).dropRight(1)
+            paginationItems.zip(Stream from 1).foreach {
+              case (paginationItem, index) =>
+                if (index == 2) {
+                  assert(paginationItem.hasClass("pagination__item--dots"))
+                  paginationItem.text() must include("...")
+                } else {
+                  assert(!paginationItem.hasClass("pagination__item--dots"))
+                  paginationItem.text() must include(s"$index")
+                }
+            }
+          }
+
+          "before the final page number" in {
+            val paginationViewModel = PaginationViewModel(101, 3, 20, href)
+            val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
+            // drop the Previous and Next pagination items so we're just left with the 1, 2, 3 etc.
+            val paginationItems = doc.getElementsByClass("pagination__item").asScala.drop(1).dropRight(1)
+            paginationItems.zip(Stream from 1).foreach {
+              case (paginationItem, index) =>
+                if (index == 5) {
+                  assert(paginationItem.hasClass("pagination__item--dots"))
+                  paginationItem.text() must include("...")
+                } else {
+                  assert(!paginationItem.hasClass("pagination__item--dots"))
+                  paginationItem.text() must include(s"$index")
+                }
+            }
+          }
+
+          "after the first page number and before the final page number" in {
+            val paginationViewModel = PaginationViewModel(121, 4, 20, href)
+            val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
+            // drop the Previous and Next pagination items so we're just left with the 1, 2, 3 etc.
+            val paginationItems = doc.getElementsByClass("pagination__item").asScala.drop(1).dropRight(1)
+            paginationItems.zip(Stream from 1).foreach {
+              case (paginationItem, index) =>
+                if (index == 2 || index == 6) {
+                  assert(paginationItem.hasClass("pagination__item--dots"))
+                  paginationItem.text() must include("...")
+                } else {
+                  assert(!paginationItem.hasClass("pagination__item--dots"))
+                  paginationItem.text() must include(s"$index")
+                }
+            }
+          }
+        }
       }
 
       "must display correct count" - {

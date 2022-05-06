@@ -49,8 +49,8 @@
                  </span>
             }
 
-            @for(item <- viewModel.items.iterator) {
-                @if(viewModel.items.lastItemDotted && !viewModel.items.iterator.hasNext) {
+            @for((item, index) <- viewModel.items.items.zip(Stream from 1)) {
+                @if(viewModel.items.lastItemDotted && index == viewModel.items.items.length) {
                     <span class="pagination__item pagination__item--dots" aria-hidden="true">@messages("pagination.ellipses")</span>
                     <span class="govuk-visually-hidden">@messages("pagination.ellipses.hidden")</span>
                 }
@@ -66,6 +66,11 @@
                             <span class="govuk-visually-hidden">@messages("pagination.page", item.pageNumber)</span>
                         </a>
                     </span>
+                }
+
+                @if(viewModel.items.firstItemDotted && index == 1) {
+                    <span class="pagination__item pagination__item--dots" aria-hidden="true">@messages("pagination.ellipses")</span>
+                    <span class="govuk-visually-hidden">@messages("pagination.ellipses.hidden")</span>
                 }
             }
 

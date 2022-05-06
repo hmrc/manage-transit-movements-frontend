@@ -16,9 +16,7 @@
 
 package viewModels.pagination
 
-case class Items(items: Seq[Item], firstItemDotted: Boolean, lastItemDotted: Boolean) {
-  lazy val iterator: Iterator[Item] = items.iterator
-}
+case class Items(items: Seq[Item], firstItemDotted: Boolean, lastItemDotted: Boolean)
 
 object Items {
 
