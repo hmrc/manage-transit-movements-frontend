@@ -40,7 +40,7 @@ trait ModelGenerators {
       } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)
     }
 
-  implicit val arbitrarylocalDate: Arbitrary[LocalDate] =
+  implicit val arbitraryLocalDate: Arbitrary[LocalDate] =
     Arbitrary {
       for {
         day <- Gen.choose(1, 28)
@@ -130,7 +130,7 @@ trait ModelGenerators {
       } yield ViewMovementAction(href, key)
     }
 
-  implicit val arbitraryViewMovement: Arbitrary[ViewArrival] =
+  implicit val arbitraryViewArrival: Arbitrary[ViewArrival] =
     Arbitrary {
       for {
         date    <- arbitrary[LocalDate]

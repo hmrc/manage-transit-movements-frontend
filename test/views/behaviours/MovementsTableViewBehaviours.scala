@@ -57,6 +57,8 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
       "must generate correct data in each row" - {
         rows.toList.zipWithIndex.forEach {
           case (row, rowIndex) =>
+            val viewMovement = viewMovements(rowIndex)
+
             s"when row ${rowIndex + 1}" - {
 
               def elementWithVisibleText(element: Element, text: String): Unit =
@@ -78,14 +80,14 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
               "must display correct reference number" in {
                 val ref = row.selectFirst("td[data-testrole*=-ref]")
 
-                behave like elementWithVisibleText(ref, viewMovements(rowIndex).referenceNumber)
+                behave like elementWithVisibleText(ref, viewMovement.referenceNumber)
                 behave like elementWithHiddenText(ref, messages(s"$prefix.table.$referenceNumberType"))
               }
 
               "must display correct status" in {
                 val status = row.selectFirst("td[data-testrole*=-status]")
 
-                behave like elementWithVisibleText(status, viewMovements(rowIndex).status)
+                behave like elementWithVisibleText(status, viewMovement.status)
                 behave like elementWithHiddenText(status, messages(s"$prefix.table.status"))
               }
 
@@ -99,23 +101,25 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
                 val actionLinks = actions.getElementsByClass("govuk-link")
                 actionLinks.zipWithIndex.forEach {
                   case (link, linkIndex) =>
+                    val action = viewMovement.actions(linkIndex)
+
                     s"when action ${linkIndex + 1}" - {
 
                       "must display correct text" in {
-                        link.text() mustBe s"${viewMovements(rowIndex).actions(linkIndex).key} for ${viewMovements(rowIndex).referenceNumber}"
+                        link.text() mustBe s"${action.key} for ${viewMovement.referenceNumber}"
 
-                        behave like elementWithVisibleText(link, s"${viewMovements(rowIndex).actions(linkIndex).key}")
+                        behave like elementWithVisibleText(link, s"${action.key}")
 
                         val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
-                        hiddenText.text() mustBe s"for ${viewMovements(rowIndex).referenceNumber}"
+                        hiddenText.text() mustBe s"for ${viewMovement.referenceNumber}"
                       }
 
                       "must have correct id" in {
-                        link.attr("id") mustBe s"${viewMovements(rowIndex).actions(linkIndex).key}-${viewMovements(rowIndex).referenceNumber}"
+                        link.attr("id") mustBe s"${action.key}-${viewMovement.referenceNumber}"
                       }
 
                       "must have correct href" in {
-                        link.attr("href") mustBe viewMovements(rowIndex).actions(linkIndex).href
+                        link.attr("href") mustBe action.href
                       }
                     }
                 }
