@@ -16,27 +16,24 @@
 
 package controllers.departure
 
-import config.FrontendAppConfig
 import controllers.actions._
 import handlers.ErrorHandler
 import javax.inject.Inject
 import models.DepartureId
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import services.DepartureMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.CancellationXmlNegativeAcknowledgementView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CancellationXmlNegativeAcknowledgementController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  val frontendAppConfig: FrontendAppConfig,
   departureMessageService: DepartureMessageService,
-  renderer: Renderer,
+  view: CancellationXmlNegativeAcknowledgementView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
@@ -46,13 +43,7 @@ class CancellationXmlNegativeAcknowledgementController @Inject() (
     implicit request =>
       departureMessageService.getXMLSubmissionNegativeAcknowledgementMessage(departureId).flatMap {
         case Some(rejectionMessage) =>
-          val json = Json.obj(
-            "contactUrl"             -> frontendAppConfig.nctsEnquiriesUrl,
-            "confirmCancellationUrl" -> frontendAppConfig.departureFrontendConfirmCancellationUrl(departureId),
-            "functionalError"        -> rejectionMessage.error
-          )
-
-          renderer.render("cancellationXmlNegativeAcknowledgement.njk", json).map(Ok(_))
+          Future.successful(Ok(view(departureId, rejectionMessage.error)))
         case _ =>
           errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }

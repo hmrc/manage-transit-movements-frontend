@@ -16,27 +16,24 @@
 
 package controllers.arrival
 
-import config.FrontendAppConfig
 import controllers.actions._
 import handlers.ErrorHandler
 import javax.inject.Inject
 import models.ArrivalId
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import services.ArrivalMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.ArrivalXmlNegativeAcknowledgementView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalXmlNegativeAcknowledgementController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  val frontendAppConfig: FrontendAppConfig,
   arrivalMessageService: ArrivalMessageService,
-  renderer: Renderer,
+  view: ArrivalXmlNegativeAcknowledgementView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
@@ -46,9 +43,7 @@ class ArrivalXmlNegativeAcknowledgementController @Inject() (
     implicit request =>
       arrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).flatMap {
         case Some(rejectionMessage) =>
-          val json = Json.obj("contactUrl" -> frontendAppConfig.nctsEnquiriesUrl, "functionalError" -> rejectionMessage.error)
-
-          renderer.render("xmlNegativeAcknowledgement.njk", json).map(Ok(_))
+          Future.successful(Ok(view(rejectionMessage.error)))
         case _ =>
           errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }
