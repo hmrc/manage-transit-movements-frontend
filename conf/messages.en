@@ -199,6 +199,8 @@ controlDecision.paragraph = You must wait for the outcome of your customs check.
 
 departureXmlNegativeAcknowledgement.title = There is a problem with this departure declaration
 departureXmlNegativeAcknowledgement.heading = There is a problem with this departure declaration
+departureXmlNegativeAcknowledgement.paragraph = You must
+departureXmlNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab)
 
 arrivalXmlNegativeAcknowledgement.title = There is a problem with this arrival notification
 arrivalXmlNegativeAcknowledgement.heading = There is a problem with this arrival notification
