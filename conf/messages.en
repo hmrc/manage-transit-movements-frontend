@@ -178,15 +178,6 @@ noReleaseForTransit.ControlResultCode = Code
 noReleaseForTransit.officeOfDepartureRefNumber = Office of departure reference number
 noReleaseForTransit.p = You must contact the office of departure for more details.
 
-xmlNegativeAcknowledgement.title = There is a problem with this arrival notification
-xmlNegativeAcknowledgement.heading = There is a problem with this arrival notification
-xmlNegativeAcknowledgement.paragraph = You must
-xmlNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab)
-xmlNegativeAcknowledgement.errorType = Error type
-xmlNegativeAcknowledgement.errorPointer = Error pointer
-xmlNegativeAcknowledgement.errorReason = Error reason
-xmlNegativeAcknowledgement.originalAttributeValue = Original attribute value
-
 unloadingRemarksNegativeAcknowledgement.title = There is a problem with these unloading remarks
 unloadingRemarksNegativeAcknowledgement.heading = There is a problem with these unloading remarks
 unloadingRemarksNegativeAcknowledgement.paragraph = You must
@@ -209,9 +200,21 @@ controlDecision.paragraph = You must wait for the outcome of your customs check.
 departureXmlNegativeAcknowledgement.title = There is a problem with this departure declaration
 departureXmlNegativeAcknowledgement.heading = There is a problem with this departure declaration
 
+arrivalXmlNegativeAcknowledgement.title = There is a problem with this arrival notification
+arrivalXmlNegativeAcknowledgement.heading = There is a problem with this arrival notification
+arrivalXmlNegativeAcknowledgement.paragraph = You must
+arrivalXmlNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab)
+
 cancellationXmlNegativeAcknowledgement.title = There is a problem with this departure cancellation
 cancellationXmlNegativeAcknowledgement.heading = There is a problem with this departure cancellation
 cancellationXmlNegativeAcknowledgement.cancelDeclaration = cancel declaration
+cancellationXmlNegativeAcknowledgement.paragraph = You must
+cancellationXmlNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab)
+
+xmlNegativeAcknowledgement.errorType = Error type
+xmlNegativeAcknowledgement.errorPointer = Error pointer
+xmlNegativeAcknowledgement.errorReason = Error reason
+xmlNegativeAcknowledgement.originalAttributeValue = Original attribute value
 
 confirmCancellation.title =  Are you sure you want to cancel this departure declaration?
 confirmCancellation.heading =  Are you sure you want to cancel this departure declaration?
