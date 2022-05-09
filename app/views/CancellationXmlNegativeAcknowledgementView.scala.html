@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Heading, XmlNegativeAcknowledgement}
+@import views.html.components.{Heading, NegativeAcknowledgement}
 @import config.FrontendAppConfig
 @import models.FunctionalError
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    xmlNegativeAcknowledgment: XmlNegativeAcknowledgement,
+    negativeAcknowledgment: NegativeAcknowledgement,
     config: FrontendAppConfig
 )
 
@@ -33,7 +33,7 @@
 ) {
     @heading("cancellationXmlNegativeAcknowledgement.heading")
 
-    @xmlNegativeAcknowledgment(functionalError)
+    @negativeAcknowledgment(functionalError)
 
     <p class="govuk-body">@messages("cancellationXmlNegativeAcknowledgement.paragraph")</p>
     <ul class="govuk-list govuk-list--bullet">

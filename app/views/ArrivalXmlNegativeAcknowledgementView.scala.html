@@ -14,15 +14,16 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Heading, XmlNegativeAcknowledgement}
+@import views.html.components.{Heading, NegativeAcknowledgement}
 @import config.FrontendAppConfig
 @import models.FunctionalError
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    xmlNegativeAcknowledgment: XmlNegativeAcknowledgement,
-    config: FrontendAppConfig
+    negativeAcknowledgment: NegativeAcknowledgement,
+    config: FrontendAppConfig,
+    govukSummaryList: GovukSummaryList
 )
 
 @(functionalError: FunctionalError)(implicit request: Request[_], messages: Messages)
@@ -33,7 +34,7 @@
 ) {
     @heading("arrivalXmlNegativeAcknowledgement.heading")
 
-    @xmlNegativeAcknowledgment(functionalError)
+    @negativeAcknowledgment(functionalError)
 
     <p class="govuk-body">
         @messages("arrivalXmlNegativeAcknowledgement.paragraph")
