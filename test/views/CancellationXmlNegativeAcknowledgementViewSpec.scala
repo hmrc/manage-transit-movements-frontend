@@ -39,14 +39,14 @@ class CancellationXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledge
   behave like pageWithContent("p", "You must")
 
   behave like pageWithLink(
-    "create-new-unloading-remarks",
-    "cancel declaration",
-    s"http://localhost:9495/manage-transit-movements-departures-cancel/${departureId.index}/confirm-cancellation"
+    id = "create-new-unloading-remarks",
+    expectedText = "cancel declaration",
+    expectedHref = s"http://localhost:9495/manage-transit-movements-departures-cancel/${departureId.index}/confirm-cancellation"
   )
 
   behave like pageWithLink(
-    "contact",
-    "contact the New Computerised Transit System helpdesk (opens in a new tab)",
-    "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/new-computerised-transit-system-enquiries"
+    id = "contact",
+    expectedText = "contact the New Computerised Transit System helpdesk (opens in a new tab)",
+    expectedHref = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/new-computerised-transit-system-enquiries"
   )
 }
