@@ -19,7 +19,7 @@ package generators
 import models.ErrorType.GenericError
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.departure._
-import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
+import models.{Arrival, ArrivalId, Arrivals, Availability, Departure, DepartureId, Departures, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
@@ -237,5 +237,30 @@ trait ModelGenerators {
         lrn   <- Gen.option(nonEmptyString)
         error <- arbitrary[FunctionalError]
       } yield XMLSubmissionNegativeAcknowledgementMessage(mrn, lrn, error)
+    }
+
+  implicit lazy val arbitraryAvailability: Arbitrary[Availability] =
+    Arbitrary {
+      Gen.oneOf(Availability.NonEmpty, Availability.Empty, Availability.Unavailable)
+    }
+
+  implicit lazy val arbitraryArrivals: Arbitrary[Arrivals] =
+    Arbitrary {
+      for {
+        retrievedArrivals <- arbitrary[Int]
+        totalArrivals     <- arbitrary[Int]
+        totalMatched      <- arbitrary[Option[Int]]
+        arrivals          <- listWithMaxLength[Arrival]()
+      } yield Arrivals(retrievedArrivals, totalArrivals, totalMatched, arrivals)
+    }
+
+  implicit lazy val arbitraryDepartures: Arbitrary[Departures] =
+    Arbitrary {
+      for {
+        retrievedDepartures <- arbitrary[Int]
+        totalDepartures     <- arbitrary[Int]
+        totalMatched        <- arbitrary[Option[Int]]
+        departures          <- listWithMaxLength[Departure]()
+      } yield Departures(retrievedDepartures, totalDepartures, totalMatched, departures)
     }
 }

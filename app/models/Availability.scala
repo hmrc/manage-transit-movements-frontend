@@ -16,12 +16,7 @@
 
 package models
 
-import models.Availability._
-
-sealed trait Availability {
-  def isAvailable: Boolean            = this != Unavailable
-  def isAvailableAndNonEmpty: Boolean = this == NonEmpty
-}
+sealed trait Availability
 
 object Availability {
 

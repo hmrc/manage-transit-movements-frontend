@@ -16,23 +16,30 @@
 
 package views
 
+import generators.Generators
 import models.Availability
+import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.WhatDoYouWantToDoView
 
-class WhatDoYouWantToDoViewSpec extends ViewBehaviours {
+class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
-  private def applyView(arrivalAvailability: Availability, departureAvailability: Availability): HtmlFormat.Appendable =
-    injector.instanceOf[WhatDoYouWantToDoView].apply(arrivalAvailability, departureAvailability)(fakeRequest, messages)
+  private val sampleAvailability = arbitrary[Availability].sample.value
 
-  override def view: HtmlFormat.Appendable = applyView(Availability.Empty, Availability.Empty)
+  private def applyView(
+    arrivalsAvailability: Availability = sampleAvailability,
+    departuresAvailability: Availability = sampleAvailability
+  ): HtmlFormat.Appendable =
+    injector.instanceOf[WhatDoYouWantToDoView].apply(arrivalsAvailability, departuresAvailability)(fakeRequest, messages)
+
+  override def view: HtmlFormat.Appendable = applyView()
 
   override val prefix: String = "whatDoYouWantToDo"
 
   behave like pageWithTitle()
 
-  behave like pageWithBackLink
+  behave like pageWithoutBackLink()
 
   behave like pageWithHeading()
 
@@ -58,42 +65,46 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours {
   )
 
   "when we have no arrivals" - {
-    val docWithNoArrivals = parseView(applyView(Availability.Empty, Availability.Empty))
-    behave like pageWithContent(docWithNoArrivals, "p", "You have no arrival notifications.")
+    val doc = parseView(applyView(arrivalsAvailability = Availability.Empty))
+    behave like pageWithContent(doc, "p", "You have no arrival notifications.")
   }
 
   "when arrivals are unavailable" - {
-    val docWithArrivalsUnavailable = parseView(applyView(Availability.Unavailable, Availability.Empty))
-    behave like pageWithContent(docWithArrivalsUnavailable, "p", "View arrival notifications is currently unavailable.")
+    val doc = parseView(applyView(arrivalsAvailability = Availability.Unavailable))
+    behave like pageWithContent(doc, "p", "View arrival notifications is currently unavailable.")
   }
 
   "when we have arrivals must" - {
-    val docWithArrivals = parseView(applyView(Availability.NonEmpty, Availability.Empty))
-    val link            = getElementById(docWithArrivals, "view-arrival-notifications")
+    val doc  = parseView(applyView(arrivalsAvailability = Availability.NonEmpty))
+    val link = getElementById(doc, "view-arrival-notifications")
+
     "have the correct text for the view arrivals link" in {
       assertElementContainsText(link, "View arrival notifications")
     }
+
     "have the correct href on the view arrivals link" in {
       assertElementContainsHref(link, "/manage-transit-movements/view-arrivals")
     }
   }
 
   "when we have no departures" - {
-    val docWithNoDepartures = parseView(applyView(Availability.Empty, Availability.Empty))
-    behave like pageWithContent(docWithNoDepartures, "p", "You have no departure declarations.")
+    val doc = parseView(applyView(departuresAvailability = Availability.Empty))
+    behave like pageWithContent(doc, "p", "You have no departure declarations.")
   }
 
   "when departures are unavailable" - {
-    val docWithDeparturesUnavailable = parseView(applyView(Availability.Empty, Availability.Unavailable))
-    behave like pageWithContent(docWithDeparturesUnavailable, "p", "View departure notifications is currently unavailable.")
+    val doc = parseView(applyView(departuresAvailability = Availability.Unavailable))
+    behave like pageWithContent(doc, "p", "View departure notifications is currently unavailable.")
   }
 
   "when we have departures must" - {
-    val docWithDepartures = parseView(applyView(Availability.Empty, Availability.NonEmpty))
-    val link              = getElementById(docWithDepartures, "view-departure-declarations")
+    val doc  = parseView(applyView(departuresAvailability = Availability.NonEmpty))
+    val link = getElementById(doc, "view-departure-declarations")
+
     "have the correct text for the view departures link" in {
       assertElementContainsText(link, "View departure declarations")
     }
+
     "have the correct href on the view departures link" in {
       assertElementContainsHref(link, "/manage-transit-movements/view-departures")
     }
