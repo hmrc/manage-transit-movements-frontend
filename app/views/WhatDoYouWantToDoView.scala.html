@@ -28,8 +28,7 @@
 @(arrivalsAvailability: Availability, departuresAvailability: Availability)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("whatDoYouWantToDo.title"),
-    showBackLink = true
+    title = messages("whatDoYouWantToDo.title")
 ) {
     @heading("whatDoYouWantToDo.heading")
 
@@ -38,33 +37,36 @@
         <a href=@config.declareArrivalNotificationStartUrl class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.makeArrival")</a>
     </p>
 
-
     <p class="govuk-body">
-        @if(arrivalsAvailability.isAvailableAndNonEmpty) {
-            <a href=@controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url class="govuk-link" id="view-arrival-notifications">
-                @messages("whatDoYouWantToDo.link.arrival.viewArrival")
-            </a>
-        } else if(arrivalsAvailability.isAvailable){
-            @messages("whatDoYouWantToDo.arrival.noArrivals")
-        } else {
-            @messages("whatDoYouWantToDo.arrival.arrivalsUnavailable")
+        @arrivalsAvailability match {
+            case Availability.NonEmpty => {
+                <a href=@controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url class="govuk-link" id="view-arrival-notifications">@messages("whatDoYouWantToDo.link.arrival.viewArrival")</a>
+            }
+            case Availability.Empty => {
+                @messages("whatDoYouWantToDo.arrival.noArrivals")
+            }
+            case Availability.Unavailable => {
+                @messages("whatDoYouWantToDo.arrival.arrivalsUnavailable")
+            }
         }
     </p>
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.departure")</h2>
     <p class="govuk-body">
-        <a href=@config.declareDepartureStartWithLRNUrl class="govuk-link" id="make-departure-notification">
-            @messages("whatDoYouWantToDo.link.departure.makeDeparture")
-        </a>
+        <a href=@config.declareDepartureStartWithLRNUrl class="govuk-link" id="make-departure-notification">@messages("whatDoYouWantToDo.link.departure.makeDeparture")</a>
     </p>
 
     <p class="govuk-body">
-        @if(departuresAvailability.isAvailableAndNonEmpty) {
-            <a href=@controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url class="govuk-link" id="view-departure-declarations">@messages("whatDoYouWantToDo.link.departure.viewDepartures")</a>
-        } else if(departuresAvailability.isAvailable){
-            @messages("whatDoYouWantToDo.departure.noDepartures")
-        } else {
-            @messages("whatDoYouWantToDo.departure.departuresUnavailable")
+        @departuresAvailability match {
+            case Availability.NonEmpty => {
+                <a href=@controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url class="govuk-link" id="view-departure-declarations">@messages("whatDoYouWantToDo.link.departure.viewDepartures")</a>
+            }
+            case Availability.Empty => {
+                @messages("whatDoYouWantToDo.departure.noDepartures")
+            }
+            case Availability.Unavailable => {
+                @messages("whatDoYouWantToDo.departure.departuresUnavailable")
+            }
         }
     </p>
 

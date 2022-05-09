@@ -17,43 +17,49 @@
 package models
 
 import base.SpecBase
+import generators.Generators
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class AvailabilitySpec extends SpecBase {
+class AvailabilitySpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  "isAvailable" - {
+  "apply" - {
 
-    "must return true" - {
-      "when Empty" in {
-        Availability.Empty.isAvailable mustBe true
+    "must return NonEmpty" - {
+      "when non-empty list of departures" in {
+        forAll(arbitrary[Departures]) {
+          departures =>
+            Availability.apply(Some(departures)) mustBe Availability.NonEmpty
+        }
       }
 
-      "when NonEmpty" in {
-        Availability.NonEmpty.isAvailable mustBe true
-      }
-    }
-
-    "must return false" - {
-      "when Unavailable" in {
-        Availability.Unavailable.isAvailable mustBe false
-      }
-    }
-  }
-
-  "isAvailableAndNonEmpty" - {
-
-    "must return true" - {
-      "when NonEmpty" in {
-        Availability.NonEmpty.isAvailableAndNonEmpty mustBe true
+      "when non-empty list of arrivals" in {
+        forAll(arbitrary[Arrivals]) {
+          arrivals =>
+            Availability.apply(Some(arrivals)) mustBe Availability.NonEmpty
+        }
       }
     }
 
-    "must return false" - {
-      "when Empty" in {
-        Availability.Empty.isAvailableAndNonEmpty mustBe false
+    "must return Empty" - {
+      "when empty list of departures" in {
+        forAll(arbitrary[Departures]) {
+          departures =>
+            Availability.apply(Some(departures.copy(departures = Nil))) mustBe Availability.Empty
+        }
       }
 
-      "when Unavailable" in {
-        Availability.Unavailable.isAvailableAndNonEmpty mustBe false
+      "when empty list of arrivals" in {
+        forAll(arbitrary[Arrivals]) {
+          arrivals =>
+            Availability.apply(Some(arrivals.copy(arrivals = Nil))) mustBe Availability.Empty
+        }
+      }
+    }
+
+    "must return Unavailable" - {
+      "when no list of movements" in {
+        Availability.apply(None) mustBe Availability.Unavailable
       }
     }
   }
