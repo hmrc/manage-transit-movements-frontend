@@ -85,6 +85,4 @@ class CancellationXmlNegativeAcknowledgementViewSpec extends ViewBehaviours with
     "contact the New Computerised Transit System helpdesk (opens in a new tab)",
     "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/new-computerised-transit-system-enquiries"
   )
-
-  ""
 }
