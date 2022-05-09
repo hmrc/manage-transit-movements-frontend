@@ -36,7 +36,6 @@ This service uses switches defined in application.conf that toggle between Phase
         unloading = false
         cancellations = false
         arrivals = false
-        guaranteeBalance = false
       }
     }
 ```

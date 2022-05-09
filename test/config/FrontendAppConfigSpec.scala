@@ -32,11 +32,10 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks {
         val app: Application = new GuiceApplicationBuilder()
           .configure(
             "microservice.services.features.phase5Enabled" -> Map(
-              "departure"        -> false,
-              "unloading"        -> false,
-              "cancellation"     -> false,
-              "arrival"          -> false,
-              "guaranteeBalance" -> false
+              "departure"    -> false,
+              "unloading"    -> false,
+              "cancellation" -> false,
+              "arrival"      -> false
             )
           )
           .build()
@@ -77,11 +76,10 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks {
         val app: Application = new GuiceApplicationBuilder()
           .configure(
             "microservice.services.features.phase5Enabled" -> Map(
-              "departure"        -> true,
-              "unloading"        -> true,
-              "cancellation"     -> true,
-              "arrival"          -> true,
-              "guaranteeBalance" -> true
+              "departure"    -> true,
+              "unloading"    -> true,
+              "cancellation" -> true,
+              "arrival"      -> true
             )
           )
           .build()
