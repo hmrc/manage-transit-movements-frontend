@@ -16,51 +16,36 @@
 
 package views
 
-import _root_.utils.Format
-import base.SingleViewSpec
+import models.LocalReferenceNumber
 import models.departure.ControlDecision
-import org.jsoup.nodes.Document
-import play.api.libs.json.Json
+import org.scalacheck.Arbitrary.arbitrary
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import views.behaviours.SummaryListViewBehaviours
+import views.html.ControlDecisionView
+import generators.Generators
+import views.utils.ViewUtils.RichControlDecision
 
-import java.time.LocalDate
+class ControlDecisionViewSpec extends SummaryListViewBehaviours with Generators {
 
-class ControlDecisionViewSpec extends SingleViewSpec("controlDecision.njk") {
+  private val controlDecision = arbitrary[ControlDecision].sample.value
 
-  "ControlDecisionView" - {
+  override def summaryLists: Seq[SummaryList] = Seq(controlDecision.toSummaryList(lrn))
 
-    "must return eori number if available and hide trader name" in {
-      val setControlDecision = ControlDecision("mrnValue", LocalDate.now(), "principleTraderNameValue", Some("eoriValue"))
+  private def applyView(controlDecisionMessage: ControlDecision, lrn: LocalReferenceNumber): HtmlFormat.Appendable =
+    injector.instanceOf[ControlDecisionView].apply(controlDecisionMessage, lrn)(fakeRequest, messages)
 
-      val doc: Document = renderDocument(
-        Json.obj("controlDecisionMessage" -> Json.toJson(setControlDecision), "lrn" -> lrn.value)
-      ).futureValue
+  override def view: HtmlFormat.Appendable = applyView(controlDecision, lrn)
 
-      val getSummaryElements = doc.getElementsByClass("govuk-summary-list__row")
+  override val prefix: String = "controlDecision"
 
-      getSummaryElements.size mustBe 4
+  behave like pageWithTitle()
 
-      getSummaryElements.eq(0).select("dd").text mustBe setControlDecision.movementReferenceNumber
-      getSummaryElements.eq(1).select("dd").text mustBe lrn.value
-      getSummaryElements.eq(2).select("dd").text mustBe setControlDecision.principleEori.value
-      getSummaryElements.eq(3).select("dd").text mustBe Format.controlDecisionDateFormatted(setControlDecision.dateOfControl)
-    }
+  behave like pageWithBackLink
 
-    "must return trader name if eori number is unavailable" in {
-      val setControlDecision = ControlDecision("mrnValue", LocalDate.now(), "principleTraderNameValue", None)
+  behave like pageWithHeading()
 
-      val doc: Document = renderDocument(
-        Json.obj("controlDecisionMessage" -> Json.toJson(setControlDecision), "lrn" -> lrn.value)
-      ).futureValue
+  behave like pageWithSummaryLists()
 
-      val getSummaryElements = doc.getElementsByClass("govuk-summary-list__row")
-
-      getSummaryElements.size mustBe 4
-
-      getSummaryElements.eq(0).select("dd").text mustBe setControlDecision.movementReferenceNumber
-      getSummaryElements.eq(1).select("dd").text mustBe lrn.value
-      getSummaryElements.eq(2).select("dd").text mustBe setControlDecision.principleTraderName
-      getSummaryElements.eq(3).select("dd").text mustBe Format.controlDecisionDateFormatted(setControlDecision.dateOfControl)
-    }
-  }
-
+  behave like pageWithContent("p", "You must wait for the outcome of your customs check.")
 }

@@ -18,13 +18,17 @@ package views.utils
 
 import base.SpecBase
 import generators.Generators
-import models.FunctionalError
-import models.departure.{NoReleaseForTransitMessage, ResultsOfControl}
+import models.departure.{ControlDecision, NoReleaseForTransitMessage, ResultsOfControl}
+import models.{FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import utils.Format
 import views.utils.ViewUtils._
+
+import java.time.LocalDate
 
 class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -242,6 +246,62 @@ class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               result.length mustBe 2
 
               result(1).rows.length mustBe 0
+          }
+        }
+      }
+    }
+  }
+
+  "RichControlDecision" - {
+    ".toSummaryLists" - {
+      "must return summary lists" - {
+        "when controlDecision defined and contains a principal eori number" in {
+
+          val message = ControlDecision("mrn", LocalDate.now, "PrincipalTraderName", Some("EoriNumber"))
+
+          forAll(arbitrary[LocalReferenceNumber]) {
+            lrn =>
+              val result: SummaryList = message
+                .toSummaryList(lrn)
+
+              result.rows.length mustBe 4
+
+              result.rows.head.key.content mustBe "Movement reference number".toText
+              result.rows.head.value.content mustBe message.movementReferenceNumber.toText
+
+              result.rows(1).key.content mustBe "Local reference number".toText
+              result.rows(1).value.content mustBe lrn.toString.toText
+
+              result.rows(2).key.content mustBe "Principal’s EORI number".toText
+              result.rows(2).value.content mustBe message.principleEori.get.toText
+
+              result.rows(3).key.content mustBe "Date of control".toText
+              result.rows(3).value.content mustBe Format.controlDecisionDateFormatted(message.dateOfControl).toText
+          }
+        }
+
+        "when controlDecision defined and does not contain a principal eori number" in {
+
+          val message = ControlDecision("mrn", LocalDate.now, "PrincipalTraderName", None)
+
+          forAll(arbitrary[LocalReferenceNumber]) {
+            lrn =>
+              val result: SummaryList = message
+                .toSummaryList(lrn)
+
+              result.rows.length mustBe 4
+
+              result.rows.head.key.content mustBe "Movement reference number".toText
+              result.rows.head.value.content mustBe message.movementReferenceNumber.toText
+
+              result.rows(1).key.content mustBe "Local reference number".toText
+              result.rows(1).value.content mustBe lrn.toString.toText
+
+              result.rows(2).key.content mustBe "Principal trader name".toText
+              result.rows(2).value.content mustBe message.principleTraderName.toText
+
+              result.rows(3).key.content mustBe "Date of control".toText
+              result.rows(3).value.content mustBe Format.controlDecisionDateFormatted(message.dateOfControl).toText
           }
         }
       }

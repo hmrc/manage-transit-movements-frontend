@@ -16,12 +16,14 @@
 
 package views.utils
 
-import models.FunctionalError
+import models.{FunctionalError, LocalReferenceNumber}
 import models.departure.NoReleaseForTransitMessage
+import models.departure.ControlDecision
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow, Value}
+import utils.Format
 
 object ViewUtils {
 
@@ -120,7 +122,39 @@ object ViewUtils {
 
       Seq(firstSummaryList, secondSummaryList)
     }
-    // scalastyle:on method.length
   }
 
+  implicit class RichControlDecision(controlDecision: ControlDecision) {
+
+    def toSummaryList(lrn: LocalReferenceNumber)(implicit messages: Messages): SummaryList =
+      SummaryList(
+        rows = Seq(
+          SummaryListRow(
+            key = messages("controlDecision.mrn").toKey,
+            value = Value(controlDecision.movementReferenceNumber.toText)
+          ),
+          SummaryListRow(
+            key = messages("controlDecision.lrn").toKey,
+            value = Value(lrn.value.toText)
+          ),
+          controlDecision.principleEori match {
+            case Some(principleEori) =>
+              SummaryListRow(
+                key = messages("controlDecision.principalEoriNumber").toKey,
+                value = Value(principleEori.toText)
+              )
+            case _ =>
+              SummaryListRow(
+                key = messages("controlDecision.principalTraderName").toKey,
+                value = Value(controlDecision.principleTraderName.toText)
+              )
+          },
+          SummaryListRow(
+            key = messages("controlDecision.dateOfControl").toKey,
+            value = Value(Format.controlDecisionDateFormatted(controlDecision.dateOfControl).toText)
+          )
+        )
+      )
+    // scalastyle:on method.length
+  }
 }
