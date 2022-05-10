@@ -16,17 +16,19 @@
 
 package views
 
-import models.FunctionalError
+import models.{ArrivalId, FunctionalError}
 import play.twirl.api.HtmlFormat
 import views.behaviours.NegativeAcknowledgementViewBehaviours
-import views.html.CancellationXmlNegativeAcknowledgementView
+import views.html.UnloadingRemarksXmlNegativeAcknowledgementView
 
-class CancellationXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledgementViewBehaviours {
+class UnloadingRemarksXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledgementViewBehaviours {
+
+  private val arrivalId: ArrivalId = ArrivalId(2)
 
   override def applyView(functionalError: FunctionalError): HtmlFormat.Appendable =
-    injector.instanceOf[CancellationXmlNegativeAcknowledgementView].apply(departureId, functionalError)(fakeRequest, messages)
+    injector.instanceOf[UnloadingRemarksXmlNegativeAcknowledgementView].apply(arrivalId, functionalError)(fakeRequest, messages)
 
-  override val prefix: String = "cancellationXmlNegativeAcknowledgement"
+  override val prefix: String = "unloadingRemarksNegativeAcknowledgement"
 
   behave like pageWithTitle()
 
@@ -36,12 +38,11 @@ class CancellationXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledge
 
   behave like pageWithSummaryLists
 
-  behave like pageWithContent("p", "You must")
-
+  behave like pageWithPartialContent("p", "You must")
   behave like pageWithLink(
-    id = "create-new-cancellation",
-    expectedText = "cancel declaration",
-    expectedHref = s"http://localhost:9495/manage-transit-movements-departures-cancel/${departureId.index}/confirm-cancellation"
+    id = "create-new-unloading-remarks",
+    expectedText = "create new unloading remarks",
+    expectedHref = s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrivalId.index}"
   )
 
   behave like pageWithLink(

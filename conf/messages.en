@@ -182,10 +182,6 @@ unloadingRemarksNegativeAcknowledgement.title = There is a problem with these un
 unloadingRemarksNegativeAcknowledgement.heading = There is a problem with these unloading remarks
 unloadingRemarksNegativeAcknowledgement.paragraph = You must
 unloadingRemarksNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab)
-unloadingRemarksNegativeAcknowledgement.errorType = Error type
-unloadingRemarksNegativeAcknowledgement.errorPointer = Error pointer
-unloadingRemarksNegativeAcknowledgement.errorReason = Error reason
-unloadingRemarksNegativeAcknowledgement.originalAttributeValue = Original attribute value
 unloadingRemarksNegativeAcknowledgement.create.unloadingRemarks = create new unloading remarks
 
 controlDecision.title = Your goods have been selected for control

@@ -25,26 +25,26 @@
     config: FrontendAppConfig
 )
 
-@(departureId: DepartureId, functionalError: FunctionalError)(implicit request: Request[_], messages: Messages)
+@(arrivalId: ArrivalId, functionalError: FunctionalError)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("cancellationXmlNegativeAcknowledgement.title"),
+    title = messages("unloadingRemarksNegativeAcknowledgement.title"),
     showBackLink = true
 ) {
-    @heading("cancellationXmlNegativeAcknowledgement.heading")
+    @heading("unloadingRemarksNegativeAcknowledgement.heading")
 
     @negativeAcknowledgment(functionalError)
 
-    <p class="govuk-body">@messages("cancellationXmlNegativeAcknowledgement.paragraph")</p>
+    <p class="govuk-body">@messages("unloadingRemarksNegativeAcknowledgement.paragraph")</p>
     <ul class="govuk-list govuk-list--bullet">
         <li>
-            <a id="create-new-cancellation" class="govuk-link" href=@config.departureFrontendConfirmCancellationUrl(departureId)>
-                @messages("cancellationXmlNegativeAcknowledgement.cancelDeclaration")
+            <a id="create-new-unloading-remarks" class="govuk-link" href=@config.declareUnloadingRemarksUrl(arrivalId)>
+                @messages("unloadingRemarksNegativeAcknowledgement.create.unloadingRemarks")
             </a>
         </li>
         <li>
             <a class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl rel="noopener noreferrer" id="contact">
-                @messages("cancellationXmlNegativeAcknowledgement.linktext")
+                @messages("unloadingRemarksNegativeAcknowledgement.linktext")
             </a>
         </li>
     </ul>

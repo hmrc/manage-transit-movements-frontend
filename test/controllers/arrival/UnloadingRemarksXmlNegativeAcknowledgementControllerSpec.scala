@@ -21,17 +21,15 @@ import generators.Generators
 import matchers.JsonMatchers
 import models.ArrivalId
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import services.ArrivalMessageService
+import views.html.UnloadingRemarksXmlNegativeAcknowledgementView
 
 import scala.concurrent.Future
 
@@ -54,29 +52,18 @@ class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase 
 
     "return OK and the correct view for a GET" in {
       val negativeAcknowledgementMessage = arbitrary[XMLSubmissionNegativeAcknowledgementMessage].sample.value
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
       when(mockArrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(any())(any(), any()))
         .thenReturn(Future.successful(Some(negativeAcknowledgementMessage)))
 
-      val request                                = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
+      val request = FakeRequest(GET, routes.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId).url)
 
       val result = route(app, request).value
 
+      val view = injector.instanceOf[UnloadingRemarksXmlNegativeAcknowledgementView]
+
       status(result) mustEqual OK
 
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
-        "declareUnloadingRemarksUrl" -> frontendAppConfig.declareUnloadingRemarksUrl(arrivalId),
-        "functionalError"            -> negativeAcknowledgementMessage.error
-      )
-
-      templateCaptor.getValue mustEqual "unloadingRemarksXmlNegativeAcknowledgement.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(arrivalId, negativeAcknowledgementMessage.error)(request, messages).toString
     }
 
     "render 'Technical difficulty page' when service fails to get rejection message" in {
