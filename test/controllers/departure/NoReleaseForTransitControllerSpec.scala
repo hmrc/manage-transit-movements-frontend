@@ -18,7 +18,6 @@ package controllers.departure
 
 import base.SpecBase
 import generators.Generators
-import matchers.JsonMatchers
 import models.departure.NoReleaseForTransitMessage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -32,7 +31,7 @@ import views.html.NoReleaseForTransitView
 
 import scala.concurrent.Future
 
-class NoReleaseForTransitControllerSpec extends SpecBase with JsonMatchers with Generators {
+class NoReleaseForTransitControllerSpec extends SpecBase with Generators {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
 

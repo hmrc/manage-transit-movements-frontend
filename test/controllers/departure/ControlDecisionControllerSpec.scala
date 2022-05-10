@@ -18,7 +18,6 @@ package controllers.departure
 
 import base.SpecBase
 import generators.Generators
-import matchers.JsonMatchers
 import models.LocalReferenceNumber
 import models.departure.ControlDecision
 import org.mockito.ArgumentMatchers.any
@@ -33,7 +32,7 @@ import views.html.ControlDecisionView
 
 import scala.concurrent.Future
 
-class ControlDecisionControllerSpec extends SpecBase with JsonMatchers with Generators {
+class ControlDecisionControllerSpec extends SpecBase with Generators {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
 

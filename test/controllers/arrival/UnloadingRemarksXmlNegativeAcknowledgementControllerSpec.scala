@@ -18,7 +18,6 @@ package controllers.arrival
 
 import base.SpecBase
 import generators.Generators
-import matchers.JsonMatchers
 import models.ArrivalId
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import org.mockito.ArgumentMatchers.any
@@ -33,7 +32,7 @@ import views.html.UnloadingRemarksXmlNegativeAcknowledgementView
 
 import scala.concurrent.Future
 
-class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase with JsonMatchers with Generators {
+class UnloadingRemarksXmlNegativeAcknowledgementControllerSpec extends SpecBase with Generators {
 
   private val mockArrivalMessageService = mock[ArrivalMessageService]
 

@@ -19,7 +19,6 @@ package controllers.departure
 import base.{FakeSearchResultsAppConfig, SpecBase}
 import config.SearchResultsAppConfig
 import connectors.DeparturesMovementConnector
-import matchers.JsonMatchers
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber, RichLocalDateTime}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
@@ -34,7 +33,7 @@ import views.html.ViewDeparturesSearchResultsView
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewDeparturesSearchResultsControllerSpec extends SpecBase with JsonMatchers {
+class ViewDeparturesSearchResultsControllerSpec extends SpecBase {
 
   private val totalSearchDepartures = 8
   private val someSearchMatches     = 5

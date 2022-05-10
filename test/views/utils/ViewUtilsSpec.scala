@@ -25,10 +25,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utils.Format
 import views.utils.ViewUtils._
-
-import java.time.LocalDate
 
 class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -253,55 +250,55 @@ class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
   }
 
   "RichControlDecision" - {
-    ".toSummaryLists" - {
-      "must return summary lists" - {
-        "when controlDecision defined and contains a principal eori number" in {
 
-          val message = ControlDecision("mrn", LocalDate.now, "PrincipalTraderName", Some("EoriNumber"))
+    // regex for date formatted as dd MMMM yyyy
+    val dateRegex = "^(([0-9])|([0-2][0-9])|([3][0-1])) (January|February|March|April|May|June|July|August|September|October|November|December) \\d{4}$"
 
-          forAll(arbitrary[LocalReferenceNumber]) {
-            lrn =>
-              val result: SummaryList = message
+    ".toSummaryList" - {
+      "must return summary list" - {
+        "when control decision contains a principal eori number" in {
+          forAll(arbitrary[ControlDecision], arbitrary[LocalReferenceNumber], Gen.alphaNumStr) {
+            (controlDecision, lrn, principleEori) =>
+              val result: SummaryList = controlDecision
+                .copy(principleEori = Some(principleEori))
                 .toSummaryList(lrn)
 
               result.rows.length mustBe 4
 
               result.rows.head.key.content mustBe "Movement reference number".toText
-              result.rows.head.value.content mustBe message.movementReferenceNumber.toText
+              result.rows.head.value.content mustBe controlDecision.movementReferenceNumber.toText
 
               result.rows(1).key.content mustBe "Local reference number".toText
               result.rows(1).value.content mustBe lrn.toString.toText
 
               result.rows(2).key.content mustBe "Principal’s EORI number".toText
-              result.rows(2).value.content mustBe message.principleEori.get.toText
+              result.rows(2).value.content mustBe principleEori.toText
 
               result.rows(3).key.content mustBe "Date of control".toText
-              result.rows(3).value.content mustBe Format.controlDecisionDateFormatted(message.dateOfControl).toText
+              result.rows(3).value.content.asHtml.toString().matches(dateRegex) mustBe true
           }
         }
 
-        "when controlDecision defined and does not contain a principal eori number" in {
-
-          val message = ControlDecision("mrn", LocalDate.now, "PrincipalTraderName", None)
-
-          forAll(arbitrary[LocalReferenceNumber]) {
-            lrn =>
-              val result: SummaryList = message
+        "when control decision does not contain a principal eori number" in {
+          forAll(arbitrary[ControlDecision], arbitrary[LocalReferenceNumber]) {
+            (controlDecision, lrn) =>
+              val result: SummaryList = controlDecision
+                .copy(principleEori = None)
                 .toSummaryList(lrn)
 
               result.rows.length mustBe 4
 
               result.rows.head.key.content mustBe "Movement reference number".toText
-              result.rows.head.value.content mustBe message.movementReferenceNumber.toText
+              result.rows.head.value.content mustBe controlDecision.movementReferenceNumber.toText
 
               result.rows(1).key.content mustBe "Local reference number".toText
               result.rows(1).value.content mustBe lrn.toString.toText
 
               result.rows(2).key.content mustBe "Principal trader name".toText
-              result.rows(2).value.content mustBe message.principleTraderName.toText
+              result.rows(2).value.content mustBe controlDecision.principleTraderName.toText
 
               result.rows(3).key.content mustBe "Date of control".toText
-              result.rows(3).value.content mustBe Format.controlDecisionDateFormatted(message.dateOfControl).toText
+              result.rows(3).value.content.asHtml.toString().matches(dateRegex) mustBe true
           }
         }
       }
