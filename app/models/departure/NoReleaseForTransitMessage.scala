@@ -21,12 +21,13 @@ import com.lucidchart.open.xtract.{__, XmlReader}
 import play.api.libs.json.{Json, OWrites}
 import models.XMLReads._
 
-case class NoReleaseForTransitMessage(mrn: String,
-                                      noReleaseMotivation: Option[String],
-                                      totalNumberOfItems: Int,
-                                      officeOfDepartureRefNumber: String,
-                                      controlResult: ControlResult,
-                                      resultsOfControl: Option[Seq[ResultsOfControl]]
+case class NoReleaseForTransitMessage(
+  mrn: String,
+  noReleaseMotivation: Option[String],
+  totalNumberOfItems: Int,
+  officeOfDepartureRefNumber: String,
+  controlResult: ControlResult,
+  resultsOfControl: Option[Seq[ResultsOfControl]]
 )
 
 object NoReleaseForTransitMessage {

@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@import models.departure.NoReleaseForTransitMessage
+@import views.html.components.Heading
+@import views.utils.ViewUtils._
 
-sealed trait Availability
+@this(
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    govukSummaryList: GovukSummaryList
+)
 
-object Availability {
+@(message: NoReleaseForTransitMessage)(implicit request: Request[_], messages: Messages)
 
-  def apply[T <: Movements](movements: Option[T]): Availability = movements match {
-    case Some(value) if value.movements.nonEmpty => NonEmpty
-    case Some(_)                                 => Empty
-    case None                                    => Unavailable
-  }
+@mainTemplate(
+    title = messages("noReleaseForTransit.title")
+) {
 
-  sealed trait Available extends Availability
+    @heading("noReleaseForTransit.heading")
 
-  case object Unavailable extends Availability
-  case object Empty extends Available
-  case object NonEmpty extends Available
+    @for(summaryList <- message.toSummaryLists) {
+        @govukSummaryList(summaryList)
+    }
+
+    <p class="govuk-body">@messages("noReleaseForTransit.p")</p>
 }

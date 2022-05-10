@@ -19,7 +19,7 @@ package generators
 import models.ErrorType.GenericError
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.departure._
-import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
+import models.{Arrival, ArrivalId, Arrivals, Availability, Departure, DepartureId, Departures, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
@@ -189,14 +189,14 @@ trait ModelGenerators {
       } yield ResultsOfControl(indicator, description)
     }
 
-  implicit val arbitraryNoReleaseForTransitMessage: Arbitrary[NoReleaseForTransitMessage] = Arbitrary {
+  implicit lazy val arbitraryNoReleaseForTransitMessage: Arbitrary[NoReleaseForTransitMessage] = Arbitrary {
     for {
       mrn                        <- nonEmptyString
       noReleaseMotivation        <- Gen.option(nonEmptyString)
       totalNumberOfItems         <- arbitrary[Int]
       officeOfDepartureRefNumber <- Gen.alphaNumStr
       controlResult              <- arbitrary[ControlResult]
-      resultsOfControl           <- Gen.option(listWithMaxLength[ResultsOfControl](ResultsOfControl.maxResultsOfControl))
+      resultsOfControl           <- Gen.option(arbitrary[Seq[ResultsOfControl]])
     } yield new NoReleaseForTransitMessage(
       mrn = mrn,
       noReleaseMotivation = noReleaseMotivation,
@@ -205,6 +205,10 @@ trait ModelGenerators {
       controlResult = controlResult,
       resultsOfControl = resultsOfControl
     )
+  }
+
+  implicit lazy val arbitraryResultsOfControlList: Arbitrary[Seq[ResultsOfControl]] = Arbitrary {
+    listWithMaxLength[ResultsOfControl](ResultsOfControl.maxResultsOfControl)
   }
 
   implicit lazy val genericErrorType: Arbitrary[GenericError] =
@@ -237,5 +241,30 @@ trait ModelGenerators {
         lrn   <- Gen.option(nonEmptyString)
         error <- arbitrary[FunctionalError]
       } yield XMLSubmissionNegativeAcknowledgementMessage(mrn, lrn, error)
+    }
+
+  implicit lazy val arbitraryAvailability: Arbitrary[Availability] =
+    Arbitrary {
+      Gen.oneOf(Availability.NonEmpty, Availability.Empty, Availability.Unavailable)
+    }
+
+  implicit lazy val arbitraryArrivals: Arbitrary[Arrivals] =
+    Arbitrary {
+      for {
+        retrievedArrivals <- arbitrary[Int]
+        totalArrivals     <- arbitrary[Int]
+        totalMatched      <- arbitrary[Option[Int]]
+        arrivals          <- listWithMaxLength[Arrival]()
+      } yield Arrivals(retrievedArrivals, totalArrivals, totalMatched, arrivals)
+    }
+
+  implicit lazy val arbitraryDepartures: Arbitrary[Departures] =
+    Arbitrary {
+      for {
+        retrievedDepartures <- arbitrary[Int]
+        totalDepartures     <- arbitrary[Int]
+        totalMatched        <- arbitrary[Option[Int]]
+        departures          <- listWithMaxLength[Departure]()
+      } yield Departures(retrievedDepartures, totalDepartures, totalMatched, departures)
     }
 }
