@@ -25,19 +25,27 @@
     config: FrontendAppConfig
 )
 
-@(functionalError: FunctionalError)(implicit request: Request[_], messages: Messages)
+@(arrivalId: ArrivalId, functionalError: FunctionalError)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("arrivalXmlNegativeAcknowledgement.title"),
+    title = messages("unloadingRemarksNegativeAcknowledgement.title"),
     showBackLink = true
 ) {
-    @heading("arrivalXmlNegativeAcknowledgement.heading")
+    @heading("unloadingRemarksNegativeAcknowledgement.heading")
 
     @negativeAcknowledgment(functionalError)
 
-    <p class="govuk-body">@messages("arrivalXmlNegativeAcknowledgement.paragraph")
-        <a class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl rel="noopener noreferrer" id="contact">
-            @messages("arrivalXmlNegativeAcknowledgement.linktext")
-        </a>
-    </p>
+    <p class="govuk-body">@messages("unloadingRemarksNegativeAcknowledgement.paragraph")</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>
+            <a id="create-new-unloading-remarks" class="govuk-link" href=@config.declareUnloadingRemarksUrl(arrivalId)>
+                @messages("unloadingRemarksNegativeAcknowledgement.create.unloadingRemarks")
+            </a>
+        </li>
+        <li>
+            <a class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl rel="noopener noreferrer" id="contact">
+                @messages("unloadingRemarksNegativeAcknowledgement.linktext")
+            </a>
+        </li>
+    </ul>
 }

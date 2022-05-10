@@ -28,16 +28,16 @@
 @(functionalError: FunctionalError)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("arrivalXmlNegativeAcknowledgement.title"),
+    title = messages("departureXmlNegativeAcknowledgement.title"),
     showBackLink = true
 ) {
-    @heading("arrivalXmlNegativeAcknowledgement.heading")
+    @heading("departureXmlNegativeAcknowledgement.heading")
 
     @negativeAcknowledgment(functionalError)
 
-    <p class="govuk-body">@messages("arrivalXmlNegativeAcknowledgement.paragraph")
+    <p class="govuk-body">@messages("departureXmlNegativeAcknowledgement.paragraph")
         <a class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl rel="noopener noreferrer" id="contact">
-            @messages("arrivalXmlNegativeAcknowledgement.linktext")
+            @messages("departureXmlNegativeAcknowledgement.linktext")
         </a>
     </p>
 }
