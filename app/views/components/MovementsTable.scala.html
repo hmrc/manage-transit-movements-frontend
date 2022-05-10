@@ -44,7 +44,7 @@
             </tr>
         </thead>
 
-        <tbody class="hmrc-responsive-table__data">
+        <tbody>
             @for((row, rowIndex) <- rows.zip(Stream from 1)) {
                 <tr data-testrole="movements-list_row@rowIndex">
 
@@ -68,8 +68,7 @@
                         <ul class="govuk-list responsive-table__list">
                             @for((action, actionIndex) <- row.actions.zip(Stream from 1)) {
                                 <li>
-                                    <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link" data-testrole="movements-list_row@rowIndex-action@actionIndex">
-                                        @messages(action.key)
+                                    <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link" data-testrole="movements-list_row@rowIndex-action@actionIndex">@messages(action.key)
                                         <span class="govuk-visually-hidden">@messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)</span>
                                     </a>
                                 </li>

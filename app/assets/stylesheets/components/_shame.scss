@@ -4,10 +4,11 @@
 // ******************************************************
 // ******************************************************
 .govuk-back-link {
-    display: none;
+  display: none;
 }
+
 .js-enabled .govuk-back-link {
-    display: inline-block;
+  display: inline-block;
 }
 
 // ******************************************************
@@ -16,17 +17,18 @@
 // ******************************************************
 // ******************************************************
 .lang {
-    float: right;
+  float: right;
 }
 
-@media screen and (max-width: 40.0624em){
-    .govuk-main-wrapper {
-        padding-top: 40px;
-    }
+@media screen and (max-width: 40.0624em) {
+  .govuk-main-wrapper {
+    padding-top: 40px;
+  }
 }
+
 // clear float back link
-.govuk-back-link + .govuk-main-wrapper {
-    clear: both;
+.govuk-back-link+.govuk-main-wrapper {
+  clear: both;
 }
 
 // ******************************************************
@@ -36,17 +38,18 @@
 // ******************************************************
 // ******************************************************
 .govuk-back-link {
-    border-bottom-width: 0.075em;
-    padding-left: 0.91em;
+  border-bottom-width: 0.075em;
+  padding-left: 0.91em;
 }
 
 // make numbers easier to read
 @supports (font-variant-numeric: tabular-nums) {
-    table,
-    input,
-    .ctc-format-ref {
-        -webkit-font-feature-settings:normal;
-        font-feature-settings: normal;
-        font-variant-numeric: tabular-nums;
-    }
+
+  table,
+  input,
+  .ctc-format-ref {
+    -webkit-font-feature-settings: normal;
+    font-feature-settings: normal;
+    font-variant-numeric: tabular-nums;
+  }
 }
