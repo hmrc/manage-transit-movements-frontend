@@ -189,14 +189,14 @@ trait ModelGenerators {
       } yield ResultsOfControl(indicator, description)
     }
 
-  implicit val arbitraryNoReleaseForTransitMessage: Arbitrary[NoReleaseForTransitMessage] = Arbitrary {
+  implicit lazy val arbitraryNoReleaseForTransitMessage: Arbitrary[NoReleaseForTransitMessage] = Arbitrary {
     for {
       mrn                        <- nonEmptyString
       noReleaseMotivation        <- Gen.option(nonEmptyString)
       totalNumberOfItems         <- arbitrary[Int]
       officeOfDepartureRefNumber <- Gen.alphaNumStr
       controlResult              <- arbitrary[ControlResult]
-      resultsOfControl           <- Gen.option(listWithMaxLength[ResultsOfControl](ResultsOfControl.maxResultsOfControl))
+      resultsOfControl           <- Gen.option(arbitrary[Seq[ResultsOfControl]])
     } yield new NoReleaseForTransitMessage(
       mrn = mrn,
       noReleaseMotivation = noReleaseMotivation,
@@ -205,6 +205,10 @@ trait ModelGenerators {
       controlResult = controlResult,
       resultsOfControl = resultsOfControl
     )
+  }
+
+  implicit lazy val arbitraryResultsOfControlList: Arbitrary[Seq[ResultsOfControl]] = Arbitrary {
+    listWithMaxLength[ResultsOfControl](ResultsOfControl.maxResultsOfControl)
   }
 
   implicit lazy val genericErrorType: Arbitrary[GenericError] =

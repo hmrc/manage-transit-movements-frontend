@@ -17,6 +17,7 @@
 package views.utils
 
 import models.FunctionalError
+import models.departure.NoReleaseForTransitMessage
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
@@ -60,6 +61,66 @@ object ViewUtils {
         }
       ).flatten
     )
+  }
+
+  implicit class RichNoReleaseForTransitMessage(message: NoReleaseForTransitMessage) {
+
+    // scalastyle:off method.length
+    def toSummaryLists(implicit messages: Messages): Seq[SummaryList] = {
+      val firstSummaryList = SummaryList(
+        rows = Seq(
+          message.noReleaseMotivation.map {
+            noReleaseMotivation =>
+              SummaryListRow(
+                key = messages("noReleaseForTransit.noReleaseMotivation").toKey,
+                value = Value(noReleaseMotivation.toText)
+              )
+          },
+          Some(
+            SummaryListRow(
+              key = messages("noReleaseForTransit.mrn").toKey,
+              value = Value(message.mrn.toText)
+            )
+          ),
+          Some(
+            SummaryListRow(
+              key = messages("noReleaseForTransit.totalNumberOfItems").toKey,
+              value = Value(message.totalNumberOfItems.toString.toText)
+            )
+          ),
+          Some(
+            SummaryListRow(
+              key = messages("noReleaseForTransit.officeOfDepartureRefNumber").toKey,
+              value = Value(message.officeOfDepartureRefNumber.toText)
+            )
+          )
+        ).flatten
+      )
+
+      val secondSummaryList = SummaryList(
+        rows = message.resultsOfControl.fold[Seq[SummaryListRow]](Nil)(_.flatMap {
+          resultsOfControl =>
+            Seq(
+              Some(
+                SummaryListRow(
+                  key = messages("noReleaseForTransit.resultsOfControlIndicator").toKey,
+                  value = Value(resultsOfControl.controlIndicator.toText)
+                )
+              ),
+              resultsOfControl.description.map {
+                description =>
+                  SummaryListRow(
+                    key = messages("noReleaseForTransit.resultsOfControlDescription").toKey,
+                    value = Value(description.toText)
+                  )
+              }
+            ).flatten
+        })
+      )
+
+      Seq(firstSummaryList, secondSummaryList)
+    }
+    // scalastyle:on method.length
   }
 
 }
