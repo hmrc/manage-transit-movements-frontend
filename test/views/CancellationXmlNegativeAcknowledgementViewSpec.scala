@@ -34,7 +34,7 @@ class CancellationXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledge
 
   behave like pageWithHeading()
 
-  behave like pageWithNegativeAcknowledgement()
+  behave like pageWithSummaryLists
 
   behave like pageWithContent("p", "You must")
 

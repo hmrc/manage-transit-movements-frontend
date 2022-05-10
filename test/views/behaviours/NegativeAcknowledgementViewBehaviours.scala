@@ -17,54 +17,20 @@
 package views.behaviours
 
 import generators.Generators
-import models.{ErrorPointer, ErrorType, FunctionalError}
+import models.FunctionalError
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import views.utils.ViewUtils._
 
-trait NegativeAcknowledgementViewBehaviours extends ViewBehaviours with Generators {
+trait NegativeAcknowledgementViewBehaviours extends SummaryListViewBehaviours with Generators {
+
+  private val functionalError: FunctionalError = arbitrary[FunctionalError].sample.value
+
+  override def summaryLists: Seq[SummaryList] = Seq(functionalError.toSummaryList)
 
   def applyView(functionalError: FunctionalError): HtmlFormat.Appendable
 
-  override def view: HtmlFormat.Appendable = applyView(arbitrary[FunctionalError].sample.value)
-
-  def viewWithFullyPopulatedFunctionalError: HtmlFormat.Appendable = applyView(fullyPopulatedFunctionalError)
-
-  def viewWithPartiallyPopulatedFunctionalError: HtmlFormat.Appendable = applyView(partiallyPopulatedFunctionalError)
-
-  private val errorType: ErrorType                       = arbitrary[ErrorType].sample.value
-  val fullyPopulatedFunctionalError: FunctionalError     = FunctionalError(errorType, ErrorPointer("Message type"), Some("Error Reason"), Some("GB007A"))
-  val partiallyPopulatedFunctionalError: FunctionalError = FunctionalError(errorType, ErrorPointer("Message type"), None, None)
-
-  def pageWithNegativeAcknowledgement(): Unit = {
-    "populate the error details when we have a fully populated function error" - {
-      val doc = parseView(viewWithFullyPopulatedFunctionalError)
-
-      behave like pageWithContent(doc, "dt", "Error type")
-      behave like pageWithContent(doc, "dd", fullyPopulatedFunctionalError.errorType.toString)
-
-      behave like pageWithContent(doc, "dt", "Error pointer")
-      behave like pageWithContent(doc, "dd", fullyPopulatedFunctionalError.pointer.value)
-
-      behave like pageWithContent(doc, "dt", "Error reason")
-      behave like pageWithContent(doc, "dd", fullyPopulatedFunctionalError.reason.get)
-
-      behave like pageWithContent(doc, "dt", "Original attribute value")
-      behave like pageWithContent(doc, "dd", fullyPopulatedFunctionalError.originalAttributeValue.get)
-    }
-
-    "populate the error details when we have a partially populated function error" - {
-      val doc = parseView(viewWithPartiallyPopulatedFunctionalError)
-
-      behave like pageWithContent(doc, "dt", "Error type")
-      behave like pageWithContent(doc, "dd", partiallyPopulatedFunctionalError.errorType.toString)
-
-      behave like pageWithContent(doc, "dt", "Error pointer")
-      behave like pageWithContent(doc, "dd", partiallyPopulatedFunctionalError.pointer.value)
-
-      behave like pageWithoutContent(doc, "dt", "Error reason")
-
-      behave like pageWithoutContent(doc, "dt", "Original attribute value")
-    }
-  }
+  override def view: HtmlFormat.Appendable = applyView(functionalError)
 
 }

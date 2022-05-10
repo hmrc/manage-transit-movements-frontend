@@ -34,7 +34,7 @@ class DepartureXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledgemen
 
   behave like pageWithHeading()
 
-  behave like pageWithNegativeAcknowledgement()
+  behave like pageWithSummaryLists
 
   behave like pageWithPartialContent("p", "You must")
   behave like pageWithLink(

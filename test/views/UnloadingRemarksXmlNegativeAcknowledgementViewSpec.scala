@@ -36,7 +36,7 @@ class UnloadingRemarksXmlNegativeAcknowledgementViewSpec extends NegativeAcknowl
 
   behave like pageWithHeading()
 
-  behave like pageWithNegativeAcknowledgement()
+  behave like pageWithSummaryLists
 
   behave like pageWithPartialContent("p", "You must")
   behave like pageWithLink(
