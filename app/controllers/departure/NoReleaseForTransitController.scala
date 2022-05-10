@@ -20,21 +20,20 @@ import controllers.actions._
 import handlers.ErrorHandler
 import models.DepartureId
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import services.DepartureMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.NoReleaseForTransitView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class NoReleaseForTransitController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   departureMessageService: DepartureMessageService,
-  val renderer: Renderer,
+  view: NoReleaseForTransitView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
@@ -43,10 +42,8 @@ class NoReleaseForTransitController @Inject() (
   def onPageLoad(departureId: DepartureId): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       departureMessageService.noReleaseForTransitMessage(departureId).flatMap {
-        case Some(message) =>
-          val json = Json.obj("noReleaseForTransitMessage" -> Json.toJson(message))
-          renderer.render("noReleaseForTransit.njk", json).map(Ok(_))
-        case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
+        case Some(message) => Future.successful(Ok(view(message)))
+        case _             => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }
   }
 }

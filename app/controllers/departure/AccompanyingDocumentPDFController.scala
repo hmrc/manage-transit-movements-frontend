@@ -28,10 +28,11 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccompanyingDocumentPDFController @Inject() (identify: IdentifierAction,
-                                                   cc: MessagesControllerComponents,
-                                                   departuresMovementConnector: DeparturesMovementConnector,
-                                                   errorHandler: ErrorHandler
+class AccompanyingDocumentPDFController @Inject() (
+  identify: IdentifierAction,
+  cc: MessagesControllerComponents,
+  departuresMovementConnector: DeparturesMovementConnector,
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
