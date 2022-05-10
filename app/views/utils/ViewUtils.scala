@@ -129,41 +129,31 @@ object ViewUtils {
     def toSummaryList(lrn: LocalReferenceNumber)(implicit messages: Messages): SummaryList =
       SummaryList(
         rows = Seq(
-          Some(
-            SummaryListRow(
-              key = messages("controlDecision.mrn").toKey,
-              value = Value(controlDecision.movementReferenceNumber.toText)
-            )
+          SummaryListRow(
+            key = messages("controlDecision.mrn").toKey,
+            value = Value(controlDecision.movementReferenceNumber.toText)
           ),
-          Some(
-            SummaryListRow(
-              key = messages("controlDecision.lrn").toKey,
-              value = Value(lrn.value.toText)
-            )
+          SummaryListRow(
+            key = messages("controlDecision.lrn").toKey,
+            value = Value(lrn.value.toText)
           ),
           controlDecision.principleEori match {
             case Some(principleEori) =>
-              Some(
-                SummaryListRow(
-                  key = messages("controlDecision.principalEoriNumber").toKey,
-                  value = Value(principleEori.toText)
-                )
+              SummaryListRow(
+                key = messages("controlDecision.principalEoriNumber").toKey,
+                value = Value(principleEori.toText)
               )
             case _ =>
-              Some(
-                SummaryListRow(
-                  key = messages("controlDecision.principalTraderName").toKey,
-                  value = Value(controlDecision.principleTraderName.toText)
-                )
+              SummaryListRow(
+                key = messages("controlDecision.principalTraderName").toKey,
+                value = Value(controlDecision.principleTraderName.toText)
               )
           },
-          Some(
-            SummaryListRow(
-              key = messages("controlDecision.dateOfControl").toKey,
-              value = Value(Format.controlDecisionDateFormatted(controlDecision.dateOfControl).toText)
-            )
+          SummaryListRow(
+            key = messages("controlDecision.dateOfControl").toKey,
+            value = Value(Format.controlDecisionDateFormatted(controlDecision.dateOfControl).toText)
           )
-        ).flatten
+        )
       )
     // scalastyle:on method.length
   }
