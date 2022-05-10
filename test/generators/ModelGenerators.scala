@@ -27,6 +27,7 @@ import viewModels._
 
 import java.time._
 
+// scalastyle:off magic.number
 trait ModelGenerators {
   self: Generators =>
 
@@ -229,8 +230,8 @@ trait ModelGenerators {
       for {
         errorType     <- arbitrary[ErrorType]
         pointer       <- Gen.alphaNumStr
-        reason        <- arbitrary[Option[String]]
-        originalValue <- arbitrary[Option[String]]
+        reason        <- Gen.option(Gen.alphaNumStr)
+        originalValue <- Gen.option(Gen.alphaNumStr)
       } yield FunctionalError(errorType, ErrorPointer(pointer), reason, originalValue)
     }
 
@@ -268,3 +269,4 @@ trait ModelGenerators {
       } yield Departures(retrievedDepartures, totalDepartures, totalMatched, departures)
     }
 }
+// scalastyle:on magic.number
