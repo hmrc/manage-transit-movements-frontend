@@ -17,13 +17,13 @@
 @import views.html.components.Heading
 @import config.FrontendAppConfig
 @import models.departure.ControlDecision
-@import utils.Format
-@import controllers.departure.{routes => departureRoutes}
+@import views.utils.ViewUtils._
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    config: FrontendAppConfig
+    config: FrontendAppConfig,
+    govukSummaryList: GovukSummaryList
 )
 
 @(controlDecisionMessage: ControlDecision, lrn: LocalReferenceNumber)(implicit request: Request[_], messages: Messages)
@@ -34,50 +34,6 @@
 ) {
     @heading("controlDecision.heading")
 
-    <dl class="govuk-summary-list">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key" style="width: 48%">
-          @messages("controlDecision.mrn")
-        </dt>
-        <dd class="govuk-summary-list__value" style="width: 62%">
-          @controlDecisionMessage.movementReferenceNumber
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key" style="width: 48%">
-          @messages("controlDecision.lrn")
-        </dt>
-        <dd class="govuk-summary-list__value" style="width: 62%">
-          @lrn
-        </dd>
-      </div>
-      @if(controlDecisionMessage.principleEori) {
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key" style="width: 48%">
-          @messages("controlDecision.principalEoriNumber")
-        </dt>
-        <dd class="govuk-summary-list__value" style="width: 62%">
-          @controlDecisionMessage.principleEori
-        </dd>
-      </div>
-      } else {
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key" style="width: 48%">
-          @messages("controlDecision.principalTraderName")
-        </dt>
-        <dd class="govuk-summary-list__value" style="width: 62%">
-          @controlDecisionMessage.principleTraderName
-        </dd>
-      </div>
-      }
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key" style="width: 48%">
-          @messages("controlDecision.dateOfControl")
-        </dt>
-        <dd class="govuk-summary-list__value" style="width: 62%">
-          @Format.controlDecisionDateFormatted(controlDecisionMessage.dateOfControl)
-        </dd>
-      </div>
-    </dl>
+    @govukSummaryList(controlDecisionMessage.toSummaryList(lrn))
     <p class="govuk-body">@messages("controlDecision.paragraph")</p>
 }

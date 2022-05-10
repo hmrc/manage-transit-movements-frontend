@@ -18,13 +18,14 @@ package views.utils
 
 import base.SpecBase
 import generators.Generators
-import models.{EoriNumber, FunctionalError, LocalReferenceNumber}
 import models.departure.{ControlDecision, NoReleaseForTransitMessage, ResultsOfControl}
+import models.{FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import utils.Format
 import views.utils.ViewUtils._
 
 import java.time.LocalDate
@@ -261,7 +262,7 @@ class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[LocalReferenceNumber]) {
             lrn =>
               val result: SummaryList = message
-                .toSummaryLists(lrn)
+                .toSummaryList(lrn)
 
               result.rows.length mustBe 4
 
@@ -275,7 +276,7 @@ class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               result.rows(2).value.content mustBe message.principleEori.get.toText
 
               result.rows(3).key.content mustBe "Date of control".toText
-              result.rows(3).value.content mustBe message.dateOfControl.toString.toText
+              result.rows(3).value.content mustBe Format.controlDecisionDateFormatted(message.dateOfControl).toText
           }
         }
 
@@ -286,7 +287,7 @@ class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           forAll(arbitrary[LocalReferenceNumber]) {
             lrn =>
               val result: SummaryList = message
-                .toSummaryLists(lrn)
+                .toSummaryList(lrn)
 
               result.rows.length mustBe 4
 
@@ -300,7 +301,7 @@ class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               result.rows(2).value.content mustBe message.principleTraderName.toText
 
               result.rows(3).key.content mustBe "Date of control".toText
-              result.rows(3).value.content mustBe message.dateOfControl.toString.toText
+              result.rows(3).value.content mustBe Format.controlDecisionDateFormatted(message.dateOfControl).toText
           }
         }
       }

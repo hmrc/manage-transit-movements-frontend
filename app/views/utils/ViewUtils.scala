@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow, Value}
+import utils.Format
 
 object ViewUtils {
 
@@ -121,13 +122,11 @@ object ViewUtils {
 
       Seq(firstSummaryList, secondSummaryList)
     }
-    // scalastyle:on method.length
   }
 
   implicit class RichControlDecision(controlDecision: ControlDecision) {
 
-    // scalastyle:off method.length
-    def toSummaryLists(lrn: LocalReferenceNumber)(implicit messages: Messages): SummaryList =
+    def toSummaryList(lrn: LocalReferenceNumber)(implicit messages: Messages): SummaryList =
       SummaryList(
         rows = Seq(
           Some(
@@ -142,26 +141,26 @@ object ViewUtils {
               value = Value(lrn.value.toText)
             )
           ),
-            controlDecision.principleEori match {
-              case Some(principleEori) =>
-                Some(
-                  SummaryListRow(
-                    key = messages("controlDecision.principalEoriNumber").toKey,
-                    value = Value(principleEori.toText)
-                  )
+          controlDecision.principleEori match {
+            case Some(principleEori) =>
+              Some(
+                SummaryListRow(
+                  key = messages("controlDecision.principalEoriNumber").toKey,
+                  value = Value(principleEori.toText)
                 )
-              case _ =>
-                Some(
-                  SummaryListRow(
-                    key = messages("controlDecision.principalTraderName").toKey,
-                    value = Value(controlDecision.principleTraderName.toText)
-                  )
+              )
+            case _ =>
+              Some(
+                SummaryListRow(
+                  key = messages("controlDecision.principalTraderName").toKey,
+                  value = Value(controlDecision.principleTraderName.toText)
                 )
+              )
           },
           Some(
             SummaryListRow(
               key = messages("controlDecision.dateOfControl").toKey,
-              value = Value(controlDecision.dateOfControl.toString.toText)
+              value = Value(Format.controlDecisionDateFormatted(controlDecision.dateOfControl).toText)
             )
           )
         ).flatten
