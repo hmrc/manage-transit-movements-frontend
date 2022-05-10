@@ -18,6 +18,7 @@ package views.utils
 
 import base.SpecBase
 import generators.Generators
+import models.FunctionalError
 import models.departure.{NoReleaseForTransitMessage, ResultsOfControl}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -27,7 +28,103 @@ import views.utils.ViewUtils._
 
 class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  "RichFunctionalError" - {}
+  "RichFunctionalError" - {
+    ".toSummaryList" - {
+      "must return summary list" - {
+        "when reason nor original attribute value defined" in {
+          forAll(arbitrary[FunctionalError]) {
+            functionalError =>
+              val result = functionalError
+                .copy(
+                  reason = None,
+                  originalAttributeValue = None
+                )
+                .toSummaryList
+
+              result.rows.length mustBe 2
+
+              result.rows.head.key.content mustBe "Error type".toText
+              result.rows.head.value.content mustBe functionalError.errorType.toString.toText
+
+              result.rows(1).key.content mustBe "Error pointer".toText
+              result.rows(1).value.content mustBe functionalError.pointer.value.toText
+          }
+        }
+
+        "when reason defined" in {
+          forAll(arbitrary[FunctionalError], Gen.alphaNumStr) {
+            (functionalError, reason) =>
+              val result = functionalError
+                .copy(
+                  reason = Some(reason),
+                  originalAttributeValue = None
+                )
+                .toSummaryList
+
+              result.rows.length mustBe 3
+
+              result.rows.head.key.content mustBe "Error type".toText
+              result.rows.head.value.content mustBe functionalError.errorType.toString.toText
+
+              result.rows(1).key.content mustBe "Error pointer".toText
+              result.rows(1).value.content mustBe functionalError.pointer.value.toText
+
+              result.rows(2).key.content mustBe "Error reason".toText
+              result.rows(2).value.content mustBe reason.toText
+          }
+        }
+
+        "when original attribute value defined" in {
+          forAll(arbitrary[FunctionalError], Gen.alphaNumStr) {
+            (functionalError, originalAttributeValue) =>
+              val result = functionalError
+                .copy(
+                  reason = None,
+                  originalAttributeValue = Some(originalAttributeValue)
+                )
+                .toSummaryList
+
+              result.rows.length mustBe 3
+
+              result.rows.head.key.content mustBe "Error type".toText
+              result.rows.head.value.content mustBe functionalError.errorType.toString.toText
+
+              result.rows(1).key.content mustBe "Error pointer".toText
+              result.rows(1).value.content mustBe functionalError.pointer.value.toText
+
+              result.rows(2).key.content mustBe "Original attribute value".toText
+              result.rows(2).value.content mustBe originalAttributeValue.toText
+          }
+        }
+
+        "when reason and original attribute value defined" in {
+          forAll(arbitrary[FunctionalError], Gen.alphaNumStr, Gen.alphaNumStr) {
+            (functionalError, reason, originalAttributeValue) =>
+              val result = functionalError
+                .copy(
+                  reason = Some(reason),
+                  originalAttributeValue = Some(originalAttributeValue)
+                )
+                .toSummaryList
+
+              result.rows.length mustBe 4
+
+              result.rows.head.key.content mustBe "Error type".toText
+              result.rows.head.value.content mustBe functionalError.errorType.toString.toText
+
+              result.rows(1).key.content mustBe "Error pointer".toText
+              result.rows(1).value.content mustBe functionalError.pointer.value.toText
+
+              result.rows(2).key.content mustBe "Error reason".toText
+              result.rows(2).value.content mustBe reason.toText
+
+              result.rows(3).key.content mustBe "Original attribute value".toText
+              result.rows(3).value.content mustBe originalAttributeValue.toText
+          }
+        }
+      }
+    }
+  }
 
   "RichNoReleaseForTransitMessage" - {
     ".toSummaryLists" - {
