@@ -1,0 +1,83 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components.Heading
+@import config.FrontendAppConfig
+@import models.departure.ControlDecision
+@import utils.Format
+@import controllers.departure.{routes => departureRoutes}
+
+@this(
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    config: FrontendAppConfig
+)
+
+@(controlDecisionMessage: ControlDecision, lrn: LocalReferenceNumber)(implicit request: Request[_], messages: Messages)
+
+@mainTemplate(
+    title = messages("controlDecision.title"),
+    showBackLink = true
+) {
+    @heading("controlDecision.heading")
+
+    <dl class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key" style="width: 48%">
+          @messages("controlDecision.mrn")
+        </dt>
+        <dd class="govuk-summary-list__value" style="width: 62%">
+          @controlDecisionMessage.movementReferenceNumber
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key" style="width: 48%">
+          @messages("controlDecision.lrn")
+        </dt>
+        <dd class="govuk-summary-list__value" style="width: 62%">
+          @lrn
+        </dd>
+      </div>
+      @if(controlDecisionMessage.principleEori) {
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key" style="width: 48%">
+          @messages("controlDecision.principalEoriNumber")
+        </dt>
+        <dd class="govuk-summary-list__value" style="width: 62%">
+          @controlDecisionMessage.principleEori
+        </dd>
+      </div>
+      } else {
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key" style="width: 48%">
+          @messages("controlDecision.principalTraderName")
+        </dt>
+        <dd class="govuk-summary-list__value" style="width: 62%">
+          @controlDecisionMessage.principleTraderName
+        </dd>
+      </div>
+      }
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key" style="width: 48%">
+          @messages("controlDecision.dateOfControl")
+        </dt>
+        <dd class="govuk-summary-list__value" style="width: 62%">
+          @Format.controlDecisionDateFormatted(controlDecisionMessage.dateOfControl)
+        </dd>
+      </div>
+    </dl>
+    <p class="govuk-body">@messages("controlDecision.paragraph")</p>
+}

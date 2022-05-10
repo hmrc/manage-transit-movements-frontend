@@ -16,6 +16,7 @@
 
 package views.utils
 
+import models.departure.ControlDecision
 import play.api.i18n.Messages
 import play.twirl.api.Html
 
@@ -24,5 +25,9 @@ object ViewUtils {
   def breadCrumbTitle(title: String, mainContent: Html)(implicit messages: Messages): String =
     (if (mainContent.body.contains("govuk-error-summary")) s"${messages("error.title.prefix")} " else "") +
       s"$title - ${messages("site.service_name")} - GOV.UK"
+
+  implicit class RichControlDecision(controlDecision: ControlDecision) {
+    //Add a row for each row we want to display in a very similar way to RichFunctionalError
+  }
 
 }
