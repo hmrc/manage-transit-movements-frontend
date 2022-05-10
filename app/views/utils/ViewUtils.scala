@@ -142,21 +142,21 @@ object ViewUtils {
               value = Value(lrn.value.toText)
             )
           ),
-          if (controlDecision.principleEori.isDefined) {
-            controlDecision.principleEori.map {
-              principleEori =>
-                SummaryListRow(
-                  key = messages("controlDecision.principalEoriNumber").toKey,
-                  value = Value(principleEori.toText)
+            controlDecision.principleEori match {
+              case Some(principleEori) =>
+                Some(
+                  SummaryListRow(
+                    key = messages("controlDecision.principalEoriNumber").toKey,
+                    value = Value(principleEori.toText)
+                  )
                 )
-            }
-          } else {
-            Some(
-              SummaryListRow(
-                key = messages("controlDecision.principalTraderName").toKey,
-                value = Value(controlDecision.principleTraderName.toText)
-              )
-            )
+              case _ =>
+                Some(
+                  SummaryListRow(
+                    key = messages("controlDecision.principalTraderName").toKey,
+                    value = Value(controlDecision.principleTraderName.toText)
+                  )
+                )
           },
           Some(
             SummaryListRow(
