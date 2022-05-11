@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
-import views.html.ViewAllDeparturesView
+import views.html.departure.ViewAllDeparturesView
 
 import java.time.LocalDateTime
 import scala.concurrent.Future

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.departure
 
 import generators.Generators
 import models.departure.NoReleaseForTransitMessage
@@ -22,7 +22,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.behaviours.SummaryListViewBehaviours
-import views.html.NoReleaseForTransitView
+import views.html.departure.NoReleaseForTransitView
 import views.utils.ViewUtils._
 
 class NoReleaseForTransitViewSpec extends SummaryListViewBehaviours with Generators {

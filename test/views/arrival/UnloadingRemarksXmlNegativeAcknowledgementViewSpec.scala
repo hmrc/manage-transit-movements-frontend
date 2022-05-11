@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package views
+package views.arrival
 
 import models.{ArrivalId, FunctionalError}
 import play.twirl.api.HtmlFormat
 import views.behaviours.NegativeAcknowledgementViewBehaviours
-import views.html.UnloadingRemarksXmlNegativeAcknowledgementView
+import views.html.arrival.UnloadingRemarksXmlNegativeAcknowledgementView
 
 class UnloadingRemarksXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledgementViewBehaviours {
 

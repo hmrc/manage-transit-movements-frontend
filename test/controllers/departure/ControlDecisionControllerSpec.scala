@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureMessageService
-import views.html.ControlDecisionView
+import views.html.departure.ControlDecisionView
 
 import scala.concurrent.Future
 

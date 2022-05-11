@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrival, ViewArrivalMovements}
-import views.html.ViewArrivalsSearchResultsView
+import views.html.arrival.ViewArrivalsSearchResultsView
 
 import java.time.Clock
 import javax.inject.Inject

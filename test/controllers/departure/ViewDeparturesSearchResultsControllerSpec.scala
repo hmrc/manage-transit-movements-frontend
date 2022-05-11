@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewModels.{ViewDeparture, ViewDepartureMovements}
-import views.html.ViewDeparturesSearchResultsView
+import views.html.departure.ViewDeparturesSearchResultsView
 
 import java.time.LocalDateTime
 import scala.concurrent.Future

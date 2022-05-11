@@ -19,14 +19,14 @@ package controllers.departure
 import config.FrontendAppConfig
 import controllers.actions._
 import handlers.ErrorHandler
-import javax.inject.Inject
 import models.DepartureId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.DepartureMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.DepartureXmlNegativeAcknowledgementView
+import views.html.departure.DepartureXmlNegativeAcknowledgementView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DepartureXmlNegativeAcknowledgementController @Inject() (

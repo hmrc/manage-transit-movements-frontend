@@ -27,7 +27,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureMessageService
-import views.html.DepartureXmlNegativeAcknowledgementView
+import views.html.departure.DepartureXmlNegativeAcknowledgementView
 
 import scala.concurrent.Future
 

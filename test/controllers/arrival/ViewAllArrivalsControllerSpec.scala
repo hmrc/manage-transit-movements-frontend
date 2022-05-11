@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
-import views.html.ViewAllArrivalsView
+import views.html.arrival.ViewAllArrivalsView
 
 import java.time.LocalDateTime
 import scala.concurrent.Future

@@ -29,7 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewModels.{ViewArrival, ViewArrivalMovements}
-import views.html.ViewArrivalsSearchResultsView
+import views.html.arrival.ViewArrivalsSearchResultsView
 
 import java.time.LocalDateTime
 import scala.concurrent.Future

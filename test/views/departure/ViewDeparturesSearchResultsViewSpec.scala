@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.departure
 
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
@@ -22,7 +22,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 import views.behaviours.{MovementsTableViewBehaviours, SearchViewBehaviours}
-import views.html.ViewDeparturesSearchResultsView
+import views.html.departure.ViewDeparturesSearchResultsView
 
 class ViewDeparturesSearchResultsViewSpec
     extends MovementsTableViewBehaviours[ViewDeparture]

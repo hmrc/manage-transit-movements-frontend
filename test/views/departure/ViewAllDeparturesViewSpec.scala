@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.departure
 
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
@@ -23,7 +23,7 @@ import play.twirl.api.HtmlFormat
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
-import views.html.ViewAllDeparturesView
+import views.html.departure.ViewAllDeparturesView
 
 class ViewAllDeparturesViewSpec
     extends MovementsTableViewBehaviours[ViewDeparture]
@@ -44,13 +44,15 @@ class ViewAllDeparturesViewSpec
 
   override val viewMovements: Seq[ViewDeparture] = dataRows.flatMap(_._2)
 
-  override def view: HtmlFormat.Appendable =
-    injector.instanceOf[ViewAllDeparturesView].apply(viewAllDepartureMovementsViewModel)(fakeRequest, messages)
+  override def view: HtmlFormat.Appendable = applyView(viewAllDepartureMovementsViewModel)
 
   override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
+    applyView(ViewAllDepartureMovementsViewModel(Seq.empty[ViewDeparture], paginationViewModel))
+
+  private def applyView(viewAllDepartureMovementsViewModel: ViewAllDepartureMovementsViewModel): HtmlFormat.Appendable =
     injector
       .instanceOf[ViewAllDeparturesView]
-      .apply(ViewAllDepartureMovementsViewModel(Seq.empty[ViewDeparture], paginationViewModel))(fakeRequest, messages)
+      .apply(viewAllDepartureMovementsViewModel)(fakeRequest, messages)
 
   behave like pageWithFullWidth()
 

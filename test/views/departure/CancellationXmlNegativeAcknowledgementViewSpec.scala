@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package views
+package views.departure
 
 import models.FunctionalError
 import play.twirl.api.HtmlFormat
 import views.behaviours.NegativeAcknowledgementViewBehaviours
-import views.html.DepartureXmlNegativeAcknowledgementView
+import views.html.departure.CancellationXmlNegativeAcknowledgementView
 
-class DepartureXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledgementViewBehaviours {
+class CancellationXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledgementViewBehaviours {
 
   override def applyView(functionalError: FunctionalError): HtmlFormat.Appendable =
-    injector.instanceOf[DepartureXmlNegativeAcknowledgementView].apply(functionalError)(fakeRequest, messages)
+    injector.instanceOf[CancellationXmlNegativeAcknowledgementView].apply(departureId, functionalError)(fakeRequest, messages)
 
-  override val prefix: String = "departureXmlNegativeAcknowledgement"
+  override val prefix: String = "cancellationXmlNegativeAcknowledgement"
 
   behave like pageWithTitle()
 
@@ -36,7 +36,14 @@ class DepartureXmlNegativeAcknowledgementViewSpec extends NegativeAcknowledgemen
 
   behave like pageWithSummaryLists
 
-  behave like pageWithPartialContent("p", "You must")
+  behave like pageWithContent("p", "You must")
+
+  behave like pageWithLink(
+    id = "create-new-cancellation",
+    expectedText = "cancel declaration",
+    expectedHref = s"http://localhost:9495/manage-transit-movements-departures-cancel/${departureId.index}/confirm-cancellation"
+  )
+
   behave like pageWithLink(
     id = "contact",
     expectedText = "contact the New Computerised Transit System helpdesk (opens in a new tab)",

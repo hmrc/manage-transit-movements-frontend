@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package views
+package views.departure
 
+import generators.Generators
 import models.LocalReferenceNumber
 import models.departure.ControlDecision
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.behaviours.SummaryListViewBehaviours
-import views.html.ControlDecisionView
-import generators.Generators
+import views.html.departure.ControlDecisionView
 import views.utils.ViewUtils.RichControlDecision
 
 class ControlDecisionViewSpec extends SummaryListViewBehaviours with Generators {

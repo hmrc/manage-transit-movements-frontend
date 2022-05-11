@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
-import views.html.ViewAllArrivalsView
+import views.html.arrival.ViewAllArrivalsView
 
 import java.time.Clock
 import javax.inject.Inject
