@@ -52,7 +52,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
   behave like pageWithContent("h2", "Departures")
   behave like pageWithLink(
-    "make-departure-notification",
+    "make-departure-declaration",
     "Make a departure declaration",
     "http://localhost:9489/manage-transit-movements-departures/local-reference-number"
   )
