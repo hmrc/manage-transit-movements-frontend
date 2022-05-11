@@ -136,10 +136,10 @@ trait ModelGenerators {
       for {
         date    <- arbitrary[LocalDate]
         time    <- arbitrary[LocalTime]
-        status  <- Gen.alphaNumStr
         mrn     <- stringsWithMaxLength(17)
+        status  <- Gen.alphaNumStr
         actions <- listOfN(4, arbitrary[ViewMovementAction])
-      } yield ViewArrival(date, time, status, mrn, actions)
+      } yield ViewArrival(date, time, mrn, status, actions)
     }
 
   implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =
