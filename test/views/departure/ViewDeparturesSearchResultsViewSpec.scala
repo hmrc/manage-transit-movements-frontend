@@ -47,8 +47,6 @@ class ViewDeparturesSearchResultsViewSpec
 
   private val tooManyResults: Boolean = arbitrary[Boolean].sample.value
 
-  override def view: HtmlFormat.Appendable = viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults)
-
   override def viewWithSpecificSearchResults(
     dataRows: Seq[(String, Seq[ViewDeparture])],
     retrieved: Int,

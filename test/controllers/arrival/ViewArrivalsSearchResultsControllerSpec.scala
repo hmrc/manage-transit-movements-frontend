@@ -206,7 +206,7 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with ScalaCheckPr
       redirectLocation(result).value mustEqual routes.ViewAllArrivalsController.onPageLoad(None).url
     }
 
-    "must redirect back to view departures search results when valid data is submitted" in {
+    "must redirect back to view arrivals search results when valid data is submitted" in {
 
       forAll(nonEmptyString) {
         mrn =>

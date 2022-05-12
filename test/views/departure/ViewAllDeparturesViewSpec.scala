@@ -45,8 +45,6 @@ class ViewAllDeparturesViewSpec
 
   override val viewMovements: Seq[ViewDeparture] = dataRows.flatMap(_._2)
 
-  override def view: HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsViewModel)
-
   override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
     applyView(form, ViewAllDepartureMovementsViewModel(Seq.empty[ViewDeparture], paginationViewModel))
 
