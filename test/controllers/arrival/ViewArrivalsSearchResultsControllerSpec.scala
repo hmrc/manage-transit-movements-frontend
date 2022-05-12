@@ -19,11 +19,13 @@ package controllers.arrival
 import base.{FakeSearchResultsAppConfig, SpecBase}
 import config.SearchResultsAppConfig
 import connectors.ArrivalMovementConnector
+import forms.SearchFormProvider
 import generators.Generators
 import models.arrival.ArrivalStatus.ArrivalSubmitted
 import models.{Arrival, ArrivalId, Arrivals, RichLocalDateTime}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -34,7 +36,7 @@ import views.html.arrival.ViewArrivalsSearchResultsView
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewArrivalsSearchResultsControllerSpec extends SpecBase with Generators {
+class ViewArrivalsSearchResultsControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private val mockArrivalMovementConnector                   = mock[ArrivalMovementConnector]
   private val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
@@ -43,6 +45,9 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with Generators {
 
   private val time: LocalDateTime              = LocalDateTime.now()
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
+
+  private val formProvider = new SearchFormProvider()
+  private val form         = formProvider()
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
@@ -106,7 +111,7 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with Generators {
       val expectedDataRows = ViewArrivalMovements(Seq(mockViewMovement)).dataRows
 
       contentAsString(result) mustEqual
-        view(mrn, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
+        view(form.fill(mrn), mrn, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
     }
 
     "return OK and the correct view for a GET when displaying search results with too many results" in {
@@ -133,7 +138,7 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with Generators {
       val expectedDataRows = ViewArrivalMovements(Seq(mockViewMovement)).dataRows
 
       contentAsString(result) mustEqual
-        view(mrn, expectedDataRows, someSearchMatches - 1, tooManyResults = true)(request, messages).toString
+        view(form.fill(mrn), mrn, expectedDataRows, someSearchMatches - 1, tooManyResults = true)(request, messages).toString
     }
 
     "return OK and the correct view for a GET when displaying search results with 0 results" in {
@@ -160,7 +165,7 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with Generators {
       val expectedDataRows = ViewArrivalMovements(Seq(mockViewMovement)).dataRows
 
       contentAsString(result) mustEqual
-        view(mrn, expectedDataRows, 0, tooManyResults = false)(request, messages).toString
+        view(form.fill(mrn), mrn, expectedDataRows, 0, tooManyResults = false)(request, messages).toString
     }
 
     "trim search string" in {
@@ -187,7 +192,7 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with Generators {
       val expectedDataRows = ViewArrivalMovements(Seq(mockViewMovement)).dataRows
 
       contentAsString(result) mustEqual
-        view(mrn, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
+        view(form.fill(mrn), mrn, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
     }
 
     "redirects to all arrivals on empty string" in {
@@ -201,7 +206,21 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with Generators {
       redirectLocation(result).value mustEqual routes.ViewAllArrivalsController.onPageLoad(None).url
     }
 
-    "render technical difficulty" in {
+    "must redirect back to view departures search results when valid data is submitted" in {
+
+      forAll(nonEmptyString) {
+        mrn =>
+          val request = FakeRequest(POST, routes.ViewArrivalsSearchResultsController.onSubmit(mrn).url)
+            .withFormUrlEncodedBody(("value", mrn))
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ViewArrivalsSearchResultsController.onPageLoad(mrn).url
+      }
+    }
+
+    "render technical difficulty when connector returns None" in {
 
       when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(None))

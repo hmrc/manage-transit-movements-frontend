@@ -19,9 +19,11 @@ package controllers.departure
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DeparturesMovementConnector
 import controllers.actions._
+import forms.SearchFormProvider
 import handlers.ErrorHandler
+import models.requests.IdentifierRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
@@ -36,30 +38,54 @@ class ViewAllDeparturesController @Inject() (
   cc: MessagesControllerComponents,
   paginationAppConfig: PaginationAppConfig,
   departuresMovementConnector: DeparturesMovementConnector,
+  formProvider: SearchFormProvider,
   view: ViewAllDeparturesView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 
+  private val form = formProvider()
+
   def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      val currentPage = page.getOrElse(1)
-
-      departuresMovementConnector.getPagedDepartures(currentPage, paginationAppConfig.departuresNumberOfMovements).flatMap {
-        case Some(filteredDepartures) =>
-          val movements: Seq[ViewDeparture] = filteredDepartures.departures.map(ViewDeparture(_))
-
-          val paginationViewModel = PaginationViewModel.apply(
-            totalNumberOfMovements = filteredDepartures.totalDepartures,
-            currentPage = currentPage,
-            numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
-            href = routes.ViewAllDeparturesController.onPageLoad(None).url
-          )
-
-          Future.successful(Ok(view(ViewAllDepartureMovementsViewModel(movements, paginationViewModel))))
-
-        case None => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
+      getViewModel(page) {
+        viewModel =>
+          Ok(view(form, viewModel))
       }
+  }
+
+  def onSubmit(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            getViewModel(page) {
+              viewModel =>
+                BadRequest(view(formWithErrors, viewModel))
+            },
+          value => Future.successful(Redirect(routes.ViewDeparturesSearchResultsController.onPageLoad(value)))
+        )
+  }
+
+  private def getViewModel(page: Option[Int])(block: ViewAllDepartureMovementsViewModel => Result)(implicit
+    request: IdentifierRequest[_]
+  ): Future[Result] = {
+    val currentPage = page.getOrElse(1)
+    departuresMovementConnector.getPagedDepartures(currentPage, paginationAppConfig.departuresNumberOfMovements).flatMap {
+      case Some(filteredDepartures) =>
+        val movements: Seq[ViewDeparture] = filteredDepartures.departures.map(ViewDeparture(_))
+
+        val paginationViewModel = PaginationViewModel(
+          totalNumberOfMovements = filteredDepartures.totalDepartures,
+          currentPage = currentPage,
+          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          href = routes.ViewAllDeparturesController.onPageLoad(None).url
+        )
+
+        Future.successful(block(ViewAllDepartureMovementsViewModel(movements, paginationViewModel)))
+      case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
+    }
   }
 }

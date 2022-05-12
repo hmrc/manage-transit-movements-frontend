@@ -19,10 +19,14 @@ package controllers.departure
 import base.{FakeSearchResultsAppConfig, SpecBase}
 import config.SearchResultsAppConfig
 import connectors.DeparturesMovementConnector
+import forms.SearchFormProvider
+import generators.Generators
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber, RichLocalDateTime}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -33,13 +37,16 @@ import views.html.departure.ViewDeparturesSearchResultsView
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewDeparturesSearchResultsControllerSpec extends SpecBase {
+class ViewDeparturesSearchResultsControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private val totalSearchDepartures = 8
   private val someSearchMatches     = 5
 
   private val time: LocalDateTime              = LocalDateTime.now()
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
+
+  private val formProvider = new SearchFormProvider()
+  private val form         = formProvider()
 
   private def mockDepartureSearchResponse(retrievedDepartures: Int, totalMatched: Int): Departures =
     Departures(
@@ -105,7 +112,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase {
       val expectedDataRows = ViewDepartureMovements(Seq(mockViewMovement)).dataRows
 
       contentAsString(result) mustEqual
-        view(lrn.toString, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
+        view(form.fill(lrn.toString), lrn.toString, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
     }
 
     "return OK and the correct view for a GET when displaying search results with too many results" in {
@@ -132,7 +139,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase {
       val expectedDataRows = ViewDepartureMovements(Seq(mockViewMovement)).dataRows
 
       contentAsString(result) mustEqual
-        view(lrn.toString, expectedDataRows, someSearchMatches - 1, tooManyResults = true)(request, messages).toString
+        view(form.fill(lrn.toString), lrn.toString, expectedDataRows, someSearchMatches - 1, tooManyResults = true)(request, messages).toString
     }
 
     "return OK and the correct view for a GET when displaying search results with 0 results" in {
@@ -159,7 +166,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase {
       val expectedDataRows = ViewDepartureMovements(Seq(mockViewMovement)).dataRows
 
       contentAsString(result) mustEqual
-        view(lrn.toString, expectedDataRows, 0, tooManyResults = false)(request, messages).toString
+        view(form.fill(lrn.toString), lrn.toString, expectedDataRows, 0, tooManyResults = false)(request, messages).toString
     }
 
     "trim search string" in {
@@ -186,7 +193,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase {
       val expectedDataRows = ViewDepartureMovements(Seq(mockViewMovement)).dataRows
 
       contentAsString(result) mustEqual
-        view(lrn.toString, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
+        view(form.fill(lrn.toString), lrn.toString, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
     }
 
     "redirects to all departures on empty string" in {
@@ -200,7 +207,21 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase {
       redirectLocation(result).value mustEqual routes.ViewAllDeparturesController.onPageLoad(None).url
     }
 
-    "render technical difficulty" in {
+    "must redirect back to view departures search results when valid data is submitted" in {
+
+      forAll(arbitrary[LocalReferenceNumber]) {
+        case LocalReferenceNumber(lrn) =>
+          val request = FakeRequest(POST, routes.ViewDeparturesSearchResultsController.onSubmit(lrn).url)
+            .withFormUrlEncodedBody(("value", lrn))
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ViewDeparturesSearchResultsController.onPageLoad(lrn).url
+      }
+    }
+
+    "render technical difficulty when connector returns None" in {
 
       when(mockDepartureMovementsConnector.getDepartureSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(None))

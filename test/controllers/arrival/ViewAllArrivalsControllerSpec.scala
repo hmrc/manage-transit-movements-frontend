@@ -18,11 +18,13 @@ package controllers.arrival
 
 import base.SpecBase
 import connectors.ArrivalMovementConnector
+import forms.SearchFormProvider
 import generators.Generators
 import models.arrival.ArrivalStatus.ArrivalSubmitted
 import models.{Arrival, ArrivalId, Arrivals, RichLocalDateTime}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -34,12 +36,15 @@ import views.html.arrival.ViewAllArrivalsView
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
+class ViewAllArrivalsControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementConnector]
 
   private val time: LocalDateTime              = LocalDateTime.now()
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
+
+  private val formProvider = new SearchFormProvider()
+  private val form         = formProvider()
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
@@ -87,7 +92,7 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
 
         val currentPage = 1
 
-        val request = FakeRequest(GET, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(Some(currentPage)).url)
+        val request = FakeRequest(GET, routes.ViewAllArrivalsController.onPageLoad(Some(currentPage)).url)
 
         val result = route(app, request).value
 
@@ -104,7 +109,7 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
         val expectedViewModel = ViewAllArrivalMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
         contentAsString(result) mustEqual
-          view(expectedViewModel)(request, messages).toString
+          view(form, expectedViewModel)(request, messages).toString
       }
 
       "when page not provided must default to 1" in {
@@ -112,7 +117,7 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
         when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
           .thenReturn(Future.successful(Some(mockArrivalResponse)))
 
-        val request = FakeRequest(GET, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
+        val request = FakeRequest(GET, routes.ViewAllArrivalsController.onPageLoad(None).url)
 
         val result = route(app, request).value
 
@@ -129,7 +134,21 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
         val expectedViewModel = ViewAllArrivalMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
         contentAsString(result) mustEqual
-          view(expectedViewModel)(request, messages).toString
+          view(form, expectedViewModel)(request, messages).toString
+      }
+    }
+
+    "must redirect to view arrivals search results when valid data is submitted" in {
+
+      forAll(nonEmptyString) {
+        mrn =>
+          val request = FakeRequest(POST, routes.ViewAllArrivalsController.onSubmit(None).url)
+            .withFormUrlEncodedBody(("value", mrn))
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ViewArrivalsSearchResultsController.onPageLoad(mrn).url
       }
     }
 
@@ -138,7 +157,7 @@ class ViewAllArrivalsControllerSpec extends SpecBase with Generators {
       when(mockArrivalMovementConnector.getPagedArrivals(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
-      val request = FakeRequest(GET, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
+      val request = FakeRequest(GET, routes.ViewAllArrivalsController.onPageLoad(None).url)
 
       val result = route(app, request).value
 

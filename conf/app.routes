@@ -24,8 +24,10 @@ GET        /unauthorised-group-access                                         co
 GET        /keep-alive                                                        controllers.KeepAliveController.keepAlive()
 
 GET        /view-arrivals                                                     controllers.arrival.ViewAllArrivalsController.onPageLoad(page: Option[Int])
+POST       /view-arrivals                                                     controllers.arrival.ViewAllArrivalsController.onSubmit(page: Option[Int])
 
 GET        /view-arrivals-search-results                                      controllers.arrival.ViewArrivalsSearchResultsController.onPageLoad(mrn: String)
+POST       /view-arrivals-search-results                                      controllers.arrival.ViewArrivalsSearchResultsController.onSubmit(mrn: String)
 
 GET        /arrivals/:arrivalId/unloading-permission-pdf                      controllers.arrival.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
 

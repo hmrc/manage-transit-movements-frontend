@@ -19,6 +19,7 @@ package views.arrival
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
@@ -44,15 +45,20 @@ class ViewAllArrivalsViewSpec
 
   override val viewMovements: Seq[ViewArrival] = dataRows.flatMap(_._2)
 
-  override def view: HtmlFormat.Appendable = applyView(viewAllArrivalMovementsViewModel)
+  override def view: HtmlFormat.Appendable = applyView(form, viewAllArrivalMovementsViewModel)
 
   override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
-    applyView(ViewAllArrivalMovementsViewModel(Seq.empty[ViewArrival], paginationViewModel))
+    applyView(form, ViewAllArrivalMovementsViewModel(Seq.empty[ViewArrival], paginationViewModel))
 
-  private def applyView(viewAllArrivalMovementsViewModel: ViewAllArrivalMovementsViewModel): HtmlFormat.Appendable =
+  override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllArrivalMovementsViewModel)
+
+  private def applyView(
+    form: Form[String],
+    viewAllArrivalMovementsViewModel: ViewAllArrivalMovementsViewModel
+  ): HtmlFormat.Appendable =
     injector
       .instanceOf[ViewAllArrivalsView]
-      .apply(viewAllArrivalMovementsViewModel)(fakeRequest, messages)
+      .apply(form, viewAllArrivalMovementsViewModel)(fakeRequest, messages)
 
   behave like pageWithFullWidth()
 
