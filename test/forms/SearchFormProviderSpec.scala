@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package forms
 
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import forms.behaviours.StringFieldBehaviours
+import org.scalacheck.Gen
 
-trait Constraints {
+class SearchFormProviderSpec extends StringFieldBehaviours {
 
-  protected def regexp(regex: String, errorKey: String): Constraint[String] =
-    Constraint {
-      case str if str.matches(regex) =>
-        Valid
-      case _ =>
-        Invalid(errorKey, regex)
-    }
+  private val form = new SearchFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      Gen.alphaNumStr
+    )
+  }
 }
