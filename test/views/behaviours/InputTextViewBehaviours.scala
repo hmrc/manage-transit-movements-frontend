@@ -23,7 +23,7 @@ import org.scalacheck.Arbitrary.arbitrary
 trait InputTextViewBehaviours[T] extends QuestionViewBehaviours[T] with Generators {
 
   implicit val arbitraryT: Arbitrary[T]
-  private lazy val validValue: T = arbitraryT.arbitrary.sample.value
+  private lazy val validValue: T = arbitrary[T].sample.value
 
   def pageWithInputText(): Unit =
     "page with an input text field" - {

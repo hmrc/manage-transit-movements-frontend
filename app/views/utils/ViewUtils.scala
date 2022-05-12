@@ -16,13 +16,13 @@
 
 package views.utils
 
+import models.departure.{ControlDecision, NoReleaseForTransitMessage}
 import models.{FunctionalError, LocalReferenceNumber}
-import models.departure.NoReleaseForTransitMessage
-import models.departure.ControlDecision
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.twirl.api.Html
+import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow, Value}
 import utils.Format
 
 object ViewUtils {
@@ -31,38 +31,53 @@ object ViewUtils {
     (if (mainContent.body.contains("govuk-error-summary")) s"${messages("error.title.prefix")} " else "") +
       s"$title - ${messages("site.service_name")} - GOV.UK"
 
+  def searchInput(form: Form[_], label: String)(implicit messages: Messages): Input = {
+    val field = form("value")
+    Input(
+      label = Label(
+        content = messages(label).toText
+      ),
+      formGroupClasses = "govuk-!-width-one-half",
+      errorMessage = field.error.map {
+        e =>
+          ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))
+      }
+    ).withFormField(field)
+  }
+
   implicit class RichFunctionalError(functionalError: FunctionalError) {
 
-    def toSummaryList(implicit messages: Messages): SummaryList = SummaryList(
-      rows = Seq(
-        Some(
-          SummaryListRow(
-            key = messages("xmlNegativeAcknowledgement.errorType").toKey,
-            value = Value(functionalError.errorType.toString.toText)
-          )
-        ),
-        Some(
-          SummaryListRow(
-            key = messages("xmlNegativeAcknowledgement.errorPointer").toKey,
-            value = Value(functionalError.pointer.value.toText)
-          )
-        ),
-        functionalError.reason.map {
-          reason =>
+    def toSummaryList(implicit messages: Messages): SummaryList =
+      SummaryList(
+        rows = Seq(
+          Some(
             SummaryListRow(
-              key = messages("xmlNegativeAcknowledgement.errorReason").toKey,
-              value = Value(reason.toText)
+              key = messages("xmlNegativeAcknowledgement.errorType").toKey,
+              value = Value(functionalError.errorType.toString.toText)
             )
-        },
-        functionalError.originalAttributeValue.map {
-          originalAttributeValue =>
+          ),
+          Some(
             SummaryListRow(
-              key = messages("xmlNegativeAcknowledgement.originalAttributeValue").toKey,
-              value = Value(originalAttributeValue.toText)
+              key = messages("xmlNegativeAcknowledgement.errorPointer").toKey,
+              value = Value(functionalError.pointer.value.toText)
             )
-        }
-      ).flatten
-    )
+          ),
+          functionalError.reason.map {
+            reason =>
+              SummaryListRow(
+                key = messages("xmlNegativeAcknowledgement.errorReason").toKey,
+                value = Value(reason.toText)
+              )
+          },
+          functionalError.originalAttributeValue.map {
+            originalAttributeValue =>
+              SummaryListRow(
+                key = messages("xmlNegativeAcknowledgement.originalAttributeValue").toKey,
+                value = Value(originalAttributeValue.toText)
+              )
+          }
+        ).flatten
+      )
   }
 
   implicit class RichNoReleaseForTransitMessage(message: NoReleaseForTransitMessage) {

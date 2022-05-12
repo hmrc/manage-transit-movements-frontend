@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.components.Button
+@import views.utils.ViewUtils._
 
 @this(
     button: Button,
@@ -35,18 +36,7 @@
     @errorSummary(form.errors)
 
     <div class="movement-search">
-        @govukInput(
-            Input(
-                label = Label(
-                    content = messages(label).toText
-                ),
-                formGroupClasses = "govuk-!-width-one-half",
-                errorMessage = form("value").error.map { e =>
-                    ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))
-                }
-            )
-            .withFormField(form("value"))
-        )
+        @govukInput(searchInput(form, label))
 
         @button(
             messageKey = "site.search",
