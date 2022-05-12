@@ -22,8 +22,10 @@ import controllers.actions._
 import forms.SearchFormProvider
 import handlers.ErrorHandler
 import models.requests.IdentifierRequest
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
@@ -50,10 +52,7 @@ class ViewAllArrivalsController @Inject() (
 
   def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      getViewModel(page) {
-        viewModel =>
-          Ok(view(form, viewModel))
-      }
+      buildView(page, form)(Ok(_))
   }
 
   def onSubmit(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
@@ -61,18 +60,14 @@ class ViewAllArrivalsController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors =>
-            getViewModel(page) {
-              viewModel =>
-                BadRequest(view(formWithErrors, viewModel))
-            },
+          formWithErrors => buildView(page, formWithErrors)(BadRequest(_)),
           value => Future.successful(Redirect(routes.ViewArrivalsSearchResultsController.onPageLoad(value)))
         )
   }
 
-  private def getViewModel(page: Option[Int])(block: ViewAllArrivalMovementsViewModel => Result)(implicit
-    request: IdentifierRequest[_]
-  ): Future[Result] = {
+  private def buildView(page: Option[Int], form: Form[String])(
+    block: HtmlFormat.Appendable => Result
+  )(implicit request: IdentifierRequest[_]): Future[Result] = {
     val currentPage = page.getOrElse(1)
     arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
       case Some(filteredArrivals) =>
@@ -85,7 +80,14 @@ class ViewAllArrivalsController @Inject() (
           href = routes.ViewAllArrivalsController.onPageLoad(None).url
         )
 
-        Future.successful(block(ViewAllArrivalMovementsViewModel(movements, paginationViewModel)))
+        Future.successful(
+          block(
+            view(
+              form = form,
+              viewModel = ViewAllArrivalMovementsViewModel(movements, paginationViewModel)
+            )
+          )
+        )
       case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
     }
   }
