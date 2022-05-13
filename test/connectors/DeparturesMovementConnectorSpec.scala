@@ -27,7 +27,6 @@ import models.{Availability, Departure, DepartureId, Departures, ErrorPointer, E
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -39,13 +38,13 @@ import scala.xml.NodeSeq
 
 class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
-  private lazy val connector: DeparturesMovementConnector =
-    app.injector.instanceOf[DeparturesMovementConnector]
-  private val startUrl = "transits-movements-trader-at-departure"
+  private lazy val connector: DeparturesMovementConnector = app.injector.instanceOf[DeparturesMovementConnector]
+  private val startUrl                                    = "transits-movements-trader-at-departure"
 
-  val app: Application = new GuiceApplicationBuilder()
-    .configure(conf = "microservice.services.departure.port" -> server.port())
-    .build()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .configure(conf = "microservice.services.departure.port" -> server.port())
 
   private val localDateTime: LocalDateTime = LocalDateTime.now()
 

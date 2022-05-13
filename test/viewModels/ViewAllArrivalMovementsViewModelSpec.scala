@@ -17,22 +17,15 @@
 package viewModels
 
 import base.SpecBase
-import config.FrontendAppConfig
 import generators.Generators
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.pagination._
 
-import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
-class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
-
-  implicit override val frontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
@@ -94,97 +87,6 @@ class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with
         val expectedResult: Seq[ViewArrival] =
           Seq(movement, movementMinus1, movementMinus2)
         result.dataRows.head._2 mustEqual expectedResult
-    }
-  }
-
-  def formatter(date: LocalDate): String = {
-    val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-    date.format(formatter)
-  }
-
-  "Json writes" - {
-
-    "adds the declareArrivalNotificationUrl from FrontendAppConfig" in {
-      val testUrl = "declareArrivalNotificationUrl"
-
-      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn(testUrl)
-
-      val paginationViewModel = PaginationViewModel(10, 1, 2, "testHref")
-
-      forAll(arbitrary[ViewArrival]) {
-        arrival =>
-          val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
-
-          val result = (testJson \ "declareArrivalNotificationUrl").validate[String].asOpt.value
-
-          result mustBe testUrl
-      }
-    }
-
-    "adds the homePageUrl" in {
-
-      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
-
-      forAll(arbitrary[ViewArrival]) {
-        arrival =>
-          val paginationViewModel = PaginationViewModel(10, 1, 2, "testHref")
-
-          val testJson: JsValue = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
-
-          val result = (testJson \ "homePageUrl").validate[String].asOpt.value
-
-          result mustBe controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
-      }
-    }
-
-    "adds the pagination" in {
-
-      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
-
-      forAll(arbitrary[ViewArrival]) {
-        arrival =>
-          val paginationViewModel = PaginationViewModel(10, 2, 2, "testHref")
-          val testJson: JsValue   = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
-          val result1             = (testJson \ "results").validate[MetaData].asOpt
-          val result2             = (testJson \ "previous").validate[Previous].asOpt
-          val result3             = (testJson \ "next").validate[Next].asOpt
-          val result4             = (testJson \ "items").validate[Seq[Item]].asOpt
-          result1 mustBe defined
-          result2 mustBe defined
-          result3 mustBe defined
-          result4 mustBe defined
-
-      }
-    }
-
-    "must show correct message for a singular movement" in {
-
-      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
-
-      forAll(arbitrary[ViewArrival]) {
-        arrival =>
-          val paginationViewModel = PaginationViewModel(1, 1, 2, "testHref")
-          val testJson: JsValue   = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
-          val result              = (testJson \ "singularOrPlural").validate[String].asOpt.value
-
-          result mustBe "numberOfMovements.singular"
-
-      }
-    }
-
-    "must show correct message for multiple movements" in {
-
-      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
-
-      forAll(arbitrary[ViewArrival]) {
-        arrival =>
-          val paginationViewModel = PaginationViewModel(2, 1, 2, "testHref")
-          val testJson: JsValue   = Json.toJson(ViewAllArrivalMovementsViewModel(Seq(arrival), paginationViewModel))
-          val result              = (testJson \ "singularOrPlural").validate[String].asOpt.value
-
-          result mustBe "numberOfMovements.plural"
-
-      }
     }
   }
 }

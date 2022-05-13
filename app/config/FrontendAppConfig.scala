@@ -68,9 +68,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val manageService: String                = configuration.get[String]("appName")
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
+  lazy val nctsHelpdeskUrl: String  = configuration.get[String]("urls.nctsHelpdesk")
   lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")
-  lazy val timeoutSeconds: String   = configuration.get[String]("session.timeoutSeconds")
-  lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
+  lazy val timeoutSeconds: Int      = configuration.get[Int]("session.timeoutSeconds")
+  lazy val countdownSeconds: Int    = configuration.get[Int]("session.countdownSeconds")
 
   private val departureFrontendUrl: String    = phase5Switch.Departures.getFrontendUrl
   private val cancellationFrontendUrl: String = phase5Switch.Cancellations.getFrontendUrl
@@ -81,8 +82,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
   def departureTadPdfUrl(departureId: DepartureId)                       = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
 
-  // Todo is there a new url for cancellation the departure in phase 5?, rollback?
-  def departureFrontendConfirmCancellationUrl(departureId: DepartureId) = if (phase5Switch.Cancellations.enabled) {
+  def departureFrontendConfirmCancellationUrl(departureId: DepartureId): String = if (phase5Switch.Cancellations.enabled) {
     s"$cancellationFrontendUrl/${departureId.index}"
   } else {
     s"$cancellationFrontendUrl/${departureId.index}/confirm-cancellation"

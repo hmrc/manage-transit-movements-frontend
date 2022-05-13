@@ -16,10 +16,6 @@
 
 package viewModels
 
-import config.FrontendAppConfig
-import controllers.routes
-import play.api.libs.json.{Json, OWrites}
-
 import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
@@ -51,14 +47,4 @@ object ViewArrivalMovements {
         (result._1.format(dateFormatter), result._2.sortBy(_.updatedTime).reverse)
     }
   }
-
-  implicit def writes(implicit
-    frontendAppConfig: FrontendAppConfig
-  ): OWrites[ViewArrivalMovements] =
-    (o: ViewArrivalMovements) =>
-      Json.obj(
-        "dataRows"                      -> o.dataRows,
-        "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-        "homePageUrl"                   -> routes.WhatDoYouWantToDoController.onPageLoad().url
-      )
 }

@@ -24,16 +24,15 @@ import models.departure.{ControlDecision, MessagesLocation, MessagesSummary, NoR
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
-class DepartureMessageServiceSpec extends SpecBase with BeforeAndAfterEach with Matchers with Generators {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
+class DepartureMessageServiceSpec extends SpecBase with Generators {
 
   private val mockDepartureConnector: DeparturesMovementConnector = mock[DeparturesMovementConnector]
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureConnector)
   }

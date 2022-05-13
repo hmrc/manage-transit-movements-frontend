@@ -20,10 +20,6 @@ import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 
-import config.FrontendAppConfig
-import controllers.routes
-import play.api.libs.json.{Json, OWrites}
-
 case class ViewDepartureMovements(dataRows: Seq[(String, Seq[ViewDeparture])])
 
 object ViewDepartureMovements {
@@ -47,14 +43,4 @@ object ViewDepartureMovements {
         (result._1.format(dateFormater), result._2.sortBy(_.updatedTime).reverse)
     }
   }
-
-  implicit def writes(implicit
-    frontendAppConfig: FrontendAppConfig
-  ): OWrites[ViewDepartureMovements] =
-    (o: ViewDepartureMovements) =>
-      Json.obj(
-        "dataRows"                        -> o.dataRows,
-        "declareDepartureNotificationUrl" -> frontendAppConfig.declareDepartureStartWithLRNUrl,
-        "homePageUrl"                     -> routes.WhatDoYouWantToDoController.onPageLoad().url
-      )
 }

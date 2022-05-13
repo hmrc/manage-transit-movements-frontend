@@ -16,15 +16,14 @@
 
 package controllers.arrival
 
-import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
-import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
+import handlers.ErrorHandler
 import models.ArrivalId
 import play.api.Logging
 import play.api.i18n.I18nSupport
+import play.api.libs.ws.WSResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -34,12 +33,10 @@ class UnloadingPermissionPDFController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   arrivalMovementConnector: ArrivalMovementConnector,
-  val config: FrontendAppConfig,
-  val renderer: Renderer
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
-    with TechnicalDifficultiesPage
     with Logging {
 
   def getPDF(arrivalId: ArrivalId): Action[AnyContent] = (Action andThen identify).async {
@@ -51,31 +48,28 @@ class UnloadingPermissionPDFController @Inject() (
               result =>
                 result.status match {
                   case OK =>
-                    val contentDisposition = result.headers
-                      .get(CONTENT_DISPOSITION)
-                      .map(
-                        value => Seq((CONTENT_DISPOSITION, value.head))
-                      )
-                      .getOrElse(Seq.empty)
-                    val contentType = result.headers
-                      .get(CONTENT_TYPE)
-                      .map(
-                        value => Seq((CONTENT_TYPE, value.head))
-                      )
-                      .getOrElse(Seq.empty)
-                    val headers = contentDisposition ++ contentType
-
-                    Future.successful(
-                      Ok(result.bodyAsBytes.toArray).withHeaders(headers: _*)
-                    )
+                    Future.successful(Ok(result.bodyAsBytes.toArray).withHeaders(headers(result): _*))
                   case _ =>
                     logger.error(s"[PDF][UP] Received downstream status code of ${result.status}")
-                    renderTechnicalDifficultiesPage
+                    errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
                 }
             }
         }
         .getOrElse {
           Future.successful(Redirect(controllers.routes.UnauthorisedController.onPageLoad()))
         }
+  }
+
+  private def headers(result: WSResponse): Seq[(String, String)] = {
+    def header(key: String): Seq[(String, String)] =
+      result.headers
+        .get(key)
+        .flatMap {
+          _.headOption.map((key, _))
+        }
+        .toSeq
+
+    header(CONTENT_DISPOSITION) ++
+      header(CONTENT_TYPE)
   }
 }

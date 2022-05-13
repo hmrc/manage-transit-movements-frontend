@@ -26,14 +26,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureMessageService @Inject() (connectors: DeparturesMovementConnector)(implicit ec: ExecutionContext) extends Logging {
+class DepartureMessageService @Inject() (connector: DeparturesMovementConnector)(implicit ec: ExecutionContext) extends Logging {
 
   def noReleaseForTransitMessage(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[Option[NoReleaseForTransitMessage]] =
-    connectors.getSummary(departureId) flatMap {
+    connector.getSummary(departureId) flatMap {
       case Some(summary) =>
         summary.messagesLocation.noReleaseForTransit match {
           case Some(location) =>
-            connectors.getNoReleaseForTransitMessage(location)
+            connector.getNoReleaseForTransitMessage(location)
           case _ =>
             logger.error(s"Get Summary failed to get noReleaseForTransit location")
             Future.successful(None)
@@ -44,11 +44,11 @@ class DepartureMessageService @Inject() (connectors: DeparturesMovementConnector
     }
 
   def controlDecisionMessage(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[Option[ControlDecision]] =
-    connectors.getSummary(departureId) flatMap {
+    connector.getSummary(departureId) flatMap {
       case Some(summary) =>
         summary.messagesLocation.controlDecision match {
           case Some(location) =>
-            connectors.getControlDecisionMessage(location)
+            connector.getControlDecisionMessage(location)
           case _ =>
             logger.error(s"Get Summary failed to get controlDecision location")
             Future.successful(None)
@@ -61,11 +61,11 @@ class DepartureMessageService @Inject() (connectors: DeparturesMovementConnector
   def getXMLSubmissionNegativeAcknowledgementMessage(
     departureId: DepartureId
   )(implicit hc: HeaderCarrier): Future[Option[XMLSubmissionNegativeAcknowledgementMessage]] =
-    connectors.getSummary(departureId) flatMap {
+    connector.getSummary(departureId) flatMap {
       case Some(summary) =>
         summary.messagesLocation.xmlSubmissionNegativeAcknowledgement match {
           case Some(negativeAcknowledgementLocation) =>
-            connectors.getXMLSubmissionNegativeAcknowledgementMessage(negativeAcknowledgementLocation)
+            connector.getXMLSubmissionNegativeAcknowledgementMessage(negativeAcknowledgementLocation)
           case _ =>
             logger.error(s"Get Summary failed to get XMLSubmissionNegativeAcknowledgement location")
             Future.successful(None)

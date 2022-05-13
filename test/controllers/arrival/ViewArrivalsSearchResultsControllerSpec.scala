@@ -16,58 +16,49 @@
 
 package controllers.arrival
 
-import base.{FakeSearchResultsAppConfig, MockNunjucksRendererApp, SpecBase}
-import config.{FrontendAppConfig, SearchResultsAppConfig}
+import base.{FakeSearchResultsAppConfig, SpecBase}
+import config.SearchResultsAppConfig
 import connectors.ArrivalMovementConnector
+import forms.SearchFormProvider
 import generators.Generators
-import matchers.JsonMatchers
 import models.arrival.ArrivalStatus.ArrivalSubmitted
 import models.{Arrival, ArrivalId, Arrivals, RichLocalDateTime}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import viewModels.{ViewArrival, ViewArrivalMovements}
+import views.html.arrival.ViewArrivalsSearchResultsView
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewArrivalsSearchResultsControllerSpec
-    extends SpecBase
-    with MockitoSugar
-    with JsonMatchers
-    with Generators
-    with NunjucksSupport
-    with BeforeAndAfterEach
-    with MockNunjucksRendererApp {
+class ViewArrivalsSearchResultsControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val mockArrivalMovementConnector                    = mock[ArrivalMovementConnector]
-  implicit val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
-  private val totalSearchArrivals                             = 8
-  private val someSearchMatches                               = 5
+  private val mockArrivalMovementConnector                   = mock[ArrivalMovementConnector]
+  private val searchResultsAppConfig: SearchResultsAppConfig = FakeSearchResultsAppConfig()
+  private val totalSearchArrivals                            = 8
+  private val someSearchMatches                              = 5
 
-  val time: LocalDateTime              = LocalDateTime.now()
-  val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
+  private val time: LocalDateTime              = LocalDateTime.now()
+  private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
-  override def beforeEach: Unit = {
+  private val formProvider = new SearchFormProvider()
+  private val form         = formProvider()
+
+  override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
-    super.beforeEach
+    super.beforeEach()
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
-        bind[FrontendAppConfig].toInstance(frontendAppConfig)
+        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )
 
   private def mockArrivalSearchResponse(retrievedArrivals: Int, totalMatched: Int): Arrivals =
@@ -76,176 +67,132 @@ class ViewArrivalsSearchResultsControllerSpec
       totalArrivals = totalSearchArrivals,
       totalMatched = Some(totalMatched),
       arrivals = Seq(
-        Arrival(ArrivalId(1), time, time, "test mrn", ArrivalSubmitted)
+        Arrival(
+          arrivalId = ArrivalId(1),
+          created = time,
+          updated = time,
+          movementReferenceNumber = mrn,
+          status = ArrivalSubmitted
+        )
       )
     )
 
   private val mockViewMovement = ViewArrival(
-    systemDefaultTime.toLocalDate,
-    systemDefaultTime.toLocalTime,
-    "test mrn",
-    "movement.status.arrivalSubmitted",
-    Nil
-  )
-
-  private lazy val expectedJson: JsObject =
-    Json.toJsObject(
-      ViewArrivalMovements(Seq(mockViewMovement))
-    ) ++ Json.obj(
-      "declareArrivalNotificationUrl" -> frontendAppConfig.declareArrivalNotificationStartUrl,
-      "homePageUrl"                   -> controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
-    )
-
-  private def expectedSearchJson(
-    mrn: String,
-    retrieved: Int,
-    tooManyResults: Boolean
-  ): JsObject = Json.obj(
-    "mrn"            -> mrn,
-    "retrieved"      -> retrieved,
-    "tooManyResults" -> tooManyResults
+    updatedDate = systemDefaultTime.toLocalDate,
+    updatedTime = systemDefaultTime.toLocalTime,
+    movementReferenceNumber = mrn,
+    status = "movement.status.arrivalSubmitted",
+    actions = Nil
   )
 
   "ViewArrivalsSearchResultsController" - {
 
     "return OK and the correct view for a GET when displaying search results with results" in {
 
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(Some(mockArrivalSearchResponse(someSearchMatches, someSearchMatches))))
 
       val request = FakeRequest(
         GET,
-        routes.ViewArrivalsSearchResultsController.onPageLoad("theMrn").url
+        routes.ViewArrivalsSearchResultsController.onPageLoad(mrn).url
       )
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
       val result = route(app, request).value
+
+      val view = injector.instanceOf[ViewArrivalsSearchResultsView]
+
       status(result) mustEqual OK
 
       verify(mockArrivalMovementConnector).getArrivalSearchResults(
-        meq("theMrn"),
+        meq(mrn),
         meq(searchResultsAppConfig.maxSearchResults)
       )(any())
 
-      verify(mockNunjucksRenderer, times(1))
-        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val expectedDataRows = ViewArrivalMovements(Seq(mockViewMovement)).dataRows
 
-      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-      templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson ++
-        expectedSearchJson(mrn = "theMrn", retrieved = someSearchMatches, tooManyResults = false)
+      contentAsString(result) mustEqual
+        view(form.fill(mrn), mrn, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
     }
 
     "return OK and the correct view for a GET when displaying search results with too many results" in {
-
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(Some(mockArrivalSearchResponse(someSearchMatches - 1, someSearchMatches))))
 
       val request = FakeRequest(
         GET,
-        routes.ViewArrivalsSearchResultsController.onPageLoad("theMrn").url
+        routes.ViewArrivalsSearchResultsController.onPageLoad(mrn).url
       )
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
       val result = route(app, request).value
+
+      val view = injector.instanceOf[ViewArrivalsSearchResultsView]
+
       status(result) mustEqual OK
 
       verify(mockArrivalMovementConnector).getArrivalSearchResults(
-        meq("theMrn"),
+        meq(mrn),
         meq(searchResultsAppConfig.maxSearchResults)
       )(any())
 
-      verify(mockNunjucksRenderer, times(1))
-        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val expectedDataRows = ViewArrivalMovements(Seq(mockViewMovement)).dataRows
 
-      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-      templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson ++
-        expectedSearchJson(mrn = "theMrn", retrieved = someSearchMatches - 1, tooManyResults = true)
+      contentAsString(result) mustEqual
+        view(form.fill(mrn), mrn, expectedDataRows, someSearchMatches - 1, tooManyResults = true)(request, messages).toString
     }
 
     "return OK and the correct view for a GET when displaying search results with 0 results" in {
-
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(Some(mockArrivalSearchResponse(0, 0))))
 
       val request = FakeRequest(
         GET,
-        routes.ViewArrivalsSearchResultsController.onPageLoad("theMrn").url
+        routes.ViewArrivalsSearchResultsController.onPageLoad(mrn).url
       )
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
       val result = route(app, request).value
+
+      val view = injector.instanceOf[ViewArrivalsSearchResultsView]
+
       status(result) mustEqual OK
 
       verify(mockArrivalMovementConnector).getArrivalSearchResults(
-        meq("theMrn"),
+        meq(mrn),
         meq(searchResultsAppConfig.maxSearchResults)
       )(any())
 
-      verify(mockNunjucksRenderer, times(1))
-        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val expectedDataRows = ViewArrivalMovements(Seq(mockViewMovement)).dataRows
 
-      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-      templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson ++
-        Json.obj(
-          "mrn"            -> "theMrn",
-          "retrieved"      -> 0,
-          "tooManyResults" -> false
-        )
+      contentAsString(result) mustEqual
+        view(form.fill(mrn), mrn, expectedDataRows, 0, tooManyResults = false)(request, messages).toString
     }
 
     "trim search string" in {
-
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(Some(mockArrivalSearchResponse(someSearchMatches, someSearchMatches))))
 
       val request = FakeRequest(
         GET,
-        routes.ViewArrivalsSearchResultsController.onPageLoad(" theMrn ").url
+        routes.ViewArrivalsSearchResultsController.onPageLoad(s" $mrn ").url
       )
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
       val result = route(app, request).value
+
+      val view = injector.instanceOf[ViewArrivalsSearchResultsView]
+
       status(result) mustEqual OK
 
       verify(mockArrivalMovementConnector).getArrivalSearchResults(
-        meq("theMrn"),
+        meq(mrn),
         meq(searchResultsAppConfig.maxSearchResults)
       )(any())
 
-      verify(mockNunjucksRenderer, times(1))
-        .render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val expectedDataRows = ViewArrivalMovements(Seq(mockViewMovement)).dataRows
 
-      val jsonCaptorWithoutConfig: JsObject = jsonCaptor.getValue - configKey
-
-      templateCaptor.getValue mustEqual "viewArrivalsSearchResults.njk"
-      jsonCaptorWithoutConfig mustBe expectedJson ++
-        expectedSearchJson(mrn = "theMrn", retrieved = someSearchMatches, tooManyResults = false)
+      contentAsString(result) mustEqual
+        view(form.fill(mrn), mrn, expectedDataRows, someSearchMatches, tooManyResults = false)(request, messages).toString
     }
 
     "redirects to all arrivals on empty string" in {
@@ -259,35 +206,34 @@ class ViewArrivalsSearchResultsControllerSpec
       redirectLocation(result).value mustEqual routes.ViewAllArrivalsController.onPageLoad(None).url
     }
 
-    "render technical difficulty" in {
+    "must redirect back to view arrivals search results when valid data is submitted" in {
 
-      val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      forAll(nonEmptyString) {
+        mrn =>
+          val request = FakeRequest(POST, routes.ViewArrivalsSearchResultsController.onSubmit(mrn).url)
+            .withFormUrlEncodedBody(("value", mrn))
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ViewArrivalsSearchResultsController.onPageLoad(mrn).url
+      }
+    }
+
+    "render technical difficulty when connector returns None" in {
 
       when(mockArrivalMovementConnector.getArrivalSearchResults(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest(
         GET,
-        routes.ViewArrivalsSearchResultsController.onPageLoad("theMrn").url
+        routes.ViewArrivalsSearchResultsController.onPageLoad(mrn).url
       )
-
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
-      status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj {
-        "contactUrl" -> config.nctsEnquiriesUrl
-      }
-
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

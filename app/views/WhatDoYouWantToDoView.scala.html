@@ -1,0 +1,79 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components.Heading
+@import config.FrontendAppConfig
+@import models.Availability
+@import controllers.departure.{routes => departureRoutes}
+
+@this(
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    config: FrontendAppConfig
+)
+
+@(arrivalsAvailability: Availability, departuresAvailability: Availability)(implicit request: Request[_], messages: Messages)
+
+@mainTemplate(
+    title = messages("whatDoYouWantToDo.title")
+) {
+    @heading("whatDoYouWantToDo.heading")
+
+    <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.arrival")</h2>
+    <p class="govuk-body">
+        <a href=@config.declareArrivalNotificationStartUrl class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.makeArrival")</a>
+    </p>
+
+    <p class="govuk-body">
+        @arrivalsAvailability match {
+            case Availability.NonEmpty => {
+                <a href=@controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url class="govuk-link" id="view-arrival-notifications">@messages("whatDoYouWantToDo.link.arrival.viewArrival")</a>
+            }
+            case Availability.Empty => {
+                @messages("whatDoYouWantToDo.arrival.noArrivals")
+            }
+            case Availability.Unavailable => {
+                @messages("whatDoYouWantToDo.arrival.arrivalsUnavailable")
+            }
+        }
+    </p>
+
+    <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.departure")</h2>
+    <p class="govuk-body">
+        <a href=@config.declareDepartureStartWithLRNUrl class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.makeDeparture")</a>
+    </p>
+
+    <p class="govuk-body">
+        @departuresAvailability match {
+            case Availability.NonEmpty => {
+                <a href=@controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url class="govuk-link" id="view-departure-declarations">@messages("whatDoYouWantToDo.link.departure.viewDepartures")</a>
+            }
+            case Availability.Empty => {
+                @messages("whatDoYouWantToDo.departure.noDepartures")
+            }
+            case Availability.Unavailable => {
+                @messages("whatDoYouWantToDo.departure.departuresUnavailable")
+            }
+        }
+    </p>
+
+    @if(config.isGuaranteeBalanceEnabled) {
+        <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.guarantee")</h2>
+        <p class="govuk-body">
+            <a href=@config.checkGuaranteeBalanceUrl class="govuk-link" id="check-guarantee-balance">@messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance")</a>
+        </p>
+    }
+}

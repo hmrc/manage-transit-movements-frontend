@@ -17,21 +17,14 @@
 package viewModels
 
 import base.SpecBase
-import config.FrontendAppConfig
 import generators.Generators
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
-class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with NunjucksSupport {
-
-  implicit override val frontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "apply groups Movements by dates and reformat date to 'd MMMM yyyy'" in {
 
@@ -90,44 +83,6 @@ class ViewArrivalMovementsSpec extends SpecBase with Generators with ScalaCheckP
           Seq(movement, movementMinus1, movementMinus2)
         result.dataRows.head._2 mustEqual expectedResult
     }
-  }
-
-  def formatter(date: LocalDate): String = {
-    val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-    date.format(formatter)
-  }
-
-  "Json writes" - {
-
-    "adds the declareArrivalNotificationUrl from FrontendAppConfig" in {
-      val testUrl = "declareArrivalNotificationUrl"
-
-      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn(testUrl)
-
-      forAll(arbitrary[ViewArrivalMovements]) {
-        viewArrivalMovements =>
-          val testJson: JsValue = Json.toJson(viewArrivalMovements)
-
-          val result = (testJson \ "declareArrivalNotificationUrl").validate[String].asOpt.value
-
-          result mustBe testUrl
-      }
-    }
-
-    "adds the homePageUrl" in {
-
-      when(frontendAppConfig.declareArrivalNotificationStartUrl).thenReturn("")
-
-      forAll(arbitrary[ViewArrivalMovements]) {
-        viewArrivalMovements =>
-          val testJson: JsValue = Json.toJson(viewArrivalMovements)
-
-          val result = (testJson \ "homePageUrl").validate[String].asOpt.value
-
-          result mustBe controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
-      }
-    }
-
   }
 
 }

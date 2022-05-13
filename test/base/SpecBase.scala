@@ -16,47 +16,39 @@
 
 package base
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PaginationAppConfig}
 import models.{DepartureId, LocalReferenceNumber}
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.inject.Injector
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.{FakeRequest, Helpers}
-import play.api.test.Helpers.baseApplicationBuilder.injector
+import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 import java.time.Clock
 
-trait SpecBase
-    extends AnyFreeSpec
-    with Matchers
-    with OptionValues
-    with TryValues
-    with ScalaFutures
-    with IntegrationPatience
-    with MockitoSugar
-    with BeforeAndAfterEach {
+trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValues with ScalaFutures with IntegrationPatience with AppWithDefaultMockFixtures {
 
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
+  val mrn: String               = "mrn"
 
-  val departureId = DepartureId(1)
+  val departureId: DepartureId = DepartureId(1)
 
-  // TODO: remove all references to this and use [[play.api.test.Helpers.stubMessagesApi]]
-  def messagesApi: MessagesApi = Helpers.stubMessagesApi()
-
-  // TODO: remove all references to this and explicitly use [[play.api.test.Helpers.stubMessages]]
-  implicit def messages: Messages = Helpers.stubMessages()
-
+  def injector: Injector                               = app.injector
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
+
+  def messagesApi: MessagesApi    = injector.instanceOf[MessagesApi]
+  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
 
-  implicit val frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+  implicit def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
+  def paginationAppConfig: PaginationAppConfig = injector.instanceOf[PaginationAppConfig]
 
   implicit val clock: Clock = Clock.systemDefaultZone()
 

@@ -16,27 +16,22 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.{ArrivalMovementConnector, DeparturesMovementConnector}
 import controllers.actions.IdentifierAction
-import controllers.departure.{routes => departureRoutes}
-import models.Availability
-import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
-import play.twirl.api.Html
-import renderer.Renderer
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.WhatDoYouWantToDoView
 
-class WhatDoYouWantToDoController @Inject() (appConfig: FrontendAppConfig,
-                                             identify: IdentifierAction,
-                                             cc: MessagesControllerComponents,
-                                             val arrivalMovementConnector: ArrivalMovementConnector,
-                                             val departuresMovementConnector: DeparturesMovementConnector,
-                                             renderer: Renderer
+import scala.concurrent.ExecutionContext
+
+class WhatDoYouWantToDoController @Inject() (
+  identify: IdentifierAction,
+  cc: MessagesControllerComponents,
+  val arrivalMovementConnector: ArrivalMovementConnector,
+  val departuresMovementConnector: DeparturesMovementConnector,
+  view: WhatDoYouWantToDoView
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -46,25 +41,8 @@ class WhatDoYouWantToDoController @Inject() (appConfig: FrontendAppConfig,
       for {
         arrivalsAvailability   <- arrivalMovementConnector.getArrivalsAvailability()
         departuresAvailability <- departuresMovementConnector.getDeparturesAvailability()
-        html                   <- renderPage(arrivalsAvailability, departuresAvailability)
-      } yield Ok(html)
-  }
-
-  private def renderPage(arrivalsAvailability: Availability, departuresAvailability: Availability)(implicit requestHeader: RequestHeader): Future[Html] =
-    renderer
-      .render(
-        "whatDoYouWantToDo.njk",
-        Json.obj(
-          "declareArrivalNotificationUrl"  -> appConfig.declareArrivalNotificationStartUrl,
-          "viewArrivalNotificationUrl"     -> controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url,
-          "arrivalsAvailable"              -> arrivalsAvailability.isAvailable,
-          "hasArrivals"                    -> arrivalsAvailability.isAvailableAndNonEmpty,
-          "declareDepartureDeclarationUrl" -> appConfig.declareDepartureStartWithLRNUrl,
-          "viewDepartureNotificationUrl"   -> departureRoutes.ViewAllDeparturesController.onPageLoad(None).url,
-          "departuresAvailable"            -> departuresAvailability.isAvailable,
-          "hasDepartures"                  -> departuresAvailability.isAvailableAndNonEmpty,
-          "isGuaranteeBalanceEnabled"      -> appConfig.isGuaranteeBalanceEnabled,
-          "checkGuaranteeBalanceUrl"       -> appConfig.checkGuaranteeBalanceUrl
-        )
+      } yield Ok(
+        view(arrivalsAvailability, departuresAvailability)
       )
+  }
 }

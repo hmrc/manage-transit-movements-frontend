@@ -18,75 +18,76 @@ package controllers.arrival
 
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
-import controllers.TechnicalDifficultiesPage
 import controllers.actions.IdentifierAction
-
-import javax.inject.Inject
+import forms.SearchFormProvider
+import handlers.ErrorHandler
 import models.requests.IdentifierRequest
-import models.{Arrival, Arrivals}
-import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.{ViewArrival, ViewArrivalMovements}
+import views.html.arrival.ViewArrivalsSearchResultsView
 
 import java.time.Clock
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ViewArrivalsSearchResultsController @Inject() (
-  val renderer: Renderer,
+  override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  val config: FrontendAppConfig,
-  val searchResultsAppConfig: SearchResultsAppConfig,
-  arrivalMovementConnector: ArrivalMovementConnector
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
+  connector: ArrivalMovementConnector,
+  searchResultsAppConfig: SearchResultsAppConfig,
+  formProvider: SearchFormProvider,
+  view: ViewArrivalsSearchResultsView,
+  errorHandler: ErrorHandler
+)(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
-    with I18nSupport
-    with TechnicalDifficultiesPage {
+    with I18nSupport {
 
-  private val pageSize = searchResultsAppConfig.maxSearchResults
+  private val form = formProvider()
+
+  private lazy val pageSize = searchResultsAppConfig.maxSearchResults
 
   def onPageLoad(mrn: String): Action[AnyContent] = (Action andThen identify).async {
-    implicit request: IdentifierRequest[AnyContent] =>
-      val trimmedMrn = mrn.trim
-      if (trimmedMrn.isEmpty) {
-        Future.successful(Redirect(routes.ViewAllArrivalsController.onPageLoad(None)))
-      } else {
-        renderSearchResults(
-          arrivalMovementConnector.getArrivalSearchResults(trimmedMrn, pageSize),
-          "viewArrivalsSearchResults.njk",
-          trimmedMrn
-        )
-      }
+    implicit request =>
+      buildView(mrn, form.fill)(Ok(_))
   }
 
-  private def searchParams(mrn: String, retrieved: Int, matchedOption: Option[Int]) =
-    matchedOption match {
-      case Some(matched) if matched > 0 =>
-        Json.obj(
-          "mrn"            -> mrn,
-          "retrieved"      -> retrieved,
-          "tooManyResults" -> (retrieved < matched)
+  def onSubmit(mrn: String): Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => buildView(mrn, _ => formWithErrors)(BadRequest(_)),
+          value => Future.successful(Redirect(routes.ViewArrivalsSearchResultsController.onPageLoad(value)))
         )
-      case _ => Json.obj("mrn" -> mrn, "retrieved" -> 0, "tooManyResults" -> false)
+  }
 
-    }
-
-  private def renderSearchResults(results: Future[Option[Arrivals]], template: String, mrn: String)(implicit request: IdentifierRequest[AnyContent]) =
-    results.flatMap {
-      case Some(allArrivals) =>
-        val viewMovements: Seq[ViewArrival] = allArrivals.arrivals.map(
-          (arrival: Arrival) => ViewArrival(arrival)
-        )
-        val formatToJson: JsObject = Json.toJsObject(ViewArrivalMovements.apply(viewMovements)) ++
-          searchParams(mrn, allArrivals.retrievedArrivals, allArrivals.totalMatched)
-
-        renderer
-          .render(template, formatToJson)
-          .map(Ok(_))
-
-      case _ => renderTechnicalDifficultiesPage
+  private def buildView(mrn: String, form: String => Form[String])(
+    block: HtmlFormat.Appendable => Result
+  )(implicit request: IdentifierRequest[_]): Future[Result] =
+    mrn.trim match {
+      case mrn if mrn.isEmpty =>
+        Future.successful(Redirect(routes.ViewAllArrivalsController.onPageLoad(None)))
+      case mrn =>
+        connector.getArrivalSearchResults(mrn, pageSize).flatMap {
+          case Some(allArrivals) =>
+            val movements: Seq[ViewArrival] = allArrivals.arrivals.map(ViewArrival(_))
+            Future.successful(
+              block(
+                view(
+                  form = form(mrn),
+                  mrn = mrn,
+                  dataRows = ViewArrivalMovements.apply(movements).dataRows,
+                  retrieved = allArrivals.retrievedArrivals,
+                  tooManyResults = allArrivals.tooManyResults
+                )
+              )
+            )
+          case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
+        }
     }
 }

@@ -17,35 +17,27 @@
 package controllers.departure
 
 import base.SpecBase
-import base.MockNunjucksRendererApp
-import config.FrontendAppConfig
 import generators.Generators
-import matchers.JsonMatchers
 import models.departure.NoReleaseForTransitMessage
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import services.DepartureMessageService
+import views.html.departure.NoReleaseForTransitView
 
 import scala.concurrent.Future
 
-class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
+class NoReleaseForTransitControllerSpec extends SpecBase with Generators {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
 
-  override def beforeEach: Unit = {
-    reset(
-      mockDepartureMessageService
-    )
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    reset(mockDepartureMessageService)
+    super.beforeEach()
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -61,52 +53,32 @@ class NoReleaseForTransitControllerSpec extends SpecBase with MockitoSugar with 
 
       val transitMessage = arbitrary[NoReleaseForTransitMessage].sample.value
 
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
         .thenReturn(Future.successful(Some(transitMessage)))
-
-      val request                                = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj("noReleaseForTransitMessage" -> Json.toJson(transitMessage))
-
-      templateCaptor.getValue mustEqual "noReleaseForTransit.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "render Technical difficulties page on failing to fetch noReleaseForTransitMessage" in {
-      val config = app.injector.instanceOf[FrontendAppConfig]
-      when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
-
-      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
-        .thenReturn(Future.successful(None))
-
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
 
       val result = route(app, request).value
 
-      status(result) mustBe INTERNAL_SERVER_ERROR
+      val view = injector.instanceOf[NoReleaseForTransitView]
 
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      status(result) mustEqual OK
 
-      val expectedJson = Json.obj {
-        "contactUrl" -> config.nctsEnquiriesUrl
-      }
+      contentAsString(result) mustEqual
+        view(transitMessage)(request, messages).toString
+    }
 
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+    "render Technical difficulties page on failing to fetch noReleaseForTransitMessage" in {
+
+      when(mockDepartureMessageService.noReleaseForTransitMessage(any())(any()))
+        .thenReturn(Future.successful(None))
+
+      val request = FakeRequest(GET, routes.NoReleaseForTransitController.onPageLoad(departureId).url)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

@@ -18,58 +18,77 @@ package controllers.arrival
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
-import controllers.TechnicalDifficultiesPage
 import controllers.actions._
-
-import javax.inject.Inject
-import models.Arrival
+import forms.SearchFormProvider
+import handlers.ErrorHandler
+import models.requests.IdentifierRequest
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.json._
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
+import views.html.arrival.ViewAllArrivalsView
 
 import java.time.Clock
-import scala.concurrent.ExecutionContext
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewAllArrivalsController @Inject() (
-  val renderer: Renderer,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
-  arrivalMovementConnector: ArrivalMovementConnector
+  arrivalMovementConnector: ArrivalMovementConnector,
+  formProvider: SearchFormProvider,
+  view: ViewAllArrivalsView,
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
-    with I18nSupport
-    with TechnicalDifficultiesPage {
+    with I18nSupport {
+
+  private val form = formProvider()
 
   def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      val currentPage = page.getOrElse(1)
+      buildView(page, form)(Ok(_))
+  }
 
-      arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
-        case Some(filteredArrivals) =>
-          val viewMovements: Seq[ViewArrival] = filteredArrivals.arrivals.map(
-            (arrival: Arrival) => ViewArrival(arrival)
+  def onSubmit(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => buildView(page, formWithErrors)(BadRequest(_)),
+          value => Future.successful(Redirect(routes.ViewArrivalsSearchResultsController.onPageLoad(value)))
+        )
+  }
+
+  private def buildView(page: Option[Int], form: Form[String])(
+    block: HtmlFormat.Appendable => Result
+  )(implicit request: IdentifierRequest[_]): Future[Result] = {
+    val currentPage = page.getOrElse(1)
+    arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
+      case Some(filteredArrivals) =>
+        val movements: Seq[ViewArrival] = filteredArrivals.arrivals.map(ViewArrival(_))
+
+        val paginationViewModel = PaginationViewModel(
+          totalNumberOfMovements = filteredArrivals.totalArrivals,
+          currentPage = currentPage,
+          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          href = routes.ViewAllArrivalsController.onPageLoad(None).url
+        )
+
+        Future.successful(
+          block(
+            view(
+              form = form,
+              viewModel = ViewAllArrivalMovementsViewModel(movements, paginationViewModel)
+            )
           )
-
-          val paginationViewModel = PaginationViewModel(
-            filteredArrivals.totalArrivals,
-            currentPage,
-            paginationAppConfig.arrivalsNumberOfMovements,
-            routes.ViewAllArrivalsController.onPageLoad(None).url
-          )
-
-          val formatToJson: JsObject = Json.toJsObject(ViewAllArrivalMovementsViewModel(viewMovements, paginationViewModel))
-
-          renderer
-            .render("viewAllArrivals.njk", formatToJson)
-            .map(Ok(_))
-
-        case _ => renderTechnicalDifficultiesPage
-      }
+        )
+      case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
+    }
   }
 }

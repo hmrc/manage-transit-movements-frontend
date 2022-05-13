@@ -1,4 +1,5 @@
 $mobile: 769px;
+
 table {
   paddin-left: -15px;
   font-family: "GDS Transport", arial, sans-serif;
@@ -29,6 +30,7 @@ td {
 .responsive-table {
   margin-bottom: 3em;
   width: 100%;
+
   thead {
     border: 0;
     clip: rect(0 0 0 0);
@@ -40,6 +42,7 @@ td {
     padding: 0;
     position: absolute;
     width: 1px;
+
     @media (min-width: $mobile) {
       clip: auto;
       -webkit-clip-path: none;
@@ -51,36 +54,45 @@ td {
       width: auto;
     }
   }
+
   tbody {
     tr {
       display: block;
       margin-bottom: 1.5em;
+
       &:last-child {
         margin-bottom: 0;
       }
+
       @media (max-width: $mobile) {
         background-color: #fff;
         box-shadow: 0 4px 0 0 #d8dde0;
         padding: 0 0.5em;
       }
+
       @media (min-width: $mobile) {
         display: table-row;
       }
+
       th {
         text-align: left;
       }
+
       td {
         display: block; // For browsers that don't support flexbox
         display: flex;
         justify-content: space-between;
         min-width: 1px;
         text-align: right;
+
         @media (min-width: $mobile) {
           display: table-cell;
           text-align: left;
         }
+
         @media (max-width: $mobile) {
           padding-right: 0;
+
           &:last-child {
             border-bottom: none;
           }
@@ -114,9 +126,11 @@ tbody tr td {
   tbody tr td {
     padding-right: 0;
   }
+
   tbody tr td:last-child {
     border-bottom: 0
   }
+
   tbody tr {
     border-bottom: 3px solid grey;
   }

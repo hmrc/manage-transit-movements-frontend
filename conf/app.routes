@@ -4,21 +4,21 @@ GET        /assets/*file                                                      co
 
 GET        /                                                                  controllers.RedirectController.onPageLoad()
 
+->         /hmrc-frontend                                                     hmrcfrontend.Routes
+
 GET        /index                                                             controllers.IndexController.onPageLoad()
 
 GET        /what-do-you-want-to-do                                            controllers.WhatDoYouWantToDoController.onPageLoad()
 
 GET        /this-service-has-been-reset                                       controllers.SessionExpiredController.onPageLoad()
+POST       /this-service-has-been-reset                                       controllers.SessionExpiredController.onSubmit()
+
+GET        /bad-request                                                       controllers.ErrorController.badRequest()
+GET        /not-found                                                         controllers.ErrorController.notFound()
+GET        /technical-difficulties                                            controllers.ErrorController.technicalDifficulties()
+GET        /internal-server-error                                             controllers.ErrorController.internalServerError()
 
 GET        /cannot-use-service-no-eori                                        controllers.UnauthorisedController.onPageLoad()
+GET        /unauthorised-group-access                                         controllers.UnauthorisedWithGroupAccessController.onPageLoad()
 
 GET        /keep-alive                                                        controllers.KeepAliveController.keepAlive()
-
-GET        /view-arrivals                                                     controllers.arrival.ViewAllArrivalsController.onPageLoad(page: Option[Int])
-
-GET        /view-arrivals-search-results                                      controllers.arrival.ViewArrivalsSearchResultsController.onPageLoad(mrn: String)
-
-GET        /arrivals/:arrivalId/unloading-permission-pdf                      controllers.arrival.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
-
-GET        /:arrivalId/negative-acknowledgement                               controllers.arrival.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId: ArrivalId)
-GET        /:arrivalId/unloading-remarks-negative-acknowledgement             controllers.arrival.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId: ArrivalId)

@@ -18,37 +18,33 @@ package controllers.arrival
 
 import akka.util.ByteString
 import base._
-import config.FrontendAppConfig
 import connectors.ArrivalMovementConnector
 import generators.Generators
-import matchers.JsonMatchers.containJson
 import models.ArrivalId
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.ahc.AhcWSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with MockNunjucksRendererApp {
+class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   private val wsResponse: AhcWSResponse                      = mock[AhcWSResponse]
   val mockArrivalMovementConnector: ArrivalMovementConnector = mock[ArrivalMovementConnector]
 
-  override def beforeEach: Unit = {
-    super.beforeEach
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(wsResponse)
     reset(mockArrivalMovementConnector)
   }
 
-  override def guiceApplicationBuilder() =
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
@@ -100,8 +96,6 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
       }
 
       "must render TechnicalDifficulties page if connector returns error" in {
-        val config = app.injector.instanceOf[FrontendAppConfig]
-        when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
 
         val genErrorResponseCode = Gen.oneOf(300, 500).sample.value
 
@@ -111,24 +105,15 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
         when(mockArrivalMovementConnector.getPDF(any(), any()))
           .thenReturn(Future.successful(wsResponse))
 
-        val arrivalId                              = ArrivalId(0)
-        val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
+        val arrivalId = ArrivalId(0)
 
         val request = FakeRequest(GET, routes.UnloadingPermissionPDFController.getPDF(arrivalId).url)
           .withSession(("authToken" -> "BearerToken"))
 
         val result = route(app, request).value
 
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val expectedJson = Json.obj {
-          "contactUrl" -> config.nctsEnquiriesUrl
-        }
-
-        templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-        jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
 
       }
     }

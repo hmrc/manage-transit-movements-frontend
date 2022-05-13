@@ -16,35 +16,31 @@
 
 package controllers.departure
 
-import base.{MockNunjucksRendererApp, SpecBase}
+import base.SpecBase
 import generators.Generators
-import matchers.JsonMatchers
 import models.LocalReferenceNumber
 import models.departure.ControlDecision
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import services.DepartureMessageService
+import views.html.departure.ControlDecisionView
 
 import scala.concurrent.Future
 
-class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with Generators with MockNunjucksRendererApp {
+class ControlDecisionControllerSpec extends SpecBase with Generators {
 
   private val mockDepartureMessageService = mock[DepartureMessageService]
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(
       mockDepartureMessageService
     )
-    super.beforeEach
+    super.beforeEach()
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -61,53 +57,29 @@ class ControlDecisionControllerSpec extends SpecBase with MockitoSugar with Json
       val controlDecision      = arbitrary[ControlDecision].sample.value
       val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
 
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       when(mockDepartureMessageService.controlDecisionMessage(any())(any()))
         .thenReturn(Future.successful(Some(controlDecision)))
 
       val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
+      val result  = route(app, request).value
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, request).value
+      val view = injector.instanceOf[ControlDecisionView]
 
       status(result) mustEqual OK
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj("controlDecisionMessage" -> controlDecision, "lrn" -> localReferenceNumber)
-
-      templateCaptor.getValue mustEqual "controlDecision.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(controlDecision, localReferenceNumber)(request, messages).toString
     }
 
     "return InternalServerError and the TechnicalDifficulties page for a failed GET " in {
       val localReferenceNumber = arbitrary[LocalReferenceNumber].sample.value
 
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       when(mockDepartureMessageService.controlDecisionMessage(any())(any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest(GET, routes.ControlDecisionController.onPageLoad(departureId, localReferenceNumber).url)
+      val result  = route(app, request).value
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, request).value
-
-      status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
-
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

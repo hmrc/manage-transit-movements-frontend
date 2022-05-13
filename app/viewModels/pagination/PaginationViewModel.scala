@@ -16,9 +16,6 @@
 
 package viewModels.pagination
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, OWrites}
-
 case class PaginationViewModel(
   results: MetaData,
   previous: Option[Previous],
@@ -48,13 +45,4 @@ object PaginationViewModel {
 
     PaginationViewModel(results, previous, next, items)
   }
-
-  implicit val writes: OWrites[PaginationViewModel] = (
-    (__ \ "results").write[MetaData] and
-      (__ \ "previous").writeNullable[Previous] and
-      (__ \ "next").writeNullable[Next] and
-      __.write[Items]
-  )(
-    o => (o.results, o.previous, o.next, o.items)
-  )
 }

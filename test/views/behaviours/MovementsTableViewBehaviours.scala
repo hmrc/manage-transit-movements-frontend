@@ -16,113 +16,121 @@
 
 package views.behaviours
 
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import play.api.libs.json._
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.ViewMovement
 
-import java.time.format.DateTimeFormatter
 import scala.collection.convert.ImplicitConversions._
 
-abstract class MovementsTableViewBehaviours(override protected val viewUnderTest: String) extends ViewBehaviours(viewUnderTest) {
+// scalastyle:off method.length
+// scalastyle:off magic.number
+trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours with ScalaCheckPropertyChecks {
 
-  val dateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+  val viewMovements: Seq[T]
 
-  // scalastyle:off method.length
-  // scalastyle:off magic.number
-  def pageWithMovementsData[T <: ViewMovement](doc: Document, viewMovements: Seq[T], messageKeyPrefix: String, refType: String)(implicit
-    wts: Writes[T]
-  ): Unit = {
+  val referenceNumberType: String
 
-    "generate a heading for each unique day" in {
-      val ls: Elements = doc.getElementsByAttributeValue("data-testrole", "movements-list_group-heading")
-      ls.size() mustEqual 6
-      ls.eq(0).text() mustBe "16 August 2020"
-      ls.eq(1).text() mustBe "15 August 2020"
-      ls.eq(2).text() mustBe "14 August 2020"
-      ls.eq(3).text() mustBe "13 August 2020"
-      ls.eq(4).text() mustBe "12 August 2020"
-      ls.eq(5).text() mustBe "11 August 2020"
-    }
+  val movementsPerPage: Int
 
-    val rows: Elements = doc.select("tr[data-testrole^=movements-list_row]")
+  def pageWithMovementsData(): Unit =
+    "page with a movements data table" - {
 
-    "generate a row for each movement" in {
-      rows.size() mustEqual 7
-    }
+      "must generate a heading for each unique day" in {
+        val elements: Elements = doc.getElementsByAttributeValue("data-testrole", "movements-list_group-heading")
 
-    "generate correct data in each row" - {
-      rows.toList.zipWithIndex.forEach {
-        case (row, rowIndex) =>
-          s"row ${rowIndex + 1}" - {
+        // regex for date formatted as dd MMMM yyyy
+        val dateRegex = "^(([0-9])|([0-2][0-9])|([3][0-1])) (January|February|March|April|May|June|July|August|September|October|November|December) \\d{4}$"
 
-            def elementWithVisibleText(element: Element, text: String): Unit =
-              element.ownText() mustBe text.trim
+        elements.forEach {
+          element =>
+            element.text().matches(dateRegex) mustBe true
+        }
+      }
 
-            def elementWithHiddenText(element: Element, text: String): Unit = {
-              val heading = element.getElementsByClass("responsive-table__heading").head
-              heading.attr("aria-hidden").toBoolean mustBe true
-              heading.text() mustBe text
-            }
+      val rows: Elements = doc.select("tr[data-testrole^=movements-list_row]")
 
-            "display correct time" in {
-              val updated = row.selectFirst("td[data-testrole*=-updated]")
-              val time    = Json.toJson(viewMovements(rowIndex)).transform((JsPath \ "updated").json.pick[JsString]).get.value
+      "must generate a row for each movement" in {
+        rows.size() mustEqual viewMovements.size
+      }
 
-              behave like elementWithVisibleText(updated, time)
-              behave like elementWithHiddenText(updated, s"$messageKeyPrefix.table.updated")
-            }
+      "must generate correct data in each row" - {
+        rows.toList.zipWithIndex.forEach {
+          case (row, rowIndex) =>
+            val viewMovement = viewMovements(rowIndex)
 
-            "display correct reference number" in {
-              val ref = row.selectFirst("td[data-testrole*=-ref]")
+            s"when row ${rowIndex + 1}" - {
 
-              behave like elementWithVisibleText(ref, viewMovements(rowIndex).referenceNumber)
-              behave like elementWithHiddenText(ref, s"$messageKeyPrefix.table.$refType")
-            }
+              def elementWithVisibleText(element: Element, text: String): Unit =
+                element.ownText() mustBe text
 
-            "display correct status" in {
-              val status = row.selectFirst("td[data-testrole*=-status]")
-
-              behave like elementWithVisibleText(status, viewMovements(rowIndex).status)
-              behave like elementWithHiddenText(status, s"$messageKeyPrefix.table.status")
-            }
-
-            "display actions" - {
-              val actions = row.selectFirst("td[data-testrole*=-actions]")
-
-              "include hidden content" in {
-                behave like elementWithHiddenText(actions, s"$messageKeyPrefix.table.action")
+              def elementWithHiddenText(element: Element, text: String): Unit = {
+                val heading = element.getElementsByClass("responsive-table__heading").head
+                heading.attr("aria-hidden").toBoolean mustBe true
+                heading.text() mustBe text
               }
 
-              val actionLinks = actions.getElementsByClass("action-link")
-              actionLinks.zipWithIndex.forEach {
-                case (link, linkIndex) =>
-                  s"action ${linkIndex + 1}" - {
+              "must display time" in {
+                val updated   = row.selectFirst("td[data-testrole*=-updated]")
+                val timeRegex = "^(([1-9])|([1][0-2])):(([0][0-9])|([1-5][0-9]))(am|pm)$"
+                updated.ownText().matches(timeRegex) mustBe true
+                behave like elementWithHiddenText(updated, messages(s"$prefix.table.updated"))
+              }
 
-                    "display correct text" in {
-                      link.text() mustBe s"${viewMovements(rowIndex).actions(linkIndex).key} viewArrivalNotifications.table.action.hidden"
+              "must display correct reference number" in {
+                val ref = row.selectFirst("td[data-testrole*=-ref]")
 
-                      behave like elementWithVisibleText(link, s"${viewMovements(rowIndex).actions(linkIndex).key}")
+                behave like elementWithVisibleText(ref, viewMovement.referenceNumber)
+                behave like elementWithHiddenText(ref, messages(s"$prefix.table.$referenceNumberType"))
+              }
 
-                      val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
-                      hiddenText.text() mustBe "viewArrivalNotifications.table.action.hidden"
+              "must display correct status" in {
+                val status = row.selectFirst("td[data-testrole*=-status]")
+
+                behave like elementWithVisibleText(status, viewMovement.status)
+                behave like elementWithHiddenText(status, messages(s"$prefix.table.status"))
+              }
+
+              "must display actions" - {
+                val actions = row.selectFirst("td[data-testrole*=-actions]")
+
+                "must include hidden content" in {
+                  behave like elementWithHiddenText(actions, messages(s"$prefix.table.action"))
+                }
+
+                val actionLinks = actions.getElementsByClass("govuk-link")
+                actionLinks.zipWithIndex.forEach {
+                  case (link, linkIndex) =>
+                    val action = viewMovement.actions(linkIndex)
+
+                    s"when action ${linkIndex + 1}" - {
+
+                      "must display correct text" in {
+                        link.text() mustBe s"${action.key} for ${viewMovement.referenceNumber}"
+
+                        behave like elementWithVisibleText(link, s"${action.key}")
+
+                        val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
+                        hiddenText.text() mustBe s"for ${viewMovement.referenceNumber}"
+                      }
+
+                      "must have correct id" in {
+                        link.attr("id") mustBe s"${action.key}-${viewMovement.referenceNumber}"
+                      }
+
+                      "must have correct href" in {
+                        link.attr("href") mustBe action.href
+                      }
                     }
-
-                    "have correct id" in {
-                      link.attr("id") mustBe s"${viewMovements(rowIndex).actions(linkIndex).key}-${viewMovements(rowIndex).referenceNumber}"
-                    }
-
-                    "have correct href" in {
-                      link.attr("href") mustBe viewMovements(rowIndex).actions(linkIndex).href
-                    }
-                  }
+                }
               }
             }
-          }
+        }
       }
     }
-  }
-  // scalastyle:on method.length
-  // scalastyle:on magic.number
+
+  protected def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").map(_.text())
 
 }
+// scalastyle:on method.length
+// scalastyle:on magic.number

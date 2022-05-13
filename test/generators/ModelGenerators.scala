@@ -19,7 +19,7 @@ package generators
 import models.ErrorType.GenericError
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.departure._
-import models.{Arrival, ArrivalId, Departure, DepartureId, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
+import models.{Arrival, ArrivalId, Arrivals, Availability, Departure, DepartureId, Departures, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
@@ -27,6 +27,7 @@ import viewModels._
 
 import java.time._
 
+// scalastyle:off magic.number
 trait ModelGenerators {
   self: Generators =>
 
@@ -40,7 +41,7 @@ trait ModelGenerators {
       } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)
     }
 
-  implicit val arbitrarylocalDate: Arbitrary[LocalDate] =
+  implicit val arbitraryLocalDate: Arbitrary[LocalDate] =
     Arbitrary {
       for {
         day <- Gen.choose(1, 28)
@@ -125,20 +126,20 @@ trait ModelGenerators {
   implicit val arbitraryViewMovementAction: Arbitrary[ViewMovementAction] =
     Arbitrary {
       for {
-        href <- arbitrary[String]
-        key  <- arbitrary[String]
+        href <- Gen.alphaNumStr
+        key  <- nonEmptyString
       } yield ViewMovementAction(href, key)
     }
 
-  implicit val arbitraryViewMovement: Arbitrary[ViewArrival] =
+  implicit val arbitraryViewArrival: Arbitrary[ViewArrival] =
     Arbitrary {
       for {
         date    <- arbitrary[LocalDate]
         time    <- arbitrary[LocalTime]
-        status  <- arbitrary[String]
         mrn     <- stringsWithMaxLength(17)
+        status  <- Gen.alphaNumStr
         actions <- listOfN(4, arbitrary[ViewMovementAction])
-      } yield ViewArrival(date, time, status, mrn, actions)
+      } yield ViewArrival(date, time, mrn, status, actions)
     }
 
   implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =
@@ -147,7 +148,7 @@ trait ModelGenerators {
         updatedDate          <- arbitrary[LocalDate]
         updatedTime          <- arbitrary[LocalTime]
         localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        status               <- arbitrary[String]
+        status               <- Gen.alphaNumStr
         actions              <- listOfN(4, arbitrary[ViewMovementAction])
       } yield new ViewDeparture(updatedDate, updatedTime, localReferenceNumber, status, actions)
     }
@@ -189,14 +190,14 @@ trait ModelGenerators {
       } yield ResultsOfControl(indicator, description)
     }
 
-  implicit val arbitraryNoReleaseForTransitMessage: Arbitrary[NoReleaseForTransitMessage] = Arbitrary {
+  implicit lazy val arbitraryNoReleaseForTransitMessage: Arbitrary[NoReleaseForTransitMessage] = Arbitrary {
     for {
       mrn                        <- nonEmptyString
       noReleaseMotivation        <- Gen.option(nonEmptyString)
       totalNumberOfItems         <- arbitrary[Int]
       officeOfDepartureRefNumber <- Gen.alphaNumStr
       controlResult              <- arbitrary[ControlResult]
-      resultsOfControl           <- Gen.option(listWithMaxLength(ResultsOfControl.maxResultsOfControl, arbitrary[ResultsOfControl]))
+      resultsOfControl           <- Gen.option(arbitrary[Seq[ResultsOfControl]])
     } yield new NoReleaseForTransitMessage(
       mrn = mrn,
       noReleaseMotivation = noReleaseMotivation,
@@ -205,6 +206,10 @@ trait ModelGenerators {
       controlResult = controlResult,
       resultsOfControl = resultsOfControl
     )
+  }
+
+  implicit lazy val arbitraryResultsOfControlList: Arbitrary[Seq[ResultsOfControl]] = Arbitrary {
+    listWithMaxLength[ResultsOfControl](ResultsOfControl.maxResultsOfControl)
   }
 
   implicit lazy val genericErrorType: Arbitrary[GenericError] =
@@ -222,22 +227,46 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryRejectionError: Arbitrary[FunctionalError] =
     Arbitrary {
-
       for {
         errorType     <- arbitrary[ErrorType]
-        pointer       <- arbitrary[String]
-        reason        <- arbitrary[Option[String]]
-        originalValue <- arbitrary[Option[String]]
+        pointer       <- Gen.alphaNumStr
+        reason        <- Gen.option(Gen.alphaNumStr)
+        originalValue <- Gen.option(Gen.alphaNumStr)
       } yield FunctionalError(errorType, ErrorPointer(pointer), reason, originalValue)
     }
 
   implicit lazy val arbitraryXMLSubmissionNegativeAcknowledgementMessage: Arbitrary[XMLSubmissionNegativeAcknowledgementMessage] =
     Arbitrary {
-
       for {
         mrn   <- Gen.option(nonEmptyString)
         lrn   <- Gen.option(nonEmptyString)
         error <- arbitrary[FunctionalError]
       } yield XMLSubmissionNegativeAcknowledgementMessage(mrn, lrn, error)
     }
+
+  implicit lazy val arbitraryAvailability: Arbitrary[Availability] =
+    Arbitrary {
+      Gen.oneOf(Availability.NonEmpty, Availability.Empty, Availability.Unavailable)
+    }
+
+  implicit lazy val arbitraryArrivals: Arbitrary[Arrivals] =
+    Arbitrary {
+      for {
+        retrievedArrivals <- arbitrary[Int]
+        totalArrivals     <- arbitrary[Int]
+        totalMatched      <- arbitrary[Option[Int]]
+        arrivals          <- listWithMaxLength[Arrival]()
+      } yield Arrivals(retrievedArrivals, totalArrivals, totalMatched, arrivals)
+    }
+
+  implicit lazy val arbitraryDepartures: Arbitrary[Departures] =
+    Arbitrary {
+      for {
+        retrievedDepartures <- arbitrary[Int]
+        totalDepartures     <- arbitrary[Int]
+        totalMatched        <- arbitrary[Option[Int]]
+        departures          <- listWithMaxLength[Departure]()
+      } yield Departures(retrievedDepartures, totalDepartures, totalMatched, departures)
+    }
 }
+// scalastyle:on magic.number

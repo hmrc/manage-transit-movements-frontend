@@ -16,23 +16,13 @@
 
 package controllers
 
-import base.{MockNunjucksRendererApp, SpecBase}
-import matchers.JsonMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 
-import scala.concurrent.Future
-
-class RedirectControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
+class RedirectControllerSpec extends SpecBase {
 
   "return OK and the correct view for a GET" in {
-
-    when(mockNunjucksRenderer.render(any(), any())(any()))
-      .thenReturn(Future.successful(Html("")))
 
     val request = FakeRequest(GET, routes.RedirectController.onPageLoad().url)
 

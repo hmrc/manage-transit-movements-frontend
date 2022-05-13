@@ -16,8 +16,6 @@
 
 package viewModels.pagination
 
-import play.api.libs.json.{Json, OFormat}
-
 case class MetaData(from: Int, to: Int, count: Int, currentPage: Int, totalPages: Int)
 
 object MetaData {
@@ -48,6 +46,4 @@ object MetaData {
 
     MetaData(from, to, totalNumberOfMovements, currentPage, totalNumberOfPages)
   }
-
-  implicit val format: OFormat[MetaData] = Json.format[MetaData]
 }

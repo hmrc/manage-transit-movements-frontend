@@ -16,48 +16,41 @@
 
 package controllers.departure
 
-import base.{MockNunjucksRendererApp, SpecBase}
+import base.SpecBase
 import connectors.DeparturesMovementConnector
-import matchers.JsonMatchers
+import forms.SearchFormProvider
+import generators.Generators
 import models.departure.DepartureStatus.DepartureSubmitted
-import models.{Departure, DepartureId, Departures, LocalReferenceNumber}
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, anyInt, eq => eqTo}
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import models.{Departure, DepartureId, Departures, LocalReferenceNumber, RichLocalDateTime}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import viewModels.pagination.PaginationViewModel
+import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
+import views.html.departure.ViewAllDeparturesView
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with JsonMatchers with MockNunjucksRendererApp {
+class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val mockDepartureResponse: Departures =
-    Departures(
-      1,
-      2,
-      Some(3),
-      Seq(
-        Departure(
-          DepartureId(1),
-          LocalDateTime.now(),
-          LocalReferenceNumber("lrn"),
-          DepartureSubmitted
-        )
-      )
-    )
+  private val mockDeparturesMovementConnector = mock[DeparturesMovementConnector]
 
-  override def beforeEach: Unit = {
-    super.beforeEach
+  private val time: LocalDateTime              = LocalDateTime.now()
+  private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
+
+  private val formProvider = new SearchFormProvider()
+  private val form         = formProvider()
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockDeparturesMovementConnector)
   }
-
-  val mockDeparturesMovementConnector = mock[DeparturesMovementConnector]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -66,55 +59,110 @@ class ViewAllDeparturesControllerSpec extends SpecBase with MockitoSugar with Js
         bind[DeparturesMovementConnector].toInstance(mockDeparturesMovementConnector)
       )
 
+  private val mockDepartureResponse: Departures = Departures(
+    retrievedDepartures = 1,
+    totalDepartures = 2,
+    totalMatched = Some(3),
+    departures = Seq(
+      Departure(
+        departureId = DepartureId(1),
+        updated = LocalDateTime.now(),
+        localReferenceNumber = lrn,
+        status = DepartureSubmitted
+      )
+    )
+  )
+
+  private val mockViewMovement = ViewDeparture(
+    updatedDate = systemDefaultTime.toLocalDate,
+    updatedTime = systemDefaultTime.toLocalTime,
+    localReferenceNumber = lrn,
+    status = "departure.status.submitted",
+    actions = Nil
+  )
+
   "ViewAllDepartures Controller" - {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" - {
 
-      when(mockDeparturesMovementConnector.getPagedDepartures(eqTo(1), anyInt())(any()))
-        .thenReturn(Future.successful(Some(mockDepartureResponse)))
+      "when page provided" in {
 
-      when(mockNunjucksRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+        when(mockDeparturesMovementConnector.getPagedDepartures(any(), any())(any()))
+          .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-      val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(Some(1)).url)
+        val currentPage = 1
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
+        val request = FakeRequest(GET, routes.ViewAllDeparturesController.onPageLoad(Some(currentPage)).url)
 
-      val result = route(app, request).value
+        val result = route(app, request).value
 
-      status(result) mustEqual OK
+        val view = injector.instanceOf[ViewAllDeparturesView]
 
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        status(result) mustEqual OK
 
-      val expectedJson = Json.obj()
+        val expectedPaginationViewModel = PaginationViewModel(
+          totalNumberOfMovements = mockDepartureResponse.totalDepartures,
+          currentPage = currentPage,
+          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          href = routes.ViewAllDeparturesController.onPageLoad(None).url
+        )
+        val expectedViewModel = ViewAllDepartureMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
-      templateCaptor.getValue mustEqual "viewAllDepartures.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        contentAsString(result) mustEqual
+          view(form, expectedViewModel)(request, messages).toString
+      }
+
+      "when page not provided must default to 1" in {
+
+        when(mockDeparturesMovementConnector.getPagedDepartures(any(), any())(any()))
+          .thenReturn(Future.successful(Some(mockDepartureResponse)))
+
+        val request = FakeRequest(GET, routes.ViewAllDeparturesController.onPageLoad(None).url)
+
+        val result = route(app, request).value
+
+        val view = injector.instanceOf[ViewAllDeparturesView]
+
+        status(result) mustEqual OK
+
+        val expectedPaginationViewModel = PaginationViewModel(
+          totalNumberOfMovements = mockDepartureResponse.totalDepartures,
+          currentPage = 1,
+          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          href = routes.ViewAllDeparturesController.onPageLoad(None).url
+        )
+        val expectedViewModel = ViewAllDepartureMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
+
+        contentAsString(result) mustEqual
+          view(form, expectedViewModel)(request, messages).toString
+      }
     }
 
-    "render Technical difficulties page on failing to fetch departures" in {
+    "must redirect to view departures search results when valid data is submitted" in {
 
-      when(mockNunjucksRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      forAll(arbitrary[LocalReferenceNumber]) {
+        case LocalReferenceNumber(lrn) =>
+          val request = FakeRequest(POST, routes.ViewAllDeparturesController.onSubmit(None).url)
+            .withFormUrlEncodedBody(("value", lrn))
 
-      when(mockDeparturesMovementConnector.getPagedDepartures(eqTo(1), anyInt())(any()))
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ViewDeparturesSearchResultsController.onPageLoad(lrn).url
+      }
+    }
+
+    "render technical difficulties page on failing to fetch departures" in {
+
+      when(mockDeparturesMovementConnector.getPagedDepartures(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor: ArgumentCaptor[JsObject]   = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(Some(1)).url)
+      val request = FakeRequest(GET, routes.ViewAllDeparturesController.onPageLoad(None).url)
 
       val result = route(app, request).value
 
-      status(result) mustBe INTERNAL_SERVER_ERROR
-
-      verify(mockNunjucksRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj()
-
-      templateCaptor.getValue mustEqual "technicalDifficulties.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

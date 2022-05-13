@@ -18,16 +18,16 @@ package controllers.arrival
 
 import config.FrontendAppConfig
 import controllers.actions._
+import handlers.ErrorHandler
 import models.ArrivalId
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import services.ArrivalMessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.arrival.UnloadingRemarksXmlNegativeAcknowledgementView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class UnloadingRemarksXmlNegativeAcknowledgementController @Inject() (
   override val messagesApi: MessagesApi,
@@ -35,7 +35,8 @@ class UnloadingRemarksXmlNegativeAcknowledgementController @Inject() (
   cc: MessagesControllerComponents,
   val frontendAppConfig: FrontendAppConfig,
   arrivalMessageService: ArrivalMessageService,
-  renderer: Renderer
+  view: UnloadingRemarksXmlNegativeAcknowledgementView,
+  errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -44,16 +45,9 @@ class UnloadingRemarksXmlNegativeAcknowledgementController @Inject() (
     implicit request =>
       arrivalMessageService.getXMLSubmissionNegativeAcknowledgementMessage(arrivalId).flatMap {
         case Some(rejectionMessage) =>
-          val json = Json.obj(
-            "contactUrl"                 -> frontendAppConfig.nctsEnquiriesUrl,
-            "declareUnloadingRemarksUrl" -> frontendAppConfig.declareUnloadingRemarksUrl(arrivalId),
-            "functionalError"            -> rejectionMessage.error
-          )
-
-          renderer.render("unloadingRemarksXmlNegativeAcknowledgement.njk", json).map(Ok(_))
+          Future.successful(Ok(view(arrivalId, rejectionMessage.error)))
         case _ =>
-          val json = Json.obj("nctsEnquiries" -> frontendAppConfig.nctsEnquiriesUrl)
-          renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
+          errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
       }
   }
 }

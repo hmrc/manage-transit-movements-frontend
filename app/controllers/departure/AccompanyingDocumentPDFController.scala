@@ -16,24 +16,26 @@
 
 package controllers.departure
 
-import config.FrontendAppConfig
 import connectors.DeparturesMovementConnector
 import controllers.actions.IdentifierAction
+import handlers.ErrorHandler
+
+import javax.inject.Inject
 import models.DepartureId
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccompanyingDocumentPDFController @Inject() (identify: IdentifierAction,
-                                                   cc: MessagesControllerComponents,
-                                                   departuresMovementConnector: DeparturesMovementConnector
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, renderer: Renderer)
+class AccompanyingDocumentPDFController @Inject() (
+  identify: IdentifierAction,
+  cc: MessagesControllerComponents,
+  departuresMovementConnector: DeparturesMovementConnector,
+  errorHandler: ErrorHandler
+)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with Logging {
@@ -44,28 +46,24 @@ class AccompanyingDocumentPDFController @Inject() (identify: IdentifierAction,
         result =>
           result.status match {
             case OK =>
-              val contentDisposition = result.headers
-                .get(CONTENT_DISPOSITION)
-                .map(
-                  value => Seq((CONTENT_DISPOSITION, value.head))
-                )
-                .getOrElse(Seq.empty)
-              val contentType = result.headers
-                .get(CONTENT_TYPE)
-                .map(
-                  value => Seq((CONTENT_TYPE, value.head))
-                )
-                .getOrElse(Seq.empty)
-              val headers = contentDisposition ++ contentType
-
-              Future.successful(
-                Ok(result.bodyAsBytes.toArray).withHeaders(headers: _*)
-              )
+              Future.successful(Ok(result.bodyAsBytes.toArray).withHeaders(headers(result): _*))
             case _ =>
               logger.error(s"[PDF][AD] Received downstream status code of ${result.status}")
-              val json = Json.obj("nctsEnquiries" -> appConfig.nctsEnquiriesUrl)
-              renderer.render("technicalDifficulties.njk", json).map(InternalServerError(_))
+              errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
           }
       }
+  }
+
+  private def headers(result: WSResponse): Seq[(String, String)] = {
+    def header(key: String): Seq[(String, String)] =
+      result.headers
+        .get(key)
+        .flatMap {
+          _.headOption.map((key, _))
+        }
+        .toSeq
+
+    header(CONTENT_DISPOSITION) ++
+      header(CONTENT_TYPE)
   }
 }
