@@ -16,27 +16,32 @@
 
 package views.behaviours
 
+import forms.SearchFormProvider
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.{Arbitrary, Gen}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.ViewMovement
 
-trait SearchViewBehaviours[T <: ViewMovement] {
+trait SearchViewBehaviours[T <: ViewMovement] extends InputTextViewBehaviours[String] {
   self: MovementsTableViewBehaviours[T] =>
 
+  override def form: Form[String] = new SearchFormProvider()()
+
   val dataRows: Seq[(String, Seq[T])]
+
+  implicit override val arbitraryT: Arbitrary[String] = Arbitrary(Gen.alphaNumStr)
 
   def viewWithSpecificSearchResults(dataRows: Seq[(String, Seq[T])], retrieved: Int, tooManyResults: Boolean): HtmlFormat.Appendable =
     view
 
+  "must contain movement-search div" in {
+    assert(doc.getElementsByClass("movement-search").size() == 1)
+  }
+
   def pageWithMovementSearch(expectedLabelText: String): Unit =
     "page with a movements search box" - {
-      s"must display a search box for $referenceNumberType" in {
-        assertRenderedById(doc, referenceNumberType)
-      }
-
-      "must contain a label for the search" in {
-        assertContainsLabel(doc, referenceNumberType, expectedLabelText)
-      }
+      behave like pageWithInputText()
 
       behave like pageWithSubmitButton("Search")
     }

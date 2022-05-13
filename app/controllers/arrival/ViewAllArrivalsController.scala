@@ -19,9 +19,13 @@ package controllers.arrival
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.actions._
+import forms.SearchFormProvider
 import handlers.ErrorHandler
+import models.requests.IdentifierRequest
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.pagination.PaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
@@ -37,30 +41,54 @@ class ViewAllArrivalsController @Inject() (
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
   arrivalMovementConnector: ArrivalMovementConnector,
+  formProvider: SearchFormProvider,
   view: ViewAllArrivalsView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 
+  private val form = formProvider()
+
   def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      val currentPage = page.getOrElse(1)
+      buildView(page, form)(Ok(_))
+  }
 
-      arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
-        case Some(filteredArrivals) =>
-          val movements: Seq[ViewArrival] = filteredArrivals.arrivals.map(ViewArrival(_))
+  def onSubmit(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => buildView(page, formWithErrors)(BadRequest(_)),
+          value => Future.successful(Redirect(routes.ViewArrivalsSearchResultsController.onPageLoad(value)))
+        )
+  }
 
-          val paginationViewModel = PaginationViewModel(
-            totalNumberOfMovements = filteredArrivals.totalArrivals,
-            currentPage = currentPage,
-            numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
-            href = routes.ViewAllArrivalsController.onPageLoad(None).url
+  private def buildView(page: Option[Int], form: Form[String])(
+    block: HtmlFormat.Appendable => Result
+  )(implicit request: IdentifierRequest[_]): Future[Result] = {
+    val currentPage = page.getOrElse(1)
+    arrivalMovementConnector.getPagedArrivals(currentPage, paginationAppConfig.arrivalsNumberOfMovements).flatMap {
+      case Some(filteredArrivals) =>
+        val movements: Seq[ViewArrival] = filteredArrivals.arrivals.map(ViewArrival(_))
+
+        val paginationViewModel = PaginationViewModel(
+          totalNumberOfMovements = filteredArrivals.totalArrivals,
+          currentPage = currentPage,
+          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          href = routes.ViewAllArrivalsController.onPageLoad(None).url
+        )
+
+        Future.successful(
+          block(
+            view(
+              form = form,
+              viewModel = ViewAllArrivalMovementsViewModel(movements, paginationViewModel)
+            )
           )
-
-          Future.successful(Ok(view(ViewAllArrivalMovementsViewModel(movements, paginationViewModel))))
-
-        case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
-      }
+        )
+      case _ => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
+    }
   }
 }

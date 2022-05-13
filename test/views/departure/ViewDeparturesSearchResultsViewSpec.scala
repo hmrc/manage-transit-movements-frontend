@@ -19,6 +19,7 @@ package views.departure
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 import views.behaviours.{MovementsTableViewBehaviours, SearchViewBehaviours}
@@ -46,12 +47,23 @@ class ViewDeparturesSearchResultsViewSpec
 
   private val tooManyResults: Boolean = arbitrary[Boolean].sample.value
 
-  override def view: HtmlFormat.Appendable = viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults)
+  override def viewWithSpecificSearchResults(
+    dataRows: Seq[(String, Seq[ViewDeparture])],
+    retrieved: Int,
+    tooManyResults: Boolean
+  ): HtmlFormat.Appendable = applyView(form, dataRows, retrieved, tooManyResults)
 
-  override def viewWithSpecificSearchResults(dataRows: Seq[(String, Seq[ViewDeparture])], retrieved: Int, tooManyResults: Boolean): HtmlFormat.Appendable =
+  override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, dataRows, retrieved, tooManyResults)
+
+  private def applyView(
+    form: Form[String],
+    dataRows: Seq[(String, Seq[ViewDeparture])],
+    retrieved: Int,
+    tooManyResults: Boolean
+  ): HtmlFormat.Appendable =
     injector
       .instanceOf[ViewDeparturesSearchResultsView]
-      .apply(lrn.toString, dataRows, retrieved, tooManyResults)(fakeRequest, messages)
+      .apply(form, lrn.toString, dataRows, retrieved, tooManyResults)(fakeRequest, messages)
 
   behave like pageWithFullWidth()
 

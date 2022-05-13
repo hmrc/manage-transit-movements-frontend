@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms.mappings
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-import play.api.data.validation.{Constraint, Invalid, Valid}
+@this(
+    govUkErrorSummary: GovukErrorSummary
+)
 
-trait Constraints {
+@(errors: Seq[FormError])(implicit messages: Messages)
 
-  protected def regexp(regex: String, errorKey: String): Constraint[String] =
-    Constraint {
-      case str if str.matches(regex) =>
-        Valid
-      case _ =>
-        Invalid(errorKey, regex)
-    }
+@if(errors.nonEmpty) {
+    @govUkErrorSummary(
+        ErrorSummary(
+            errorList = errors
+                .map(err => err.copy(key = err.key, args = err.args))
+                .asTextErrorLinks,
+            title = Text(messages("error.summary.title"))
+        )
+    )
 }

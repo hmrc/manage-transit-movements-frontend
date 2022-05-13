@@ -16,34 +16,31 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.components.Button
+@import views.utils.ViewUtils._
 
 @this(
     button: Button,
-    govukInput: GovukInput
+    govukInput: GovukInput,
+    formHelper: FormWithCSRF,
+    errorSummary: ErrorSummary
 )
 
 @(
-    action: String,
-    label: String,
-    field: String,
-    value: Option[String]
-)(implicit messages: Messages)
+    form: Form[_],
+    action: Call,
+    label: String
+)(implicit request: Request[_], messages: Messages)
 
-<form action=@action method="GET" class="movement-search">
-    @govukInput(
-        Input(
-            id = field,
-            name = field,
-            value = value,
-            label = Label(
-                content = messages(label).toText
-            ),
-            formGroupClasses = "govuk-!-width-one-half"
+@formHelper(action = action, 'autoComplete -> "off") {
+
+    @errorSummary(form.errors)
+
+    <div class="movement-search">
+        @govukInput(searchInput(form, label))
+
+        @button(
+            messageKey = "site.search",
+            attributes = Map("id" -> "submit")
         )
-    )
-
-    @button(
-        messageKey = "site.search",
-        attributes = Map("id" -> "submit")
-    )
-</form>
+    </div>
+}

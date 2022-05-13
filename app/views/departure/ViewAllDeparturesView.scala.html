@@ -30,6 +30,7 @@
 )
 
 @(
+    form: Form[_],
     viewModel: ViewAllDepartureMovementsViewModel
 )(implicit request: Request[_], messages: Messages)
 
@@ -48,10 +49,9 @@
     </p>
 
     @search(
-        action = ViewDeparturesSearchResultsController.onPageLoad("").url,
-        label = "movement.search.departure.title",
-        field = "lrn",
-        value = None
+        form = form,
+        action = ViewAllDeparturesController.onSubmit(Some(viewModel.paginationViewModel.results.currentPage)),
+        label = "movement.search.departure.title"
     )
 
     @pagination(viewModel.paginationViewModel)

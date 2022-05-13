@@ -30,6 +30,7 @@
 )
 
 @(
+    form: Form[_],
     viewModel: ViewAllArrivalMovementsViewModel
 )(implicit request: Request[_], messages: Messages)
 
@@ -48,10 +49,9 @@
     </p>
 
     @search(
-        action = ViewArrivalsSearchResultsController.onPageLoad("").url,
-        label = "movement.search.title",
-        field = "mrn",
-        value = None
+        form = form,
+        action = ViewAllArrivalsController.onSubmit(Some(viewModel.paginationViewModel.results.currentPage)),
+        label = "movement.search.title"
     )
 
     @pagination(viewModel.paginationViewModel)

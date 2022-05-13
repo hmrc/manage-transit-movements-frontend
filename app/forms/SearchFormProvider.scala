@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package forms
 
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.Form
+import play.api.data.Forms.text
 
-trait Constraints {
+class SearchFormProvider {
 
-  protected def regexp(regex: String, errorKey: String): Constraint[String] =
-    Constraint {
-      case str if str.matches(regex) =>
-        Valid
-      case _ =>
-        Invalid(errorKey, regex)
-    }
+  def apply(): Form[String] =
+    Form(
+      "value" -> text()
+    )
 }

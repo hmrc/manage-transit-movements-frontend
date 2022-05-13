@@ -18,10 +18,14 @@ package controllers.departure
 
 import base.SpecBase
 import connectors.DeparturesMovementConnector
+import forms.SearchFormProvider
+import generators.Generators
 import models.departure.DepartureStatus.DepartureSubmitted
-import models.{Departure, DepartureId, Departures, RichLocalDateTime}
+import models.{Departure, DepartureId, Departures, LocalReferenceNumber, RichLocalDateTime}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -33,12 +37,15 @@ import views.html.departure.ViewAllDeparturesView
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ViewAllDeparturesControllerSpec extends SpecBase {
+class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private val mockDeparturesMovementConnector = mock[DeparturesMovementConnector]
 
   private val time: LocalDateTime              = LocalDateTime.now()
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
+
+  private val formProvider = new SearchFormProvider()
+  private val form         = formProvider()
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -85,7 +92,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase {
 
         val currentPage = 1
 
-        val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(Some(currentPage)).url)
+        val request = FakeRequest(GET, routes.ViewAllDeparturesController.onPageLoad(Some(currentPage)).url)
 
         val result = route(app, request).value
 
@@ -102,7 +109,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase {
         val expectedViewModel = ViewAllDepartureMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
         contentAsString(result) mustEqual
-          view(expectedViewModel)(request, messages).toString
+          view(form, expectedViewModel)(request, messages).toString
       }
 
       "when page not provided must default to 1" in {
@@ -110,7 +117,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase {
         when(mockDeparturesMovementConnector.getPagedDepartures(any(), any())(any()))
           .thenReturn(Future.successful(Some(mockDepartureResponse)))
 
-        val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url)
+        val request = FakeRequest(GET, routes.ViewAllDeparturesController.onPageLoad(None).url)
 
         val result = route(app, request).value
 
@@ -127,7 +134,21 @@ class ViewAllDeparturesControllerSpec extends SpecBase {
         val expectedViewModel = ViewAllDepartureMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
         contentAsString(result) mustEqual
-          view(expectedViewModel)(request, messages).toString
+          view(form, expectedViewModel)(request, messages).toString
+      }
+    }
+
+    "must redirect to view departures search results when valid data is submitted" in {
+
+      forAll(arbitrary[LocalReferenceNumber]) {
+        case LocalReferenceNumber(lrn) =>
+          val request = FakeRequest(POST, routes.ViewAllDeparturesController.onSubmit(None).url)
+            .withFormUrlEncodedBody(("value", lrn))
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ViewDeparturesSearchResultsController.onPageLoad(lrn).url
       }
     }
 
@@ -136,7 +157,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase {
       when(mockDeparturesMovementConnector.getPagedDepartures(any(), any())(any()))
         .thenReturn(Future.successful(None))
 
-      val request = FakeRequest(GET, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url)
+      val request = FakeRequest(GET, routes.ViewAllDeparturesController.onPageLoad(None).url)
 
       val result = route(app, request).value
 

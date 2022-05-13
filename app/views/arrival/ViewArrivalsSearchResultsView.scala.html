@@ -27,6 +27,7 @@
 )
 
 @(
+    form: Form[_],
     mrn: String,
     dataRows: Seq[(String, Seq[ViewArrival])],
     retrieved: Int,
@@ -55,10 +56,9 @@
     </p>
 
     @search(
-        action = ViewArrivalsSearchResultsController.onPageLoad("").url,
-        label = "movement.search.title",
-        field = "mrn",
-        value = Some(mrn)
+        form = form,
+        action = ViewArrivalsSearchResultsController.onSubmit(mrn),
+        label = "movement.search.title"
     )
 
     @if(dataRows.nonEmpty) {
