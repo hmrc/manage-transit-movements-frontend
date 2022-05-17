@@ -67,7 +67,7 @@ class ViewAllDeparturesViewSpec
   behave like pageWithHeading()
 
   behave like pageWithLink(
-    id = "make-departure-notification",
+    id = "make-departure-declaration",
     expectedText = "Make a departure declaration",
     expectedHref = frontendAppConfig.declareDepartureStartWithLRNUrl
   )
