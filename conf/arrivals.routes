@@ -6,7 +6,7 @@ POST       /view-arrivals                                                     co
 GET        /view-arrivals-search-results                                      controllers.arrival.ViewArrivalsSearchResultsController.onPageLoad(mrn: String)
 POST       /view-arrivals-search-results                                      controllers.arrival.ViewArrivalsSearchResultsController.onSubmit(mrn: String)
 
-GET        /arrivals/:arrivalId/unloading-permission-pdf                      controllers.arrival.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
+GET        /:arrivalId/unloading-permission-pdf                               controllers.arrival.UnloadingPermissionPDFController.getPDF(arrivalId: ArrivalId)
 
 GET        /:arrivalId/negative-acknowledgement                               controllers.arrival.ArrivalXmlNegativeAcknowledgementController.onPageLoad(arrivalId: ArrivalId)
 GET        /:arrivalId/unloading-remarks-negative-acknowledgement             controllers.arrival.UnloadingRemarksXmlNegativeAcknowledgementController.onPageLoad(arrivalId: ArrivalId)
