@@ -31,6 +31,7 @@
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     standardBetaBanner: StandardBetaBanner,
     stylesheets: Stylesheets,
+    javascripts: Javascripts,
     govukBackLink: GovukBackLink,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     twoThirdsMainContent: TwoThirdsMainContent,
@@ -90,5 +91,6 @@
     phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUnauthenticatedUrl)),
     beforeContentBlock = Some(beforeContentBlock),
     nonce = CSPNonce.get,
+    additionalScriptsBlock = Some(javascripts()),
     mainContentLayout = if (fullWidth) Some(fullWidthContent(_)) else Some(twoThirdsMainContent(_))
 )(mainContentWithGetHelp)
