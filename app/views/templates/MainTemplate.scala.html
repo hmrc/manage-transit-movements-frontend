@@ -61,19 +61,6 @@
     @stylesheets()
 }
 
-@beforeContentBlock = {
-    @if(showBackLink) {
-        @govukBackLink(
-            BackLink(
-                attributes = Map("id" -> "back-link"),
-                classes = "js-enabled",
-                href = "javascript:history.back()",
-                content = HtmlContent(messages("site.back"))
-            )
-        )
-    }
-}
-
 @mainContentWithGetHelp = {
     @mainContent
     @hmrcReportTechnicalIssueHelper()
@@ -89,7 +76,7 @@
     serviceUrl = Some(routes.WhatDoYouWantToDoController.onPageLoad().url),
     signOutUrl = if (canSignOut) Some(appConfig.signOutUrl) else None,
     phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUnauthenticatedUrl)),
-    beforeContentBlock = Some(beforeContentBlock),
+    backLinkUrl = if (showBackLink) Some("#") else None, // This is overridden in ctc.js
     nonce = CSPNonce.get,
     additionalScriptsBlock = Some(javascripts()),
     mainContentLayout = if (fullWidth) Some(fullWidthContent(_)) else Some(twoThirdsMainContent(_))
