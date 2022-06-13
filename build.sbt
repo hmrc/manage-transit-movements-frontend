@@ -53,7 +53,7 @@ lazy val root = (project in file("."))
       Resolver.jcenterRepo
     ),
     Concat.groups := Seq(
-      "javascripts/application.js" -> group(Seq("lib/govuk-frontend/govuk/all.js", "lib/hmrc-frontend/hmrc/all.js", "javascripts/ctc.js"))
+      "javascripts/application.js" -> group(Seq("javascripts/ctc.js"))
     ),
     uglifyCompressOptions          := Seq("unused=false", "dead_code=false", "warnings=false"),
     pipelineStages in Assets       := Seq(digest, concat, uglify),
