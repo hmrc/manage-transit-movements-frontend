@@ -81,15 +81,23 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   private val departureFrontendUrl: String    = phase5Switch.Departures.getFrontendUrl
   private val cancellationFrontendUrl: String = phase5Switch.Cancellations.getFrontendUrl
 
-  val declareDepartureStartWithLRNUrl: String                            = s"$departureFrontendUrl/local-reference-number"
-  def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
-  def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
-  def departureFrontendCancellationDecisionUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
-  def departureTadPdfUrl(departureId: DepartureId)                       = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
+  val declareDepartureStartWithLRNUrl: String                       = s"$departureFrontendUrl/local-reference-number"
+  def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
+  def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
 
-  def departureFrontendConfirmCancellationUrl(departureId: DepartureId): String = if (phase5Switch.Cancellations.enabled) {
-    s"$cancellationFrontendUrl/${departureId.index}"
-  } else {
-    s"$cancellationFrontendUrl/${departureId.index}/confirm-cancellation"
-  }
+  def departureFrontendCancellationDecisionUrl(departureId: DepartureId): String =
+    if (phase5Switch.Cancellations.enabled) {
+      s"$cancellationFrontendUrl/${departureId.index}/cancellation-decision-update"
+    } else {
+      s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
+    }
+
+  def departureTadPdfUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
+
+  def departureFrontendConfirmCancellationUrl(departureId: DepartureId): String =
+    if (phase5Switch.Cancellations.enabled) {
+      s"$cancellationFrontendUrl/${departureId.index}"
+    } else {
+      s"$cancellationFrontendUrl/${departureId.index}/confirm-cancellation"
+    }
 }

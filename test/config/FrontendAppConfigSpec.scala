@@ -95,7 +95,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks {
             config.departureFrontendDeclarationFailUrl(DepartureId(index)) mustEqual
               s"http://localhost:10120/manage-transit-movements/departure/$index/departure-declaration-fail"
             config.departureFrontendCancellationDecisionUrl(DepartureId(index)) mustEqual
-              s"http://localhost:10120/manage-transit-movements/departure/$index/cancellation-decision-update"
+              s"http://localhost:10122/manage-transit-movements/cancellation/$index/cancellation-decision-update"
             config.departureTadPdfUrl(DepartureId(index)) mustEqual
               s"http://localhost:10120/manage-transit-movements/departure/$index/tad-pdf"
 
