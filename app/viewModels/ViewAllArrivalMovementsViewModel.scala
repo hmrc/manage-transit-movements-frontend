@@ -18,10 +18,6 @@ package viewModels
 
 import viewModels.pagination.PaginationViewModel
 
-import java.time.LocalDate
-import java.time.chrono.ChronoLocalDate
-import java.time.format.DateTimeFormatter
-
 case class ViewAllArrivalMovementsViewModel(
   dataRows: Seq[(String, Seq[ViewArrival])],
   paginationViewModel: PaginationViewModel
@@ -29,27 +25,13 @@ case class ViewAllArrivalMovementsViewModel(
 
 object ViewAllArrivalMovementsViewModel {
 
-  implicit val localDateOrdering: Ordering[LocalDate] =
-    Ordering.by(identity[ChronoLocalDate])
-
   def apply(
     movements: Seq[ViewArrival],
     paginationViewModel: PaginationViewModel
   )(implicit d: DummyImplicit): ViewAllArrivalMovementsViewModel =
-    new ViewAllArrivalMovementsViewModel(format(movements), paginationViewModel)
-
-  private def format(movements: Seq[ViewArrival]): Seq[(String, Seq[ViewArrival])] = {
-    val groupMovements: Map[LocalDate, Seq[ViewArrival]] =
-      movements.groupBy(_.updatedDate)
-    val sortByDate: Seq[(LocalDate, Seq[ViewArrival])] =
-      groupMovements.toSeq.sortBy(_._1).reverse
-
-    sortByDate.map {
-      result =>
-        val dateFormatter: DateTimeFormatter =
-          DateTimeFormatter.ofPattern("d MMMM yyyy")
-        (result._1.format(dateFormatter), result._2.sortBy(_.updatedTime).reverse)
-    }
-  }
+    new ViewAllArrivalMovementsViewModel(
+      ViewArrivalMovements(movements).dataRows,
+      paginationViewModel
+    )
 
 }

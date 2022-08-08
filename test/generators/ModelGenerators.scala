@@ -17,13 +17,13 @@
 package generators
 
 import models.ErrorType.GenericError
+import models._
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.departure._
-import models.{Arrival, ArrivalId, Arrivals, Availability, Departure, DepartureId, Departures, ErrorPointer, ErrorType, FunctionalError, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
-import viewModels._
+import play.api.mvc.Call
 
 import java.time._
 
@@ -121,50 +121,6 @@ trait ModelGenerators {
   implicit val arbitraryArrivalStatus: Arbitrary[ArrivalStatus] =
     Arbitrary {
       Gen.oneOf(ArrivalStatus.values)
-    }
-
-  implicit val arbitraryViewMovementAction: Arbitrary[ViewMovementAction] =
-    Arbitrary {
-      for {
-        href <- Gen.alphaNumStr
-        key  <- nonEmptyString
-      } yield ViewMovementAction(href, key)
-    }
-
-  implicit val arbitraryViewArrival: Arbitrary[ViewArrival] =
-    Arbitrary {
-      for {
-        date    <- arbitrary[LocalDate]
-        time    <- arbitrary[LocalTime]
-        mrn     <- stringsWithMaxLength(17)
-        status  <- Gen.alphaNumStr
-        actions <- listOfN(4, arbitrary[ViewMovementAction])
-      } yield ViewArrival(date, time, mrn, status, actions)
-    }
-
-  implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =
-    Arbitrary {
-      for {
-        updatedDate          <- arbitrary[LocalDate]
-        updatedTime          <- arbitrary[LocalTime]
-        localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        status               <- Gen.alphaNumStr
-        actions              <- listOfN(4, arbitrary[ViewMovementAction])
-      } yield new ViewDeparture(updatedDate, updatedTime, localReferenceNumber, status, actions)
-    }
-
-  implicit val arbitraryViewArrivalMovements: Arbitrary[ViewArrivalMovements] =
-    Arbitrary {
-      for {
-        seqOfViewMovements <- listOfN(10, arbitrary[ViewArrival])
-      } yield ViewArrivalMovements(seqOfViewMovements)
-    }
-
-  implicit val arbitraryViewDepartureMovements: Arbitrary[ViewDepartureMovements] =
-    Arbitrary {
-      for {
-        seqOfViewDepartureMovements <- listOfN(10, arbitrary[ViewDeparture])
-      } yield ViewDepartureMovements(seqOfViewDepartureMovements)
     }
 
   implicit lazy val arbitraryLocalReferenceNumber: Arbitrary[LocalReferenceNumber] =
@@ -267,6 +223,14 @@ trait ModelGenerators {
         totalMatched        <- arbitrary[Option[Int]]
         departures          <- listWithMaxLength[Departure]()
       } yield Departures(retrievedDepartures, totalDepartures, totalMatched, departures)
+    }
+
+  implicit lazy val arbitraryCall: Arbitrary[Call] =
+    Arbitrary {
+      for {
+        method <- Gen.const("POST")
+        url    <- nonEmptyString
+      } yield Call(method, url)
     }
 }
 // scalastyle:on magic.number

@@ -16,10 +16,15 @@
 
 package generators
 
+import models.LocalReferenceNumber
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
+import play.api.data.FormError
+import play.twirl.api.Html
+import viewModels._
 import viewModels.pagination._
-import viewModels.{ViewAllArrivalMovementsViewModel, ViewAllDepartureMovementsViewModel, ViewArrival, ViewDeparture}
+
+import java.time.{LocalDate, LocalTime}
 
 trait ViewModelGenerators {
   self: Generators =>
@@ -43,35 +48,33 @@ trait ViewModelGenerators {
   implicit lazy val arbitraryPaginationViewModel: Arbitrary[PaginationViewModel] =
     Arbitrary {
       for {
-        results  <- arbitrary[MetaData]
-        previous <- arbitrary[Option[Previous]]
-        next     <- arbitrary[Option[Next]]
-        items    <- arbitrary[Items]
-      } yield PaginationViewModel(results, previous, next, items)
+        totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)
+        numberOfMovementsPerPage <- Gen.choose(1, Int.MaxValue)
+        currentPage              <- Gen.choose(1, Int.MaxValue)
+        href                     <- nonEmptyString
+      } yield PaginationViewModel(totalNumberOfMovements, numberOfMovementsPerPage, currentPage, href)
     }
 
   implicit lazy val arbitraryMetaData: Arbitrary[MetaData] =
     Arbitrary {
       for {
-        from        <- arbitrary[Int]
-        to          <- arbitrary[Int]
-        count       <- arbitrary[Int]
-        currentPage <- arbitrary[Int]
-        totalPages  <- arbitrary[Int]
-      } yield MetaData(from, to, count, currentPage, totalPages)
+        totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)
+        numberOfMovementsPerPage <- Gen.choose(1, Int.MaxValue)
+        currentPage              <- Gen.choose(1, Int.MaxValue)
+      } yield MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
     }
 
   implicit lazy val arbitraryPrevious: Arbitrary[Previous] =
     Arbitrary {
       for {
-        href <- Gen.alphaNumStr
+        href <- nonEmptyString
       } yield Previous(href)
     }
 
   implicit lazy val arbitraryNext: Arbitrary[Next] =
     Arbitrary {
       for {
-        href <- Gen.alphaNumStr
+        href <- nonEmptyString
       } yield Next(href)
     }
 
@@ -88,8 +91,65 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         pageNumber <- arbitrary[Int]
-        href       <- Gen.alphaNumStr
+        href       <- nonEmptyString
         selected   <- arbitrary[Boolean]
       } yield Item(pageNumber, href, selected)
+    }
+
+  implicit lazy val arbitraryHtml: Arbitrary[Html] = Arbitrary {
+    for {
+      text <- nonEmptyString
+    } yield Html(text)
+  }
+
+  implicit lazy val arbitraryFormError: Arbitrary[FormError] = Arbitrary {
+    for {
+      key     <- nonEmptyString
+      message <- nonEmptyString
+    } yield FormError(key, message)
+  }
+
+  implicit val arbitraryViewMovementAction: Arbitrary[ViewMovementAction] =
+    Arbitrary {
+      for {
+        href <- nonEmptyString
+        key  <- nonEmptyString
+      } yield ViewMovementAction(href, key)
+    }
+
+  implicit val arbitraryViewArrival: Arbitrary[ViewArrival] =
+    Arbitrary {
+      for {
+        date    <- arbitrary[LocalDate]
+        time    <- arbitrary[LocalTime]
+        mrn     <- stringsWithMaxLength(17: Int)
+        status  <- nonEmptyString
+        actions <- listWithMaxLength[ViewMovementAction]()
+      } yield ViewArrival(date, time, mrn, status, actions)
+    }
+
+  implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =
+    Arbitrary {
+      for {
+        updatedDate          <- arbitrary[LocalDate]
+        updatedTime          <- arbitrary[LocalTime]
+        localReferenceNumber <- arbitrary[LocalReferenceNumber]
+        status               <- nonEmptyString
+        actions              <- listWithMaxLength[ViewMovementAction]()
+      } yield new ViewDeparture(updatedDate, updatedTime, localReferenceNumber, status, actions)
+    }
+
+  implicit val arbitraryViewArrivalMovements: Arbitrary[ViewArrivalMovements] =
+    Arbitrary {
+      for {
+        seqOfViewMovements <- listWithMaxLength[ViewArrival]()
+      } yield ViewArrivalMovements(seqOfViewMovements)
+    }
+
+  implicit val arbitraryViewDepartureMovements: Arbitrary[ViewDepartureMovements] =
+    Arbitrary {
+      for {
+        seqOfViewDepartureMovements <- listWithMaxLength[ViewDeparture]()
+      } yield ViewDepartureMovements(seqOfViewDepartureMovements)
     }
 }
