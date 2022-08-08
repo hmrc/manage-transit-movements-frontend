@@ -12,8 +12,7 @@ site.continue = Continue
 site.youMust = You must
 site.search = Search
 site.service_name = Manage your transit movements
-site.textarea.char_limit = (Limit is {0} characters)
-site.title.suffix = - Manage your transit movements - GOV.UK
+site.section = This section is
 
 viewAllMovements.link.title = View all movements
 search.results.singular = Showing {0} result matching {1}.
@@ -23,23 +22,6 @@ search.noResultsFound = No results found
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
-
-footer.links.support_links = Support links
-footer.links.help = Help using GOV.UK
-footer.links.cookies = Cookies
-footer.links.accessibility = Accessibility statement
-footer.links.privacy = Privacy policy
-footer.links.terms = Terms and conditions
-
-language.cymraeg = Cymraeg
-language.change.cymraeg = Newid yr iaith i'r Gymraeg
-language.english = English
-language.change.english = Change the language to English
-language.switcher = Language switcher
-
-phaseBanner.1 = This is a new service – your
-phaseBanner.2 = feedback
-phaseBanner.3 = will help us to improve it.
 
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
@@ -220,4 +202,3 @@ confirmCancellation.error.required = Select yes if you want to cancel this depar
 unauthorisedWithGroupAccess.title = You cannot use this service
 unauthorisedWithGroupAccess.heading = You cannot use this service
 unauthorisedWithGroupAccess.p = If you already have access, you must contact your group administrator to update your access rights.
-
