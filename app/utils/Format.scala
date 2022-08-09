@@ -35,4 +35,6 @@ object Format {
 
   def dateFormattedForHeader(dateTime: OffsetDateTime): String =
     dateTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
+
+  val dateDisplayFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 }

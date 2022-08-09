@@ -16,31 +16,10 @@
 
 package viewModels
 
-import java.time.LocalDate
-import java.time.chrono.ChronoLocalDate
-import java.time.format.DateTimeFormatter
-
 case class ViewDepartureMovements(dataRows: Seq[(String, Seq[ViewDeparture])])
 
-object ViewDepartureMovements {
-
-  implicit val localDateOrdering: Ordering[LocalDate] =
-    Ordering.by(identity[ChronoLocalDate])
+object ViewDepartureMovements extends ViewMovements {
 
   def apply(departures: Seq[ViewDeparture])(implicit d: DummyImplicit): ViewDepartureMovements =
     ViewDepartureMovements(format(departures))
-
-  private def format(departures: Seq[ViewDeparture]): Seq[(String, Seq[ViewDeparture])] = {
-    val groupDepartures: Map[LocalDate, Seq[ViewDeparture]] =
-      departures.groupBy(_.updatedDate)
-    val sortByDate: Seq[(LocalDate, Seq[ViewDeparture])] =
-      groupDepartures.toSeq.sortBy(_._1).reverse
-
-    sortByDate.map {
-      result =>
-        val dateFormater: DateTimeFormatter =
-          DateTimeFormatter.ofPattern("d MMMM yyyy")
-        (result._1.format(dateFormater), result._2.sortBy(_.updatedTime).reverse)
-    }
-  }
 }

@@ -16,22 +16,26 @@
 
 package viewModels
 
-import viewModels.pagination.PaginationViewModel
+import utils.Format
 
-case class ViewAllDepartureMovementsViewModel(
-  dataRows: Seq[(String, Seq[ViewDeparture])],
-  paginationViewModel: PaginationViewModel
-)
+import java.time.LocalDate
+import java.time.chrono.ChronoLocalDate
 
-object ViewAllDepartureMovementsViewModel {
+trait ViewMovements {
 
-  def apply(
-    movements: Seq[ViewDeparture],
-    paginationViewModel: PaginationViewModel
-  )(implicit d: DummyImplicit): ViewAllDepartureMovementsViewModel =
-    new ViewAllDepartureMovementsViewModel(
-      ViewDepartureMovements(movements).dataRows,
-      paginationViewModel
-    )
+  implicit val localDateOrdering: Ordering[LocalDate] =
+    Ordering.by(identity[ChronoLocalDate])
+
+  def format[T <: ViewMovement](movements: Seq[T]): Seq[(String, Seq[T])] = {
+    val groupMovements: Map[LocalDate, Seq[T]] =
+      movements.groupBy(_.updatedDate)
+    val sortByDate: Seq[(LocalDate, Seq[T])] =
+      groupMovements.toSeq.sortBy(_._1).reverse
+
+    sortByDate.map {
+      result =>
+        (result._1.format(Format.dateDisplayFormat), result._2.sortBy(_.updatedTime).reverse)
+    }
+  }
 
 }

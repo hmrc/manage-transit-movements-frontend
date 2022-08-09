@@ -33,7 +33,7 @@
 @if(viewModel.results.totalPages == 1) {
     <p id="results-count" class="govuk-body">@resultsCountMessage</p>
 } else if(viewModel.results.totalPages > 1) {
-    <nav class="pagination" aria-label=@messages("pagination.searchResults")>
+    <nav class="pagination" aria-label="@messages("pagination.searchResults")">
         <div class="pagination__list">
 
             <p id="paginated-results-count" class="pagination__results">
@@ -42,7 +42,7 @@
 
             @viewModel.previous.map { p =>
                 <span class="pagination__item pagination__item--prev" >
-                    <a id="previous" class="pagination__link" href=@p.href>
+                    <a id="previous" class="pagination__link" href="@p.href">
                         <span aria-hidden="true">@messages("pagination.previous")</span>
                         <span class="govuk-visually-hidden">@messages("pagination.previous.hidden")</span>
                     </a>
@@ -61,7 +61,7 @@
                     </span>
                 } else {
                     <span id="pagination-item-@item.pageNumber" class="pagination__item">
-                        <a class="pagination__link" href=@item.href>
+                        <a class="pagination__link" href="@item.href">
                             <span aria-hidden="true">@item.pageNumber</span>
                             <span class="govuk-visually-hidden">@messages("pagination.page", item.pageNumber)</span>
                         </a>
@@ -76,7 +76,7 @@
 
             @viewModel.next.map { n =>
                 <span class="pagination__item  pagination__item--next" >
-                    <a id="next" class="pagination__link" href=@n.href>
+                    <a id="next" class="pagination__link" href="@n.href">
                         <span aria-hidden="true">@messages("pagination.next")</span>
                         <span class="govuk-visually-hidden">@messages("pagination.next.hidden")</span>
                     </a>
