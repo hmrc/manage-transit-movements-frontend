@@ -32,7 +32,7 @@
     title = messages("controlDecision.title"),
     showBackLink = true
 ) {
-    @heading("controlDecision.heading")
+    @heading(messages("controlDecision.heading"))
 
     @govukSummaryList(controlDecisionMessage.toSummaryList(lrn))
     <p class="govuk-body">@messages("controlDecision.paragraph")</p>

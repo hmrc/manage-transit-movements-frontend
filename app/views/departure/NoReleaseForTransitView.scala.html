@@ -30,7 +30,7 @@
     title = messages("noReleaseForTransit.title")
 ) {
 
-    @heading("noReleaseForTransit.heading")
+    @heading(messages("noReleaseForTransit.heading"))
 
     @for(summaryList <- message.toSummaryLists) {
         @govukSummaryList(summaryList)
