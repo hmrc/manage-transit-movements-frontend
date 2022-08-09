@@ -12,22 +12,25 @@
 # Test routes
 
 + nocsrf
-POST        /manage-transit-movements/test-only/arrival-notification-to-core                controllers.testOnly.TestOnlyRouterController.arrivalNotificationMessageToCore()
+POST        /manage-transit-movements/test-only/arrival/submit                              controllers.testOnly.TestOnlyArrivalsRouterController.arrivalNotificationMessageToCore()
 
 + nocsrf
-PUT         /manage-transit-movements/test-only/resubmit-arrival-notification-to-core       controllers.testOnly.TestOnlyRouterController.resubmitArrivalNotificationMessageToCore()
+PUT         /manage-transit-movements/test-only/arrival/resubmit                            controllers.testOnly.TestOnlyArrivalsRouterController.resubmitArrivalNotificationMessageToCore()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/to-core-message                             controllers.testOnly.TestOnlyRouterController.messageToCore()
+POST        /manage-transit-movements/test-only/arrival/message                             controllers.testOnly.TestOnlyArrivalsRouterController.messageToCore()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/from-core-message                           controllers.testOnly.TestOnlyRouterController.fromCoreMessage()
+POST        /manage-transit-movements/test-only/message                                     controllers.testOnly.TestOnlyRouterController.fromCoreMessage()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/declaration-to-core                         controllers.testOnly.TestOnlyDeparturesRouterController.declarationMessageToCore()
+POST        /manage-transit-movements/test-only/departure/submit                            controllers.testOnly.TestOnlyDeparturesRouterController.declarationMessageToCore()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/declaration-cancellation-request-to-core    controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
+POST        /manage-transit-movements/test-only/departure/message                           controllers.testOnly.TestOnlyDeparturesRouterController.messageToCore()
+
++ nocsrf
+POST        /manage-transit-movements/test-only/cancellation/submit                         controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes

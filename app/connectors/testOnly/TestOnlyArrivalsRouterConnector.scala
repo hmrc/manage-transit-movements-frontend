@@ -17,8 +17,6 @@
 package connectors.testOnly
 
 import config.FrontendAppConfig
-import logging.Logging
-import play.api.libs.json.JsValue
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse}
@@ -27,51 +25,50 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyDeparturesRouterConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
+class TestOnlyArrivalsRouterConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
-  private def newHeaders(headers: Headers, contentType: String)(implicit hc: HeaderCarrier): HeaderCarrier =
+  private def newHeaders(headers: Headers)(implicit hc: HeaderCarrier): HeaderCarrier =
     hc
       .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
-      .withExtraHeaders(Seq("Content-Type" -> s"application/$contentType", "Channel" -> "web"): _*)
+      .withExtraHeaders(Seq("Content-Type" -> "application/xml", "Channel" -> "web"): _*)
 
-  def createDeclarationMessage(
+  def createArrivalNotificationMessage(
     requestData: NodeSeq,
     headers: Headers
   )(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
-    val serviceUrl = s"${config.departureUrl}/movements/departures"
+    val serviceUrl = s"${config.destinationUrl}/movements/arrivals"
 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(
       rds = HttpReads[HttpResponse],
-      hc = newHeaders(headers, "xml"),
+      hc = newHeaders(headers),
       ec = ec
     )
   }
 
-  def createDeclarationCancellationMessage(
+  def resubmitArrivalNotificationMessage(
     requestData: NodeSeq,
-    departureId: String,
+    arrivalId: String,
     headers: Headers
   )(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
-    val serviceUrl = s"${config.departureUrl}/movements/departures/$departureId/messages"
+    val serviceUrl = s"${config.destinationUrl}/movements/arrivals/$arrivalId"
 
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(
+    http.PUTString[HttpResponse](serviceUrl, requestData.toString)(
       rds = HttpReads[HttpResponse],
-      hc = newHeaders(headers, "xml"),
+      hc = newHeaders(headers),
       ec = ec
     )
   }
 
   def submitMessageToCore(
-    requestData: JsValue,
-    departureId: String,
+    requestData: NodeSeq,
+    arrivalId: String,
     headers: Headers
   )(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
-    val serviceUrl = s"${config.testSupportUrl}/movements/departures/$departureId/messages"
+    val serviceUrl = s"${config.destinationUrl}/movements/arrivals/$arrivalId/messages"
 
-    http.POST[JsValue, HttpResponse](serviceUrl, requestData)(
-      wts = implicitly,
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(
       rds = HttpReads[HttpResponse],
-      hc = newHeaders(headers, "json"),
+      hc = newHeaders(headers),
       ec = ec
     )
   }
