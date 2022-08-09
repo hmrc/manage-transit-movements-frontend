@@ -61,6 +61,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val eccEnrolmentSplashPage: String       = configuration.get[String]("urls.eccEnrolmentSplashPage")
   lazy val departureBaseUrl: String             = configuration.get[Service]("microservice.services.departure").baseUrl
   lazy val departureUrl: String                 = configuration.get[Service]("microservice.services.departure").fullServiceUrl
+  lazy val testSupportUrl: String               = configuration.get[Service]("microservice.services.test-support").baseUrl
   lazy val destinationBaseUrl: String           = configuration.get[Service]("microservice.services.destination").baseUrl
   lazy val destinationUrl: String               = configuration.get[Service]("microservice.services.destination").fullServiceUrl
   lazy val referenceDataUrl: String             = configuration.get[Service]("microservice.services.reference-data").fullServiceUrl
