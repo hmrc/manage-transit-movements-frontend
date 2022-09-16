@@ -26,3 +26,4 @@ yarn-error.log
 .vscode
 project/metals.sbt
 /.bsp/sbt.json
+.java-version
