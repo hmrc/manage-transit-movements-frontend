@@ -23,12 +23,10 @@ import java.time.Clock
 
 class Module extends AbstractModule {
 
-  // format: off
   override def configure(): Unit = {
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[PaginationAppConfig]).asEagerSingleton()
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
   }
-  // format: on
 }

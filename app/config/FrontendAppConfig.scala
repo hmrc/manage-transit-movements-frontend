@@ -28,9 +28,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val contactHost: String     = configuration.get[String]("contact-frontend.host")
   val contactFormServiceIdentifier = "CTCTraders"
 
-  val trackingConsentUrl: String = configuration.get[String]("microservice.services.tracking-consent-frontend.url")
-  val gtmContainer: String       = configuration.get[String]("microservice.services.tracking-consent-frontend.gtm.container")
-
   val showPhaseBanner: Boolean        = configuration.get[Boolean]("banners.showPhase")
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
   val showUserResearchBanner: Boolean = configuration.get[Boolean]("banners.showUserResearch")
