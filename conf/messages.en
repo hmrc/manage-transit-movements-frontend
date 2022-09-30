@@ -26,7 +26,7 @@ error.summary.title = There is a problem
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 
-whatDoYouWantToDo.title =  Manage your transit movements - GOV.UK
+whatDoYouWantToDo.title = Manage your transit movements
 whatDoYouWantToDo.heading = Manage your transit movements
 whatDoYouWantToDo.subHeading.arrival = Arrivals
 whatDoYouWantToDo.link.arrival.makeArrival = Make an arrival notification
