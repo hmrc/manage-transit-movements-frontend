@@ -100,9 +100,9 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks {
               s"http://localhost:10120/manage-transit-movements/departure/$index/tad-pdf"
 
             config.declareArrivalNotificationStartUrl mustEqual
-              "http://localhost:10121/manage-transit-movements/arrival/movement-reference-number"
+              "http://localhost:10121/manage-transit-movements/arrivals/movement-reference-number"
             config.arrivalFrontendRejectedUrl(ArrivalId(index)) mustEqual
-              s"http://localhost:10121/manage-transit-movements/arrival/$index/arrival-rejection"
+              s"http://localhost:10121/manage-transit-movements/arrivals/$index/arrival-rejection"
 
             config.declareUnloadingRemarksUrl(ArrivalId(index)) mustEqual
               s"http://localhost:10123/manage-transit-movements/unloading/$index"
