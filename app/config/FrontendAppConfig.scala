@@ -43,7 +43,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
 
   def declareUnloadingRemarksUrl(arrivalId: ArrivalId)  = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}"
   private val declareArrivalNotificationUrlBase: String = phase5Switch.Arrivals.getFrontendUrl
-  val declareArrivalNotificationStartUrl: String        = s"$declareArrivalNotificationUrlBase/movement-reference-number"
+
+  val declareArrivalNotificationStartUrl: String =
+    if (phase5Switch.Arrivals.enabled) {
+      declareArrivalNotificationUrlBase
+    } else {
+      s"$declareArrivalNotificationUrlBase/movement-reference-number"
+    }
 
   def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$declareArrivalNotificationUrlBase/${arrivalId.index}/arrival-rejection"
   def unloadingRemarksRejectedUrl(arrivalId: ArrivalId) = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}/unloading-rejection"
@@ -78,7 +84,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   private val departureFrontendUrl: String    = phase5Switch.Departures.getFrontendUrl
   private val cancellationFrontendUrl: String = phase5Switch.Cancellations.getFrontendUrl
 
-  val declareDepartureStartWithLRNUrl: String                       = s"$departureFrontendUrl/local-reference-number"
+  val declareDepartureStartWithLRNUrl: String =
+    if (phase5Switch.Departures.enabled) {
+      departureFrontendUrl
+    } else {
+      s"$departureFrontendUrl/local-reference-number"
+    }
+
   def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
 
