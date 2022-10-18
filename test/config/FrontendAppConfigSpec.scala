@@ -118,16 +118,16 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
           forAll(arbitrary[Int]) {
             index =>
               config.declareDepartureStartWithLRNUrl mustEqual
-                "http://localhost:10120/manage-transit-movements/departure"
+                "http://localhost:10120/manage-transit-movements/departures"
 
               config.departureFrontendRejectedUrl(DepartureId(index)) mustEqual
-                s"http://localhost:10120/manage-transit-movements/departure/$index/guarantee-rejection"
+                s"http://localhost:10120/manage-transit-movements/departures/$index/guarantee-rejection"
 
               config.departureFrontendDeclarationFailUrl(DepartureId(index)) mustEqual
-                s"http://localhost:10120/manage-transit-movements/departure/$index/departure-declaration-fail"
+                s"http://localhost:10120/manage-transit-movements/departures/$index/departure-declaration-fail"
 
               config.departureTadPdfUrl(DepartureId(index)) mustEqual
-                s"http://localhost:10120/manage-transit-movements/departure/$index/tad-pdf"
+                s"http://localhost:10120/manage-transit-movements/departures/$index/tad-pdf"
           }
         }
 
