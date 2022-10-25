@@ -32,7 +32,7 @@ class KeepAliveControllerSpec extends SpecBase {
 
       val controller = new KeepAliveController(FakeIdentifierAction(), Helpers.stubMessagesControllerComponents())
 
-      val result = controller.keepAlive.apply(request)
+      val result = controller.keepAlive().apply(request)
 
       status(result) mustEqual NO_CONTENT
 

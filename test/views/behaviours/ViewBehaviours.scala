@@ -21,9 +21,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.Assertion
 import play.twirl.api.HtmlFormat
+import play.twirl.api.TwirlHelperImports._
 import views.base.ViewSpecAssertions
-
-import scala.collection.JavaConverters._
 
 trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
 
@@ -77,7 +76,7 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
   "must render accessibility statement link" in {
     val link = doc
       .select(".govuk-footer__inline-list-item > .govuk-footer__link")
-      .asScala
+      .toList
       .find(_.text() == "Accessibility statement")
       .get
 
@@ -192,7 +191,7 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
     "must render list" in {
       val list      = getElementByClass(doc, listClass)
       val listItems = list.getElementsByTag("li")
-      listItems.asScala.map(_.text()) mustEqual expectedListItems
+      listItems.toList.map(_.text()) mustEqual expectedListItems
     }
 
   def pageWithFormAction(expectedUrl: String): Unit =

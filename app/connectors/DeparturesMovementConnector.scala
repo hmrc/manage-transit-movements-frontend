@@ -67,7 +67,7 @@ class DeparturesMovementConnector @Inject() (config: FrontendAppConfig, http: Ht
       "User-Agent" -> s"${config.manageService}",
       "Channel"    -> channel
     ) ++ hc.headers(HMRCHeaderNames.explicitlyIncludedHeaders)
-    ws.url(serviceUrl).withHttpHeaders(headers: _*).get
+    ws.url(serviceUrl).withHttpHeaders(headers: _*).get()
   }
 
   def getSummary(departureId: DepartureId)(implicit hc: HeaderCarrier): Future[Option[MessagesSummary]] = {

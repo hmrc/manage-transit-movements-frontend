@@ -26,7 +26,6 @@
     @viewModel.results.count match {
         case 1 => { @Html(messages("numberOfMovements.singular", "<b>1</b>")) }
         case x => { @Html(messages("numberOfMovements.plural", s"<b>$x</b>")) }
-        case _ => { () }
     }
 }
 
@@ -49,7 +48,7 @@
                  </span>
             }
 
-            @for((item, index) <- viewModel.items.items.zip(Stream from 1)) {
+            @for((item, index) <- viewModel.items.items.zip(LazyList from 1)) {
                 @if(viewModel.items.lastItemDotted && index == viewModel.items.items.length) {
                     <span class="pagination__item pagination__item--dots" aria-hidden="true">@messages("pagination.ellipses")</span>
                     <span class="govuk-visually-hidden">@messages("pagination.ellipses.hidden")</span>
