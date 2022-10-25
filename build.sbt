@@ -6,8 +6,6 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "manage-transit-movements-frontend"
 
-val silencerVersion = "1.7.9"
-
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
@@ -20,7 +18,7 @@ lazy val root = (project in file("."))
   .settings(headerSettings(A11yTest): _*)
   .settings(automateHeaderSettings(A11yTest))
   .settings(majorVersion := 0)
-  .settings(scalaVersion := "2.12.15")
+  .settings(scalaVersion := "2.13.8")
   .settings(
     name := appName,
     RoutesKeys.routesImport += "models._",
@@ -43,17 +41,15 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageHighlighting     := true,
     scalacOptions ++= Seq(
       "-feature",
-      "-P:silencer:pathFilters=routes;views"
+      "-Wconf:src=routes/.*:s",
+      "-Wconf:cat=unused-imports&src=html/.*:s"
     ),
-    libraryDependencies ++= AppDependencies() ++ Seq(
-      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-    ),
+    libraryDependencies ++= AppDependencies(),
+    dependencyOverrides ++= AppDependencies.overrides,
     retrieveManaged := true,
     update / evictionWarningOptions :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(
-      Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.jcenterRepo
     ),
     Concat.groups := Seq(

@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import views.html.components.Button
+@import views.html.components.{Button, ErrorSummary}
 @import views.utils.ViewUtils._
 
 @this(
@@ -31,7 +31,7 @@
     label: String
 )(implicit request: Request[_], messages: Messages)
 
-@formHelper(action = action, 'autoComplete -> "off") {
+@formHelper(action = action, Symbol("autoComplete") -> "off") {
 
     @errorSummary(form.errors)
 

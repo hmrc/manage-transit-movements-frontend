@@ -30,7 +30,7 @@ class KeepAliveController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def keepAlive: Action[AnyContent] =
+  def keepAlive(): Action[AnyContent] =
     (Action andThen identify).async {
       _ =>
         Future.successful(NoContent)

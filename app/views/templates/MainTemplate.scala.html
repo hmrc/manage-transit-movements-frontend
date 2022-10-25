@@ -52,7 +52,7 @@
             TimeoutDialog(
                 timeout = Some(appConfig.timeoutSeconds),
                 countdown = Some(appConfig.countdownSeconds),
-                keepAliveUrl = Some(routes.KeepAliveController.keepAlive.url),
+                keepAliveUrl = Some(routes.KeepAliveController.keepAlive().url),
                 signOutUrl = Some(appConfig.signOutUrl)
             )
         )

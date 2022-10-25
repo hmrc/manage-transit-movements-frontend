@@ -19,9 +19,8 @@ package views.behaviours
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.twirl.api.TwirlHelperImports._
 import viewModels.ViewMovement
-
-import scala.collection.convert.ImplicitConversions._
 
 // scalastyle:off method.length
 // scalastyle:off magic.number
@@ -55,7 +54,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
       }
 
       "must generate correct data in each row" - {
-        rows.toList.zipWithIndex.forEach {
+        rows.toList.zipWithIndex.foreach {
           case (row, rowIndex) =>
             val viewMovement = viewMovements(rowIndex)
 
@@ -99,7 +98,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
                 }
 
                 val actionLinks = actions.getElementsByClass("govuk-link")
-                actionLinks.zipWithIndex.forEach {
+                actionLinks.zipWithIndex.foreach {
                   case (link, linkIndex) =>
                     val action = viewMovement.actions(linkIndex)
 
@@ -129,7 +128,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
       }
     }
 
-  protected def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").map(_.text())
+  protected def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").toList.map(_.text())
 
 }
 // scalastyle:on method.length
