@@ -97,8 +97,18 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
 
         val expectedResult = ArrivalMovements(
           Seq(
-            ArrivalMovement("63651574c3447b12", "27WF9X1FQ9RCKN0TM3", "movements/arrivals/63651574c3447b12/messages"),
-            ArrivalMovement("6365135ba5e821ee", "27WF9X1FQ9RCKN0TM3", "movements/arrivals/6365135ba5e821ee/messages")
+            ArrivalMovement(
+              "63651574c3447b12",
+              "27WF9X1FQ9RCKN0TM3",
+              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
+              "movements/arrivals/63651574c3447b12/messages"
+            ),
+            ArrivalMovement(
+              "6365135ba5e821ee",
+              "27WF9X1FQ9RCKN0TM3",
+              LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
+              "movements/arrivals/6365135ba5e821ee/messages"
+            )
           )
         )
 

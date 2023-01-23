@@ -18,7 +18,9 @@ package models.arrivalP5
 
 import play.api.libs.json.{__, Reads}
 
-case class ArrivalMovement(arrivalId: String, movementReferenceNumber: String, messagesLocation: String)
+import java.time.LocalDateTime
+
+case class ArrivalMovement(arrivalId: String, movementReferenceNumber: String, updated: LocalDateTime, messagesLocation: String)
 
 object ArrivalMovement {
 
@@ -27,6 +29,7 @@ object ArrivalMovement {
     (
       (__ \ "id").read[String] and
         (__ \ "movementReferenceNumber").read[String] and
+        (__ \ "updated").read[LocalDateTime] and
         (__ \ "_links" \ "messages" \ "href")
           .read[String]
           .map(_.replace("/customs/transits/", ""))

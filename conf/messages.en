@@ -83,6 +83,14 @@ movement.status.unloadingRemarksRejected = Unloading remarks rejected
 movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement = Unloading remarks rejected
 movement.status.goodsReleased = Goods Released
 
+movement.status.P5.arrivalNotificationSubmitted                = IE007 (content to be added)
+movement.status.P5.unloadingRemarksSubmitted                   = IE044 (content to be added)
+movement.status.P5.goodsReleasedReceived                       = IE025 (content to be added)
+movement.status.P5.unloadingPermissionReceived                 = IE043 (content to be added)
+movement.status.P5.rejectionFromOfficeOfDestinationReceived    = IE057 (content to be added)
+movement.status.P5.functionalNackReceived                      = IE906 (content to be added)
+movement.status.P5.xmlNackReceived                             = IE917 (content to be added)
+
 technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service
 technicalDifficulties.tryAgain = Try again later.

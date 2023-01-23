@@ -19,6 +19,9 @@ package models.arrivalP5
 import base.SpecBase
 import play.api.libs.json._
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 class ArrivalMovementSpec extends SpecBase {
 
   "ArrivalMovement" - {
@@ -46,6 +49,7 @@ class ArrivalMovementSpec extends SpecBase {
       val expectedResult = ArrivalMovement(
         "63651574c3447b12",
         "27WF9X1FQ9RCKN0TM3",
+        LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
         "movements/arrivals/63651574c3447b12/messages"
       )
 
