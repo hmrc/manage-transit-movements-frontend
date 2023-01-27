@@ -22,17 +22,19 @@ import viewModels.drafts.AllDraftDeparturesViewModel.{DraftDepartureRow, getRema
 
 import java.time.LocalDate
 
-case class AllDraftDeparturesViewModel(items: List[DraftDeparture])(implicit messages: Messages) {
+case class AllDraftDeparturesViewModel(items: List[DraftDeparture]) {
 
   val messageKeyPrefix = "departure.drafts.dashboard"
   val tableMessageKeyPrefix = "viewDraftDepartures.table"
 
-  val title = messages(s"$messageKeyPrefix.title")
-  val heading = messages(s"$messageKeyPrefix.heading")
-  val visuallyHiddenHeader = messages(s"$messageKeyPrefix.heading.hidden")
+  val draftDepartures: Int      = items.length
 
-  val referenceNumber = messages(s"$tableMessageKeyPrefix.lrn")
-  val daysToComplete = messages(s"$tableMessageKeyPrefix.daysToComplete")
+  def title(implicit messages: Messages): String   = messages(s"$messageKeyPrefix.title")
+  def heading(implicit messages: Messages): String   = messages(s"$messageKeyPrefix.heading")
+  def visuallyHiddenHeader(implicit messages: Messages): String   = messages(s"$messageKeyPrefix.heading.hidden")
+
+  def referenceNumber(implicit messages: Messages): String   = messages(s"$tableMessageKeyPrefix.lrn")
+  def daysToComplete(implicit messages: Messages): String   = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
 
   def dataRows: Seq[DraftDepartureRow] = items.map {

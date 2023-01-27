@@ -20,6 +20,7 @@ import models.{DraftDeparture, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
+import play.api.i18n.Messages
 import play.twirl.api.Html
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
@@ -44,13 +45,6 @@ trait ViewModelGenerators {
         viewDepartures      <- listWithMaxLength[ViewDeparture]()
         paginationViewModel <- arbitrary[PaginationViewModel]
       } yield ViewAllDepartureMovementsViewModel(viewDepartures, paginationViewModel)
-    }
-
-  implicit lazy val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
-    Arbitrary {
-      for {
-        viewDraftDepartures <- listWithMaxLength[DraftDeparture]()
-      } yield AllDraftDeparturesViewModel(viewDraftDepartures)
     }
 
   implicit lazy val arbitraryPaginationViewModel: Arbitrary[PaginationViewModel] =
@@ -159,5 +153,12 @@ trait ViewModelGenerators {
       for {
         seqOfViewDepartureMovements <- listWithMaxLength[ViewDeparture]()
       } yield ViewDepartureMovements(seqOfViewDepartureMovements)
+    }
+
+  implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
+    Arbitrary {
+      for {
+        viewDraftDepartures <- arbitrary[List[DraftDeparture]]
+      } yield AllDraftDeparturesViewModel(viewDraftDepartures)
     }
 }

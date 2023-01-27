@@ -17,39 +17,29 @@
 package views.departure.drafts
 
 import generators.Generators
-import models.DraftDeparture
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
+import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.twirl.api.HtmlFormat
+import viewModels.ViewAllDepartureMovementsViewModel
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
-import views.behaviours.{DraftDepartureTableViewBehaviours, MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.departure.ViewAllDeparturesView
-import views.html.departure.drafts.DashboardView
 
-class DashboardViewSpec
-    extends Generators
-    with ScalaCheckPropertyChecks {
+class DashboardViewSpec extends Generators with ScalaCheckPropertyChecks {
 
-  val prefix: String = "viewDraftDepartures"
+  val viewAllDepartureMovementsViewModel = arbitrary[AllDraftDeparturesViewModel].sample.get
 
-  private val viewAllDraftDeparturesViewModel = arbitrary[AllDraftDeparturesViewModel].sample.value
-//
-//  val dataRows: Seq[DraftDepartureM] = viewAllDraftDeparturesViewModel.dataRows
-//
-//  val draftDeparture: Seq[DraftDeparture] = dataRows.
-
-//  def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsViewModel)
+  override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsViewModel)
 
   private def applyView(
-    form: Form[String],
-    viewAllDepartureMovementsViewModel: ViewAllDepartureMovementsViewModel
-  ): HtmlFormat.Appendable =
+                         form: Form[String],
+                         viewAllDepartureMovementsViewModel: ViewAllDepartureMovementsViewModel
+                       ): HtmlFormat.Appendable =
     injector
-      .instanceOf[DashboardView]
+      .instanceOf[ViewAllDeparturesView]
       .apply(form, viewAllDepartureMovementsViewModel)(fakeRequest, messages)
+
 
   behave like pageWithFullWidth()
 
