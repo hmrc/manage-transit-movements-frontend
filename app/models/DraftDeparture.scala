@@ -18,4 +18,4 @@ package models
 
 import java.time.LocalDate
 
-case class DraftDeparture(createdAt: LocalDate, referenceNumber: LocalReferenceNumber, status: String)
+case class DraftDeparture(lrn: LocalReferenceNumber, createdAt: LocalDate)

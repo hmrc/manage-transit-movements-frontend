@@ -23,10 +23,8 @@
 @(
     dataRows: Seq[DraftDepartureM],
     visuallyHiddenHeader: String,
-    rowHeadingUpdated: String,
     rowHeadingReferenceNumber: String,
-    rowHeadingStatus: String,
-    rowHeadingAction: String
+        rowHeadingDaysToComplete: String,
 )(implicit messages: Messages)
 
     <table class="responsive-table">
@@ -34,10 +32,9 @@
 
         <thead>
             <tr>
-                <th scope="col">@rowHeadingUpdated</th>
                 <th scope="col">@rowHeadingReferenceNumber</th>
-                <th scope="col">@rowHeadingStatus</th>
-                <th scope="col">@rowHeadingAction</th>
+                <th scope="col">@rowHeadingDaysToComplete</th>
+                <th scope="col"></th>
             </tr>
         </thead>
 
@@ -46,17 +43,17 @@
                 <tr data-testrole="movements-list_row@rowIndex">
 
                     <td data-testrole="movements-list_row@rowIndex-updated">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingUpdated</span>
-                        @row.createdAt
+                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
+                        @row.lrn
                     </td>
 
                     <td data-testrole="movements-list_row@rowIndex-ref">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
+                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingDaysToComplete</span>
                         @row.daysRemaining
                     </td>
 
                    <td data-testrole="movements-list_row@rowIndex-actions">
-                       <span class="responsive-table__heading" aria-hidden="true">@rowHeadingAction</span>
+                       <span class="responsive-table__heading" aria-hidden="true"></span>
                        <href>Delete</href>
                    </td>
                 </tr>

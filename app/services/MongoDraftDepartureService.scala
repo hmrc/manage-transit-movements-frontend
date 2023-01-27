@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class MongoDraftDepartureService @Inject() ()(implicit ec: ExecutionContext) extends DraftDepartureService {
 
   val data: List[DraftDeparture] =
-    List(DraftDeparture(LocalDate.now(), new LocalReferenceNumber("12345"), "Open"), DraftDeparture(LocalDate.now(), new LocalReferenceNumber("23456"), "Open"))
+    List(DraftDeparture(new LocalReferenceNumber("12345"), LocalDate.now()), DraftDeparture(new LocalReferenceNumber("23456"), LocalDate.now()))
 
   override def getAll(eori: EoriNumber): Future[List[DraftDeparture]] = Future(data)
 }

@@ -24,11 +24,11 @@ import java.time.LocalDate
 case class AllDraftDeparturesViewModel(items: List[DraftDeparture]) {
 
   def dataRows: Seq[DraftDepartureM] = items.map {
-    dd => DraftDepartureM(dd.createdAt.toString(), LocalDate.now().until(dd.createdAt.plusDays(30)).getDays)
+    dd => DraftDepartureM(dd.lrn.toString(), LocalDate.now().until(dd.createdAt.plusDays(30)).getDays)
   }
 
 }
 
 object AllDraftDeparturesViewModel {
-  case class DraftDepartureM(createdAt: String, daysRemaining: Int)
+  case class DraftDepartureM(lrn: String, daysRemaining: Int)
 }

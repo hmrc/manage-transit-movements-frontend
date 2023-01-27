@@ -206,3 +206,15 @@ unauthorisedWithGroupAccess.p = If you already have access, you must contact you
 departure.drafts.dashboard.title = Draft departure declarations
 departure.drafts.dashboard.heading = Draft departure declarations
 departure.drafts.dashboard.search = Search by local reference number (LRN)
+
+viewDraftDepartures.heading.hidden             = Draft departure table
+viewDraftDepartures.makeDepartureDeclaration   = Make a new departure declaration
+viewDraftDepartures.goToManageTransitMovements = Go to manage transit movements
+viewDraftDepartures.table.lrn         = Local reference number
+viewDraftDepartures.table.daysToComplete      = Days to complete
+viewDraftDepartures.table.action      = dauiwdah
+viewDraftDepartures.table.action.viewErrors              = View errors
+viewDraftDepartures.table.action.unloadingRemarks        = Make unloading remarks
+viewDraftDepartures.table.action.viewHistory             = View history
+viewDraftDepartures.table.action.viewPDF                 = Unloading Permission PDF
+viewDraftDepartures.table.action.hidden                  = for {0}
