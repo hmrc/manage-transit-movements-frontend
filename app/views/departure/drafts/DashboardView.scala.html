@@ -17,7 +17,6 @@
 @import views.html.components.Heading
 @import viewModels.drafts.AllDraftDeparturesViewModel
 @import views.html.components.DraftDeparturesTable
-@import views.html.components.Search
 
 @this(
     mainTemplate: MainTemplate,
@@ -28,16 +27,16 @@
 @(eori: EoriNumber, viewModel: AllDraftDeparturesViewModel)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("departure.drafts.dashboard.title"),
+    title = viewModel.title,
     showBackLink = true
 ) {
 
-    @heading(messages("departure.drafts.dashboard.heading"))
+    @heading(viewModel.heading)
 
    @draftDeparturesTable(
     dataRows = viewModel.dataRows,
-    visuallyHiddenHeader = messages("viewDraftDepartures.heading.hidden"),
-    rowHeadingReferenceNumber = messages("viewDraftDepartures.table.lrn"),
-    rowHeadingDaysToComplete = messages("viewDraftDepartures.table.daysToComplete")
+    visuallyHiddenHeader = viewModel.visuallyHiddenHeader,
+    rowHeadingReferenceNumber = viewModel.referenceNumber,
+    rowHeadingDaysToComplete = viewModel.daysToComplete
    )
 }

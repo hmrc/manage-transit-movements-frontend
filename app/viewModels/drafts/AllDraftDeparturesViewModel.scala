@@ -17,18 +17,33 @@
 package viewModels.drafts
 
 import models.DraftDeparture
-import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureM
+import play.api.i18n.Messages
+import viewModels.drafts.AllDraftDeparturesViewModel.{DraftDepartureRow, getRemainingDays}
 
 import java.time.LocalDate
 
-case class AllDraftDeparturesViewModel(items: List[DraftDeparture]) {
+case class AllDraftDeparturesViewModel(items: List[DraftDeparture])(implicit messages: Messages) {
 
-  def dataRows: Seq[DraftDepartureM] = items.map {
-    dd => DraftDepartureM(dd.lrn.toString(), LocalDate.now().until(dd.createdAt.plusDays(30)).getDays)
+  val messageKeyPrefix = "departure.drafts.dashboard"
+  val tableMessageKeyPrefix = "viewDraftDepartures.table"
+
+  val title = messages(s"$messageKeyPrefix.title")
+  val heading = messages(s"$messageKeyPrefix.heading")
+  val visuallyHiddenHeader = messages(s"$messageKeyPrefix.heading.hidden")
+
+  val referenceNumber = messages(s"$tableMessageKeyPrefix.lrn")
+  val daysToComplete = messages(s"$tableMessageKeyPrefix.daysToComplete")
+
+
+  def dataRows: Seq[DraftDepartureRow] = items.map {
+    dd => DraftDepartureRow(dd.lrn.toString(), getRemainingDays(dd.createdAt, LocalDate.now()))
   }
 
 }
 
 object AllDraftDeparturesViewModel {
-  case class DraftDepartureM(lrn: String, daysRemaining: Int)
+
+  def getRemainingDays(createdAt: LocalDate, today: LocalDate) =
+    today.until(createdAt.plusDays(30)).getDays
+  case class DraftDepartureRow(lrn: String, daysRemaining: Int)
 }

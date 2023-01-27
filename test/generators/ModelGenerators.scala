@@ -232,5 +232,14 @@ trait ModelGenerators {
         url    <- nonEmptyString
       } yield Call(method, url)
     }
+
+  implicit lazy val arbitraryDraftDeparture: Arbitrary[DraftDeparture] =
+    Arbitrary {
+    for {
+      lrn <- arbitrary[LocalReferenceNumber]
+      createdAt <- arbitrary[LocalDate]
+    } yield DraftDeparture(lrn,createdAt)
+  }
+
 }
 // scalastyle:on magic.number

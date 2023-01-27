@@ -15,13 +15,13 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureM
+@import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 
 @this()
 
 
 @(
-    dataRows: Seq[DraftDepartureM],
+    dataRows: Seq[DraftDepartureRow],
     visuallyHiddenHeader: String,
     rowHeadingReferenceNumber: String,
         rowHeadingDaysToComplete: String,
@@ -42,12 +42,12 @@
             @for((row, rowIndex)<- dataRows.zip(LazyList from 1)) {
                 <tr data-testrole="movements-list_row@rowIndex">
 
-                    <td data-testrole="movements-list_row@rowIndex-updated">
+                    <td data-testrole="movements-list_row@rowIndex-lrn">
                         <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
                         @row.lrn
                     </td>
 
-                    <td data-testrole="movements-list_row@rowIndex-ref">
+                    <td data-testrole="movements-list_row@rowIndex-daysToComplete">
                         <span class="responsive-table__heading" aria-hidden="true">@rowHeadingDaysToComplete</span>
                         @row.daysRemaining
                     </td>
