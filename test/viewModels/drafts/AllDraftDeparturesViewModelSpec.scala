@@ -34,7 +34,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
   "AllDraftDeparturesViewModelSpec" - {
 
 
-    "When DraftDepartures are tabulated" in {
+    "When DraftDepartures are tabulated must display correct data and format" in {
 
 
       val draftDepartures: Gen[List[DraftDeparture]] = Gen.listOfN(2, arbitrary[DraftDeparture])
