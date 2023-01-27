@@ -2,6 +2,7 @@
 ->         /manage-transit-movements  app.Routes
 ->         /manage-transit-movements  arrivals.Routes
 ->         /manage-transit-movements  departures.Routes
+->         /manage-transit-movements  departures.drafts.Routes
 ->         /                          health.Routes
 
 GET        /admin/metrics             @com.kenshoo.play.metrics.MetricsController.metrics
