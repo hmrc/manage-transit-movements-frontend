@@ -1,1 +1,1 @@
-GET        /dashboard                        controllers.departure.drafts.DashboardController.onPageLoad()
+GET        /departures/dashboard                        controllers.departure.drafts.DashboardController.onPageLoad()
