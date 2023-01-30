@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package services
+package connectors
 
-import connectors.DraftDeparturesConnector
-import models.{DraftDeparture, LocalReferenceNumber, UserAnswer}
-import uk.gov.hmrc.http.HeaderCarrier
+import config.FrontendAppConfig
+import models.{DraftDeparture}
+import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class MongoDraftDepartureService @Inject() (connector: DraftDeparturesConnector)(implicit ec: ExecutionContext) extends DraftDepartureService {
+class DraftDeparturesConnector @Inject() (config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) {
 
-  override def getAll(eori: String)(implicit hc: HeaderCarrier): Future[DraftDeparture] =
-    connector.getDraftDepartures(eori)
+  def allDraftsUrl(eori: String): String = s"${config.draftDeparturesUrl}/user-answers"
+
+  def getDraftDepartures(eori: String)(implicit hc: HeaderCarrier): Future[DraftDeparture] =
+    http
+      .GET[DraftDeparture](allDraftsUrl(eori))(HttpReads[DraftDeparture], hc, ec)
+
 }

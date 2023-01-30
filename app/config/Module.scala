@@ -29,7 +29,6 @@ class Module extends AbstractModule {
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[PaginationAppConfig]).asEagerSingleton()
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
-
     bind(classOf[DraftDepartureService]).to(classOf[MongoDraftDepartureService])
   }
 }

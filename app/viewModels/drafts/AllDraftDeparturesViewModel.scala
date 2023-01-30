@@ -24,12 +24,12 @@ import viewModels.drafts.AllDraftDeparturesViewModel.{getRemainingDays, DraftDep
 
 import java.time.LocalDate
 
-case class AllDraftDeparturesViewModel(daysTilDeletion: Int, items: List[DraftDeparture]) {
+case class AllDraftDeparturesViewModel(daysTilDeletion: Int, items: DraftDeparture) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
   val tableMessageKeyPrefix = "departure.drafts.dashboard.table"
 
-  val draftDepartures: Int = items.length
+  val draftDepartures: Int = items.userAnswers.length
 
   def title(implicit messages: Messages): String                = messages(s"$messageKeyPrefix.title")
   def heading(implicit messages: Messages): String              = messages(s"$messageKeyPrefix.heading")
@@ -38,8 +38,8 @@ case class AllDraftDeparturesViewModel(daysTilDeletion: Int, items: List[DraftDe
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
   def daysToComplete(implicit messages: Messages): String  = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
-  def dataRows: Seq[DraftDepartureRow] = items.map {
-    dd => DraftDepartureRow(dd.lrn.toString(), getRemainingDays(dd.createdAt, LocalDate.now(), daysTilDeletion).toInt)
+  def dataRows: Seq[DraftDepartureRow] = items.userAnswers.map {
+    dd => DraftDepartureRow(dd.lrn, getRemainingDays(dd.createdAt.toLocalDate, LocalDate.now(), daysTilDeletion).toInt)
   }
 
 }

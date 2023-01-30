@@ -65,6 +65,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val departureBaseUrl: String             = configuration.get[Service]("microservice.services.departure").baseUrl
   lazy val departureUrl: String                 = configuration.get[Service]("microservice.services.departure").fullServiceUrl
   lazy val testSupportUrl: String               = configuration.get[Service]("microservice.services.test-support").baseUrl
+  lazy val draftDeparturesUrl: String           = configuration.get[Service]("microservice.services.drafts-repository").fullServiceUrl
   lazy val destinationBaseUrl: String           = configuration.get[Service]("microservice.services.destination").baseUrl
   lazy val destinationUrl: String               = configuration.get[Service]("microservice.services.destination").fullServiceUrl
   lazy val routerUrl: String                    = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl

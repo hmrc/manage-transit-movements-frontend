@@ -16,6 +16,19 @@
 
 package models
 
-import java.time.LocalDate
+import play.api.libs.json.{Json, OFormat}
 
-case class DraftDeparture(lrn: LocalReferenceNumber, createdAt: LocalDate)
+import java.time.{LocalDate, LocalDateTime}
+
+case class UserAnswer(lrn: String, createdAt: LocalDateTime)
+
+object UserAnswer {
+  implicit val fmt = Json.format[UserAnswer]
+}
+
+case class DraftDeparture(userAnswers: List[UserAnswer])
+
+object DraftDeparture {
+
+  implicit val format: OFormat[DraftDeparture] = Json.format[DraftDeparture]
+}

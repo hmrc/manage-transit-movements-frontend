@@ -17,11 +17,12 @@
 package services
 
 import models.{DraftDeparture, EoriNumber}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
 trait DraftDepartureService {
 
-  def getAll(eori: String): Future[List[DraftDeparture]]
+  def getAll(eori: String)(implicit hc: HeaderCarrier): Future[DraftDeparture]
 
 }
