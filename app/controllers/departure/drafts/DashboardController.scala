@@ -48,5 +48,3 @@ class DashboardController @Inject() (
   }
 
 }
-
-object DashboardController {}

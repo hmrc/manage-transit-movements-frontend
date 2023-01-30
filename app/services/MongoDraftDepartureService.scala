@@ -22,7 +22,6 @@ import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
 class MongoDraftDepartureService @Inject() ()(implicit ec: ExecutionContext) extends DraftDepartureService {
 
   val data: List[DraftDeparture] =
