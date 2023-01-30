@@ -17,7 +17,7 @@
 package views.departure.drafts
 
 import generators.Generators
-import models.DraftDeparture
+import models.{DraftDepartures, UserAnswerSummary}
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
@@ -35,7 +35,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
   val daysTilDeletion: Int = frontendAppConfig.daysTilDeletion
 
-  val genDraftDeparture: List[DraftDeparture]                         = arbitrary[List[DraftDeparture]].sample.value
+  val genDraftDeparture: DraftDepartures                              = arbitrary[DraftDepartures].sample.value
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(daysTilDeletion, genDraftDeparture)
   val dataRows: Seq[DraftDepartureRow]                                = viewAllDepartureMovementsViewModel.dataRows
 
@@ -58,16 +58,16 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
   behave like pageWithHeading()
 
-  val rows: Elements = doc.select("tr[data-testrole^=movements-list_row]")
+  val rows: Elements = doc.select("tr[data-testrole^=draft-list_row]")
 
-  "must generate a row for each movement" in {
-    rows.size() mustEqual genDraftDeparture.size
+  "must generate a row for each draft" in {
+    rows.size() mustEqual genDraftDeparture.userAnswers.size
   }
 
   "must generate correct data in each row" - {
     rows.toList.zipWithIndex.foreach {
       case (row, rowIndex) =>
-        val viewDraftDeparture = genDraftDeparture(rowIndex)
+        val viewDraftDeparture: UserAnswerSummary = genDraftDeparture.userAnswers(rowIndex)
 
         s"when row ${rowIndex + 1}" - {
 
@@ -80,42 +80,42 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
             heading.text() mustBe text
           }
 
-          "must display correct local reference number" in {
-            val lrn = row.selectFirst("td[data-testrole*=-lrn]")
+          "Local reference number" - {
 
-            behave like elementWithVisibleText(lrn, viewDraftDeparture.lrn.value)
+            val lrn     = row.selectFirst("td[data-testrole*=-lrn]")
+            val lrnLink = lrn.getElementsByClass("govuk-link").head
+
+            "must display correct text" in {
+              behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
+            }
+
+            "must have correct href" ignore { // TODO during CTCP-1881
+              behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
+            }
           }
 
           "must display correct days remaining" in {
             val daysToComplete = row.selectFirst("td[data-testrole*=-daysToComplete]")
 
-            val daysRemaining = getRemainingDays(viewDraftDeparture.createdAt, LocalDate.now(), daysTilDeletion)
+            val daysRemaining = getRemainingDays(viewDraftDeparture.createdAt.toLocalDate, LocalDate.now(), daysTilDeletion)
 
             behave like elementWithVisibleText(daysToComplete, daysRemaining.toString)
             behave like elementWithHiddenText(daysToComplete, messages(s"$prefix.table.daysToComplete"))
           }
 
-          "must display delete actions" - {
-            val actions = row.selectFirst("td[data-testrole*=-actions]")
+          "Delete" - {
 
-            val actionLinks = actions.getElementsByClass("govuk-link")
-            actionLinks.zipWithIndex.foreach {
-              case (link, linkIndex) =>
-                s"when action ${linkIndex + 1}" - {
+            val delete     = row.selectFirst("td[data-testrole*=-delete]")
+            val deleteLink = delete.getElementsByClass("govuk-link").head
 
-                  "must display correct text" in {
-                    link.text() mustBe s"${messages(s"$prefix.table.action.delete")} for ${viewDraftDeparture.lrn}" // TODO - When href links are in
+            "must display correct text" in {
+              behave like elementWithVisibleText(deleteLink, s"${messages(s"$prefix.table.action.delete")}")
+              val hiddenText = deleteLink.getElementsByClass("govuk-visually-hidden").head
+              hiddenText.text() mustBe s"for ${viewDraftDeparture.lrn}"
+            }
 
-                    behave like elementWithVisibleText(link, s"${messages(s"$prefix.table.action.delete")}")
-
-                    val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
-                    hiddenText.text() mustBe s"for ${viewDraftDeparture.lrn}"
-                  }
-
-                  "must have correct href" ignore {
-                    link.attr("href") mustBe ???
-                  }
-                }
+            "must have correct href" ignore { // TODO during CTCP-1881
+              ???
             }
           }
         }

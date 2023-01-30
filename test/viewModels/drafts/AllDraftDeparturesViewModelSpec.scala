@@ -18,7 +18,7 @@ package viewModels.drafts
 
 import base.SpecBase
 import generators.Generators
-import models.DraftDeparture
+import models.{DraftDepartures, UserAnswerSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -34,20 +34,22 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
     "When DraftDepartures are tabulated must display correct data and format" in {
 
-      val draftDepartures: Gen[List[DraftDeparture]] = Gen.listOfN(2, arbitrary[DraftDeparture])
-      val today                                      = LocalDate.now()
+      val userAnswerSummary: Gen[List[UserAnswerSummary]] = Gen.listOfN(2, arbitrary[UserAnswerSummary])
+      val today                                           = LocalDate.now()
 
-      forAll(draftDepartures) {
-        draftDeparture =>
+      forAll(userAnswerSummary) {
+        userAnswerSummary =>
+          val draftDeparture = DraftDepartures(userAnswerSummary)
+
           val viewModel = AllDraftDeparturesViewModel(daysTilDeletion, draftDeparture)
 
-          viewModel.dataRows.length mustBe draftDeparture.length
+          viewModel.dataRows.length mustBe draftDeparture.userAnswers.length
 
-          viewModel.dataRows.head.lrn mustBe draftDeparture.head.lrn.toString
-          viewModel.dataRows(1).lrn mustBe draftDeparture(1).lrn.toString
+          viewModel.dataRows.head.lrn mustBe draftDeparture.userAnswers.head.lrn.toString
+          viewModel.dataRows(1).lrn mustBe draftDeparture.userAnswers(1).lrn.toString
 
-          viewModel.dataRows.head.daysRemaining mustBe getRemainingDays(draftDeparture.head.createdAt, today, daysTilDeletion)
-          viewModel.dataRows(1).daysRemaining mustBe getRemainingDays(draftDeparture(1).createdAt, today, daysTilDeletion)
+          viewModel.dataRows.head.daysRemaining mustBe getRemainingDays(draftDeparture.userAnswers.head.createdAt.toLocalDate, today, daysTilDeletion)
+          viewModel.dataRows(1).daysRemaining mustBe getRemainingDays(draftDeparture.userAnswers(1).createdAt.toLocalDate, today, daysTilDeletion)
 
       }
 

@@ -17,15 +17,13 @@
 package services
 
 import connectors.DraftDeparturesConnector
-import models.{DraftDeparture, LocalReferenceNumber, UserAnswer}
+import models.DraftDepartures
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class MongoDraftDepartureService @Inject() (connector: DraftDeparturesConnector)(implicit ec: ExecutionContext) extends DraftDepartureService {
+class MongoDraftDepartureService @Inject() (connector: DraftDeparturesConnector) extends DraftDepartureService {
 
-  override def getAll(eori: String)(implicit hc: HeaderCarrier): Future[DraftDeparture] =
-    connector.getDraftDepartures(eori)
+  override def getAll()(implicit hc: HeaderCarrier): Future[DraftDepartures] = connector.getDraftDepartures
 }

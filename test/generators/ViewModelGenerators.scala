@@ -16,7 +16,7 @@
 
 package generators
 
-import models.{DraftDeparture, LocalReferenceNumber}
+import models.{DraftDepartures, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
@@ -24,7 +24,7 @@ import play.twirl.api.Html
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination._
-import config.FrontendAppConfig
+
 import java.time.{LocalDate, LocalTime}
 
 trait ViewModelGenerators {
@@ -157,8 +157,8 @@ trait ViewModelGenerators {
   implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
     Arbitrary {
       for {
-        daysTilDeletion     <- arbitrary[Int]
-        viewDraftDepartures <- listWithMaxLength[DraftDeparture]()
-      } yield AllDraftDeparturesViewModel(daysTilDeletion, viewDraftDepartures)
+        daysTilDeletion <- arbitrary[Int]
+        draftDepartures <- arbitrary[DraftDepartures]
+      } yield AllDraftDeparturesViewModel(daysTilDeletion, draftDepartures)
     }
 }

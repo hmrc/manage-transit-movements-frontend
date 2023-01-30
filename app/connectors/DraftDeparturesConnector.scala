@@ -17,19 +17,19 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{DraftDeparture}
-import play.api.libs.ws.WSClient
+import models.DraftDepartures
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DraftDeparturesConnector @Inject() (config: FrontendAppConfig, http: HttpClient, ws: WSClient)(implicit ec: ExecutionContext) {
+class DraftDeparturesConnector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
 
-  def allDraftsUrl(eori: String): String = s"${config.draftDeparturesUrl}/user-answers"
+  def getDraftDepartures(implicit hc: HeaderCarrier): Future[DraftDepartures] = {
+    val url = s"${config.draftDeparturesUrl}/user-answers"
 
-  def getDraftDepartures(eori: String)(implicit hc: HeaderCarrier): Future[DraftDeparture] =
-    http
-      .GET[DraftDeparture](allDraftsUrl(eori))(HttpReads[DraftDeparture], hc, ec)
+    http.GET[DraftDepartures](url)(HttpReads[DraftDepartures], hc, ec)
+  }
 
 }

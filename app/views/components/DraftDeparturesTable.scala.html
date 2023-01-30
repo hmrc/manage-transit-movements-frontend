@@ -21,45 +21,45 @@
 
 
 @(
-    dataRows: Seq[DraftDepartureRow],
-    visuallyHiddenHeader: String,
-    rowHeadingReferenceNumber: String,
+        dataRows: Seq[DraftDepartureRow],
+        visuallyHiddenHeader: String,
+        rowHeadingReferenceNumber: String,
         rowHeadingDaysToComplete: String,
 )(implicit messages: Messages)
 
-    <table class="responsive-table">
-        <caption class="govuk-visually-hidden">@visuallyHiddenHeader</caption>
+<table class="responsive-table">
+    <caption class="govuk-visually-hidden">@visuallyHiddenHeader</caption>
 
-        <thead>
-            <tr>
-                <th scope="col">@rowHeadingReferenceNumber</th>
-                <th scope="col">@rowHeadingDaysToComplete</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
+    <thead>
+        <tr>
+            <th scope="col">@rowHeadingReferenceNumber</th>
+            <th scope="col">@rowHeadingDaysToComplete</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
 
-        <tbody>
-            @for((row, rowIndex)<- dataRows.zip(LazyList from 1)) {
-                <tr data-testrole="movements-list_row@rowIndex">
+    <tbody>
+    @for((row, rowIndex) <- dataRows.zip(LazyList from 1)) {
+        <tr data-testrole="draft-list_row@rowIndex">
 
-                    <td data-testrole="movements-list_row@rowIndex-lrn">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
-                        @row.lrn
-                    </td>
+            <td data-testrole="draft-list_row@rowIndex-lrn">
+                <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
+                <a href="" class="govuk-link">@row.lrn</a>
+            </td>
 
-                    <td data-testrole="movements-list_row@rowIndex-daysToComplete">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingDaysToComplete</span>
-                        @row.daysRemaining
-                    </td>
+            <td data-testrole="draft-list_row@rowIndex-daysToComplete">
+                <span class="responsive-table__heading" aria-hidden="true">@rowHeadingDaysToComplete</span>
+                @row.daysRemaining
+            </td>
 
-                   <td data-testrole="movements-list_row@rowIndex-actions">
-                       <span class="responsive-table__heading" aria-hidden="true"></span>
-                           <a id="@row.lrn" href="" class="govuk-link" data-testrole="movements-list_row@rowIndex">@messages("departure.drafts.dashboard.table.action.delete")
-                           <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
-                           </a>
-                   </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            <td data-testrole="draft-list_row@rowIndex-delete">
+                <span class="responsive-table__heading" aria-hidden="true"></span>
+                <a href="" class="govuk-link">@messages("departure.drafts.dashboard.table.action.delete")
+                <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
 

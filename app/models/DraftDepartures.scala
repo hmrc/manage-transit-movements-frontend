@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package services
+package models
 
-import models.DraftDepartures
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.{Json, OFormat}
 
-import scala.concurrent.Future
+case class DraftDepartures(userAnswers: List[UserAnswerSummary])
 
-trait DraftDepartureService {
+object DraftDepartures {
 
-  def getAll()(implicit hc: HeaderCarrier): Future[DraftDepartures]
-
+  implicit val format: OFormat[DraftDepartures] = Json.format[DraftDepartures]
 }

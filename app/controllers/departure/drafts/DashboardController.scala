@@ -26,7 +26,7 @@ import viewModels.drafts.AllDraftDeparturesViewModel
 import views.html.departure.drafts.DashboardView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DashboardController @Inject() (
   override val messagesApi: MessagesApi,
@@ -41,10 +41,11 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      for {
-        drafts <- draftDepartureService.getAll(request.eoriNumber)
-        model  <- Future(AllDraftDeparturesViewModel(appConfig.daysTilDeletion, drafts))
-      } yield Ok(view(model))
+      draftDepartureService.getAll().map {
+        draftDepartures =>
+          val toViewModel = AllDraftDeparturesViewModel(appConfig.daysTilDeletion, draftDepartures)
+          Ok(view(toViewModel))
+      }
   }
 
 }

@@ -18,17 +18,10 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDateTime
 
-case class UserAnswer(lrn: String, createdAt: LocalDateTime)
+case class UserAnswerSummary(lrn: LocalReferenceNumber, createdAt: LocalDateTime)
 
-object UserAnswer {
-  implicit val fmt = Json.format[UserAnswer]
-}
-
-case class DraftDeparture(userAnswers: List[UserAnswer])
-
-object DraftDeparture {
-
-  implicit val format: OFormat[DraftDeparture] = Json.format[DraftDeparture]
+object UserAnswerSummary {
+  implicit val fmt: OFormat[UserAnswerSummary] = Json.format[UserAnswerSummary]
 }

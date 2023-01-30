@@ -17,16 +17,16 @@
 package controllers.departure.drafts
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import models.{DraftDeparture, LocalReferenceNumber}
+import models.{DraftDepartures, LocalReferenceNumber, UserAnswerSummary}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import services.{DepartureMessageService, DraftDepartureService}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import services.DraftDepartureService
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
@@ -46,10 +46,15 @@ class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
     "must return OK and the correct view for a GET" in {
 
-      val drafts: List[DraftDeparture] =
-        List(DraftDeparture(new LocalReferenceNumber("12345"), LocalDate.now()), DraftDeparture(new LocalReferenceNumber("23456"), LocalDate.now()))
+      val draftDeparture =
+        DraftDepartures(
+          List(
+            UserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now()),
+            UserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now())
+          )
+        )
 
-      when(draftDepartureService.getAll(any())(any())).thenReturn(Future.successful(drafts))
+      when(draftDepartureService.getAll()(any())).thenReturn(Future.successful(draftDeparture))
 
       val request = FakeRequest(GET, draftDashboardRoute)
       val result  = route(app, request).value
