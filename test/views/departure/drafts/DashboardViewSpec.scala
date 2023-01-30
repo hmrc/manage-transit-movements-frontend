@@ -82,7 +82,6 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
             val lrn = row.selectFirst("td[data-testrole*=-lrn]")
 
             behave like elementWithVisibleText(lrn, viewDraftDeparture.lrn.value)
-            behave like elementWithHiddenText(lrn, messages(s"$prefix.table.$lrn"))
           }
 
           "must display correct days remaining" in {
@@ -103,9 +102,9 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
                 s"when action ${linkIndex + 1}" - {
 
                   "must display correct text" in {
-                    link.text() mustBe messages(s"${prefix.table.action.delete} for ${viewDraftDeparture.lrn}") // TODO - When href links are in
+                    link.text() mustBe s"${messages(s"$prefix.table.action.delete")} for ${viewDraftDeparture.lrn}" // TODO - When href links are in
 
-                    behave like elementWithVisibleText(link, s"$prefix.table.action.delete")
+                    behave like elementWithVisibleText(link, s"${messages(s"$prefix.table.action.delete")}")
 
                     val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
                     hiddenText.text() mustBe s"for ${viewDraftDeparture.lrn}"
