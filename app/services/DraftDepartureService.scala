@@ -22,6 +22,6 @@ import scala.concurrent.Future
 
 trait DraftDepartureService {
 
-  def getAll(eori: EoriNumber): Future[List[DraftDeparture]]
+  def getAll(eori: String): Future[List[DraftDeparture]]
 
 }

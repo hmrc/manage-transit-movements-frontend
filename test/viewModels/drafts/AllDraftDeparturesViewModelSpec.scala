@@ -33,12 +33,10 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
   "AllDraftDeparturesViewModelSpec" - {
 
-
     "When DraftDepartures are tabulated must display correct data and format" in {
 
-
       val draftDepartures: Gen[List[DraftDeparture]] = Gen.listOfN(2, arbitrary[DraftDeparture])
-      val today = LocalDate.now()
+      val today                                      = LocalDate.now()
 
       forAll(draftDepartures) {
         draftDeparture =>
@@ -46,20 +44,15 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
           viewModel.dataRows.length mustBe draftDeparture.length
 
-          viewModel.dataRows(0).lrn mustBe draftDeparture(0).lrn
-          viewModel.dataRows(1).lrn mustBe draftDeparture(1).lrn
+          viewModel.dataRows.head.lrn mustBe draftDeparture.head.lrn.toString
+          viewModel.dataRows(1).lrn mustBe draftDeparture(1).lrn.toString
 
-          viewModel.dataRows(0).daysRemaining mustBe getRemainingDays(draftDeparture(0).createdAt,today)
-          viewModel.dataRows(1).daysRemaining mustBe getRemainingDays(draftDeparture(1).createdAt,today)
+          viewModel.dataRows.head.daysRemaining mustBe getRemainingDays(draftDeparture.head.createdAt, today)
+          viewModel.dataRows(1).daysRemaining mustBe getRemainingDays(draftDeparture(1).createdAt, today)
 
       }
 
-
-
-
     }
-
-
 
   }
 }

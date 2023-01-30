@@ -235,11 +235,11 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryDraftDeparture: Arbitrary[DraftDeparture] =
     Arbitrary {
-    for {
-      lrn <- arbitrary[LocalReferenceNumber]
-      createdAt <- arbitrary[LocalDate]
-    } yield DraftDeparture(lrn,createdAt)
-  }
+      for {
+        lrn       <- arbitrary[LocalReferenceNumber]
+        createdAt <- arbitrary[LocalDate]
+      } yield DraftDeparture(lrn, createdAt)
+    }
 
 }
 // scalastyle:on magic.number

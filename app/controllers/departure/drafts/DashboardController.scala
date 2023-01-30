@@ -17,7 +17,6 @@
 package controllers.departure.drafts
 
 import controllers.actions._
-import models.EoriNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.DraftDepartureService
@@ -38,12 +37,12 @@ class DashboardController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = Action.async {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
-        drafts <- draftDepartureService.getAll(new EoriNumber("123345"))
+        drafts <- draftDepartureService.getAll(request.eoriNumber)
         model  <- Future(AllDraftDeparturesViewModel(drafts))
-      } yield Ok(view(new EoriNumber("123345"), model))
+      } yield Ok(view(model))
   }
 
 }

@@ -28,5 +28,5 @@ class MongoDraftDepartureService @Inject() ()(implicit ec: ExecutionContext) ext
   val data: List[DraftDeparture] =
     List(DraftDeparture(new LocalReferenceNumber("12345"), LocalDate.now()), DraftDeparture(new LocalReferenceNumber("23456"), LocalDate.now()))
 
-  override def getAll(eori: EoriNumber): Future[List[DraftDeparture]] = Future(data)
+  override def getAll(eori: String): Future[List[DraftDeparture]] = Future(data)
 }

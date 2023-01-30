@@ -21,14 +21,15 @@
 @this(
     mainTemplate: MainTemplate,
         draftDeparturesTable: DraftDeparturesTable,
-        heading: Heading
+        heading: Heading,
 )
 
-@(eori: EoriNumber, viewModel: AllDraftDeparturesViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: AllDraftDeparturesViewModel)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,
-    showBackLink = true
+    showBackLink = false,
+    fullWidth = true
 ) {
 
     @heading(viewModel.heading)

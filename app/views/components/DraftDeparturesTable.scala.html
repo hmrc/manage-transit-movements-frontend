@@ -54,7 +54,11 @@
 
                    <td data-testrole="movements-list_row@rowIndex-actions">
                        <span class="responsive-table__heading" aria-hidden="true"></span>
-                       <href>Delete</href>
+                       <li>
+                           <a id="@row.lrn" href="" class="govuk-link" data-testrole="movements-list_row@rowIndex">@messages("departure.drafts.dashboard.table.action.delete")
+                           <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
+                           </a>
+                       </li>
                    </td>
                 </tr>
             }

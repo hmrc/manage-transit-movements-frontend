@@ -158,7 +158,7 @@ trait ViewModelGenerators {
   implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
     Arbitrary {
       for {
-        viewDraftDepartures <- arbitrary[List[DraftDeparture]]
+        viewDraftDepartures <- listWithMaxLength[DraftDeparture]()
       } yield AllDraftDeparturesViewModel(viewDraftDepartures)
     }
 }

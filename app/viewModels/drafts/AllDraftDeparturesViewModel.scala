@@ -18,24 +18,23 @@ package viewModels.drafts
 
 import models.DraftDeparture
 import play.api.i18n.Messages
-import viewModels.drafts.AllDraftDeparturesViewModel.{DraftDepartureRow, getRemainingDays}
+import viewModels.drafts.AllDraftDeparturesViewModel.{getRemainingDays, DraftDepartureRow}
 
 import java.time.LocalDate
 
 case class AllDraftDeparturesViewModel(items: List[DraftDeparture]) {
 
-  val messageKeyPrefix = "departure.drafts.dashboard"
-  val tableMessageKeyPrefix = "viewDraftDepartures.table"
+  val messageKeyPrefix      = "departure.drafts.dashboard"
+  val tableMessageKeyPrefix = "departure.drafts.dashboard.table"
 
-  val draftDepartures: Int      = items.length
+  val draftDepartures: Int = items.length
 
-  def title(implicit messages: Messages): String   = messages(s"$messageKeyPrefix.title")
-  def heading(implicit messages: Messages): String   = messages(s"$messageKeyPrefix.heading")
-  def visuallyHiddenHeader(implicit messages: Messages): String   = messages(s"$messageKeyPrefix.heading.hidden")
+  def title(implicit messages: Messages): String                = messages(s"$messageKeyPrefix.title")
+  def heading(implicit messages: Messages): String              = messages(s"$messageKeyPrefix.heading")
+  def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading.hidden")
 
-  def referenceNumber(implicit messages: Messages): String   = messages(s"$tableMessageKeyPrefix.lrn")
-  def daysToComplete(implicit messages: Messages): String   = messages(s"$tableMessageKeyPrefix.daysToComplete")
-
+  def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
+  def daysToComplete(implicit messages: Messages): String  = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
   def dataRows: Seq[DraftDepartureRow] = items.map {
     dd => DraftDepartureRow(dd.lrn.toString(), getRemainingDays(dd.createdAt, LocalDate.now()))
@@ -46,6 +45,6 @@ case class AllDraftDeparturesViewModel(items: List[DraftDeparture]) {
 object AllDraftDeparturesViewModel {
 
   def getRemainingDays(createdAt: LocalDate, today: LocalDate) =
-    today.until(createdAt.plusDays(30)).getDays
+    today.until(createdAt.plusDays(30)).getDays //TODO: Set to config value
   case class DraftDepartureRow(lrn: String, daysRemaining: Int)
 }
