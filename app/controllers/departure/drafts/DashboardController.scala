@@ -16,6 +16,7 @@
 
 package controllers.departure.drafts
 
+import config.FrontendAppConfig
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +33,8 @@ class DashboardController @Inject() (
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   draftDepartureService: DraftDepartureService,
-  view: DashboardView
+  view: DashboardView,
+  appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -41,7 +43,7 @@ class DashboardController @Inject() (
     implicit request =>
       for {
         drafts <- draftDepartureService.getAll(request.eoriNumber)
-        model  <- Future(AllDraftDeparturesViewModel(drafts))
+        model  <- Future(AllDraftDeparturesViewModel(appConfig.daysTilDeletion, drafts))
       } yield Ok(view(model))
   }
 

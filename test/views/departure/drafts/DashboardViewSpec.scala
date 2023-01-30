@@ -33,8 +33,10 @@ import java.time.LocalDate
 
 class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPropertyChecks {
 
+  val daysTilDeletion: Int = frontendAppConfig.daysTilDeletion
+
   val genDraftDeparture: List[DraftDeparture]                         = arbitrary[List[DraftDeparture]].sample.value
-  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(genDraftDeparture)
+  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(daysTilDeletion, genDraftDeparture)
   val dataRows: Seq[DraftDepartureRow]                                = viewAllDepartureMovementsViewModel.dataRows
 
   override val prefix = "departure.drafts.dashboard"
@@ -87,7 +89,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
           "must display correct days remaining" in {
             val daysToComplete = row.selectFirst("td[data-testrole*=-daysToComplete]")
 
-            val daysRemaining = getRemainingDays(viewDraftDeparture.createdAt, LocalDate.now())
+            val daysRemaining = getRemainingDays(viewDraftDeparture.createdAt, LocalDate.now(), daysTilDeletion)
 
             behave like elementWithVisibleText(daysToComplete, daysRemaining.toString)
             behave like elementWithHiddenText(daysToComplete, messages(s"$prefix.table.daysToComplete"))

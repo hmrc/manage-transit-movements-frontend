@@ -17,19 +17,18 @@
 package viewModels.drafts
 
 import base.SpecBase
-import controllers.departure.{routes => departureRoutes}
 import generators.Generators
-import models.{Departure, DraftDeparture}
-import models.departure.DepartureStatus._
+import models.DraftDeparture
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.drafts.AllDraftDeparturesViewModel.getRemainingDays
 
 import java.time.LocalDate
-import scala.annotation.unused
 
 class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+
+  val daysTilDeletion = frontendAppConfig.daysTilDeletion
 
   "AllDraftDeparturesViewModelSpec" - {
 
@@ -40,15 +39,15 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       forAll(draftDepartures) {
         draftDeparture =>
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture)
+          val viewModel = AllDraftDeparturesViewModel(daysTilDeletion, draftDeparture)
 
           viewModel.dataRows.length mustBe draftDeparture.length
 
           viewModel.dataRows.head.lrn mustBe draftDeparture.head.lrn.toString
           viewModel.dataRows(1).lrn mustBe draftDeparture(1).lrn.toString
 
-          viewModel.dataRows.head.daysRemaining mustBe getRemainingDays(draftDeparture.head.createdAt, today)
-          viewModel.dataRows(1).daysRemaining mustBe getRemainingDays(draftDeparture(1).createdAt, today)
+          viewModel.dataRows.head.daysRemaining mustBe getRemainingDays(draftDeparture.head.createdAt, today, daysTilDeletion)
+          viewModel.dataRows(1).daysRemaining mustBe getRemainingDays(draftDeparture(1).createdAt, today, daysTilDeletion)
 
       }
 
