@@ -29,7 +29,7 @@ import views.html.WhatDoYouWantToDoView
 
 import scala.concurrent.Future
 
-class WhatDoYouWantToDoControllerSpec extends SpecBase {
+class WhatDoYouWantToDoP5ControllerSpec extends SpecBase {
 
   private val mockArrivalMovementConnector: ArrivalMovementConnector            = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector       = mock[DeparturesMovementConnector]
@@ -50,9 +50,9 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
         bind[DeparturesMovementsP5Connector].toInstance(mockDepartureMovementsP5Connector)
       )
-      .configure("microservice.services.features.phase5Enabled.departure" -> false)
+      .configure("microservice.services.features.phase5Enabled.departure" -> true)
 
-  "WhatDoYouWantToDoP4 Controller" - {
+  "WhatDoYouWantToDoP5 Controller" - {
 
     "must return OK and the correct view for a GET with" - {
 
@@ -64,6 +64,9 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
           .thenReturn(Future.successful(Availability.NonEmpty))
 
+        when(mockDepartureMovementsP5Connector.getDraftDeparturesAvailability()(any()))
+          .thenReturn(Future.successful(DraftAvailability.NonEmpty))
+
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
 
@@ -71,9 +74,9 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Availability.NonEmpty, Availability.NonEmpty, None)(request, messages).toString
+          view(Availability.NonEmpty, Availability.NonEmpty, Some(DraftAvailability.NonEmpty))(request, messages).toString
 
-        verifyNoInteractions(mockDepartureMovementsP5Connector)
+        verify(mockDepartureMovementsP5Connector).getDraftDeparturesAvailability()(any())
       }
 
       "No arrivals and no departures" in {
@@ -83,15 +86,18 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
           .thenReturn(Future.successful(Availability.Empty))
 
+        when(mockDepartureMovementsP5Connector.getDraftDeparturesAvailability()(any()))
+          .thenReturn(Future.successful(DraftAvailability.Empty))
+
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
 
         val view = injector.instanceOf[WhatDoYouWantToDoView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Availability.Empty, Availability.Empty, None)(request, messages).toString
+          view(Availability.Empty, Availability.Empty, Some(DraftAvailability.Empty))(request, messages).toString
 
-        verifyNoInteractions(mockDepartureMovementsP5Connector)
+        verify(mockDepartureMovementsP5Connector).getDraftDeparturesAvailability()(any())
       }
 
       "No response from arrivals and departures" in {
@@ -101,15 +107,18 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
           .thenReturn(Future.successful(Availability.Unavailable))
 
+        when(mockDepartureMovementsP5Connector.getDraftDeparturesAvailability()(any()))
+          .thenReturn(Future.successful(DraftAvailability.Unavailable))
+
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
 
         val view = injector.instanceOf[WhatDoYouWantToDoView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Availability.Unavailable, Availability.Unavailable, None)(request, messages).toString
+          view(Availability.Unavailable, Availability.Unavailable, Some(DraftAvailability.Unavailable))(request, messages).toString
 
-        verifyNoInteractions(mockDepartureMovementsP5Connector)
+        verify(mockDepartureMovementsP5Connector).getDraftDeparturesAvailability()(any())
       }
     }
   }

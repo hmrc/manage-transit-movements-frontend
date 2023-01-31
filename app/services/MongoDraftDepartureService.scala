@@ -25,5 +25,6 @@ import scala.concurrent.Future
 
 class MongoDraftDepartureService @Inject() (connector: DeparturesMovementsP5Connector) extends DraftDepartureService {
 
-  override def getAll()(implicit hc: HeaderCarrier): Future[DeparturesSummary] = connector.getDeparturesSummary
+  override def getAll(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    connector.getDeparturesSummary(queryParams)
 }

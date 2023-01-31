@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package services
+package models
 
-import models.DeparturesSummary
-import uk.gov.hmrc.http.HeaderCarrier
+sealed trait DraftAvailability
 
-import scala.concurrent.Future
+object DraftAvailability {
 
-trait DraftDepartureService {
+  def apply[T <: DeparturesSummary](departureSummaries: Option[T]): DraftAvailability = departureSummaries match {
+    case Some(value) if value.userAnswers.nonEmpty => NonEmpty
+    case Some(_)                                   => Empty
+    case None                                      => Unavailable
+  }
 
-  def getAll(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
+  sealed trait Available extends DraftAvailability
 
+  case object Unavailable extends DraftAvailability
+  case object Empty extends DraftAvailability
+  case object NonEmpty extends DraftAvailability
 }

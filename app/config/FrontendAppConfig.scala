@@ -94,6 +94,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
       s"$departureFrontendUrl/local-reference-number"
     }
 
+  val phase5Enabled: Boolean = phase5Switch.Departures.enabled
+
   def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
 

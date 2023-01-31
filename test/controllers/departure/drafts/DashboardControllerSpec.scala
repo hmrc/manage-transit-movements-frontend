@@ -54,7 +54,7 @@ class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
           )
         )
 
-      when(draftDepartureService.getAll()(any())).thenReturn(Future.successful(draftDeparture))
+      when(draftDepartureService.getAll(any())(any())).thenReturn(Future.successful(Some(draftDeparture)))
 
       val request = FakeRequest(GET, draftDashboardRoute)
       val result  = route(app, request).value

@@ -41,10 +41,11 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      draftDepartureService.getAll().map {
-        draftDepartures =>
-          val toViewModel = AllDraftDeparturesViewModel(appConfig.daysTilDeletion, draftDepartures)
+      draftDepartureService.getAll(Seq.empty).map {
+        case Some(draft) =>
+          val toViewModel = AllDraftDeparturesViewModel(appConfig.daysTilDeletion, draft)
           Ok(view(toViewModel))
+        case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
       }
   }
 

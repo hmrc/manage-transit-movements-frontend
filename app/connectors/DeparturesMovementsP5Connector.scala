@@ -17,19 +17,32 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.DeparturesSummary
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import logging.Logging
+import models.{DeparturesSummary, DraftAvailability}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
+class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
-  def getDeparturesSummary(implicit hc: HeaderCarrier): Future[DeparturesSummary] = {
+  def getDeparturesSummary(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
     val url = s"${config.draftDeparturesUrl}/user-answers"
 
-    http.GET[DeparturesSummary](url)(HttpReads[DeparturesSummary], hc, ec)
+    http
+      .GET[DeparturesSummary](url, queryParams)(HttpReads[DeparturesSummary], hc, ec)
+      .map(
+        departureSummaries => Some(departureSummaries)
+      )
+      .recover {
+        case _ =>
+          logger.error(s"get Departure Summary failed to return data")
+          None
+      }
   }
+
+  def getDraftDeparturesAvailability()(implicit hc: HeaderCarrier): Future[DraftAvailability] =
+    getDeparturesSummary(Seq("limit" -> "1")).map(DraftAvailability(_))
 
 }
