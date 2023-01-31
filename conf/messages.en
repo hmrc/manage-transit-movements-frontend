@@ -40,9 +40,9 @@ whatDoYouWantToDo.departure.noDepartures = You have no departure declarations.
 whatDoYouWantToDo.departure.departuresUnavailable = View departure notifications is currently unavailable.
 whatDoYouWantToDo.subHeading.guarantee = Guarantees
 whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance = Check your guarantee balance
-whatDoYouWantToDo.link.departure.viewDraftDepartures = View draft departures dashboard
-whatDoYouWantToDo.departure.noDraftDepartures = You have no draft departures
-whatDoYouWantToDo.departure.draftDeparturesUnavailable = Draft departures unavailable
+whatDoYouWantToDo.link.departure.viewDraftDepartures = View draft departure declarations
+whatDoYouWantToDo.departure.noDraftDepartures = You have no draft departure declarations
+whatDoYouWantToDo.departure.draftDeparturesUnavailable = Draft departure declarations unavailable
 
 session_expired.title = For your security, we signed you out
 session_expired.heading = For your security, we signed you out

@@ -115,12 +115,12 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
   "when we have no draft departures" - {
     val doc = parseView(applyView(draftDeparturesAvailability = Some(DraftAvailability.Empty)))
-    behave like pageWithContent(doc, "p", "You have no draft departures")
+    behave like pageWithContent(doc, "p", "You have no draft departure declarations")
   }
 
   "when draft departures are unavailable" - {
     val doc = parseView(applyView(draftDeparturesAvailability = Some(DraftAvailability.Unavailable)))
-    behave like pageWithContent(doc, "p", "Draft departures unavailable")
+    behave like pageWithContent(doc, "p", "Draft departure declarations unavailable")
   }
 
   "when we have draft departures must" - {
@@ -128,7 +128,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     val link = getElementById(doc, "view-draft-departures")
 
     "have the correct text for the view departures link" in {
-      assertElementContainsText(link, "View draft departures dashboard")
+      assertElementContainsText(link, "View draft departure declarations")
     }
 
     "have the correct href on the view departures link" in {
