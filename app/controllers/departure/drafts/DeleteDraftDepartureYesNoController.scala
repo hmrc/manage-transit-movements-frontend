@@ -47,10 +47,19 @@ class DeleteDraftDepartureYesNoController @Inject() (
 
   def onSubmit(lrn: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      draftDepartureService.deleteDraftDeparture(lrn) map {
-        case response if response.status == 200 => Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad())
-        case _                                  => Redirect(controllers.routes.ErrorController.internalServerError())
-      }
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn))),
+          {
+            case true =>
+              draftDepartureService.deleteDraftDeparture(lrn) map {
+                case response if response.status == 200 => Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad())
+                case _                                  => Redirect(controllers.routes.ErrorController.internalServerError())
+              }
+            case false => Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad()))
+          }
+        )
   }
 
 }
