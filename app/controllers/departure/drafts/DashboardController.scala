@@ -41,7 +41,7 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      draftDepartureService.getAll(Seq.empty).map {
+      draftDepartureService.getAll().map {
         case Some(draft) =>
           val toViewModel = AllDraftDeparturesViewModel(appConfig.daysTilDeletion, draft)
           Ok(view(toViewModel))

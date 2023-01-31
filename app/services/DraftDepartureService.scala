@@ -23,6 +23,6 @@ import scala.concurrent.Future
 
 trait DraftDepartureService {
 
-  def getAll(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
+  def getAll(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
 
 }
