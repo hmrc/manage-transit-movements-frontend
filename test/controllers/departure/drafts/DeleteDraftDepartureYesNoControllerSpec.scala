@@ -19,12 +19,88 @@ package controllers.departure.drafts
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.YesNoFormProvider
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.bind
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import services.DraftDepartureService
+import views.html.departure.drafts.DeleteDraftDepartureYesNoView
 
-class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefaultMockFixtures with MockitoSugar {
+class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefaultMockFixtures with MockitoSugar with ScalaCheckPropertyChecks {
 
   private val formProvider = new YesNoFormProvider()
   private val form         = formProvider("departure.drafts.deleteDraftDepartureYesNo")
-  private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn.toString()).url
 
-  "DeleteDraftDepartureYesNo Controller" ignore {}
+  val lrnString: String = lrn.toString()
+
+  private val draftDepartureService = mock[DraftDepartureService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(
+        bind[DraftDepartureService].toInstance(draftDepartureService)
+      )
+
+  private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString).url
+
+  "DeleteDraftDepartureYesNo Controller" - {
+
+    "must return OK and the correct view for a GET" in {
+
+      val request = FakeRequest(GET, deleteDraftDepartureYesNoRoute)
+      val result  = route(app, request).value
+
+      val view = injector.instanceOf[DeleteDraftDepartureYesNoView]
+
+      status(result) mustEqual OK
+
+      contentAsString(result) mustEqual
+        view(form, lrnString)(request, messages).toString
+    }
+
+    "when yes submitted must redirect back to draft departure dashboard" in {
+      val request = FakeRequest(POST, deleteDraftDepartureYesNoRoute)
+        .withFormUrlEncodedBody(("value", "true"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual
+        controllers.departure.drafts.routes.DashboardController.onPageLoad().url
+    }
+
+    "when no submitted must redirect back to draft departure dashboard" in {
+      val request = FakeRequest(POST, deleteDraftDepartureYesNoRoute)
+        .withFormUrlEncodedBody(("value", "false"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual
+        controllers.departure.drafts.routes.DashboardController.onPageLoad().url
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      val invalidValue = ""
+      val request      = FakeRequest(POST, deleteDraftDepartureYesNoRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm    = form.bind(Map("value" -> invalidValue))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      val view = injector.instanceOf[DeleteDraftDepartureYesNoView]
+
+      val content = contentAsString(result)
+
+      content mustEqual
+        view(boundForm, invalidValue)(request, messages).toString
+    }
+
+  }
 }

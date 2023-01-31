@@ -43,7 +43,6 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
 
   def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url = s"${config.draftDeparturesUrl}/user-answers/$lrn"
-
     http.DELETE[HttpResponse](url)
   }
 

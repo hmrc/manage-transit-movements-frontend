@@ -17,7 +17,7 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
 import models.{DepartureUserAnswerSummary, DeparturesSummary, DraftAvailability, LocalReferenceNumber}
@@ -25,6 +25,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDateTime
 
@@ -119,6 +120,23 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
       val expectedResult = None
       connector.getDeparturesSummary().futureValue mustBe expectedResult
 
+    }
+
+    "deleteDraftDeparture" - {
+      val lrn = "1234"
+      "must return 200 on a succesful deletion" in {
+        server.stubFor(
+          delete(urlEqualTo(s"/$startUrl/user-answers/$lrn"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+            )
+        )
+
+        val expectedResult = HttpResponse(200)
+        connector.deleteDraftDeparture(lrn).futureValue mustBe expectedResult
+
+      }
     }
 
     "getDraftDeparturesAvailability" - {
