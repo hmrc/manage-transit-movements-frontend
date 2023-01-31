@@ -20,11 +20,13 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.DraftAvailability
+import models.{DepartureUserAnswerSummary, DeparturesSummary, DraftAvailability, LocalReferenceNumber}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+
+import java.time.LocalDateTime
 
 class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
@@ -38,6 +40,8 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
       .guiceApplicationBuilder()
       .configure(conf = "microservice.services.drafts-repository.port" -> server.port())
 
+  private val createdAt = LocalDateTime.now()
+
   private val summaryResponseJson =
     Json.obj(
       "eoriNumber" -> "1234567",
@@ -50,7 +54,7 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
                 "href" -> "/manage-transit-movements-departure-cache/user-answers/AB123"
               }
             },
-            "createdAt"   -> "2023-01-26T10:32:15.648",
+            "createdAt"   -> createdAt.toString(),
             "lastUpdated" -> "2023-01-27T08:43:17.064",
             "_id"         -> "27e687a9-4544-4e22-937e-74e699d855f8"
           ),
@@ -61,7 +65,7 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
                 "href" -> "/manage-transit-movements-departure-cache/user-answers/CD123 "
               }
             },
-            "createdAt"   -> "2023-01-26T11:32:15.648",
+            "createdAt"   -> createdAt.toString(),
             "lastUpdated" -> "2023-01-27T09:43:17.064",
             "_id"         -> "27e687a9-4544-4e22-937e-74e699d855f8"
           )
@@ -79,8 +83,42 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
             .willReturn(okJson(summaryResponseJson.toString()))
         )
 
-        connector.getDeparturesSummary().futureValue mustBe ???
+        val expectedResult = DeparturesSummary(
+          List(
+            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt),
+            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt)
+          )
+        )
+
+        connector.getDeparturesSummary().futureValue.value mustBe expectedResult
       }
+
+      "must return empty DeparturesSummary when not found" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/user-answers"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+            )
+        )
+
+        val expectedResult = DeparturesSummary(List.empty)
+        connector.getDeparturesSummary().futureValue.value mustBe expectedResult
+
+      }
+    }
+    "must return none on failure" in {
+      server.stubFor(
+        get(urlEqualTo(s"/$startUrl/user-answers"))
+          .willReturn(
+            aResponse()
+              .withStatus(500)
+          )
+      )
+
+      val expectedResult = None
+      connector.getDeparturesSummary().futureValue mustBe expectedResult
+
     }
 
     "getDraftDeparturesAvailability" - {
