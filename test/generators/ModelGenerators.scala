@@ -233,16 +233,16 @@ trait ModelGenerators {
       } yield Call(method, url)
     }
 
-  implicit lazy val arbitraryUserAnswerSummary: Arbitrary[UserAnswerSummary] =
+  implicit lazy val arbitraryUserAnswerSummary: Arbitrary[DepartureUserAnswerSummary] =
     Arbitrary {
       for {
         lrn       <- arbitrary[LocalReferenceNumber]
         createdAt <- arbitrary[LocalDateTime]
-      } yield UserAnswerSummary(lrn, createdAt)
+      } yield DepartureUserAnswerSummary(lrn, createdAt)
     }
 
-  implicit lazy val arbitraryDraftDeparture: Arbitrary[DraftDepartures] = Arbitrary {
-    listWithMaxLength[UserAnswerSummary](9).map(DraftDepartures(_))
+  implicit lazy val arbitraryDraftDeparture: Arbitrary[DeparturesSummary] = Arbitrary {
+    listWithMaxLength[DepartureUserAnswerSummary](9).map(DeparturesSummary(_))
   }
 
 }

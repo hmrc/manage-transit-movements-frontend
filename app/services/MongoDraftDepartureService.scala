@@ -16,14 +16,14 @@
 
 package services
 
-import connectors.DraftDeparturesConnector
-import models.DraftDepartures
+import connectors.DeparturesMovementsP5Connector
+import models.DeparturesSummary
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class MongoDraftDepartureService @Inject() (connector: DraftDeparturesConnector) extends DraftDepartureService {
+class MongoDraftDepartureService @Inject() (connector: DeparturesMovementsP5Connector) extends DraftDepartureService {
 
-  override def getAll()(implicit hc: HeaderCarrier): Future[DraftDepartures] = connector.getDraftDepartures
+  override def getAll()(implicit hc: HeaderCarrier): Future[DeparturesSummary] = connector.getDeparturesSummary
 }

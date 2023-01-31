@@ -16,7 +16,7 @@
 
 package generators
 
-import models.{DraftDepartures, LocalReferenceNumber}
+import models.{DeparturesSummary, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
@@ -158,7 +158,7 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         daysTilDeletion <- arbitrary[Int]
-        draftDepartures <- arbitrary[DraftDepartures]
+        draftDepartures <- arbitrary[DeparturesSummary]
       } yield AllDraftDeparturesViewModel(daysTilDeletion, draftDepartures)
     }
 }

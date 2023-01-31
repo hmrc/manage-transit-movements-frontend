@@ -18,9 +18,9 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class DraftDepartures(userAnswers: List[UserAnswerSummary])
+case class DeparturesSummary(userAnswers: List[DepartureUserAnswerSummary])
 
-object DraftDepartures {
+object DeparturesSummary {
 
-  implicit val format: OFormat[DraftDepartures] = Json.format[DraftDepartures]
+  implicit val format: OFormat[DeparturesSummary] = Json.format[DeparturesSummary]
 }

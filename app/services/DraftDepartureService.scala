@@ -16,13 +16,13 @@
 
 package services
 
-import models.DraftDepartures
+import models.DeparturesSummary
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
 trait DraftDepartureService {
 
-  def getAll()(implicit hc: HeaderCarrier): Future[DraftDepartures]
+  def getAll()(implicit hc: HeaderCarrier): Future[DeparturesSummary]
 
 }

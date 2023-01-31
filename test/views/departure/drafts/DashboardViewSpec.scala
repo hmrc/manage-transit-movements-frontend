@@ -17,7 +17,7 @@
 package views.departure.drafts
 
 import generators.Generators
-import models.{DraftDepartures, UserAnswerSummary}
+import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
@@ -35,7 +35,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
   val daysTilDeletion: Int = frontendAppConfig.daysTilDeletion
 
-  val genDraftDeparture: DraftDepartures                              = arbitrary[DraftDepartures].sample.value
+  val genDraftDeparture: DeparturesSummary                            = arbitrary[DeparturesSummary].sample.value
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(daysTilDeletion, genDraftDeparture)
   val dataRows: Seq[DraftDepartureRow]                                = viewAllDepartureMovementsViewModel.dataRows
 
@@ -67,7 +67,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
   "must generate correct data in each row" - {
     rows.toList.zipWithIndex.foreach {
       case (row, rowIndex) =>
-        val viewDraftDeparture: UserAnswerSummary = genDraftDeparture.userAnswers(rowIndex)
+        val viewDraftDeparture: DepartureUserAnswerSummary = genDraftDeparture.userAnswers(rowIndex)
 
         s"when row ${rowIndex + 1}" - {
 

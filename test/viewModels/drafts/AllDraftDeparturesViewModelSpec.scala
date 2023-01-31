@@ -18,7 +18,7 @@ package viewModels.drafts
 
 import base.SpecBase
 import generators.Generators
-import models.{DraftDepartures, UserAnswerSummary}
+import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -34,12 +34,12 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
     "When DraftDepartures are tabulated must display correct data and format" in {
 
-      val userAnswerSummary: Gen[List[UserAnswerSummary]] = Gen.listOfN(2, arbitrary[UserAnswerSummary])
-      val today                                           = LocalDate.now()
+      val userAnswerSummary: Gen[List[DepartureUserAnswerSummary]] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary])
+      val today                                                    = LocalDate.now()
 
       forAll(userAnswerSummary) {
         userAnswerSummary =>
-          val draftDeparture = DraftDepartures(userAnswerSummary)
+          val draftDeparture = DeparturesSummary(userAnswerSummary)
 
           val viewModel = AllDraftDeparturesViewModel(daysTilDeletion, draftDeparture)
 

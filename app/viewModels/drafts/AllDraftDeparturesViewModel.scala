@@ -16,7 +16,7 @@
 
 package viewModels.drafts
 
-import models.DraftDepartures
+import models.DeparturesSummary
 
 import java.time.temporal.ChronoUnit.DAYS
 import play.api.i18n.Messages
@@ -24,7 +24,7 @@ import viewModels.drafts.AllDraftDeparturesViewModel.{getRemainingDays, DraftDep
 
 import java.time.LocalDate
 
-case class AllDraftDeparturesViewModel(daysTilDeletion: Int, items: DraftDepartures) {
+case class AllDraftDeparturesViewModel(daysTilDeletion: Int, items: DeparturesSummary) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
   val tableMessageKeyPrefix = "departure.drafts.dashboard.table"

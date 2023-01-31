@@ -17,19 +17,19 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.DraftDepartures
+import models.DeparturesSummary
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DraftDeparturesConnector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
+class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) {
 
-  def getDraftDepartures(implicit hc: HeaderCarrier): Future[DraftDepartures] = {
+  def getDeparturesSummary(implicit hc: HeaderCarrier): Future[DeparturesSummary] = {
     val url = s"${config.draftDeparturesUrl}/user-answers"
 
-    http.GET[DraftDepartures](url)(HttpReads[DraftDepartures], hc, ec)
+    http.GET[DeparturesSummary](url)(HttpReads[DeparturesSummary], hc, ec)
   }
 
 }

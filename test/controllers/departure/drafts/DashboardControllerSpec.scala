@@ -17,7 +17,7 @@
 package controllers.departure.drafts
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import models.{DraftDepartures, LocalReferenceNumber, UserAnswerSummary}
+import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -47,10 +47,10 @@ class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
     "must return OK and the correct view for a GET" in {
 
       val draftDeparture =
-        DraftDepartures(
+        DeparturesSummary(
           List(
-            UserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now()),
-            UserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now())
+            DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now()),
+            DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now())
           )
         )
 
