@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import uk.gov.hmrc.govukfrontend.views.implicits.RichRadiosSupport
 import utils.Format
 
 object ViewUtils {
@@ -171,5 +172,22 @@ object ViewUtils {
         )
       )
     // scalastyle:on method.length
+  }
+
+  implicit class RadiosImplicits(radios: Radios)(implicit messages: Messages) extends RichRadiosSupport {
+
+    def withHeadingAndCaption(heading: String, caption: Option[String]): Radios =
+      caption match {
+        case Some(value) => radios.withHeadingAndSectionCaption(Text(heading), Text(value))
+        case None        => radios.withHeading(Text(heading))
+      }
+
+    def withLegend(legend: String, legendIsVisible: Boolean = true): Radios = {
+      val legendClass = if (legendIsVisible) "govuk-fieldset__legend--m" else "govuk-visually-hidden"
+      radios.copy(
+        fieldset = Some(Fieldset(legend = Some(Legend(content = Text(legend), classes = legendClass, isPageHeading = false))))
+      )
+    }
+
   }
 }

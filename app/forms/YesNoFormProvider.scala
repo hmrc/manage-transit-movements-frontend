@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package forms
 
-import play.api.data.FieldMapping
-import play.api.data.Forms.of
+import forms.mappings.Mappings
+import play.api.data.Form
 
-trait Mappings extends Formatters with Constraints {
+import javax.inject.Inject
 
-  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
-    of(stringFormatter(errorKey))
+class YesNoFormProvider @Inject() extends Mappings {
 
-  protected def boolean(requiredKey: String = "error.required", invalidKey: String = "error.boolean", args: Seq[Any] = Seq.empty): FieldMapping[Boolean] =
-    of(booleanFormatter(requiredKey, invalidKey, args))
+  def apply(prefix: String): Form[Boolean] =
+    Form(
+      "value" -> boolean(s"$prefix.error.required")
+    )
 }

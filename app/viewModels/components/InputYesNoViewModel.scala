@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package viewModels.components
 
-import play.api.data.FieldMapping
-import play.api.data.Forms.of
+import play.twirl.api.Html
 
-trait Mappings extends Formatters with Constraints {
+sealed trait InputYesNoViewModel
 
-  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
-    of(stringFormatter(errorKey))
+object InputYesNoViewModel {
 
-  protected def boolean(requiredKey: String = "error.required", invalidKey: String = "error.boolean", args: Seq[Any] = Seq.empty): FieldMapping[Boolean] =
-    of(booleanFormatter(requiredKey, invalidKey, args))
+  case class OrdinaryYesNo(
+    heading: String,
+    caption: Option[String] = None
+  ) extends InputYesNoViewModel
+
+  case class YesNoWithAdditionalHtml(
+    heading: String,
+    caption: Option[String] = None,
+    additionalHtml: Html
+  ) extends InputYesNoViewModel
+      with AdditionalHtmlViewModel
+
+  case class YesNoWithLegend(
+    legend: String
+  ) extends InputYesNoViewModel
 }

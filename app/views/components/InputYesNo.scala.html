@@ -1,0 +1,67 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import viewModels.components.InputYesNoViewModel
+@import viewModels.components.InputYesNoViewModel._
+@import views.html.components.Heading
+@import views.utils.ViewUtils._
+@import viewModels.components.InputYesNoViewModel
+
+@this(
+    govukRadios: GovukRadios,
+    hmrcHeading: Heading
+)
+
+@(
+    field: Field,
+    yesNoType: InputYesNoViewModel,
+    hint: Option[Content] = None
+)(implicit messages: Messages)
+
+@radios = @{
+    Radios(
+        classes = "govuk-radios--inline",
+        hint = hint.map(x => Hint(content = x)),
+        items = Seq(
+            RadioItem(
+                id = Some(field.id),
+                value = Some("true"),
+                content = Text(messages("site.yes"))
+            ),
+            RadioItem(
+                id = Some(s"${field.id}-no"),
+                value = Some("false"),
+                content = Text(messages("site.no"))
+            )
+        )
+    )
+    .withFormField(field)
+}
+
+@yesNoType match {
+    case OrdinaryYesNo(heading, caption) => {
+        @govukRadios(radios.withHeadingAndCaption(heading, caption))
+    }
+    case x @ YesNoWithAdditionalHtml(heading, caption, additionalHtml) => {
+        @hmrcHeading(heading, caption, Some(x.headingClasses))
+        @additionalHtml
+        @govukRadios(radios.withLegend(heading, false))
+    }
+    case YesNoWithLegend(legend) => {
+        @govukRadios(radios.withLegend(legend))
+    }
+}

@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package viewModels.components
 
-import play.api.data.FieldMapping
-import play.api.data.Forms.of
+import play.twirl.api.Html
 
-trait Mappings extends Formatters with Constraints {
-
-  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
-    of(stringFormatter(errorKey))
-
-  protected def boolean(requiredKey: String = "error.required", invalidKey: String = "error.boolean", args: Seq[Any] = Seq.empty): FieldMapping[Boolean] =
-    of(booleanFormatter(requiredKey, invalidKey, args))
+trait AdditionalHtmlViewModel {
+  val additionalHtml: Html
+  val headingClasses = "govuk-!-margin-top-0 govuk-!-margin-bottom-2"
 }

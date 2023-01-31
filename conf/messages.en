@@ -216,3 +216,7 @@ departure.drafts.dashboard.table.daysToComplete = Days to complete
 departure.drafts.dashboard.table.daysToComplete.hidden = for {0}
 departure.drafts.dashboard.table.action.delete = Delete
 departure.drafts.dashboard.table.action.delete.hidden = for {0}
+
+departure.drafts.deleteDraftDepartureYesNo.title = Are you sure you want to cancel this declaration?
+departure.drafts.deleteDraftDepartureYesNo.heading = Are you sure you want to cancel this declaration?
+departure.drafts.deleteDraftDepartureYesNo.error.required = Select yes or no placeholder #####
