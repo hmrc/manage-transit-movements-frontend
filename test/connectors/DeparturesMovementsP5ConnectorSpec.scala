@@ -108,17 +108,20 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
       }
     }
     "must return none on failure" in {
-      server.stubFor(
-        get(urlEqualTo(s"/$startUrl/user-answers"))
-          .willReturn(
-            aResponse()
-              .withStatus(500)
+      errorResponses.map {
+        errorResponse =>
+          server.stubFor(
+            get(urlEqualTo(s"/$startUrl/user-answers"))
+              .willReturn(
+                aResponse()
+                  .withStatus(errorResponse)
+              )
           )
-      )
 
-      val expectedResult = None
-      connector.getDeparturesSummary().futureValue mustBe expectedResult
+          val expectedResult = None
+          connector.getDeparturesSummary().futureValue mustBe expectedResult
 
+      }
     }
 
     "getDraftDeparturesAvailability" - {
