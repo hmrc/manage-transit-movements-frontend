@@ -38,5 +38,5 @@ class DeleteDraftDepartureYesNoViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithRadioItems()
 
-  behave like pageWithSubmitButton("Continue")
+  behave like pageWithSubmitButton("Confirm")
 }
