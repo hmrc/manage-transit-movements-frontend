@@ -23,7 +23,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.departure.drafts.DeleteDraftDepartureYesNoView
-
+import play.api.http.Status.{OK => StatusOK}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,8 +54,8 @@ class DeleteDraftDepartureYesNoController @Inject() (
           {
             case true =>
               draftDepartureService.deleteDraftDeparture(lrn) map {
-                case response if response.status == 200 => Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad())
-                case _                                  => Redirect(controllers.routes.ErrorController.internalServerError())
+                case response if response.status == StatusOK => Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad())
+                case _                                       => Redirect(controllers.routes.ErrorController.internalServerError())
               }
             case false => Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad()))
           }

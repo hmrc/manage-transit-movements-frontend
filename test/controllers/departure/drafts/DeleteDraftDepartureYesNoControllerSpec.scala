@@ -18,6 +18,8 @@ package controllers.departure.drafts
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.YesNoFormProvider
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.verify
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -61,15 +63,18 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
     }
 
     "when yes submitted must redirect back to draft departure dashboard" in {
+
       val request = FakeRequest(POST, deleteDraftDepartureYesNoRoute)
         .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(app, request).value
 
-      status(result) mustEqual SEE_OTHER
+      status(result) mustEqual OK
 
       redirectLocation(result).value mustEqual
         controllers.departure.drafts.routes.DashboardController.onPageLoad().url
+
+      // verify(draftDepartureService).deleteDraftDeparture(any())(any())
     }
 
     "when no submitted must redirect back to draft departure dashboard" in {

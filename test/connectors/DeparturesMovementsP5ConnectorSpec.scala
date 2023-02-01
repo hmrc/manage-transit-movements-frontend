@@ -25,8 +25,6 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpResponse
-
 import java.time.LocalDateTime
 
 class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
@@ -124,7 +122,7 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
 
     "deleteDraftDeparture" - {
       val lrn = "1234"
-      "must return 200 on a succesful deletion" in {
+      "must return 200 on a successful deletion" in {
         server.stubFor(
           delete(urlEqualTo(s"/$startUrl/user-answers/$lrn"))
             .willReturn(
@@ -133,9 +131,19 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
             )
         )
 
-        val expectedResult = HttpResponse(200)
-        connector.deleteDraftDeparture(lrn).futureValue mustBe expectedResult
+        connector.deleteDraftDeparture(lrn).futureValue.status mustBe 200
+      }
 
+      "must return 500 on a failed deletion" in {
+        server.stubFor(
+          delete(urlEqualTo(s"/$startUrl/user-answers/$lrn"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+            )
+        )
+
+        connector.deleteDraftDeparture(lrn).futureValue.status mustBe 500
       }
     }
 
