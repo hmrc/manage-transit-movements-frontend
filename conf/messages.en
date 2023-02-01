@@ -40,9 +40,9 @@ whatDoYouWantToDo.departure.noDepartures = You have no departure declarations.
 whatDoYouWantToDo.departure.departuresUnavailable = View departure notifications is currently unavailable.
 whatDoYouWantToDo.subHeading.guarantee = Guarantees
 whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance = Check your guarantee balance
-whatDoYouWantToDo.link.departure.viewDraftDepartures = View draft departures dashboard
-whatDoYouWantToDo.departure.noDraftDepartures = You have no draft departures
-whatDoYouWantToDo.departure.draftDeparturesUnavailable = Draft departures unavailable
+whatDoYouWantToDo.link.departure.viewDraftDepartures = View draft departure declarations
+whatDoYouWantToDo.departure.noDraftDepartures = You have no draft departure declarations
+whatDoYouWantToDo.departure.draftDeparturesUnavailable = Draft departure declarations unavailable
 
 session_expired.title = For your security, we signed you out
 session_expired.heading = For your security, we signed you out
@@ -216,6 +216,9 @@ departure.drafts.dashboard.table.daysToComplete = Days to complete
 departure.drafts.dashboard.table.daysToComplete.hidden = for {0}
 departure.drafts.dashboard.table.action.delete = Delete
 departure.drafts.dashboard.table.action.delete.hidden = for {0}
+departure.drafts.dashboard.table.panel.title = Make a new departure declaration
+departure.drafts.dashboard.table.panel.text = You can save your declaration and come back later. You have 30 days from the first time you save to complete this declaration or your information will be deleted.
+departure.drafts.dashboard.table.panel.button = Start now
 
 departure.drafts.deleteDraftDepartureYesNo.title = Are you sure you want to cancel this declaration?
 departure.drafts.deleteDraftDepartureYesNo.heading = Are you sure you want to cancel this declaration?
