@@ -34,6 +34,8 @@ class DeleteDraftDepartureYesNoViewSpec extends YesNoViewBehaviours {
 
   behave like pageWithHeading()
 
+  behave like pageWithContent("p", "Once you delete it, you will not be able to retrieve it.")
+
   behave like pageWithRadioItems()
 
   behave like pageWithSubmitButton("Continue")

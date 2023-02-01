@@ -42,7 +42,7 @@
             field = form("value"),
             yesNoType = YesNoWithAdditionalHtml(
                 heading = messages("departure.drafts.deleteDraftDepartureYesNo.heading"),
-                additionalHtml = Html(s"""<dl class="govuk-summary-list"><div class="govuk-summary-list__row"><dt class="govuk-summary-list__key">Local reference number</dt><dd class="govuk-summary-list__value">$lrn</dd></div></dl>""")
+                additionalHtml = Html(s"""<p class="govuk-body">${messages("departure.drafts.deleteDraftDepartureYesNo.paragraph")}</p><dl class="govuk-summary-list"><div class="govuk-summary-list__row"><dt class="govuk-summary-list__key">Local reference number</dt><dd class="govuk-summary-list__value">$lrn</dd></div></dl>""")
 
             )
         )

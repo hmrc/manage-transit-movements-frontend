@@ -1,3 +1,3 @@
-GET        /departures/dashboard                                            controllers.departure.drafts.DashboardController.onPageLoad()
-GET        /departures/dashboard/:lrn/cancel-departure                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onPageLoad(lrn: String)
-POST       /departures/dashboard/:lrn/cancel-departure                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onSubmit(lrn: String)
+GET        /departures/dashboard                                                     controllers.departure.drafts.DashboardController.onPageLoad()
+GET        /departures/dashboard/draft-declarations/:lrn/delete                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onPageLoad(lrn: String)
+POST       /departures/dashboard/draft-declarations/:lrn/delete                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onSubmit(lrn: String)
