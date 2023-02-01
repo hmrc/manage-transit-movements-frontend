@@ -25,18 +25,14 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.drafts.AllDraftDeparturesViewModel.{getRemainingDays, DraftDepartureRow}
+import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 import views.behaviours.ViewBehaviours
 import views.html.departure.drafts.DashboardView
 
-import java.time.LocalDate
-
 class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPropertyChecks {
 
-  val daysTilDeletion: Int = frontendAppConfig.daysTilDeletion
-
   val genDraftDeparture: DeparturesSummary                            = arbitrary[DeparturesSummary].sample.value
-  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(daysTilDeletion, genDraftDeparture)
+  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(genDraftDeparture)
   val dataRows: Seq[DraftDepartureRow]                                = viewAllDepartureMovementsViewModel.dataRows
 
   override val prefix = "departure.drafts.dashboard"
@@ -97,7 +93,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
           "must display correct days remaining" in {
             val daysToComplete = row.selectFirst("td[data-testrole*=-daysToComplete]")
 
-            val daysRemaining = getRemainingDays(viewDraftDeparture.createdAt.toLocalDate, LocalDate.now(), daysTilDeletion)
+            val daysRemaining = viewDraftDeparture.expiresInDays
 
             behave like elementWithVisibleText(daysToComplete, daysRemaining.toString)
             behave like elementWithHiddenText(daysToComplete, messages(s"$prefix.table.daysToComplete"))

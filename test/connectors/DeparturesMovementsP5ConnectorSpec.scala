@@ -54,9 +54,10 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
                 "href" -> "/manage-transit-movements-departure-cache/user-answers/AB123"
               }
             },
-            "createdAt"   -> createdAt.toString(),
-            "lastUpdated" -> "2023-01-27T08:43:17.064",
-            "_id"         -> "27e687a9-4544-4e22-937e-74e699d855f8"
+            "createdAt"     -> createdAt.toString(),
+            "lastUpdated"   -> "2023-01-27T08:43:17.064",
+            "expiresInDays" -> 29,
+            "_id"           -> "27e687a9-4544-4e22-937e-74e699d855f8"
           ),
           Json.obj(
             "lrn" -> "CD123",
@@ -65,9 +66,10 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
                 "href" -> "/manage-transit-movements-departure-cache/user-answers/CD123 "
               }
             },
-            "createdAt"   -> createdAt.toString(),
-            "lastUpdated" -> "2023-01-27T09:43:17.064",
-            "_id"         -> "27e687a9-4544-4e22-937e-74e699d855f8"
+            "createdAt"     -> createdAt.toString(),
+            "lastUpdated"   -> "2023-01-27T09:43:17.064",
+            "expiresInDays" -> 28,
+            "_id"           -> "27e687a9-4544-4e22-937e-74e699d855f8"
           )
         )
     )
@@ -85,8 +87,8 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
 
         val expectedResult = DeparturesSummary(
           List(
-            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt),
-            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt)
+            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
+            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28)
           )
         )
 

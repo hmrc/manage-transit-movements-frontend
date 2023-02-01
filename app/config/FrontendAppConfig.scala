@@ -82,8 +82,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val timeoutSeconds: Int      = configuration.get[Int]("session.timeoutSeconds")
   lazy val countdownSeconds: Int    = configuration.get[Int]("session.countdownSeconds")
 
-  lazy val daysTilDeletion: Int = configuration.get[Int]("draft-dashboard.daysTilDeletion")
-
   private val departureFrontendUrl: String    = phase5Switch.Departures.getFrontendUrl
   private val cancellationFrontendUrl: String = phase5Switch.Cancellations.getFrontendUrl
 

@@ -49,8 +49,8 @@ class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
       val draftDeparture =
         DeparturesSummary(
           List(
-            DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now()),
-            DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now())
+            DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+            DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
           )
         )
 
