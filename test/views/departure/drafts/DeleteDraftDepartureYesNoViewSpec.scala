@@ -16,12 +16,15 @@
 
 package views.departure.drafts
 
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
+import org.jsoup.nodes.Element
 import play.twirl.api.HtmlFormat
+import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import views.behaviours.YesNoViewBehaviours
 import views.html.departure.drafts.DeleteDraftDepartureYesNoView
 
-class DeleteDraftDepartureYesNoViewSpec extends YesNoViewBehaviours {
+class DeleteDraftDepartureYesNoViewSpec extends YesNoViewBehaviours with ScalaCheckPropertyChecks {
 
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
     injector.instanceOf[DeleteDraftDepartureYesNoView].apply(form, lrn.toString())(fakeRequest, messages)
@@ -39,4 +42,15 @@ class DeleteDraftDepartureYesNoViewSpec extends YesNoViewBehaviours {
   behave like pageWithRadioItems()
 
   behave like pageWithSubmitButton("Confirm")
+
+  "must display table with local reference number label and correct LRN" in {
+    def elementWithVisibleText(element: Element, text: String): Unit =
+      element.ownText() mustBe text
+
+    val lrnLabel = doc.getElementsByClass("govuk-summary-list__key").head
+    val lrnValue = doc.getElementsByClass("govuk-summary-list__value").head
+
+    behave like elementWithVisibleText(lrnLabel, "Local reference number")
+    behave like elementWithVisibleText(lrnValue, lrn.toString)
+  }
 }
