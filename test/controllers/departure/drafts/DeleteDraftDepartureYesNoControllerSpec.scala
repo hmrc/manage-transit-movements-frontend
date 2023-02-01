@@ -19,7 +19,7 @@ package controllers.departure.drafts
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.YesNoFormProvider
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -27,7 +27,10 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DraftDepartureService
+import uk.gov.hmrc.http.HttpResponse
 import views.html.departure.drafts.DeleteDraftDepartureYesNoView
+
+import scala.concurrent.Future
 
 class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefaultMockFixtures with MockitoSugar with ScalaCheckPropertyChecks {
 
@@ -64,17 +67,19 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
 
     "when yes submitted must redirect back to draft departure dashboard" in {
 
+      val statusOK = 200
+
+      when(draftDepartureService.deleteDraftDeparture(any())(any())).thenReturn(Future.successful(HttpResponse(statusOK, "")))
+
       val request = FakeRequest(POST, deleteDraftDepartureYesNoRoute)
         .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(app, request).value
 
-      status(result) mustEqual OK
+      status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
         controllers.departure.drafts.routes.DashboardController.onPageLoad().url
-
-      // verify(draftDepartureService).deleteDraftDeparture(any())(any())
     }
 
     "when no submitted must redirect back to draft departure dashboard" in {
@@ -89,10 +94,29 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
         controllers.departure.drafts.routes.DashboardController.onPageLoad().url
     }
 
+    "when yes submitted must redirect to InternalServerError if status 500 is returned from connector" in {
+
+      val statusError = 500
+
+      when(draftDepartureService.deleteDraftDeparture(any())(any())).thenReturn(Future.successful(HttpResponse(statusError, "")))
+
+      val request = FakeRequest(POST, deleteDraftDepartureYesNoRoute)
+        .withFormUrlEncodedBody(("value", "true"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual
+        controllers.routes.ErrorController.internalServerError().url
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
+      val lrnString = lrn.toString
+
       val invalidValue = ""
-      val request      = FakeRequest(POST, deleteDraftDepartureYesNoRoute).withFormUrlEncodedBody(("value", ""))
+      val request      = FakeRequest(POST, deleteDraftDepartureYesNoRoute).withFormUrlEncodedBody(("value", invalidValue))
       val boundForm    = form.bind(Map("value" -> invalidValue))
 
       val result = route(app, request).value
@@ -104,7 +128,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       val content = contentAsString(result)
 
       content mustEqual
-        view(boundForm, invalidValue)(request, messages).toString
+        view(boundForm, lrnString)(request, messages).toString
     }
 
   }
