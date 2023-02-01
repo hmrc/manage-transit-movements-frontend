@@ -22,38 +22,29 @@ import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.drafts.AllDraftDeparturesViewModel.getRemainingDays
-
-import java.time.LocalDate
 
 class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  val daysTilDeletion = frontendAppConfig.daysTilDeletion
 
   "AllDraftDeparturesViewModelSpec" - {
 
     "When DraftDepartures are tabulated must display correct data and format" in {
 
       val userAnswerSummary: Gen[List[DepartureUserAnswerSummary]] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary])
-      val today                                                    = LocalDate.now()
 
       forAll(userAnswerSummary) {
         userAnswerSummary =>
           val draftDeparture = DeparturesSummary(userAnswerSummary)
 
-          val viewModel = AllDraftDeparturesViewModel(daysTilDeletion, draftDeparture)
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture)
 
           viewModel.dataRows.length mustBe draftDeparture.userAnswers.length
 
           viewModel.dataRows.head.lrn mustBe draftDeparture.userAnswers.head.lrn.toString
           viewModel.dataRows(1).lrn mustBe draftDeparture.userAnswers(1).lrn.toString
 
-          viewModel.dataRows.head.daysRemaining mustBe getRemainingDays(draftDeparture.userAnswers.head.createdAt.toLocalDate, today, daysTilDeletion)
-          viewModel.dataRows(1).daysRemaining mustBe getRemainingDays(draftDeparture.userAnswers(1).createdAt.toLocalDate, today, daysTilDeletion)
-
+          viewModel.dataRows.head.daysRemaining mustBe draftDeparture.userAnswers.head.expiresInDays
+          viewModel.dataRows(1).daysRemaining mustBe draftDeparture.userAnswers(1).expiresInDays
       }
-
     }
-
   }
 }

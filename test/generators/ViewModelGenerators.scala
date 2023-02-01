@@ -157,8 +157,7 @@ trait ViewModelGenerators {
   implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
     Arbitrary {
       for {
-        daysTilDeletion <- arbitrary[Int]
         draftDepartures <- arbitrary[DeparturesSummary]
-      } yield AllDraftDeparturesViewModel(daysTilDeletion, draftDepartures)
+      } yield AllDraftDeparturesViewModel(draftDepartures)
     }
 }

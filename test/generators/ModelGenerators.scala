@@ -243,7 +243,8 @@ trait ModelGenerators {
       for {
         lrn       <- arbitrary[LocalReferenceNumber]
         createdAt <- arbitrary[LocalDateTime]
-      } yield DepartureUserAnswerSummary(lrn, createdAt)
+        expires   <- Gen.chooseNum(1, 30)
+      } yield DepartureUserAnswerSummary(lrn, createdAt, expires)
     }
 
   implicit lazy val arbitraryDraftDeparture: Arbitrary[DeparturesSummary] = Arbitrary {

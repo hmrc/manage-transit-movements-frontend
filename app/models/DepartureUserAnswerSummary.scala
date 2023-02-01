@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 
-case class DepartureUserAnswerSummary(lrn: LocalReferenceNumber, createdAt: LocalDateTime)
+case class DepartureUserAnswerSummary(lrn: LocalReferenceNumber, createdAt: LocalDateTime, expiresInDays: Int)
 
 object DepartureUserAnswerSummary {
   implicit val fmt: OFormat[DepartureUserAnswerSummary] = Json.format[DepartureUserAnswerSummary]

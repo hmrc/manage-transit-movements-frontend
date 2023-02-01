@@ -17,14 +17,10 @@
 package viewModels.drafts
 
 import models.DeparturesSummary
-
-import java.time.temporal.ChronoUnit.DAYS
 import play.api.i18n.Messages
-import viewModels.drafts.AllDraftDeparturesViewModel.{getRemainingDays, DraftDepartureRow}
+import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 
-import java.time.LocalDate
-
-case class AllDraftDeparturesViewModel(daysTilDeletion: Int, items: DeparturesSummary) {
+case class AllDraftDeparturesViewModel(items: DeparturesSummary) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
   val tableMessageKeyPrefix = "departure.drafts.dashboard.table"
@@ -39,15 +35,12 @@ case class AllDraftDeparturesViewModel(daysTilDeletion: Int, items: DeparturesSu
   def daysToComplete(implicit messages: Messages): String  = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
   def dataRows: Seq[DraftDepartureRow] = items.userAnswers.map {
-    dd => DraftDepartureRow(dd.lrn.toString, getRemainingDays(dd.createdAt.toLocalDate, LocalDate.now(), daysTilDeletion).toInt)
+    dd => DraftDepartureRow(dd.lrn.toString, dd.expiresInDays)
   }
 
 }
 
 object AllDraftDeparturesViewModel {
-
-  def getRemainingDays(createdAt: LocalDate, today: LocalDate, daysTilDeletion: Int): Long =
-    DAYS.between(today, createdAt.plusDays(daysTilDeletion))
 
   case class DraftDepartureRow(lrn: String, daysRemaining: Int)
 }
