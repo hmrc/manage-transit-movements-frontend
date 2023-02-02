@@ -110,8 +110,9 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
               hiddenText.text() mustBe s"for ${viewDraftDeparture.lrn}"
             }
 
-            "must have correct href" ignore { // TODO during CTCP-1881
-              ???
+            "must have correct href" in {
+              val redirectLink = controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(viewDraftDeparture.lrn.toString()).url
+              deleteLink.attr("href") mustBe redirectLink
             }
           }
         }
