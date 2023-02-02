@@ -20,7 +20,6 @@ import config.{FrontendAppConfig, SearchResultsAppConfig}
 import controllers.actions._
 import forms.SearchFormProvider
 import handlers.ErrorHandler
-import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.drafts.AllDraftDeparturesViewModel
 import views.html.departure.drafts.DraftDeparturesSearchResultsView
 
-import java.time.{Clock, LocalDateTime}
+import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -57,17 +56,7 @@ class DraftDeparturesSearchResultsController @Inject() (
         case Some(draft) =>
           val toViewModel = AllDraftDeparturesViewModel(draft)
           Ok(view(form, lrn, toViewModel, toViewModel.draftDepartures > pageSize))
-        case None =>
-          Ok(
-            view(
-              form,
-              lrn,
-              AllDraftDeparturesViewModel(DeparturesSummary(List(DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 4)))),
-              AllDraftDeparturesViewModel(
-                DeparturesSummary(List(DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 4)))
-              ).draftDepartures > pageSize
-            )
-          )
+        case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
       }
   }
 

@@ -108,21 +108,77 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
         connector.getDeparturesSummary().futureValue.value mustBe expectedResult
 
       }
+
+      "must return none on failure" in {
+        errorResponses.map {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/user-answers"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+
+            val expectedResult = None
+            connector.getDeparturesSummary().futureValue mustBe expectedResult
+
+        }
+      }
     }
-    "must return none on failure" in {
-      errorResponses.map {
-        errorResponse =>
-          server.stubFor(
-            get(urlEqualTo(s"/$startUrl/user-answers"))
-              .willReturn(
-                aResponse()
-                  .withStatus(errorResponse)
-              )
+
+    "lrnFuzzySearch" - {
+
+      val maxSearchResults = 100
+      val partialLRN       = "123"
+
+      "must return DeparturesSummary when given successful response" in {
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/user-answers?l$partialLRN?$maxSearchResults"))
+            .willReturn(okJson(summaryResponseJson.toString()))
+        )
+
+        val expectedResult = DeparturesSummary(
+          List(
+            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
+            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28)
           )
+        )
 
-          val expectedResult = None
-          connector.getDeparturesSummary().futureValue mustBe expectedResult
+        connector.lrnFuzzySearch("AB123", maxSearchResults).futureValue.value mustBe expectedResult
+      }
 
+      "must return empty DeparturesSummary when not found" in {
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN?limit=$maxSearchResults"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+            )
+        )
+
+        val expectedResult = DeparturesSummary(List.empty)
+        connector.lrnFuzzySearch(partialLRN, maxSearchResults).futureValue.value mustBe expectedResult
+
+      }
+
+      "must return none on failure" in {
+        errorResponses.map {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN?limit=$maxSearchResults"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+
+            val expectedResult = None
+            connector.lrnFuzzySearch(partialLRN, maxSearchResults).futureValue mustBe expectedResult
+
+        }
       }
     }
 

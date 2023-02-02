@@ -57,20 +57,14 @@ class DashboardController @Inject() (
       }
   }
 
-  def onSubmit: Action[AnyContent] = (Action andThen identify).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors =>
-            Future.successful(
-              BadRequest(
-                view(formWithErrors,
-                     AllDraftDeparturesViewModel(DeparturesSummary(List(DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 4))))
-                )
-              )
-            ),
-          value => Future.successful(Redirect(controllers.departure.drafts.routes.DraftDeparturesSearchResultsController.onPageLoad(value)))
-        )
-  }
+  def onSubmit: Action[AnyContent] = ???
+//  (Action andThen identify).async {
+//    implicit request =>
+//      form
+//        .bindFromRequest()
+//        .fold(
+//          //formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+//          value => Future.successful(Redirect(controllers.departure.drafts.routes.DraftDeparturesSearchResultsController.onPageLoad(value)))
+//        )
+//  }
 }

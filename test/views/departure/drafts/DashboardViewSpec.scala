@@ -16,6 +16,7 @@
 
 package views.departure.drafts
 
+import forms.SearchFormProvider
 import generators.Generators
 import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.jsoup.nodes.Element
@@ -35,6 +36,9 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(genDraftDeparture)
   val dataRows: Seq[DraftDepartureRow]                                = viewAllDepartureMovementsViewModel.dataRows
 
+  private val formProvider = new SearchFormProvider()
+  private val form         = formProvider()
+
   override val prefix = "departure.drafts.dashboard"
 
   private def applyView(
@@ -42,7 +46,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[DashboardView]
-      .apply(viewAllDepartureMovementsViewModel)(fakeRequest, messages)
+      .apply(form, viewAllDepartureMovementsViewModel)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable = applyView(viewAllDepartureMovementsViewModel)
 
