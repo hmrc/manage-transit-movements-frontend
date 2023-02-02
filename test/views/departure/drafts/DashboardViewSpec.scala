@@ -127,13 +127,13 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
     }
 
     "must render correct header" in {
-      panel.head.getElementsByClass("govuk-heading-m").text() mustBe "Make a new departure declaration"
+      panel.head.getElementsByClass("govuk-heading-m").text() mustBe "Create a new departure declaration"
     }
 
     "must render correct text" in {
       panel.head
         .getElementsByClass("govuk-body")
-        .text() mustBe "You can save your declaration and come back later. You have 30 days from the first time you save to complete this declaration or your information will be deleted."
+        .text() mustBe "You have 30 days from the first time you save a declaration to complete it."
     }
 
     "must render href button" in {
