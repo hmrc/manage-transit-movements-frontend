@@ -41,6 +41,9 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
     }
   }
 
+  def lrnFuzzySearch(lrn: String, limit: Int)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("lrn" -> lrn, "limit" -> limit.toString))
+
   def getDraftDeparturesAvailability()(implicit hc: HeaderCarrier): Future[DraftAvailability] =
     getDeparturesSummary(Seq("limit" -> "1")).map(DraftAvailability(_))
 

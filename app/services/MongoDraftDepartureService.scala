@@ -27,4 +27,7 @@ class MongoDraftDepartureService @Inject() (connector: DeparturesMovementsP5Conn
 
   override def getAll(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.getDeparturesSummary(queryParams)
+
+  override def getLRNs(lrn: String, limit: Int)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    connector.lrnFuzzySearch(lrn, limit)
 }

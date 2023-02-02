@@ -18,35 +18,59 @@ package controllers.departure.drafts
 
 import config.FrontendAppConfig
 import controllers.actions._
+import forms.SearchFormProvider
+import models.requests.IdentifierRequest
+import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
 import views.html.departure.drafts.DashboardView
 
+import java.time.{LocalDate, LocalDateTime}
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   draftDepartureService: DraftDepartureService,
+  formProvider: SearchFormProvider,
   view: DashboardView,
   appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
+  private val form = formProvider()
+
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       draftDepartureService.getAll().map {
         case Some(draft) =>
           val toViewModel = AllDraftDeparturesViewModel(draft)
-          Ok(view(toViewModel))
+          Ok(view(form, toViewModel))
         case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
       }
   }
 
+  def onSubmit: Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(formWithErrors,
+                     AllDraftDeparturesViewModel(DeparturesSummary(List(DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 4))))
+                )
+              )
+            ),
+          value => Future.successful(Redirect(controllers.departure.drafts.routes.DraftDeparturesSearchResultsController.onPageLoad(value)))
+        )
+  }
 }

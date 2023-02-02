@@ -18,15 +18,17 @@
 @import viewModels.drafts.AllDraftDeparturesViewModel
 @import views.html.components.DraftDeparturesTable
 @import config.FrontendAppConfig
+@import views.html.components.Search
 
 @this(
-        mainTemplate: MainTemplate,
-        draftDeparturesTable: DraftDeparturesTable,
-        heading: Heading,
-        config: FrontendAppConfig
+mainTemplate: MainTemplate,
+draftDeparturesTable: DraftDeparturesTable,
+heading: Heading,
+search: Search,
+config: FrontendAppConfig
 )
 
-@(viewModel: AllDraftDeparturesViewModel)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], viewModel: AllDraftDeparturesViewModel)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,
@@ -35,6 +37,12 @@
 ) {
 
     @heading(viewModel.heading)
+
+    @search(
+        form = form,
+        action = controllers.departure.drafts.routes.DashboardController.onSubmit(),
+        label = "departure.drafts.dashboard.search"
+    )
 
     @draftDeparturesTable(
         dataRows = viewModel.dataRows,

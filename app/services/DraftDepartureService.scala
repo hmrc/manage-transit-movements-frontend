@@ -24,5 +24,6 @@ import scala.concurrent.Future
 trait DraftDepartureService {
 
   def getAll(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
+  def getLRNs(lrn: String, limit: Int = 0)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
 
 }

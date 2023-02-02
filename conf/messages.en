@@ -209,6 +209,8 @@ unauthorisedWithGroupAccess.p = If you already have access, you must contact you
 departure.drafts.dashboard.title = Draft departure declarations
 departure.drafts.dashboard.heading = Draft departure declarations
 departure.drafts.dashboard.search = Search by local reference number (LRN)
+departure.drafts.dashboard.link.title = View all draft departure declarations
+
 
 departure.drafts.dashboard.table.heading.hidden = Draft departure table
 departure.drafts.dashboard.table.lrn = Local reference number (LRN)
