@@ -31,9 +31,11 @@ import views.html.departure.drafts.DashboardView
 
 class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPropertyChecks {
 
-  val genDraftDeparture: DeparturesSummary                            = arbitrary[DeparturesSummary].sample.value
-  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(genDraftDeparture)
-  val dataRows: Seq[DraftDepartureRow]                                = viewAllDepartureMovementsViewModel.dataRows
+  val genDraftDeparture: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
+
+  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
+    AllDraftDeparturesViewModel(genDraftDeparture, frontendAppConfig.draftDepartureFrontendUrl)
+  val dataRows: Seq[DraftDepartureRow] = viewAllDepartureMovementsViewModel.dataRows
 
   override val prefix = "departure.drafts.dashboard"
 
@@ -86,7 +88,9 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
             }
 
             "must have correct href" in {
-              behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
+
+              val redirectLink = s"${frontendAppConfig.draftDepartureFrontendUrl}/drafts/${viewDraftDeparture.lrn}"
+              lrnLink.attr("href") mustBe redirectLink
             }
           }
 
