@@ -33,7 +33,7 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary, draftDepartureF
 
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
 
-  val lrnRedirectLocation                                 = s"$draftDepartureFrontendUrl/drafts/"
+  def lrnRedirectLocation(lrn: String): String            = s"$draftDepartureFrontendUrl/drafts/$lrn"
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
   def dataRows: Seq[DraftDepartureRow] = items.userAnswers.map {

@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
+@import viewModels.drafts.AllDraftDeparturesViewModel
 
 @this()
 
@@ -25,7 +26,7 @@
         visuallyHiddenHeader: String,
         rowHeadingReferenceNumber: String,
         rowHeadingDaysToComplete: String,
-        lrnRedirectLocation: String
+        viewModel: AllDraftDeparturesViewModel
 )(implicit messages: Messages)
 
 <table class="responsive-table">
@@ -45,7 +46,7 @@
 
             <td data-testrole="draft-list_row@rowIndex-lrn">
                 <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
-                <a href="@lrnRedirectLocation@row.lrn" class="govuk-link">@row.lrn</a>
+                <a href="@viewModel.lrnRedirectLocation(row.lrn)" class="govuk-link">@row.lrn</a>
             </td>
 
             <td data-testrole="draft-list_row@rowIndex-daysToComplete">
