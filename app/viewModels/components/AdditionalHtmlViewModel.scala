@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package services
+package viewModels.components
 
-import models.DeparturesSummary
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import play.twirl.api.Html
 
-import scala.concurrent.Future
-
-trait DraftDepartureService {
-
-  def getAll(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse]
-
+trait AdditionalHtmlViewModel {
+  val additionalHtml: Html
+  val headingClasses = "govuk-!-margin-top-0 govuk-!-margin-bottom-2"
 }

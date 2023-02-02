@@ -1,0 +1,52 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.departure.drafts.routes
+@import models.LocalReferenceNumber
+@import viewModels.components.InputYesNoViewModel._
+@import views.html.components.{Button, ErrorSummary, InputYesNo}
+
+@this(
+    mainTemplate: MainTemplate,
+    formHelper: FormWithCSRF,
+    inputYesNo: InputYesNo,
+    errorSummary: ErrorSummary,
+    button: Button
+)
+
+@(form: Form[Boolean], lrn: String)(implicit request: Request[_], messages: Messages)
+
+@mainTemplate(
+    title = messages("departure.drafts.deleteDraftDepartureYesNo.title"),
+    showBackLink = true,
+) {
+
+    @formHelper(action = routes.DeleteDraftDepartureYesNoController.onSubmit(lrn), Symbol("autoComplete") -> "off") {
+
+        @errorSummary(form.errors)
+
+        @inputYesNo(
+            field = form("value"),
+            yesNoType = YesNoWithAdditionalHtml(
+                heading = messages("departure.drafts.deleteDraftDepartureYesNo.heading"),
+                additionalHtml = Html(s"""<p class="govuk-body">${messages("departure.drafts.deleteDraftDepartureYesNo.paragraph")}</p><dl class="govuk-summary-list"><div class="govuk-summary-list__row"><dt class="govuk-summary-list__key">Local reference number</dt><dd class="govuk-summary-list__value">$lrn</dd></div></dl>""")
+
+            )
+        )
+
+        @button(attributes = Map("id" -> "submit"), messageKey = messages("departure.drafts.deleteDraftDepartureYesNo.button"))
+    }
+}

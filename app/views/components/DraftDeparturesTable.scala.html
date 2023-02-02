@@ -55,7 +55,7 @@
 
             <td data-testrole="draft-list_row@rowIndex-delete">
                 <span class="responsive-table__heading" aria-hidden="true"></span>
-                <a href="" class="govuk-link">@messages("departure.drafts.dashboard.table.action.delete")
+                <a href="@controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(row.lrn)" class="govuk-link">@messages("departure.drafts.dashboard.table.action.delete")
                 <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
                 </a>
             </td>

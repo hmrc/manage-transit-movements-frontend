@@ -41,6 +41,11 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
     }
   }
 
+  def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val url = s"${config.draftDeparturesUrl}/user-answers/$lrn"
+    http.DELETE[HttpResponse](url)
+  }
+
   def getDraftDeparturesAvailability()(implicit hc: HeaderCarrier): Future[DraftAvailability] =
     getDeparturesSummary(Seq("limit" -> "1")).map(DraftAvailability(_))
 
