@@ -216,8 +216,8 @@ departure.drafts.dashboard.table.daysToComplete = Days to complete
 departure.drafts.dashboard.table.daysToComplete.hidden = for {0}
 departure.drafts.dashboard.table.action.delete = Delete
 departure.drafts.dashboard.table.action.delete.hidden = for {0}
-departure.drafts.dashboard.table.panel.title = Make a new departure declaration
-departure.drafts.dashboard.table.panel.text = You can save your declaration and come back later. You have 30 days from the first time you save to complete this declaration or your information will be deleted.
+departure.drafts.dashboard.table.panel.title = Create a new departure declaration
+departure.drafts.dashboard.table.panel.text = You have 30 days from the first time you save a declaration to complete it.
 departure.drafts.dashboard.table.panel.button = Start now
 
 departure.drafts.deleteDraftDepartureYesNo.title = Are you sure you want to delete this declaration?
