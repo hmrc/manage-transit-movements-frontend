@@ -85,7 +85,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
               behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
             }
 
-            "must have correct href" ignore { // TODO during CTCP-1881
+            "must have correct href" in {
               behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
             }
           }

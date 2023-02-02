@@ -20,7 +20,7 @@ import models.DeparturesSummary
 import play.api.i18n.Messages
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 
-case class AllDraftDeparturesViewModel(items: DeparturesSummary) {
+case class AllDraftDeparturesViewModel(items: DeparturesSummary, draftDepartureFrontendUrl: String) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
   val tableMessageKeyPrefix = "departure.drafts.dashboard.table"
@@ -32,7 +32,9 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary) {
   def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading.hidden")
 
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
-  def daysToComplete(implicit messages: Messages): String  = messages(s"$tableMessageKeyPrefix.daysToComplete")
+
+  val lrnRedirectLocation                                 = s"$draftDepartureFrontendUrl/drafts/"
+  def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
   def dataRows: Seq[DraftDepartureRow] = items.userAnswers.map {
     dd => DraftDepartureRow(dd.lrn.toString, dd.expiresInDays)
