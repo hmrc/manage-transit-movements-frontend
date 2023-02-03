@@ -65,7 +65,7 @@ class DashboardController @Inject() (
           lrn =>
             lrn.trim match {
               case "" => Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad()))
-              case _ =>
+              case lrn =>
                 draftDepartureService.getLRNs(lrn, pageSize).map {
                   case Some(draft) =>
                     val toViewModel = AllDraftDeparturesViewModel(draft)
