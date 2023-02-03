@@ -51,14 +51,14 @@ search: Search
     @heading(viewModel.heading)
 
     <p class="govuk-body">
-        <a id="go-to-view-all-movements" class="govuk-link" href="TODO add this">
+        <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad()">
             @messages("departure.drafts.dashboard.link.title")
         </a>
     </p>
 
     @search(
         form = form,
-        action = controllers.departure.drafts.routes.DraftDeparturesSearchResultsController.onSubmit(lrn),
+        action = controllers.departure.drafts.routes.DashboardController.onSubmit(),
         label = "departure.drafts.dashboard.search"
     )
 
