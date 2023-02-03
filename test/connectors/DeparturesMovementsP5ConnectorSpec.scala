@@ -135,7 +135,7 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
       "must return DeparturesSummary when given successful response" in {
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?l$partialLRN?$maxSearchResults"))
+          get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN&limit=$maxSearchResults"))
             .willReturn(okJson(summaryResponseJson.toString()))
         )
 
@@ -146,13 +146,13 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
           )
         )
 
-        connector.lrnFuzzySearch("AB123", maxSearchResults).futureValue.value mustBe expectedResult
+        connector.lrnFuzzySearch(partialLRN, maxSearchResults).futureValue.value mustBe expectedResult
       }
 
       "must return empty DeparturesSummary when not found" in {
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN?limit=$maxSearchResults"))
+          get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN&limit=$maxSearchResults"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -168,7 +168,7 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
         errorResponses.map {
           errorResponse =>
             server.stubFor(
-              get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN?limit=$maxSearchResults"))
+              get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN&limit=$maxSearchResults"))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)

@@ -24,6 +24,7 @@ import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumb
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
@@ -49,22 +50,30 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      draftDepartureService.getAll().map {
-        case Some(draft) =>
-          val toViewModel = AllDraftDeparturesViewModel(draft)
-          Ok(view(form, toViewModel))
-        case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
-      }
+      buildView(form)(Ok(_))
   }
 
-  def onSubmit: Action[AnyContent] = ???
-//  (Action andThen identify).async {
-//    implicit request =>
-//      form
-//        .bindFromRequest()
-//        .fold(
-//          //formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-//          value => Future.successful(Redirect(controllers.departure.drafts.routes.DraftDeparturesSearchResultsController.onPageLoad(value)))
-//        )
-//  }
+  def onSubmit: Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => buildView(formWithErrors)(BadRequest(_)),
+          value => Future.successful(Redirect(controllers.departure.drafts.routes.DraftDeparturesSearchResultsController.onPageLoad(value)))
+        )
+  }
+
+  private def buildView(form: Form[String])(
+    block: HtmlFormat.Appendable => Result
+  )(implicit request: IdentifierRequest[_]): Future[Result] =
+    draftDepartureService.getAll().map {
+      case Some(drafts) =>
+        val toViewModel = AllDraftDeparturesViewModel(drafts)
+
+        block(view(form, toViewModel))
+
+      case None =>
+        Redirect(controllers.routes.ErrorController.technicalDifficulties())
+    }
+
 }
