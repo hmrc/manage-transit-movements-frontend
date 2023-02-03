@@ -20,7 +20,6 @@ import config.{FrontendAppConfig, SearchResultsAppConfig}
 import controllers.actions._
 import forms.SearchFormProvider
 import models.requests.IdentifierRequest
-import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -30,7 +29,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
 import views.html.departure.drafts.DashboardView
 
-import java.time.{LocalDate, LocalDateTime}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
