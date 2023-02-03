@@ -16,7 +16,7 @@
 
 package controllers.departure.drafts
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, SearchResultsAppConfig}
 import controllers.actions._
 import forms.SearchFormProvider
 import models.requests.IdentifierRequest
@@ -40,6 +40,7 @@ class DashboardController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   draftDepartureService: DraftDepartureService,
   formProvider: SearchFormProvider,
+  searchResultsAppConfig: SearchResultsAppConfig,
   view: DashboardView,
   appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
@@ -47,6 +48,8 @@ class DashboardController @Inject() (
     with I18nSupport {
 
   private val form = formProvider()
+
+  private lazy val pageSize = searchResultsAppConfig.maxSearchResults
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
@@ -59,7 +62,13 @@ class DashboardController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => buildView(formWithErrors)(BadRequest(_)),
-          value => Future.successful(Redirect(controllers.departure.drafts.routes.DraftDeparturesSearchResultsController.onPageLoad(value)))
+          lrn =>
+            draftDepartureService.getLRNs(lrn, pageSize).map {
+              case Some(draft) =>
+                val toViewModel = AllDraftDeparturesViewModel(draft)
+                Ok(view(form, toViewModel, Some(lrn), toViewModel.draftDepartures > pageSize, isSearch = true))
+              case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
+            }
         )
   }
 
@@ -70,7 +79,7 @@ class DashboardController @Inject() (
       case Some(drafts) =>
         val toViewModel = AllDraftDeparturesViewModel(drafts)
 
-        block(view(form, toViewModel))
+        block(view(form, toViewModel, None, tooManyResults = false, isSearch = false))
 
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())

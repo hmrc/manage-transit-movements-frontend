@@ -60,6 +60,4 @@ class DraftDeparturesSearchResultsController @Inject() (
       }
   }
 
-  def onSubmit(lrn: String): Action[AnyContent] = ???
-
 }
