@@ -39,8 +39,7 @@ class DashboardController @Inject() (
   draftDepartureService: DraftDepartureService,
   formProvider: SearchFormProvider,
   searchResultsAppConfig: SearchResultsAppConfig,
-  view: DashboardView,
-  appConfig: FrontendAppConfig
+  view: DashboardView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -51,7 +50,7 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(form)(Ok(_))
+      buildView(form, pageSize)(Ok(_))
   }
 
   def onSubmit: Action[AnyContent] = (Action andThen identify).async {
@@ -59,32 +58,30 @@ class DashboardController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => buildView(formWithErrors)(BadRequest(_)),
-          lrn =>
-            lrn.trim match {
-              case "" => Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad()))
-              case lrn =>
-                draftDepartureService.getLRNs(lrn, pageSize).map {
-                  case Some(draft) =>
-                    val toViewModel = AllDraftDeparturesViewModel(draft)
-                    Ok(view(form, toViewModel, Some(lrn), toViewModel.draftDepartures > pageSize, isSearch = true))
-                  case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
-                }
-            }
+          formWithErrors => buildView(formWithErrors, pageSize)(BadRequest(_)),
+          lrn => {
+            val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
+            buildView(form, pageSize, fuzzyLrn, isSearch = true)(Ok(_))
+          }
         )
   }
 
-  private def buildView(form: Form[String])(
+  private def buildView(form: Form[String], pageSize: Int, lrn: Option[String] = None, isSearch: Boolean = false)(
     block: HtmlFormat.Appendable => Result
-  )(implicit request: IdentifierRequest[_]): Future[Result] =
-    draftDepartureService.getAll().map {
+  )(implicit request: IdentifierRequest[_]): Future[Result] = {
+
+    val getDrafts = lrn match {
+      case Some(value) => draftDepartureService.getLRNs(value, pageSize)
+      case None        => draftDepartureService.getAll()
+    }
+
+    getDrafts.map {
       case Some(drafts) =>
         val toViewModel = AllDraftDeparturesViewModel(drafts)
-
-        block(view(form, toViewModel, None, tooManyResults = false, isSearch = false))
-
+        block(view(form, toViewModel, lrn, toViewModel.draftDepartures > pageSize, isSearch))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())
     }
+  }
 
 }

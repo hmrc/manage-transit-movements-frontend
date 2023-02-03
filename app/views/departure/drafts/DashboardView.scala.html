@@ -21,11 +21,11 @@
 @import views.html.components.Search
 
 @this(
-mainTemplate: MainTemplate,
-draftDeparturesTable: DraftDeparturesTable,
-heading: Heading,
-search: Search,
-config: FrontendAppConfig
+        mainTemplate: MainTemplate,
+        draftDeparturesTable: DraftDeparturesTable,
+        heading: Heading,
+        search: Search,
+        config: FrontendAppConfig
 )
 
 @(
@@ -44,7 +44,7 @@ config: FrontendAppConfig
 
     @heading(viewModel.heading)
 
-    @if(isSearch){
+    @if(isSearch) {
         <p class="govuk-body">
             <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad()">
             @messages("departure.drafts.dashboard.link.title")
@@ -52,51 +52,45 @@ config: FrontendAppConfig
         </p>
     }
 
-
     @search(
         form = form,
         action = controllers.departure.drafts.routes.DashboardController.onSubmit(),
         label = "departure.drafts.dashboard.search"
     )
 
-    @if(isSearch){
-        @if(viewModel.dataRows.nonEmpty) {
-            <p class="govuk-body" id="results-found">
-                @Html(lrn.map(viewModel.searchResult(_)))
-                @if(tooManyResults) {
-                    @messages("search.tooManyResults")
-                }
-            </p>
+    @if(isSearch & viewModel.dataRows.nonEmpty) {
+        <p class="govuk-body" id="results-found">
+            @Html(lrn.map(viewModel.searchResult(_)))
+            @if(tooManyResults) {
+                @messages("search.tooManyResults")
+            }
+        </p>
+    }
 
-            @draftDeparturesTable(
-                dataRows = viewModel.dataRows,
-                visuallyHiddenHeader = viewModel.visuallyHiddenHeader,
-                rowHeadingReferenceNumber = viewModel.referenceNumber,
-                rowHeadingDaysToComplete = viewModel.daysToComplete
-            )
-        } else {
-            <p class="govuk-body" id="no-results-found">@messages("search.noResultsFound")</p>
-        }
-    }else {
+    @if(viewModel.dataRows.nonEmpty) {
+
         @draftDeparturesTable(
             dataRows = viewModel.dataRows,
             visuallyHiddenHeader = viewModel.visuallyHiddenHeader,
             rowHeadingReferenceNumber = viewModel.referenceNumber,
             rowHeadingDaysToComplete = viewModel.daysToComplete
         )
+    } else {
+        <p class="govuk-body" id="no-results-found">@messages("search.noResultsFound")</p>
 
-        <article class="ticket-panel" aria-label="Sub navigation 1">
-            <section class="ticket-panel__content ticket-panel__content--blue" aria-label="Section 1">
-                <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("departure.drafts.dashboard.table.panel.title")</h2>
-                <p class="govuk-body">@messages("departure.drafts.dashboard.table.panel.text")</p>
-                <a href="@config.declareDepartureStartWithLRNUrl" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
-                    @messages("departure.drafts.dashboard.table.panel.button")
-                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-                        <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
-                    </svg></a>
-            </section>
-        </article>
     }
+
+    <article class="ticket-panel" aria-label="Sub navigation 1">
+        <section class="ticket-panel__content ticket-panel__content--blue" aria-label="Section 1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("departure.drafts.dashboard.table.panel.title")</h2>
+            <p class="govuk-body">@messages("departure.drafts.dashboard.table.panel.text")</p>
+            <a href="@config.declareDepartureStartWithLRNUrl" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+                @messages("departure.drafts.dashboard.table.panel.button")
+                <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
+                </svg></a>
+        </section>
+    </article>
 
 
 }
