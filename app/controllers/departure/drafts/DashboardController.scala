@@ -63,11 +63,15 @@ class DashboardController @Inject() (
         .fold(
           formWithErrors => buildView(formWithErrors)(BadRequest(_)),
           lrn =>
-            draftDepartureService.getLRNs(lrn, pageSize).map {
-              case Some(draft) =>
-                val toViewModel = AllDraftDeparturesViewModel(draft)
-                Ok(view(form, toViewModel, Some(lrn), toViewModel.draftDepartures > pageSize, isSearch = true))
-              case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
+            lrn.trim match {
+              case "" => Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad()))
+              case _ =>
+                draftDepartureService.getLRNs(lrn, pageSize).map {
+                  case Some(draft) =>
+                    val toViewModel = AllDraftDeparturesViewModel(draft)
+                    Ok(view(form, toViewModel, Some(lrn), toViewModel.draftDepartures > pageSize, isSearch = true))
+                  case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
+                }
             }
         )
   }
