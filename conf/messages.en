@@ -215,6 +215,7 @@ departure.drafts.dashboard.table.lrn = Local reference number (LRN)
 departure.drafts.dashboard.table.daysToComplete = Days to complete
 departure.drafts.dashboard.table.daysToComplete.hidden = for {0}
 departure.drafts.dashboard.table.action.delete = Delete
+departure.drafts.dashboard.table.delete.action.hidden = Actions
 departure.drafts.dashboard.table.action.delete.hidden = Local Reference Number (LRN) {0}
 
 departure.drafts.dashboard.table.panel.title = Create a new departure declaration

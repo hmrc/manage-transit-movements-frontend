@@ -60,6 +60,11 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
     rows.size() mustEqual genDraftDeparture.userAnswers.size
   }
 
+  "must generate correct hidden text for delete heading" in {
+    val deleteHiddenSpan = doc.getElementById("actionHidden").text()
+    deleteHiddenSpan mustBe "Actions"
+  }
+
   "must generate correct data in each row" - {
     rows.toList.zipWithIndex.foreach {
       case (row, rowIndex) =>
