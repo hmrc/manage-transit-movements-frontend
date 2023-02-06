@@ -50,7 +50,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
   behave like pageWithTitle()
 
-  behave like pageWithoutBackLink()
+  behave like pageWithBackLink()
 
   behave like pageWithHeading()
 
