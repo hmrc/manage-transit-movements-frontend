@@ -107,7 +107,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
             "must display correct text" in {
               behave like elementWithVisibleText(deleteLink, s"${messages(s"$prefix.table.action.delete")}")
               val hiddenText = deleteLink.getElementsByClass("govuk-visually-hidden").head
-              hiddenText.text() mustBe s"for ${viewDraftDeparture.lrn}"
+              hiddenText.text() mustBe s"Local Reference Number (LRN) ${viewDraftDeparture.lrn}"
             }
 
             "must have correct href" ignore { // TODO during CTCP-1881
