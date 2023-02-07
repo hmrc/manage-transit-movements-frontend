@@ -56,4 +56,41 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.apply("value").value.value mustEqual "foobar"
     }
   }
+  "boolean" - {
+
+    val testForm: Form[Boolean] =
+      Form(
+        "value" -> boolean()
+      )
+
+    "must bind true" in {
+      val result = testForm.bind(Map("value" -> "true"))
+      result.get mustEqual true
+    }
+
+    "must bind false" in {
+      val result = testForm.bind(Map("value" -> "false"))
+      result.get mustEqual false
+    }
+
+    "must not bind a non-boolean" in {
+      val result = testForm.bind(Map("value" -> "not a boolean"))
+      result.errors must contain(FormError("value", "error.boolean"))
+    }
+
+    "must not bind an empty value" in {
+      val result = testForm.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind an empty map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must unbind" in {
+      val result = testForm.fill(true)
+      result.apply("value").value.value mustEqual "true"
+    }
+  }
 }

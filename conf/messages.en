@@ -221,3 +221,9 @@ departure.drafts.dashboard.table.action.delete.hidden = Local Reference Number (
 departure.drafts.dashboard.table.panel.title = Create a new departure declaration
 departure.drafts.dashboard.table.panel.text = You have 30 days from starting a declaration to complete it.
 departure.drafts.dashboard.table.panel.button = Start now
+
+departure.drafts.deleteDraftDepartureYesNo.title = Are you sure you want to delete this declaration?
+departure.drafts.deleteDraftDepartureYesNo.heading = Are you sure you want to delete this declaration?
+departure.drafts.deleteDraftDepartureYesNo.paragraph = Once you delete it, you will not be able to retrieve it.
+departure.drafts.deleteDraftDepartureYesNo.error.required = Select yes if you want to delete this declaration
+departure.drafts.deleteDraftDepartureYesNo.button = Confirm

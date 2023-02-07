@@ -31,9 +31,11 @@ import views.html.departure.drafts.DashboardView
 
 class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPropertyChecks {
 
-  val genDraftDeparture: DeparturesSummary                            = arbitrary[DeparturesSummary].sample.value
-  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(genDraftDeparture)
-  val dataRows: Seq[DraftDepartureRow]                                = viewAllDepartureMovementsViewModel.dataRows
+  val genDraftDeparture: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
+
+  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
+    AllDraftDeparturesViewModel(genDraftDeparture, frontendAppConfig.draftDepartureFrontendUrl)
+  val dataRows: Seq[DraftDepartureRow] = viewAllDepartureMovementsViewModel.dataRows
 
   override val prefix = "departure.drafts.dashboard"
 
@@ -90,8 +92,10 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
               behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
             }
 
-            "must have correct href" ignore { // TODO during CTCP-1881
-              behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
+            "must have correct href" in {
+
+              val redirectLink = s"${frontendAppConfig.draftDepartureFrontendUrl}/drafts/${viewDraftDeparture.lrn}"
+              lrnLink.attr("href") mustBe redirectLink
             }
           }
 
@@ -115,8 +119,9 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
               hiddenText.text() mustBe s"Local Reference Number (LRN) ${viewDraftDeparture.lrn}"
             }
 
-            "must have correct href" ignore { // TODO during CTCP-1881
-              ???
+            "must have correct href" in {
+              val redirectLink = controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(viewDraftDeparture.lrn.toString()).url
+              deleteLink.attr("href") mustBe redirectLink
             }
           }
         }
