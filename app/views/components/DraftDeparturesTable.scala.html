@@ -15,40 +15,37 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
+@import viewModels.drafts.AllDraftDeparturesViewModel
 
 @this()
 
 
 @(
-        dataRows: Seq[DraftDepartureRow],
-        visuallyHiddenHeader: String,
-        rowHeadingReferenceNumber: String,
-        rowHeadingDaysToComplete: String,
+        viewModel: AllDraftDeparturesViewModel
 )(implicit messages: Messages)
 
 <table class="responsive-table">
-    <caption class="govuk-visually-hidden">@visuallyHiddenHeader</caption>
+    <caption class="govuk-visually-hidden">@viewModel.visuallyHiddenHeader</caption>
 
     <thead>
         <tr>
-            <th scope="col">@rowHeadingReferenceNumber</th>
-            <th scope="col">@rowHeadingDaysToComplete</th>
+            <th scope="col">@viewModel.referenceNumber</th>
+            <th scope="col">@viewModel.daysToComplete</th>
             <th scope="col"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
         </tr>
     </thead>
 
     <tbody>
-    @for((row, rowIndex) <- dataRows.zip(LazyList from 1)) {
+    @for((row, rowIndex) <- viewModel.dataRows.zip(LazyList from 1)) {
         <tr data-testrole="draft-list_row@rowIndex">
 
             <td data-testrole="draft-list_row@rowIndex-lrn">
-                <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
-                <a href="" class="govuk-link">@row.lrn</a>
+                <span class="responsive-table__heading" aria-hidden="true">@viewModel.referenceNumber</span>
+                <a href="@viewModel.lrnRedirectLocation(row.lrn)" class="govuk-link">@row.lrn</a>
             </td>
 
             <td data-testrole="draft-list_row@rowIndex-daysToComplete">
-                <span class="responsive-table__heading" aria-hidden="true">@rowHeadingDaysToComplete</span>
+                <span class="responsive-table__heading" aria-hidden="true">@viewModel.daysToComplete</span>
                 @row.daysRemaining
             </td>
 
