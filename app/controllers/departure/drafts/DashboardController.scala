@@ -16,7 +16,7 @@
 
 package controllers.departure.drafts
 
-import config.{FrontendAppConfig, PaginationAppConfig, SearchResultsAppConfig}
+import config.PaginationAppConfig
 import controllers.actions._
 import forms.SearchFormProvider
 import models.requests.IdentifierRequest
@@ -50,7 +50,7 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(form, pageSize)(Ok(_))
+      buildView(form)(Ok(_))
   }
 
   def onSubmit: Action[AnyContent] = (Action andThen identify).async {
@@ -58,15 +58,15 @@ class DashboardController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => buildView(formWithErrors, pageSize)(BadRequest(_)),
+          formWithErrors => buildView(formWithErrors)(BadRequest(_)),
           lrn => {
             val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
-            buildView(form, pageSize, fuzzyLrn, isSearch = true)(Ok(_))
+            buildView(form, fuzzyLrn)(Ok(_))
           }
         )
   }
 
-  private def buildView(form: Form[String], pageSize: Int, lrn: Option[String] = None, isSearch: Boolean = false)(
+  private def buildView(form: Form[String], lrn: Option[String] = None)(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] = {
 
