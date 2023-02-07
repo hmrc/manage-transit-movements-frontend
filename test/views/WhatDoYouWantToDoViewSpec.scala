@@ -132,7 +132,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     }
 
     "have the correct href on the view departures link" in {
-      assertElementContainsHref(link, "/manage-transit-movements/departures/dashboard")
+      assertElementContainsHref(link, "/manage-transit-movements/draft-declarations")
     }
   }
 
