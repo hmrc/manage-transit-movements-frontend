@@ -1,1 +1,3 @@
-GET        /draft-declarations                        controllers.departure.drafts.DashboardController.onPageLoad()
+GET        /draft-declarations                                  controllers.departure.drafts.DashboardController.onPageLoad()
+GET        /draft-declarations/:lrn/delete                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onPageLoad(lrn: String)
+POST       /draft-declarations/:lrn/delete                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onSubmit(lrn: String)

@@ -158,6 +158,7 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         draftDepartures <- arbitrary[DeparturesSummary]
-      } yield AllDraftDeparturesViewModel(draftDepartures)
+        url             <- arbitrary[String]
+      } yield AllDraftDeparturesViewModel(draftDepartures, url)
     }
 }

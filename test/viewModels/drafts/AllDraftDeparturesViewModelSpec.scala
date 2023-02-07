@@ -35,7 +35,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         userAnswerSummary =>
           val draftDeparture = DeparturesSummary(userAnswerSummary)
 
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture)
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, frontendAppConfig.draftDepartureFrontendUrl)
 
           viewModel.dataRows.length mustBe draftDeparture.userAnswers.length
 

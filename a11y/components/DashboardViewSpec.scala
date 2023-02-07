@@ -19,9 +19,7 @@ package components
 import a11ySpecBase.A11ySpecBase
 import org.scalacheck.Arbitrary.arbitrary
 import viewModels.drafts.AllDraftDeparturesViewModel
-import views.html.components.DraftDeparturesTable
 import views.html.departure.drafts.DashboardView
-import views.html.templates.MainTemplate
 
 class DashboardViewSpec extends A11ySpecBase {
 

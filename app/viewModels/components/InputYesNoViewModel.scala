@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package services
+package viewModels.components
 
-import models.DeparturesSummary
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import play.twirl.api.Html
 
-import scala.concurrent.Future
+sealed trait InputYesNoViewModel
 
-trait DraftDepartureService {
+object InputYesNoViewModel {
 
-  def getAll(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse]
+  case class OrdinaryYesNo(
+    heading: String,
+    caption: Option[String] = None
+  ) extends InputYesNoViewModel
 
+  case class YesNoWithAdditionalHtml(
+    heading: String,
+    caption: Option[String] = None,
+    additionalHtml: Html
+  ) extends InputYesNoViewModel
+      with AdditionalHtmlViewModel
+
+  case class YesNoWithLegend(
+    legend: String
+  ) extends InputYesNoViewModel
 }

@@ -18,7 +18,8 @@ package services
 
 import connectors.DeparturesMovementsP5Connector
 import models.DeparturesSummary
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc.Result
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -27,4 +28,7 @@ class MongoDraftDepartureService @Inject() (connector: DeparturesMovementsP5Conn
 
   override def getAll(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.getDeparturesSummary(queryParams)
+
+  override def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = connector.deleteDraftDeparture(lrn)
+
 }

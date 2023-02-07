@@ -43,7 +43,7 @@ class DashboardController @Inject() (
     implicit request =>
       draftDepartureService.getAll().map {
         case Some(draft) =>
-          val toViewModel = AllDraftDeparturesViewModel(draft)
+          val toViewModel = AllDraftDeparturesViewModel(draft, appConfig.draftDepartureFrontendUrl)
           Ok(view(toViewModel))
         case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
       }
