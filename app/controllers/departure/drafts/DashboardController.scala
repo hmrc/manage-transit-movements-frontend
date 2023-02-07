@@ -16,7 +16,7 @@
 
 package controllers.departure.drafts
 
-import config.{FrontendAppConfig, SearchResultsAppConfig}
+import config.{FrontendAppConfig, PaginationAppConfig, SearchResultsAppConfig}
 import controllers.actions._
 import forms.SearchFormProvider
 import models.requests.IdentifierRequest
@@ -38,7 +38,7 @@ class DashboardController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   draftDepartureService: DraftDepartureService,
   formProvider: SearchFormProvider,
-  searchResultsAppConfig: SearchResultsAppConfig,
+  paginationAppConfig: PaginationAppConfig,
   view: DashboardView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -46,7 +46,7 @@ class DashboardController @Inject() (
 
   private val form = formProvider()
 
-  private lazy val pageSize = searchResultsAppConfig.maxSearchResults
+  private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
