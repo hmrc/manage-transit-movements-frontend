@@ -77,8 +77,8 @@ class DashboardController @Inject() (
 
     getDrafts.map {
       case Some(drafts) =>
-        val toViewModel = AllDraftDeparturesViewModel(drafts)
-        block(view(form, toViewModel, lrn, toViewModel.draftDepartures > pageSize, isSearch))
+        val toViewModel = AllDraftDeparturesViewModel(drafts, pageSize, lrn)
+        block(view(form, toViewModel))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())
     }

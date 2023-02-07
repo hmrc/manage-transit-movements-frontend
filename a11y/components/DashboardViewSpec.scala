@@ -17,22 +17,24 @@
 package components
 
 import a11ySpecBase.A11ySpecBase
+import forms.SearchFormProvider
 import org.scalacheck.Arbitrary.arbitrary
 import viewModels.drafts.AllDraftDeparturesViewModel
-import views.html.components.DraftDeparturesTable
 import views.html.departure.drafts.DashboardView
-import views.html.templates.MainTemplate
 
 class DashboardViewSpec extends A11ySpecBase {
 
   "the 'dashboard view' component" must {
     val component = app.injector.instanceOf[DashboardView]
 
+    val formProvider = new SearchFormProvider()
+    val form         = formProvider()
+
     "pass accessibility checks" when {
 
       "dashboard view spec" in {
         val viewModel = arbitrary[AllDraftDeparturesViewModel].sample.value
-        val content   = component.apply(viewModel)
+        val content   = component.apply(form, viewModel)
         content.toString() must passAccessibilityChecks
       }
     }

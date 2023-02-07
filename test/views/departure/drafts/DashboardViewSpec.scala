@@ -36,7 +36,7 @@ import java.time.LocalDateTime
 class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPropertyChecks {
 
   val genDraftDeparture: DeparturesSummary                            = arbitrary[DeparturesSummary].sample.value
-  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(genDraftDeparture)
+  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(genDraftDeparture, 20, None)
   val dataRows: Seq[DraftDepartureRow]                                = viewAllDepartureMovementsViewModel.dataRows
 
   private val formProvider = new SearchFormProvider()
@@ -45,14 +45,11 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
   override val prefix = "departure.drafts.dashboard"
 
   private def applyView(
-    viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel,
-    lrn: Option[String] = None,
-    tooManyResults: Boolean = false,
-    isSearch: Boolean = false
+    viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[DashboardView]
-      .apply(form, viewAllDepartureMovementsViewModel, lrn, tooManyResults, isSearch)(fakeRequest, messages)
+      .apply(form, viewAllDepartureMovementsViewModel)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable = applyView(viewAllDepartureMovementsViewModel)
 
@@ -84,7 +81,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
           DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30)
         )
       )
-      val view = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture), lrn = Some("123"), isSearch = true)
+      val view = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, Some("123")))
 
       val doc = Jsoup.parse(view.toString())
 
@@ -99,7 +96,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
           DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), LocalDateTime.now(), 29)
         )
       )
-      val view = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture), lrn = Some("123"), isSearch = true)
+      val view = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, Some("123")))
 
       val doc = Jsoup.parse(view.toString())
 
@@ -114,7 +111,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
         )
       )
       val view =
-        applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture), lrn = Some("123"), isSearch = true, tooManyResults = true)
+        applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 1, Some("123")))
 
       val doc = Jsoup.parse(view.toString())
 
@@ -123,7 +120,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
     "must not render when there are no drafts" in {
       val draftDeparture = DeparturesSummary(List.empty)
-      val view           = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture), lrn = Some("123"), isSearch = true)
+      val view           = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, None))
 
       val doc = Jsoup.parse(view.toString())
 
@@ -200,7 +197,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
     "must render when no data rows" in {
 
       val draftDeparture = DeparturesSummary(List.empty)
-      val view           = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture), lrn = Some("123"), isSearch = true)
+      val view           = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, Some("AB123")))
 
       val doc = Jsoup.parse(view.toString())
 

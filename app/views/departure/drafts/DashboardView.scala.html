@@ -30,10 +30,7 @@
 
 @(
         form: Form[_],
-        viewModel: AllDraftDeparturesViewModel,
-        lrn: Option[String],
-        tooManyResults: Boolean,
-        isSearch: Boolean
+        viewModel: AllDraftDeparturesViewModel
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
@@ -44,7 +41,7 @@
 
     @heading(viewModel.heading)
 
-    @if(isSearch && lrn.isDefined) {
+    @if(viewModel.isSearch) {
         <p class="govuk-body">
             <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad()">
             @messages("departure.drafts.dashboard.link.title")
@@ -58,16 +55,16 @@
         label = "departure.drafts.dashboard.search"
     )
 
-    @if(isSearch && viewModel.dataRows.nonEmpty && lrn.isDefined) {
+    @if(viewModel.searchResultsFound) {
         <p class="govuk-body" id="results-found">
-            @Html(lrn.map(viewModel.searchResult(_)))
-            @if(tooManyResults) {
+            @Html(viewModel.searchResult())
+            @if(viewModel.tooManyResults) {
                 @messages("search.tooManyResults")
             }
         </p>
     }
 
-    @if(viewModel.dataRows.nonEmpty) {
+    @if(viewModel.resultsFound) {
 
         @draftDeparturesTable(
             dataRows = viewModel.dataRows,
