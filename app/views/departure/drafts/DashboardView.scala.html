@@ -44,7 +44,7 @@
 
     @heading(viewModel.heading)
 
-    @if(isSearch) {
+    @if(isSearch && lrn.isDefined) {
         <p class="govuk-body">
             <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad()">
             @messages("departure.drafts.dashboard.link.title")
@@ -58,7 +58,7 @@
         label = "departure.drafts.dashboard.search"
     )
 
-    @if(isSearch & viewModel.dataRows.nonEmpty) {
+    @if(isSearch && viewModel.dataRows.nonEmpty && lrn.isDefined) {
         <p class="govuk-body" id="results-found">
             @Html(lrn.map(viewModel.searchResult(_)))
             @if(tooManyResults) {
