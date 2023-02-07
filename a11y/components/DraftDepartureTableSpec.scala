@@ -25,10 +25,10 @@ import views.html.components.DraftDeparturesTable
 class DraftDepartureTableSpec extends A11ySpecBase {
 
   "the 'draft departure table' component" must {
-    val template  = app.injector.instanceOf[MainTemplate]
+    val template = app.injector.instanceOf[MainTemplate]
     val component = app.injector.instanceOf[DraftDeparturesTable]
 
-    val title                     = nonEmptyString.sample.value
+    val title = nonEmptyString.sample.value
 
     "pass accessibility checks" when {
 
