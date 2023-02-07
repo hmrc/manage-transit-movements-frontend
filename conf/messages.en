@@ -219,5 +219,5 @@ departure.drafts.dashboard.table.delete.action.hidden = Actions
 departure.drafts.dashboard.table.action.delete.hidden = Local Reference Number (LRN) {0}
 
 departure.drafts.dashboard.table.panel.title = Create a new departure declaration
-departure.drafts.dashboard.table.panel.text = You have 30 days from the first time you save a declaration to complete it.
+departure.drafts.dashboard.table.panel.text = You have 30 days from starting a declaration to complete it.
 departure.drafts.dashboard.table.panel.button = Start now

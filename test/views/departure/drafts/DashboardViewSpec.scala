@@ -138,7 +138,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
     "must render correct text" in {
       panel.head
         .getElementsByClass("govuk-body")
-        .text() mustBe "You have 30 days from the first time you save a declaration to complete it."
+        .text() mustBe "You have 30 days from starting a declaration to complete it."
     }
 
     "must render href button" in {
