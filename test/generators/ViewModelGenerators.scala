@@ -16,12 +16,13 @@
 
 package generators
 
-import models.LocalReferenceNumber
+import models.{DeparturesSummary, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
 import play.twirl.api.Html
 import viewModels._
+import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination._
 
 import java.time.{LocalDate, LocalTime}
@@ -151,5 +152,12 @@ trait ViewModelGenerators {
       for {
         seqOfViewDepartureMovements <- listWithMaxLength[ViewDeparture]()
       } yield ViewDepartureMovements(seqOfViewDepartureMovements)
+    }
+
+  implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
+    Arbitrary {
+      for {
+        draftDepartures <- arbitrary[DeparturesSummary]
+      } yield AllDraftDeparturesViewModel(draftDepartures)
     }
 }

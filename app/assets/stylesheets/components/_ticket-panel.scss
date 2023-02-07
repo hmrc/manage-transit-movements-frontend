@@ -1,0 +1,60 @@
+/* ==========================================================================
+   #TICKET PANEL
+   ========================================================================== */
+
+.ticket-panel {
+    display: block;
+    margin-right: 0;
+    flex-wrap: wrap;
+}
+
+.ticket-panel--inline {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.ticket-panel--inline > * + * {
+    margin-left: 15px;
+}
+
+.ticket-panel__content *:last-child {
+    margin-bottom: 0;
+}
+
+.ticket-panel__content {
+    display: block;
+    position: relative;
+    background-color: #f3f2f1;
+    padding: 20px;
+    margin-bottom: 15px;
+    flex-grow: 1;
+    border-left: 4px solid transparent;
+}
+
+.ticket-panel__content--grey {
+    border-left-color: #b1b4b6;
+}
+
+.ticket-panel__content--blue {
+    border-left-color: #1d70b8;
+}
+
+.ticket-panel__content--red {
+    border-left-color: #d4351c;
+}
+
+.ticket-panel__content--yellow {
+    border-left-color: #ffdd00;
+}
+
+.ticket-panel__content--green {
+    border-left-color: #00703c;
+}
+
+.ticket-panel__content--purple {
+    border-left-color: #4c2c92;
+}
+
+.ticket-panel__content--orange {
+    border-left-color: #f47738;
+}

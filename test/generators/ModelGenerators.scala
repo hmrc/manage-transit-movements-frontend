@@ -205,6 +205,11 @@ trait ModelGenerators {
       Gen.oneOf(Availability.NonEmpty, Availability.Empty, Availability.Unavailable)
     }
 
+  implicit lazy val arbitraryDraftAvailability: Arbitrary[DraftAvailability] =
+    Arbitrary {
+      Gen.oneOf(DraftAvailability.NonEmpty, DraftAvailability.Empty, DraftAvailability.Unavailable)
+    }
+
   implicit lazy val arbitraryArrivals: Arbitrary[Arrivals] =
     Arbitrary {
       for {
@@ -232,5 +237,19 @@ trait ModelGenerators {
         url    <- nonEmptyString
       } yield Call(method, url)
     }
+
+  implicit lazy val arbitraryUserAnswerSummary: Arbitrary[DepartureUserAnswerSummary] =
+    Arbitrary {
+      for {
+        lrn       <- arbitrary[LocalReferenceNumber]
+        createdAt <- arbitrary[LocalDateTime]
+        expires   <- Gen.chooseNum(1, 30)
+      } yield DepartureUserAnswerSummary(lrn, createdAt, expires)
+    }
+
+  implicit lazy val arbitraryDraftDeparture: Arbitrary[DeparturesSummary] = Arbitrary {
+    listWithMaxLength[DepartureUserAnswerSummary](9).map(DeparturesSummary(_))
+  }
+
 }
 // scalastyle:on magic.number

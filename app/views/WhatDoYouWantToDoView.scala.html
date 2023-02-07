@@ -25,7 +25,7 @@
     config: FrontendAppConfig
 )
 
-@(arrivalsAvailability: Availability, departuresAvailability: Availability)(implicit request: Request[_], messages: Messages)
+@(arrivalsAvailability: Availability, departuresAvailability: Availability, draftDepartureAvailability: Option[DraftAvailability])(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("whatDoYouWantToDo.title")
@@ -69,6 +69,22 @@
             }
         }
     </p>
+
+    @draftDepartureAvailability.map { availability =>
+        <p class="govuk-body">
+        @availability match {
+            case DraftAvailability.NonEmpty => {
+                <a href=@controllers.departure.drafts.routes.DashboardController.onPageLoad().url class="govuk-link" id="view-draft-departures">@messages("whatDoYouWantToDo.link.departure.viewDraftDepartures")</a>
+            }
+            case DraftAvailability.Empty => {
+                @messages("whatDoYouWantToDo.departure.noDraftDepartures")
+            }
+            case DraftAvailability.Unavailable => {
+                @messages("whatDoYouWantToDo.departure.draftDeparturesUnavailable")
+            }
+        }
+        </p>
+    }
 
     @if(config.isGuaranteeBalanceEnabled) {
         <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.guarantee")</h2>
