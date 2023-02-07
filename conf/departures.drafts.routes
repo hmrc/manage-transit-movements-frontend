@@ -1,2 +1,2 @@
-GET        /departures/dashboard                                         controllers.departure.drafts.DashboardController.onPageLoad()
-POST       /departures/dashboard                                         controllers.departure.drafts.DashboardController.onSubmit()
+GET        /draft-declarations                                         controllers.departure.drafts.DashboardController.onPageLoad()
+POST       /draft-declarations                                         controllers.departure.drafts.DashboardController.onSubmit()
