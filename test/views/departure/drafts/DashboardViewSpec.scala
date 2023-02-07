@@ -52,7 +52,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
   behave like pageWithTitle()
 
-  behave like pageWithoutBackLink()
+  behave like pageWithBackLink()
 
   behave like pageWithHeading()
 
@@ -60,6 +60,11 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
   "must generate a row for each draft" in {
     rows.size() mustEqual genDraftDeparture.userAnswers.size
+  }
+
+  "must generate correct hidden text for delete heading" in {
+    val deleteHiddenSpan = doc.getElementById("actionHidden").text()
+    deleteHiddenSpan mustBe "Actions"
   }
 
   "must generate correct data in each row" - {
@@ -111,7 +116,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
             "must display correct text" in {
               behave like elementWithVisibleText(deleteLink, s"${messages(s"$prefix.table.action.delete")}")
               val hiddenText = deleteLink.getElementsByClass("govuk-visually-hidden").head
-              hiddenText.text() mustBe s"for ${viewDraftDeparture.lrn}"
+              hiddenText.text() mustBe s"Local Reference Number (LRN) ${viewDraftDeparture.lrn}"
             }
 
             "must have correct href" in {
