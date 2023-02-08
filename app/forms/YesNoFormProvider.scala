@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package services
+package forms
 
-import models.DeparturesSummary
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-import scala.concurrent.Future
+import javax.inject.Inject
 
-trait DraftDepartureService {
+class YesNoFormProvider @Inject() extends Mappings {
 
-  def getAll(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def getLRNs(lrn: String, limit: Int = 0)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse]
-
+  def apply(prefix: String): Form[Boolean] =
+    Form(
+      "value" -> boolean(s"$prefix.error.required")
+    )
 }

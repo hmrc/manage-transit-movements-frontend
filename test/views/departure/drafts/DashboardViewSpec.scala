@@ -36,7 +36,7 @@ import java.time.LocalDateTime
 class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPropertyChecks {
 
   val genDraftDeparture: DeparturesSummary                            = arbitrary[DeparturesSummary].sample.value
-  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(genDraftDeparture, 20, None)
+  val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel = AllDraftDeparturesViewModel(genDraftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl)
   val dataRows: Seq[DraftDepartureRow]                                = viewAllDepartureMovementsViewModel.dataRows
 
   private val formProvider = new SearchFormProvider()
@@ -81,7 +81,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
           DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30)
         )
       )
-      val view = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, Some("123")))
+      val view = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl))
 
       val doc = Jsoup.parse(view.toString())
 
@@ -96,7 +96,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
           DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), LocalDateTime.now(), 29)
         )
       )
-      val view = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, Some("123")))
+      val view = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl))
 
       val doc = Jsoup.parse(view.toString())
 
@@ -111,7 +111,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
         )
       )
       val view =
-        applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 1, Some("123")))
+        applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 1, Some("123"), frontendAppConfig.draftDepartureFrontendUrl))
 
       val doc = Jsoup.parse(view.toString())
 
@@ -120,7 +120,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
     "must not render when there are no drafts" in {
       val draftDeparture = DeparturesSummary(List.empty)
-      val view           = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, None))
+      val view           = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl))
 
       val doc = Jsoup.parse(view.toString())
 
@@ -159,8 +159,10 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
               behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
             }
 
-            "must have correct href" ignore { // TODO during CTCP-1881
-              behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
+            "must have correct href" in {
+
+              val redirectLink = s"${frontendAppConfig.draftDepartureFrontendUrl}/drafts/${viewDraftDeparture.lrn}"
+              lrnLink.attr("href") mustBe redirectLink
             }
           }
 
@@ -184,8 +186,9 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
               hiddenText.text() mustBe s"Local Reference Number (LRN) ${viewDraftDeparture.lrn}"
             }
 
-            "must have correct href" ignore { // TODO during CTCP-1881
-              ???
+            "must have correct href" in {
+              val redirectLink = controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(viewDraftDeparture.lrn.toString()).url
+              deleteLink.attr("href") mustBe redirectLink
             }
           }
         }
@@ -197,7 +200,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
     "must render when no data rows" in {
 
       val draftDeparture = DeparturesSummary(List.empty)
-      val view           = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, Some("AB123")))
+      val view           = applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl))
 
       val doc = Jsoup.parse(view.toString())
 

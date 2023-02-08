@@ -28,17 +28,14 @@ class DraftDepartureTableSpec extends A11ySpecBase {
     val template  = app.injector.instanceOf[MainTemplate]
     val component = app.injector.instanceOf[DraftDeparturesTable]
 
-    val title                     = nonEmptyString.sample.value
-    val visuallyHiddenHeader      = nonEmptyString.sample.value
-    val rowHeadingReferenceNumber = nonEmptyString.sample.value
-    val rowHeadingDaysToComplete  = nonEmptyString.sample.value
+    val title = nonEmptyString.sample.value
 
     "pass accessibility checks" when {
 
       "draft departure table" in {
-        val dataRows = arbitrary[AllDraftDeparturesViewModel].sample.value.dataRows
+        val dataRows = arbitrary[AllDraftDeparturesViewModel].sample.value
         val content = template.apply(title) {
-          component.apply(dataRows, visuallyHiddenHeader, rowHeadingReferenceNumber, rowHeadingDaysToComplete).withHeading(title)
+          component.apply(dataRows).withHeading(title)
         }
         content.toString() must passAccessibilityChecks
       }

@@ -17,7 +17,7 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
 import models.{DepartureUserAnswerSummary, DeparturesSummary, DraftAvailability, LocalReferenceNumber}
@@ -25,7 +25,6 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-
 import java.time.LocalDateTime
 
 class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
@@ -179,6 +178,33 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
             connector.lrnFuzzySearch(partialLRN, maxSearchResults).futureValue mustBe expectedResult
 
         }
+      }
+    }
+
+    "deleteDraftDeparture" - {
+      val lrn = "1234"
+      "must return 200 on a successful deletion" in {
+        server.stubFor(
+          delete(urlEqualTo(s"/$startUrl/user-answers/$lrn"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+            )
+        )
+
+        connector.deleteDraftDeparture(lrn).futureValue.status mustBe 200
+      }
+
+      "must return 500 on a failed deletion" in {
+        server.stubFor(
+          delete(urlEqualTo(s"/$startUrl/user-answers/$lrn"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+            )
+        )
+
+        connector.deleteDraftDeparture(lrn).futureValue.status mustBe 500
       }
     }
 

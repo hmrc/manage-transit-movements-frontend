@@ -15,8 +15,8 @@
  */
 
 package controllers.departure.drafts
-
 import config.PaginationAppConfig
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.SearchFormProvider
 import models.requests.IdentifierRequest
@@ -37,9 +37,10 @@ class DashboardController @Inject() (
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   draftDepartureService: DraftDepartureService,
+  view: DashboardView,
   formProvider: SearchFormProvider,
   paginationAppConfig: PaginationAppConfig,
-  view: DashboardView
+  appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -77,7 +78,7 @@ class DashboardController @Inject() (
 
     getDrafts.map {
       case Some(drafts) =>
-        val toViewModel = AllDraftDeparturesViewModel(drafts, pageSize, lrn)
+        val toViewModel = AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl)
         block(view(form, toViewModel))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())

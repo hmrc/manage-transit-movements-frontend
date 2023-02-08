@@ -67,10 +67,7 @@
     @if(viewModel.resultsFound) {
 
         @draftDeparturesTable(
-            dataRows = viewModel.dataRows,
-            visuallyHiddenHeader = viewModel.visuallyHiddenHeader,
-            rowHeadingReferenceNumber = viewModel.referenceNumber,
-            rowHeadingDaysToComplete = viewModel.daysToComplete
+            viewModel = viewModel
         )
     } else {
         <p class="govuk-body" id="no-results-found">@messages("search.noResultsFound")</p>
