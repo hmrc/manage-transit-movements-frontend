@@ -28,6 +28,7 @@ import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
+import viewModels.pagination.PaginationViewModel
 import views.html.departure.drafts.DashboardView
 
 import javax.inject.Inject
@@ -77,10 +78,17 @@ class DashboardController @Inject() (
       case None        => draftDepartureService.getAll()
     }
 
+    val paginationViewModel = PaginationViewModel(
+      100,
+      1,
+      paginationAppConfig.draftDeparturesNumberOfDrafts,
+      routes.DashboardController.onPageLoad().url
+    )
+
     getDrafts.map {
       case Some(drafts) =>
         val toViewModel = AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl)
-        block(view(form, toViewModel))
+        block(view(form, toViewModel, paginationViewModel))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())
     }

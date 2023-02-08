@@ -19,18 +19,22 @@
 @import views.html.components.DraftDeparturesTable
 @import config.FrontendAppConfig
 @import views.html.components.Search
+@import views.html.components.Pagination
+@import viewModels.pagination.PaginationViewModel
 
 @this(
         mainTemplate: MainTemplate,
         draftDeparturesTable: DraftDeparturesTable,
         heading: Heading,
         search: Search,
-        config: FrontendAppConfig
+        config: FrontendAppConfig,
+        pagination: Pagination
 )
 
 @(
         form: Form[_],
-        viewModel: AllDraftDeparturesViewModel
+        viewModel: AllDraftDeparturesViewModel,
+        paginationViewModel: PaginationViewModel
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
@@ -73,6 +77,8 @@
         <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>
 
     }
+
+    @pagination(paginationViewModel)
 
     <article class="ticket-panel" aria-label="Sub navigation 1">
         <section class="ticket-panel__content ticket-panel__content--blue" aria-label="Section 1">
