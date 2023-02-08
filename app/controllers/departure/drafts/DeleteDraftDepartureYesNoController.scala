@@ -40,24 +40,24 @@ class DeleteDraftDepartureYesNoController @Inject() (
 
   private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
-  def onPageLoad(lrn: String): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(lrn: String, pageNumber: Int): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      Future.successful(Ok(view(form, lrn)))
+      Future.successful(Ok(view(form, lrn, pageNumber)))
   }
 
-  def onSubmit(lrn: String): Action[AnyContent] = (Action andThen identify).async {
+  def onSubmit(lrn: String, pageNumber: Int): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, pageNumber))),
           {
             case true =>
               draftDepartureService.deleteDraftDeparture(lrn) map {
-                case response if response.status == StatusOK => Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad())
+                case response if response.status == StatusOK => Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(pageNumber))
                 case _                                       => Redirect(controllers.routes.ErrorController.internalServerError())
               }
-            case false => Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad()))
+            case false => Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(pageNumber)))
           }
         )
   }

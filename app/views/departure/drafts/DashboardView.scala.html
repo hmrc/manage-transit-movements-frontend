@@ -47,7 +47,7 @@
 
     @if(viewModel.isSearch) {
         <p class="govuk-body">
-            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad()">
+            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(paginationViewModel.pageNumber)">
             @messages("departure.drafts.dashboard.link.title")
             </a>
         </p>
@@ -55,7 +55,7 @@
 
     @search(
         form = form,
-        action = controllers.departure.drafts.routes.DashboardController.onSubmit(),
+        action = controllers.departure.drafts.routes.DashboardController.onSubmit(paginationViewModel.pageNumber),
         label = "departure.drafts.dashboard.search"
     )
 
@@ -71,7 +71,8 @@
     @if(viewModel.resultsFound) {
 
         @draftDeparturesTable(
-            viewModel = viewModel
+            viewModel = viewModel,
+            pageNumber = paginationViewModel.pageNumber
         )
     } else {
         <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>

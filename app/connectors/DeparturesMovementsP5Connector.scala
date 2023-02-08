@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import logging.Logging
+import models.departure.drafts.{Limit, Skip}
 import models.{DeparturesSummary, DraftAvailability}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpReads.is2xx
@@ -27,6 +28,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
+
+  def getAllDeparturesSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("limit" -> limit.toString, "skip" -> skip.toString))
+
+  def getLRNs(partialLRN: String, skip: Skip, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("lrn" -> partialLRN, "limit" -> limit.toString, "skip" -> skip.toString))
 
   def getDeparturesSummary(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
     val url = s"${config.draftDeparturesUrl}/user-answers"
@@ -41,7 +48,7 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
     }
   }
 
-  def lrnFuzzySearch(lrn: String, limit: Int)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+  def lrnFuzzySearch(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     getDeparturesSummary(Seq("lrn" -> lrn, "limit" -> limit.toString))
 
   def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {

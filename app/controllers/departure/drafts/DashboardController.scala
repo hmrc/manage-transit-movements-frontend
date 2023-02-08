@@ -20,6 +20,7 @@ import config.PaginationAppConfig
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.SearchFormProvider
+import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -51,38 +52,42 @@ class DashboardController @Inject() (
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(pageNumber: Int): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(form)(Ok(_))
+      buildView(form, pageNumber)(Ok(_))
   }
 
-  def onSubmit: Action[AnyContent] = (Action andThen identify).async {
+  def onSubmit(pageNumber: Int): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => buildView(formWithErrors)(BadRequest(_)),
+          formWithErrors => buildView(formWithErrors, pageNumber)(BadRequest(_)),
           lrn => {
             val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
-            buildView(form, fuzzyLrn)(Ok(_))
+            buildView(form, pageNumber, fuzzyLrn)(Ok(_))
           }
         )
   }
 
-  private def buildView(form: Form[String], lrn: Option[String] = None)(
+  private def buildView(form: Form[String], pageNumber: Int, lrn: Option[String] = None)(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] = {
 
+    val limit = Limit(pageSize)
+
+    val skip = Skip(pageNumber)
+
     val getDrafts = lrn match {
-      case Some(value) => draftDepartureService.getLRNs(value, pageSize)
-      case None        => draftDepartureService.getAll()
+      case Some(value) => draftDepartureService.getLRNs(value, skip, limit)
+      case None        => draftDepartureService.getPagedDepartureSummary(limit, skip)
     }
 
     val paginationViewModel = PaginationViewModel(
       100,
-      1,
+      pageNumber,
       paginationAppConfig.draftDeparturesNumberOfDrafts,
-      routes.DashboardController.onPageLoad().url
+      routes.DashboardController.onPageLoad(pageNumber).url
     )
 
     getDrafts.map {
