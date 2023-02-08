@@ -15,6 +15,7 @@
  */
 
 package controllers.departure.drafts
+
 import config.PaginationAppConfig
 import config.FrontendAppConfig
 import controllers.actions._

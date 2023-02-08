@@ -18,7 +18,6 @@ package services
 
 import connectors.DeparturesMovementsP5Connector
 import models.DeparturesSummary
-import play.api.mvc.Result
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject

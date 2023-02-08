@@ -54,14 +54,16 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "must return true when departure size is greater than page size" in {
 
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length - 1, None, frontendAppConfig.draftDepartureFrontendUrl)
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length - 1, None, frontendAppConfig.draftDepartureFrontendUrl)
 
         viewModel.tooManyResults mustBe true
       }
 
       "must return false when departure size is less than or equal to page size" in {
 
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length + 1, None, frontendAppConfig.draftDepartureFrontendUrl)
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length + 1, None, frontendAppConfig.draftDepartureFrontendUrl)
 
         viewModel.tooManyResults mustBe false
       }
@@ -74,7 +76,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "must return true when LRN is defined" in {
 
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
 
         viewModel.isSearch mustBe true
       }
@@ -117,7 +120,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
 
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
 
         viewModel.searchResultsFound mustBe true
       }
