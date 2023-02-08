@@ -16,8 +16,10 @@
 
 package views.departure.drafts
 
+import forms.SearchFormProvider
 import generators.Generators
-import models.{DepartureUserAnswerSummary, DeparturesSummary}
+import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
@@ -29,13 +31,18 @@ import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 import views.behaviours.ViewBehaviours
 import views.html.departure.drafts.DashboardView
 
+import java.time.LocalDateTime
+
 class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPropertyChecks {
 
   val genDraftDeparture: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
 
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
-    AllDraftDeparturesViewModel(genDraftDeparture, frontendAppConfig.draftDepartureFrontendUrl)
+    AllDraftDeparturesViewModel(genDraftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl)
   val dataRows: Seq[DraftDepartureRow] = viewAllDepartureMovementsViewModel.dataRows
+
+  private val formProvider = new SearchFormProvider()
+  private val form         = formProvider()
 
   override val prefix = "departure.drafts.dashboard"
 
@@ -44,7 +51,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[DashboardView]
-      .apply(viewAllDepartureMovementsViewModel)(fakeRequest, messages)
+      .apply(form, viewAllDepartureMovementsViewModel)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable = applyView(viewAllDepartureMovementsViewModel)
 
@@ -65,6 +72,73 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
   "must generate correct hidden text for delete heading" in {
     val deleteHiddenSpan = doc.getElementById("actionHidden").text()
     deleteHiddenSpan mustBe "Actions"
+  }
+
+  "search result text" - {
+
+    "must render when 'isSearch' is true and is singular" in {
+
+      val draftDeparture = DeparturesSummary(
+        List(
+          DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30)
+        )
+      )
+      val view = applyView(viewAllDepartureMovementsViewModel =
+        AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl)
+      )
+
+      val doc = Jsoup.parse(view.toString())
+
+      doc.getElementById("results-found").text() mustBe s"Showing 1 result matching 123."
+    }
+
+    "must render when 'isSearch' is true and is plural" in {
+
+      val draftDeparture = DeparturesSummary(
+        List(
+          DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30),
+          DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), LocalDateTime.now(), 29)
+        )
+      )
+      val view = applyView(viewAllDepartureMovementsViewModel =
+        AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl)
+      )
+
+      val doc = Jsoup.parse(view.toString())
+
+      doc.getElementById("results-found").text() mustBe s"Showing 2 results matching 123."
+    }
+
+    "must render too many results text when 'tooManyResults' is true" in {
+      val draftDeparture = DeparturesSummary(
+        List(
+          DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30),
+          DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), LocalDateTime.now(), 29)
+        )
+      )
+      val view =
+        applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 1, Some("123"), frontendAppConfig.draftDepartureFrontendUrl))
+
+      val doc = Jsoup.parse(view.toString())
+
+      doc.getElementById("results-found").text() mustBe s"Showing 2 results matching 123. There are too many results. Please refine your search."
+    }
+
+    "must not render when there are no drafts" in {
+      val draftDeparture = DeparturesSummary(List.empty)
+      val view =
+        applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl))
+
+      val doc = Jsoup.parse(view.toString())
+
+      doc.getElementById("results-found") mustBe null
+    }
+
+    "must not render when 'isSearch' is false" in {
+
+      doc.getElementById("results-found") mustBe null
+    }
+
   }
 
   "must generate correct data in each row" - {
@@ -125,6 +199,26 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
             }
           }
         }
+    }
+  }
+
+  "no results found" - {
+
+    "must render when no data rows" in {
+
+      val draftDeparture = DeparturesSummary(List.empty)
+      val view = applyView(viewAllDepartureMovementsViewModel =
+        AllDraftDeparturesViewModel(draftDeparture, 20, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
+      )
+
+      val doc = Jsoup.parse(view.toString())
+
+      doc.getElementById("no-results-found").text() mustBe "This LRN does not exist"
+    }
+
+    "must no render when there are data rows" in {
+
+      doc.getElementById("no-results-found") mustBe null
     }
   }
 

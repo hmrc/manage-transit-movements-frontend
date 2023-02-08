@@ -41,6 +41,9 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
     }
   }
 
+  def lrnFuzzySearch(lrn: String, limit: Int)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("lrn" -> lrn, "limit" -> limit.toString))
+
   def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url = s"${config.draftDeparturesUrl}/user-answers/$lrn"
     http.DELETE[HttpResponse](url)

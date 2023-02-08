@@ -20,7 +20,7 @@ import models.DeparturesSummary
 import play.api.i18n.Messages
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 
-case class AllDraftDeparturesViewModel(items: DeparturesSummary, draftDepartureFrontendUrl: String) {
+case class AllDraftDeparturesViewModel(items: DeparturesSummary, pageSize: Int, lrn: Option[String], draftDepartureFrontendUrl: String) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
   val tableMessageKeyPrefix = "departure.drafts.dashboard.table"
@@ -36,9 +36,26 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary, draftDepartureF
   def lrnRedirectLocation(lrn: String): String            = s"$draftDepartureFrontendUrl/drafts/$lrn"
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
+  def searchResult()(implicit messages: Messages): Option[String] =
+    lrn.map {
+      lrn =>
+        draftDepartures match {
+          case 1 => messages("search.results.singular", "<b>1</b>", lrn)
+          case x => messages("search.results.plural", s"<b>$x</b>", lrn)
+        }
+    }
+
   def dataRows: Seq[DraftDepartureRow] = items.userAnswers.map {
     dd => DraftDepartureRow(dd.lrn.toString, dd.expiresInDays)
   }
+
+  def tooManyResults: Boolean = draftDepartures > pageSize
+
+  def isSearch: Boolean = lrn.isDefined
+
+  def resultsFound: Boolean = dataRows.nonEmpty
+
+  def searchResultsFound: Boolean = resultsFound && isSearch
 
 }
 

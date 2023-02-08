@@ -44,21 +44,92 @@ class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   "DraftDashboard Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "GET" - {
+      "must return OK and the correct view" in {
 
-      val draftDeparture =
-        DeparturesSummary(
-          List(
-            DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
-            DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+        val draftDeparture =
+          DeparturesSummary(
+            List(
+              DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+              DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+            )
           )
-        )
 
-      when(draftDepartureService.getAll(any())(any())).thenReturn(Future.successful(Some(draftDeparture)))
+        when(draftDepartureService.getAll(any())(any())).thenReturn(Future.successful(Some(draftDeparture)))
 
-      val request = FakeRequest(GET, draftDashboardRoute)
-      val result  = route(app, request).value
-      status(result) mustEqual OK
+        val request = FakeRequest(GET, draftDashboardRoute)
+        val result  = route(app, request).value
+
+        status(result) mustEqual OK
+      }
+
+      "must redirect to technical difficulties when there is an error" in {
+
+        when(draftDepartureService.getAll(any())(any())).thenReturn(Future.successful(None))
+
+        val request = FakeRequest(GET, draftDashboardRoute)
+        val result  = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+      }
+    }
+
+    "POST" - {
+
+      "must return OK and the correct view when given a search LRN" in {
+
+        val draftDeparture =
+          DeparturesSummary(
+            List(
+              DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+              DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+            )
+          )
+
+        when(draftDepartureService.getLRNs(any(), any())(any())).thenReturn(Future.successful(Some(draftDeparture)))
+
+        val request = FakeRequest(POST, draftDashboardRoute)
+          .withFormUrlEncodedBody(("value", "lrn"))
+
+        val result = route(app, request).value
+
+        status(result) mustEqual OK
+      }
+
+      "must return OK and the correct view when empty search" in {
+
+        val draftDeparture =
+          DeparturesSummary(
+            List(
+              DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+              DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+            )
+          )
+
+        when(draftDepartureService.getAll(any())(any())).thenReturn(Future.successful(Some(draftDeparture)))
+
+        val request = FakeRequest(POST, draftDashboardRoute)
+          .withFormUrlEncodedBody(("value", ""))
+
+        val result = route(app, request).value
+
+        status(result) mustEqual OK
+      }
+
+      "must redirect to technical difficulties when there is an error" in {
+
+        when(draftDepartureService.getLRNs(any(), any())(any())).thenReturn(Future.successful(None))
+
+        val request = FakeRequest(POST, draftDashboardRoute)
+          .withFormUrlEncodedBody(("value", "lrn"))
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+      }
+
     }
   }
 }

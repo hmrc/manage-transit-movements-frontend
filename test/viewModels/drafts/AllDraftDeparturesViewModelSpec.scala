@@ -25,9 +25,9 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  "AllDraftDeparturesViewModelSpec" - {
+  "AllDraftDeparturesViewModel" - {
 
-    "When DraftDepartures are tabulated must display correct data and format" in {
+    "must return correct data rows" in {
 
       val userAnswerSummary: Gen[List[DepartureUserAnswerSummary]] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary])
 
@@ -35,7 +35,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         userAnswerSummary =>
           val draftDeparture = DeparturesSummary(userAnswerSummary)
 
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, frontendAppConfig.draftDepartureFrontendUrl)
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, 1, None, frontendAppConfig.draftDepartureFrontendUrl)
 
           viewModel.dataRows.length mustBe draftDeparture.userAnswers.length
 
@@ -44,6 +44,105 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
           viewModel.dataRows.head.daysRemaining mustBe draftDeparture.userAnswers.head.expiresInDays
           viewModel.dataRows(1).daysRemaining mustBe draftDeparture.userAnswers(1).expiresInDays
+      }
+    }
+
+    "tooManyResult" - {
+
+      val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
+      val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+
+      "must return true when departure size is greater than page size" in {
+
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length - 1, None, frontendAppConfig.draftDepartureFrontendUrl)
+
+        viewModel.tooManyResults mustBe true
+      }
+
+      "must return false when departure size is less than or equal to page size" in {
+
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length + 1, None, frontendAppConfig.draftDepartureFrontendUrl)
+
+        viewModel.tooManyResults mustBe false
+      }
+    }
+
+    "isSearch" - {
+
+      val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
+      val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+
+      "must return true when LRN is defined" in {
+
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
+
+        viewModel.isSearch mustBe true
+      }
+
+      "must return false when LRN is not defined" in {
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+
+        viewModel.isSearch mustBe false
+      }
+
+    }
+
+    "resultsFound" - {
+
+      "must return true when data rows is not empty" in {
+
+        val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
+        val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+
+        viewModel.resultsFound mustBe true
+      }
+
+      "must return false when data rows is empty" in {
+
+        val departuresSummary: DeparturesSummary = DeparturesSummary(List.empty)
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+
+        viewModel.resultsFound mustBe false
+      }
+    }
+
+    "searchResultsFound" - {
+
+      "must return true when LRN is defined and rows is not empty" in {
+
+        val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
+        val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
+
+        viewModel.searchResultsFound mustBe true
+      }
+
+      "must return false when LRN is not defined" in {
+
+        val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
+        val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+
+        viewModel.searchResultsFound mustBe false
+      }
+
+      "must return false when rows are empty" in {
+
+        val departuresSummary: DeparturesSummary = DeparturesSummary(List.empty)
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+
+        viewModel.searchResultsFound mustBe false
       }
     }
   }

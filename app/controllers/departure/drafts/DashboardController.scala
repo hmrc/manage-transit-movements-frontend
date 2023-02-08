@@ -16,17 +16,22 @@
 
 package controllers.departure.drafts
 
+import config.PaginationAppConfig
 import config.FrontendAppConfig
 import controllers.actions._
+import forms.SearchFormProvider
+import models.requests.IdentifierRequest
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
 import views.html.departure.drafts.DashboardView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
   override val messagesApi: MessagesApi,
@@ -34,19 +39,51 @@ class DashboardController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   draftDepartureService: DraftDepartureService,
   view: DashboardView,
+  formProvider: SearchFormProvider,
+  paginationAppConfig: PaginationAppConfig,
   appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
+  private val form = formProvider()
+
+  private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
+
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      draftDepartureService.getAll().map {
-        case Some(draft) =>
-          val toViewModel = AllDraftDeparturesViewModel(draft, appConfig.draftDepartureFrontendUrl)
-          Ok(view(toViewModel))
-        case None => Redirect(controllers.routes.ErrorController.technicalDifficulties())
-      }
+      buildView(form)(Ok(_))
+  }
+
+  def onSubmit: Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => buildView(formWithErrors)(BadRequest(_)),
+          lrn => {
+            val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
+            buildView(form, fuzzyLrn)(Ok(_))
+          }
+        )
+  }
+
+  private def buildView(form: Form[String], lrn: Option[String] = None)(
+    block: HtmlFormat.Appendable => Result
+  )(implicit request: IdentifierRequest[_]): Future[Result] = {
+
+    val getDrafts = lrn match {
+      case Some(value) => draftDepartureService.getLRNs(value, pageSize)
+      case None        => draftDepartureService.getAll()
+    }
+
+    getDrafts.map {
+      case Some(drafts) =>
+        val toViewModel = AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl)
+        block(view(form, toViewModel))
+      case None =>
+        Redirect(controllers.routes.ErrorController.technicalDifficulties())
+    }
   }
 
 }
