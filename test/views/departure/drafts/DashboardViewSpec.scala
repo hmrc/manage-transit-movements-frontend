@@ -213,7 +213,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
       val doc = Jsoup.parse(view.toString())
 
-      doc.getElementById("no-results-found").text() mustBe "No results found"
+      doc.getElementById("no-results-found").text() mustBe "This LRN does not exist"
     }
 
     "must no render when there are data rows" in {
