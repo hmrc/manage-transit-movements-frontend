@@ -20,6 +20,7 @@ import config.PaginationAppConfig
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.SearchFormProvider
+import models.DeparturesSummary
 import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
 import play.api.data.Form
@@ -86,18 +87,22 @@ class DashboardController @Inject() (
 
     getDrafts.map {
       case Some(drafts) =>
-        val toViewModel = AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl)
-        val paginationViewModel = PaginationViewModel(
-          drafts.totalMatchingMovements,
-          page,
-          paginationAppConfig.draftDeparturesNumberOfDrafts,
-          routes.DashboardController.onPageLoad(None, lrn).url
-        )
+        block(view(form, present(drafts, page, lrn)))
 
-        block(view(form, toViewModel, paginationViewModel))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())
     }
+  }
+
+  def present(drafts: DeparturesSummary, page: Int, lrn: Option[String]): AllDraftDeparturesViewModel = {
+    val pvm = PaginationViewModel(
+      drafts.totalMatchingMovements,
+      page,
+      paginationAppConfig.draftDeparturesNumberOfDrafts,
+      routes.DashboardController.onPageLoad(None, lrn).url
+    )
+
+    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl, pvm)
   }
 
 }

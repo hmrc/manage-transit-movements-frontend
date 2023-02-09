@@ -48,7 +48,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
         bind[DraftDepartureService].toInstance(draftDepartureService)
       )
 
-  private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString).url
+  private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString, None).url
 
   "DeleteDraftDepartureYesNo Controller" - {
 
@@ -62,7 +62,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrnString)(request, messages).toString
+        view(form, lrnString, None)(request, messages).toString
     }
 
     "when yes submitted must redirect back to draft departure dashboard" in {
@@ -79,7 +79,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departure.drafts.routes.DashboardController.onPageLoad().url
+        controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url
     }
 
     "when no submitted must redirect back to draft departure dashboard" in {
@@ -91,7 +91,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departure.drafts.routes.DashboardController.onPageLoad().url
+        controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url
     }
 
     "when yes submitted must redirect to InternalServerError if status 500 is returned from connector" in {
@@ -128,7 +128,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       val content = contentAsString(result)
 
       content mustEqual
-        view(boundForm, lrnString)(request, messages).toString
+        view(boundForm, lrnString, Option(0))(request, messages).toString
     }
 
   }

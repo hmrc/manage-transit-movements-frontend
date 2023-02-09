@@ -46,4 +46,6 @@ object PaginationViewModel {
 
     PaginationViewModel(results, previous, next, items, currentPage)
   }
+
+  val Empty = PaginationViewModel(0, 0, 0, "")
 }

@@ -33,8 +33,7 @@
 
 @(
         form: Form[_],
-        viewModel: AllDraftDeparturesViewModel,
-        paginationViewModel: PaginationViewModel
+        viewModel: AllDraftDeparturesViewModel
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
@@ -47,7 +46,7 @@
 
     @if(viewModel.isSearch) {
         <p class="govuk-body">
-            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(paginationViewModel.pageNumber), viewModel.lrn)">
+            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(viewModel.pageNumber), viewModel.lrn)">
             @messages("departure.drafts.dashboard.link.title")
             </a>
         </p>
@@ -55,7 +54,7 @@
 
     @search(
         form = form,
-        action = controllers.departure.drafts.routes.DashboardController.onSubmit(Some(paginationViewModel.pageNumber)),
+        action = controllers.departure.drafts.routes.DashboardController.onSubmit(Option(viewModel.pageNumber)),
         label = "departure.drafts.dashboard.search"
     )
 
@@ -72,14 +71,14 @@
 
         @draftDeparturesTable(
             viewModel = viewModel,
-            pageNumber = Some(viewModel.returnPage(paginationViewModel.pageNumber))
+            pageNumber = Some(viewModel.returnPage)
         )
     } else {
         <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>
 
     }
 
-    @pagination(paginationViewModel)
+    @pagination(viewModel.paginationViewModel)
 
     <article class="ticket-panel" aria-label="Sub navigation 1">
         <section class="ticket-panel__content ticket-panel__content--blue" aria-label="Section 1">

@@ -33,7 +33,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       forAll(userAnswerSummary) {
         userAnswerSummary =>
-          val draftDeparture = DeparturesSummary(userAnswerSummary)
+          val draftDeparture = DeparturesSummary(0, 0, userAnswerSummary)
 
           val viewModel = AllDraftDeparturesViewModel(draftDeparture, 1, None, frontendAppConfig.draftDepartureFrontendUrl)
 
@@ -50,7 +50,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
     "tooManyResult" - {
 
       val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
-      val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+      val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
 
       "must return true when departure size is greater than page size" in {
 
@@ -72,7 +72,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
     "isSearch" - {
 
       val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
-      val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+      val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
 
       "must return true when LRN is defined" in {
 
@@ -96,7 +96,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "must return true when data rows is not empty" in {
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
-        val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+        val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
 
         val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
 
@@ -105,7 +105,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "must return false when data rows is empty" in {
 
-        val departuresSummary: DeparturesSummary = DeparturesSummary(List.empty)
+        val departuresSummary: DeparturesSummary = DeparturesSummary.Empty
 
         val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
 
@@ -118,7 +118,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "must return true when LRN is defined and rows is not empty" in {
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
-        val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+        val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
 
         val viewModel =
           AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
@@ -129,7 +129,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "must return false when LRN is not defined" in {
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
-        val departuresSummary: DeparturesSummary                = DeparturesSummary(userAnswerSummary)
+        val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
 
         val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
 
@@ -138,7 +138,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "must return false when rows are empty" in {
 
-        val departuresSummary: DeparturesSummary = DeparturesSummary(List.empty)
+        val departuresSummary = DeparturesSummary.Empty
 
         val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
 

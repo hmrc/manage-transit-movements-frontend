@@ -20,11 +20,13 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
+import models.departure.drafts.Limit
 import models.{DepartureUserAnswerSummary, DeparturesSummary, DraftAvailability, LocalReferenceNumber}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+
 import java.time.LocalDateTime
 
 class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
@@ -85,6 +87,8 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
         )
 
         val expectedResult = DeparturesSummary(
+          0,
+          0,
           List(
             DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
             DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28)
@@ -103,7 +107,7 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
             )
         )
 
-        val expectedResult = DeparturesSummary(List.empty)
+        val expectedResult = DeparturesSummary.Empty
         connector.getDeparturesSummary().futureValue.value mustBe expectedResult
 
       }
@@ -139,13 +143,15 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
         )
 
         val expectedResult = DeparturesSummary(
+          0,
+          0,
           List(
             DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
             DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28)
           )
         )
 
-        connector.lrnFuzzySearch(partialLRN, maxSearchResults).futureValue.value mustBe expectedResult
+        connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustBe expectedResult
       }
 
       "must return empty DeparturesSummary when not found" in {
@@ -158,8 +164,8 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
             )
         )
 
-        val expectedResult = DeparturesSummary(List.empty)
-        connector.lrnFuzzySearch(partialLRN, maxSearchResults).futureValue.value mustBe expectedResult
+        val expectedResult = DeparturesSummary.Empty
+        connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustBe expectedResult
 
       }
 
@@ -175,7 +181,7 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
             )
 
             val expectedResult = None
-            connector.lrnFuzzySearch(partialLRN, maxSearchResults).futureValue mustBe expectedResult
+            connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue mustBe expectedResult
 
         }
       }

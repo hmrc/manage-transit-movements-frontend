@@ -27,7 +27,7 @@ import views.html.departure.drafts.DeleteDraftDepartureYesNoView
 class DeleteDraftDepartureYesNoViewSpec extends YesNoViewBehaviours with ScalaCheckPropertyChecks {
 
   override def applyView(form: Form[Boolean]): HtmlFormat.Appendable =
-    injector.instanceOf[DeleteDraftDepartureYesNoView].apply(form, lrn.toString())(fakeRequest, messages)
+    injector.instanceOf[DeleteDraftDepartureYesNoView].apply(form, lrn.toString(), None)(fakeRequest, messages)
 
   override val prefix: String = "departure.drafts.deleteDraftDepartureYesNo"
 

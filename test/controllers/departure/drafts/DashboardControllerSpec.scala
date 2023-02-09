@@ -33,7 +33,7 @@ class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   private val draftDepartureService = mock[DraftDepartureService]
 
-  private lazy val draftDashboardRoute = routes.DashboardController.onPageLoad().url
+  private lazy val draftDashboardRoute = routes.DashboardController.onPageLoad(None, None).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -49,6 +49,8 @@ class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         val draftDeparture =
           DeparturesSummary(
+            0,
+            0,
             List(
               DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
               DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
@@ -81,6 +83,8 @@ class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         val draftDeparture =
           DeparturesSummary(
+            0,
+            0,
             List(
               DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
               DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
@@ -101,6 +105,8 @@ class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
         val draftDeparture =
           DeparturesSummary(
+            0,
+            0,
             List(
               DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
               DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
