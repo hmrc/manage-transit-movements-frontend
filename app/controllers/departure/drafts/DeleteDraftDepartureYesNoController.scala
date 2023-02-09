@@ -40,12 +40,12 @@ class DeleteDraftDepartureYesNoController @Inject() (
 
   private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
-  def onPageLoad(lrn: String, pageNumber: Int): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(lrn: String, pageNumber: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       Future.successful(Ok(view(form, lrn, pageNumber)))
   }
 
-  def onSubmit(lrn: String, pageNumber: Int): Action[AnyContent] = (Action andThen identify).async {
+  def onSubmit(lrn: String, pageNumber: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -54,10 +54,12 @@ class DeleteDraftDepartureYesNoController @Inject() (
           {
             case true =>
               draftDepartureService.deleteDraftDeparture(lrn) map {
-                case response if response.status == StatusOK => Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(pageNumber))
-                case _                                       => Redirect(controllers.routes.ErrorController.internalServerError())
+                case response if response.status == StatusOK =>
+                  Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(pageNumber, None)) // TODO need to pass LRN here
+                case _ => Redirect(controllers.routes.ErrorController.internalServerError())
               }
-            case false => Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(pageNumber)))
+            case false =>
+              Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(pageNumber, None))) // TODO need to pass LRN here
           }
         )
   }

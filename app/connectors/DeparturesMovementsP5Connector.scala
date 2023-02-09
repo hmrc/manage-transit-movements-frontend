@@ -29,12 +29,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
-  def getAllDeparturesSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
-    getDeparturesSummary(Seq("limit" -> limit.toString, "skip" -> skip.toString))
-
-  def getLRNs(partialLRN: String, skip: Skip, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
-    getDeparturesSummary(Seq("lrn" -> partialLRN, "limit" -> limit.toString, "skip" -> skip.toString))
-
   def getDeparturesSummary(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
     val url = s"${config.draftDeparturesUrl}/user-answers"
 
@@ -42,14 +36,20 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
       case response if is2xx(response.status) =>
         response.json.asOpt[DeparturesSummary]
       case response if response.status == 404 =>
-        Some(DeparturesSummary(List.empty))
+        Some(DeparturesSummary(0, List.empty))
       case _ =>
         None
     }
   }
 
+  def getAllDeparturesSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("limit" -> limit.value.toString, "skip" -> skip.value.toString))
+
+  def getLRNs(partialLRN: String, skip: Skip, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("lrn" -> partialLRN, "limit" -> limit.value.toString, "skip" -> skip.value.toString))
+
   def lrnFuzzySearch(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
-    getDeparturesSummary(Seq("lrn" -> lrn, "limit" -> limit.toString))
+    getDeparturesSummary(Seq("lrn" -> lrn, "limit" -> limit.value.toString))
 
   def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url = s"${config.draftDeparturesUrl}/user-answers/$lrn"

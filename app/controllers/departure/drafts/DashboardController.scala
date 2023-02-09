@@ -52,12 +52,12 @@ class DashboardController @Inject() (
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-  def onPageLoad(pageNumber: Int): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(pageNumber: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(form, pageNumber)(Ok(_))
+      buildView(form, pageNumber, lrn)(Ok(_))
   }
 
-  def onSubmit(pageNumber: Int): Action[AnyContent] = (Action andThen identify).async {
+  def onSubmit(pageNumber: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -70,29 +70,30 @@ class DashboardController @Inject() (
         )
   }
 
-  private def buildView(form: Form[String], pageNumber: Int, lrn: Option[String] = None)(
+  private def buildView(form: Form[String], pageNumber: Option[Int], lrn: Option[String] = None)(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] = {
 
     val limit = Limit(pageSize)
+    val page  = pageNumber.getOrElse(1)
 
-    val skip = Skip(pageNumber)
+    val skip = Skip(page - 1)
 
     val getDrafts = lrn match {
       case Some(value) => draftDepartureService.getLRNs(value, skip, limit)
       case None        => draftDepartureService.getPagedDepartureSummary(limit, skip)
     }
 
-    val paginationViewModel = PaginationViewModel(
-      100,
-      pageNumber,
-      paginationAppConfig.draftDeparturesNumberOfDrafts,
-      routes.DashboardController.onPageLoad(pageNumber).url
-    )
-
     getDrafts.map {
       case Some(drafts) =>
         val toViewModel = AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl)
+        val paginationViewModel = PaginationViewModel(
+          drafts.totalMovements,
+          page,
+          paginationAppConfig.draftDeparturesNumberOfDrafts,
+          routes.DashboardController.onPageLoad(None, lrn).url
+        )
+
         block(view(form, toViewModel, paginationViewModel))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())

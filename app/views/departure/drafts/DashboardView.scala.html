@@ -19,8 +19,8 @@
 @import views.html.components.DraftDeparturesTable
 @import config.FrontendAppConfig
 @import views.html.components.Search
-@import views.html.components.Pagination
 @import viewModels.pagination.PaginationViewModel
+@import views.html.components.PaginationP5
 
 @this(
         mainTemplate: MainTemplate,
@@ -28,7 +28,7 @@
         heading: Heading,
         search: Search,
         config: FrontendAppConfig,
-        pagination: Pagination
+        pagination: PaginationP5
 )
 
 @(
@@ -47,7 +47,7 @@
 
     @if(viewModel.isSearch) {
         <p class="govuk-body">
-            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(paginationViewModel.pageNumber)">
+            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(paginationViewModel.pageNumber), viewModel.lrn)">
             @messages("departure.drafts.dashboard.link.title")
             </a>
         </p>
@@ -55,7 +55,7 @@
 
     @search(
         form = form,
-        action = controllers.departure.drafts.routes.DashboardController.onSubmit(paginationViewModel.pageNumber),
+        action = controllers.departure.drafts.routes.DashboardController.onSubmit(Some(paginationViewModel.pageNumber)),
         label = "departure.drafts.dashboard.search"
     )
 
@@ -72,7 +72,7 @@
 
         @draftDeparturesTable(
             viewModel = viewModel,
-            pageNumber = paginationViewModel.pageNumber
+            pageNumber = Some(paginationViewModel.pageNumber)
         )
     } else {
         <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>

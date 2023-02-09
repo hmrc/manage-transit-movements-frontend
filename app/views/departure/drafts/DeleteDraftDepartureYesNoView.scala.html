@@ -27,7 +27,7 @@
     button: Button
 )
 
-@(form: Form[Boolean], lrn: String, pageNumber: Int)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: String, pageNumber: Option[Int])(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("departure.drafts.deleteDraftDepartureYesNo.title"),
