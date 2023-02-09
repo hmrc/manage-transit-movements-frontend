@@ -81,11 +81,6 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
 
       "must return DeparturesSummary when given successful response" in {
 
-        server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers"))
-            .willReturn(okJson(summaryResponseJson.toString()))
-        )
-
         val expectedResult = DeparturesSummary(
           0,
           0,
@@ -93,6 +88,11 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
             DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
             DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28)
           )
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/user-answers"))
+            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
         connector.getDeparturesSummary().futureValue.value mustBe expectedResult
@@ -137,11 +137,6 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
 
       "must return DeparturesSummary when given successful response" in {
 
-        server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN&limit=$maxSearchResults"))
-            .willReturn(okJson(summaryResponseJson.toString()))
-        )
-
         val expectedResult = DeparturesSummary(
           0,
           0,
@@ -149,6 +144,11 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
             DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
             DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28)
           )
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN&limit=$maxSearchResults"))
+            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
         connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustBe expectedResult
@@ -217,9 +217,18 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
     "getDraftDeparturesAvailability" - {
 
       "must return NonEmpty when given successful response" in {
+        val expectedResult = DeparturesSummary(
+          0,
+          0,
+          List(
+            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
+            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28)
+          )
+        )
+
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/user-answers?limit=1"))
-            .willReturn(okJson(summaryResponseJson.toString()))
+            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
         connector.getDraftDeparturesAvailability().futureValue mustBe DraftAvailability.NonEmpty
