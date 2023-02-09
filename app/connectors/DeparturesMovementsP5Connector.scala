@@ -36,7 +36,7 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
       case response if is2xx(response.status) =>
         response.json.asOpt[DeparturesSummary]
       case response if response.status == 404 =>
-        Some(DeparturesSummary(0, List.empty))
+        Some(DeparturesSummary(0, 0, List.empty))
       case _ =>
         None
     }

@@ -57,6 +57,14 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary, pageSize: Int, 
 
   def searchResultsFound: Boolean = resultsFound && isSearch
 
+  def returnPage(currentPage: Int): Int = currentPage match {
+    case 1 => 1
+
+    case n if dataRows.length == 1 => n - 1
+
+    case n => n
+  }
+
 }
 
 object AllDraftDeparturesViewModel {

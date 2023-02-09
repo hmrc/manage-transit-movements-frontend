@@ -88,7 +88,7 @@ class DashboardController @Inject() (
       case Some(drafts) =>
         val toViewModel = AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl)
         val paginationViewModel = PaginationViewModel(
-          drafts.totalMovements,
+          drafts.totalMatchingMovements,
           page,
           paginationAppConfig.draftDeparturesNumberOfDrafts,
           routes.DashboardController.onPageLoad(None, lrn).url

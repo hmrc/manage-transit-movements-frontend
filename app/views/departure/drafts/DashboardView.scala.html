@@ -72,7 +72,7 @@
 
         @draftDeparturesTable(
             viewModel = viewModel,
-            pageNumber = Some(paginationViewModel.pageNumber)
+            pageNumber = Some(viewModel.returnPage(paginationViewModel.pageNumber))
         )
     } else {
         <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>
