@@ -48,7 +48,8 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
         bind[DraftDepartureService].toInstance(draftDepartureService)
       )
 
-  private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString, None).url
+  private lazy val deleteDraftDepartureYesNoRoute         = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString, None).url
+  private lazy val deleteDraftDepartureYesNoRouteWithPage = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString, Some(0)).url
 
   "DeleteDraftDepartureYesNo Controller" - {
 
@@ -116,7 +117,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       val lrnString = lrn.toString
 
       val invalidValue = ""
-      val request      = FakeRequest(POST, deleteDraftDepartureYesNoRoute).withFormUrlEncodedBody(("value", invalidValue))
+      val request      = FakeRequest(POST, deleteDraftDepartureYesNoRouteWithPage).withFormUrlEncodedBody(("value", invalidValue))
       val boundForm    = form.bind(Map("value" -> invalidValue))
 
       val result = route(app, request).value

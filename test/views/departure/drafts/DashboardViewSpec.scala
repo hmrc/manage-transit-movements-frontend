@@ -200,7 +200,8 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
             }
 
             "must have correct href" in {
-              val redirectLink = controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(viewDraftDeparture.lrn.toString(), None).url
+              val redirectLink =
+                controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(viewDraftDeparture.lrn.toString(), Some(0)).url
               deleteLink.attr("href") mustBe redirectLink
             }
           }

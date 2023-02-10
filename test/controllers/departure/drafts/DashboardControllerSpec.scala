@@ -129,7 +129,7 @@ class DashboardControllerSpec extends SpecBase {
 
         when(draftDepartureService.getLRNs(any(), Skip(any()), Limit(any()))(any())).thenReturn(Future.successful(None))
 
-        val request = FakeRequest(POST, draftDashboardGetRoute)
+        val request = FakeRequest(POST, draftDashboardPostRoute)
           .withFormUrlEncodedBody(("value", "lrn"))
 
         val result = route(app, request).value
