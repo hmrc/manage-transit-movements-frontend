@@ -40,26 +40,33 @@ class DeleteDraftDepartureYesNoController @Inject() (
 
   private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
-  def onPageLoad(lrn: String, pageNumber: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      Future.successful(Ok(view(form, lrn, pageNumber)))
+      Future.successful(Ok(view(form, lrn, pageNumber, numberOfRows, searchLrn)))
   }
 
-  def onSubmit(lrn: String, pageNumber: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
+  def onSubmit(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, pageNumber))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, pageNumber, numberOfRows, searchLrn))),
           {
             case true =>
               draftDepartureService.deleteDraftDeparture(lrn) map {
                 case response if response.status == StatusOK =>
-                  Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(pageNumber, None)) // TODO need to pass LRN here
-                case _ => Redirect(controllers.routes.ErrorController.internalServerError())
+                  val redirectPageNumber: Int = pageNumber match {
+                    case 1                               => 1
+                    case pageNumber if numberOfRows == 1 => pageNumber - 1
+                    case pageNumber                      => pageNumber
+                  }
+
+                  Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(redirectPageNumber), searchLrn))
+                case _ =>
+                  Redirect(controllers.routes.ErrorController.internalServerError())
               }
             case false =>
-              Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(pageNumber, None))) // TODO need to pass LRN here
+              Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(pageNumber), searchLrn)))
           }
         )
   }

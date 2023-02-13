@@ -92,7 +92,7 @@ class DashboardController @Inject() (
     }
   }
 
-  def present(drafts: DeparturesSummary, page: Int, lrn: Option[String]): AllDraftDeparturesViewModel = {
+  private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String]): AllDraftDeparturesViewModel = {
 
     val param =
       lrn.map(

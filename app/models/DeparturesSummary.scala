@@ -23,6 +23,4 @@ case class DeparturesSummary(totalMovements: Int, totalMatchingMovements: Int, u
 object DeparturesSummary {
 
   implicit val format: OFormat[DeparturesSummary] = Json.format[DeparturesSummary]
-
-  val Empty: DeparturesSummary = DeparturesSummary(0, 0, Nil)
 }

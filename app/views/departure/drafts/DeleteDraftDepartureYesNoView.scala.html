@@ -27,14 +27,14 @@
     button: Button
 )
 
-@(form: Form[Boolean], lrn: String, pageNumber: Option[Int])(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("departure.drafts.deleteDraftDepartureYesNo.title"),
     showBackLink = true,
 ) {
 
-    @formHelper(action = routes.DeleteDraftDepartureYesNoController.onSubmit(lrn, pageNumber), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.DeleteDraftDepartureYesNoController.onSubmit(lrn, pageNumber, numberOfRows, searchLrn), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 

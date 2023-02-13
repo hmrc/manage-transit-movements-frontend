@@ -32,14 +32,14 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
   def getDeparturesSummary(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
     val url = s"${config.draftDeparturesUrl}/user-answers"
 
-    http.GET[HttpResponse](url, queryParams).map {
-      case response if is2xx(response.status) =>
-        response.json.asOpt[DeparturesSummary]
-      case response if response.status == 404 =>
-        Some(DeparturesSummary(0, 0, List.empty))
-      case _ =>
-        None
-    }
+    http
+      .GET[DeparturesSummary](url, queryParams)
+      .map(Some(_))
+      .recover {
+        case _ =>
+          logger.error(s"get Departures Summary failed to return data")
+          None
+      }
   }
 
   def getAllDeparturesSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =

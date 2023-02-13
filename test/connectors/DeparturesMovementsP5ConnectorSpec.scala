@@ -66,18 +66,16 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
         connector.getDeparturesSummary().futureValue.value mustBe expectedResult
       }
 
-      "must return empty DeparturesSummary when not found" in {
+      "must return DeparturesSummary when given successful response with empty user answers" in {
+
+        val expectedResult = DeparturesSummary(0, 0, List.empty)
+
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/user-answers"))
-            .willReturn(
-              aResponse()
-                .withStatus(404)
-            )
+            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
-        val expectedResult = DeparturesSummary.Empty
         connector.getDeparturesSummary().futureValue.value mustBe expectedResult
-
       }
 
       "must return none on failure" in {
@@ -93,7 +91,6 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
 
             val expectedResult = None
             connector.getDeparturesSummary().futureValue mustBe expectedResult
-
         }
       }
     }
@@ -120,21 +117,6 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
         )
 
         connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustBe expectedResult
-      }
-
-      "must return empty DeparturesSummary when not found" in {
-
-        server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN&limit=$maxSearchResults"))
-            .willReturn(
-              aResponse()
-                .withStatus(404)
-            )
-        )
-
-        val expectedResult = DeparturesSummary.Empty
-        connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustBe expectedResult
-
       }
 
       "must return none on failure" in {
@@ -203,12 +185,12 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
       }
 
       "must return Empty when given a not found response" in {
+
+        val expectedResult = DeparturesSummary(0, 0, List.empty)
+
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/user-answers?limit=1"))
-            .willReturn(
-              aResponse()
-                .withStatus(404)
-            )
+            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
         connector.getDraftDeparturesAvailability().futureValue mustBe DraftAvailability.Empty

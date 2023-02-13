@@ -67,10 +67,7 @@
     }
 
     @if(viewModel.resultsFound) {
-        @draftDeparturesTable(
-            viewModel = viewModel,
-            pageNumber = Some(viewModel.returnPage)
-        )
+        @draftDeparturesTable(viewModel)
     }
 
     @if(viewModel.noSearchResultsFound) {

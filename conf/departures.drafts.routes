@@ -1,5 +1,5 @@
 GET        /draft-declarations                                  controllers.departure.drafts.DashboardController.onPageLoad(page: Option[Int], lrn: Option[String])
 POST       /draft-declarations                                  controllers.departure.drafts.DashboardController.onSubmit()
 
-GET        /draft-declarations/:lrn/delete                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onPageLoad(lrn: String, page: Option[Int])
-POST       /draft-declarations/:lrn/delete                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onSubmit(lrn: String, page: Option[Int])
+GET        /draft-declarations/:lrn/delete                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onPageLoad(lrn: String, page: Int, numberOfRows: Int, searchLrn: Option[String])
+POST       /draft-declarations/:lrn/delete                      controllers.departure.drafts.DeleteDraftDepartureYesNoController.onSubmit(lrn: String, page: Int, numberOfRows: Int, searchLrn: Option[String])

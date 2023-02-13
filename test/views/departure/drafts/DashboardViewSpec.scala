@@ -38,7 +38,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
   val genDraftDeparture: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
 
-  val paginationViewModel: PaginationViewModelP5 = PaginationViewModelP5(2, 2, 2, "test")
+  val paginationViewModel: PaginationViewModelP5 = PaginationViewModelP5(2, 1, 2, "test")
 
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
     AllDraftDeparturesViewModel(genDraftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
@@ -188,10 +188,11 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
             "must have correct href" in {
 
-              val pageNumber = if (rows.toList.length === 1) 1 else 2
-
               val redirectLink =
-                controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(viewDraftDeparture.lrn.toString(), Some(pageNumber)).url
+                controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController
+                  .onPageLoad(viewDraftDeparture.lrn.toString(), 1, rows.toList.length, None)
+                  .url
+
               deleteLink.attr("href") mustBe redirectLink
             }
           }
@@ -203,7 +204,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
     "must render when no data rows for a search" in {
 
-      val draftDeparture = DeparturesSummary(0, 0, List.empty)
+      val draftDeparture = DeparturesSummary(1, 0, List.empty)
       val view = applyView(viewAllDepartureMovementsViewModel =
         AllDraftDeparturesViewModel(draftDeparture, 20, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
       )
@@ -213,7 +214,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
       doc.getElementById("no-search-results-found").text() mustBe "This LRN does not exist."
     }
 
-    "must no render when there are data rows" in {
+    "must not render when there are data rows" in {
 
       doc.getElementById("no-search-results-found") mustBe null
     }
@@ -233,7 +234,14 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
       doc.getElementById("no-results-found").text() mustBe "You have no draft departure declarations."
     }
 
-    "must no render when there are data rows" in {
+    "must not render when there are data rows" in {
+
+      val draftDeparture = DeparturesSummary(1, 0, List.empty)
+      val view = applyView(viewAllDepartureMovementsViewModel =
+        AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
+      )
+
+      val doc = Jsoup.parse(view.toString())
 
       doc.getElementById("no-results-found") mustBe null
     }
