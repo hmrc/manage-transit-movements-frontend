@@ -16,13 +16,39 @@
 
 package viewModels.paginationP5
 
+import play.api.i18n.Messages
+
 case class PaginationViewModelP5(
   results: MetaData,
   previous: Option[Previous],
   next: Option[Next],
   items: Items,
-  pageNumber: Int
-)
+  pageNumber: Int,
+  lrn: Option[String]
+) {
+
+  def searchResult()(implicit messages: Messages): String =
+    lrn match {
+      case Some(lrn) =>
+        results.count match {
+          case 1 => messages("numberOfMovements.singular.withLRN", "<b>1</b>", lrn)
+          case x => messages("numberOfMovements.plural.withLRN", s"<b>$x</b>", lrn)
+        }
+      case None =>
+        results.count match {
+          case 1 => messages("numberOfMovements.singular", "<b>1</b>")
+          case x => messages("numberOfMovements.plural", s"<b>$x</b>")
+        }
+    }
+
+  def paginatedSearchResult()(implicit messages: Messages): String =
+    lrn match {
+      case Some(lrn) =>
+        messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", lrn)
+      case None =>
+        messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
+    }
+}
 
 object PaginationViewModelP5 {
 
@@ -31,7 +57,8 @@ object PaginationViewModelP5 {
     currentPage: Int,
     numberOfMovementsPerPage: Int,
     href: String,
-    additionalParams: Seq[(String, String)] = Seq.empty
+    additionalParams: Seq[(String, String)] = Seq.empty,
+    lrn: Option[String] = None
   ): PaginationViewModelP5 = {
 
     val results: MetaData = MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
@@ -50,6 +77,6 @@ object PaginationViewModelP5 {
 
     val items = Items(results, href, additionalParams)
 
-    PaginationViewModelP5(results, previous, next, items, currentPage)
+    PaginationViewModelP5(results, previous, next, items, currentPage, lrn)
   }
 }

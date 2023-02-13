@@ -16,22 +16,23 @@
 
 package views.behaviours
 
-import models.{Departure, DeparturesSummary}
+import generators.Generators
+import models.DeparturesSummary
 import org.jsoup.nodes.{Document, Element}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports._
-import viewModels.ViewMovement
 import viewModels.paginationP5.PaginationViewModelP5
 
 // scalastyle:off method.length
 // scalastyle:off magic.number
-trait PaginationP5ViewBehaviours[T <: DeparturesSummary] extends ViewBehaviours with ScalaCheckPropertyChecks {
+trait PaginationP5ViewBehaviours[T <: DeparturesSummary] extends ViewBehaviours with ScalaCheckPropertyChecks with Generators {
 
   val movementsPerPage: Int
 
   def viewWithSpecificPagination(paginationP5ViewModel: PaginationViewModelP5): HtmlFormat.Appendable
+  def viewWithSpecificPaginationAndSearch(paginationP5ViewModel: PaginationViewModelP5): HtmlFormat.Appendable
 
   def pageWithPaginationP5(href: String): Unit =
     "page with pagination" - {
@@ -145,6 +146,7 @@ trait PaginationP5ViewBehaviours[T <: DeparturesSummary] extends ViewBehaviours 
       "must display correct count" - {
 
         "when not paginated" - {
+
           "when only one movement" in {
             val paginationP5ViewModel = PaginationViewModelP5(1, 1, movementsPerPage, "")
             val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
@@ -163,9 +165,31 @@ trait PaginationP5ViewBehaviours[T <: DeparturesSummary] extends ViewBehaviours 
                 boldWords(p) mustBe Seq(numberOfMovements.toString)
             }
           }
+
+          "when only one movement returned on a search" in {
+
+            val paginationP5ViewModel = PaginationViewModelP5(1, 1, movementsPerPage, "", lrn = Some(lrn.toString))
+            val doc: Document         = parseView(viewWithSpecificPaginationAndSearch(paginationP5ViewModel))
+            val p                     = doc.getElementById("results-count")
+            p.text() mustBe s"Showing 1 result matching $lrn"
+            boldWords(p) mustBe Seq("1")
+          }
+
+          "when multiple movements returned on a search" in {
+            forAll(Gen.choose(2, movementsPerPage)) {
+              numberOfMovements =>
+                val paginationP5ViewModel = PaginationViewModelP5(numberOfMovements, 1, movementsPerPage, "", lrn = Some(lrn.toString))
+                val doc: Document         = parseView(viewWithSpecificPaginationAndSearch(paginationP5ViewModel))
+                val p                     = doc.getElementById("results-count")
+
+                p.text() mustBe s"Showing $numberOfMovements results matching $lrn"
+                boldWords(p) mustBe Seq(numberOfMovements.toString)
+            }
+          }
         }
 
         "when paginated" in {
+
           forAll(Gen.choose(2, 10)) {
             numberOfPages =>
               val numberOfMovements = movementsPerPage * numberOfPages
@@ -177,6 +201,23 @@ trait PaginationP5ViewBehaviours[T <: DeparturesSummary] extends ViewBehaviours 
                   val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
                   val p                     = doc.getElementById("paginated-results-count")
                   p.text() mustBe s"Showing $from to $to of $numberOfMovements results"
+                  boldWords(p) mustBe Seq(from.toString, to.toString, numberOfMovements.toString)
+              }
+          }
+        }
+
+        "when paginated and on a search" in {
+          forAll(Gen.choose(2, 10)) {
+            numberOfPages =>
+              val numberOfMovements = movementsPerPage * numberOfPages
+              forAll(Gen.choose(1, numberOfPages)) {
+                currentPage =>
+                  val to                    = currentPage * movementsPerPage
+                  val from                  = to - movementsPerPage + 1
+                  val paginationP5ViewModel = PaginationViewModelP5(numberOfMovements, currentPage, movementsPerPage, "", lrn = Some(lrn.toString))
+                  val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
+                  val p                     = doc.getElementById("paginated-results-count")
+                  p.text() mustBe s"Showing $from to $to of $numberOfMovements results matching $lrn"
                   boldWords(p) mustBe Seq(from.toString, to.toString, numberOfMovements.toString)
               }
           }

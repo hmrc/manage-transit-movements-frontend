@@ -104,7 +104,8 @@ class DashboardController @Inject() (
       currentPage = page,
       numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
       href = routes.DashboardController.onSubmit().url,
-      additionalParams = param.getOrElse(Seq.empty)
+      additionalParams = param.getOrElse(Seq.empty),
+      lrn = lrn
     )
 
     AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl, pvm)

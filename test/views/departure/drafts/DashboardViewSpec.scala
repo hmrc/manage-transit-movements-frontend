@@ -17,24 +17,22 @@
 package views.departure.drafts
 
 import forms.SearchFormProvider
-import generators.Generators
 import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 import viewModels.paginationP5.PaginationViewModelP5
-import views.behaviours.{PaginationP5ViewBehaviours, ViewBehaviours}
+import views.behaviours.PaginationP5ViewBehaviours
 import views.html.departure.drafts.DashboardView
 
 import java.time.LocalDateTime
 
-class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] with Generators {
+class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] {
 
   val genDraftDeparture: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
 
@@ -56,6 +54,16 @@ class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] wi
       AllDraftDeparturesViewModel(arbitrary[DeparturesSummary].sample.value,
                                   movementsPerPage,
                                   None,
+                                  frontendAppConfig.draftDepartureFrontendUrl,
+                                  paginationViewModelP5
+      )
+    )
+
+  override def viewWithSpecificPaginationAndSearch(paginationViewModelP5: PaginationViewModelP5): HtmlFormat.Appendable =
+    applyView(
+      AllDraftDeparturesViewModel(arbitrary[DeparturesSummary].sample.value,
+                                  movementsPerPage,
+                                  Some(lrn.toString),
                                   frontendAppConfig.draftDepartureFrontendUrl,
                                   paginationViewModelP5
       )
