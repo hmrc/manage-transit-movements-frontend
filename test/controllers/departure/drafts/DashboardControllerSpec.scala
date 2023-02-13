@@ -35,7 +35,7 @@ class DashboardControllerSpec extends SpecBase {
   private val draftDepartureService = mock[DraftDepartureService]
 
   private lazy val draftDashboardGetRoute  = routes.DashboardController.onPageLoad(None, None).url
-  private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit(None).url
+  private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit().url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super

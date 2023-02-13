@@ -28,7 +28,7 @@ import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.pagination.PaginationViewModel
+import viewModels.paginationP5.PaginationViewModelP5
 import views.behaviours.ViewBehaviours
 import views.html.departure.drafts.DashboardView
 
@@ -38,8 +38,10 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
   val genDraftDeparture: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
 
+  val paginationViewModel: PaginationViewModelP5 = PaginationViewModelP5(2, 2, 2, "test")
+
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
-    AllDraftDeparturesViewModel(genDraftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl)
+    AllDraftDeparturesViewModel(genDraftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
   val dataRows: Seq[DraftDepartureRow] = viewAllDepartureMovementsViewModel.dataRows
 
   private val formProvider = new SearchFormProvider()
@@ -86,7 +88,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
                                              )
       )
       val view = applyView(viewAllDepartureMovementsViewModel =
-        AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl)
+        AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
       )
 
       val doc = Jsoup.parse(view.toString())
@@ -105,7 +107,7 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
         )
       )
       val view = applyView(viewAllDepartureMovementsViewModel =
-        AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl)
+        AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
       )
 
       val doc = Jsoup.parse(view.toString())
@@ -113,27 +115,12 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
       doc.getElementById("results-found").text() mustBe s"Showing 2 results matching 123."
     }
 
-    "must render too many results text when 'tooManyResults' is true" in {
-      val draftDeparture = DeparturesSummary(
-        0,
-        0,
-        List(
-          DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30),
-          DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), LocalDateTime.now(), 29)
-        )
-      )
-      val view =
-        applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 1, Some("123"), frontendAppConfig.draftDepartureFrontendUrl))
-
-      val doc = Jsoup.parse(view.toString())
-
-      doc.getElementById("results-found").text() mustBe s"Showing 2 results matching 123. There are too many results. Please refine your search."
-    }
-
     "must not render when there are no drafts" in {
       val draftDeparture = DeparturesSummary(0, 0, List.empty)
       val view =
-        applyView(viewAllDepartureMovementsViewModel = AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl))
+        applyView(viewAllDepartureMovementsViewModel =
+          AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
+        )
 
       val doc = Jsoup.parse(view.toString())
 
@@ -200,12 +187,35 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
             }
 
             "must have correct href" in {
+
+              val pageNumber = if (rows.toList.length === 1) 1 else 2
+
               val redirectLink =
-                controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(viewDraftDeparture.lrn.toString(), Some(0)).url
+                controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(viewDraftDeparture.lrn.toString(), Some(pageNumber)).url
               deleteLink.attr("href") mustBe redirectLink
             }
           }
         }
+    }
+  }
+
+  "no search results found" - {
+
+    "must render when no data rows for a search" in {
+
+      val draftDeparture = DeparturesSummary(0, 0, List.empty)
+      val view = applyView(viewAllDepartureMovementsViewModel =
+        AllDraftDeparturesViewModel(draftDeparture, 20, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
+      )
+
+      val doc = Jsoup.parse(view.toString())
+
+      doc.getElementById("no-search-results-found").text() mustBe "This LRN does not exist."
+    }
+
+    "must no render when there are data rows" in {
+
+      doc.getElementById("no-search-results-found") mustBe null
     }
   }
 
@@ -215,12 +225,12 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
 
       val draftDeparture = DeparturesSummary(0, 0, List.empty)
       val view = applyView(viewAllDepartureMovementsViewModel =
-        AllDraftDeparturesViewModel(draftDeparture, 20, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl, PaginationViewModel.Empty)
+        AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
       )
 
       val doc = Jsoup.parse(view.toString())
 
-      doc.getElementById("no-results-found").text() mustBe "This LRN does not exist"
+      doc.getElementById("no-results-found").text() mustBe "You have no draft departure declarations."
     }
 
     "must no render when there are data rows" in {

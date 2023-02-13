@@ -19,13 +19,13 @@ package viewModels.drafts
 import models.DeparturesSummary
 import play.api.i18n.Messages
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.pagination.PaginationViewModel
+import viewModels.paginationP5.PaginationViewModelP5
 
 case class AllDraftDeparturesViewModel(items: DeparturesSummary,
                                        pageSize: Int,
                                        lrn: Option[String],
                                        draftDepartureFrontendUrl: String,
-                                       paginationViewModel: PaginationViewModel = PaginationViewModel.Empty
+                                       paginationViewModel: PaginationViewModelP5
 ) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
@@ -63,12 +63,14 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary,
 
   def searchResultsFound: Boolean = resultsFound && isSearch
 
-  val returnPage = paginationViewModel.pageNumber match {
-    case 1 => 1
+  def noSearchResultsFound: Boolean = !resultsFound && isSearch
 
+  def noResultsFound: Boolean = !resultsFound && !isSearch
+
+  def returnPage: Int = paginationViewModel.pageNumber match {
+    case 1                         => 1
     case n if dataRows.length == 1 => n - 1
-
-    case n => n
+    case n                         => n
   }
 
   def pageNumber = paginationViewModel.pageNumber

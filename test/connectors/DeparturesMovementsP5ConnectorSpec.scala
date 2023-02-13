@@ -43,38 +43,6 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
 
   private val createdAt = LocalDateTime.now()
 
-  private val summaryResponseJson =
-    Json.obj(
-      "eoriNumber" -> "1234567",
-      "userAnswers" ->
-        Json.arr(
-          Json.obj(
-            "lrn" -> "AB123",
-            "_links" -> {
-              "self" -> {
-                "href" -> "/manage-transit-movements-departure-cache/user-answers/AB123"
-              }
-            },
-            "createdAt"     -> createdAt.toString(),
-            "lastUpdated"   -> "2023-01-27T08:43:17.064",
-            "expiresInDays" -> 29,
-            "_id"           -> "27e687a9-4544-4e22-937e-74e699d855f8"
-          ),
-          Json.obj(
-            "lrn" -> "CD123",
-            "_links" -> {
-              "self" -> {
-                "href" -> "/manage-transit-movements-departure-cache/user-answers/CD123 "
-              }
-            },
-            "createdAt"     -> createdAt.toString(),
-            "lastUpdated"   -> "2023-01-27T09:43:17.064",
-            "expiresInDays" -> 28,
-            "_id"           -> "27e687a9-4544-4e22-937e-74e699d855f8"
-          )
-        )
-    )
-
   "DeparturesMovementConnector" - {
 
     "getDeparturesSummary" - {

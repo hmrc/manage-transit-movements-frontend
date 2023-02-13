@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package models
+package viewModels.paginationP5
 
-import play.api.libs.json.{Json, OFormat}
+import base.SpecBase
 
-case class DeparturesSummary(totalMovements: Int, totalMatchingMovements: Int, userAnswers: List[DepartureUserAnswerSummary])
+class PreviousSpec extends SpecBase {
 
-object DeparturesSummary {
+  "Previous" - {
+    "apply" - {
+      "must format href when given no params" in {
+        Previous("testHref", 2, Seq.empty).href mustBe "testHref?page=1"
+      }
 
-  implicit val format: OFormat[DeparturesSummary] = Json.format[DeparturesSummary]
-
-  val Empty: DeparturesSummary = DeparturesSummary(0, 0, Nil)
+      "must format href when given params" in {
+        Previous("testHref", 2, Seq(("lrn", "123"))).href mustBe "testHref?page=1&lrn=123"
+      }
+    }
+  }
 }

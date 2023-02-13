@@ -14,13 +14,11 @@
  * limitations under the License.
  *@
 
-@import viewModels.pagination._
+@import viewModels.paginationP5.PaginationViewModelP5
 
 @this()
 
-@(
-        viewModel: PaginationViewModel
-)(implicit messages: Messages)
+@(viewModel: PaginationViewModelP5)(implicit messages: Messages)
 
 @resultsCountMessage = {
 @viewModel.results.count match {

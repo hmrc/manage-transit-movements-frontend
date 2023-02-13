@@ -24,6 +24,7 @@ import play.twirl.api.Html
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination._
+import viewModels.paginationP5.PaginationViewModelP5
 
 import java.time.{LocalDate, LocalTime}
 
@@ -154,6 +155,16 @@ trait ViewModelGenerators {
       } yield ViewDepartureMovements(seqOfViewDepartureMovements)
     }
 
+  implicit lazy val arbitraryPaginationViewModelP5: Arbitrary[PaginationViewModelP5] =
+    Arbitrary {
+      for {
+        totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)
+        numberOfMovementsPerPage <- Gen.choose(1, Int.MaxValue)
+        currentPage              <- Gen.choose(1, Int.MaxValue)
+        href                     <- nonEmptyString
+      } yield PaginationViewModelP5(totalNumberOfMovements, currentPage, numberOfMovementsPerPage, href)
+    }
+
   implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
     Arbitrary {
       for {
@@ -161,6 +172,7 @@ trait ViewModelGenerators {
         pageSize        <- arbitrary[Int]
         lrn             <- Gen.option(arbitrary[String])
         url             <- nonEmptyString
-      } yield AllDraftDeparturesViewModel(draftDepartures, pageSize, lrn, url)
+        pagination      <- arbitrary[PaginationViewModelP5]
+      } yield AllDraftDeparturesViewModel(draftDepartures, pageSize, lrn, url, pagination)
     }
 }

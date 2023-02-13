@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package viewModels.pagination
+package viewModels.paginationP5
 
-case class PaginationViewModel(
+case class PaginationViewModelP5(
   results: MetaData,
   previous: Option[Previous],
   next: Option[Next],
@@ -24,31 +24,32 @@ case class PaginationViewModel(
   pageNumber: Int
 )
 
-object PaginationViewModel {
+object PaginationViewModelP5 {
 
   def apply(
     totalNumberOfMovements: Int,
     currentPage: Int,
     numberOfMovementsPerPage: Int,
-    href: String
-  ): PaginationViewModel = {
+    href: String,
+    additionalParams: Seq[(String, String)] = Seq.empty
+  ): PaginationViewModelP5 = {
 
     val results: MetaData = MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
 
     val previous: Option[Previous] = if (results.currentPage > 1) {
-      Some(Previous(href, results.currentPage))
+      Some(Previous(href, results.currentPage, additionalParams))
     } else {
       None
     }
 
     val next: Option[Next] = if (results.currentPage < results.totalPages) {
-      Some(Next(href, results.currentPage))
+      Some(Next(href, results.currentPage, additionalParams))
     } else {
       None
     }
 
-    val items = Items(results, href)
+    val items = Items(results, href, additionalParams)
 
-    PaginationViewModel(results, previous, next, items, currentPage)
+    PaginationViewModelP5(results, previous, next, items, currentPage)
   }
 }

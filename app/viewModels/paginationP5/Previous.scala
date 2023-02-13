@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package viewModels.paginationP5
 
-import play.api.libs.json.{Json, OFormat}
+case class Previous(href: String)
 
-case class DeparturesSummary(totalMovements: Int, totalMatchingMovements: Int, userAnswers: List[DepartureUserAnswerSummary])
+object Previous {
 
-object DeparturesSummary {
-
-  implicit val format: OFormat[DeparturesSummary] = Json.format[DeparturesSummary]
-
-  val Empty: DeparturesSummary = DeparturesSummary(0, 0, Nil)
+  def apply(href: String, currentPage: Int, additionalParams: Seq[(String, String)]): Previous =
+    Previous(
+      additionalParams.foldLeft(s"$href?page=${currentPage - 1}") {
+        (href, param) =>
+          href + s"&${param._1}=${param._2}"
+      }
+    )
 }

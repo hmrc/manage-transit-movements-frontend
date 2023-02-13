@@ -22,6 +22,7 @@ import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import viewModels.paginationP5.PaginationViewModelP5
 
 class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
@@ -33,9 +34,10 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       forAll(userAnswerSummary) {
         userAnswerSummary =>
-          val draftDeparture = DeparturesSummary(0, 0, userAnswerSummary)
+          val draftDeparture      = DeparturesSummary(0, 0, userAnswerSummary)
+          val paginationViewModel = PaginationViewModelP5(2, 1, 2, "test")
 
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, 1, None, frontendAppConfig.draftDepartureFrontendUrl)
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
 
           viewModel.dataRows.length mustBe draftDeparture.userAnswers.length
 
@@ -51,11 +53,17 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
       val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
+      val paginationViewModel                                 = PaginationViewModelP5(2, 1, 2, "test")
 
       "must return true when departure size is greater than page size" in {
 
         val viewModel =
-          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length - 1, None, frontendAppConfig.draftDepartureFrontendUrl)
+          AllDraftDeparturesViewModel(departuresSummary,
+                                      departuresSummary.userAnswers.length - 1,
+                                      None,
+                                      frontendAppConfig.draftDepartureFrontendUrl,
+                                      paginationViewModel
+          )
 
         viewModel.tooManyResults mustBe true
       }
@@ -63,7 +71,12 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "must return false when departure size is less than or equal to page size" in {
 
         val viewModel =
-          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length + 1, None, frontendAppConfig.draftDepartureFrontendUrl)
+          AllDraftDeparturesViewModel(departuresSummary,
+                                      departuresSummary.userAnswers.length + 1,
+                                      None,
+                                      frontendAppConfig.draftDepartureFrontendUrl,
+                                      paginationViewModel
+          )
 
         viewModel.tooManyResults mustBe false
       }
@@ -73,18 +86,29 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
       val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
+      val paginationViewModel                                 = PaginationViewModelP5(2, 1, 2, "test")
 
       "must return true when LRN is defined" in {
 
         val viewModel =
-          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
+          AllDraftDeparturesViewModel(departuresSummary,
+                                      departuresSummary.userAnswers.length,
+                                      Some("AB123"),
+                                      frontendAppConfig.draftDepartureFrontendUrl,
+                                      paginationViewModel
+          )
 
         viewModel.isSearch mustBe true
       }
 
       "must return false when LRN is not defined" in {
 
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
 
         viewModel.isSearch mustBe false
       }
@@ -97,8 +121,14 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
+        val paginationViewModel                                 = PaginationViewModelP5(2, 1, 2, "test")
 
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
 
         viewModel.resultsFound mustBe true
       }
@@ -106,8 +136,14 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "must return false when data rows is empty" in {
 
         val departuresSummary: DeparturesSummary = DeparturesSummary.Empty
+        val paginationViewModel                  = PaginationViewModelP5(2, 1, 2, "test")
 
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
 
         viewModel.resultsFound mustBe false
       }
@@ -119,9 +155,15 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
+        val paginationViewModel                                 = PaginationViewModelP5(2, 1, 2, "test")
 
         val viewModel =
-          AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, Some("AB123"), frontendAppConfig.draftDepartureFrontendUrl)
+          AllDraftDeparturesViewModel(departuresSummary,
+                                      departuresSummary.userAnswers.length,
+                                      Some("AB123"),
+                                      frontendAppConfig.draftDepartureFrontendUrl,
+                                      paginationViewModel
+          )
 
         viewModel.searchResultsFound mustBe true
       }
@@ -130,19 +172,155 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
+        val paginationViewModel                                 = PaginationViewModelP5(2, 1, 2, "test")
 
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
 
         viewModel.searchResultsFound mustBe false
       }
 
       "must return false when rows are empty" in {
 
-        val departuresSummary = DeparturesSummary.Empty
+        val departuresSummary   = DeparturesSummary.Empty
+        val paginationViewModel = PaginationViewModelP5(2, 1, 2, "test")
 
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
 
         viewModel.searchResultsFound mustBe false
+      }
+    }
+
+    "noSearchResultsFound" - {
+
+      "mut return true when no search results found" in {
+
+        val departuresSummary: DeparturesSummary = DeparturesSummary(0, 0, List.empty)
+        val paginationViewModel                  = PaginationViewModelP5(2, 1, 2, "test")
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    Some("AB123"),
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
+
+        viewModel.noSearchResultsFound mustBe true
+      }
+
+      "must return false when search results found" in {
+
+        val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
+        val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
+        val paginationViewModel                                 = PaginationViewModelP5(2, 1, 2, "test")
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    Some("AB123"),
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
+
+        viewModel.noResultsFound mustBe false
+      }
+    }
+
+    "noResultsFound" - {
+
+      "mut return true when no results found" in {
+
+        val departuresSummary: DeparturesSummary = DeparturesSummary(0, 0, List.empty)
+        val paginationViewModel                  = PaginationViewModelP5(2, 1, 2, "test")
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
+
+        viewModel.noResultsFound mustBe true
+      }
+
+      "must return false when results found" in {
+
+        val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
+        val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
+        val paginationViewModel                                 = PaginationViewModelP5(2, 1, 2, "test")
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
+
+        viewModel.noResultsFound mustBe false
+      }
+    }
+
+    "returnPage" - {
+
+      "must return 1 when on first page" in {
+
+        val currentPage = 1
+
+        val departuresSummary: DeparturesSummary = DeparturesSummary(0, 0, List.empty)
+        val paginationViewModel                  = PaginationViewModelP5(2, currentPage, 2, "test")
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
+
+        viewModel.returnPage mustBe 1
+      }
+
+      "must return current page - 1 when data rows length is only 1" in {
+
+        val currentPage = 2
+
+        val userAnswerSummary: DepartureUserAnswerSummary = arbitrary[DepartureUserAnswerSummary].sample.value
+        val departuresSummary: DeparturesSummary          = DeparturesSummary(0, 0, List(userAnswerSummary))
+        val paginationViewModel                           = PaginationViewModelP5(2, currentPage, 2, "test")
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
+
+        viewModel.returnPage mustBe 1
+      }
+
+      "must return current when data rows length is greater than 1" in {
+
+        val currentPage = 3
+
+        val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
+        val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
+        val paginationViewModel                                 = PaginationViewModelP5(2, currentPage, 2, "test")
+
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
+                                                    departuresSummary.userAnswers.length,
+                                                    None,
+                                                    frontendAppConfig.draftDepartureFrontendUrl,
+                                                    paginationViewModel
+        )
+
+        viewModel.returnPage mustBe 3
       }
     }
   }

@@ -46,36 +46,39 @@
 
     @if(viewModel.isSearch) {
         <p class="govuk-body">
-            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(viewModel.pageNumber), viewModel.lrn)">
+            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None)">
             @messages("departure.drafts.dashboard.link.title")
             </a>
         </p>
     }
 
-    @search(
-        form = form,
-        action = controllers.departure.drafts.routes.DashboardController.onSubmit(Option(viewModel.pageNumber)),
-        label = "departure.drafts.dashboard.search"
-    )
+    @if(!viewModel.noResultsFound) {
+        @search(
+            form = form,
+            action = controllers.departure.drafts.routes.DashboardController.onSubmit(),
+            label = "departure.drafts.dashboard.search"
+        )
+    }
 
     @if(viewModel.searchResultsFound) {
         <p class="govuk-body" id="results-found">
             @Html(viewModel.searchResult())
-            @if(viewModel.tooManyResults) {
-                @messages("search.tooManyResults")
-            }
         </p>
     }
 
     @if(viewModel.resultsFound) {
-
         @draftDeparturesTable(
             viewModel = viewModel,
             pageNumber = Some(viewModel.returnPage)
         )
-    } else {
-        <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>
+    }
 
+    @if(viewModel.noSearchResultsFound) {
+        <p class="govuk-body" id="no-search-results-found">@messages("departure.drafts.dashboard.table.noSearchResults")</p>
+    }
+
+    @if(viewModel.noResultsFound){
+        <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>
     }
 
     @pagination(viewModel.paginationViewModel)

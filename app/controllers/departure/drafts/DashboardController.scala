@@ -16,8 +16,7 @@
 
 package controllers.departure.drafts
 
-import config.PaginationAppConfig
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
 import forms.SearchFormProvider
 import models.DeparturesSummary
@@ -30,7 +29,7 @@ import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.pagination.PaginationViewModel
+import viewModels.paginationP5.PaginationViewModelP5
 import views.html.departure.drafts.DashboardView
 
 import javax.inject.Inject
@@ -58,20 +57,20 @@ class DashboardController @Inject() (
       buildView(form, pageNumber, lrn)(Ok(_))
   }
 
-  def onSubmit(pageNumber: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
+  def onSubmit(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => buildView(formWithErrors, pageNumber)(BadRequest(_)),
+          formWithErrors => buildView(formWithErrors)(BadRequest(_)),
           lrn => {
             val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
-            buildView(form, pageNumber, fuzzyLrn)(Ok(_))
+            buildView(form, lrn = fuzzyLrn)(Ok(_))
           }
         )
   }
 
-  private def buildView(form: Form[String], pageNumber: Option[Int], lrn: Option[String] = None)(
+  private def buildView(form: Form[String], pageNumber: Option[Int] = None, lrn: Option[String] = None)(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] = {
 
@@ -88,18 +87,24 @@ class DashboardController @Inject() (
     getDrafts.map {
       case Some(drafts) =>
         block(view(form, present(drafts, page, lrn)))
-
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())
     }
   }
 
   def present(drafts: DeparturesSummary, page: Int, lrn: Option[String]): AllDraftDeparturesViewModel = {
-    val pvm = PaginationViewModel(
-      drafts.totalMatchingMovements,
-      page,
-      paginationAppConfig.draftDeparturesNumberOfDrafts,
-      routes.DashboardController.onPageLoad(None, lrn).url
+
+    val param =
+      lrn.map(
+        x => Seq(("lrn", x))
+      )
+
+    val pvm = PaginationViewModelP5(
+      totalNumberOfMovements = drafts.totalMatchingMovements,
+      currentPage = page,
+      numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
+      href = routes.DashboardController.onSubmit().url,
+      additionalParams = param.getOrElse(Seq.empty)
     )
 
     AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl, pvm)
