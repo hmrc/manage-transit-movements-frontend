@@ -29,12 +29,12 @@ import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 import viewModels.paginationP5.PaginationViewModelP5
-import views.behaviours.ViewBehaviours
+import views.behaviours.{PaginationP5ViewBehaviours, ViewBehaviours}
 import views.html.departure.drafts.DashboardView
 
 import java.time.LocalDateTime
 
-class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPropertyChecks {
+class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] with Generators {
 
   val genDraftDeparture: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
 
@@ -48,6 +48,18 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
   private val form         = formProvider()
 
   override val prefix = "departure.drafts.dashboard"
+
+  override val movementsPerPage: Int = paginationAppConfig.draftDeparturesNumberOfDrafts
+
+  override def viewWithSpecificPagination(paginationViewModelP5: PaginationViewModelP5): HtmlFormat.Appendable =
+    applyView(
+      AllDraftDeparturesViewModel(arbitrary[DeparturesSummary].sample.value,
+                                  movementsPerPage,
+                                  None,
+                                  frontendAppConfig.draftDepartureFrontendUrl,
+                                  paginationViewModelP5
+      )
+    )
 
   private def applyView(
     viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel
@@ -65,6 +77,8 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
   behave like pageWithBackLink()
 
   behave like pageWithHeading()
+
+  behave like pageWithPaginationP5(controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url)
 
   val rows: Elements = doc.select("tr[data-testrole^=draft-list_row]")
 
@@ -270,5 +284,4 @@ class DashboardViewSpec extends ViewBehaviours with Generators with ScalaCheckPr
       panel.head.getElementsByClass("govuk-button").attr("href") mustBe frontendAppConfig.declareDepartureStartWithLRNUrl
     }
   }
-
 }

@@ -67,7 +67,7 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary,
 
   def noSearchResultsFound: Boolean = items.totalMatchingMovements == 0 && items.totalMovements > 0
 
-  def pageNumber = paginationViewModel.pageNumber
+  def pageNumber: Int = paginationViewModel.pageNumber
 
 }
 
