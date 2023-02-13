@@ -35,7 +35,7 @@ class DraftDepartureTableSpec extends A11ySpecBase {
       "draft departure table" in {
         val dataRows = arbitrary[AllDraftDeparturesViewModel].sample.value
         val content = template.apply(title) {
-          component.apply(dataRows, None).withHeading(title)
+          component.apply(dataRows).withHeading(title)
         }
         content.toString() must passAccessibilityChecks
       }

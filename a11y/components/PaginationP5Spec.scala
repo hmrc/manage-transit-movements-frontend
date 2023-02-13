@@ -19,8 +19,8 @@ package components
 import a11ySpecBase.A11ySpecBase
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import viewModels.pagination.{MetaData, PaginationViewModel}
-import views.html.components.{Pagination, PaginationP5}
+import viewModels.paginationP5.{MetaData, PaginationViewModelP5}
+import views.html.components.PaginationP5
 import views.html.templates.MainTemplate
 
 class PaginationP5Spec extends A11ySpecBase {
@@ -35,7 +35,7 @@ class PaginationP5Spec extends A11ySpecBase {
 
       "0 pages" in {
         val metaData            = arbitrary[MetaData].sample.value.copy(totalPages = 0)
-        val paginationViewModel = arbitrary[PaginationViewModel].sample.value.copy(results = metaData)
+        val paginationViewModel = arbitrary[PaginationViewModelP5].sample.value.copy(results = metaData)
         val content = template.apply(title) {
           component.apply(paginationViewModel).withHeading(title)
         }
@@ -44,7 +44,7 @@ class PaginationP5Spec extends A11ySpecBase {
 
       "1 page" in {
         val metaData            = arbitrary[MetaData].sample.value.copy(totalPages = 1)
-        val paginationViewModel = arbitrary[PaginationViewModel].sample.value.copy(results = metaData)
+        val paginationViewModel = arbitrary[PaginationViewModelP5].sample.value.copy(results = metaData)
         val content = template.apply(title) {
           component.apply(paginationViewModel).withHeading(title)
         }
@@ -54,7 +54,7 @@ class PaginationP5Spec extends A11ySpecBase {
       "multiple pages" in {
         val totalPages          = Gen.choose(2, Int.MaxValue).sample.value
         val metaData            = arbitrary[MetaData].sample.value.copy(totalPages = totalPages)
-        val paginationViewModel = arbitrary[PaginationViewModel].sample.value.copy(results = metaData)
+        val paginationViewModel = arbitrary[PaginationViewModelP5].sample.value.copy(results = metaData)
         val content = template.apply(title) {
           component.apply(paginationViewModel).withHeading(title)
         }

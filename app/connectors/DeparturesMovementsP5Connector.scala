@@ -21,7 +21,6 @@ import logging.Logging
 import models.departure.drafts.{Limit, Skip}
 import models.{DeparturesSummary, DraftAvailability}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject

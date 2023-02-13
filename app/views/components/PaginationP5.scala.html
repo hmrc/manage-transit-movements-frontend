@@ -25,7 +25,7 @@
 } else if(viewModel.results.totalPages > 1) {
 
     <p id="paginated-results-count" class="pagination__results">
-    @Html(viewModel.paginatedSearchResult)
+    @Html(viewModel.paginatedSearchResult())
     </p>
 
     <nav class="govuk-pagination" role="navigation" aria-label="results">

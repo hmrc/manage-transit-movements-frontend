@@ -23,7 +23,7 @@ object DraftAvailability {
   def apply(departureSummaries: Option[DeparturesSummary]): DraftAvailability = departureSummaries match {
     case Some(value) if value.userAnswers.nonEmpty => NonEmpty
     case Some(value) if value.userAnswers.isEmpty  => Empty
-    case None                                      => Unavailable
+    case _                                         => Unavailable
   }
 
   sealed trait Available extends DraftAvailability
