@@ -21,7 +21,7 @@ import play.api.data.Form
 import org.jsoup.nodes.Element
 import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
-import views.behaviours.YesNoViewBehaviours
+import views.behaviours.{ViewBehaviours, YesNoViewBehaviours}
 import views.html.departure.drafts.DeleteDraftDepartureYesNoView
 
 class DeleteDraftDepartureYesNoViewSpec extends YesNoViewBehaviours with ScalaCheckPropertyChecks {
