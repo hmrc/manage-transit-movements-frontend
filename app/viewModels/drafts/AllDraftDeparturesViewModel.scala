@@ -16,24 +16,34 @@
 
 package viewModels.drafts
 
-import models.DeparturesSummary
+import models.Sort.{SortByCreatedAtAsc, SortByCreatedAtDesc, SortByLRNAsc, SortByLRNDesc}
+import models.{DeparturesSummary, Sort}
 import play.api.i18n.Messages
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 
-case class AllDraftDeparturesViewModel(items: DeparturesSummary, pageSize: Int, lrn: Option[String], draftDepartureFrontendUrl: String) {
+case class AllDraftDeparturesViewModel(
+  items: DeparturesSummary,
+  pageSize: Int,
+  lrn: Option[String],
+  draftDepartureFrontendUrl: String,
+  sortParams: Option[Sort] = Some(SortByCreatedAtDesc)
+) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
   val tableMessageKeyPrefix = "departure.drafts.dashboard.table"
 
   val draftDepartures: Int = items.userAnswers.length
 
-  def title(implicit messages: Messages): String                = messages(s"$messageKeyPrefix.title")
-  def heading(implicit messages: Messages): String              = messages(s"$messageKeyPrefix.heading")
+  def title(implicit messages: Messages): String = messages(s"$messageKeyPrefix.title")
+
+  def heading(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading")
+
   def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading.hidden")
 
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
 
-  def lrnRedirectLocation(lrn: String): String            = s"$draftDepartureFrontendUrl/drafts/$lrn"
+  def lrnRedirectLocation(lrn: String): String = s"$draftDepartureFrontendUrl/drafts/$lrn"
+
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
   def searchResult()(implicit messages: Messages): Option[String] =
@@ -57,6 +67,17 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary, pageSize: Int, 
 
   def searchResultsFound: Boolean = resultsFound && isSearch
 
+  val sortLrn: String = sortParams match {
+    case Some(SortByLRNAsc)  => "ascending"
+    case Some(SortByLRNDesc) => "descending"
+    case _                   => "none"
+  }
+
+  val sortCreatedAt: String = sortParams match {
+    case Some(SortByCreatedAtAsc)  => "ascending"
+    case Some(SortByCreatedAtDesc) => "descending"
+    case _                         => "none"
+  }
 }
 
 object AllDraftDeparturesViewModel {

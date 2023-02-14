@@ -18,6 +18,7 @@ package viewModels.drafts
 
 import base.SpecBase
 import generators.Generators
+import models.Sort.{SortByCreatedAtAsc, SortByCreatedAtDesc, SortByLRNAsc, SortByLRNDesc}
 import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -143,6 +144,48 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         val viewModel = AllDraftDeparturesViewModel(departuresSummary, departuresSummary.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl)
 
         viewModel.searchResultsFound mustBe false
+      }
+    }
+
+    "sortParams" - {
+      val departuresSummary = arbitrary[DeparturesSummary].sample.value
+      "when sortParams is SortByLRNAsc" in {
+        val sortParams = SortByLRNAsc
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, sortParams = Some(sortParams))
+        viewModel.sortLrn mustBe "ascending"
+        viewModel.sortCreatedAt mustBe "none"
+
+      }
+
+      "when sortParams is SortByLRNDesc" in {
+        val sortParams = SortByLRNDesc
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, sortParams = Some(sortParams))
+        viewModel.sortLrn mustBe "descending"
+        viewModel.sortCreatedAt mustBe "none"
+
+      }
+
+      "when sortParams is SortByCreatedAtAsc" in {
+        val sortParams = SortByCreatedAtAsc
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, sortParams = Some(sortParams))
+        viewModel.sortCreatedAt mustBe "ascending"
+        viewModel.sortLrn mustBe "none"
+
+      }
+
+      "when sortParams is SortByCreatedAtDesc" in {
+        val sortParams = SortByCreatedAtDesc
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, sortParams = Some(sortParams))
+        viewModel.sortCreatedAt mustBe "descending"
+        viewModel.sortLrn mustBe "none"
+
+      }
+
+      "when sortParams is None" in {
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl)
+        viewModel.sortCreatedAt mustBe "descending"
+        viewModel.sortLrn mustBe "none"
+
       }
     }
   }

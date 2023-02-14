@@ -24,13 +24,13 @@
         viewModel: AllDraftDeparturesViewModel
 )(implicit messages: Messages)
 
-<table class="responsive-table">
+<table class="responsive-table sortable-table">
     <caption class="govuk-visually-hidden">@viewModel.visuallyHiddenHeader</caption>
 
     <thead>
         <tr>
-            <th scope="col">@viewModel.referenceNumber</th>
-            <th scope="col">@viewModel.daysToComplete</th>
+            <th scope="col" aria-sort=@viewModel.sortLrn><a href="">@viewModel.referenceNumber</a></th>
+            <th scope="col" aria-sort=@viewModel.sortCreatedAt><a href="">@viewModel.daysToComplete</a></th>
             <th scope="col"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
         </tr>
     </thead>
