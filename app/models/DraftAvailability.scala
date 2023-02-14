@@ -22,7 +22,7 @@ object DraftAvailability {
 
   def apply(departureSummaries: Option[DeparturesSummary]): DraftAvailability = departureSummaries match {
     case Some(value) if value.userAnswers.nonEmpty => NonEmpty
-    case Some(value) if value.userAnswers.isEmpty  => Empty
+    case Some(_)                                   => Empty
     case _                                         => Unavailable
   }
 
