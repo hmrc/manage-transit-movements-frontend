@@ -20,12 +20,18 @@ case class PaginationViewModel(
   results: MetaData,
   previous: Option[Previous],
   next: Option[Next],
-  items: Items
+  items: Items,
+  pageNumber: Int
 )
 
 object PaginationViewModel {
 
-  def apply(totalNumberOfMovements: Int, currentPage: Int, numberOfMovementsPerPage: Int, href: String): PaginationViewModel = {
+  def apply(
+    totalNumberOfMovements: Int,
+    currentPage: Int,
+    numberOfMovementsPerPage: Int,
+    href: String
+  ): PaginationViewModel = {
 
     val results: MetaData = MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
 
@@ -43,6 +49,6 @@ object PaginationViewModel {
 
     val items = Items(results, href)
 
-    PaginationViewModel(results, previous, next, items)
+    PaginationViewModel(results, previous, next, items, currentPage)
   }
 }

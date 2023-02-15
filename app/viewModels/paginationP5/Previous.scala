@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package viewModels.paginationP5
 
-sealed trait DraftAvailability
+case class Previous(href: String)
 
-object DraftAvailability {
+object Previous {
 
-  def apply(departureSummaries: Option[DeparturesSummary]): DraftAvailability = departureSummaries match {
-    case Some(value) if value.userAnswers.nonEmpty => NonEmpty
-    case Some(_)                                   => Empty
-    case _                                         => Unavailable
-  }
-
-  sealed trait Available extends DraftAvailability
-
-  case object Unavailable extends DraftAvailability
-  case object Empty extends DraftAvailability
-  case object NonEmpty extends DraftAvailability
+  def apply(href: String, currentPage: Int, additionalParams: Seq[(String, String)]): Previous =
+    Previous(
+      additionalParams.foldLeft(s"$href?page=${currentPage - 1}") {
+        (href, param) =>
+          href + s"&${param._1}=${param._2}"
+      }
+    )
 }
