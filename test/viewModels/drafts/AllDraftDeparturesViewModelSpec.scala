@@ -278,6 +278,9 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams = sortParams)
         viewModel.sortLrn mustBe "ascending"
         viewModel.sortCreatedAt mustBe "none"
+        viewModel.sortLRNHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.convertParams))
+        viewModel
+          .sortCreatedAtHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.convertParams))
 
       }
 
@@ -287,7 +290,9 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams = sortParams)
         viewModel.sortLrn mustBe "descending"
         viewModel.sortCreatedAt mustBe "none"
-
+        viewModel.sortLRNHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.convertParams))
+        viewModel
+          .sortCreatedAtHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.convertParams))
       }
 
       "when sortParams is SortByCreatedAtAsc" in {
@@ -296,6 +301,9 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams = sortParams)
         viewModel.sortCreatedAt mustBe "ascending"
         viewModel.sortLrn mustBe "none"
+        viewModel.sortLRNHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.convertParams))
+        viewModel
+          .sortCreatedAtHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.convertParams))
 
       }
 
@@ -305,6 +313,9 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams = sortParams)
         viewModel.sortCreatedAt mustBe "descending"
         viewModel.sortLrn mustBe "none"
+        viewModel.sortLRNHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.convertParams))
+        viewModel
+          .sortCreatedAtHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.convertParams))
 
       }
 
@@ -312,6 +323,9 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         val viewModel = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
         viewModel.sortCreatedAt mustBe "descending"
         viewModel.sortLrn mustBe "none"
+        viewModel.sortLRNHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.convertParams))
+        viewModel
+          .sortCreatedAtHref() mustBe controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.convertParams))
 
       }
     }
