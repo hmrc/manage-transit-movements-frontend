@@ -28,25 +28,25 @@ object Sort {
 
   case object SortByLRNAsc extends Sort {
     val field: String   = "lrn"
-    val orderBy: String = "ascending"
+    val orderBy: String = "asc"
     val convertParams   = s"$field.$orderBy"
   }
 
   case object SortByLRNDesc extends Sort {
     val field: String   = "lrn"
-    val orderBy: String = "descending"
+    val orderBy: String = "dsc"
     val convertParams   = s"$field.$orderBy"
   }
 
   case object SortByCreatedAtAsc extends Sort {
     val field: String   = "createdAt"
-    val orderBy: String = "ascending"
+    val orderBy: String = "asc"
     val convertParams   = s"$field.$orderBy"
   }
 
   case object SortByCreatedAtDesc extends Sort {
     val field: String   = "createdAt"
-    val orderBy: String = "descending"
+    val orderBy: String = "dsc"
     val convertParams   = s"$field.$orderBy"
   }
 

@@ -20,9 +20,9 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
 import forms.SearchFormProvider
 import models.Sort.SortByCreatedAtDesc
-import models.{DeparturesSummary, Sort}
 import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
+import models.{DeparturesSummary, Sort}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -80,7 +80,7 @@ class DashboardController @Inject() (
 
     val skip = Skip(page - 1)
 
-    val sortOrGetDrafts: Future[Option[DeparturesSummary]] = sortParams match {
+    def sortOrGetDrafts: Future[Option[DeparturesSummary]] = sortParams match {
       case Some(x) =>
         draftDepartureService.sortDraftDepartures(x)
       case None =>
@@ -89,7 +89,6 @@ class DashboardController @Inject() (
           case None        => draftDepartureService.getPagedDepartureSummary(limit, skip)
         }
     }
-
 
     sortOrGetDrafts.map {
       case Some(drafts) =>
@@ -115,7 +114,7 @@ class DashboardController @Inject() (
       lrn = lrn
     )
 
-    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl, pvm, Some(sortParams))
+    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl, pvm, sortParams)
   }
 
 }
