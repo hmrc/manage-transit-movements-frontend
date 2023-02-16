@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package models
+package viewModels.paginationP5
 
-sealed trait DraftAvailability
+import base.SpecBase
 
-object DraftAvailability {
+class PreviousSpec extends SpecBase {
 
-  def apply(departureSummaries: Option[DeparturesSummary]): DraftAvailability = departureSummaries match {
-    case Some(value) if value.userAnswers.nonEmpty => NonEmpty
-    case Some(_)                                   => Empty
-    case _                                         => Unavailable
+  "Previous" - {
+    "apply" - {
+      "must format href when given no params" in {
+        Previous("testHref", 2, Seq.empty).href mustBe "testHref?page=1"
+      }
+
+      "must format href when given params" in {
+        Previous("testHref", 2, Seq(("lrn", "123"))).href mustBe "testHref?page=1&lrn=123"
+      }
+    }
   }
-
-  sealed trait Available extends DraftAvailability
-
-  case object Unavailable extends DraftAvailability
-  case object Empty extends DraftAvailability
-  case object NonEmpty extends DraftAvailability
 }

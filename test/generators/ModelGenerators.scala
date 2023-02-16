@@ -248,7 +248,7 @@ trait ModelGenerators {
     }
 
   implicit lazy val arbitraryDraftDeparture: Arbitrary[DeparturesSummary] = Arbitrary {
-    listWithMaxLength[DepartureUserAnswerSummary](9).map(DeparturesSummary(_))
+    listWithMaxLength[DepartureUserAnswerSummary](9).map(DeparturesSummary(0, 0, _))
   }
 
 }

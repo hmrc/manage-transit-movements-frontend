@@ -18,9 +18,9 @@ package connectors
 
 import config.FrontendAppConfig
 import logging.Logging
+import models.departure.drafts.{Limit, Skip}
 import models.{DeparturesSummary, DraftAvailability}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
@@ -31,18 +31,24 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
   def getDeparturesSummary(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
     val url = s"${config.draftDeparturesUrl}/user-answers"
 
-    http.GET[HttpResponse](url, queryParams).map {
-      case response if is2xx(response.status) =>
-        response.json.asOpt[DeparturesSummary]
-      case response if response.status == 404 =>
-        Some(DeparturesSummary(List.empty))
-      case _ =>
-        None
-    }
+    http
+      .GET[DeparturesSummary](url, queryParams)
+      .map(Some(_))
+      .recover {
+        case _ =>
+          logger.error(s"get Departures Summary failed to return data")
+          None
+      }
   }
 
-  def lrnFuzzySearch(lrn: String, limit: Int)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
-    getDeparturesSummary(Seq("lrn" -> lrn, "limit" -> limit.toString))
+  def getAllDeparturesSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("limit" -> limit.value.toString, "skip" -> skip.value.toString))
+
+  def getLRNs(partialLRN: String, skip: Skip, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("lrn" -> partialLRN, "limit" -> limit.value.toString, "skip" -> skip.value.toString))
+
+  def lrnFuzzySearch(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("lrn" -> lrn, "limit" -> limit.value.toString))
 
   def sortDraftDepartures(sortParams: String)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     getDeparturesSummary(Seq("sortBy" -> sortParams))

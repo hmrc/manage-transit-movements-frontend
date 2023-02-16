@@ -19,13 +19,16 @@
 @import views.html.components.DraftDeparturesTable
 @import config.FrontendAppConfig
 @import views.html.components.Search
+@import viewModels.pagination.PaginationViewModel
+@import views.html.components.PaginationP5
 
 @this(
         mainTemplate: MainTemplate,
         draftDeparturesTable: DraftDeparturesTable,
         heading: Heading,
         search: Search,
-        config: FrontendAppConfig
+        config: FrontendAppConfig,
+        pagination: PaginationP5
 )
 
 @(
@@ -43,36 +46,39 @@
 
     @if(viewModel.isSearch) {
         <p class="govuk-body">
-            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad()">
+            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None)">
             @messages("departure.drafts.dashboard.link.title")
             </a>
         </p>
     }
 
-    @search(
-        form = form,
-        action = controllers.departure.drafts.routes.DashboardController.onSubmit(),
-        label = "departure.drafts.dashboard.search"
-    )
+    @if(!viewModel.noResultsFound) {
+        @search(
+            form = form,
+            action = controllers.departure.drafts.routes.DashboardController.onSubmit(),
+            label = "departure.drafts.dashboard.search"
+        )
+    }
 
     @if(viewModel.searchResultsFound) {
         <p class="govuk-body" id="results-found">
             @Html(viewModel.searchResult())
-            @if(viewModel.tooManyResults) {
-                @messages("search.tooManyResults")
-            }
         </p>
     }
 
     @if(viewModel.resultsFound) {
-
-        @draftDeparturesTable(
-            viewModel = viewModel
-        )
-    } else {
-        <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>
-
+        @draftDeparturesTable(viewModel)
     }
+
+    @if(viewModel.noSearchResultsFound) {
+        <p class="govuk-body" id="no-search-results-found">@messages("departure.drafts.dashboard.table.noSearchResults")</p>
+    }
+
+    @if(viewModel.noResultsFound){
+        <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>
+    }
+
+    @pagination(viewModel.paginationViewModel)
 
     <article class="ticket-panel" aria-label="Sub navigation 1">
         <section class="ticket-panel__content ticket-panel__content--blue" aria-label="Section 1">
@@ -85,6 +91,4 @@
                 </svg></a>
         </section>
     </article>
-
-
 }
