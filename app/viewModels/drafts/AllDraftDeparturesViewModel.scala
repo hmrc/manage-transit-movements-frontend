@@ -16,8 +16,10 @@
 
 package viewModels.drafts
 
-import models.DeparturesSummary
+import models.{DeparturesSummary, Sort}
+import models.Sort._
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 import viewModels.paginationP5.PaginationViewModelP5
 
@@ -26,8 +28,8 @@ case class AllDraftDeparturesViewModel(
   pageSize: Int,
   lrn: Option[String],
   draftDepartureFrontendUrl: String,
-  paginationViewModel: PaginationViewModelP5
-    sortParams: Option[Sort] = Some(SortByCreatedAtDesc),
+  paginationViewModel: PaginationViewModelP5,
+  sortParams: Sort = SortByCreatedAtDesc
 ) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
@@ -72,17 +74,36 @@ case class AllDraftDeparturesViewModel(
 
   def pageNumber: Int = paginationViewModel.pageNumber
 
-  val sortLrn: String = sortParams match {
-    case Some(SortByLRNAsc)  => "ascending"
-    case Some(SortByLRNDesc) => "descending"
+  def sortLrn: String = sortParams match {
+    case SortByLRNAsc  => "ascending"
+    case SortByLRNDesc => "descending"
     case _                   => "none"
   }
 
-  val sortCreatedAt: String = sortParams match {
-    case Some(SortByCreatedAtAsc)  => "ascending"
-    case Some(SortByCreatedAtDesc) => "descending"
+  def sortCreatedAt: String = sortParams match {
+    case SortByCreatedAtAsc  => "ascending"
+    case SortByCreatedAtDesc => "descending"
     case _                         => "none"
   }
+
+  def sortLRNHref(): Call = {
+    val currentLRNState = sortLrn
+    currentLRNState match {
+      case "descending" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.ascending"))
+      case "ascending"  => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.descending"))
+      case _            => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.ascending"))
+    }
+  }
+
+  def sortCreatedAtHref(): Call = {
+    val currentCreatedAtState = sortCreatedAt
+    currentCreatedAtState match {
+      case "descending" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.ascending"))
+      case "ascending"  => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.descending"))
+      case _            => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.ascending"))
+    }
+  }
+
 }
 
 object AllDraftDeparturesViewModel {

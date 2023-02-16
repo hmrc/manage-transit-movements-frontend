@@ -19,7 +19,8 @@ package controllers.departure.drafts
 import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
 import forms.SearchFormProvider
-import models.DeparturesSummary
+import models.Sort.SortByCreatedAtDesc
+import models.{DeparturesSummary, Sort}
 import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
 import play.api.data.Form
@@ -52,9 +53,9 @@ class DashboardController @Inject() (
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-  def onPageLoad(pageNumber: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(pageNumber: Option[Int], lrn: Option[String], sortParams: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(form, pageNumber, lrn)(Ok(_))
+      buildView(form, pageNumber, lrn, Sort(sortParams))(Ok(_))
   }
 
   def onSubmit(): Action[AnyContent] = (Action andThen identify).async {
@@ -70,7 +71,7 @@ class DashboardController @Inject() (
         )
   }
 
-  private def buildView(form: Form[String], pageNumber: Option[Int] = None, lrn: Option[String] = None)(
+  private def buildView(form: Form[String], pageNumber: Option[Int] = None, lrn: Option[String] = None, sortParams: Option[Sort] = None)(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] = {
 
@@ -79,20 +80,26 @@ class DashboardController @Inject() (
 
     val skip = Skip(page - 1)
 
-    val getDrafts = lrn match {
-      case Some(value) => draftDepartureService.getLRNs(value, skip, limit)
-      case None        => draftDepartureService.getPagedDepartureSummary(limit, skip)
+    val sortOrGetDrafts: Future[Option[DeparturesSummary]] = sortParams match {
+      case Some(x) =>
+        draftDepartureService.sortDraftDepartures(x)
+      case None =>
+        lrn match {
+          case Some(value) => draftDepartureService.getLRNs(value, skip, limit)
+          case None        => draftDepartureService.getPagedDepartureSummary(limit, skip)
+        }
     }
 
-    getDrafts.map {
+
+    sortOrGetDrafts.map {
       case Some(drafts) =>
-        block(view(form, present(drafts, page, lrn)))
+        block(view(form, present(drafts, page, lrn, sortParams.getOrElse(SortByCreatedAtDesc))))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())
     }
   }
 
-  private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String]): AllDraftDeparturesViewModel = {
+  private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String], sortParams: Sort): AllDraftDeparturesViewModel = {
 
     val param =
       lrn.map(
@@ -108,7 +115,7 @@ class DashboardController @Inject() (
       lrn = lrn
     )
 
-    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl, pvm)
+    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl, pvm, Some(sortParams))
   }
 
 }

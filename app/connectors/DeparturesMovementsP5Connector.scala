@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import logging.Logging
 import models.departure.drafts.{Limit, Skip}
-import models.{DeparturesSummary, DraftAvailability}
+import models.{DeparturesSummary, DraftAvailability, Sort}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -50,8 +50,8 @@ class DeparturesMovementsP5Connector @Inject() (config: FrontendAppConfig, http:
   def lrnFuzzySearch(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     getDeparturesSummary(Seq("lrn" -> lrn, "limit" -> limit.value.toString))
 
-  def sortDraftDepartures(sortParams: String)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
-    getDeparturesSummary(Seq("sortBy" -> sortParams))
+  def sortDraftDepartures(sortParams: Sort)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    getDeparturesSummary(Seq("sortBy" -> sortParams.convertParams))
 
   def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url = s"${config.draftDeparturesUrl}/user-answers/$lrn"

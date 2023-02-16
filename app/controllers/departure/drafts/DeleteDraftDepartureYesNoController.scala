@@ -61,12 +61,12 @@ class DeleteDraftDepartureYesNoController @Inject() (
                     case pageNumber                      => pageNumber
                   }
 
-                  Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(redirectPageNumber), searchLrn))
+                  Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(redirectPageNumber), searchLrn, None))
                 case _ =>
                   Redirect(controllers.routes.ErrorController.internalServerError())
               }
             case false =>
-              Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(pageNumber), searchLrn)))
+              Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(pageNumber), searchLrn, None)))
           }
         )
   }

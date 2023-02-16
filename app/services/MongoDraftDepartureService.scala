@@ -17,7 +17,7 @@
 package services
 
 import connectors.DeparturesMovementsP5Connector
-import models.DeparturesSummary
+import models.{DeparturesSummary, Sort}
 import models.departure.drafts.{Limit, Skip}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -31,6 +31,9 @@ class MongoDraftDepartureService @Inject() (connector: DeparturesMovementsP5Conn
 
   override def getLRNs(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.lrnFuzzySearch(lrn, limit)
+
+  override def sortDraftDepartures(sortParams: Sort)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    connector.sortDraftDepartures(sortParams)
 
   override def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = connector.deleteDraftDeparture(lrn)
 
