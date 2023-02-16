@@ -16,8 +16,9 @@
 
 package viewModels.drafts
 
-import models.{DeparturesSummary, Sort}
+import controllers.departure.drafts.routes
 import models.Sort._
+import models.{DeparturesSummary, Sort}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
@@ -29,7 +30,8 @@ case class AllDraftDeparturesViewModel(
   lrn: Option[String],
   draftDepartureFrontendUrl: String,
   paginationViewModel: PaginationViewModelP5,
-  sortParams: Sort = SortByCreatedAtDesc
+  sortParams: Sort = SortByCreatedAtDesc,
+  searchSubmitted: Boolean = false
 ) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
@@ -37,8 +39,10 @@ case class AllDraftDeparturesViewModel(
 
   val draftDepartures: Int = items.userAnswers.length
 
-  def title(implicit messages: Messages): String                = messages(s"$messageKeyPrefix.title")
-  def heading(implicit messages: Messages): String              = messages(s"$messageKeyPrefix.heading")
+  def title(implicit messages: Messages): String = messages(s"$messageKeyPrefix.title")
+
+  def heading(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading")
+
   def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading.hidden")
 
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
@@ -88,22 +92,26 @@ case class AllDraftDeparturesViewModel(
 
   def sortLRNHref(): Call = {
     val currentLRNState = sortLrn
-    currentLRNState match {
-      case "descending" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.asc"))
-      case "ascending"  => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.dsc"))
-      case _            => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.asc"))
+    val callParams = currentLRNState match {
+      case "descending" => Some("lrn.asc")
+      case "ascending"  => Some("lrn.dsc")
+      case _            => Some("lrn.asc")
     }
+
+    routes.DashboardController.onPageLoad(None, lrn = lrn, callParams)
+
   }
 
   def sortCreatedAtHref(): Call = {
     val currentCreatedAtState = sortCreatedAt
-    currentCreatedAtState match {
-      case "descending" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.asc"))
-      case "ascending"  => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.dsc"))
-      case _            => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.dsc"))
+    val callParams = currentCreatedAtState match {
+      case "descending" => Some("createdAt.asc")
+      case "ascending"  => Some("createdAt.dsc")
+      case _            => Some("createdAt.dsc")
     }
-  }
 
+    routes.DashboardController.onPageLoad(None, lrn, callParams)
+  }
 }
 
 object AllDraftDeparturesViewModel {

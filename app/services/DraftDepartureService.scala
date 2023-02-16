@@ -26,7 +26,8 @@ trait DraftDepartureService {
 
   def getAll(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
   def getLRNs(partialLRN: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def sortDraftDepartures(sortParams: Sort)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
+  def sortDraftDepartures(sortParams: Sort, limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
+  def sortDraftDepartures(sortParams: Sort, limit: Limit, skip: Skip, lrn: String)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
   def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse]
   def getLRNs(partialLRN: String, skip: Skip, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
   def getPagedDepartureSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]

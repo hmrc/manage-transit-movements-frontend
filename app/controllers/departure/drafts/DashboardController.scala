@@ -71,7 +71,12 @@ class DashboardController @Inject() (
         )
   }
 
-  private def buildView(form: Form[String], pageNumber: Option[Int] = None, lrn: Option[String] = None, sortParams: Option[Sort] = None)(
+  private def buildView(
+    form: Form[String],
+    pageNumber: Option[Int] = None,
+    lrn: Option[String] = None,
+    sortParams: Option[Sort] = None
+  )(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] = {
 
@@ -80,14 +85,11 @@ class DashboardController @Inject() (
 
     val skip = Skip(page - 1)
 
-    def sortOrGetDrafts: Future[Option[DeparturesSummary]] = sortParams match {
-      case Some(x) =>
-        draftDepartureService.sortDraftDepartures(x)
-      case None =>
-        lrn match {
-          case Some(value) => draftDepartureService.getLRNs(value, skip, limit)
-          case None        => draftDepartureService.getPagedDepartureSummary(limit, skip)
-        }
+    def sortOrGetDrafts: Future[Option[DeparturesSummary]] = (lrn, sortParams) match {
+      case (Some(lrn), Some(sortParams)) => draftDepartureService.sortDraftDepartures(sortParams, limit, skip, lrn)
+      case (Some(lrn), None)             => draftDepartureService.getLRNs(lrn, skip, limit)
+      case (None, Some(sortParams))      => draftDepartureService.sortDraftDepartures(sortParams, limit, skip)
+      case _                             => draftDepartureService.getPagedDepartureSummary(limit, skip)
     }
 
     sortOrGetDrafts.map {

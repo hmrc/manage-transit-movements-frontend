@@ -32,8 +32,11 @@ class MongoDraftDepartureService @Inject() (connector: DeparturesMovementsP5Conn
   override def getLRNs(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.lrnFuzzySearch(lrn, limit)
 
-  override def sortDraftDepartures(sortParams: Sort)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
-    connector.sortDraftDepartures(sortParams)
+  override def sortDraftDepartures(sortParams: Sort, limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    connector.sortDraftDepartures(sortParams, limit, skip)
+
+  override def sortDraftDepartures(sortParams: Sort, limit: Limit, skip: Skip, lrn: String)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    connector.sortDraftDepartures(sortParams, limit, skip, lrn)
 
   override def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = connector.deleteDraftDeparture(lrn)
 
