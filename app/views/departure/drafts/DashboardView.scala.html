@@ -55,7 +55,7 @@
     @if(!viewModel.noResultsFound) {
         @search(
             form = form,
-            action = controllers.departure.drafts.routes.DashboardController.onSubmit(),
+            action = controllers.departure.drafts.routes.DashboardController.onSubmit(Some(viewModel.sortParams.convertParams)),
             label = "departure.drafts.dashboard.search"
         )
     }

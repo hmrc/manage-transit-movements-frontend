@@ -58,7 +58,7 @@ class DashboardController @Inject() (
       buildView(form, pageNumber, lrn, Sort(sortParams))(Ok(_))
   }
 
-  def onSubmit(): Action[AnyContent] = (Action andThen identify).async {
+  def onSubmit(sortParams: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -66,7 +66,7 @@ class DashboardController @Inject() (
           formWithErrors => buildView(formWithErrors)(BadRequest(_)),
           lrn => {
             val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
-            buildView(form, lrn = fuzzyLrn)(Ok(_))
+            buildView(form, lrn = fuzzyLrn, sortParams = Sort(sortParams))(Ok(_))
           }
         )
   }
@@ -104,15 +104,15 @@ class DashboardController @Inject() (
 
     val param =
       lrn.map(
-        x => Seq(("lrn", x))
+        x => Seq(("lrn", x), ("sortParams", sortParams.convertParams))
       )
 
     val pvm = PaginationViewModelP5(
       totalNumberOfMovements = drafts.totalMatchingMovements,
       currentPage = page,
       numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
-      href = routes.DashboardController.onSubmit().url,
-      additionalParams = param.getOrElse(Seq.empty),
+      href = routes.DashboardController.onSubmit(None).url,
+      additionalParams = param.getOrElse(Seq(("sortParams", sortParams.convertParams))),
       lrn = lrn
     )
 
