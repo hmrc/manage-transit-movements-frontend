@@ -86,7 +86,7 @@ class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] {
 
   behave like pageWithHeading()
 
-  behave like pageWithPaginationP5(controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url)
+  behave like pageWithPaginationP5(controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
 
   val rows: Elements = doc.select("tr[data-testrole^=draft-list_row]")
 

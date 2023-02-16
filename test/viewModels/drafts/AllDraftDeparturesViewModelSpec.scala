@@ -274,13 +274,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       val paginationViewModel = PaginationViewModelP5(2, 1, 2, "test")
       "when sortParams is SortByLRNAsc" in {
         val sortParams = SortByLRNAsc
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
-                                                    1,
-                                                    None,
-                                                    frontendAppConfig.draftDepartureFrontendUrl,
-                                                    paginationViewModel,
-                                                    sortParams = Some(sortParams)
-        )
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams = sortParams)
         viewModel.sortLrn mustBe "ascending"
         viewModel.sortCreatedAt mustBe "none"
 
@@ -288,13 +283,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByLRNDesc" in {
         val sortParams = SortByLRNDesc
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
-                                                    1,
-                                                    None,
-                                                    frontendAppConfig.draftDepartureFrontendUrl,
-                                                    paginationViewModel,
-                                                    sortParams = Some(sortParams)
-        )
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams = sortParams)
         viewModel.sortLrn mustBe "descending"
         viewModel.sortCreatedAt mustBe "none"
 
@@ -302,13 +292,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByCreatedAtAsc" in {
         val sortParams = SortByCreatedAtAsc
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
-                                                    1,
-                                                    None,
-                                                    frontendAppConfig.draftDepartureFrontendUrl,
-                                                    paginationViewModel,
-                                                    sortParams = Some(sortParams)
-        )
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams = sortParams)
         viewModel.sortCreatedAt mustBe "ascending"
         viewModel.sortLrn mustBe "none"
 
@@ -316,13 +301,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByCreatedAtDesc" in {
         val sortParams = SortByCreatedAtDesc
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary,
-                                                    1,
-                                                    None,
-                                                    frontendAppConfig.draftDepartureFrontendUrl,
-                                                    paginationViewModel,
-                                                    sortParams = Some(sortParams)
-        )
+        val viewModel =
+          AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams = sortParams)
         viewModel.sortCreatedAt mustBe "descending"
         viewModel.sortLrn mustBe "none"
 

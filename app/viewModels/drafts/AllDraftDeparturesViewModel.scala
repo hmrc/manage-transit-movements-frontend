@@ -75,32 +75,32 @@ case class AllDraftDeparturesViewModel(
   def pageNumber: Int = paginationViewModel.pageNumber
 
   def sortLrn: String = sortParams match {
-    case SortByLRNAsc  => "asc"
-    case SortByLRNDesc => "dsc"
+    case SortByLRNAsc  => "ascending"
+    case SortByLRNDesc => "descending"
     case _             => "none"
   }
 
   def sortCreatedAt: String = sortParams match {
-    case SortByCreatedAtAsc  => "asc"
-    case SortByCreatedAtDesc => "dsc"
+    case SortByCreatedAtAsc  => "ascending"
+    case SortByCreatedAtDesc => "descending"
     case _                   => "none"
   }
 
   def sortLRNHref(): Call = {
     val currentLRNState = sortLrn
     currentLRNState match {
-      case "dsc" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.asc"))
-      case "asc" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.dsc"))
-      case _     => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.asc"))
+      case "descending" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.asc"))
+      case "ascending"  => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.dsc"))
+      case _            => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("lrn.asc"))
     }
   }
 
   def sortCreatedAtHref(): Call = {
     val currentCreatedAtState = sortCreatedAt
     currentCreatedAtState match {
-      case "dsc" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.asc"))
-      case "asc" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.dsc"))
-      case _     => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.asc"))
+      case "descending" => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.asc"))
+      case "ascending"  => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.dsc"))
+      case _            => controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, Some("createdAt.dsc"))
     }
   }
 
