@@ -14,21 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.departure.drafts
 
-sealed trait DraftAvailability
-
-object DraftAvailability {
-
-  def apply(departureSummaries: Option[DeparturesSummary]): DraftAvailability = departureSummaries match {
-    case Some(value) if value.userAnswers.nonEmpty => NonEmpty
-    case Some(_)                                   => Empty
-    case _                                         => Unavailable
-  }
-
-  sealed trait Available extends DraftAvailability
-
-  case object Unavailable extends DraftAvailability
-  case object Empty extends DraftAvailability
-  case object NonEmpty extends DraftAvailability
-}
+case class Limit(value: Int) extends AnyVal
+case class Skip(value: Int) extends AnyVal

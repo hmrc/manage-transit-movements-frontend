@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class DeparturesSummary(userAnswers: List[DepartureUserAnswerSummary])
+case class DeparturesSummary(totalMovements: Int, totalMatchingMovements: Int, userAnswers: List[DepartureUserAnswerSummary])
 
 object DeparturesSummary {
 

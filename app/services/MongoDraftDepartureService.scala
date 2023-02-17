@@ -18,6 +18,7 @@ package services
 
 import connectors.DeparturesMovementsP5Connector
 import models.DeparturesSummary
+import models.departure.drafts.{Limit, Skip}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
@@ -28,10 +29,16 @@ class MongoDraftDepartureService @Inject() (connector: DeparturesMovementsP5Conn
   override def getAll(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.getDeparturesSummary(queryParams)
 
-  override def getLRNs(lrn: String, limit: Int)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+  override def getLRNs(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.lrnFuzzySearch(lrn, limit)
 
   override def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = connector.deleteDraftDeparture(lrn)
+
+  override def getLRNs(partialLRN: String, skip: Skip, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    connector.getLRNs(partialLRN, skip, limit)
+
+  override def getPagedDepartureSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    connector.getAllDeparturesSummary(limit, skip)
 
   override def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = connector.checkLock(lrn)
 }

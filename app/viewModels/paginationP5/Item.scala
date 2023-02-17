@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package models
+package viewModels.paginationP5
 
-sealed trait DraftAvailability
+case class Item(pageNumber: Int, href: String, selected: Boolean)
 
-object DraftAvailability {
+object Item {
 
-  def apply(departureSummaries: Option[DeparturesSummary]): DraftAvailability = departureSummaries match {
-    case Some(value) if value.userAnswers.nonEmpty => NonEmpty
-    case Some(_)                                   => Empty
-    case _                                         => Unavailable
+  def apply(pageNumber: Int, href: String, currentPage: Int, additionalParams: Seq[(String, String)]): Item = {
+
+    val paginatedHref =
+      additionalParams.foldLeft(s"$href?page=$pageNumber") {
+        (href, param) =>
+          href + s"&${param._1}=${param._2}"
+      }
+
+    Item(
+      pageNumber = pageNumber,
+      href = paginatedHref,
+      selected = pageNumber == currentPage
+    )
   }
-
-  sealed trait Available extends DraftAvailability
-
-  case object Unavailable extends DraftAvailability
-  case object Empty extends DraftAvailability
-  case object NonEmpty extends DraftAvailability
 }
