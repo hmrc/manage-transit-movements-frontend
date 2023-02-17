@@ -26,7 +26,7 @@ import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.paginationP5.DraftsPaginationViewModel
+import viewModels.pagination.DraftsPaginationViewModel
 import views.behaviours.PaginationP5ViewBehaviours
 import views.html.departure.drafts.DashboardView
 

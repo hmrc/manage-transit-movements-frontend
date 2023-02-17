@@ -29,7 +29,7 @@ import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.paginationP5.DraftsPaginationViewModel
+import viewModels.pagination.DraftsPaginationViewModel
 import views.html.departure.drafts.DashboardView
 
 import javax.inject.Inject

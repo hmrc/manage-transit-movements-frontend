@@ -19,7 +19,8 @@ package components
 import a11ySpecBase.A11ySpecBase
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import viewModels.paginationP5.{DraftsPaginationViewModel, MetaData}
+import viewModels.pagination.DraftsPaginationViewModel
+import viewModels.paginationP5.MetaData
 import views.html.components.PaginationP5
 import views.html.templates.MainTemplate
 

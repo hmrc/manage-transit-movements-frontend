@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels.paginationP5
+package viewModels.pagination
 
 import base.SpecBase
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.PaginationItem

@@ -19,7 +19,7 @@ package viewModels.drafts
 import models.DeparturesSummary
 import play.api.i18n.Messages
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.paginationP5.DraftsPaginationViewModel
+import viewModels.pagination.DraftsPaginationViewModel
 
 case class AllDraftDeparturesViewModel(
   items: DeparturesSummary,

@@ -18,24 +18,13 @@
 
 @this(govukPagination: GovukPagination)
 
-@(
-    viewModel: MovementsPaginationViewModel
-)(implicit messages: Messages)
-
-@resultsCountMessage = {
-    @viewModel.results.count match {
-        case 1 => { @Html(messages("numberOfMovements.singular", "<b>1</b>")) }
-        case x => { @Html(messages("numberOfMovements.plural", s"<b>$x</b>")) }
-    }
-}
+@(viewModel: PaginationViewModel)(implicit messages: Messages)
 
 @if(viewModel.results.totalPages == 1) {
-    <p id="results-count" class="govuk-body">@resultsCountMessage</p>
+    <p id="results-count" class="govuk-body">@Html(viewModel.searchResult)</p>
 } else if(viewModel.results.totalPages > 1) {
 
-    <p id="paginated-results-count" class="pagination__results">
-        @Html(messages("pagination.results", s"<b>${viewModel.results.from}</b>", s"<b>${viewModel.results.to}</b>", s"<b>${viewModel.results.count}</b>"))
-    </p>
+    <p id="paginated-results-count" class="pagination__results">@Html(viewModel.paginatedSearchResult)</p>
 
     @govukPagination(viewModel.pagination)
 }

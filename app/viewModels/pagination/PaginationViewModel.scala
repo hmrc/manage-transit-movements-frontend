@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import viewModels.paginationP5.DraftsPaginationViewModel
+package viewModels.pagination
 
-@this(govukPagination: GovukPagination)
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 
-@(viewModel: DraftsPaginationViewModel)(implicit messages: Messages)
+trait PaginationViewModel {
 
-@if(viewModel.results.totalPages == 1) {
-    <p id="results-count" class="govuk-body">@Html(viewModel.searchResult)</p>
-} else if(viewModel.results.totalPages > 1) {
+  val results: MetaData
+  val previous: Option[PaginationLink]
+  val next: Option[PaginationLink]
+  val items: Seq[PaginationItem]
+  val pageNumber: Int
 
-    <p id="paginated-results-count" class="pagination__results">@Html(viewModel.paginatedSearchResult)</p>
+  def searchResult(implicit messages: Messages): String
 
-    @govukPagination(viewModel.pagination)
+  def paginatedSearchResult(implicit messages: Messages): String
+
+  val pagination: Pagination = Pagination(Some(items), previous, next)
+
 }

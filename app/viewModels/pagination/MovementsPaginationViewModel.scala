@@ -16,17 +16,25 @@
 
 package viewModels.pagination
 
-import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 
 case class MovementsPaginationViewModel(
-  results: MetaData,
-  previous: Option[PaginationLink],
-  next: Option[PaginationLink],
-  items: Seq[PaginationItem],
-  pageNumber: Int
-) {
+  override val results: MetaData,
+  override val previous: Option[PaginationLink],
+  override val next: Option[PaginationLink],
+  override val items: Seq[PaginationItem],
+  override val pageNumber: Int
+) extends PaginationViewModel {
 
-  val pagination: Pagination = Pagination(Some(items), previous, next)
+  override def searchResult(implicit messages: Messages): String =
+    results.count match {
+      case 1 => messages("numberOfMovements.singular", "<b>1</b>")
+      case x => messages("numberOfMovements.plural", s"<b>$x</b>")
+    }
+
+  override def paginatedSearchResult(implicit messages: Messages): String =
+    messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
 }
 
 object MovementsPaginationViewModel {

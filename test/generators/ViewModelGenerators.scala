@@ -24,7 +24,6 @@ import play.twirl.api.Html
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination._
-import viewModels.paginationP5.{DraftsPaginationViewModel, MetaData => MetaDataP5}
 
 import java.time.{LocalDate, LocalTime}
 
@@ -64,15 +63,6 @@ trait ViewModelGenerators {
         numberOfMovementsPerPage <- Gen.choose(1, Int.MaxValue)
         currentPage              <- Gen.choose(1, Int.MaxValue)
       } yield MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
-    }
-
-  implicit lazy val arbitraryMetaDataP5: Arbitrary[MetaDataP5] =
-    Arbitrary {
-      for {
-        totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)
-        numberOfMovementsPerPage <- Gen.choose(1, Int.MaxValue)
-        currentPage              <- Gen.choose(1, Int.MaxValue)
-      } yield MetaDataP5(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
     }
 
   implicit lazy val arbitraryHtml: Arbitrary[Html] = Arbitrary {

@@ -23,7 +23,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports._
-import viewModels.paginationP5.DraftsPaginationViewModel
+import viewModels.pagination.DraftsPaginationViewModel
 
 // scalastyle:off method.length
 // scalastyle:off magic.number

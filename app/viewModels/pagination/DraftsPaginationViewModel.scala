@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package viewModels.paginationP5
+package viewModels.pagination
 
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 
 case class DraftsPaginationViewModel(
-  results: MetaData,
-  previous: Option[PaginationLink],
-  next: Option[PaginationLink],
-  items: Seq[PaginationItem],
-  pageNumber: Int,
+  override val results: MetaData,
+  override val previous: Option[PaginationLink],
+  override val next: Option[PaginationLink],
+  override val items: Seq[PaginationItem],
+  override val pageNumber: Int,
   lrn: Option[String]
-) {
+) extends PaginationViewModel {
 
-  def searchResult(implicit messages: Messages): String =
+  override def searchResult(implicit messages: Messages): String =
     lrn match {
       case Some(lrn) =>
         results.count match {
@@ -42,15 +42,13 @@ case class DraftsPaginationViewModel(
         }
     }
 
-  def paginatedSearchResult(implicit messages: Messages): String =
+  override def paginatedSearchResult(implicit messages: Messages): String =
     lrn match {
       case Some(lrn) =>
         messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", lrn)
       case None =>
         messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
     }
-
-  val pagination: Pagination = Pagination(Some(items), previous, next)
 }
 
 object DraftsPaginationViewModel {
