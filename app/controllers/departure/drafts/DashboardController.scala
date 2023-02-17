@@ -94,17 +94,16 @@ class DashboardController @Inject() (
 
   private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String]): AllDraftDeparturesViewModel = {
 
-    val param =
-      lrn.map(
-        x => Seq(("lrn", x))
-      )
+    val additionalParams = lrn.fold[Seq[(String, String)]](Nil) {
+      value => Seq(("lrn", value))
+    }
 
     val pvm = DraftsPaginationViewModel(
       totalNumberOfMovements = drafts.totalMatchingMovements,
       currentPage = page,
       numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
       href = routes.DashboardController.onSubmit().url,
-      additionalParams = param.getOrElse(Seq.empty),
+      additionalParams = additionalParams,
       lrn = lrn
     )
 

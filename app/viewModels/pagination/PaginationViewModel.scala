@@ -27,10 +27,63 @@ trait PaginationViewModel {
   val items: Seq[PaginationItem]
   val pageNumber: Int
 
-  def searchResult(implicit messages: Messages): String
+  def searchResult(implicit messages: Messages): String =
+    results.count match {
+      case 1 => messages("numberOfMovements.singular", "<b>1</b>")
+      case x => messages("numberOfMovements.plural", s"<b>$x</b>")
+    }
 
   def paginatedSearchResult(implicit messages: Messages): String
 
   val pagination: Pagination = Pagination(Some(items), previous, next)
+}
 
+object PaginationViewModel {
+
+  def apply[T <: PaginationViewModel](
+    totalNumberOfMovements: Int,
+    currentPage: Int,
+    numberOfMovementsPerPage: Int,
+    href: String,
+    additionalParams: Seq[(String, String)] = Seq.empty
+  )(
+    f: (MetaData, Option[PaginationLink], Option[PaginationLink], Seq[PaginationItem]) => T
+  ): T = {
+
+    val results: MetaData = MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
+
+    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"$href?page=$page") {
+      case (href, (key, value)) =>
+        href + s"&$key=$value"
+    }
+
+    val previous: Option[PaginationLink] = if (currentPage > 1) {
+      Some(PaginationLink(hrefWithParams(currentPage - 1)))
+    } else {
+      None
+    }
+
+    val next: Option[PaginationLink] = if (currentPage < results.totalPages) {
+      Some(PaginationLink(hrefWithParams(currentPage + 1)))
+    } else {
+      None
+    }
+
+    val items = (1 to results.totalPages).foldLeft[Seq[PaginationItem]](Nil) {
+      (acc, page) =>
+        if (page == 1 || (page >= currentPage - 1 && page <= currentPage + 1) || page == results.totalPages) {
+          acc :+ PaginationItem(
+            href = hrefWithParams(page),
+            number = Some(page.toString),
+            current = Some(page == currentPage)
+          )
+        } else if (acc.lastOption.flatMap(_.ellipsis).contains(true)) {
+          acc
+        } else {
+          acc :+ PaginationItem(ellipsis = Some(true))
+        }
+    }
+
+    f(results, previous, next, items)
+  }
 }

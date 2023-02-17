@@ -20,11 +20,11 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 
 case class DraftsPaginationViewModel(
-  override val results: MetaData,
-  override val previous: Option[PaginationLink],
-  override val next: Option[PaginationLink],
-  override val items: Seq[PaginationItem],
-  override val pageNumber: Int,
+  results: MetaData,
+  previous: Option[PaginationLink],
+  next: Option[PaginationLink],
+  items: Seq[PaginationItem],
+  pageNumber: Int,
   lrn: Option[String]
 ) extends PaginationViewModel {
 
@@ -36,10 +36,7 @@ case class DraftsPaginationViewModel(
           case x => messages("numberOfMovements.plural.withLRN", s"<b>$x</b>", lrn)
         }
       case None =>
-        results.count match {
-          case 1 => messages("numberOfMovements.singular", "<b>1</b>")
-          case x => messages("numberOfMovements.plural", s"<b>$x</b>")
-        }
+        super.searchResult
     }
 
   override def paginatedSearchResult(implicit messages: Messages): String =
@@ -60,44 +57,13 @@ object DraftsPaginationViewModel {
     href: String,
     additionalParams: Seq[(String, String)] = Seq.empty,
     lrn: Option[String] = None
-  ): DraftsPaginationViewModel = {
-
-    val numberOfPages: Int = Math.ceil(totalNumberOfMovements.toDouble / numberOfMovementsPerPage).toInt
-
-    val results: MetaData = MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
-
-    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"$href?page=$page") {
-      case (href, (key, value)) =>
-        href + s"&$key=$value"
+  ): DraftsPaginationViewModel =
+    PaginationViewModel(
+      totalNumberOfMovements,
+      currentPage,
+      numberOfMovementsPerPage,
+      href
+    ) {
+      new DraftsPaginationViewModel(_, _, _, _, currentPage, lrn)
     }
-
-    val previous: Option[PaginationLink] = if (currentPage > 1) {
-      Some(PaginationLink(hrefWithParams(currentPage - 1)))
-    } else {
-      None
-    }
-
-    val next: Option[PaginationLink] = if (currentPage < numberOfPages) {
-      Some(PaginationLink(hrefWithParams(currentPage + 1)))
-    } else {
-      None
-    }
-
-    val items = (1 to numberOfPages).foldLeft[Seq[PaginationItem]](Nil) {
-      (acc, page) =>
-        if (page == 1 || (page >= currentPage - 1 && page <= currentPage + 1) || page == numberOfPages) {
-          acc :+ PaginationItem(
-            href = hrefWithParams(page),
-            number = Some(page.toString),
-            current = Some(page == currentPage)
-          )
-        } else if (acc.lastOption.flatMap(_.ellipsis).contains(true)) {
-          acc
-        } else {
-          acc :+ PaginationItem(ellipsis = Some(true))
-        }
-    }
-
-    new DraftsPaginationViewModel(results, previous, next, items, currentPage, lrn)
-  }
 }
