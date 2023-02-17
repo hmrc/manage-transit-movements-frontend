@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import viewModels.paginationP5.PaginationViewModelP5
+@import viewModels.paginationP5.DraftsPaginationViewModel
 
 @this(govukPagination: GovukPagination)
 
-@(viewModel: PaginationViewModelP5)(implicit messages: Messages)
+@(viewModel: DraftsPaginationViewModel)(implicit messages: Messages)
 
 @if(viewModel.results.totalPages == 1) {
     <p id="results-count" class="govuk-body">@Html(viewModel.searchResult)</p>

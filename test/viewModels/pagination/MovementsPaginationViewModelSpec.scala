@@ -18,32 +18,30 @@ package viewModels.pagination
 
 import base.SpecBase
 
-class PaginationViewModelSpec extends SpecBase {
+class MovementsPaginationViewModelSpec extends SpecBase {
 
-  "PaginationViewModel" - {
+  "MovementsPaginationViewModel" - {
     "apply" - {
 
       "Next" - {
 
         "must return some when current page is less than the total number of pages" in {
-
-          PaginationViewModel(10, 2, 2, "testHref").next.isDefined mustBe true
+          MovementsPaginationViewModel(10, 2, 2, "testHref").next.isDefined mustBe true
         }
 
         "must return None when current page is not less than the total number of pages" in {
-
-          PaginationViewModel(10, 5, 2, "testHref").next.isDefined mustBe false
+          MovementsPaginationViewModel(10, 5, 2, "testHref").next.isDefined mustBe false
         }
       }
 
       "Previous" - {
 
         "must return some when current page is greater than 1" in {
-          PaginationViewModel(10, 2, 2, "testHref").previous.isDefined mustBe true
+          MovementsPaginationViewModel(10, 2, 2, "testHref").previous.isDefined mustBe true
         }
 
         "must return none when current page is not greater than 1" in {
-          PaginationViewModel(10, 1, 2, "testHref").previous.isDefined mustBe false
+          MovementsPaginationViewModel(10, 1, 2, "testHref").previous.isDefined mustBe false
         }
       }
     }

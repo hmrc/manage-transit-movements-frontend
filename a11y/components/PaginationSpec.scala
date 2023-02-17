@@ -19,7 +19,7 @@ package components
 import a11ySpecBase.A11ySpecBase
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import viewModels.pagination.{MetaData, PaginationViewModel}
+import viewModels.pagination.{MetaData, MovementsPaginationViewModel}
 import views.html.components.Pagination
 import views.html.templates.MainTemplate
 
@@ -35,7 +35,7 @@ class PaginationSpec extends A11ySpecBase {
 
       "0 pages" in {
         val metaData            = arbitrary[MetaData].sample.value.copy(totalPages = 0)
-        val paginationViewModel = arbitrary[PaginationViewModel].sample.value.copy(results = metaData)
+        val paginationViewModel = arbitrary[MovementsPaginationViewModel].sample.value.copy(results = metaData)
         val content = template.apply(title) {
           component.apply(paginationViewModel).withHeading(title)
         }
@@ -44,7 +44,7 @@ class PaginationSpec extends A11ySpecBase {
 
       "1 page" in {
         val metaData            = arbitrary[MetaData].sample.value.copy(totalPages = 1)
-        val paginationViewModel = arbitrary[PaginationViewModel].sample.value.copy(results = metaData)
+        val paginationViewModel = arbitrary[MovementsPaginationViewModel].sample.value.copy(results = metaData)
         val content = template.apply(title) {
           component.apply(paginationViewModel).withHeading(title)
         }
@@ -54,7 +54,7 @@ class PaginationSpec extends A11ySpecBase {
       "multiple pages" in {
         val totalPages          = Gen.choose(2, Int.MaxValue).sample.value
         val metaData            = arbitrary[MetaData].sample.value.copy(totalPages = totalPages)
-        val paginationViewModel = arbitrary[PaginationViewModel].sample.value.copy(results = metaData)
+        val paginationViewModel = arbitrary[MovementsPaginationViewModel].sample.value.copy(results = metaData)
         val content = template.apply(title) {
           component.apply(paginationViewModel).withHeading(title)
         }

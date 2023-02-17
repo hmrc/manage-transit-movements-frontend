@@ -19,14 +19,14 @@ package viewModels.drafts
 import models.DeparturesSummary
 import play.api.i18n.Messages
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.paginationP5.PaginationViewModelP5
+import viewModels.paginationP5.DraftsPaginationViewModel
 
 case class AllDraftDeparturesViewModel(
   items: DeparturesSummary,
   pageSize: Int,
   lrn: Option[String],
   draftDepartureFrontendUrl: String,
-  paginationViewModel: PaginationViewModelP5
+  paginationViewModel: DraftsPaginationViewModel
 ) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"

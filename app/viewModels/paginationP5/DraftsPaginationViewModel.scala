@@ -19,7 +19,7 @@ package viewModels.paginationP5
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 
-case class PaginationViewModelP5(
+case class DraftsPaginationViewModel(
   results: MetaData,
   previous: Option[PaginationLink],
   next: Option[PaginationLink],
@@ -53,7 +53,7 @@ case class PaginationViewModelP5(
   val pagination: Pagination = Pagination(Some(items), previous, next)
 }
 
-object PaginationViewModelP5 {
+object DraftsPaginationViewModel {
 
   def apply(
     totalNumberOfMovements: Int,
@@ -62,7 +62,7 @@ object PaginationViewModelP5 {
     href: String,
     additionalParams: Seq[(String, String)] = Seq.empty,
     lrn: Option[String] = None
-  ): PaginationViewModelP5 = {
+  ): DraftsPaginationViewModel = {
 
     val numberOfPages: Int = Math.ceil(totalNumberOfMovements.toDouble / numberOfMovementsPerPage).toInt
 
@@ -100,6 +100,6 @@ object PaginationViewModelP5 {
         }
     }
 
-    new PaginationViewModelP5(results, previous, next, items, currentPage, lrn)
+    new DraftsPaginationViewModel(results, previous, next, items, currentPage, lrn)
   }
 }

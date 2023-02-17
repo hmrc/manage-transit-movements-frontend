@@ -21,7 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import viewModels.pagination.PaginationViewModel
+import viewModels.pagination.MovementsPaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.departure.ViewAllDeparturesView
@@ -45,7 +45,7 @@ class ViewAllDeparturesViewSpec
 
   override val viewMovements: Seq[ViewDeparture] = dataRows.flatMap(_._2)
 
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: MovementsPaginationViewModel): HtmlFormat.Appendable =
     applyView(form, ViewAllDepartureMovementsViewModel(Seq.empty[ViewDeparture], paginationViewModel))
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsViewModel)

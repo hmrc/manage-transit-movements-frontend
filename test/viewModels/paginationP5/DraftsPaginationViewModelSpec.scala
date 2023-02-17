@@ -19,39 +19,37 @@ package viewModels.paginationP5
 import base.SpecBase
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.PaginationItem
 
-class PaginationViewModelP5Spec extends SpecBase {
+class DraftsPaginationViewModelSpec extends SpecBase {
 
-  "PaginationViewModelP5" - {
+  "DraftsPaginationViewModel" - {
     "apply" - {
 
       "Next" - {
 
         "must return some when current page is less than the total number of pages" in {
-
-          PaginationViewModelP5(10, 2, 2, "testHref").next.isDefined mustBe true
+          DraftsPaginationViewModel(10, 2, 2, "testHref").next.isDefined mustBe true
         }
 
         "must return None when current page is not less than the total number of pages" in {
-
-          PaginationViewModelP5(10, 5, 2, "testHref").next.isDefined mustBe false
+          DraftsPaginationViewModel(10, 5, 2, "testHref").next.isDefined mustBe false
         }
       }
 
       "Previous" - {
 
         "must return some when current page is greater than 1" in {
-          PaginationViewModelP5(10, 2, 2, "testHref").previous.isDefined mustBe true
+          DraftsPaginationViewModel(10, 2, 2, "testHref").previous.isDefined mustBe true
         }
 
         "must return none when current page is not greater than 1" in {
-          PaginationViewModelP5(10, 1, 2, "testHref").previous.isDefined mustBe false
+          DraftsPaginationViewModel(10, 1, 2, "testHref").previous.isDefined mustBe false
         }
       }
 
       "Items" - {
 
         "must return [1] 2 … 100 when on page 1 of 100" in {
-          val result = PaginationViewModelP5(1000, 1, 10, "href").items
+          val result = DraftsPaginationViewModel(1000, 1, 10, "href").items
 
           result mustBe Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(true)),
@@ -62,7 +60,7 @@ class PaginationViewModelP5Spec extends SpecBase {
         }
 
         "must return 1 [2] 3 … 100 when on page 2 of 100" in {
-          val result = PaginationViewModelP5(1000, 2, 10, "href").items
+          val result = DraftsPaginationViewModel(1000, 2, 10, "href").items
 
           result mustBe Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -74,7 +72,7 @@ class PaginationViewModelP5Spec extends SpecBase {
         }
 
         "must return 1 2 [3] 4 … 100 when on page 3 of 100" in {
-          val result = PaginationViewModelP5(1000, 3, 10, "href").items
+          val result = DraftsPaginationViewModel(1000, 3, 10, "href").items
 
           result mustBe Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -87,7 +85,7 @@ class PaginationViewModelP5Spec extends SpecBase {
         }
 
         "must return 1 … 3 [4] 5 … 100 when on page 4 of 100" in {
-          val result = PaginationViewModelP5(1000, 4, 10, "href").items
+          val result = DraftsPaginationViewModel(1000, 4, 10, "href").items
 
           result mustBe Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -101,7 +99,7 @@ class PaginationViewModelP5Spec extends SpecBase {
         }
 
         "must return 1 … 97 [98] 99 100 when on page 98 of 100" in {
-          val result = PaginationViewModelP5(1000, 98, 10, "href").items
+          val result = DraftsPaginationViewModel(1000, 98, 10, "href").items
 
           result mustBe Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -114,7 +112,7 @@ class PaginationViewModelP5Spec extends SpecBase {
         }
 
         "must return 1 … 98 [99] 100 when on page 99 of 100" in {
-          val result = PaginationViewModelP5(1000, 99, 10, "href").items
+          val result = DraftsPaginationViewModel(1000, 99, 10, "href").items
 
           result mustBe Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -126,7 +124,7 @@ class PaginationViewModelP5Spec extends SpecBase {
         }
 
         "must return 1 … 99 [100] when on page 100 of 100" in {
-          val result = PaginationViewModelP5(1000, 100, 10, "href").items
+          val result = DraftsPaginationViewModel(1000, 100, 10, "href").items
 
           result mustBe Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -137,7 +135,7 @@ class PaginationViewModelP5Spec extends SpecBase {
         }
 
         "must return 1 [2] 3 when on page 2 of 3" in {
-          val result = PaginationViewModelP5(30, 2, 10, "href").items
+          val result = DraftsPaginationViewModel(30, 2, 10, "href").items
 
           result mustBe Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),

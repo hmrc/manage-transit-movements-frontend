@@ -29,7 +29,7 @@ import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.paginationP5.PaginationViewModelP5
+import viewModels.paginationP5.DraftsPaginationViewModel
 import views.html.departure.drafts.DashboardView
 
 import javax.inject.Inject
@@ -99,7 +99,7 @@ class DashboardController @Inject() (
         x => Seq(("lrn", x))
       )
 
-    val pvm = PaginationViewModelP5(
+    val pvm = DraftsPaginationViewModel(
       totalNumberOfMovements = drafts.totalMatchingMovements,
       currentPage = page,
       numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
