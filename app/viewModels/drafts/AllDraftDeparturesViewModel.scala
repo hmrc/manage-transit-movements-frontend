@@ -16,7 +16,6 @@
 
 package viewModels.drafts
 
-import controllers.departure.drafts.routes
 import models.Sort.Field.{CreatedAt, LRN}
 import models.Sort._
 import models.{DeparturesSummary, Sort}
@@ -81,8 +80,8 @@ case class AllDraftDeparturesViewModel(
   def sortLrn: String       = sortParams.ariaSort(LRN)
   def sortCreatedAt: String = sortParams.ariaSort(CreatedAt)
 
-  def sortLRNHref(): Call       = LRN.sortHyperlink(sortLrn, lrn)
-  def sortCreatedAtHref(): Call = CreatedAt.sortHyperlink(sortCreatedAt, lrn)
+  def sortLRNHref(): Call       = sortParams.href(LRN, lrn)
+  def sortCreatedAtHref(): Call = sortParams.href(CreatedAt, lrn)
 
 }
 

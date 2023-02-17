@@ -18,59 +18,66 @@ package models
 
 import controllers.departure.drafts.routes
 import models.Sort.Field.{CreatedAt, LRN}
-import models.Sort.{Field, Order}
 import models.Sort.Order.{Ascending, Descending}
+import models.Sort.{buildParam, Field, Order}
 import play.api.mvc.Call
 
 sealed trait Sort {
   val field: Field
   val order: Order
-  def ariaSort(that: Field): String = if (this.field == that) this.order.ariaSort else "none"
 
   lazy val convertParams: String = this.toString
-  override def toString: String  = s"$field.$order"
+
+  def ariaSort(field: Field): String = if (this.field == field) this.order.ariaSort else "none"
+
+  def href(field: Field, lrn: Option[String]): Call = {
+    val order = if (this.field == field) this.order.toggle else field.defaultOrder
+    routes.DashboardController.onPageLoad(None, lrn, Some(buildParam(field, order)))
+  }
+
+  override def toString: String = buildParam(field, order)
 }
 
 object Sort {
 
+  def buildParam(field: Field, order: Order): String = s"$field.$order"
+
   sealed trait Order {
-    def ariaSort: String
+    val ariaSort: String
+
+    def toggle: Order = this match {
+      case Ascending  => Descending
+      case Descending => Ascending
+    }
   }
 
   object Order {
 
     case object Ascending extends Order {
+      override val ariaSort: String = "ascending"
       override def toString: String = "asc"
-      override def ariaSort: String = "ascending"
     }
 
     case object Descending extends Order {
+      override val ariaSort: String = "descending"
       override def toString: String = "dsc"
-      override def ariaSort: String = "descending"
     }
   }
 
   sealed trait Field {
-
-    def sortHyperlink(currentSort: String, lrn: Option[String]): Call =
-      routes.DashboardController.onPageLoad(
-        None,
-        lrn = lrn,
-        currentSort match {
-          case "descending" => Some(s"$this.$Ascending")
-          case _            => Some(s"$this.$Descending")
-        }
-      )
+    val defaultOrder: Order
   }
 
   object Field {
 
     case object LRN extends Field {
-      override def toString: String = "lrn"
+      override val defaultOrder: Order = Ascending
+      override def toString: String    = "lrn"
     }
 
     case object CreatedAt extends Field {
-      override def toString: String = "createdAt"
+      override val defaultOrder: Order = Descending
+      override def toString: String    = "createdAt"
     }
   }
 
