@@ -81,28 +81,9 @@ case class AllDraftDeparturesViewModel(
   def sortLrn: String       = sortParams.ariaSort(LRN)
   def sortCreatedAt: String = sortParams.ariaSort(CreatedAt)
 
-  def sortLRNHref(): Call = {
-    val currentLRNState = sortLrn
-    val callParams = currentLRNState match {
-      case "descending" => Some("lrn.asc")
-      case "ascending"  => Some("lrn.dsc")
-      case _            => Some("lrn.asc")
-    }
+  def sortLRNHref(): Call       = LRN.sortHyperlink(sortLrn, lrn)
+  def sortCreatedAtHref(): Call = CreatedAt.sortHyperlink(sortCreatedAt, lrn)
 
-    routes.DashboardController.onPageLoad(None, lrn = lrn, callParams)
-
-  }
-
-  def sortCreatedAtHref(): Call = {
-    val currentCreatedAtState = sortCreatedAt
-    val callParams = currentCreatedAtState match {
-      case "descending" => Some("createdAt.asc")
-      case "ascending"  => Some("createdAt.dsc")
-      case _            => Some("createdAt.dsc")
-    }
-
-    routes.DashboardController.onPageLoad(None, lrn, callParams)
-  }
 }
 
 object AllDraftDeparturesViewModel {

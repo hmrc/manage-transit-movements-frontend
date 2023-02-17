@@ -16,16 +16,19 @@
 
 package models
 
+import controllers.departure.drafts.routes
 import models.Sort.Field.{CreatedAt, LRN}
 import models.Sort.{Field, Order}
 import models.Sort.Order.{Ascending, Descending}
+import play.api.mvc.Call
 
 sealed trait Sort {
   val field: Field
   val order: Order
   def ariaSort(that: Field): String = if (this.field == that) this.order.ariaSort else "none"
-  lazy val convertParams: String    = this.toString
-  override def toString: String     = s"$field.$order"
+
+  lazy val convertParams: String = this.toString
+  override def toString: String  = s"$field.$order"
 }
 
 object Sort {
@@ -47,7 +50,18 @@ object Sort {
     }
   }
 
-  sealed trait Field
+  sealed trait Field {
+
+    def sortHyperlink(currentSort: String, lrn: Option[String]): Call =
+      routes.DashboardController.onPageLoad(
+        None,
+        lrn = lrn,
+        currentSort match {
+          case "descending" => Some(s"$this.$Ascending")
+          case _            => Some(s"$this.$Descending")
+        }
+      )
+  }
 
   object Field {
 
