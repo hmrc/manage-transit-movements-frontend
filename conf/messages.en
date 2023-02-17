@@ -97,13 +97,13 @@ viewArrivalNotificationsP5.table.action.viewPDF             = Unloading Permissi
 viewArrivalNotificationsP5.table.action.hidden              = for {0}
 viewArrivalNotificationsP5.search.title                     = Search by Movement Reference Number (MRN)
 
-movement.status.P5.arrivalNotificationSubmitted                = IE007 (Notification submitted)
-movement.status.P5.unloadingRemarksSubmitted                   = IE044 (Unloading remarks submitted)
-movement.status.P5.goodsReleasedReceived                       = IE025 (Goods released received)
-movement.status.P5.unloadingPermissionReceived                 = IE043 (Unloading permission received)
-movement.status.P5.rejectionFromOfficeOfDestinationReceived    = IE057 (Office of destination rejection received)
-movement.status.P5.functionalNackReceived                      = IE906 (Functional nack received)
-movement.status.P5.xmlNackReceived                             = IE917 (Xml nack received)
+movement.status.P5.arrivalNotificationSubmitted                = Notification sent
+movement.status.P5.unloadingRemarksSubmitted                   = Unloading remarks sent
+movement.status.P5.goodsReleasedReceived                       = Goods released
+movement.status.P5.unloadingPermissionReceived                 = Unloading permission granted
+movement.status.P5.rejectionFromOfficeOfDestinationReceived    = Rejected by office of destination
+movement.status.P5.functionalNackReceived                      = Notification rejected
+movement.status.P5.xmlNackReceived                             = Notification rejected
 
 movement.search.title = Search by movement reference number
 movement.search.departure.title = Search by local reference number
