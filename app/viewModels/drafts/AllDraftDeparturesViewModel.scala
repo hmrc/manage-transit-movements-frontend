@@ -17,6 +17,7 @@
 package viewModels.drafts
 
 import controllers.departure.drafts.routes
+import models.Sort.Field.{CreatedAt, LRN}
 import models.Sort._
 import models.{DeparturesSummary, Sort}
 import play.api.i18n.Messages
@@ -77,17 +78,8 @@ case class AllDraftDeparturesViewModel(
 
   def pageNumber: Int = paginationViewModel.pageNumber
 
-  def sortLrn: String = sortParams match {
-    case SortByLRNAsc  => "ascending"
-    case SortByLRNDesc => "descending"
-    case _             => "none"
-  }
-
-  def sortCreatedAt: String = sortParams match {
-    case SortByCreatedAtAsc  => "ascending"
-    case SortByCreatedAtDesc => "descending"
-    case _                   => "none"
-  }
+  def sortLrn: String       = sortParams.ariaSort(LRN)
+  def sortCreatedAt: String = sortParams.ariaSort(CreatedAt)
 
   def sortLRNHref(): Call = {
     val currentLRNState = sortLrn

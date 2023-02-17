@@ -16,38 +16,68 @@
 
 package models
 
-sealed trait Sort {
-  val field: String
-  val orderBy: String
-  val convertParams: String
+import models.Sort.Field.{CreatedAt, LRN}
+import models.Sort.{Field, Order}
+import models.Sort.Order.{Ascending, Descending}
 
-  override def toString: String = s"$field.$orderBy"
+sealed trait Sort {
+  val field: Field
+  val order: Order
+  def ariaSort(that: Field): String = if (this.field == that) this.order.ariaSort else "none"
+  lazy val convertParams: String    = this.toString
+  override def toString: String     = s"$field.$order"
 }
 
 object Sort {
 
+  sealed trait Order {
+    def ariaSort: String
+  }
+
+  object Order {
+
+    case object Ascending extends Order {
+      override def toString: String = "asc"
+      override def ariaSort: String = "ascending"
+    }
+
+    case object Descending extends Order {
+      override def toString: String = "dsc"
+      override def ariaSort: String = "descending"
+    }
+  }
+
+  sealed trait Field
+
+  object Field {
+
+    case object LRN extends Field {
+      override def toString: String = "lrn"
+    }
+
+    case object CreatedAt extends Field {
+      override def toString: String = "createdAt"
+    }
+  }
+
   case object SortByLRNAsc extends Sort {
-    val field: String   = "lrn"
-    val orderBy: String = "asc"
-    val convertParams   = s"$field.$orderBy"
+    override val field: Field = LRN
+    override val order: Order = Ascending
   }
 
   case object SortByLRNDesc extends Sort {
-    val field: String   = "lrn"
-    val orderBy: String = "dsc"
-    val convertParams   = s"$field.$orderBy"
+    override val field: Field = LRN
+    override val order: Order = Descending
   }
 
   case object SortByCreatedAtAsc extends Sort {
-    val field: String   = "createdAt"
-    val orderBy: String = "asc"
-    val convertParams   = s"$field.$orderBy"
+    override val field: Field = CreatedAt
+    override val order: Order = Ascending
   }
 
   case object SortByCreatedAtDesc extends Sort {
-    val field: String   = "createdAt"
-    val orderBy: String = "dsc"
-    val convertParams   = s"$field.$orderBy"
+    override val field: Field = CreatedAt
+    override val order: Order = Descending
   }
 
   def apply(sortParams: Option[String]): Option[Sort] = sortParams map {

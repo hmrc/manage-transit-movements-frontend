@@ -104,7 +104,7 @@ class DashboardController @Inject() (
 
     val param =
       lrn.map(
-        x => Seq(("lrn", x), ("sortParams", sortParams.convertParams))
+        x => Seq(("lrn", x), ("sortParams", sortParams.toString))
       )
 
     val pvm = PaginationViewModelP5(
@@ -112,7 +112,7 @@ class DashboardController @Inject() (
       currentPage = page,
       numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
       href = routes.DashboardController.onSubmit(None).url,
-      additionalParams = param.getOrElse(Seq(("sortParams", sortParams.convertParams))),
+      additionalParams = param.getOrElse(Seq(("sortParams", sortParams.toString))),
       lrn = lrn
     )
 
