@@ -34,7 +34,7 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
 
     http
       .GET[ArrivalMovements](url)(HttpReads[ArrivalMovements], headers, ec)
-      .map(Some(_)) // TODO this could be better
+      .map(Some(_))
       .recover {
         case e =>
           logger.error(s"Failed to get arrival movements with error: $e")

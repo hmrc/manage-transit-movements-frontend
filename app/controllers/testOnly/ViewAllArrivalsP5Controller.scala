@@ -55,11 +55,6 @@ class ViewAllArrivalsP5Controller @Inject() (
       buildView(page, form)(Ok(_))
   }
 
-  def onSubmit(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
-    implicit request =>
-      ???
-  }
-
   private def buildView(page: Option[Int], form: Form[String])(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] =
@@ -71,7 +66,7 @@ class ViewAllArrivalsP5Controller @Inject() (
 
             val paginationViewModel = PaginationViewModel(
               totalNumberOfMovements = movementsAndMessages.length,
-              currentPage = 1, // TODO for pagination
+              currentPage = 1,
               numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
               href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
             )

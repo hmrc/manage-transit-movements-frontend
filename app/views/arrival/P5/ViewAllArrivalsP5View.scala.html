@@ -35,39 +35,39 @@
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("viewArrivalNotifications.title"),
+    title = messages("viewArrivalNotificationsP5.title"),
     showBackLink = false,
     fullWidth = true
 ) {
 
-    @heading(messages("viewArrivalNotifications.heading") + " P5 (test only)")
+    @heading(messages("viewArrivalNotificationsP5.heading"))
 
     <p class="govuk-body">
         <a id="make-arrival-notification" class="govuk-link" href=@config.declareArrivalNotificationStartUrl>
-            @messages("viewArrivalNotifications.makeArrivalNotification")
+            @messages("viewArrivalNotificationsP5.makeArrivalNotification")
         </a>
     </p>
 
     @search(
         form = form,
-        action = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onSubmit(Some(viewModel.paginationViewModel.results.currentPage)),
-        label = "movement.search.title"
+        action = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None),
+        label = "viewArrivalNotificationsP5.search.title"
     )
 
     @pagination(viewModel.paginationViewModel)
 
     @movementsTable(
         dataRows = viewModel.dataRows,
-        visuallyHiddenHeader = messages("viewArrivalNotifications.heading.hidden"),
-        rowHeadingUpdated = messages("viewArrivalNotifications.table.updated"),
-        rowHeadingReferenceNumber = messages("viewArrivalNotifications.table.mrn"),
-        rowHeadingStatus = messages("viewArrivalNotifications.table.status"),
-        rowHeadingAction = messages("viewArrivalNotifications.table.action")
+        visuallyHiddenHeader = messages("viewArrivalNotificationsP5.heading.hidden"),
+        rowHeadingUpdated = messages("viewArrivalNotificationsP5.table.updated"),
+        rowHeadingReferenceNumber = messages("viewArrivalNotificationsP5.table.mrn"),
+        rowHeadingStatus = messages("viewArrivalNotificationsP5.table.status"),
+        rowHeadingAction = messages("viewArrivalNotificationsP5.table.action")
     )
 
     <p class="govuk-body govuk-!-margin-top-3">
         <a id="go-to-manage-transit-movements" class="govuk-link" href=@WhatDoYouWantToDoController.onPageLoad()>
-            @messages("viewArrivalNotifications.goToManageTransitMovements")
+            @messages("viewArrivalNotificationsP5.goToManageTransitMovements")
         </a>
     </p>
 }

@@ -35,4 +35,5 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
             messagesForMovement => ArrivalMovementAndMessage(movement, messagesForMovement)
           )
     }
+
 }

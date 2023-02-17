@@ -16,7 +16,6 @@
 
 package viewModels.P5
 
-import config.FrontendAppConfig
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5.Message
 import viewModels.ViewMovementAction
@@ -25,7 +24,7 @@ case class ArrivalStatusP5ViewModel(status: String, actions: Seq[ViewMovementAct
 
 object ArrivalStatusP5ViewModel {
 
-  def apply(message: Message)(implicit config: FrontendAppConfig): ArrivalStatusP5ViewModel = {
+  def apply(message: Message): ArrivalStatusP5ViewModel = {
     val allPfs: PartialFunction[Message, ArrivalStatusP5ViewModel] =
       Seq(
         arrivalNotification,
@@ -40,37 +39,37 @@ object ArrivalStatusP5ViewModel {
     allPfs.apply(message)
   }
 
-  private def arrivalNotification(implicit config: FrontendAppConfig): PartialFunction[Message, ArrivalStatusP5ViewModel] = {
+  private def arrivalNotification: PartialFunction[Message, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == ArrivalNotification =>
       ArrivalStatusP5ViewModel("movement.status.P5.arrivalNotificationSubmitted", actions = Nil)
   }
 
-  private def unloadingRemarks(implicit config: FrontendAppConfig): PartialFunction[Message, ArrivalStatusP5ViewModel] = {
+  private def unloadingRemarks: PartialFunction[Message, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == UnloadingRemarks =>
       ArrivalStatusP5ViewModel("movement.status.P5.unloadingRemarksSubmitted", actions = Nil)
   }
 
-  private def unloadingPermission(implicit config: FrontendAppConfig): PartialFunction[Message, ArrivalStatusP5ViewModel] = {
+  private def unloadingPermission: PartialFunction[Message, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == UnloadingPermission =>
       ArrivalStatusP5ViewModel("movement.status.P5.unloadingPermissionReceived", actions = Nil)
   }
 
-  private def goodsReleased(implicit config: FrontendAppConfig): PartialFunction[Message, ArrivalStatusP5ViewModel] = {
+  private def goodsReleased: PartialFunction[Message, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == GoodsReleasedNotification =>
       ArrivalStatusP5ViewModel("movement.status.P5.goodsReleasedReceived", actions = Nil)
   }
 
-  private def rejectionFromOfficeOfDestination(implicit config: FrontendAppConfig): PartialFunction[Message, ArrivalStatusP5ViewModel] = {
+  private def rejectionFromOfficeOfDestination: PartialFunction[Message, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == RejectionFromOfficeOfDestination =>
       ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived", actions = Nil)
   }
 
-  private def functionalNack(implicit config: FrontendAppConfig): PartialFunction[Message, ArrivalStatusP5ViewModel] = {
+  private def functionalNack: PartialFunction[Message, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == FunctionalNack =>
       ArrivalStatusP5ViewModel("movement.status.P5.functionalNackReceived", actions = Nil)
   }
 
-  private def xmlNack(implicit config: FrontendAppConfig): PartialFunction[Message, ArrivalStatusP5ViewModel] = {
+  private def xmlNack: PartialFunction[Message, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == XmlNack =>
       ArrivalStatusP5ViewModel("movement.status.P5.xmlNackReceived", actions = Nil)
   }
