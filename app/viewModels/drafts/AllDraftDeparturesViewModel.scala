@@ -30,8 +30,7 @@ case class AllDraftDeparturesViewModel(
   lrn: Option[String],
   draftDepartureFrontendUrl: String,
   paginationViewModel: PaginationViewModelP5,
-  sortParams: Sort = SortByCreatedAtDesc,
-  searchSubmitted: Boolean = false
+  sortParams: Sort = SortByCreatedAtDesc
 ) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
