@@ -28,7 +28,7 @@ case class PaginationViewModelP5(
   lrn: Option[String]
 ) {
 
-  def searchResult()(implicit messages: Messages): String =
+  def searchResult(implicit messages: Messages): String =
     lrn match {
       case Some(lrn) =>
         results.count match {
@@ -42,7 +42,7 @@ case class PaginationViewModelP5(
         }
     }
 
-  def paginatedSearchResult()(implicit messages: Messages): String =
+  def paginatedSearchResult(implicit messages: Messages): String =
     lrn match {
       case Some(lrn) =>
         messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", lrn)

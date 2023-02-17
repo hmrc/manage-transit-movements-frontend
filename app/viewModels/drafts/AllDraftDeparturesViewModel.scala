@@ -21,11 +21,12 @@ import play.api.i18n.Messages
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 import viewModels.paginationP5.PaginationViewModelP5
 
-case class AllDraftDeparturesViewModel(items: DeparturesSummary,
-                                       pageSize: Int,
-                                       lrn: Option[String],
-                                       draftDepartureFrontendUrl: String,
-                                       paginationViewModel: PaginationViewModelP5
+case class AllDraftDeparturesViewModel(
+  items: DeparturesSummary,
+  pageSize: Int,
+  lrn: Option[String],
+  draftDepartureFrontendUrl: String,
+  paginationViewModel: PaginationViewModelP5
 ) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
@@ -42,7 +43,7 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary,
   def lrnRedirectLocation(lrn: String): String            = s"$draftDepartureFrontendUrl/drafts/$lrn"
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
-  def searchResult()(implicit messages: Messages): Option[String] =
+  def searchResult(implicit messages: Messages): Option[String] =
     lrn.map {
       lrn =>
         draftDepartures match {

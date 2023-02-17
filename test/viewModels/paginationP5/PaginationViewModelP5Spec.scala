@@ -135,6 +135,16 @@ class PaginationViewModelP5Spec extends SpecBase {
             PaginationItem(s"href?page=100", Some("100"), current = Some(true))
           )
         }
+
+        "must return 1 [2] 3 when on page 2 of 3" in {
+          val result = PaginationViewModelP5(30, 2, 10, "href").items
+
+          result mustBe Seq(
+            PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
+            PaginationItem(s"href?page=2", Some("2"), current = Some(true)),
+            PaginationItem(s"href?page=3", Some("3"), current = Some(false))
+          )
+        }
       }
     }
   }

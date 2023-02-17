@@ -21,10 +21,10 @@
 @(viewModel: PaginationViewModelP5)(implicit messages: Messages)
 
 @if(viewModel.results.totalPages == 1) {
-    <p id="results-count" class="govuk-body">@Html(viewModel.searchResult())</p>
+    <p id="results-count" class="govuk-body">@Html(viewModel.searchResult)</p>
 } else if(viewModel.results.totalPages > 1) {
 
-    <p id="paginated-results-count" class="pagination__results">@Html(viewModel.paginatedSearchResult())</p>
+    <p id="paginated-results-count" class="pagination__results">@Html(viewModel.paginatedSearchResult)</p>
 
     @govukPagination(viewModel.pagination)
 }
