@@ -37,12 +37,12 @@ import scala.concurrent.Future
 class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefaultMockFixtures with MockitoSugar with ScalaCheckPropertyChecks {
 
   private val formProvider = new YesNoFormProvider()
-  private val form         = formProvider("departure.drafts.deleteDraftDepartureYesNo")
+  private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
   val lrnString: String = lrn.toString()
 
   private val draftDepartureService = mock[DraftDepartureService]
-  private val mockConnector         = mock[DeparturesMovementsP5Connector]
+  private val mockConnector = mock[DeparturesMovementsP5Connector]
 
   final val mockLockActionProvider: LockActionProvider = mock[LockActionProvider]
 
@@ -60,11 +60,11 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
   "DeleteDraftDepartureYesNo Controller" - {
 
     when(mockLockActionProvider.apply(any())).thenReturn(new FakeLockAction("AB123", mockConnector))
-    
+
     "must return OK and the correct view for a GET" in {
 
       val request = FakeRequest(GET, deleteDraftDepartureYesNoRoute)
-      val result  = route(app, request).value
+      val result = route(app, request).value
 
       val view = injector.instanceOf[DeleteDraftDepartureYesNoView]
 
@@ -165,8 +165,8 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       val lrnString = lrn.toString
 
       val invalidValue = ""
-      val request      = FakeRequest(POST, deleteDraftDepartureYesNoRoute).withFormUrlEncodedBody(("value", invalidValue))
-      val boundForm    = form.bind(Map("value" -> invalidValue))
+      val request = FakeRequest(POST, deleteDraftDepartureYesNoRoute).withFormUrlEncodedBody(("value", invalidValue))
+      val boundForm = form.bind(Map("value" -> invalidValue))
 
       val result = route(app, request).value
 
