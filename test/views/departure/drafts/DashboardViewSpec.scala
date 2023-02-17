@@ -51,21 +51,23 @@ class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] {
 
   override def viewWithSpecificPagination(paginationViewModelP5: PaginationViewModelP5): HtmlFormat.Appendable =
     applyView(
-      AllDraftDeparturesViewModel(arbitrary[DeparturesSummary].sample.value,
-                                  movementsPerPage,
-                                  None,
-                                  frontendAppConfig.draftDepartureFrontendUrl,
-                                  paginationViewModelP5
+      AllDraftDeparturesViewModel(
+        arbitrary[DeparturesSummary].sample.value,
+        movementsPerPage,
+        None,
+        frontendAppConfig.draftDepartureFrontendUrl,
+        paginationViewModelP5
       )
     )
 
   override def viewWithSpecificPaginationAndSearch(paginationViewModelP5: PaginationViewModelP5): HtmlFormat.Appendable =
     applyView(
-      AllDraftDeparturesViewModel(arbitrary[DeparturesSummary].sample.value,
-                                  movementsPerPage,
-                                  Some(lrn.toString),
-                                  frontendAppConfig.draftDepartureFrontendUrl,
-                                  paginationViewModelP5
+      AllDraftDeparturesViewModel(
+        arbitrary[DeparturesSummary].sample.value,
+        movementsPerPage,
+        Some(lrn.toString),
+        frontendAppConfig.draftDepartureFrontendUrl,
+        paginationViewModelP5
       )
     )
 
@@ -103,11 +105,12 @@ class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] {
 
     "must render when 'isSearch' is true and is singular" in {
 
-      val draftDeparture = DeparturesSummary(0,
-                                             0,
-                                             List(
-                                               DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30)
-                                             )
+      val draftDeparture = DeparturesSummary(
+        0,
+        0,
+        List(
+          DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30)
+        )
       )
       val view = applyView(viewAllDepartureMovementsViewModel =
         AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)

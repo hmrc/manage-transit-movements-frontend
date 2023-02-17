@@ -17,12 +17,13 @@
 package viewModels.paginationP5
 
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 
 case class PaginationViewModelP5(
   results: MetaData,
-  previous: Option[Previous],
-  next: Option[Next],
-  items: Items,
+  previous: Option[PaginationLink],
+  next: Option[PaginationLink],
+  items: Seq[PaginationItem],
   pageNumber: Int,
   lrn: Option[String]
 ) {
@@ -48,6 +49,8 @@ case class PaginationViewModelP5(
       case None =>
         messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
     }
+
+  val pagination: Pagination = Pagination(Some(items), previous, next)
 }
 
 object PaginationViewModelP5 {
@@ -61,22 +64,42 @@ object PaginationViewModelP5 {
     lrn: Option[String] = None
   ): PaginationViewModelP5 = {
 
+    val numberOfPages: Int = Math.ceil(totalNumberOfMovements.toDouble / numberOfMovementsPerPage).toInt
+
     val results: MetaData = MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
 
-    val previous: Option[Previous] = if (results.currentPage > 1) {
-      Some(Previous(href, results.currentPage, additionalParams))
+    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"$href?page=$page") {
+      case (href, (key, value)) =>
+        href + s"&$key=$value"
+    }
+
+    val previous: Option[PaginationLink] = if (currentPage > 1) {
+      Some(PaginationLink(hrefWithParams(currentPage - 1)))
     } else {
       None
     }
 
-    val next: Option[Next] = if (results.currentPage < results.totalPages) {
-      Some(Next(href, results.currentPage, additionalParams))
+    val next: Option[PaginationLink] = if (currentPage < numberOfPages) {
+      Some(PaginationLink(hrefWithParams(currentPage + 1)))
     } else {
       None
     }
 
-    val items = Items(results, href, additionalParams)
+    val items = (1 to numberOfPages).foldLeft[Seq[PaginationItem]](Nil) {
+      (acc, page) =>
+        if (page == 1 || (page >= currentPage - 1 && page <= currentPage + 1) || page == numberOfPages) {
+          acc :+ PaginationItem(
+            href = hrefWithParams(page),
+            number = Some(page.toString),
+            current = Some(page == currentPage)
+          )
+        } else if (acc.lastOption.flatMap(_.ellipsis).contains(true)) {
+          acc
+        } else {
+          acc :+ PaginationItem(ellipsis = Some(true))
+        }
+    }
 
-    PaginationViewModelP5(results, previous, next, items, currentPage, lrn)
+    new PaginationViewModelP5(results, previous, next, items, currentPage, lrn)
   }
 }

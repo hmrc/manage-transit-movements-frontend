@@ -41,106 +41,52 @@ trait PaginationP5ViewBehaviours[T <: DeparturesSummary] extends ViewBehaviours 
         val paginationP5ViewModel = PaginationViewModelP5(4, 2, 2, href)
         val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
 
-        assertRenderedById(doc, "previous")
-        doc.getElementById("previous").attr("href") mustBe s"$href?page=1"
+        val element = doc.select("""[rel="prev"]""").headOption
+        element.value.attr("href") mustBe s"$href?page=1"
       }
 
       "must not display previous button when on the first page" in {
         val paginationP5ViewModel = PaginationViewModelP5(1, 1, 1, href)
         val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
 
-        assertNotRenderedById(doc, "previous")
+        val element = doc.select("""[rel="prev"]""").headOption
+        element must not be defined
       }
 
       "must display next button when not on the last page" in {
         val paginationP5ViewModel = PaginationViewModelP5(2, 1, 1, href)
         val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
 
-        assertRenderedById(doc, "next")
-        doc.getElementById("next").attr("href") mustBe s"$href?page=2"
+        val element = doc.select("""[rel="next"]""").headOption
+        element.value.attr("href") mustBe s"$href?page=2"
       }
 
       "must not display next button when on the last page" in {
         val paginationP5ViewModel = PaginationViewModelP5(2, 2, 1, href)
         val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
 
-        assertNotRenderedById(doc, "next")
+        val element = doc.select("""[rel="next"]""").headOption
+        element must not be defined
       }
 
       "must display correct amount of items" in {
         val paginationP5ViewModel = PaginationViewModelP5(60, 4, 5, href)
         val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
 
-        assertRenderedById(doc, "pagination-item-1")
-        assertNotRenderedById(doc, "pagination-item-2")
-        assertRenderedById(doc, "pagination-item-3")
-        assertRenderedById(doc, "pagination-item-4")
-        assertRenderedById(doc, "pagination-item-5")
-        assertNotRenderedById(doc, "pagination-item-6")
-        assertRenderedById(doc, "pagination-item-12")
-      }
+        // should look like 1 … 3 [4] 5 … 12
 
-      "must display correct page as active" in {
-        val activePage            = 4
-        val paginationP5ViewModel = PaginationViewModelP5(60, activePage, 5, href)
-        val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
-        val element               = doc.getElementsByClass("govuk-pagination__item govuk-pagination__item--current").first()
-        element.text() mustBe s"$activePage"
-      }
+        val current = doc.getElementsByClass("govuk-pagination__item--current").head
+        current.getElementsByClass("govuk-pagination__link").text() mustBe "4"
 
-      "when there's a sufficient number of pages" - {
-        "must display ellipses" - {
-          "after the first page number" in {
-            val paginationP5ViewModel = PaginationViewModelP5(101, 4, 20, href)
-            val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
-            // drop the Previous and Next pagination items so we're just left with the 1, 2, 3 etc.
-            val paginationItems = doc.getElementsByClass("pagination__item").toList.drop(1).dropRight(1)
-            paginationItems.zip(LazyList from 1).foreach {
-              case (paginationItem, index) =>
-                if (index == 2) {
-                  assert(paginationItem.hasClass("pagination__item--dots"))
-                  paginationItem.text() must include("...")
-                } else {
-                  assert(!paginationItem.hasClass("pagination__item--dots"))
-                  paginationItem.text() must include(s"$index")
-                }
-            }
-          }
-
-          "before the final page number" in {
-            val paginationP5ViewModel = PaginationViewModelP5(101, 3, 20, href)
-            val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
-            // drop the Previous and Next pagination items so we're just left with the 1, 2, 3 etc.
-            val paginationItems = doc.getElementsByClass("pagination__item").toList.drop(1).dropRight(1)
-            paginationItems.zip(LazyList from 1).foreach {
-              case (paginationItem, index) =>
-                if (index == 5) {
-                  assert(paginationItem.hasClass("pagination__item--dots"))
-                  paginationItem.text() must include("...")
-                } else {
-                  assert(!paginationItem.hasClass("pagination__item--dots"))
-                  paginationItem.text() must include(s"$index")
-                }
-            }
-          }
-
-          "after the first page number and before the final page number" in {
-            val paginationP5ViewModel = PaginationViewModelP5(121, 4, 20, href)
-            val doc: Document         = parseView(viewWithSpecificPagination(paginationP5ViewModel))
-            // drop the Previous and Next pagination items so we're just left with the 1, 2, 3 etc.
-            val paginationItems = doc.getElementsByClass("pagination__item").toList.drop(1).dropRight(1)
-            paginationItems.zip(LazyList from 1).foreach {
-              case (paginationItem, index) =>
-                if (index == 2 || index == 6) {
-                  assert(paginationItem.hasClass("pagination__item--dots"))
-                  paginationItem.text() must include("...")
-                } else {
-                  assert(!paginationItem.hasClass("pagination__item--dots"))
-                  paginationItem.text() must include(s"$index")
-                }
-            }
-          }
-        }
+        val items = doc.getElementsByClass("govuk-pagination__item").toList
+        items.length mustBe 7
+        items.head.getElementsByClass("govuk-pagination__link").text() mustBe "1"
+        items(1).text() mustBe "⋯"
+        items(2).getElementsByClass("govuk-pagination__link").text() mustBe "3"
+        items(3).getElementsByClass("govuk-pagination__link").text() mustBe "4"
+        items(4).getElementsByClass("govuk-pagination__link").text() mustBe "5"
+        items(5).text() mustBe "⋯"
+        items(6).getElementsByClass("govuk-pagination__link").text() mustBe "12"
       }
 
       "must display correct count" - {
