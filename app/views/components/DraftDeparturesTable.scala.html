@@ -1,0 +1,61 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewModels.drafts.AllDraftDeparturesViewModel
+
+@this()
+
+
+@(
+        viewModel: AllDraftDeparturesViewModel
+)(implicit messages: Messages)
+
+<table class="responsive-table">
+    <caption class="govuk-visually-hidden">@viewModel.visuallyHiddenHeader</caption>
+
+    <thead>
+        <tr>
+            <th scope="col">@viewModel.referenceNumber</th>
+            <th scope="col">@viewModel.daysToComplete</th>
+            <th scope="col"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
+        </tr>
+    </thead>
+
+    <tbody>
+    @for((row, rowIndex) <- viewModel.dataRows.zip(LazyList from 1)) {
+        <tr data-testrole="draft-list_row@rowIndex">
+
+            <td data-testrole="draft-list_row@rowIndex-lrn">
+                <span class="responsive-table__heading" aria-hidden="true">@viewModel.referenceNumber</span>
+                <a href="@viewModel.lrnRedirectLocation(row.lrn)" class="govuk-link">@row.lrn</a>
+            </td>
+
+            <td data-testrole="draft-list_row@rowIndex-daysToComplete">
+                <span class="responsive-table__heading" aria-hidden="true">@viewModel.daysToComplete</span>
+                @row.daysRemaining
+            </td>
+
+            <td data-testrole="draft-list_row@rowIndex-delete">
+                <span class="responsive-table__heading" aria-hidden="true"></span>
+                <a href="@controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(row.lrn, viewModel.paginationViewModel.pageNumber, viewModel.items.userAnswers.length, viewModel.lrn)" class="govuk-link">@messages("departure.drafts.dashboard.table.action.delete")
+                <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+

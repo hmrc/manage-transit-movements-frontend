@@ -58,23 +58,24 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   def checkGuaranteeBalanceUrl           = s"$guaranteeBalanceUrlBase/start?referral=ncts"
   val isGuaranteeBalanceEnabled: Boolean = configuration.get[Boolean]("microservice.services.features.isGuaranteeBalanceEnabled")
 
-  lazy val authUrl: String                           = configuration.get[Service]("auth").fullServiceUrl
-  lazy val loginUrl: String                          = configuration.get[String]("urls.login")
-  lazy val loginContinueUrl: String                  = configuration.get[String]("urls.loginContinue")
-  lazy val eccEnrolmentSplashPage: String            = configuration.get[String]("urls.eccEnrolmentSplashPage")
-  lazy val departureBaseUrl: String                  = configuration.get[Service]("microservice.services.departure").baseUrl
-  lazy val departureUrl: String                      = configuration.get[Service]("microservice.services.departure").fullServiceUrl
-  lazy val testSupportUrl: String                    = configuration.get[Service]("microservice.services.test-support").baseUrl
-  lazy val destinationBaseUrl: String                = configuration.get[Service]("microservice.services.destination").baseUrl
-  lazy val destinationUrl: String                    = configuration.get[Service]("microservice.services.destination").fullServiceUrl
-  lazy val routerUrl: String                         = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
-  lazy val enrolmentProxyUrl: String                 = configuration.get[Service]("microservice.services.enrolment-store-proxy").fullServiceUrl
+  lazy val authUrl: String                      = configuration.get[Service]("auth").fullServiceUrl
+  lazy val loginUrl: String                     = configuration.get[String]("urls.login")
+  lazy val loginContinueUrl: String             = configuration.get[String]("urls.loginContinue")
+  lazy val eccEnrolmentSplashPage: String       = configuration.get[String]("urls.eccEnrolmentSplashPage")
+  lazy val departureBaseUrl: String             = configuration.get[Service]("microservice.services.departure").baseUrl
+  lazy val departureUrl: String                 = configuration.get[Service]("microservice.services.departure").fullServiceUrl
+  lazy val testSupportUrl: String               = configuration.get[Service]("microservice.services.test-support").baseUrl
+  lazy val draftDeparturesUrl: String           = configuration.get[Service]("microservice.services.drafts-repository").fullServiceUrl
+  lazy val destinationBaseUrl: String           = configuration.get[Service]("microservice.services.destination").baseUrl
+  lazy val destinationUrl: String               = configuration.get[Service]("microservice.services.destination").fullServiceUrl
+  lazy val routerUrl: String                    = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
+  lazy val enrolmentProxyUrl: String            = configuration.get[Service]("microservice.services.enrolment-store-proxy").fullServiceUrl
+  lazy val legacyEnrolmentKey: String           = configuration.get[String]("keys.legacy.enrolmentKey")
+  lazy val legacyEnrolmentIdentifierKey: String = configuration.get[String]("keys.legacy.enrolmentIdentifierKey")
+  lazy val newEnrolmentKey: String              = configuration.get[String]("keys.enrolmentKey")
+  lazy val newEnrolmentIdentifierKey: String    = configuration.get[String]("keys.enrolmentIdentifierKey")
+  lazy val manageService: String                = configuration.get[String]("appName")
   lazy val commonTransitConventionTradersUrl: String = configuration.get[Service]("microservice.services.common-transit-convention-trader").fullServiceUrl
-  lazy val legacyEnrolmentKey: String                = configuration.get[String]("keys.legacy.enrolmentKey")
-  lazy val legacyEnrolmentIdentifierKey: String      = configuration.get[String]("keys.legacy.enrolmentIdentifierKey")
-  lazy val newEnrolmentKey: String                   = configuration.get[String]("keys.enrolmentKey")
-  lazy val newEnrolmentIdentifierKey: String         = configuration.get[String]("keys.enrolmentIdentifierKey")
-  lazy val manageService: String                     = configuration.get[String]("appName")
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val nctsHelpdeskUrl: String  = configuration.get[String]("urls.nctsHelpdesk")
@@ -83,6 +84,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val countdownSeconds: Int    = configuration.get[Int]("session.countdownSeconds")
 
   private val departureFrontendUrl: String    = phase5Switch.Departures.getFrontendUrl
+  lazy val draftDepartureFrontendUrl: String  = phase5Switch.Departures.getFrontendUrl
   private val cancellationFrontendUrl: String = phase5Switch.Cancellations.getFrontendUrl
 
   val declareDepartureStartWithLRNUrl: String =
@@ -91,6 +93,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
     } else {
       s"$departureFrontendUrl/local-reference-number"
     }
+
+  val phase5Enabled: Boolean = phase5Switch.Departures.enabled
 
   def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"

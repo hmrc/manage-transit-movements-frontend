@@ -17,7 +17,8 @@
 package views
 
 import generators.Generators
-import models.Availability
+import models.{Availability, DraftAvailability}
+import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
@@ -25,13 +26,15 @@ import views.html.WhatDoYouWantToDoView
 
 class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
-  private val sampleAvailability = arbitrary[Availability].sample.value
+  private val sampleAvailability      = arbitrary[Availability].sample.value
+  private val sampleDraftAvailability = arbitrary[DraftAvailability].sample.value
 
   private def applyView(
     arrivalsAvailability: Availability = sampleAvailability,
-    departuresAvailability: Availability = sampleAvailability
+    departuresAvailability: Availability = sampleAvailability,
+    draftDeparturesAvailability: Option[DraftAvailability] = Some(sampleDraftAvailability)
   ): HtmlFormat.Appendable =
-    injector.instanceOf[WhatDoYouWantToDoView].apply(arrivalsAvailability, departuresAvailability)(fakeRequest, messages)
+    injector.instanceOf[WhatDoYouWantToDoView].apply(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable = applyView()
 
@@ -51,11 +54,21 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   )
 
   behave like pageWithContent("h2", "Departures")
-  behave like pageWithLink(
-    "make-departure-declaration",
-    "Make a departure declaration",
-    "http://localhost:9489/manage-transit-movements-departures/local-reference-number"
-  )
+
+  if (frontendAppConfig.phase5Enabled) {
+    behave like pageWithLink(
+      "make-departure-declaration",
+      "Make a departure declaration",
+      "http://localhost:10120/manage-transit-movements/departures"
+    )
+
+  } else {
+    behave like pageWithLink(
+      "make-departure-declaration",
+      "Make a departure declaration",
+      "http://localhost:9489/manage-transit-movements-departures/local-reference-number"
+    )
+  }
 
   behave like pageWithContent("h2", "Guarantees")
   behave like pageWithLink(
@@ -108,5 +121,34 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "have the correct href on the view departures link" in {
       assertElementContainsHref(link, "/manage-transit-movements/view-departures")
     }
+  }
+
+  "when we have no draft departures" - {
+    val doc = parseView(applyView(draftDeparturesAvailability = Some(DraftAvailability.Empty)))
+    behave like pageWithContent(doc, "p", "You have no draft departure declarations")
+  }
+
+  "when draft departures are unavailable" - {
+    val doc = parseView(applyView(draftDeparturesAvailability = Some(DraftAvailability.Unavailable)))
+    behave like pageWithContent(doc, "p", "Draft departure declarations unavailable")
+  }
+
+  "when we have draft departures must" - {
+    val doc  = parseView(applyView(draftDeparturesAvailability = Some(DraftAvailability.NonEmpty)))
+    val link = getElementById(doc, "view-draft-departures")
+
+    "have the correct text for the view departures link" in {
+      assertElementContainsText(link, "View draft departure declarations")
+    }
+
+    "have the correct href on the view departures link" in {
+      assertElementContainsHref(link, "/manage-transit-movements/draft-declarations")
+    }
+  }
+
+  "when draftDeparturesAvailability is None" in {
+    val doc: Document = parseView(applyView(draftDeparturesAvailability = None))
+
+    assertNotRenderedById(doc, "view-draft-departures")
   }
 }
