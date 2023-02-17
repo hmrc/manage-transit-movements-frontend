@@ -16,7 +16,7 @@
 
 package controllers.departure.drafts
 
-import controllers.actions.IdentifierAction
+import controllers.actions.{IdentifierAction, LockAction, LockActionProvider}
 import forms.YesNoFormProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -24,6 +24,7 @@ import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.departure.drafts.DeleteDraftDepartureYesNoView
 import play.api.http.Status.{OK => StatusOK}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,6 +32,7 @@ class DeleteDraftDepartureYesNoController @Inject() (
   override val messagesApi: MessagesApi,
   formProvider: YesNoFormProvider,
   identify: IdentifierAction,
+  lockAction: LockActionProvider,
   val controllerComponents: MessagesControllerComponents,
   view: DeleteDraftDepartureYesNoView,
   draftDepartureService: DraftDepartureService
@@ -40,35 +42,37 @@ class DeleteDraftDepartureYesNoController @Inject() (
 
   private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
-  def onPageLoad(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
-    implicit request =>
-      Future.successful(Ok(view(form, lrn, pageNumber, numberOfRows, searchLrn)))
-  }
+  def onPageLoad(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
+    (Action andThen identify andThen lockAction(lrn)).async {
+      implicit request =>
+        Future.successful(Ok(view(form, lrn, pageNumber, numberOfRows, searchLrn)))
+    }
 
-  def onSubmit(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, pageNumber, numberOfRows, searchLrn))),
-          {
-            case true =>
-              draftDepartureService.deleteDraftDeparture(lrn) map {
-                case response if response.status == StatusOK =>
-                  val redirectPageNumber: Int = pageNumber match {
-                    case 1                               => 1
-                    case pageNumber if numberOfRows == 1 => pageNumber - 1
-                    case pageNumber                      => pageNumber
-                  }
+  def onSubmit(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
+    (Action andThen identify andThen lockAction(lrn)).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, pageNumber, numberOfRows, searchLrn))),
+            {
+              case true =>
+                draftDepartureService.deleteDraftDeparture(lrn) map {
+                  case response if response.status == StatusOK =>
+                    val redirectPageNumber: Int = pageNumber match {
+                      case 1                               => 1
+                      case pageNumber if numberOfRows == 1 => pageNumber - 1
+                      case pageNumber                      => pageNumber
+                    }
 
-                  Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(redirectPageNumber), searchLrn))
-                case _ =>
-                  Redirect(controllers.routes.ErrorController.internalServerError())
-              }
-            case false =>
-              Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(pageNumber), searchLrn)))
-          }
-        )
-  }
+                    Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(redirectPageNumber), searchLrn))
+                  case _ =>
+                    Redirect(controllers.routes.ErrorController.internalServerError())
+                }
+              case false =>
+                Future.successful(Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(pageNumber), searchLrn)))
+            }
+          )
+    }
 
 }

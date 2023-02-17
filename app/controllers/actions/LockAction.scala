@@ -16,26 +16,32 @@
 
 package controllers.actions
 
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.Inject
 import connectors.DeparturesMovementsP5Connector
 import models.requests.IdentifierRequest
+import play.api.Logging
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionFilter, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class LockActionImpl @Inject() (lrn: String, connector: DeparturesMovementsP5Connector)(implicit val executionContext: ExecutionContext) extends LockAction {
+class LockActionProvider @Inject() (connector: DeparturesMovementsP5Connector)(implicit ec: ExecutionContext) {
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, IdentifierRequest[A]]] = {
+  def apply(lrn: String): ActionFilter[IdentifierRequest] =
+    new LockAction(lrn, connector)
+}
+
+class LockAction(lrn: String, connector: DeparturesMovementsP5Connector)(implicit val executionContext: ExecutionContext)
+    extends ActionFilter[IdentifierRequest]
+    with Logging {
+
+  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     connector.checkLock(lrn).map {
-      case true  => Right(request)
-      case false => Left(Redirect(controllers.departure.drafts.routes.DraftLockedController.onPageLoad()))
+      case true  => None
+      case false => Some(Redirect(controllers.departure.drafts.routes.DraftLockedController.onPageLoad()))
     }
   }
 }
-
-trait LockAction extends ActionRefiner[IdentifierRequest, IdentifierRequest]

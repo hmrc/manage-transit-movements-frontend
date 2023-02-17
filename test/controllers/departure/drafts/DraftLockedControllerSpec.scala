@@ -17,22 +17,12 @@
 package controllers.departure.drafts
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import controllers.actions.{FakeIdentifierAction, FakeLockAction, IdentifierAction, LockAction}
 import generators.Generators
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.departure.drafts.DraftLockedView
 
 class DraftLockedControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
-
-  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
-    super
-      .guiceApplicationBuilder()
-      .overrides(
-        bind[LockAction].to[FakeLockAction]
-      )
 
   "Draft Locked Controller" - {
 

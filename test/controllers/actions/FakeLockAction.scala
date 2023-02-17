@@ -16,15 +16,15 @@
 
 package controllers.actions
 
+import connectors.DeparturesMovementsP5Connector
 import models.requests.IdentifierRequest
 import play.api.mvc.Result
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-class FakeLockAction extends LockAction {
+class FakeLockAction(lrn: String, connector: DeparturesMovementsP5Connector) extends LockAction(lrn, connector) {
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, IdentifierRequest[A]]] =
-    Future.successful(Right(request))
-
-  override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
+    Future.successful(None)
 }

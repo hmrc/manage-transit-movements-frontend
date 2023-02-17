@@ -28,14 +28,13 @@ import scala.concurrent.ExecutionContext
 class DraftLockedController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  lockAction: LockAction,
   val controllerComponents: MessagesControllerComponents,
   view: DraftLockedView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify andThen lockAction) {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify) {
     implicit request =>
       Ok(view())
   }

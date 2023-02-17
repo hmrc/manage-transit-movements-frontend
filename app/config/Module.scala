@@ -27,7 +27,6 @@ class Module extends AbstractModule {
   override def configure(): Unit = {
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
-    bind(classOf[LockAction]).to(classOf[LockActionImpl])
     bind(classOf[PaginationAppConfig]).asEagerSingleton()
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
     bind(classOf[DraftDepartureService]).to(classOf[MongoDraftDepartureService])

@@ -23,9 +23,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContent, Request, Result, Results}
+import play.api.mvc.{Action, AnyContent, Request, Result, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderNames
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,18 +35,12 @@ class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   val dataRequest = IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], "id")
 
-  def harness(): Result = {
+  class Harness(authAction: LockActionProvider) {
 
-    lazy val actionProvider = app.injector.instanceOf[LockActionImpl]
-
-    actionProvider
-      .invokeBlock(
-        dataRequest,
-        {
-          _: IdentifierRequest[_] => Future.successful(Results.Ok)
-        }
-      )
-      .futureValue
+    def onPageLoad(): Action[AnyContent] = (stubControllerComponents().actionBuilder andThen FakeIdentifierAction.apply() andThen authAction(lrn.toString)) {
+      _ =>
+        Results.Ok
+    }
   }
 
   val connector: DeparturesMovementsP5Connector = mock[DeparturesMovementsP5Connector]
@@ -66,14 +61,25 @@ class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
       when(connector.checkLock(any())(any())).thenReturn(Future(true))
 
-      harness() mustBe Results.Ok
+      val actionProvider: LockActionProvider = app.injector.instanceOf[LockActionProvider]
+
+      val controller = new Harness(actionProvider)
+      val result     = controller.onPageLoad()(fakeRequest)
+
+      status(result) mustBe OK
     }
 
     "must redirect to lock page when lock is not open" in {
 
       when(connector.checkLock(any())(any())).thenReturn(Future(false))
 
-      harness() mustBe Results.SeeOther(controllers.departure.drafts.routes.DraftLockedController.onPageLoad().url)
+      val actionProvider: LockActionProvider = app.injector.instanceOf[LockActionProvider]
+
+      val controller = new Harness(actionProvider)
+      val result     = controller.onPageLoad()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.departure.drafts.routes.DraftLockedController.onPageLoad().url
     }
   }
 
