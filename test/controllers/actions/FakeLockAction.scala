@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package services
+package controllers.actions
 
-import models.DeparturesSummary
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import models.requests.IdentifierRequest
+import play.api.mvc.Result
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-trait DraftDepartureService {
+class FakeLockAction extends LockAction {
 
-  def getAll(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def getLRNs(lrn: String, limit: Int = 0)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse]
-  def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean]
+  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, IdentifierRequest[A]]] =
+    Future.successful(Right(request))
+
+  override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 }

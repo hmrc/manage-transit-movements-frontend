@@ -4,5 +4,4 @@ POST       /draft-declarations                                                  
 GET        /draft-declarations/:lrn/delete                                         controllers.departure.drafts.DeleteDraftDepartureYesNoController.onPageLoad(lrn: String)
 POST       /draft-declarations/:lrn/delete                                         controllers.departure.drafts.DeleteDraftDepartureYesNoController.onSubmit(lrn: String)
 
-GET        /draft-declarations/cannot-open                                         controllers.departure.drafts.DraftLockedController.onPageLoad()
-POST       /draft-declarations/cannot-open                                         controllers.departure.drafts.DraftLockedController.onSubmit()
+GET        /draft-declarations/cannot-delete                                       controllers.departure.drafts.DraftLockedController.onPageLoad()

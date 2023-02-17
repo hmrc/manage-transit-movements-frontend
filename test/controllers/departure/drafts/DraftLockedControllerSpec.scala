@@ -17,7 +17,9 @@
 package controllers.departure.drafts
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import controllers.actions.{FakeIdentifierAction, FakeLockAction, IdentifierAction, LockAction}
 import generators.Generators
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -28,6 +30,9 @@ class DraftLockedControllerSpec extends SpecBase with AppWithDefaultMockFixtures
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
+      .overrides(
+        bind[LockAction].to[FakeLockAction]
+      )
 
   "Draft Locked Controller" - {
 
@@ -43,18 +48,6 @@ class DraftLockedControllerSpec extends SpecBase with AppWithDefaultMockFixtures
 
       contentAsString(result) mustEqual
         view()(request, messages).toString
-    }
-
-    "must redirect to dashboard controller on submit" in {
-
-      val request = FakeRequest(POST, controllers.departure.drafts.routes.DraftLockedController.onSubmit().url)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual controllers.departure.drafts.routes.DashboardController.onPageLoad().url
-
     }
   }
 }

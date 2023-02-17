@@ -18,10 +18,10 @@
 @import views.html.components.Heading
 
 @this(
-    mainTemplate: MainTemplate,
+        mainTemplate: MainTemplate,
         heading: Heading,
-    formHelper: FormWithCSRF,
-    button: Button
+        formHelper: FormWithCSRF,
+        button: Button
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -31,14 +31,18 @@
     showBackLink = true,
 ) {
 
-        @heading(
-            heading = messages("departure.drafts.dashboard.draftLocked.heading"),
-        )
+    @heading(
+        heading = messages("departure.drafts.dashboard.draftLocked.heading"),
+    )
 
-        <p class="govuk-body">@messages("departure.drafts.dashboard.draftLocked.paragraph")</p>
+    <p class="govuk-body">@messages("departure.drafts.dashboard.draftLocked.paragraph")</p>
 
+    <div>
 
-        @formHelper(action = controllers.departure.drafts.routes.DraftLockedController.onSubmit(), Symbol("autoComplete") -> "off") {
-            @button(attributes = Map("id" -> "submit"), messageKey = messages("departure.drafts.dashboard.draftLocked.button"))
-        }
+    @button(
+        messageKey = messages("departure.drafts.dashboard.draftLocked.button"),
+        href = Some(controllers.departure.drafts.routes.DashboardController.onPageLoad().url)
+    )
+    </div>
+
 }

@@ -23,8 +23,11 @@ import helper.WireMockServerHandler
 import models.{DepartureUserAnswerSummary, DeparturesSummary, DraftAvailability, LocalReferenceNumber}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.test.Helpers.{await, OK}
+
 import java.time.LocalDateTime
 
 class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
@@ -247,6 +250,38 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
         }
       }
     }
+
+    "checkLock" - {
+
+      val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn/lock"
+
+      "must return true when status is Ok" in {
+        server.stubFor(get(urlEqualTo(url)) willReturn aResponse().withStatus(OK))
+
+        val result: Boolean = connector.checkLock(lrn.value).futureValue
+
+        result mustBe true
+      }
+
+      "return false for other responses" in {
+
+        val errorResponses: Gen[Int] = Gen
+          .chooseNum(400: Int, 599: Int)
+
+        forAll(errorResponses) {
+          error =>
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(aResponse().withStatus(error))
+            )
+
+            val result: Boolean = connector.checkLock(lrn.value).futureValue
+
+            result mustBe false
+        }
+      }
+    }
+
   }
 
 }

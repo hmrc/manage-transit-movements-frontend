@@ -19,7 +19,6 @@ package controllers.departure.drafts
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.departure.drafts.DraftLockedView
 
@@ -29,21 +28,15 @@ import scala.concurrent.ExecutionContext
 class DraftLockedController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
+  lockAction: LockAction,
   val controllerComponents: MessagesControllerComponents,
-  draftDepartureService: DraftDepartureService,
   view: DraftLockedView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify) {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify andThen lockAction) {
     implicit request =>
       Ok(view())
   }
-
-  def onSubmit: Action[AnyContent] = (Action andThen identify) {
-    implicit request =>
-      Redirect(controllers.departure.drafts.routes.DashboardController.onPageLoad())
-  }
-
 }

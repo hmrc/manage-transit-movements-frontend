@@ -33,4 +33,5 @@ class MongoDraftDepartureService @Inject() (connector: DeparturesMovementsP5Conn
 
   override def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = connector.deleteDraftDeparture(lrn)
 
+  override def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = connector.checkLock(lrn)
 }
