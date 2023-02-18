@@ -29,9 +29,12 @@ import views.html.departure.ViewAllDeparturesView
 class ViewAllDeparturesViewSpec
     extends MovementsTableViewBehaviours[ViewDeparture]
     with SearchViewBehaviours[ViewDeparture]
-    with PaginationViewBehaviours[ViewDeparture]
+    with PaginationViewBehaviours[MovementsPaginationViewModel]
     with Generators
     with ScalaCheckPropertyChecks {
+
+  override val buildViewModel: (Int, Int, Int, String) => MovementsPaginationViewModel =
+    MovementsPaginationViewModel(_, _, _, _)
 
   override val prefix: String = "viewDepartures"
 
@@ -83,5 +86,4 @@ class ViewAllDeparturesViewSpec
     expectedText = "Go to manage transit movements",
     expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
   )
-
 }

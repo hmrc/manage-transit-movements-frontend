@@ -29,9 +29,12 @@ import views.html.arrival.ViewAllArrivalsView
 class ViewAllArrivalsViewSpec
     extends MovementsTableViewBehaviours[ViewArrival]
     with SearchViewBehaviours[ViewArrival]
-    with PaginationViewBehaviours[ViewArrival]
+    with PaginationViewBehaviours[MovementsPaginationViewModel]
     with Generators
     with ScalaCheckPropertyChecks {
+
+  override val buildViewModel: (Int, Int, Int, String) => MovementsPaginationViewModel =
+    MovementsPaginationViewModel(_, _, _, _)
 
   override val prefix: String = "viewArrivalNotifications"
 

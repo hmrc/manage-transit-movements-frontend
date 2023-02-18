@@ -122,7 +122,7 @@ trait ViewModelGenerators {
       } yield ViewDepartureMovements(seqOfViewDepartureMovements)
     }
 
-  implicit lazy val arbitraryPaginationViewModelP5: Arbitrary[DraftsPaginationViewModel] =
+  implicit lazy val arbitraryDraftsPaginationViewModel: Arbitrary[DraftsPaginationViewModel] =
     Arbitrary {
       for {
         totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)

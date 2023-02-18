@@ -16,25 +16,29 @@
 
 package views.behaviours
 
+import generators.Generators
 import org.jsoup.nodes.Document
 import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports._
-import viewModels.ViewMovement
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 
 // scalastyle:off method.length
 // scalastyle:off magic.number
-trait PaginationViewBehaviours[T <: ViewMovement] {
-  self: MovementsTableViewBehaviours[T] =>
+trait PaginationViewBehaviours[T <: PaginationViewModel] extends ViewBehaviours with ScalaCheckPropertyChecks with Generators {
 
-  def viewWithSpecificPagination(paginationViewModel: MovementsPaginationViewModel): HtmlFormat.Appendable
+  val movementsPerPage: Int
+
+  val buildViewModel: (Int, Int, Int, String) => T
+
+  def viewWithSpecificPagination(paginationViewModel: T): HtmlFormat.Appendable
 
   def pageWithPagination(href: String): Unit =
     "page with pagination" - {
 
       "must display previous button when not on the first page" in {
-        val paginationViewModel = MovementsPaginationViewModel(4, 2, 2, href)
+        val paginationViewModel = buildViewModel(4, 2, 2, href)
         val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
 
         val element = doc.select("""[rel="prev"]""").headOption
@@ -42,7 +46,7 @@ trait PaginationViewBehaviours[T <: ViewMovement] {
       }
 
       "must not display previous button when on the first page" in {
-        val paginationViewModel = MovementsPaginationViewModel(1, 1, 1, href)
+        val paginationViewModel = buildViewModel(1, 1, 1, href)
         val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
 
         val element = doc.select("""[rel="prev"]""").headOption
@@ -50,7 +54,7 @@ trait PaginationViewBehaviours[T <: ViewMovement] {
       }
 
       "must display next button when not on the last page" in {
-        val paginationViewModel = MovementsPaginationViewModel(2, 1, 1, href)
+        val paginationViewModel = buildViewModel(2, 1, 1, href)
         val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
 
         val element = doc.select("""[rel="next"]""").headOption
@@ -58,7 +62,7 @@ trait PaginationViewBehaviours[T <: ViewMovement] {
       }
 
       "must not display next button when on the last page" in {
-        val paginationViewModel = MovementsPaginationViewModel(2, 2, 1, href)
+        val paginationViewModel = buildViewModel(2, 2, 1, href)
         val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
 
         val element = doc.select("""[rel="next"]""").headOption
@@ -66,7 +70,7 @@ trait PaginationViewBehaviours[T <: ViewMovement] {
       }
 
       "must display correct amount of items" in {
-        val paginationViewModel = MovementsPaginationViewModel(60, 4, 5, href)
+        val paginationViewModel = buildViewModel(60, 4, 5, href)
         val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
 
         // should look like 1 … 3 [4] 5 … 12
@@ -89,7 +93,7 @@ trait PaginationViewBehaviours[T <: ViewMovement] {
 
         "when not paginated" - {
           "when only one movement" in {
-            val paginationViewModel = MovementsPaginationViewModel(1, 1, movementsPerPage, "")
+            val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
             val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
             val p                   = doc.getElementById("results-count")
             p.text() mustBe "Showing 1 result"
@@ -99,7 +103,7 @@ trait PaginationViewBehaviours[T <: ViewMovement] {
           "when multiple movements" in {
             forAll(Gen.choose(2, movementsPerPage)) {
               numberOfMovements =>
-                val paginationViewModel = MovementsPaginationViewModel(numberOfMovements, 1, movementsPerPage, "")
+                val paginationViewModel = buildViewModel(numberOfMovements, 1, movementsPerPage, "")
                 val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
                 val p                   = doc.getElementById("results-count")
                 p.text() mustBe s"Showing $numberOfMovements results"
@@ -116,7 +120,7 @@ trait PaginationViewBehaviours[T <: ViewMovement] {
                 currentPage =>
                   val to                  = currentPage * movementsPerPage
                   val from                = to - movementsPerPage + 1
-                  val paginationViewModel = MovementsPaginationViewModel(numberOfMovements, currentPage, movementsPerPage, "")
+                  val paginationViewModel = buildViewModel(numberOfMovements, currentPage, movementsPerPage, "")
                   val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
                   val p                   = doc.getElementById("paginated-results-count")
                   p.text() mustBe s"Showing $from to $to of $numberOfMovements results"

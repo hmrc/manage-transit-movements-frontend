@@ -204,4 +204,6 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
     "must have full width class" in {
       assert(doc.getElementsByClass("govuk-grid-column-full").size() == 1)
     }
+
+  def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").toList.map(_.text())
 }

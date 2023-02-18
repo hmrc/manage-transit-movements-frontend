@@ -27,12 +27,15 @@ import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 import viewModels.pagination.DraftsPaginationViewModel
-import views.behaviours.PaginationP5ViewBehaviours
+import views.behaviours.PaginationViewBehaviours
 import views.html.departure.drafts.DashboardView
 
 import java.time.LocalDateTime
 
-class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] {
+class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewModel] {
+
+  override val buildViewModel: (Int, Int, Int, String) => DraftsPaginationViewModel =
+    DraftsPaginationViewModel(_, _, _, _)
 
   val genDraftDeparture: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
 
@@ -40,6 +43,7 @@ class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] {
 
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
     AllDraftDeparturesViewModel(genDraftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
+
   val dataRows: Seq[DraftDepartureRow] = viewAllDepartureMovementsViewModel.dataRows
 
   private val formProvider = new SearchFormProvider()
@@ -55,17 +59,6 @@ class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] {
         arbitrary[DeparturesSummary].sample.value,
         movementsPerPage,
         None,
-        frontendAppConfig.draftDepartureFrontendUrl,
-        paginationViewModelP5
-      )
-    )
-
-  override def viewWithSpecificPaginationAndSearch(paginationViewModelP5: DraftsPaginationViewModel): HtmlFormat.Appendable =
-    applyView(
-      AllDraftDeparturesViewModel(
-        arbitrary[DeparturesSummary].sample.value,
-        movementsPerPage,
-        Some(lrn.toString),
         frontendAppConfig.draftDepartureFrontendUrl,
         paginationViewModelP5
       )
@@ -88,7 +81,7 @@ class DashboardViewSpec extends PaginationP5ViewBehaviours[DeparturesSummary] {
 
   behave like pageWithHeading()
 
-  behave like pageWithPaginationP5(controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url)
+  behave like pageWithPagination(controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url)
 
   val rows: Elements = doc.select("tr[data-testrole^=draft-list_row]")
 
