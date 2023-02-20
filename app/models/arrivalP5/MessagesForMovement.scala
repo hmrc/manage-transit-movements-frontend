@@ -43,7 +43,6 @@ object MessagesForMovement {
         list =>
           val sortedList: List[Message] = list.sortBy(_.received).reverse
 
-
           val getFirstMessage: Message = sortedList.head.messageType match {
             case FunctionalNack =>
               if (sortedList.tail.exists(_.messageType == UnloadingRemarks)) {
@@ -51,14 +50,7 @@ object MessagesForMovement {
               } else {
                 sortedList.head.copy(messageType = FunctionalNackArrival)
               }
-            case XmlNack =>
-              if (sortedList.tail.exists(_.messageType == UnloadingRemarks)) {
-                sortedList.head.copy(messageType = XmlNackUnloading)
-              } else {
-                sortedList.head.copy(messageType = XmlNackArrival)
-              }
             case _ => sortedList.head
-
           }
 
           NonEmptyList[Message](getFirstMessage, sortedList.tail)
