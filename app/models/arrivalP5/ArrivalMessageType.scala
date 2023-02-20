@@ -20,15 +20,24 @@ import models.{Enumerable, WithName}
 
 trait ArrivalMessageType extends WithName
 
-object ArrivalMessageType extends Enumerable.Implicits { // TODO make own implicits to handle unknown status
+trait ErrorMessageType extends ArrivalMessageType
+
+object ArrivalMessageType extends Enumerable.Implicits {
 
   case object ArrivalNotification extends WithName("IE007") with ArrivalMessageType
   case object UnloadingRemarks extends WithName("IE044") with ArrivalMessageType
   case object GoodsReleasedNotification extends WithName("IE025") with ArrivalMessageType
   case object UnloadingPermission extends WithName("IE043") with ArrivalMessageType
   case object RejectionFromOfficeOfDestination extends WithName("IE057") with ArrivalMessageType
+
   case object FunctionalNack extends WithName("IE906") with ArrivalMessageType
   case object XmlNack extends WithName("IE917") with ArrivalMessageType
+
+  case object FunctionalNackArrival extends WithName("IE906") with ErrorMessageType
+  case object FunctionalNackUnloading extends WithName("IE906") with ErrorMessageType
+
+  case object XmlNackArrival extends WithName("IE917") with ErrorMessageType
+  case object XmlNackUnloading extends WithName("IE917") with ErrorMessageType
 
   val values = Seq(
     ArrivalNotification,

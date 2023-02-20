@@ -17,6 +17,7 @@
 package viewModels.P5
 
 import config.FrontendAppConfig
+import models.arrivalP5.ArrivalMessageType.{FunctionalNack, XmlNack}
 import models.arrivalP5.ArrivalMovementAndMessage
 import viewModels.{ViewMovement, ViewMovementAction}
 

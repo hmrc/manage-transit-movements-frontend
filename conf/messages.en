@@ -105,6 +105,10 @@ movement.status.P5.rejectionFromOfficeOfDestinationReceived    = Rejected by off
 movement.status.P5.functionalNackReceived                      = Notification rejected
 movement.status.P5.xmlNackReceived                             = Notification rejected
 
+movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
+movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
+movement.status.P5.action.viewError = View Errors
+
 movement.search.title = Search by movement reference number
 movement.search.departure.title = Search by local reference number
 

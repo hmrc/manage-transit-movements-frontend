@@ -36,10 +36,6 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: Fr
 
     val serviceUrl = s"${config.commonTransitConventionTradersUrl}transit-movements/traders/movements/$arrivalId/messages"
 
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(
-      rds = HttpReads[HttpResponse],
-      hc = newHeaders(headers),
-      ec = ec
-    )
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)
   }
 }

@@ -17,6 +17,15 @@
 package models.arrivalP5
 
 import cats.data.NonEmptyList
+import models.arrivalP5.ArrivalMessageType.{
+  FunctionalNack,
+  FunctionalNackArrival,
+  FunctionalNackUnloading,
+  UnloadingRemarks,
+  XmlNack,
+  XmlNackArrival,
+  XmlNackUnloading
+}
 import play.api.libs.json.{Json, JsonValidationError, Reads}
 
 case class MessagesForMovement(messages: NonEmptyList[Message]) {
@@ -33,7 +42,26 @@ object MessagesForMovement {
       ) {
         list =>
           val sortedList: List[Message] = list.sortBy(_.received).reverse
-          NonEmptyList[Message](sortedList.head, sortedList.tail)
+
+
+          val getFirstMessage: Message = sortedList.head.messageType match {
+            case FunctionalNack =>
+              if (sortedList.tail.exists(_.messageType == UnloadingRemarks)) {
+                sortedList.head.copy(messageType = FunctionalNackUnloading)
+              } else {
+                sortedList.head.copy(messageType = FunctionalNackArrival)
+              }
+            case XmlNack =>
+              if (sortedList.tail.exists(_.messageType == UnloadingRemarks)) {
+                sortedList.head.copy(messageType = XmlNackUnloading)
+              } else {
+                sortedList.head.copy(messageType = XmlNackArrival)
+              }
+            case _ => sortedList.head
+
+          }
+
+          NonEmptyList[Message](getFirstMessage, sortedList.tail)
       }
 
   implicit val reads: Reads[MessagesForMovement] = Json.reads[MessagesForMovement]
