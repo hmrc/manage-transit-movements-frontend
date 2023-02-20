@@ -43,9 +43,9 @@ class DeleteDraftDepartureYesNoController @Inject() (
   private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
   def onPageLoad(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
-    (Action andThen identify andThen lockAction(lrn)).async {
+    (Action andThen identify andThen lockAction(lrn)) {
       implicit request =>
-        Future.successful(Ok(view(form, lrn, pageNumber, numberOfRows, searchLrn)))
+        Ok(view(form, lrn, pageNumber, numberOfRows, searchLrn))
     }
 
   def onSubmit(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
