@@ -33,7 +33,8 @@ trait PaginationViewModel {
       case x => messages("numberOfMovements.plural", s"<b>$x</b>")
     }
 
-  def paginatedSearchResult(implicit messages: Messages): String
+  def paginatedSearchResult(implicit messages: Messages): String =
+    messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
 
   val pagination: Pagination = Pagination(Some(items), previous, next)
 }

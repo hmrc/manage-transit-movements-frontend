@@ -29,23 +29,21 @@ case class DraftsPaginationViewModel(
 ) extends PaginationViewModel {
 
   override def searchResult(implicit messages: Messages): String =
-    lrn match {
-      case Some(lrn) =>
-        results.count match {
-          case 1 => messages("numberOfMovements.singular.withLRN", "<b>1</b>", lrn)
-          case x => messages("numberOfMovements.plural.withLRN", s"<b>$x</b>", lrn)
-        }
-      case None =>
-        super.searchResult
-    }
+    lrn.fold(
+      super.searchResult
+    )(
+      results.count match {
+        case 1 => messages("numberOfMovements.singular.withLRN", "<b>1</b>", _)
+        case x => messages("numberOfMovements.plural.withLRN", s"<b>$x</b>", _)
+      }
+    )
 
   override def paginatedSearchResult(implicit messages: Messages): String =
-    lrn match {
-      case Some(lrn) =>
-        messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", lrn)
-      case None =>
-        messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
-    }
+    lrn.fold(
+      super.paginatedSearchResult
+    )(
+      messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", _)
+    )
 }
 
 object DraftsPaginationViewModel {

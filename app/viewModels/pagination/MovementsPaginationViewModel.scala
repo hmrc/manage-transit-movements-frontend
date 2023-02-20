@@ -16,7 +16,6 @@
 
 package viewModels.pagination
 
-import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 
 case class MovementsPaginationViewModel(
@@ -25,11 +24,7 @@ case class MovementsPaginationViewModel(
   next: Option[PaginationLink],
   items: Seq[PaginationItem],
   pageNumber: Int
-) extends PaginationViewModel {
-
-  override def paginatedSearchResult(implicit messages: Messages): String =
-    messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
-}
+) extends PaginationViewModel
 
 object MovementsPaginationViewModel {
 
