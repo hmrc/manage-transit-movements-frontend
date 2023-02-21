@@ -40,7 +40,7 @@ case class AllDraftDeparturesViewModel(
 
   def title(implicit messages: Messages): String                = messages(s"$messageKeyPrefix.title")
   def heading(implicit messages: Messages): String              = messages(s"$messageKeyPrefix.heading")
-  def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading.hidden")
+  def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.heading.hidden")
 
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
 
