@@ -16,6 +16,7 @@
 
 package viewModels.P5
 
+import cats.data.NonEmptySeq
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5.{ArrivalMessageType, Message}
 import viewModels.ViewMovementAction
@@ -24,19 +25,18 @@ case class ArrivalStatusP5ViewModel(status: String, actions: Seq[ViewMovementAct
 
 object ArrivalStatusP5ViewModel {
 
-  def apply(message: Message): ArrivalStatusP5ViewModel = {
+  def apply(messages: NonEmptySeq[Message]): ArrivalStatusP5ViewModel = {
     val allPfs: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] =
       Seq(
         arrivalNotification,
         unloadingRemarks,
         unloadingPermission,
         goodsReleased,
-        rejectionFromOfficeOfDestination,
-        functionalNack,
-        xmlNack
+        rejectionFromOfficeOfDestinationUnloading(messages.tail),
+        rejectionFromOfficeOfDestinationArrival
       ).reduce(_ orElse _)
 
-    allPfs.apply(message.messageType)
+    allPfs.apply(messages.head.messageType)
   }
 
   private def arrivalNotification: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
@@ -65,31 +65,23 @@ object ArrivalStatusP5ViewModel {
       ArrivalStatusP5ViewModel("movement.status.P5.goodsReleasedReceived", actions = Nil)
   }
 
-  private def rejectionFromOfficeOfDestination: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
-    case RejectionFromOfficeOfDestination =>
+  private def rejectionFromOfficeOfDestinationUnloading(previousMessages: Seq[Message]): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
+    case RejectionFromOfficeOfDestination if previousMessages.exists(_.messageType == UnloadingRemarks) =>
       ArrivalStatusP5ViewModel(
-        "movement.status.P5.rejectionFromOfficeOfDestinationReceived",
+        "movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
         actions = Seq(
           ViewMovementAction("#", "movement.status.P5.action.viewError")
         )
       )
   }
 
-  private def functionalNack: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
-    case FunctionalNack =>
-      ArrivalStatusP5ViewModel("movement.status.P5.functionalNackReceived",
-                               actions = Seq(
-                                 ViewMovementAction("#", "movement.status.P5.action.viewError")
-                               )
-      )
-  }
-
-  private def xmlNack: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
-    case XmlNack =>
-      ArrivalStatusP5ViewModel("movement.status.P5.xmlNackReceived",
-                               actions = Seq(
-                                 ViewMovementAction("#", "movement.status.P5.action.viewError")
-                               )
+  private def rejectionFromOfficeOfDestinationArrival: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
+    case RejectionFromOfficeOfDestination =>
+      ArrivalStatusP5ViewModel(
+        "movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
+        actions = Seq(
+          ViewMovementAction("#", "movement.status.P5.action.viewError")
+        )
       )
   }
 

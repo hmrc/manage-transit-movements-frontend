@@ -17,7 +17,6 @@
 package viewModels.P5
 
 import config.FrontendAppConfig
-import models.arrivalP5.ArrivalMessageType.{FunctionalNack, XmlNack}
 import models.arrivalP5.ArrivalMovementAndMessage
 import viewModels.{ViewMovement, ViewMovementAction}
 
@@ -38,7 +37,7 @@ object ViewArrivalP5 {
 
   def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewArrivalP5 = {
 
-    val arrivalStatus: ArrivalStatusP5ViewModel = ArrivalStatusP5ViewModel(movementAndMessage.messagesForMovement.messages.head)
+    val arrivalStatus: ArrivalStatusP5ViewModel = ArrivalStatusP5ViewModel(movementAndMessage.messagesForMovement.messages)
 
     val systemTime = movementAndMessage.arrivalMovement.updated
 
