@@ -22,14 +22,14 @@ import models.{DeparturesSummary, Sort}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.paginationP5.PaginationViewModelP5
+import viewModels.pagination.DraftsPaginationViewModel
 
 case class AllDraftDeparturesViewModel(
   items: DeparturesSummary,
   pageSize: Int,
   lrn: Option[String],
   draftDepartureFrontendUrl: String,
-  paginationViewModel: PaginationViewModelP5,
+  paginationViewModel: DraftsPaginationViewModel,
   sortParams: Sort = SortByCreatedAtDesc
 ) {
 
@@ -38,10 +38,8 @@ case class AllDraftDeparturesViewModel(
 
   val draftDepartures: Int = items.userAnswers.length
 
-  def title(implicit messages: Messages): String = messages(s"$messageKeyPrefix.title")
-
-  def heading(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading")
-
+  def title(implicit messages: Messages): String                = messages(s"$messageKeyPrefix.title")
+  def heading(implicit messages: Messages): String              = messages(s"$messageKeyPrefix.heading")
   def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading.hidden")
 
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
@@ -50,7 +48,7 @@ case class AllDraftDeparturesViewModel(
 
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
-  def searchResult()(implicit messages: Messages): Option[String] =
+  def searchResult(implicit messages: Messages): Option[String] =
     lrn.map {
       lrn =>
         draftDepartures match {
@@ -74,8 +72,6 @@ case class AllDraftDeparturesViewModel(
   def noResultsFound: Boolean = items.totalMovements == 0
 
   def noSearchResultsFound: Boolean = items.totalMatchingMovements == 0 && items.totalMovements > 0
-
-  def pageNumber: Int = paginationViewModel.pageNumber
 
   def sortLrn: String       = sortParams.ariaSort(LRN)
   def sortCreatedAt: String = sortParams.ariaSort(CreatedAt)

@@ -16,39 +16,75 @@
 
 package viewModels.pagination
 
-case class PaginationViewModel(
-  results: MetaData,
-  previous: Option[Previous],
-  next: Option[Next],
-  items: Items,
-  pageNumber: Int
-)
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
+
+trait PaginationViewModel {
+
+  val results: MetaData
+  val previous: Option[PaginationLink]
+  val next: Option[PaginationLink]
+  val items: Seq[PaginationItem]
+  val pageNumber: Int
+
+  def searchResult(implicit messages: Messages): String =
+    results.count match {
+      case 1 => messages("numberOfMovements.singular", "<b>1</b>")
+      case x => messages("numberOfMovements.plural", s"<b>$x</b>")
+    }
+
+  def paginatedSearchResult(implicit messages: Messages): String =
+    messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
+
+  val pagination: Pagination = Pagination(Some(items), previous, next)
+}
 
 object PaginationViewModel {
 
-  def apply(
+  def apply[T <: PaginationViewModel](
     totalNumberOfMovements: Int,
     currentPage: Int,
     numberOfMovementsPerPage: Int,
-    href: String
-  ): PaginationViewModel = {
+    href: String,
+    additionalParams: Seq[(String, String)] = Seq.empty
+  )(
+    f: (MetaData, Option[PaginationLink], Option[PaginationLink], Seq[PaginationItem]) => T
+  ): T = {
 
     val results: MetaData = MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
 
-    val previous: Option[Previous] = if (results.currentPage > 1) {
-      Some(Previous(href, results.currentPage))
+    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"$href?page=$page") {
+      case (href, (key, value)) =>
+        href + s"&$key=$value"
+    }
+
+    val previous: Option[PaginationLink] = if (currentPage > 1) {
+      Some(PaginationLink(hrefWithParams(currentPage - 1)))
     } else {
       None
     }
 
-    val next: Option[Next] = if (results.currentPage < results.totalPages) {
-      Some(Next(href, results.currentPage))
+    val next: Option[PaginationLink] = if (currentPage < results.totalPages) {
+      Some(PaginationLink(hrefWithParams(currentPage + 1)))
     } else {
       None
     }
 
-    val items = Items(results, href)
+    val items = (1 to results.totalPages).foldLeft[Seq[PaginationItem]](Nil) {
+      (acc, page) =>
+        if (page == 1 || (page >= currentPage - 1 && page <= currentPage + 1) || page == results.totalPages) {
+          acc :+ PaginationItem(
+            href = hrefWithParams(page),
+            number = Some(page.toString),
+            current = Some(page == currentPage)
+          )
+        } else if (acc.lastOption.flatMap(_.ellipsis).contains(true)) {
+          acc
+        } else {
+          acc :+ PaginationItem(ellipsis = Some(true))
+        }
+    }
 
-    PaginationViewModel(results, previous, next, items, currentPage)
+    f(results, previous, next, items)
   }
 }

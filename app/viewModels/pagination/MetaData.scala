@@ -22,13 +22,7 @@ object MetaData {
 
   def apply(totalNumberOfMovements: Int, numberOfMovementsPerPage: Int, currentPage: Int): MetaData = {
 
-    val numberOfPagesFloat = totalNumberOfMovements.toFloat / numberOfMovementsPerPage
-
-    val totalNumberOfPages = if (numberOfPagesFloat.isWhole) {
-      numberOfPagesFloat.toInt
-    } else {
-      numberOfPagesFloat.toInt + 1
-    }
+    val totalNumberOfPages: Int = Math.ceil(totalNumberOfMovements.toDouble / numberOfMovementsPerPage).toInt
 
     val from = numberOfMovementsPerPage * (currentPage - 1) + 1
 

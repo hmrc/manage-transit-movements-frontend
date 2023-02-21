@@ -30,7 +30,7 @@ import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.paginationP5.PaginationViewModelP5
+import viewModels.pagination.DraftsPaginationViewModel
 import views.html.departure.drafts.DashboardView
 
 import javax.inject.Inject
@@ -102,17 +102,17 @@ class DashboardController @Inject() (
 
   private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String], sortParams: Sort): AllDraftDeparturesViewModel = {
 
-    val param =
-      lrn.map(
-        x => Seq(("lrn", x), ("sortParams", sortParams.toString))
-      )
+    val additionalParams = Seq(
+      lrn.map(("lrn", _)),
+      Some(("sortParams", sortParams.toString))
+    ).flatten
 
-    val pvm = PaginationViewModelP5(
+    val pvm = DraftsPaginationViewModel(
       totalNumberOfMovements = drafts.totalMatchingMovements,
       currentPage = page,
       numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
       href = routes.DashboardController.onSubmit(None).url,
-      additionalParams = param.getOrElse(Seq(("sortParams", sortParams.toString))),
+      additionalParams = additionalParams,
       lrn = lrn
     )
 

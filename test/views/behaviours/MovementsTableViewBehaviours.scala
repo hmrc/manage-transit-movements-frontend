@@ -128,8 +128,6 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
       }
     }
 
-  protected def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").toList.map(_.text())
-
 }
 // scalastyle:on method.length
 // scalastyle:on magic.number

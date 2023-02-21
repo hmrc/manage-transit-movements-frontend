@@ -21,7 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import viewModels.pagination.PaginationViewModel
+import viewModels.pagination.MovementsPaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.arrival.ViewAllArrivalsView
@@ -29,9 +29,12 @@ import views.html.arrival.ViewAllArrivalsView
 class ViewAllArrivalsViewSpec
     extends MovementsTableViewBehaviours[ViewArrival]
     with SearchViewBehaviours[ViewArrival]
-    with PaginationViewBehaviours[ViewArrival]
+    with PaginationViewBehaviours[MovementsPaginationViewModel]
     with Generators
     with ScalaCheckPropertyChecks {
+
+  override val buildViewModel: (Int, Int, Int, String) => MovementsPaginationViewModel =
+    MovementsPaginationViewModel(_, _, _, _)
 
   override val prefix: String = "viewArrivalNotifications"
 
@@ -45,7 +48,7 @@ class ViewAllArrivalsViewSpec
 
   override val viewMovements: Seq[ViewArrival] = dataRows.flatMap(_._2)
 
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: MovementsPaginationViewModel): HtmlFormat.Appendable =
     applyView(form, ViewAllArrivalMovementsViewModel(Seq.empty[ViewArrival], paginationViewModel))
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllArrivalMovementsViewModel)
