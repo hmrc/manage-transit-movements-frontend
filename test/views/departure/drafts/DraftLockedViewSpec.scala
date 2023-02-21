@@ -42,7 +42,7 @@ class DraftLockedViewSpec extends ViewBehaviours {
   s"must render button" in {
     val button = getElementByClass(doc, "govuk-button")
     assertElementContainsText(button, "Return to drafts")
-    assertElementContainsHref(button, controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url)
+    assertElementContainsHref(button, controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
   }
 
 }
