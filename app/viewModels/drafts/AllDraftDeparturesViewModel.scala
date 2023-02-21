@@ -19,13 +19,14 @@ package viewModels.drafts
 import models.DeparturesSummary
 import play.api.i18n.Messages
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.paginationP5.PaginationViewModelP5
+import viewModels.pagination.DraftsPaginationViewModel
 
-case class AllDraftDeparturesViewModel(items: DeparturesSummary,
-                                       pageSize: Int,
-                                       lrn: Option[String],
-                                       draftDepartureFrontendUrl: String,
-                                       paginationViewModel: PaginationViewModelP5
+case class AllDraftDeparturesViewModel(
+  items: DeparturesSummary,
+  pageSize: Int,
+  lrn: Option[String],
+  draftDepartureFrontendUrl: String,
+  paginationViewModel: DraftsPaginationViewModel
 ) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
@@ -42,7 +43,7 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary,
   def lrnRedirectLocation(lrn: String): String            = s"$draftDepartureFrontendUrl/drafts/$lrn"
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
-  def searchResult()(implicit messages: Messages): Option[String] =
+  def searchResult(implicit messages: Messages): Option[String] =
     lrn.map {
       lrn =>
         draftDepartures match {
@@ -66,8 +67,6 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary,
   def noResultsFound: Boolean = items.totalMovements == 0
 
   def noSearchResultsFound: Boolean = items.totalMatchingMovements == 0 && items.totalMovements > 0
-
-  def pageNumber: Int = paginationViewModel.pageNumber
 
 }
 
