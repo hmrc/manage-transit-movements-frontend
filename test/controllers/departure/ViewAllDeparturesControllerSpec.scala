@@ -30,7 +30,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import viewModels.pagination.PaginationViewModel
+import viewModels.pagination.MovementsPaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 import views.html.departure.ViewAllDeparturesView
 
@@ -100,7 +100,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = PaginationViewModel(
+        val expectedPaginationViewModel = MovementsPaginationViewModel(
           totalNumberOfMovements = mockDepartureResponse.totalDepartures,
           currentPage = currentPage,
           numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
@@ -125,7 +125,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = PaginationViewModel(
+        val expectedPaginationViewModel = MovementsPaginationViewModel(
           totalNumberOfMovements = mockDepartureResponse.totalDepartures,
           currentPage = 1,
           numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
