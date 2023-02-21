@@ -28,7 +28,7 @@ import play.twirl.api.HtmlFormat
 import services.ArrivalP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.{MovementsPaginationViewModel, PaginationViewModel}
+import viewModels.pagination.MovementsPaginationViewModel
 import views.html.arrival.P5.ViewAllArrivalsP5View
 
 import java.time.Clock

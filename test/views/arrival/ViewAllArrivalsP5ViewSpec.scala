@@ -22,7 +22,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.{MovementsPaginationViewModel, PaginationViewModel}
+import viewModels.pagination.MovementsPaginationViewModel
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.arrival.P5.ViewAllArrivalsP5View
 

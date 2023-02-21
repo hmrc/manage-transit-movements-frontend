@@ -20,14 +20,12 @@ import config.FrontendAppConfig
 import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
 import controllers.actions.IdentifierAction
 import models.Availability
-import models.Availability._
-
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatDoYouWantToDoView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatDoYouWantToDoController @Inject() (
