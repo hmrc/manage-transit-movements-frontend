@@ -17,8 +17,10 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{ArrivalMovementConnector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
+import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
 import controllers.actions.IdentifierAction
+import models.Availability
+import models.Availability._
 
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
@@ -28,27 +30,43 @@ import views.html.WhatDoYouWantToDoView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatDoYouWantToDoController @Inject() (
-  identify: IdentifierAction,
-  cc: MessagesControllerComponents,
-  val arrivalMovementConnector: ArrivalMovementConnector,
-  val departuresMovementConnector: DeparturesMovementConnector,
-  val departuresMovementsP5Connector: DeparturesMovementsP5Connector,
-  view: WhatDoYouWantToDoView,
-  appConfig: FrontendAppConfig
-)(implicit ec: ExecutionContext)
-    extends FrontendController(cc)
+class WhatDoYouWantToDoController @Inject()(
+                                             identify: IdentifierAction,
+                                             cc: MessagesControllerComponents,
+                                             val arrivalMovementConnector: ArrivalMovementConnector,
+                                             val departuresMovementConnector: DeparturesMovementConnector,
+                                             val departuresMovementsP5Connector: DeparturesMovementsP5Connector,
+                                             val arrivalMovementsP5Connector: ArrivalMovementP5Connector,
+                                             view: WhatDoYouWantToDoView,
+                                             appConfig: FrontendAppConfig
+                                           )(implicit ec: ExecutionContext)
+  extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
-        arrivalsAvailability   <- arrivalMovementConnector.getArrivalsAvailability()
+        arrivalsAvailability <- if (appConfig.phase5Enabled) {
+          arrivalMovementsP5Connector.getAllMovements() map (Availability(_)) //TODO update when we have API params
+        } else {
+          arrivalMovementConnector.getArrivalsAvailability()
+        }
         departuresAvailability <- departuresMovementConnector.getDeparturesAvailability()
         draftDeparturesAvailability <-
-          if (appConfig.phase5Enabled) departuresMovementsP5Connector.getDraftDeparturesAvailability().map(Some(_)) else Future.successful(None)
+          if (appConfig.phase5Enabled) {
+            departuresMovementsP5Connector.getDraftDeparturesAvailability().map(Some(_))
+          }
+          else {
+            Future.successful(None)
+          }
+        viewAllArrivalUrl =
+          if (appConfig.phase5Enabled){
+            controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
+          } else {
+            controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
+          }
       } yield Ok(
-        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability)
+        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalUrl)
       )
   }
 }
