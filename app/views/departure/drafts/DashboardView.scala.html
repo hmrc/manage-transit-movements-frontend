@@ -20,20 +20,20 @@
 @import config.FrontendAppConfig
 @import views.html.components.Search
 @import viewModels.pagination.PaginationViewModel
-@import views.html.components.PaginationP5
+@import views.html.components.Pagination
 
 @this(
-        mainTemplate: MainTemplate,
-        draftDeparturesTable: DraftDeparturesTable,
-        heading: Heading,
-        search: Search,
-        config: FrontendAppConfig,
-        pagination: PaginationP5
+    mainTemplate: MainTemplate,
+    draftDeparturesTable: DraftDeparturesTable,
+    heading: Heading,
+    search: Search,
+    config: FrontendAppConfig,
+    pagination: Pagination
 )
 
 @(
-        form: Form[_],
-        viewModel: AllDraftDeparturesViewModel
+    form: Form[_],
+    viewModel: AllDraftDeparturesViewModel
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
@@ -46,7 +46,7 @@
 
     @if(viewModel.isSearch) {
         <p class="govuk-body">
-            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None)">
+            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, None)">
             @messages("departure.drafts.dashboard.link.title")
             </a>
         </p>
@@ -55,14 +55,14 @@
     @if(!viewModel.noResultsFound) {
         @search(
             form = form,
-            action = controllers.departure.drafts.routes.DashboardController.onSubmit(),
+            action = controllers.departure.drafts.routes.DashboardController.onSubmit(Some(viewModel.sortParams.convertParams)),
             label = "departure.drafts.dashboard.search"
         )
     }
 
     @if(viewModel.searchResultsFound) {
         <p class="govuk-body" id="results-found">
-            @Html(viewModel.searchResult())
+            @Html(viewModel.searchResult)
         </p>
     }
 

@@ -16,16 +16,21 @@
 
 package viewModels.drafts
 
-import models.DeparturesSummary
+import models.Sort.Field.{CreatedAt, LRN}
+import models.Sort._
+import models.{DeparturesSummary, Sort}
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.paginationP5.PaginationViewModelP5
+import viewModels.pagination.DraftsPaginationViewModel
 
-case class AllDraftDeparturesViewModel(items: DeparturesSummary,
-                                       pageSize: Int,
-                                       lrn: Option[String],
-                                       draftDepartureFrontendUrl: String,
-                                       paginationViewModel: PaginationViewModelP5
+case class AllDraftDeparturesViewModel(
+  items: DeparturesSummary,
+  pageSize: Int,
+  lrn: Option[String],
+  draftDepartureFrontendUrl: String,
+  paginationViewModel: DraftsPaginationViewModel,
+  sortParams: Sort = SortByCreatedAtDesc
 ) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
@@ -35,14 +40,15 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary,
 
   def title(implicit messages: Messages): String                = messages(s"$messageKeyPrefix.title")
   def heading(implicit messages: Messages): String              = messages(s"$messageKeyPrefix.heading")
-  def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$messageKeyPrefix.heading.hidden")
+  def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.heading.hidden")
 
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
 
-  def lrnRedirectLocation(lrn: String): String            = s"$draftDepartureFrontendUrl/drafts/$lrn"
+  def lrnRedirectLocation(lrn: String): String = s"$draftDepartureFrontendUrl/drafts/$lrn"
+
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
-  def searchResult()(implicit messages: Messages): Option[String] =
+  def searchResult(implicit messages: Messages): Option[String] =
     lrn.map {
       lrn =>
         draftDepartures match {
@@ -67,7 +73,11 @@ case class AllDraftDeparturesViewModel(items: DeparturesSummary,
 
   def noSearchResultsFound: Boolean = items.totalMatchingMovements == 0 && items.totalMovements > 0
 
-  def pageNumber: Int = paginationViewModel.pageNumber
+  def sortLrn: String       = sortParams.ariaSort(LRN)
+  def sortCreatedAt: String = sortParams.ariaSort(CreatedAt)
+
+  def sortLRNHref(): Call       = sortParams.href(LRN, lrn)
+  def sortCreatedAtHref(): Call = sortParams.href(CreatedAt, lrn)
 
 }
 

@@ -90,7 +90,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(1), None).url
+        controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(1), None, None).url
     }
 
     "when yes submitted must redirect back to draft departure dashboard when on page is not 1 and rows is 1" in {
@@ -109,7 +109,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(1), None).url
+        controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(1), None, None).url
     }
 
     "when yes submitted must redirect back to draft departure dashboard when on page is not 1 and rows is not 1" in {
@@ -128,7 +128,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(2), None).url
+        controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(2), None, None).url
     }
 
     "when no submitted must redirect back to draft departure dashboard" in {
@@ -140,7 +140,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(1), None).url
+        controllers.departure.drafts.routes.DashboardController.onPageLoad(Some(1), None, None).url
     }
 
     "when yes submitted must redirect to InternalServerError if status 500 is returned from connector" in {
@@ -181,4 +181,5 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
     }
 
   }
+
 }

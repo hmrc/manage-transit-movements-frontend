@@ -17,6 +17,8 @@
 package controllers.departure.drafts
 
 import base.SpecBase
+import forms.SearchFormProvider
+import models.Sort.{SortByCreatedAtAsc, SortByCreatedAtDesc, SortByLRNAsc, SortByLRNDesc}
 import models.departure.drafts.{Limit, Skip}
 import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import org.mockito.ArgumentMatchers.any
@@ -26,6 +28,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DraftDepartureService
+import viewModels.drafts.AllDraftDeparturesViewModel
+import viewModels.pagination.DraftsPaginationViewModel
+import views.html.departure.drafts.DashboardView
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -34,8 +39,10 @@ class DashboardControllerSpec extends SpecBase {
 
   private val draftDepartureService = mock[DraftDepartureService]
 
-  private lazy val draftDashboardGetRoute  = routes.DashboardController.onPageLoad(None, None).url
-  private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit().url
+  private val formProvider                 = new SearchFormProvider()
+  private val form                         = formProvider()
+  private lazy val draftDashboardGetRoute  = routes.DashboardController.onPageLoad(None, None, None).url
+  private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit(None).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -47,12 +54,12 @@ class DashboardControllerSpec extends SpecBase {
   "DraftDashboard Controller" - {
 
     "GET" - {
-      "must return OK and the correct view" in {
+      "must return OK and the correct view when a pagedDepartureSummary is returned" in {
 
         val draftDeparture =
           DeparturesSummary(
-            0,
-            0,
+            2,
+            2,
             List(
               DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
               DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
@@ -64,7 +71,362 @@ class DashboardControllerSpec extends SpecBase {
         val request = FakeRequest(GET, draftDashboardGetRoute)
         val result  = route(app, request).value
 
+        val view                = injector.instanceOf[DashboardView]
+        val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length, 1, 2, "test")
+        val viewModel =
+          AllDraftDeparturesViewModel(draftDeparture, draftDeparture.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
+
         status(result) mustEqual OK
+        contentAsString(result) mustEqual
+          view(form, viewModel)(request, messages).toString
+      }
+
+      "must return OK correct VIEW for a get" - {
+        "when sortParam lrn.asc is passed" in {
+          val sortParam = SortByLRNAsc
+
+          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, None, Some(sortParam.convertParams)).url
+
+          val draftDeparture =
+            DeparturesSummary(
+              4,
+              4,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("4123"), LocalDateTime.now(), 27),
+                DepartureUserAnswerSummary(LocalReferenceNumber("3412"), LocalDateTime.now(), 28),
+                DepartureUserAnswerSummary(LocalReferenceNumber("2341"), LocalDateTime.now(), 29),
+                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 30)
+              )
+            )
+
+          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          val view = injector.instanceOf[DashboardView]
+          val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length,
+                                                              1,
+                                                              4,
+                                                              routes.DashboardController.onSubmit(None).url,
+                                                              Seq(("sortParams", sortParam.convertParams))
+          )
+          val viewModel =
+            AllDraftDeparturesViewModel(draftDeparture,
+                                        draftDeparture.userAnswers.length,
+                                        None,
+                                        frontendAppConfig.draftDepartureFrontendUrl,
+                                        paginationViewModel,
+                                        sortParams = sortParam
+            )
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form, viewModel)(request, messages).toString
+        }
+        "when sortParam lrn.desc is passed" in {
+          val sortParam = SortByLRNDesc
+
+          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, None, Some(sortParam.convertParams)).url
+
+          val draftDeparture =
+            DeparturesSummary(
+              4,
+              4,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 30),
+                DepartureUserAnswerSummary(LocalReferenceNumber("2341"), LocalDateTime.now(), 29),
+                DepartureUserAnswerSummary(LocalReferenceNumber("3412"), LocalDateTime.now(), 28),
+                DepartureUserAnswerSummary(LocalReferenceNumber("4123"), LocalDateTime.now(), 27)
+              )
+            )
+
+          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          val view = injector.instanceOf[DashboardView]
+          val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length,
+                                                              1,
+                                                              4,
+                                                              routes.DashboardController.onSubmit(None).url,
+                                                              Seq(("sortParams", sortParam.convertParams))
+          )
+          val viewModel =
+            AllDraftDeparturesViewModel(draftDeparture,
+                                        draftDeparture.userAnswers.length,
+                                        None,
+                                        frontendAppConfig.draftDepartureFrontendUrl,
+                                        paginationViewModel,
+                                        sortParams = sortParam
+            )
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form, viewModel)(request, messages).toString
+        }
+        "when sortParam createdAt.asc is passed" in {
+          val sortParam = SortByCreatedAtAsc
+
+          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, None, Some(sortParam.convertParams)).url
+
+          val draftDeparture =
+            DeparturesSummary(
+              4,
+              4,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 30),
+                DepartureUserAnswerSummary(LocalReferenceNumber("2341"), LocalDateTime.now(), 29),
+                DepartureUserAnswerSummary(LocalReferenceNumber("3412"), LocalDateTime.now(), 28),
+                DepartureUserAnswerSummary(LocalReferenceNumber("4123"), LocalDateTime.now(), 27)
+              )
+            )
+
+          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          val view = injector.instanceOf[DashboardView]
+          val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length,
+                                                              1,
+                                                              4,
+                                                              routes.DashboardController.onSubmit(None).url,
+                                                              Seq(("sortParams", sortParam.convertParams))
+          )
+          val viewModel =
+            AllDraftDeparturesViewModel(draftDeparture,
+                                        draftDeparture.userAnswers.length,
+                                        None,
+                                        frontendAppConfig.draftDepartureFrontendUrl,
+                                        paginationViewModel,
+                                        sortParams = sortParam
+            )
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form, viewModel)(request, messages).toString
+        }
+        "when sortParam createdAt.desc is passed" in {
+          val sortParam = SortByCreatedAtDesc
+
+          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, None, Some(sortParam.convertParams)).url
+
+          val draftDeparture =
+            DeparturesSummary(
+              4,
+              4,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 30),
+                DepartureUserAnswerSummary(LocalReferenceNumber("2341"), LocalDateTime.now(), 29),
+                DepartureUserAnswerSummary(LocalReferenceNumber("3412"), LocalDateTime.now(), 28),
+                DepartureUserAnswerSummary(LocalReferenceNumber("4123"), LocalDateTime.now(), 27)
+              )
+            )
+
+          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          val view = injector.instanceOf[DashboardView]
+          val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length,
+                                                              1,
+                                                              4,
+                                                              routes.DashboardController.onSubmit(None).url,
+                                                              Seq(("sortParams", sortParam.convertParams))
+          )
+          val viewModel =
+            AllDraftDeparturesViewModel(draftDeparture,
+                                        draftDeparture.userAnswers.length,
+                                        None,
+                                        frontendAppConfig.draftDepartureFrontendUrl,
+                                        paginationViewModel,
+                                        sortParams = sortParam
+            )
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form, viewModel)(request, messages).toString
+        }
+
+        "when sortParam lrn.asc is passed along with an LRN" in {
+          val sortParam = SortByLRNAsc
+          val lrn       = "123"
+
+          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, Some(lrn), Some(sortParam.convertParams)).url
+
+          val draftDeparture =
+            DeparturesSummary(
+              2,
+              2,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 27),
+                DepartureUserAnswerSummary(LocalReferenceNumber("1235"), LocalDateTime.now(), 28)
+              )
+            )
+
+          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()), any())(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          val view = injector.instanceOf[DashboardView]
+          val paginationViewModel = DraftsPaginationViewModel(
+            draftDeparture.userAnswers.length,
+            1,
+            4,
+            routes.DashboardController.onSubmit(None).url,
+            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams)),
+            lrn = Some(lrn)
+          )
+
+          val viewModel =
+            AllDraftDeparturesViewModel(draftDeparture,
+                                        draftDeparture.userAnswers.length,
+                                        Some(lrn),
+                                        frontendAppConfig.draftDepartureFrontendUrl,
+                                        paginationViewModel,
+                                        sortParams = sortParam
+            )
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form, viewModel)(request, messages).toString
+        }
+        "when sortParam lrn.desc is passed along with an LRN" in {
+          val sortParam = SortByLRNDesc
+          val lrn       = "123"
+
+          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, Some(lrn), Some(sortParam.convertParams)).url
+
+          val draftDeparture =
+            DeparturesSummary(
+              2,
+              2,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("1235"), LocalDateTime.now(), 28),
+                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 27)
+              )
+            )
+
+          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()), any())(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          val view = injector.instanceOf[DashboardView]
+          val paginationViewModel = DraftsPaginationViewModel(
+            draftDeparture.userAnswers.length,
+            1,
+            4,
+            routes.DashboardController.onSubmit(None).url,
+            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams)),
+            lrn = Some(lrn)
+          )
+
+          val viewModel =
+            AllDraftDeparturesViewModel(draftDeparture,
+                                        draftDeparture.userAnswers.length,
+                                        Some(lrn),
+                                        frontendAppConfig.draftDepartureFrontendUrl,
+                                        paginationViewModel,
+                                        sortParams = sortParam
+            )
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form, viewModel)(request, messages).toString
+        }
+        "when sortParam createdAt.asc is passed along with an LRN" in {
+          val sortParam = SortByCreatedAtAsc
+          val lrn       = "123"
+
+          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, Some(lrn), Some(sortParam.convertParams)).url
+
+          val draftDeparture =
+            DeparturesSummary(
+              2,
+              2,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 27),
+                DepartureUserAnswerSummary(LocalReferenceNumber("1235"), LocalDateTime.now(), 28)
+              )
+            )
+
+          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()), any())(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          val view = injector.instanceOf[DashboardView]
+          val paginationViewModel = DraftsPaginationViewModel(
+            draftDeparture.userAnswers.length,
+            1,
+            4,
+            routes.DashboardController.onSubmit(None).url,
+            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams)),
+            lrn = Some(lrn)
+          )
+
+          val viewModel =
+            AllDraftDeparturesViewModel(draftDeparture,
+                                        draftDeparture.userAnswers.length,
+                                        Some(lrn),
+                                        frontendAppConfig.draftDepartureFrontendUrl,
+                                        paginationViewModel,
+                                        sortParams = sortParam
+            )
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form, viewModel)(request, messages).toString
+        }
+        "when sortParam createdAt.desc is passed along with an LRN" in {
+          val sortParam = SortByCreatedAtDesc
+          val lrn       = "123"
+
+          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, Some(lrn), Some(sortParam.convertParams)).url
+
+          val draftDeparture =
+            DeparturesSummary(
+              2,
+              2,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("1235"), LocalDateTime.now(), 28),
+                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 27)
+              )
+            )
+
+          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()), any())(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          val view = injector.instanceOf[DashboardView]
+          val paginationViewModel = DraftsPaginationViewModel(
+            draftDeparture.userAnswers.length,
+            1,
+            4,
+            routes.DashboardController.onSubmit(None).url,
+            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams)),
+            lrn = Some(lrn)
+          )
+
+          val viewModel =
+            AllDraftDeparturesViewModel(draftDeparture,
+                                        draftDeparture.userAnswers.length,
+                                        Some(lrn),
+                                        frontendAppConfig.draftDepartureFrontendUrl,
+                                        paginationViewModel,
+                                        sortParams = sortParam
+            )
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form, viewModel)(request, messages).toString
+        }
       }
 
       "must redirect to technical difficulties when there is an error" in {
