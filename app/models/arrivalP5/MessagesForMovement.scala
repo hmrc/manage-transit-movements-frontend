@@ -16,16 +16,16 @@
 
 package models.arrivalP5
 
-import cats.data.NonEmptySeq
+import cats.data.NonEmptyList
 import play.api.libs.json.{Json, JsonValidationError, Reads}
 
-case class MessagesForMovement(messages: NonEmptySeq[Message]) {
+case class MessagesForMovement(messages: NonEmptyList[Message]) {
   val messageBeforeLatest: Option[Message] = messages.tail.headOption
 }
 
 object MessagesForMovement {
 
-  implicit val sortedNonEmptyListReads: Reads[NonEmptySeq[Message]] =
+  implicit val sortedNonEmptyListReads: Reads[NonEmptyList[Message]] =
     Reads
       .of[List[Message]]
       .collect(
@@ -34,7 +34,7 @@ object MessagesForMovement {
         list =>
           val sortedList: List[Message] = list.sortBy(_.received).reverse
 
-          NonEmptySeq[Message](list.head, sortedList.tail)
+          NonEmptyList[Message](sortedList.head, sortedList.tail)
       }
 
   implicit val reads: Reads[MessagesForMovement] = Json.reads[MessagesForMovement]

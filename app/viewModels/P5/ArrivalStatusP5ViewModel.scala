@@ -16,7 +16,7 @@
 
 package viewModels.P5
 
-import cats.data.NonEmptySeq
+import cats.data.NonEmptyList
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5.{ArrivalMessageType, Message}
 import viewModels.ViewMovementAction
@@ -25,7 +25,7 @@ case class ArrivalStatusP5ViewModel(status: String, actions: Seq[ViewMovementAct
 
 object ArrivalStatusP5ViewModel {
 
-  def apply(messages: NonEmptySeq[Message]): ArrivalStatusP5ViewModel = {
+  def apply(messages: NonEmptyList[Message]): ArrivalStatusP5ViewModel = {
     val allPfs: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] =
       Seq(
         arrivalNotification,

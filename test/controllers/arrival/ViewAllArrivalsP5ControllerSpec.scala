@@ -30,7 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.PaginationViewModel
+import viewModels.pagination.MovementsPaginationViewModel
 import views.html.arrival.P5.ViewAllArrivalsP5View
 
 import java.time.LocalDateTime
@@ -40,8 +40,6 @@ import scala.concurrent.Future
 class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementP5Connector]
-
-  private val time: LocalDateTime = LocalDateTime.now()
 
   private val formProvider = new SearchFormProvider()
   private val form         = formProvider()
@@ -107,7 +105,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
       status(result) mustEqual OK
 
-      val expectedPaginationViewModel = PaginationViewModel(
+      val expectedPaginationViewModel = MovementsPaginationViewModel(
         totalNumberOfMovements = mockArrivalMovementResponse.movements.length,
         currentPage = 1,
         numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,

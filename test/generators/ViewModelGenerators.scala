@@ -43,7 +43,7 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewArrivals        <- listWithMaxLength[ViewArrivalP5]()
-        paginationViewModel <- arbitrary[PaginationViewModel]
+        paginationViewModel <- arbitrary[MovementsPaginationViewModel]
       } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, paginationViewModel)
     }
 

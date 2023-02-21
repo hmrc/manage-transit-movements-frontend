@@ -22,14 +22,14 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.PaginationViewModel
+import viewModels.pagination.{MovementsPaginationViewModel, PaginationViewModel}
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.arrival.P5.ViewAllArrivalsP5View
 
 class ViewAllArrivalsP5ViewSpec
     extends MovementsTableViewBehaviours[ViewArrivalP5]
     with SearchViewBehaviours[ViewArrivalP5]
-    with PaginationViewBehaviours[ViewArrivalP5]
+    with PaginationViewBehaviours[MovementsPaginationViewModel]
     with Generators
     with ScalaCheckPropertyChecks {
 
@@ -45,10 +45,12 @@ class ViewAllArrivalsP5ViewSpec
 
   override val viewMovements: Seq[ViewArrivalP5] = dataRows.flatMap(_._2)
 
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: MovementsPaginationViewModel): HtmlFormat.Appendable =
     applyView(form, ViewAllArrivalMovementsP5ViewModel(Seq.empty[ViewArrivalP5], paginationViewModel))
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllArrivalMovementsP5ViewModel)
+
+  override val buildViewModel: (Int, Int, Int, String) => MovementsPaginationViewModel = MovementsPaginationViewModel(_, _, _, _)
 
   private def applyView(
     form: Form[String],
@@ -83,5 +85,4 @@ class ViewAllArrivalsP5ViewSpec
     expectedText = "Manage your transit movements",
     expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
   )
-
 }

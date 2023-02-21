@@ -21,7 +21,7 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.arrivalP5.{ArrivalMessageType, ArrivalMovement, ArrivalMovements, Message, MessagesForMovement}
+import models.arrivalP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
