@@ -21,12 +21,7 @@ package object connectors {
   object CustomHttpReads {
 
     implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      new HttpReads[HttpResponse] {
-
-        def read(method: String, url: String, response: HttpResponse): HttpResponse = response
-
-      }
-
+      (_: String, _: String, response: HttpResponse) => response
   }
 
 }

@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +31,8 @@ class WhatDoYouWantToDoController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   view: WhatDoYouWantToDoView,
-  whatDoYouWantToDoService: WhatDoYouWantToDoService
+  whatDoYouWantToDoService: WhatDoYouWantToDoService,
+  appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -38,10 +40,10 @@ class WhatDoYouWantToDoController @Inject() (
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
-        arrivalsAvailability        <- whatDoYouWantToDoService.fetchArrivalsAvailability
+        arrivalsAvailability <- whatDoYouWantToDoService.fetchArrivalsAvailability(appConfig.phase5ArrivalEnabled)
+        viewAllArrivalUrl = whatDoYouWantToDoService.fetchArrivalsUrl(appConfig.phase5ArrivalEnabled)
         departuresAvailability      <- whatDoYouWantToDoService.getDeparturesAvailability
-        draftDeparturesAvailability <- whatDoYouWantToDoService.fetchDraftArrivalsAvailability
-        viewAllArrivalUrl = whatDoYouWantToDoService.fetchDraftArrivalsUrl
+        draftDeparturesAvailability <- whatDoYouWantToDoService.fetchDraftDepartureAvailability(appConfig.phase5DepartureEnabled)
       } yield Ok(
         view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalUrl)
       )

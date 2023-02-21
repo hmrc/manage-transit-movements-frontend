@@ -18,10 +18,11 @@ package connectors
 
 import base.SpecBase
 import cats.data.NonEmptyList
-import com.github.tomakehurst.wiremock.client.WireMock.{get, okJson, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
 import models.arrivalP5._
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
@@ -113,6 +114,30 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
         )
 
         connector.getAllMovements().futureValue mustBe Some(expectedResult)
+      }
+
+      "must return empty ArrivalMovements when 404 is returned" in {
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/arrivals"))
+            .willReturn(aResponse().withStatus(404))
+        )
+
+        connector.getAllMovements().futureValue mustBe Some(ArrivalMovements(Seq.empty))
+      }
+
+      "must return None when an error is returned" in {
+        val genError = Gen.chooseNum(400, 599).suchThat(_ != 404)
+
+        forAll(genError) {
+          error =>
+            server.stubFor(
+              get(urlEqualTo(s"/movements/arrivals"))
+                .willReturn(aResponse().withStatus(error))
+            )
+
+            connector.getAllMovements().futureValue mustBe None
+        }
       }
     }
 

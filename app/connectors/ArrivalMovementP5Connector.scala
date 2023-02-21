@@ -17,9 +17,12 @@
 package connectors
 
 import config.FrontendAppConfig
+import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
 import models.arrivalP5.{ArrivalMovements, MessagesForMovement}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry}
+import play.api.http.Status.{NOT_FOUND, OK}
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,8 +36,15 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
     val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals"
 
     http
-      .GET[ArrivalMovements](url)(HttpReads[ArrivalMovements], headers, ec)
-      .map(Some(_))
+      .GET[HttpResponse](url)(rawHttpResponseHttpReads, headers, ec)
+      .map {
+        response =>
+          response.status match {
+            case OK        => response.json.asOpt[ArrivalMovements]
+            case NOT_FOUND => Some(ArrivalMovements(Seq.empty))
+            case _         => None
+          }
+      }
       .recover {
         case e =>
           logger.error(s"Failed to get arrival movements with error: $e")
