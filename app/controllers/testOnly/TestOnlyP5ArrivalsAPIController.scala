@@ -16,7 +16,8 @@
 
 package controllers.testOnly
 
-import connectors.testOnly.TestOnlyArrivalsRouterConnector
+import connectors.testOnly.TestOnlyP5ArrivalsAPIConnector
+import play.api.libs.json.Json
 import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -26,57 +27,35 @@ import scala.xml.NodeSeq
 
 class TestOnlyP5ArrivalsAPIController @Inject() (
   cc: MessagesControllerComponents,
-  connector: TestOnlyArrivalsRouterConnector,
+  connector: TestOnlyP5ArrivalsAPIConnector,
   action: DefaultActionBuilder
 )(implicit val ec: ExecutionContext)
     extends FrontendController(cc) {
 
-  def arrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
+  def outboundArrivalMessage: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector
-        .createArrivalNotificationMessage(request.body, request.headers)
-        .map {
-          response =>
-            val location = response.header("Location").getOrElse("Location is missing")
-            Status(response.status)
-              .withHeaders(
-                "Location"  -> location,
-                "arrivalId" -> location.split("/").last
-              )
-        }
+        .arrivalOutbound(request.body, request.headers)
+        .map(
+          x => Accepted(x.body)
+        )
   }
 
-  def resubmitArrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
+  def outboundUnloadingMessage(arrivalId: String): Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      request.headers.get("arrivalId") match {
-        case Some(arrivalId) =>
-          connector
-            .resubmitArrivalNotificationMessage(request.body, arrivalId, request.headers)
-            .map {
-              response =>
-                val location = response.header("Location").getOrElse("Location is missing")
-                Status(response.status)
-                  .withHeaders(
-                    "Location"  -> location,
-                    "arrivalId" -> location.split("/").last
-                  )
-            }
-
-        case _ => Future.successful(BadRequest("ArrivalId is missing"))
-      }
+      connector
+        .unloadingOutbound(request.body, arrivalId, request.headers)
+        .map(
+          x => Accepted(x.body)
+        )
   }
 
-  def messageToCore: Action[NodeSeq] = action.async(parse.xml) {
+  def inboundArrivalMessage(arrivalId: String): Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      request.headers.get("arrivalId") match {
-        case Some(arrivalId) =>
-          connector
-            .submitMessageToCore(request.body, arrivalId, request.headers)
-            .map(
-              response => Status(response.status)
-            )
-
-        case _ => Future.successful(BadRequest("ArrivalId is missing"))
-      }
+      connector
+        .arrivalInbound(request.body, arrivalId, request.headers)
+        .map(
+          x => Accepted(x.body)
+        )
   }
 }

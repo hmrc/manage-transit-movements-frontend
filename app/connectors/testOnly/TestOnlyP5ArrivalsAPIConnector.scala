@@ -26,16 +26,47 @@ import scala.xml.NodeSeq
 
 class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
-  def arrivalOutbound(requestData: NodeSeq)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+  def arrivalOutbound(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+
+    val newHeaders: HeaderCarrier = headerCarrier
+      .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
+      .withExtraHeaders(
+        ("Content-Type" -> "application/xml"),
+        ("Accept", "application/vnd.hmrc.2.0+json")
+      )
+
     val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/arrivals"
 
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
+  }
+
+  def unloadingOutbound(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+
+    val newHeaders: HeaderCarrier = headerCarrier
+      .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
+      .withExtraHeaders(
+        ("Content-Type" -> "application/xml"),
+        ("Accept", "application/vnd.hmrc.2.0+json"),
+        ("X-Message-Type", headers.get("X-Message-Type").getOrElse("No x-message-type"))
+      )
+
+    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
+
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 
   def arrivalInbound(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
-    val serviceUrl = s"${config.commonTransitConventionTradersUrl}transit-movements/traders/movements/$arrivalId/messages"
+    val newHeaders: HeaderCarrier = headerCarrier
+      .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
+      .withExtraHeaders(
+        ("Content-Type" -> "application/xml"),
+        ("Accept", "application/vnd.hmrc.2.0+json"),
+        ("X-Message-Type", headers.get("X-Message-Type").getOrElse("No x-message-type"))
+      )
 
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)
+    val serviceUrl = s"${config.transitMovementsUrl}transit-movements/traders/movements/$arrivalId/messages"
+
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 }
