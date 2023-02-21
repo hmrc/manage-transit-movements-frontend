@@ -16,27 +16,21 @@
 
 package controllers
 
-import config.FrontendAppConfig
-import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
 import controllers.actions.IdentifierAction
-import models.Availability
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.WhatDoYouWantToDoService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatDoYouWantToDoView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class WhatDoYouWantToDoController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  val arrivalMovementConnector: ArrivalMovementConnector,
-  val departuresMovementConnector: DeparturesMovementConnector,
-  val departuresMovementsP5Connector: DeparturesMovementsP5Connector,
-  val arrivalMovementsP5Connector: ArrivalMovementP5Connector,
   view: WhatDoYouWantToDoView,
-  appConfig: FrontendAppConfig
+  whatDoYouWantToDoService: WhatDoYouWantToDoService
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -44,25 +38,10 @@ class WhatDoYouWantToDoController @Inject() (
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
-        arrivalsAvailability <-
-          if (appConfig.phase5ArrivalEnabled) {
-            arrivalMovementsP5Connector.getAllMovements().map(Availability(_)) //TODO update when we have API params
-          } else {
-            arrivalMovementConnector.getArrivalsAvailability()
-          }
-        departuresAvailability <- departuresMovementConnector.getDeparturesAvailability()
-        draftDeparturesAvailability <-
-          if (appConfig.phase5DepartureEnabled) {
-            departuresMovementsP5Connector.getDraftDeparturesAvailability().map(Some(_))
-          } else {
-            Future.successful(None)
-          }
-        viewAllArrivalUrl =
-          if (appConfig.phase5ArrivalEnabled) {
-            controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
-          } else {
-            controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
-          }
+        arrivalsAvailability        <- whatDoYouWantToDoService.fetchArrivalsAvailability
+        departuresAvailability      <- whatDoYouWantToDoService.getDeparturesAvailability
+        draftDeparturesAvailability <- whatDoYouWantToDoService.fetchDraftArrivalsAvailability
+        viewAllArrivalUrl = whatDoYouWantToDoService.fetchDraftArrivalsUrl
       } yield Ok(
         view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalUrl)
       )
