@@ -81,7 +81,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
 
   behave like pageWithHeading()
 
-  behave like pageWithPagination(controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url)
+  behave like pageWithPagination(controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
 
   val rows: Elements = doc.select("tr[data-testrole^=draft-list_row]")
 

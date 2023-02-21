@@ -60,7 +60,8 @@ object DraftsPaginationViewModel {
       totalNumberOfMovements,
       currentPage,
       numberOfMovementsPerPage,
-      href
+      href,
+      additionalParams
     ) {
       new DraftsPaginationViewModel(_, _, _, _, currentPage, lrn)
     }

@@ -46,7 +46,7 @@ object PaginationViewModel {
     currentPage: Int,
     numberOfMovementsPerPage: Int,
     href: String,
-    additionalParams: Seq[(String, String)] = Seq.empty
+    additionalParams: Seq[(String, String)]
   )(
     f: (MetaData, Option[PaginationLink], Option[PaginationLink], Seq[PaginationItem]) => T
   ): T = {

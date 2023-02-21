@@ -16,8 +16,11 @@
 
 package viewModels.drafts
 
-import models.DeparturesSummary
+import models.Sort.Field.{CreatedAt, LRN}
+import models.Sort._
+import models.{DeparturesSummary, Sort}
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 import viewModels.pagination.DraftsPaginationViewModel
 
@@ -26,7 +29,8 @@ case class AllDraftDeparturesViewModel(
   pageSize: Int,
   lrn: Option[String],
   draftDepartureFrontendUrl: String,
-  paginationViewModel: DraftsPaginationViewModel
+  paginationViewModel: DraftsPaginationViewModel,
+  sortParams: Sort = SortByCreatedAtDesc
 ) {
 
   val messageKeyPrefix      = "departure.drafts.dashboard"
@@ -40,7 +44,8 @@ case class AllDraftDeparturesViewModel(
 
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
 
-  def lrnRedirectLocation(lrn: String): String            = s"$draftDepartureFrontendUrl/drafts/$lrn"
+  def lrnRedirectLocation(lrn: String): String = s"$draftDepartureFrontendUrl/drafts/$lrn"
+
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
   def searchResult(implicit messages: Messages): Option[String] =
@@ -67,6 +72,12 @@ case class AllDraftDeparturesViewModel(
   def noResultsFound: Boolean = items.totalMovements == 0
 
   def noSearchResultsFound: Boolean = items.totalMatchingMovements == 0 && items.totalMovements > 0
+
+  def sortLrn: String       = sortParams.ariaSort(LRN)
+  def sortCreatedAt: String = sortParams.ariaSort(CreatedAt)
+
+  def sortLRNHref(): Call       = sortParams.href(LRN, lrn)
+  def sortCreatedAtHref(): Call = sortParams.href(CreatedAt, lrn)
 
 }
 

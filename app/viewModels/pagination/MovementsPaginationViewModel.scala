@@ -38,7 +38,8 @@ object MovementsPaginationViewModel {
       totalNumberOfMovements,
       currentPage,
       numberOfMovementsPerPage,
-      href
+      href,
+      Seq.empty
     ) {
       new MovementsPaginationViewModel(_, _, _, _, currentPage)
     }

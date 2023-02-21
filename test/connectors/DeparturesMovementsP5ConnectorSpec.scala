@@ -20,7 +20,8 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.departure.drafts.Limit
+import models.Sort.{SortByCreatedAtAsc, SortByCreatedAtDesc, SortByLRNAsc, SortByLRNDesc}
+import models.departure.drafts.{Limit, Skip}
 import models.{DepartureUserAnswerSummary, DeparturesSummary, DraftAvailability, LocalReferenceNumber}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -91,6 +92,143 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
 
             val expectedResult = None
             connector.getDeparturesSummary().futureValue mustBe expectedResult
+        }
+      }
+    }
+
+    "sortDraftDepartures" - {
+
+      val skip  = 1
+      val limit = 100
+
+      "must return Departure Summary sorted by LRN ascending when given successful response" in {
+
+        val expectedResult = DeparturesSummary(
+          0,
+          0,
+          List(
+            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
+            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28),
+            DepartureUserAnswerSummary(LocalReferenceNumber("DE123"), createdAt, 27),
+            DepartureUserAnswerSummary(LocalReferenceNumber("EF123"), createdAt, 26)
+          )
+        )
+
+        val departuresUserAnswers: List[DepartureUserAnswerSummary] = expectedResult.userAnswers
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.asc"))
+            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
+        )
+
+        val result =
+          connector.sortDraftDepartures(sortParams = SortByLRNAsc, limit = Limit(limit), skip = Skip(skip))
+        val resultsDeparturesUserAnswers: Seq[DepartureUserAnswerSummary] = result.futureValue.value.userAnswers
+
+        resultsDeparturesUserAnswers.head mustBe departuresUserAnswers.head
+        resultsDeparturesUserAnswers(1) mustBe departuresUserAnswers(1)
+        resultsDeparturesUserAnswers(2) mustBe departuresUserAnswers(2)
+        resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
+      }
+      "must return Departure Summary sorted by LRN descending when given successful response" in {
+
+        val expectedResult = DeparturesSummary(
+          0,
+          0,
+          List(
+            DepartureUserAnswerSummary(LocalReferenceNumber("EF123"), createdAt, 26),
+            DepartureUserAnswerSummary(LocalReferenceNumber("DE123"), createdAt, 27),
+            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28),
+            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29)
+          )
+        )
+        val departuresUserAnswers: List[DepartureUserAnswerSummary] = expectedResult.userAnswers
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.dsc"))
+            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
+        )
+
+        val result =
+          connector.sortDraftDepartures(SortByLRNDesc, limit = Limit(limit), skip = Skip(skip))
+        val resultsDeparturesUserAnswers: Seq[DepartureUserAnswerSummary] = result.futureValue.value.userAnswers
+
+        resultsDeparturesUserAnswers.head mustBe departuresUserAnswers.head
+        resultsDeparturesUserAnswers(1) mustBe departuresUserAnswers(1)
+        resultsDeparturesUserAnswers(2) mustBe departuresUserAnswers(2)
+        resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
+      }
+      "must return Departure Summary sorted by CreatedAT ascending when given successful response" in {
+
+        val expectedResult = DeparturesSummary(
+          0,
+          0,
+          List(
+            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
+            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28),
+            DepartureUserAnswerSummary(LocalReferenceNumber("DE123"), createdAt, 27),
+            DepartureUserAnswerSummary(LocalReferenceNumber("EF123"), createdAt, 26)
+          )
+        )
+
+        val departuresUserAnswers: List[DepartureUserAnswerSummary] = expectedResult.userAnswers
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=createdAt.asc"))
+            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
+        )
+
+        val result =
+          connector.sortDraftDepartures(SortByCreatedAtAsc, limit = Limit(limit), skip = Skip(skip))
+        val resultsDeparturesUserAnswers: Seq[DepartureUserAnswerSummary] = result.futureValue.value.userAnswers
+
+        resultsDeparturesUserAnswers.head mustBe departuresUserAnswers.head
+        resultsDeparturesUserAnswers(1) mustBe departuresUserAnswers(1)
+        resultsDeparturesUserAnswers(2) mustBe departuresUserAnswers(2)
+        resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
+      }
+      "must return Departure Summary sorted by createdAt descending when given successful response" in {
+
+        val expectedResult = DeparturesSummary(
+          0,
+          0,
+          List(
+            DepartureUserAnswerSummary(LocalReferenceNumber("EF123"), createdAt, 26),
+            DepartureUserAnswerSummary(LocalReferenceNumber("DE123"), createdAt, 27),
+            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28),
+            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29)
+          )
+        )
+        val departuresUserAnswers: List[DepartureUserAnswerSummary] = expectedResult.userAnswers
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=createdAt.dsc"))
+            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
+        )
+
+        val result =
+          connector.sortDraftDepartures(SortByCreatedAtDesc, limit = Limit(limit), skip = Skip(skip))
+        val resultsDeparturesUserAnswers: Seq[DepartureUserAnswerSummary] = result.futureValue.value.userAnswers
+
+        resultsDeparturesUserAnswers.head mustBe departuresUserAnswers.head
+        resultsDeparturesUserAnswers(1) mustBe departuresUserAnswers(1)
+        resultsDeparturesUserAnswers(2) mustBe departuresUserAnswers(2)
+        resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
+      }
+
+      "must return none on failure" in {
+        errorResponses.map {
+          errorResponse =>
+            server.stubFor(
+              get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.asc"))
+                .willReturn(
+                  aResponse()
+                    .withStatus(errorResponse)
+                )
+            )
+
+            val expectedResult = None
+            connector.sortDraftDepartures(SortByLRNAsc, limit = Limit(limit), skip = Skip(skip)).futureValue mustBe expectedResult
         }
       }
     }
