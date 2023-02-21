@@ -79,6 +79,9 @@ case class AllDraftDeparturesViewModel(
   def sortLRNHref(): Call       = sortParams.href(LRN, lrn)
   def sortCreatedAtHref(): Call = sortParams.href(CreatedAt, lrn)
 
+  def sortHiddenTextLRN(implicit messages: Messages): String            = sortParams.hiddenText(LRN)
+  def sortHiddenTextDaysToComplete(implicit messages: Messages): String = sortParams.hiddenText(CreatedAt)
+
 }
 
 object AllDraftDeparturesViewModel {

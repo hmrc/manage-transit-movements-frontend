@@ -287,6 +287,14 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       val departuresSummary   = arbitrary[DeparturesSummary].sample.value
       val paginationViewModel = DraftsPaginationViewModel(2, 1, 2, "test")
 
+      val viewModel = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
+
+      val sortMessageLRNDescending = messages("departure.drafts.dashboard.table.sort.hidden", viewModel.referenceNumber, "descending")
+      val sortMessageLRNDefault    = messages("departure.drafts.dashboard.table.sort.hidden", viewModel.referenceNumber, "ascending")
+
+      val sortMessageDaysToCompleteAscending = messages("departure.drafts.dashboard.table.sort.hidden", viewModel.daysToComplete, "ascending")
+      val sortMessageDaysToCompleteDefault   = messages("departure.drafts.dashboard.table.sort.hidden", viewModel.daysToComplete, "descending")
+
       "when sortParams is SortByLRNAsc" in {
         val sortParams = SortByLRNAsc
         val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams)
@@ -294,6 +302,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortCreatedAt mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortHiddenTextLRN(messages) mustBe sortMessageLRNDescending
+        viewModel.sortHiddenTextDaysToComplete(messages) mustBe sortMessageDaysToCompleteDefault
       }
 
       "when sortParams is SortByLRNDesc" in {
@@ -303,6 +313,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortCreatedAt mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortHiddenTextLRN(messages) mustBe sortMessageLRNDefault
+        viewModel.sortHiddenTextDaysToComplete(messages) mustBe sortMessageDaysToCompleteDefault
       }
 
       "when sortParams is SortByCreatedAtAsc" in {
@@ -312,6 +324,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortHiddenTextLRN(messages) mustBe sortMessageLRNDefault
+        viewModel.sortHiddenTextDaysToComplete(messages) mustBe sortMessageDaysToCompleteDefault
       }
 
       "when sortParams is SortByCreatedAtDesc" in {
@@ -321,6 +335,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
+        viewModel.sortHiddenTextLRN(messages) mustBe sortMessageLRNDefault
+        viewModel.sortHiddenTextDaysToComplete(messages) mustBe sortMessageDaysToCompleteAscending
       }
 
       "when sortParams is None" in {
@@ -329,6 +345,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
+        viewModel.sortHiddenTextLRN(messages) mustBe sortMessageLRNDefault
+        viewModel.sortHiddenTextDaysToComplete(messages) mustBe sortMessageDaysToCompleteAscending
       }
     }
   }

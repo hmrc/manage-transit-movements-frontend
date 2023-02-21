@@ -226,6 +226,12 @@ departure.drafts.dashboard.table.noSearchResults = This LRN does not exist.
 departure.drafts.dashboard.table.delete.action.hidden = Actions
 departure.drafts.dashboard.table.action.delete.hidden = Local Reference Number (LRN) {0}
 
+departure.drafts.dashboard.table.sort.hidden = Sort {0} in {1} order
+departure.drafts.dashboard.table.sort.hidden.descending = Sort {1} in ascending order
+
+departure.drafts.dashboard.table.daysToComplete.sort.hidden.ascending = Sort days to complete in descending order
+departure.drafts.dashboard.table.daysToComplete.sort.hidden.descending = Sort days to complete in ascending order
+
 departure.drafts.dashboard.table.panel.title = Create a new departure declaration
 departure.drafts.dashboard.table.panel.text = You have 30 days from starting a declaration to complete it.
 departure.drafts.dashboard.table.panel.button = Start now

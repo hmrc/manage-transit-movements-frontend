@@ -20,6 +20,7 @@ import controllers.departure.drafts.routes
 import models.Sort.Field.{CreatedAt, LRN}
 import models.Sort.Order.{Ascending, Descending}
 import models.Sort.{buildParam, Field, Order}
+import play.api.i18n.Messages
 import play.api.mvc.Call
 
 sealed trait Sort {
@@ -33,6 +34,13 @@ sealed trait Sort {
   def href(field: Field, lrn: Option[String]): Call = {
     val order = if (this.field == field) this.order.toggle else field.defaultOrder
     routes.DashboardController.onPageLoad(None, lrn, Some(buildParam(field, order)))
+  }
+
+  val prefix = "departure.drafts.dashboard.table.sort.hidden"
+
+  def hiddenText(field: Field)(implicit messages: Messages): String = {
+    val sortBy = if (this.field == field) this.order.toggle.ariaSort else field.defaultOrder.ariaSort
+    messages(prefix, field.sortHeader, sortBy)
   }
 
   override def toString: String = buildParam(field, order)
@@ -66,18 +74,21 @@ object Sort {
 
   sealed trait Field {
     val defaultOrder: Order
+    def sortHeader(implicit messages: Messages): String
   }
 
   object Field {
 
     case object LRN extends Field {
-      override val defaultOrder: Order = Ascending
-      override def toString: String    = "lrn"
+      override val defaultOrder: Order                             = Ascending
+      override def toString: String                                = "lrn"
+      override def sortHeader(implicit messages: Messages): String = messages("departure.drafts.dashboard.table.lrn")
     }
 
     case object CreatedAt extends Field {
-      override val defaultOrder: Order = Descending
-      override def toString: String    = "createdAt"
+      override val defaultOrder: Order                             = Descending
+      override def toString: String                                = "createdAt"
+      override def sortHeader(implicit messages: Messages): String = messages("departure.drafts.dashboard.table.daysToComplete")
     }
   }
 
