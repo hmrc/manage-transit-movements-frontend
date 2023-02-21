@@ -16,11 +16,12 @@
 
 package models.arrivalP5
 
+import models.Movement
 import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime
 
-case class ArrivalMovement(arrivalId: String, movementReferenceNumber: String, updated: LocalDateTime, messagesLocation: String)
+case class ArrivalMovement(arrivalId: String, movementReferenceNumber: String, updated: LocalDateTime, messagesLocation: String) extends Movement
 
 object ArrivalMovement {
 

@@ -16,9 +16,14 @@
 
 package models.arrivalP5
 
+import models.{Movement, Movements}
 import play.api.libs.json.{__, Reads}
 
-case class ArrivalMovements(movements: Seq[ArrivalMovement])
+case class ArrivalMovements(arrivalMovements: Seq[ArrivalMovement]) extends Movements {
+  override val movements: Seq[Movement]  = arrivalMovements
+  override val retrieved: Int            = arrivalMovements.length
+  override val totalMatched: Option[Int] = None
+}
 
 object ArrivalMovements {
 

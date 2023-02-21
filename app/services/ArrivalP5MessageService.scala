@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMovementP5Connector) {
 
   def getMessagesForAllMovements(arrivalMovements: ArrivalMovements)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ArrivalMovementAndMessage]] =
-    arrivalMovements.movements.traverse {
+    arrivalMovements.arrivalMovements.traverse {
       movement =>
         arrivalMovementP5Connector
           .getMessagesForMovement(movement.messagesLocation)

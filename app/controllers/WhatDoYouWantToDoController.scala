@@ -30,37 +30,37 @@ import views.html.WhatDoYouWantToDoView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatDoYouWantToDoController @Inject()(
-                                             identify: IdentifierAction,
-                                             cc: MessagesControllerComponents,
-                                             val arrivalMovementConnector: ArrivalMovementConnector,
-                                             val departuresMovementConnector: DeparturesMovementConnector,
-                                             val departuresMovementsP5Connector: DeparturesMovementsP5Connector,
-                                             val arrivalMovementsP5Connector: ArrivalMovementP5Connector,
-                                             view: WhatDoYouWantToDoView,
-                                             appConfig: FrontendAppConfig
-                                           )(implicit ec: ExecutionContext)
-  extends FrontendController(cc)
+class WhatDoYouWantToDoController @Inject() (
+  identify: IdentifierAction,
+  cc: MessagesControllerComponents,
+  val arrivalMovementConnector: ArrivalMovementConnector,
+  val departuresMovementConnector: DeparturesMovementConnector,
+  val departuresMovementsP5Connector: DeparturesMovementsP5Connector,
+  val arrivalMovementsP5Connector: ArrivalMovementP5Connector,
+  view: WhatDoYouWantToDoView,
+  appConfig: FrontendAppConfig
+)(implicit ec: ExecutionContext)
+    extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
-        arrivalsAvailability <- if (appConfig.phase5Enabled) {
-          arrivalMovementsP5Connector.getAllMovements() map (Availability(_)) //TODO update when we have API params
-        } else {
-          arrivalMovementConnector.getArrivalsAvailability()
-        }
+        arrivalsAvailability <-
+          if (appConfig.phase5ArrivalEnabled) {
+            arrivalMovementsP5Connector.getAllMovements().map(Availability(_)) //TODO update when we have API params
+          } else {
+            arrivalMovementConnector.getArrivalsAvailability()
+          }
         departuresAvailability <- departuresMovementConnector.getDeparturesAvailability()
         draftDeparturesAvailability <-
-          if (appConfig.phase5Enabled) {
+          if (appConfig.phase5DepartureEnabled) {
             departuresMovementsP5Connector.getDraftDeparturesAvailability().map(Some(_))
-          }
-          else {
+          } else {
             Future.successful(None)
           }
         viewAllArrivalUrl =
-          if (appConfig.phase5Enabled){
+          if (appConfig.phase5ArrivalEnabled) {
             controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
           } else {
             controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
