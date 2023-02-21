@@ -17,7 +17,7 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, okJson, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
 import helper.WireMockServerHandler
 import models.Sort.{SortByCreatedAtAsc, SortByCreatedAtDesc, SortByLRNAsc, SortByLRNDesc}
@@ -27,6 +27,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.test.Helpers.OK
 
 import java.time.LocalDateTime
 
@@ -350,6 +351,38 @@ class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHan
         }
       }
     }
+
+    "checkLock" - {
+
+      val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn/lock"
+
+      "must return true when status is Ok" in {
+        server.stubFor(get(urlEqualTo(url)) willReturn aResponse().withStatus(OK))
+
+        val result: Boolean = connector.checkLock(lrn.value).futureValue
+
+        result mustBe true
+      }
+
+      "return false for other responses" in {
+
+        val errorResponses: Gen[Int] = Gen
+          .chooseNum(400: Int, 599: Int)
+
+        forAll(errorResponses) {
+          error =>
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(aResponse().withStatus(error))
+            )
+
+            val result: Boolean = connector.checkLock(lrn.value).futureValue
+
+            result mustBe false
+        }
+      }
+    }
+
   }
 
 }

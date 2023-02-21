@@ -32,4 +32,5 @@ trait DraftDepartureService {
   def getLRNs(partialLRN: String, skip: Skip, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
   def getPagedDepartureSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
 
+  def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean]
 }

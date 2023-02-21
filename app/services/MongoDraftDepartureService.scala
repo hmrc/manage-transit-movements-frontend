@@ -46,4 +46,5 @@ class MongoDraftDepartureService @Inject() (connector: DeparturesMovementsP5Conn
   override def getPagedDepartureSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.getAllDeparturesSummary(limit, skip)
 
+  override def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = connector.checkLock(lrn)
 }

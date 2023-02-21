@@ -235,3 +235,8 @@ departure.drafts.deleteDraftDepartureYesNo.heading = Are you sure you want to de
 departure.drafts.deleteDraftDepartureYesNo.paragraph = Once you delete it, you will not be able to retrieve it.
 departure.drafts.deleteDraftDepartureYesNo.error.required = Select yes if you want to delete this declaration
 departure.drafts.deleteDraftDepartureYesNo.button = Confirm
+
+departure.drafts.dashboard.draftLocked.title = You cannot delete this declaration right now
+departure.drafts.dashboard.draftLocked.heading = You cannot delete this declaration right now
+departure.drafts.dashboard.draftLocked.paragraph = Another person from your organisation is currently working on this declaration. You cannot delete it until they’re finished.
+departure.drafts.dashboard.draftLocked.button = Return to drafts
