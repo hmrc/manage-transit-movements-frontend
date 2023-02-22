@@ -39,8 +39,8 @@ sealed trait Sort {
   val prefix = "departure.drafts.dashboard.table.sort.hidden"
 
   def hiddenText(field: Field)(implicit messages: Messages): String = {
-    val sortBy = if (this.field == field) this.order.toggle.ariaSort else field.defaultOrder.ariaSort
-    messages(prefix, field.sortHeader, sortBy)
+    val order = if (this.field == field) this.order.toggle else field.defaultOrder
+    messages(prefix, field.sortHeader, order.ariaSort)
   }
 
   override def toString: String = buildParam(field, order)
