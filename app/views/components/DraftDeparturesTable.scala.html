@@ -18,14 +18,13 @@
 
 @this()
 
-
 @(
-        viewModel: AllDraftDeparturesViewModel
+    viewModel: AllDraftDeparturesViewModel
 )(implicit messages: Messages)
-
 
 <table class="responsive-table sortable-table">
     <caption class="govuk-visually-hidden">@viewModel.visuallyHiddenHeader</caption>
+
     <thead>
         <tr>
             <th scope="col" aria-sort="@viewModel.sortLrn"><span class="govuk-visually-hidden">@viewModel.sortHiddenTextLRN</span><a href="@viewModel.sortLRNHref()">@viewModel.referenceNumber</a></th>
@@ -35,27 +34,25 @@
     </thead>
 
     <tbody>
-    @for((row, rowIndex) <- viewModel.dataRows.zip(LazyList from 1)) {
-        <tr data-testrole="draft-list_row@rowIndex">
+        @for((row, rowIndex) <- viewModel.dataRows.zip(LazyList from 1)) {
+            <tr data-testrole="draft-list_row@rowIndex">
+                <td data-testrole="draft-list_row@rowIndex-lrn">
+                    <span class="responsive-table__heading" aria-hidden="true">@viewModel.referenceNumber</span>
+                    <a href="@viewModel.lrnRedirectLocation(row.lrn)" class="govuk-link">@row.lrn</a>
+                </td>
 
-            <td data-testrole="draft-list_row@rowIndex-lrn">
-                <span class="responsive-table__heading" aria-hidden="true">@viewModel.referenceNumber</span>
-                <a href="@viewModel.lrnRedirectLocation(row.lrn)" class="govuk-link">@row.lrn</a>
-            </td>
+                <td data-testrole="draft-list_row@rowIndex-daysToComplete">
+                    <span class="responsive-table__heading" aria-hidden="true">@viewModel.daysToComplete</span>
+                    @row.daysRemaining
+                </td>
 
-            <td data-testrole="draft-list_row@rowIndex-daysToComplete">
-                <span class="responsive-table__heading" aria-hidden="true">@viewModel.daysToComplete</span>
-                @row.daysRemaining
-            </td>
-
-            <td data-testrole="draft-list_row@rowIndex-delete">
-                <span class="responsive-table__heading" aria-hidden="true"></span>
-                <a href="@controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController.onPageLoad(row.lrn, viewModel.paginationViewModel.pageNumber, viewModel.items.userAnswers.length, viewModel.lrn)" class="govuk-link">@messages("departure.drafts.dashboard.table.action.delete")
-                <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
-                </a>
-            </td>
-        </tr>
-    }
+                <td data-testrole="draft-list_row@rowIndex-delete">
+                    <span class="responsive-table__heading" aria-hidden="true"></span>
+                    <a href="@viewModel.deleteDraftUrl(row)" class="govuk-link">@messages("departure.drafts.dashboard.table.action.delete")
+                        <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
-
