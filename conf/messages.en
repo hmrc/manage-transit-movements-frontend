@@ -14,6 +14,9 @@ site.search = Search
 site.service_name = Manage your transit movements
 site.section = This section is
 
+site.ascending = ascending
+site.descending = descending
+
 viewAllMovements.link.title = View all movements
 search.results.singular = Showing {0} result matching {1}.
 search.results.plural = Showing {0} results matching {1}.
@@ -218,8 +221,9 @@ departure.drafts.dashboard.link.title = View all draft departure declarations
 
 departure.drafts.dashboard.table.heading.hidden = Draft departure declarations
 departure.drafts.dashboard.table.lrn = Local reference number (LRN)
+departure.drafts.dashboard.table.lrn.hidden = local reference number (LRN)
 departure.drafts.dashboard.table.daysToComplete = Days to complete
-departure.drafts.dashboard.table.daysToComplete.hidden = for {0}
+departure.drafts.dashboard.table.daysToComplete.hidden = days to complete
 departure.drafts.dashboard.table.action.delete = Delete
 departure.drafts.dashboard.table.noResults = You have no draft departure declarations.
 departure.drafts.dashboard.table.noSearchResults = This LRN does not exist.

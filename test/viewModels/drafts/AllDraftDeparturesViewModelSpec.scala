@@ -294,8 +294,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortCreatedAt mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort Local reference number (LRN) in descending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort Days to complete in descending order"
+        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in descending order"
+        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in descending order"
       }
 
       "when sortParams is SortByLRNDesc" in {
@@ -305,8 +305,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortCreatedAt mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort Local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort Days to complete in descending order"
+        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in descending order"
       }
 
       "when sortParams is SortByCreatedAtAsc" in {
@@ -316,8 +316,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort Local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort Days to complete in descending order"
+        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in descending order"
       }
 
       "when sortParams is SortByCreatedAtDesc" in {
@@ -327,8 +327,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort Local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort Days to complete in ascending order"
+        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in ascending order"
       }
 
       "when sortParams is None" in {
@@ -337,8 +337,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort Local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort Days to complete in ascending order"
+        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in ascending order"
       }
     }
   }
