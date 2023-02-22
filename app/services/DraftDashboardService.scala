@@ -16,60 +16,54 @@
 
 package services
 
-import connectors.{DeparturesMovementConnector, DeparturesMovementsP5Connector}
-import logging.Logging
-import models.DepartureId
-import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
-import models.departure.{ControlDecision, NoReleaseForTransitMessage}
-import uk.gov.hmrc.http.HeaderCarrier
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 import config.{FrontendAppConfig, PaginationAppConfig}
-import controllers.actions._
 import controllers.departure.drafts.routes
-import forms.SearchFormProvider
 import models.Sort.SortByCreatedAtDesc
 import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
 import models.{DeparturesSummary, Sort}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
-import services.DraftDepartureService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination.DraftsPaginationViewModel
 import views.html.departure.drafts.DashboardView
 
-class DraftDashboardService @Inject()(connector: DraftDepartureService,
-                                      paginationAppConfig: PaginationAppConfig,
-                                      appConfig: FrontendAppConfig,
-                                      view: DashboardView
-                                     )(implicit hc: HeaderCarrier, ec: ExecutionContext) {
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+
+class DraftDashboardService @Inject() (
+  override val messagesApi: MessagesApi,
+  connector: DraftDepartureService,
+  paginationAppConfig: PaginationAppConfig,
+  appConfig: FrontendAppConfig,
+  view: DashboardView
+)(implicit ec: ExecutionContext)
+    extends I18nSupport {
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-   def buildView(
-                         form: Form[String],
-                         pageNumber: Option[Int] = None,
-                         lrn: Option[String] = None,
-                         sortParams: Option[Sort] = None
-                       )(
-                         block: HtmlFormat.Appendable => Result
-                       )(implicit request: IdentifierRequest[_]): Future[Result] = {
+  def buildView(
+    form: Form[String],
+    pageNumber: Option[Int] = None,
+    lrn: Option[String] = None,
+    sortParams: Option[Sort] = None
+  )(
+    block: HtmlFormat.Appendable => Result
+  )(implicit request: IdentifierRequest[_], hc: HeaderCarrier): Future[Result] = {
 
     val limit = Limit(pageSize)
-    val page = pageNumber.getOrElse(1)
-    val skip = Skip(page - 1)
+    val page  = pageNumber.getOrElse(1)
+    val skip  = Skip(page - 1)
 
     def sortOrGetDrafts: Future[Option[DeparturesSummary]] = (lrn, sortParams) match {
       case (Some(lrn), Some(sortParams)) => connector.sortDraftDepartures(sortParams, limit, skip, lrn)
-      case (Some(lrn), None) => connector.getLRNs(lrn, skip, limit)
-      case (None, Some(sortParams)) => connector.sortDraftDepartures(sortParams, limit, skip)
-      case _ => connector.getPagedDepartureSummary(limit, skip)
+      case (Some(lrn), None)             => connector.getLRNs(lrn, skip, limit)
+      case (None, Some(sortParams))      => connector.sortDraftDepartures(sortParams, limit, skip)
+      case _                             => connector.getPagedDepartureSummary(limit, skip)
     }
 
     sortOrGetDrafts.map {
