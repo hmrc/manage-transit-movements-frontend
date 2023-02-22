@@ -16,6 +16,7 @@
 
 package viewModels.drafts
 
+import controllers.departure.drafts.routes
 import models.Sort.Field.{CreatedAt, LRN}
 import models.Sort._
 import models.{DeparturesSummary, Sort}
@@ -78,6 +79,12 @@ case class AllDraftDeparturesViewModel(
 
   def sortLRNHref(): Call       = sortParams.href(LRN, lrn)
   def sortCreatedAtHref(): Call = sortParams.href(CreatedAt, lrn)
+
+  def sortHiddenTextLRN(implicit messages: Messages): String            = sortParams.hiddenText(LRN)
+  def sortHiddenTextDaysToComplete(implicit messages: Messages): String = sortParams.hiddenText(CreatedAt)
+
+  def deleteDraftUrl(draft: DraftDepartureRow): Call =
+    routes.DeleteDraftDepartureYesNoController.onPageLoad(draft.lrn, paginationViewModel.pageNumber, items.userAnswers.length, lrn)
 
 }
 
