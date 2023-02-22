@@ -22,6 +22,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.Assertion
 import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import viewModels.drafts.AllDraftDeparturesViewModel
@@ -37,12 +38,12 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
   override val buildViewModel: (Int, Int, Int, String) => DraftsPaginationViewModel =
     DraftsPaginationViewModel(_, _, _, _)
 
-  val genDraftDeparture: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
+  val departuresSummary: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
 
   val paginationViewModel: DraftsPaginationViewModel = DraftsPaginationViewModel(2, 1, 2, "test")
 
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
-    AllDraftDeparturesViewModel(genDraftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
+    AllDraftDeparturesViewModel(departuresSummary, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
 
   val dataRows: Seq[DraftDepartureRow] = viewAllDepartureMovementsViewModel.dataRows
 
@@ -86,12 +87,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
   val rows: Elements = doc.select("tr[data-testrole^=draft-list_row]")
 
   "must generate a row for each draft" in {
-    rows.size() mustEqual genDraftDeparture.userAnswers.size
-  }
-
-  "must generate correct hidden text for delete heading" in {
-    val deleteHiddenSpan = doc.getElementById("actionHidden").text()
-    deleteHiddenSpan mustBe "Actions"
+    rows.size() mustEqual departuresSummary.userAnswers.size
   }
 
   "search result text" - {
@@ -142,20 +138,33 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
 
       val doc = Jsoup.parse(view.toString())
 
-      doc.getElementById("results-found") mustBe null
+      assertNotRenderedById(doc, "results-found")
     }
 
     "must not render when 'isSearch' is false" in {
+      assertNotRenderedById(doc, "results-found")
+    }
+  }
 
-      doc.getElementById("results-found") mustBe null
+  "must have visually hidden text on table headers" in {
+    val tableHeaders = doc.getElementsByTag("th").toList
+
+    tableHeaders.size mustBe 3
+
+    def check(th: Element, expectedVisuallyHiddenText: String): Assertion = {
+      val visuallyHiddenText = th.getElementsByClass("govuk-visually-hidden").text()
+      visuallyHiddenText mustBe expectedVisuallyHiddenText
     }
 
+    check(tableHeaders.head, viewAllDepartureMovementsViewModel.sortHiddenTextLRN)
+    check(tableHeaders(1), viewAllDepartureMovementsViewModel.sortHiddenTextDaysToComplete)
+    check(tableHeaders(2), "Actions")
   }
 
   "must generate correct data in each row" - {
     rows.toList.zipWithIndex.foreach {
       case (row, rowIndex) =>
-        val viewDraftDeparture: DepartureUserAnswerSummary = genDraftDeparture.userAnswers(rowIndex)
+        val draft: DepartureUserAnswerSummary = departuresSummary.userAnswers(rowIndex)
 
         s"when row ${rowIndex + 1}" - {
 
@@ -174,12 +183,12 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
             val lrnLink = lrn.getElementsByClass("govuk-link").head
 
             "must display correct text" in {
-              behave like elementWithVisibleText(lrnLink, viewDraftDeparture.lrn.toString)
+              behave like elementWithVisibleText(lrnLink, draft.lrn.toString)
             }
 
             "must have correct href" in {
 
-              val redirectLink = s"${frontendAppConfig.draftDepartureFrontendUrl}/drafts/${viewDraftDeparture.lrn}"
+              val redirectLink = s"${frontendAppConfig.draftDepartureFrontendUrl}/drafts/${draft.lrn}"
               lrnLink.attr("href") mustBe redirectLink
             }
           }
@@ -187,9 +196,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
           "must display correct days remaining" in {
             val daysToComplete = row.selectFirst("td[data-testrole*=-daysToComplete]")
 
-            val daysRemaining = viewDraftDeparture.expiresInDays
-
-            behave like elementWithVisibleText(daysToComplete, daysRemaining.toString)
+            behave like elementWithVisibleText(daysToComplete, draft.expiresInDays.toString)
             behave like elementWithHiddenText(daysToComplete, messages(s"$prefix.table.daysToComplete"))
           }
 
@@ -201,14 +208,14 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
             "must display correct text" in {
               behave like elementWithVisibleText(deleteLink, s"${messages(s"$prefix.table.action.delete")}")
               val hiddenText = deleteLink.getElementsByClass("govuk-visually-hidden").head
-              hiddenText.text() mustBe s"Local Reference Number (LRN) ${viewDraftDeparture.lrn}"
+              hiddenText.text() mustBe s"Local Reference Number (LRN) ${draft.lrn}"
             }
 
             "must have correct href" in {
 
               val redirectLink =
                 controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController
-                  .onPageLoad(viewDraftDeparture.lrn.toString(), 1, rows.toList.length, None)
+                  .onPageLoad(draft.lrn.toString(), 1, rows.toList.length, None)
                   .url
 
               deleteLink.attr("href") mustBe redirectLink
@@ -233,8 +240,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
     }
 
     "must not render when there are data rows" in {
-
-      doc.getElementById("no-search-results-found") mustBe null
+      assertNotRenderedById(doc, "no-search-results-found")
     }
   }
 
@@ -261,7 +267,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
 
       val doc = Jsoup.parse(view.toString())
 
-      doc.getElementById("no-results-found") mustBe null
+      assertNotRenderedById(doc, "no-results-found")
     }
   }
 
