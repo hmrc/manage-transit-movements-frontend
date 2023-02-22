@@ -16,46 +16,32 @@
 
 package controllers.departure.drafts
 
-import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
 import forms.SearchFormProvider
-import models.Sort.SortByCreatedAtDesc
-import models.departure.drafts.{Limit, Skip}
-import models.requests.IdentifierRequest
-import models.{DeparturesSummary, Sort}
-import play.api.data.Form
+import models.Sort
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import play.twirl.api.HtmlFormat
-import services.DraftDepartureService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.DraftDashboardService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.pagination.DraftsPaginationViewModel
-import views.html.departure.drafts.DashboardView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DashboardController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  draftDepartureService: DraftDepartureService,
-  view: DashboardView,
-  formProvider: SearchFormProvider,
-  paginationAppConfig: PaginationAppConfig,
-  appConfig: FrontendAppConfig
+  draftDashboardService: DraftDashboardService,
+  formProvider: SearchFormProvider
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   private val form = formProvider()
 
-  private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
-
   def onPageLoad(pageNumber: Option[Int], lrn: Option[String], sortParams: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(form, pageNumber, lrn, Sort(sortParams))(Ok(_))
+      draftDashboardService.buildView(form, pageNumber, lrn, Sort(sortParams))(Ok(_))
   }
 
   def onSubmit(sortParams: Option[String]): Action[AnyContent] = (Action andThen identify).async {
@@ -63,60 +49,11 @@ class DashboardController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => buildView(formWithErrors)(BadRequest(_)),
+          formWithErrors => draftDashboardService.buildView(formWithErrors)(BadRequest(_)),
           lrn => {
             val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
-            buildView(form, lrn = fuzzyLrn, sortParams = Sort(sortParams))(Ok(_))
+            draftDashboardService.buildView(form, lrn = fuzzyLrn, sortParams = Sort(sortParams))(Ok(_))
           }
         )
   }
-
-  private def buildView(
-    form: Form[String],
-    pageNumber: Option[Int] = None,
-    lrn: Option[String] = None,
-    sortParams: Option[Sort] = None
-  )(
-    block: HtmlFormat.Appendable => Result
-  )(implicit request: IdentifierRequest[_]): Future[Result] = {
-
-    val limit = Limit(pageSize)
-    val page  = pageNumber.getOrElse(1)
-
-    val skip = Skip(page - 1)
-
-    def sortOrGetDrafts: Future[Option[DeparturesSummary]] = (lrn, sortParams) match {
-      case (Some(lrn), Some(sortParams)) => draftDepartureService.sortDraftDepartures(sortParams, limit, skip, lrn)
-      case (Some(lrn), None)             => draftDepartureService.getLRNs(lrn, skip, limit)
-      case (None, Some(sortParams))      => draftDepartureService.sortDraftDepartures(sortParams, limit, skip)
-      case _                             => draftDepartureService.getPagedDepartureSummary(limit, skip)
-    }
-
-    sortOrGetDrafts.map {
-      case Some(drafts) =>
-        block(view(form, present(drafts, page, lrn, sortParams.getOrElse(SortByCreatedAtDesc))))
-      case None =>
-        Redirect(controllers.routes.ErrorController.technicalDifficulties())
-    }
-  }
-
-  private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String], sortParams: Sort): AllDraftDeparturesViewModel = {
-
-    val additionalParams = Seq(
-      lrn.map(("lrn", _)),
-      Some(("sortParams", sortParams.toString))
-    ).flatten
-
-    val pvm = DraftsPaginationViewModel(
-      totalNumberOfMovements = drafts.totalMatchingMovements,
-      currentPage = page,
-      numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
-      href = routes.DashboardController.onSubmit(None).url,
-      additionalParams = additionalParams,
-      lrn = lrn
-    )
-
-    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.draftDepartureFrontendUrl, pvm, sortParams)
-  }
-
 }
