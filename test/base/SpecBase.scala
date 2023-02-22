@@ -17,6 +17,7 @@
 package base
 
 import config.{FrontendAppConfig, PaginationAppConfig}
+import models.requests.IdentifierRequest
 import models.{DepartureId, LocalReferenceNumber}
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -24,7 +25,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
@@ -35,6 +36,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
   val mrn: String               = "mrn"
+  val eori                      = "1234"
 
   val departureId: DepartureId = DepartureId(1)
 
