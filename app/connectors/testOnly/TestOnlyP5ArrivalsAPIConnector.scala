@@ -29,7 +29,7 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: Fr
   def arrivalOutbound(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val newHeaders: HeaderCarrier = headerCarrier
-      .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
+      .copy(authorization = headers.get("Authorization").map(Authorization))
       .withExtraHeaders(
         ("Content-Type" -> "application/xml"),
         ("Accept", "application/vnd.hmrc.2.0+json")
@@ -43,7 +43,7 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: Fr
   def unloadingOutbound(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val newHeaders: HeaderCarrier = headerCarrier
-      .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
+      .copy(authorization = headers.get("Authorization").map(Authorization))
       .withExtraHeaders(
         ("Content-Type" -> "application/xml"),
         ("Accept", "application/vnd.hmrc.2.0+json"),
@@ -58,7 +58,7 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: Fr
   def arrivalInbound(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val newHeaders: HeaderCarrier = headerCarrier
-      .copy(authorization = Some(Authorization(headers.get("Authorization").getOrElse(""))))
+      .copy(authorization = headers.get("Authorization").map(Authorization))
       .withExtraHeaders(
         ("Content-Type" -> "application/xml"),
         ("Accept", "application/vnd.hmrc.2.0+json"),
