@@ -32,5 +32,17 @@ POST        /manage-transit-movements/test-only/departure/message               
 + nocsrf
 POST        /manage-transit-movements/test-only/cancellation/submit                         controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
++ nocsrf
+GET         /manage-transit-movements/test-only/view-arrival-notifications                   controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad(page: Option[Int])
+
++ nocsrf
+POST        /manage-transit-movements/test-only/arrival-outbound                            controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()
+
++ nocsrf
+POST        /manage-transit-movements/test-only/unloading-outbound/:arrivalId               controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundUnloadingMessage(arrivalId: String)
+
++ nocsrf
+POST        /manage-transit-movements/test-only/arrival-inbound/:arrivalId                  controllers.testOnly.TestOnlyP5ArrivalsAPIController.inboundArrivalMessage(arrivalId: String)
+
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes

@@ -34,6 +34,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
   private val mockArrivalMovementConnector: ArrivalMovementConnector            = mock[ArrivalMovementConnector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector       = mock[DeparturesMovementConnector]
   private val mockDepartureMovementsP5Connector: DeparturesMovementsP5Connector = mock[DeparturesMovementsP5Connector]
+  private val viewAllUrl                                                        = controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
@@ -66,12 +67,11 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
 
         val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
         val result  = route(app, request).value
-
-        val view = injector.instanceOf[WhatDoYouWantToDoView]
+        val view    = injector.instanceOf[WhatDoYouWantToDoView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Availability.NonEmpty, Availability.NonEmpty, None)(request, messages).toString
+          view(Availability.NonEmpty, Availability.NonEmpty, None, viewAllUrl)(request, messages).toString
 
         verifyNoInteractions(mockDepartureMovementsP5Connector)
       }
@@ -89,7 +89,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         val view = injector.instanceOf[WhatDoYouWantToDoView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Availability.Empty, Availability.Empty, None)(request, messages).toString
+          view(Availability.Empty, Availability.Empty, None, viewAllUrl)(request, messages).toString
 
         verifyNoInteractions(mockDepartureMovementsP5Connector)
       }
@@ -107,7 +107,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         val view = injector.instanceOf[WhatDoYouWantToDoView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Availability.Unavailable, Availability.Unavailable, None)(request, messages).toString
+          view(Availability.Unavailable, Availability.Unavailable, None, viewAllUrl)(request, messages).toString
 
         verifyNoInteractions(mockDepartureMovementsP5Connector)
       }

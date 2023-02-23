@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+package viewModels.P5
 
-package object connectors {
+import viewModels.ViewMovements
 
-  object CustomHttpReads {
+case class ViewArrivalMovementsP5(
+  dataRows: Seq[(String, Seq[ViewArrivalP5])]
+)
 
-    implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      (_: String, _: String, response: HttpResponse) => response
-  }
+object ViewArrivalMovementsP5 extends ViewMovements {
 
+  def apply(
+    movements: Seq[ViewArrivalP5]
+  )(implicit d: DummyImplicit): ViewArrivalMovementsP5 =
+    ViewArrivalMovementsP5(format(movements))
 }

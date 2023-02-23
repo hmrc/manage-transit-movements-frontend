@@ -80,6 +80,37 @@ viewArrivalNotifications.table.action.viewHistory             = View history
 viewArrivalNotifications.table.action.viewPDF                 = Unloading Permission PDF
 viewArrivalNotifications.table.action.hidden                  = for {0}
 
+
+viewArrivalNotificationsP5.title                            = Arrival notifications
+viewArrivalNotificationsP5.heading                          = Arrival notifications
+viewArrivalNotificationsP5.heading.hidden                   = Arrival notifications table
+viewArrivalNotificationsP5.makeArrivalNotification          = Create an arrival notification
+viewArrivalNotificationsP5.goToManageTransitMovements       = Manage your transit movements
+viewArrivalNotificationsP5.table.updated                    = Updated
+viewArrivalNotificationsP5.table.mrn                        = Movement Reference Number (MRN)
+viewArrivalNotificationsP5.table.trader.name                = Trader name
+viewArrivalNotificationsP5.table.office                     = Office
+viewArrivalNotificationsP5.table.procedure                  = Procedure
+viewArrivalNotificationsP5.table.status                     = Status
+viewArrivalNotificationsP5.table.action                     = Actions
+viewArrivalNotificationsP5.table.action.viewErrors          = View errors
+viewArrivalNotificationsP5.table.action.unloadingRemarks    = Make unloading remarks
+viewArrivalNotificationsP5.table.action.viewHistory         = View history
+viewArrivalNotificationsP5.table.action.viewPDF             = Unloading Permission PDF
+viewArrivalNotificationsP5.table.action.hidden              = for {0}
+viewArrivalNotificationsP5.search.title                     = Search by Movement Reference Number (MRN)
+
+movement.status.P5.arrivalNotificationSubmitted                         = Arrival notification sent
+movement.status.P5.unloadingRemarksSubmitted                            = Unloading remarks sent
+movement.status.P5.goodsReleasedReceived                                = Goods released
+movement.status.P5.unloadingPermissionReceived                          = Unloading permission granted
+movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading   = Unloading Rejected
+movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival     = Arrival Rejected
+
+movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
+movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
+movement.status.P5.action.viewError = View Errors
+
 movement.search.title = Search by movement reference number
 movement.search.departure.title = Search by local reference number
 
@@ -91,6 +122,7 @@ movement.status.unloadingRemarksSubmitted = Unloading remarks sent
 movement.status.unloadingRemarksRejected = Unloading remarks rejected
 movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement = Unloading remarks rejected
 movement.status.goodsReleased = Goods Released
+
 
 technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service

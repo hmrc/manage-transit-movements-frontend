@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+package models.arrivalP5
 
-package object connectors {
+import models.{Movement, Movements}
+import play.api.libs.json.{__, Reads}
 
-  object CustomHttpReads {
+case class ArrivalMovements(arrivalMovements: Seq[ArrivalMovement]) extends Movements {
+  override val movements: Seq[Movement]  = arrivalMovements
+  override val retrieved: Int            = arrivalMovements.length
+  override val totalMatched: Option[Int] = None
+}
 
-    implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      (_: String, _: String, response: HttpResponse) => response
-  }
+object ArrivalMovements {
 
+  implicit lazy val reads: Reads[ArrivalMovements] =
+    (__ \ "arrivals").read[Seq[ArrivalMovement]].map(ArrivalMovements.apply)
 }

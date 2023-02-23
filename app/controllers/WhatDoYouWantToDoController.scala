@@ -17,24 +17,21 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{ArrivalMovementConnector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
 import controllers.actions.IdentifierAction
-
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.WhatDoYouWantToDoService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatDoYouWantToDoView
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class WhatDoYouWantToDoController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  val arrivalMovementConnector: ArrivalMovementConnector,
-  val departuresMovementConnector: DeparturesMovementConnector,
-  val departuresMovementsP5Connector: DeparturesMovementsP5Connector,
   view: WhatDoYouWantToDoView,
+  whatDoYouWantToDoService: WhatDoYouWantToDoService,
   appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
@@ -43,12 +40,12 @@ class WhatDoYouWantToDoController @Inject() (
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
-        arrivalsAvailability   <- arrivalMovementConnector.getArrivalsAvailability()
-        departuresAvailability <- departuresMovementConnector.getDeparturesAvailability()
-        draftDeparturesAvailability <-
-          if (appConfig.phase5Enabled) departuresMovementsP5Connector.getDraftDeparturesAvailability().map(Some(_)) else Future.successful(None)
+        arrivalsAvailability <- whatDoYouWantToDoService.fetchArrivalsAvailability(appConfig.phase5ArrivalEnabled)
+        viewAllArrivalUrl = whatDoYouWantToDoService.fetchArrivalsUrl(appConfig.phase5ArrivalEnabled)
+        departuresAvailability      <- whatDoYouWantToDoService.getDeparturesAvailability
+        draftDeparturesAvailability <- whatDoYouWantToDoService.fetchDraftDepartureAvailability(appConfig.phase5DepartureEnabled)
       } yield Ok(
-        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability)
+        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalUrl)
       )
   }
 }

@@ -19,6 +19,7 @@ package generators
 import models.ErrorType.GenericError
 import models._
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
+import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departure._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
@@ -219,6 +220,20 @@ trait ModelGenerators {
         arrivals          <- listWithMaxLength[Arrival]()
       } yield Arrivals(retrievedArrivals, totalArrivals, totalMatched, arrivals)
     }
+
+  implicit lazy val arbitraryArrivalMovement: Arbitrary[ArrivalMovement] =
+    Arbitrary {
+      for {
+        arrivalId        <- arbitrary[String]
+        mrn              <- arbitrary[String]
+        updated          <- arbitrary[LocalDateTime]
+        messagesLocation <- arbitrary[String]
+      } yield ArrivalMovement(arrivalId, mrn, updated, messagesLocation)
+    }
+
+  implicit lazy val arbitraryArrivalMovements: Arbitrary[ArrivalMovements] = Arbitrary {
+    Gen.nonEmptyListOf(arbitrary[ArrivalMovement]).map(ArrivalMovements(_))
+  }
 
   implicit lazy val arbitraryDepartures: Arbitrary[Departures] =
     Arbitrary {

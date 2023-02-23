@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import cats.data.NonEmptyList
 import play.api.libs.json._
 
 import java.time.{Clock, LocalDateTime, ZoneId}
@@ -167,4 +168,13 @@ package object models {
       utcTime.withZoneSameInstant(clock.getZone).toLocalDateTime
     }
   }
+
+  implicit def nonEmptyListReads[A: Reads]: Reads[NonEmptyList[A]] =
+    Reads
+      .of[List[A]]
+      .collect(
+        JsonValidationError("expected a NonEmptyList but the list was empty")
+      ) {
+        case head :: tail => NonEmptyList(head, tail)
+      }
 }

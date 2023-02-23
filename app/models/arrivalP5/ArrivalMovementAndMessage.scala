@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+package models.arrivalP5
 
-package object connectors {
-
-  object CustomHttpReads {
-
-    implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      (_: String, _: String, response: HttpResponse) => response
-  }
-
-}
+case class ArrivalMovementAndMessage(arrivalMovement: ArrivalMovement, messagesForMovement: MessagesForMovement)

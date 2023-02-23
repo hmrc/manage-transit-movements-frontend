@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+package models.arrivalP5
 
-package object connectors {
+import play.api.libs.json.{__, Reads}
+import ArrivalMessageType._
 
-  object CustomHttpReads {
+import java.time.LocalDateTime
 
-    implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
-      (_: String, _: String, response: HttpResponse) => response
+case class Message(received: LocalDateTime, messageType: ArrivalMessageType)
+
+object Message {
+
+  implicit lazy val reads: Reads[Message] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "received").read[LocalDateTime] and
+        (__ \ "type").read[ArrivalMessageType]
+    )(Message.apply _)
   }
-
 }

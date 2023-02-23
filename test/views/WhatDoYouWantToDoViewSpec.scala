@@ -32,9 +32,12 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   private def applyView(
     arrivalsAvailability: Availability = sampleAvailability,
     departuresAvailability: Availability = sampleAvailability,
-    draftDeparturesAvailability: Option[DraftAvailability] = Some(sampleDraftAvailability)
+    draftDeparturesAvailability: Option[DraftAvailability] = Some(sampleDraftAvailability),
+    viewAllUrl: String = " "
   ): HtmlFormat.Appendable =
-    injector.instanceOf[WhatDoYouWantToDoView].apply(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability)(fakeRequest, messages)
+    injector
+      .instanceOf[WhatDoYouWantToDoView]
+      .apply(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllUrl)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable = applyView()
 
@@ -55,7 +58,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
   behave like pageWithContent("h2", "Departures")
 
-  if (frontendAppConfig.phase5Enabled) {
+  if (frontendAppConfig.phase5DepartureEnabled) {
     behave like pageWithLink(
       "make-departure-declaration",
       "Make a departure declaration",
@@ -88,7 +91,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   }
 
   "when we have arrivals must" - {
-    val doc  = parseView(applyView(arrivalsAvailability = Availability.NonEmpty))
+    val doc  = parseView(applyView(arrivalsAvailability = Availability.NonEmpty, viewAllUrl = "/manage-transit-movements/view-arrivals"))
     val link = getElementById(doc, "view-arrival-notifications")
 
     "have the correct text for the view arrivals link" in {
