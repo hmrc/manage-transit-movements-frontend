@@ -37,7 +37,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .configure(conf = "microservice.services.common-transit-convention-trader.port" -> server.port())
+      .configure(conf = "microservice.services.common-transit-convention-traders.port" -> server.port())
 
   "ArrivalMovementP5Connector" - {
 

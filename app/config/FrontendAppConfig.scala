@@ -75,7 +75,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val newEnrolmentKey: String                   = configuration.get[String]("keys.enrolmentKey")
   lazy val newEnrolmentIdentifierKey: String         = configuration.get[String]("keys.enrolmentIdentifierKey")
   lazy val manageService: String                     = configuration.get[String]("appName")
-  lazy val commonTransitConventionTradersUrl: String = configuration.get[Service]("microservice.services.common-transit-convention-trader").fullServiceUrl
+  lazy val commonTransitConventionTradersUrl: String = configuration.get[Service]("microservice.services.common-transit-convention-traders").fullServiceUrl
   lazy val transitMovementsUrl: String               = configuration.get[Service]("microservice.services.transit-movements").fullServiceUrl
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
