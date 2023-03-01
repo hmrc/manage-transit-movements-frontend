@@ -37,7 +37,7 @@ object ViewArrivalP5 {
 
   def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewArrivalP5 = {
 
-    val arrivalStatus: ArrivalStatusP5ViewModel = ArrivalStatusP5ViewModel(movementAndMessage.messagesForMovement.messages)
+    val arrivalStatus: ArrivalStatusP5ViewModel = ArrivalStatusP5ViewModel(movementAndMessage)
 
     val systemTime = movementAndMessage.arrivalMovement.updated
 

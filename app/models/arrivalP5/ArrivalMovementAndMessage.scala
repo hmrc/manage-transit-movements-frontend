@@ -16,4 +16,7 @@
 
 package models.arrivalP5
 
-case class ArrivalMovementAndMessage(arrivalMovement: ArrivalMovement, messagesForMovement: MessagesForMovement)
+case class ArrivalMovementAndMessage(
+  arrivalMovement: ArrivalMovement,
+  messagesForMovement: MessagesForMovement
+)
