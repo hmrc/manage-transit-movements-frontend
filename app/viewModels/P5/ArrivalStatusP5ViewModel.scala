@@ -17,9 +17,8 @@
 package viewModels.P5
 
 import config.FrontendAppConfig
-import models.ArrivalId
 import models.arrivalP5.ArrivalMessageType._
-import models.arrivalP5.{ArrivalMessageType, ArrivalMovement, ArrivalMovementAndMessage, Message, MessagesForMovement}
+import models.arrivalP5._
 import viewModels.ViewMovementAction
 
 case class ArrivalStatusP5ViewModel(status: String, actions: Seq[ViewMovementAction])
@@ -59,7 +58,9 @@ object ArrivalStatusP5ViewModel {
       ArrivalStatusP5ViewModel(
         "movement.status.P5.unloadingPermissionReceived",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.unloadingRemarksUrl}/$arrivalId", "movement.status.P5.action.unloadingPermission.unloadingRemarks"),
+          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$arrivalId",
+                             "movement.status.P5.action.unloadingPermission.unloadingRemarks"
+          ),
           ViewMovementAction("#", "movement.status.P5.action.unloadingPermission.pdf")
         )
       )
