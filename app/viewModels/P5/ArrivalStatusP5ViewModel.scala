@@ -16,28 +16,30 @@
 
 package viewModels.P5
 
-import cats.data.NonEmptyList
+import config.FrontendAppConfig
 import models.arrivalP5.ArrivalMessageType._
-import models.arrivalP5.{ArrivalMessageType, Message}
+import models.arrivalP5._
 import viewModels.ViewMovementAction
 
 case class ArrivalStatusP5ViewModel(status: String, actions: Seq[ViewMovementAction])
 
 object ArrivalStatusP5ViewModel {
 
-  def apply(messages: NonEmptyList[Message]): ArrivalStatusP5ViewModel = {
-    val allPfs: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] =
-      Seq(
-        arrivalNotification,
-        unloadingRemarks,
-        unloadingPermission,
-        goodsReleased,
-        rejectionFromOfficeOfDestinationUnloading(messages.tail),
-        rejectionFromOfficeOfDestinationArrival
-      ).reduce(_ orElse _)
+  def apply(movementAndMessages: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ArrivalStatusP5ViewModel =
+    movementAndMessages match {
+      case ArrivalMovementAndMessage(ArrivalMovement(arrivalId, _, _, _), MessagesForMovement(messages)) =>
+        val allPfs: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] =
+          Seq(
+            arrivalNotification,
+            unloadingRemarks,
+            unloadingPermission(arrivalId),
+            goodsReleased,
+            rejectionFromOfficeOfDestinationUnloading(messages.tail),
+            rejectionFromOfficeOfDestinationArrival
+          ).reduce(_ orElse _)
 
-    allPfs.apply(messages.head.messageType)
-  }
+        allPfs.apply(messages.head.messageType)
+    }
 
   private def arrivalNotification: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case ArrivalNotification =>
@@ -49,12 +51,16 @@ object ArrivalStatusP5ViewModel {
       ArrivalStatusP5ViewModel("movement.status.P5.unloadingRemarksSubmitted", actions = Nil)
   }
 
-  private def unloadingPermission: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
+  private def unloadingPermission(
+    arrivalId: String
+  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case UnloadingPermission =>
       ArrivalStatusP5ViewModel(
         "movement.status.P5.unloadingPermissionReceived",
         actions = Seq(
-          ViewMovementAction("#", "movement.status.P5.action.unloadingPermission.unloadingRemarks"),
+          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$arrivalId",
+                             "movement.status.P5.action.unloadingPermission.unloadingRemarks"
+          ),
           ViewMovementAction("#", "movement.status.P5.action.unloadingPermission.pdf")
         )
       )
