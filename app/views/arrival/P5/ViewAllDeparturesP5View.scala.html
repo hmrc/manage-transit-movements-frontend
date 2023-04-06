@@ -23,8 +23,6 @@
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    pagination: Pagination,
-    movementsTable: MovementsTable,
     search: Search,
     config: FrontendAppConfig
 )
@@ -35,39 +33,29 @@
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("viewArrivalNotificationsP5.title"),
+    title = messages("viewDepartureDeclarationsP5.title"),
     showBackLink = false,
     fullWidth = true
 ) {
 
-    @heading(messages("viewArrivalNotificationsP5.heading"))
+    @heading(messages("viewDepartureDeclarationsP5.heading"))
 
     <p class="govuk-body">
-        <a id="make-arrival-notification" class="govuk-link" href=@config.declareArrivalNotificationStartUrl>
-            @messages("viewArrivalNotificationsP5.makeArrivalNotification")
+        <a id="make-departure-declaration" class="govuk-link" href=@config.startDepartureDeclarationStartUrl>
+            @messages("viewDepartureDeclarationsP5.link.create")
         </a>
     </p>
 
     @search(
         form = form,
         action = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None),
-        label = "viewArrivalNotificationsP5.search.title"
+        label = "viewDepartureDeclarationsP5.search.title"
     )
 
-    @pagination(viewModel.paginationViewModel)
-
-    @movementsTable(
-        dataRows = viewModel.dataRows,
-        visuallyHiddenHeader = messages("viewArrivalNotificationsP5.heading.hidden"),
-        rowHeadingUpdated = messages("viewArrivalNotificationsP5.table.updated"),
-        rowHeadingReferenceNumber = messages("viewArrivalNotificationsP5.table.mrn"),
-        rowHeadingStatus = messages("viewArrivalNotificationsP5.table.status"),
-        rowHeadingAction = messages("viewArrivalNotificationsP5.table.action")
-    )
 
     <p class="govuk-body govuk-!-margin-top-3">
         <a id="go-to-manage-transit-movements" class="govuk-link" href=@WhatDoYouWantToDoController.onPageLoad()>
-            @messages("viewArrivalNotificationsP5.goToManageTransitMovements")
+            @messages("viewDepartureDeclarationsP5.link.manage")
         </a>
     </p>
 }

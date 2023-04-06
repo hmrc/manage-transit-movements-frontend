@@ -29,13 +29,13 @@ import services.ArrivalP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.pagination.MovementsPaginationViewModel
-import views.html.arrival.P5.ViewAllArrivalsP5View
+import views.html.arrival.P5.{ViewAllArrivalsP5View, ViewAllDeparturesP5View}
 
 import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ViewAllArrivalsP5Controller @Inject() (
+class ViewAllDeparturesP5Controller @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   val config: FrontendAppConfig,
@@ -43,7 +43,7 @@ class ViewAllArrivalsP5Controller @Inject() (
   arrivalP5MessageService: ArrivalP5MessageService,
   arrivalMovementP5Connector: ArrivalMovementP5Connector,
   formProvider: SearchFormProvider,
-  view: ViewAllArrivalsP5View
+  view: ViewAllDeparturesP5View
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
@@ -55,7 +55,7 @@ class ViewAllArrivalsP5Controller @Inject() (
       buildView(page, form)(Ok(_))
   }
 
-  private def buildView(page: Option[Int], form: Form[String])(
+  private def buildView(page: Option[Int], form: Form[String])( //todo update when departure viewmodel created
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] =
     arrivalMovementP5Connector.getAllMovements().flatMap {

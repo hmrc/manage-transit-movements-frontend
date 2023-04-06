@@ -36,6 +36,9 @@ POST        /manage-transit-movements/test-only/cancellation/submit             
 GET         /manage-transit-movements/test-only/view-arrival-notifications                   controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad(page: Option[Int])
 
 + nocsrf
+GET         /manage-transit-movements/test-only/view-departure-declarations                 controllers.testOnly.ViewAllDeparturesP5Controller.onPageLoad(page: Option[Int])
+
++ nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                            controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()
 
 + nocsrf
