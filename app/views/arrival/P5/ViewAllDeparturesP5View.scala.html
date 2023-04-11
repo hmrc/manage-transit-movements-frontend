@@ -27,10 +27,7 @@
     config: FrontendAppConfig
 )
 
-@(
-    form: Form[_],
-    viewModel: ViewAllArrivalMovementsP5ViewModel
-)(implicit request: Request[_], messages: Messages)
+@(form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("viewDepartureDeclarationsP5.title"),

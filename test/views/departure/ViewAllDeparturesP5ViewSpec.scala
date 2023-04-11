@@ -58,7 +58,7 @@ class ViewAllDeparturesP5ViewSpec
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ViewAllDeparturesP5View]
-      .apply(form, viewAllArrivalMovementsViewModel)(fakeRequest, messages)
+      .apply(form)(fakeRequest, messages)
 
   behave like pageWithFullWidth()
 
