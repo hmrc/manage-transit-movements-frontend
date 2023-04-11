@@ -30,6 +30,9 @@ POST        /manage-transit-movements/test-only/departure/submit                
 POST        /manage-transit-movements/test-only/departure/message                           controllers.testOnly.TestOnlyDeparturesRouterController.messageToCore()
 
 + nocsrf
+POST        /manage-transit-movements/test-only/departures-outbound                         controllers.testOnly.TestOnlyP5DeparturesAPIController.outboundDepartureMessage()
+
++ nocsrf
 POST        /manage-transit-movements/test-only/cancellation/submit                         controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
 + nocsrf
