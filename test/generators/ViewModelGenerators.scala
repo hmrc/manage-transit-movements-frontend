@@ -21,7 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
 import play.twirl.api.Html
-import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
+import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewDepartureP5}
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination._
@@ -42,7 +42,7 @@ trait ViewModelGenerators {
   implicit lazy val arbitraryViewAllArrivalMovementsP5ViewModel: Arbitrary[ViewAllArrivalMovementsP5ViewModel] =
     Arbitrary {
       for {
-        viewArrivals        <- listWithMaxLength[ViewArrivalP5]()
+        viewArrivals        <- listWithMaxLength[ViewDepartureP5]()
         paginationViewModel <- arbitrary[MovementsPaginationViewModel]
       } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, paginationViewModel)
     }
@@ -106,7 +106,7 @@ trait ViewModelGenerators {
       } yield ViewArrival(date, time, mrn, status, actions)
     }
 
-  implicit val arbitraryViewArrivalP5: Arbitrary[ViewArrivalP5] =
+  implicit val arbitraryViewArrivalP5: Arbitrary[ViewDepartureP5] =
     Arbitrary {
       for {
         date    <- arbitrary[LocalDate]
@@ -114,7 +114,7 @@ trait ViewModelGenerators {
         mrn     <- stringsWithMaxLength(17: Int)
         status  <- nonEmptyString
         actions <- listWithMaxLength[ViewMovementAction]()
-      } yield ViewArrivalP5(date, time, mrn, status, actions)
+      } yield ViewDepartureP5(date, time, mrn, status, actions)
     }
 
   implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =

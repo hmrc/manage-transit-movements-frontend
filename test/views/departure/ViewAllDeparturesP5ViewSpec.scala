@@ -21,14 +21,14 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
+import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewDepartureP5}
 import viewModels.pagination.MovementsPaginationViewModel
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.arrival.P5.{ViewAllArrivalsP5View, ViewAllDeparturesP5View}
 
 class ViewAllDeparturesP5ViewSpec
-    extends MovementsTableViewBehaviours[ViewArrivalP5]
-    with SearchViewBehaviours[ViewArrivalP5]
+    extends MovementsTableViewBehaviours[ViewDepartureP5]
+    with SearchViewBehaviours[ViewDepartureP5]
     with PaginationViewBehaviours[MovementsPaginationViewModel]
     with Generators
     with ScalaCheckPropertyChecks {
@@ -41,12 +41,12 @@ class ViewAllDeparturesP5ViewSpec
 
   private val viewAllArrivalMovementsP5ViewModel = arbitrary[ViewAllArrivalMovementsP5ViewModel].sample.value
 
-  override val dataRows: Seq[(String, Seq[ViewArrivalP5])] = viewAllArrivalMovementsP5ViewModel.dataRows
+  override val dataRows: Seq[(String, Seq[ViewDepartureP5])] = viewAllArrivalMovementsP5ViewModel.dataRows
 
-  override val viewMovements: Seq[ViewArrivalP5] = dataRows.flatMap(_._2)
+  override val viewMovements: Seq[ViewDepartureP5] = dataRows.flatMap(_._2)
 
   override def viewWithSpecificPagination(paginationViewModel: MovementsPaginationViewModel): HtmlFormat.Appendable =
-    applyView(form, ViewAllArrivalMovementsP5ViewModel(Seq.empty[ViewArrivalP5], paginationViewModel))
+    applyView(form, ViewAllArrivalMovementsP5ViewModel(Seq.empty[ViewDepartureP5], paginationViewModel))
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllArrivalMovementsP5ViewModel)
 
