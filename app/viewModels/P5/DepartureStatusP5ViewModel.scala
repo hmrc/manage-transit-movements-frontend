@@ -57,19 +57,19 @@ object DepartureStatusP5ViewModel {
             prelodgedDeclarationSent,
             movementNotArrivedResponseSent,
             movementNotArrived,
-            declarationAmendmentAccepted(departureId),
-            cancellationDecision(departureId),
+            declarationAmendmentAccepted,
+            cancellationDecision,
             discrepancies,
-            invalidMRN(departureId),
-            allocatedMRN(departureId),
-            releasedForTransit(departureId),
-            goodsNotReleased(departureId),
-            guaranteeRejected(departureId),
-            rejectedByOfficeOfDeparture(departureId),
-            goodsUnderControl(departureId),
-            incidentDuringTransit(departureId),
-            declarationSent(departureId),
-            goodsBeingRecovered(departureId),
+            invalidMRN,
+            allocatedMRN,
+            releasedForTransit,
+            goodsNotReleased,
+            guaranteeRejected,
+            rejectedByOfficeOfDeparture,
+            goodsUnderControl,
+            incidentDuringTransit,
+            declarationSent,
+            goodsBeingRecovered,
             guaranteeWrittenOff
           ).reduce(_ orElse _)
 
@@ -82,13 +82,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.departureNotificationSubmitted",
         actions = Seq(
           ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
-                             "movement.status.P5.action.departureNotification.amendDeclaration"
-          ),
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
                              "movement.status.P5.action.departureNotification.cancelDeclaration"
-          ),
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
-                             "movement.status.P5.action.departureNotification.completeDeclaration"
           )
         )
       )
@@ -133,14 +127,14 @@ object DepartureStatusP5ViewModel {
   }
 
   private def declarationAmendmentAccepted(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case DeclarationAmendmentAccepted =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.declarationAmendmentAccepted",
         actions = Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+            s"",
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           )
         )
@@ -148,17 +142,14 @@ object DepartureStatusP5ViewModel {
   }
 
   private def cancellationDecision(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case CancellationDecision =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.cancellationDecision",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.cancellationDecision.viewCancellation"
-          ),
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
-                             "movement.status.P5.action.cancellationDecision.viewErrors"
           )
         )
       )
@@ -170,25 +161,25 @@ object DepartureStatusP5ViewModel {
   }
 
   private def invalidMRN(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case InvalidMRN =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.invalidMRN",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId", "movement.status.P5.action.invalidMRN.amendErrors")
+          ViewMovementAction(s"", "movement.status.P5.action.invalidMRN.amendErrors")
         )
       )
   }
 
   private def allocatedMRN(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case AllocatedMRN =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.allocatedMRN",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.allocatedMRN.cancelDeclaration"
           )
         )
@@ -196,14 +187,14 @@ object DepartureStatusP5ViewModel {
   }
 
   private def releasedForTransit(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case ReleasedForTransit =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.releasedForTransit",
         actions = Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+            s"",
             "movement.status.P5.action.releasedForTransit.viewAndPrintAccompanyingPDF"
           )
         )
@@ -211,13 +202,13 @@ object DepartureStatusP5ViewModel {
   }
 
   private def goodsNotReleased(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case GoodsNotReleased =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsNotReleased",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.goodsNotReleased.viewDetails"
           )
         )
@@ -225,16 +216,16 @@ object DepartureStatusP5ViewModel {
   }
 
   private def guaranteeRejected(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case GuaranteeRejected =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.guaranteeRejected",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.guaranteeRejected.cancelDeclaration"
           )
         )
@@ -242,13 +233,13 @@ object DepartureStatusP5ViewModel {
   }
 
   private def rejectedByOfficeOfDeparture(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case RejectedByOfficeOfDeparture =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.rejectedByOfficeOfDeparture.amendErrors"
           )
         )
@@ -256,16 +247,16 @@ object DepartureStatusP5ViewModel {
   }
 
   private def goodsUnderControl(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case GoodsUnderControl =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.goodsUnderControl.viewErrors"
           ),
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
           )
         )
@@ -273,13 +264,13 @@ object DepartureStatusP5ViewModel {
   }
 
   private def incidentDuringTransit(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case IncidentDuringTransit =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.incidentDuringTransit",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.incidentDuringTransit.viewErrors"
           )
         )
@@ -287,16 +278,16 @@ object DepartureStatusP5ViewModel {
   }
 
   private def declarationSent(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case DeclarationSent =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.declarationSent",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.declarationSent.amendDeclaration"
           ),
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.declarationSent.cancelDeclaration"
           )
         )
@@ -304,13 +295,13 @@ object DepartureStatusP5ViewModel {
   }
 
   private def goodsBeingRecovered(
-    departureId: String
+    
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case GoodsBeingRecovered =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsBeingRecovered",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$departureId",
+          ViewMovementAction(s"",
                              "movement.status.P5.action.goodsBeingRecovered.viewErrors"
           )
         )
