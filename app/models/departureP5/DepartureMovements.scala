@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package models.departureP5
 
-import connectors.DeparturesDraftsP5Connector
-import models.requests.IdentifierRequest
-import play.api.mvc.Result
+import models.{Movement, Movements}
+import play.api.libs.json.{Reads, __}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
-class FakeLockAction(lrn: String, connector: DeparturesDraftsP5Connector) extends LockAction(lrn, connector) {
-
-  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
-    Future.successful(None)
+case class DepartureMovements(departureMovements: Seq[DepartureMovement]) extends Movements {
+  override val movements: Seq[Movement]  = departureMovements
+  override val retrieved: Int            = departureMovements.length
+  override val totalMatched: Option[Int] = None
 }
+
+object DepartureMovements {
+
+  implicit lazy val reads: Reads[DepartureMovements] =
+    (__ \ "departures").read[Seq[DepartureMovement]].map(DepartureMovements.apply)
+}
+
+

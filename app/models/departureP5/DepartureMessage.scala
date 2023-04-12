@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package models.departureP5
 
-import connectors.DeparturesDraftsP5Connector
-import models.requests.IdentifierRequest
-import play.api.mvc.Result
+import play.api.libs.json.{Reads, __}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import java.time.LocalDateTime
 
-class FakeLockAction(lrn: String, connector: DeparturesDraftsP5Connector) extends LockAction(lrn, connector) {
+case class DepartureMessage(received: LocalDateTime, messageType: DepartureMessageType)
 
-  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
-    Future.successful(None)
+object DepartureMessage {
+
+  implicit lazy val reads: Reads[DepartureMessage] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "received").read[LocalDateTime] and
+        (__ \ "type").read[DepartureMessageType]
+      )(DepartureMessage.apply _)
+  }
 }
+

@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
+import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DeparturesDraftsP5Connector, DeparturesMovementConnector}
 import models.{Availability, DraftAvailability}
 import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
@@ -24,7 +24,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WhatDoYouWantToDoService @Inject() (arrivalMovementConnector: ArrivalMovementConnector,
                                           departuresMovementConnector: DeparturesMovementConnector,
-                                          departuresMovementsP5Connector: DeparturesMovementsP5Connector,
+                                          departuresMovementsP5Connector: DeparturesDraftsP5Connector,
                                           arrivalMovementsP5Connector: ArrivalMovementP5Connector
 ) {
 

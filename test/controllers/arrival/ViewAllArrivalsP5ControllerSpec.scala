@@ -69,13 +69,13 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
     )
   )
 
-  val mockArrivalMessageResponse: MessagesForMovement = MessagesForMovement(
+  val mockArrivalMessageResponse: MessagesForArrivalMovement = MessagesForArrivalMovement(
     NonEmptyList(
-      Message(
+      ArrivalMessage(
         dateTime,
         ArrivalMessageType.ArrivalNotification
       ),
-      List.empty[Message]
+      List.empty[ArrivalMessage]
     )
   )
 

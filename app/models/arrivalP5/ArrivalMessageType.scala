@@ -20,8 +20,6 @@ import models.{Enumerable, WithName}
 
 trait ArrivalMessageType extends WithName
 
-trait ErrorMessageType extends ArrivalMessageType
-
 object ArrivalMessageType extends Enumerable.Implicits {
 
   case object ArrivalNotification extends WithName("IE007") with ArrivalMessageType

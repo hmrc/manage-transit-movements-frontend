@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.{ArrivalMovementConnector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
+import connectors.{ArrivalMovementConnector, DeparturesDraftsP5Connector, DeparturesMovementConnector}
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -31,10 +31,10 @@ import scala.concurrent.Future
 
 class WhatDoYouWantToDoControllerSpec extends SpecBase {
 
-  private val mockArrivalMovementConnector: ArrivalMovementConnector            = mock[ArrivalMovementConnector]
-  private val mockDepartureMovementConnector: DeparturesMovementConnector       = mock[DeparturesMovementConnector]
-  private val mockDepartureMovementsP5Connector: DeparturesMovementsP5Connector = mock[DeparturesMovementsP5Connector]
-  private val viewAllUrl                                                        = controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
+  private val mockArrivalMovementConnector: ArrivalMovementConnector         = mock[ArrivalMovementConnector]
+  private val mockDepartureMovementConnector: DeparturesMovementConnector    = mock[DeparturesMovementConnector]
+  private val mockDepartureMovementsP5Connector: DeparturesDraftsP5Connector = mock[DeparturesDraftsP5Connector]
+  private val viewAllUrl                                                     = controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
@@ -49,7 +49,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
-        bind[DeparturesMovementsP5Connector].toInstance(mockDepartureMovementsP5Connector)
+        bind[DeparturesDraftsP5Connector].toInstance(mockDepartureMovementsP5Connector)
       )
       .configure("microservice.services.features.phase5Enabled.departure" -> false)
 

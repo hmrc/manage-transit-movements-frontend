@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package models.departureP5
 
-import connectors.DeparturesDraftsP5Connector
-import models.requests.IdentifierRequest
-import play.api.mvc.Result
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
-class FakeLockAction(lrn: String, connector: DeparturesDraftsP5Connector) extends LockAction(lrn, connector) {
-
-  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
-    Future.successful(None)
-}
+case class DepartureMovementAndMessage(
+  departureMovement: DepartureMovement,
+  messagesForMovement: MessagesForDepartureMovement
+)

@@ -21,15 +21,15 @@ import ArrivalMessageType._
 
 import java.time.LocalDateTime
 
-case class Message(received: LocalDateTime, messageType: ArrivalMessageType)
+case class ArrivalMessage(received: LocalDateTime, messageType: ArrivalMessageType)
 
-object Message {
+object ArrivalMessage {
 
-  implicit lazy val reads: Reads[Message] = {
+  implicit lazy val reads: Reads[ArrivalMessage] = {
     import play.api.libs.functional.syntax._
     (
       (__ \ "received").read[LocalDateTime] and
         (__ \ "type").read[ArrivalMessageType]
-    )(Message.apply _)
+    )(ArrivalMessage.apply _)
   }
 }

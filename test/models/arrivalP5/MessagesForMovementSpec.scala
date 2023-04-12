@@ -31,22 +31,22 @@ class MessagesForMovementSpec extends SpecBase {
 
       "must return previous message" in {
 
-        val currentMessage = Message(
+        val currentMessage = ArrivalMessage(
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
           ArrivalMessageType.GoodsReleasedNotification
         )
 
-        val previousMessage = Message(
+        val previousMessage = ArrivalMessage(
           LocalDateTime.parse("2022-11-12T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
           ArrivalMessageType.UnloadingRemarks
         )
 
-        val lastMessage = Message(
+        val lastMessage = ArrivalMessage(
           LocalDateTime.parse("2022-11-11T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
           ArrivalMessageType.UnloadingPermission
         )
 
-        val messagesForMovement = MessagesForMovement(
+        val messagesForMovement = MessagesForArrivalMovement(
           NonEmptyList(currentMessage, List(previousMessage, lastMessage))
         )
 
@@ -56,12 +56,12 @@ class MessagesForMovementSpec extends SpecBase {
 
       "must return None when no previous message" in {
 
-        val currentMessage = Message(
+        val currentMessage = ArrivalMessage(
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
           ArrivalMessageType.GoodsReleasedNotification
         )
 
-        val messagesForMovement = MessagesForMovement(
+        val messagesForMovement = MessagesForArrivalMovement(
           NonEmptyList(currentMessage, List.empty)
         )
 
@@ -96,22 +96,22 @@ class MessagesForMovementSpec extends SpecBase {
             |}
             |""".stripMargin)
 
-      val expectedResult = MessagesForMovement(
+      val expectedResult = MessagesForArrivalMovement(
         NonEmptyList(
-          Message(
+          ArrivalMessage(
             LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
             ArrivalMessageType.GoodsReleasedNotification
           ),
           List(
-            Message(
+            ArrivalMessage(
               LocalDateTime.parse("2022-11-10T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingRemarks
             ),
-            Message(
+            ArrivalMessage(
               LocalDateTime.parse("2022-11-10T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingPermission
             ),
-            Message(
+            ArrivalMessage(
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.ArrivalNotification
             )
@@ -119,7 +119,7 @@ class MessagesForMovementSpec extends SpecBase {
         )
       )
 
-      val result: MessagesForMovement = json.validate[MessagesForMovement].asOpt.value
+      val result: MessagesForArrivalMovement = json.validate[MessagesForArrivalMovement].asOpt.value
 
       result mustBe expectedResult
     }
@@ -150,22 +150,22 @@ class MessagesForMovementSpec extends SpecBase {
             |}
             |""".stripMargin)
 
-      val expectedResult = MessagesForMovement(
+      val expectedResult = MessagesForArrivalMovement(
         NonEmptyList(
-          Message(
+          ArrivalMessage(
             LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
             ArrivalMessageType.GoodsReleasedNotification
           ),
           List(
-            Message(
+            ArrivalMessage(
               LocalDateTime.parse("2022-11-12T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingRemarks
             ),
-            Message(
+            ArrivalMessage(
               LocalDateTime.parse("2022-11-11T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingPermission
             ),
-            Message(
+            ArrivalMessage(
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.ArrivalNotification
             )
@@ -173,7 +173,7 @@ class MessagesForMovementSpec extends SpecBase {
         )
       )
 
-      val result: MessagesForMovement = json.validate[MessagesForMovement].asOpt.value
+      val result: MessagesForArrivalMovement = json.validate[MessagesForArrivalMovement].asOpt.value
 
       result mustBe expectedResult
     }

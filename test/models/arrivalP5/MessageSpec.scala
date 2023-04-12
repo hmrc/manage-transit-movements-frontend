@@ -49,12 +49,12 @@ class MessageSpec extends SpecBase {
               |""".stripMargin
           )
 
-          val expectedResult = Message(
+          val expectedResult = ArrivalMessage(
             LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
             messageType
           )
 
-          val result: Message = json.validate[Message].asOpt.value
+          val result: ArrivalMessage = json.validate[ArrivalMessage].asOpt.value
 
           result mustBe expectedResult
       }

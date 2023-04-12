@@ -14,28 +14,32 @@
  * limitations under the License.
  */
 
-package models.arrivalP5
+package models.departureP5
 
 import cats.data.NonEmptyList
 import play.api.libs.json.{Json, JsonValidationError, Reads}
 
-case class MessagesForMovement(messages: NonEmptyList[Message]) {
-  val messageBeforeLatest: Option[Message] = messages.tail.headOption
+case class MessagesForDepartureMovement(messages: NonEmptyList[DepartureMessage]) {
+  val messageBeforeLatest: Option[DepartureMessage] = messages.tail.headOption
 }
 
-object MessagesForMovement {
 
-  implicit val sortedNonEmptyListReads: Reads[NonEmptyList[Message]] =
+object MessagesForDepartureMovement {
+
+  implicit val sortedNonEmptyListReads: Reads[NonEmptyList[DepartureMessage]] =
     Reads
-      .of[List[Message]]
+      .of[List[DepartureMessage]]
       .collect(
         JsonValidationError("expected a NonEmptyList but the list was empty")
       ) {
         list =>
-          val sortedList: List[Message] = list.sortBy(_.received).reverse
+          val sortedList: List[DepartureMessage] = list.sortBy(_.received).reverse
 
-          NonEmptyList[Message](sortedList.head, sortedList.tail)
+          NonEmptyList[DepartureMessage](sortedList.head, sortedList.tail)
       }
 
-  implicit val reads: Reads[MessagesForMovement] = Json.reads[MessagesForMovement]
+  implicit val reads: Reads[MessagesForDepartureMovement] = Json.reads[MessagesForDepartureMovement]
 }
+
+
+

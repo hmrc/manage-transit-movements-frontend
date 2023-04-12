@@ -47,11 +47,11 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
         val movement1 = ArrivalMovement("arrivalId1", "movementReferenceNo1", LocalDateTime.now(), "/locationUrl1")
         val movement2 = ArrivalMovement("arrivalId2", "movementReferenceNo2", LocalDateTime.now(), "/locationUrl2")
 
-        val message1 = Message(LocalDateTime.now().minusDays(1), ArrivalMessageType.ArrivalNotification)
-        val message2 = Message(LocalDateTime.now(), ArrivalMessageType.UnloadingPermission)
+        val message1 = ArrivalMessage(LocalDateTime.now().minusDays(1), ArrivalMessageType.ArrivalNotification)
+        val message2 = ArrivalMessage(LocalDateTime.now(), ArrivalMessageType.UnloadingPermission)
 
-        val messages1 = MessagesForMovement(NonEmptyList(message1, List(message2)))
-        val messages2 = MessagesForMovement(NonEmptyList(message1, List(message2)))
+        val messages1 = MessagesForArrivalMovement(NonEmptyList(message1, List(message2)))
+        val messages2 = MessagesForArrivalMovement(NonEmptyList(message1, List(message2)))
 
         val movementAndMessages1 = ArrivalMovementAndMessage(movement1, messages1)
         val movementAndMessages2 = ArrivalMovementAndMessage(movement2, messages2)

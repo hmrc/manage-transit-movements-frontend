@@ -17,7 +17,7 @@
 package controllers.actions
 
 import com.google.inject.Inject
-import connectors.DeparturesMovementsP5Connector
+import connectors.DeparturesDraftsP5Connector
 import models.requests.IdentifierRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
@@ -27,13 +27,13 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class LockActionProvider @Inject() (connector: DeparturesMovementsP5Connector)(implicit ec: ExecutionContext) {
+class LockActionProvider @Inject() (connector: DeparturesDraftsP5Connector)(implicit ec: ExecutionContext) {
 
   def apply(lrn: String): ActionFilter[IdentifierRequest] =
     new LockAction(lrn, connector)
 }
 
-class LockAction(lrn: String, connector: DeparturesMovementsP5Connector)(implicit val executionContext: ExecutionContext)
+class LockAction(lrn: String, connector: DeparturesDraftsP5Connector)(implicit val executionContext: ExecutionContext)
     extends ActionFilter[IdentifierRequest]
     with Logging {
 

@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package models.departureP5
 
-import connectors.DeparturesDraftsP5Connector
-import models.requests.IdentifierRequest
-import play.api.mvc.Result
+import models.{Enumerable, WithName}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+trait DepartureMessageType extends WithName
 
-class FakeLockAction(lrn: String, connector: DeparturesDraftsP5Connector) extends LockAction(lrn, connector) {
+object DepartureMessageType extends Enumerable.Implicits {
 
-  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
-    Future.successful(None)
+  case object DepartureNotification extends WithName("IE015") with DepartureMessageType
+
+  val values = Seq(
+    DepartureNotification
+  )
+
+  implicit val enumerable: Enumerable[DepartureMessageType] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }
+
+

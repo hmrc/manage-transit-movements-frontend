@@ -195,14 +195,14 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
             .willReturn(okJson(responseJson.toString()))
         )
 
-        val expectedResult = MessagesForMovement(
+        val expectedResult = MessagesForArrivalMovement(
           NonEmptyList(
-            Message(
+            ArrivalMessage(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingPermission
             ),
             List(
-              Message(
+              ArrivalMessage(
                 LocalDateTime.parse("2022-11-10T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
                 ArrivalMessageType.ArrivalNotification
               )

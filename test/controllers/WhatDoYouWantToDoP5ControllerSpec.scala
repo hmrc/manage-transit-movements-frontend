@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
+import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DeparturesDraftsP5Connector, DeparturesMovementConnector}
 import generators.Generators
 import models._
 import models.arrivalP5.ArrivalMovements
@@ -34,11 +34,11 @@ import scala.concurrent.Future
 
 class WhatDoYouWantToDoP5ControllerSpec extends SpecBase with Generators {
 
-  private val mockArrivalMovementConnector: ArrivalMovementConnector            = mock[ArrivalMovementConnector]
-  private val mockArrivalMovementP5Connector: ArrivalMovementP5Connector        = mock[ArrivalMovementP5Connector]
-  private val mockDepartureMovementConnector: DeparturesMovementConnector       = mock[DeparturesMovementConnector]
-  private val mockDepartureMovementsP5Connector: DeparturesMovementsP5Connector = mock[DeparturesMovementsP5Connector]
-  private val viewAllUrl                                                        = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
+  private val mockArrivalMovementConnector: ArrivalMovementConnector         = mock[ArrivalMovementConnector]
+  private val mockArrivalMovementP5Connector: ArrivalMovementP5Connector     = mock[ArrivalMovementP5Connector]
+  private val mockDepartureMovementConnector: DeparturesMovementConnector    = mock[DeparturesMovementConnector]
+  private val mockDepartureMovementsP5Connector: DeparturesDraftsP5Connector = mock[DeparturesDraftsP5Connector]
+  private val viewAllUrl                                                     = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
@@ -55,7 +55,7 @@ class WhatDoYouWantToDoP5ControllerSpec extends SpecBase with Generators {
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
         bind[ArrivalMovementP5Connector].toInstance(mockArrivalMovementP5Connector),
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
-        bind[DeparturesMovementsP5Connector].toInstance(mockDepartureMovementsP5Connector)
+        bind[DeparturesDraftsP5Connector].toInstance(mockDepartureMovementsP5Connector)
       )
       .configure("microservice.services.features.phase5Enabled.departure" -> true)
       .configure("microservice.services.features.phase5Enabled.arrival" -> true)

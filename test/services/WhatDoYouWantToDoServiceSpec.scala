@@ -31,10 +31,10 @@ import scala.concurrent.Future
 
 class WhatDoYouWantToDoServiceSpec extends SpecBase with Generators {
 
-  val mockArrivalConnector: ArrivalMovementConnector                     = mock[ArrivalMovementConnector]
-  val mockDeparturesMovementConnector: DeparturesMovementConnector       = mock[DeparturesMovementConnector]
-  val mockDeparturesMovementsP5Connector: DeparturesMovementsP5Connector = mock[DeparturesMovementsP5Connector]
-  val mockArrivalMovementP5Connector: ArrivalMovementP5Connector         = mock[ArrivalMovementP5Connector]
+  val mockArrivalConnector: ArrivalMovementConnector                  = mock[ArrivalMovementConnector]
+  val mockDeparturesMovementConnector: DeparturesMovementConnector    = mock[DeparturesMovementConnector]
+  val mockDeparturesMovementsP5Connector: DeparturesDraftsP5Connector = mock[DeparturesDraftsP5Connector]
+  val mockArrivalMovementP5Connector: ArrivalMovementP5Connector      = mock[ArrivalMovementP5Connector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

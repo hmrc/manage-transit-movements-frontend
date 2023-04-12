@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
 import models.arrivalP5.{ArrivalMovements, MessagesForArrivalMovement}
+import models.departureP5.{DepartureMovements, MessagesForDepartureMovement}
 import play.api.http.Status.{NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
@@ -27,37 +28,37 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, Htt
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends HttpReadsTry with Logging {
+class DepartureMovementP5Connector @Inject()(config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends HttpReadsTry with Logging {
 
-  def getAllMovements()(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] = {
+  def getAllMovements()(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] = {
 
     val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
 
-    val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals"
+    val url = s"${config.commonTransitConventionTradersUrl}movements/departures"
 
     http
       .GET[HttpResponse](url)(rawHttpResponseHttpReads, headers, ec)
       .map {
         response =>
           response.status match {
-            case OK        => response.json.asOpt[ArrivalMovements]
-            case NOT_FOUND => Some(ArrivalMovements(Seq.empty))
+            case OK        => response.json.asOpt[DepartureMovements]
+            case NOT_FOUND => Some(DepartureMovements(Seq.empty))
             case _         => None
           }
       }
       .recover {
         case e =>
-          logger.error(s"Failed to get arrival movements with error: $e")
+          logger.error(s"Failed to get departure movements with error: $e")
           None
       }
   }
 
-  def getMessagesForMovement(location: String)(implicit hc: HeaderCarrier): Future[MessagesForArrivalMovement] = {
+  def getMessagesForMovement(location: String)(implicit hc: HeaderCarrier): Future[MessagesForDepartureMovement] = {
 
     val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
 
     val url = s"${config.commonTransitConventionTradersUrl}$location"
 
-    http.GET[MessagesForArrivalMovement](url)(HttpReads[MessagesForArrivalMovement], headers, ec)
+    http.GET[MessagesForDepartureMovement](url)(HttpReads[MessagesForDepartureMovement], headers, ec)
   }
 }
