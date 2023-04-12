@@ -52,6 +52,18 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClient, config: 
     val serviceUrl = s"${config.transitMovementsUrl}transit-movements/traders/movements/$departureId/messages"
 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
+  }
 
+  def departureAddMessage(requestData: NodeSeq, headers: Headers, departureId: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+    val newHeaders: HeaderCarrier = headerCarrier
+      .copy(authorization = headers.get("Authorization").map(Authorization))
+      .withExtraHeaders(
+        ("Content-Type" -> "application/xml"),
+        ("Accept", "application/vnd.hmrc.2.0+json")
+      )
+
+    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
+
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 }

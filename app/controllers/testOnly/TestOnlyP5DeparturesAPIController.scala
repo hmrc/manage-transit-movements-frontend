@@ -48,4 +48,13 @@ class TestOnlyP5DeparturesAPIController @Inject() (
           x => Accepted(x.body)
         )
   }
+
+  def addMessageToDeparture(departureId: String): Action[NodeSeq] = action.async(parse.xml) {
+    implicit request =>
+      connector
+        .departureAddMessage(request.body, request.headers, departureId)
+        .map(
+          x => Accepted(x.body)
+        )
+  }
 }
