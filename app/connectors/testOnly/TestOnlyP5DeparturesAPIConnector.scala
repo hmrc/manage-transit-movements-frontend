@@ -40,7 +40,7 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClient, config: 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 
-  def departureInbound(requestData: NodeSeq, headers: Headers, departureId: String)(implicit headerCarrier: HeaderCarrier): Future[Option[HttpResponse]] = {
+  def departureInbound(requestData: NodeSeq, headers: Headers, departureId: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val newHeaders: HeaderCarrier = headerCarrier
       .copy(authorization = headers.get("Authorization").map(Authorization))
@@ -51,19 +51,7 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClient, config: 
       )
     val serviceUrl = s"${config.transitMovementsUrl}transit-movements/traders/movements/$departureId/messages"
 
-    http
-      .POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
-      .map {
-        case response =>
-          println("\n\n\nResponse" + s"$response")
-          Some(response)
+    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
 
-      }
-      .recover {
-        case exception =>
-          println("\n\n\nfailed")
-          None
-      }
   }
-
 }

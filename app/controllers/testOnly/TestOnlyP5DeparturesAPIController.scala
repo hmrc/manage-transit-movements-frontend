@@ -44,11 +44,8 @@ class TestOnlyP5DeparturesAPIController @Inject() (
     implicit request =>
       connector
         .departureInbound(request.body, request.headers, departureId)
-        .map {
-          x =>
-            println("************" + s"$x")
-
-            Accepted(x.get.body)
-        }
+        .map(
+          x => Accepted(x.body)
+        )
   }
 }
