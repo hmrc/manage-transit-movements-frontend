@@ -35,5 +35,3 @@ object DepartureMessageType extends Enumerable.Implicits {
       ): _*
     )
 }
-
-

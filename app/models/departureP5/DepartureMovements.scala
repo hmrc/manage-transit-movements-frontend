@@ -17,7 +17,7 @@
 package models.departureP5
 
 import models.{Movement, Movements}
-import play.api.libs.json.{Reads, __}
+import play.api.libs.json.{__, Reads}
 
 case class DepartureMovements(departureMovements: Seq[DepartureMovement]) extends Movements {
   override val movements: Seq[Movement]  = departureMovements
@@ -30,5 +30,3 @@ object DepartureMovements {
   implicit lazy val reads: Reads[DepartureMovements] =
     (__ \ "departures").read[Seq[DepartureMovement]].map(DepartureMovements.apply)
 }
-
-

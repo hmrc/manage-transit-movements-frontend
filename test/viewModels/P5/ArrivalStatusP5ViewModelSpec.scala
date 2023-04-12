@@ -20,7 +20,7 @@ import base.SpecBase
 import cats.data.NonEmptyList
 import generators.Generators
 import models.arrivalP5.ArrivalMessageType._
-import models.arrivalP5.{ArrivalMessageType, ArrivalMovement, ArrivalMovementAndMessage, ArrivalMessage, MessagesForArrivalMovement}
+import models.arrivalP5.{ArrivalMessage, ArrivalMessageType, ArrivalMovement, ArrivalMovementAndMessage, MessagesForArrivalMovement}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.ViewMovementAction
 

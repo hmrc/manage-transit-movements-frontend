@@ -17,15 +17,17 @@
 package controllers.testOnly
 
 import config.{FrontendAppConfig, PaginationAppConfig}
+import connectors.{ArrivalMovementP5Connector, DepartureMovementP5Connector}
 import controllers.actions._
 import forms.SearchFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{ArrivalP5MessageService, DepartureP5MessageService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.arrival.P5.ViewAllDeparturesP5View
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewAllDeparturesP5Controller @Inject() (
   identify: IdentifierAction,
@@ -33,6 +35,8 @@ class ViewAllDeparturesP5Controller @Inject() (
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
   formProvider: SearchFormProvider,
+  departureP5MessageService: DepartureP5MessageService,
+  departureMovementP5Connector: DepartureMovementP5Connector,
   view: ViewAllDeparturesP5View
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
@@ -40,9 +44,20 @@ class ViewAllDeparturesP5Controller @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify) {
+  def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      Ok(view(form))
+      departureMovementP5Connector.getAllMovements().flatMap {
+        case Some(movements) =>
+          departureP5MessageService.getMessagesForAllMovements(movements).map {
+
+            x =>
+              println(s"\n\n\n $x \n\n\n\n")
+
+              Ok(view(form))
+
+          }
+        case None => Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+      }
   }
 
 }

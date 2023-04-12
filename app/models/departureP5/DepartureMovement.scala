@@ -18,16 +18,16 @@ package models.departureP5
 
 import models.Movement
 import models.arrivalP5.ArrivalMovement
-import play.api.libs.json.{Reads, __}
+import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime
 
 case class DepartureMovement(
-                              departureId: String,
-                              movementReferenceNumber: String,
-                              updated: LocalDateTime,
-                              messagesLocation: String
-                            ) extends Movement
+  departureId: String,
+  movementReferenceNumber: Option[String],
+  updated: LocalDateTime,
+  messagesLocation: String
+) extends Movement
 
 object DepartureMovement {
 
@@ -35,12 +35,11 @@ object DepartureMovement {
     import play.api.libs.functional.syntax._
     (
       (__ \ "id").read[String] and
-        (__ \ "movementReferenceNumber").read[String] and // TODO check this is correct
+        (__ \ "movementReferenceNumber").readNullable[String] and // TODO check this is correct
         (__ \ "updated").read[LocalDateTime] and
         (__ \ "_links" \ "messages" \ "href")
           .read[String]
           .map(_.replace("/customs/transits/", ""))
-      )(DepartureMovement.apply _)
+    )(DepartureMovement.apply _)
   }
 }
-

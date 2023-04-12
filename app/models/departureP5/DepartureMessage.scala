@@ -16,7 +16,7 @@
 
 package models.departureP5
 
-import play.api.libs.json.{Reads, __}
+import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime
 
@@ -29,7 +29,6 @@ object DepartureMessage {
     (
       (__ \ "received").read[LocalDateTime] and
         (__ \ "type").read[DepartureMessageType]
-      )(DepartureMessage.apply _)
+    )(DepartureMessage.apply _)
   }
 }
-

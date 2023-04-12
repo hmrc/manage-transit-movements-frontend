@@ -23,7 +23,6 @@ case class MessagesForDepartureMovement(messages: NonEmptyList[DepartureMessage]
   val messageBeforeLatest: Option[DepartureMessage] = messages.tail.headOption
 }
 
-
 object MessagesForDepartureMovement {
 
   implicit val sortedNonEmptyListReads: Reads[NonEmptyList[DepartureMessage]] =
@@ -40,6 +39,3 @@ object MessagesForDepartureMovement {
 
   implicit val reads: Reads[MessagesForDepartureMovement] = Json.reads[MessagesForDepartureMovement]
 }
-
-
-

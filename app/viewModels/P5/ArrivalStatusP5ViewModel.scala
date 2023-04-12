@@ -71,7 +71,9 @@ object ArrivalStatusP5ViewModel {
       ArrivalStatusP5ViewModel("movement.status.P5.goodsReleasedReceived", actions = Nil)
   }
 
-  private def rejectionFromOfficeOfDestinationUnloading(previousMessages: Seq[ArrivalMessage]): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
+  private def rejectionFromOfficeOfDestinationUnloading(
+    previousMessages: Seq[ArrivalMessage]
+  ): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case RejectionFromOfficeOfDestination if previousMessages.exists(_.messageType == UnloadingRemarks) =>
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
