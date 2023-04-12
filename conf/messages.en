@@ -100,6 +100,21 @@ viewArrivalNotificationsP5.table.action.viewPDF             = Unloading Permissi
 viewArrivalNotificationsP5.table.action.hidden              = for {0}
 viewArrivalNotificationsP5.search.title                     = Search by Movement Reference Number (MRN)
 
+viewDepartureDeclarationsP5.title                            = Departure declarations
+viewDepartureDeclarationsP5.heading                          = Departure declarations
+viewDepartureDeclarationsP5.heading.hidden                   = Departure declarations table
+viewDepartureDeclarationsP5.link.create                      = Create a departure declaration
+viewDepartureDeclarationsP5.search.title                     = Search by Local Reference Number (LRN)
+viewDepartureDeclarationsP5.searchButton                     = Search
+viewDepartureDeclarationsP5.label.preSearch                  = Showing {0} results
+viewDepartureDeclarationsP5.label.postSearch                 = Showing {0} results matching {1}
+viewDepartureDeclarationsP5.declarationDate.h2               = {0}
+viewDepartureDeclarationsP5.table.updated                    = Updated
+viewDepartureDeclarationsP5.table.lrn                        = Local Reference Number (LRN)
+viewDepartureDeclarationsP5.table.header3.status             = Status
+viewDepartureDeclarationsP5.table.actions                    = Actions
+viewDepartureDeclarationsP5.link.manage                      = Manage your transit movements
+
 movement.status.P5.arrivalNotificationSubmitted                         = Arrival notification sent
 movement.status.P5.unloadingRemarksSubmitted                            = Unloading remarks sent
 movement.status.P5.goodsReleasedReceived                                = Goods released

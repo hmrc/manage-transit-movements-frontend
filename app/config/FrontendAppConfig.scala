@@ -43,12 +43,20 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
 
   def declareUnloadingRemarksUrl(arrivalId: ArrivalId)  = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}"
   private val declareArrivalNotificationUrlBase: String = phase5Switch.Arrivals.getFrontendUrl
+  private val startDepartureDeclarationUrlBase: String  = phase5Switch.Departures.getFrontendUrl
 
   val declareArrivalNotificationStartUrl: String =
     if (phase5Switch.Arrivals.enabled) {
       declareArrivalNotificationUrlBase
     } else {
       s"$declareArrivalNotificationUrlBase/movement-reference-number"
+    }
+
+  val startDepartureDeclarationStartUrl: String =
+    if (phase5Switch.Arrivals.enabled) {
+      startDepartureDeclarationUrlBase
+    } else {
+      s"$startDepartureDeclarationUrlBase/local-reference-number"
     }
 
   def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$declareArrivalNotificationUrlBase/${arrivalId.index}/arrival-rejection"
