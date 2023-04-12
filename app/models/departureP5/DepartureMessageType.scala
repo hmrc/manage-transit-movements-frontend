@@ -23,9 +23,47 @@ trait DepartureMessageType extends WithName
 object DepartureMessageType extends Enumerable.Implicits {
 
   case object DepartureNotification extends WithName("IE015") with DepartureMessageType
+  case object CancellationRequested extends WithName("IE014") with DepartureMessageType
+  case object AmendmentSubmitted extends WithName("IE013") with DepartureMessageType
+  case object PrelodgedDeclarationSent extends WithName("IE170") with DepartureMessageType
+  case object MovementNotArrivedResponseSent extends WithName("IE141") with DepartureMessageType
+  case object MovementNotArrived extends WithName("IE140") with DepartureMessageType
+  case object DeclarationAmendmentAccepted extends WithName("IE004") with DepartureMessageType
+  case object CancellationDecision extends WithName("IE009") with DepartureMessageType
+  case object Discrepancies extends WithName("IE019") with DepartureMessageType
+  case object InvalidMRN extends WithName("IE022") with DepartureMessageType
+  case object AllocatedMRN extends WithName("IE028") with DepartureMessageType
+  case object ReleasedForTransit extends WithName("IE029") with DepartureMessageType
+  case object GoodsNotReleased extends WithName("IE051") with DepartureMessageType
+  case object GuaranteeRejected extends WithName("IE055") with DepartureMessageType
+  case object RejectedByOfficeOfDeparture extends WithName("IE056") with DepartureMessageType
+  case object GoodsUnderControl extends WithName("IE060") with DepartureMessageType
+  case object IncidentDuringTransit extends WithName("IE182") with DepartureMessageType
+  case object DeclarationSent extends WithName("IE928") with DepartureMessageType
+  case object GoodsBeingRecovered extends WithName("IE035") with DepartureMessageType
+  case object GuaranteeWrittenOff extends WithName("IE045") with DepartureMessageType
 
   val values = Seq(
-    DepartureNotification
+    DepartureNotification,
+    CancellationRequested,
+    AmendmentSubmitted,
+    PrelodgedDeclarationSent,
+    MovementNotArrivedResponseSent,
+    MovementNotArrived,
+    DeclarationAmendmentAccepted,
+    CancellationDecision,
+    Discrepancies,
+    InvalidMRN,
+    AllocatedMRN,
+    ReleasedForTransit,
+    GoodsNotReleased,
+    GuaranteeRejected,
+    RejectedByOfficeOfDeparture,
+    GoodsUnderControl,
+    IncidentDuringTransit,
+    DeclarationSent,
+    GoodsBeingRecovered,
+    GuaranteeWrittenOff
   )
 
   implicit val enumerable: Enumerable[DepartureMessageType] =
