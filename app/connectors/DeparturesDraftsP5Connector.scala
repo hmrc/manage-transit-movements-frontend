@@ -19,9 +19,8 @@ package connectors
 import config.FrontendAppConfig
 import logging.Logging
 import models.departure.drafts.{Limit, Skip}
-import models.{DeparturesSummary, DraftAvailability}
-import play.api.http.Status.OK
 import models.{DeparturesSummary, DraftAvailability, Sort}
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 

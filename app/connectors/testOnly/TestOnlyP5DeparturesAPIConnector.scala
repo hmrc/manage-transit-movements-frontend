@@ -31,7 +31,7 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClient, config: 
     val newHeaders: HeaderCarrier = headerCarrier
       .copy(authorization = headers.get("Authorization").map(Authorization))
       .withExtraHeaders(
-        ("Content-Type" -> "application/xml"),
+        "Content-Type" -> "application/xml",
         ("Accept", "application/vnd.hmrc.2.0+json")
       )
 
@@ -45,7 +45,7 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClient, config: 
     val newHeaders: HeaderCarrier = headerCarrier
       .copy(authorization = headers.get("Authorization").map(Authorization))
       .withExtraHeaders(
-        ("Content-Type" -> "application/xml"),
+        "Content-Type" -> "application/xml",
         ("Accept", "application/vnd.hmrc.2.0+json"),
         ("X-Message-Type", headers.get("X-Message-Type").getOrElse("No x-message-type"))
       )
@@ -58,7 +58,7 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClient, config: 
     val newHeaders: HeaderCarrier = headerCarrier
       .copy(authorization = headers.get("Authorization").map(Authorization))
       .withExtraHeaders(
-        ("Content-Type" -> "application/xml"),
+        "Content-Type" -> "application/xml",
         ("Accept", "application/vnd.hmrc.2.0+json")
       )
 
