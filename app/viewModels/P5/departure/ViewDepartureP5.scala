@@ -31,7 +31,7 @@ final case class ViewDepartureP5(
 ) extends ViewMovement {
 
   //TODO need to revisit
-  override val referenceNumber = movementReferenceNumber.get
+  override val referenceNumber = movementReferenceNumber.getOrElse("")
 }
 
 object ViewDepartureP5 {

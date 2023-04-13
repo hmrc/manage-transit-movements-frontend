@@ -111,8 +111,8 @@ viewDepartureDeclarationsP5.label.postSearch                 = Showing {0} resul
 viewDepartureDeclarationsP5.declarationDate.h2               = {0}
 viewDepartureDeclarationsP5.table.updated                    = Updated
 viewDepartureDeclarationsP5.table.lrn                        = Local Reference Number (LRN)
-viewDepartureDeclarationsP5.table.header3.status             = Status
-viewDepartureDeclarationsP5.table.actions                    = Actions
+viewDepartureDeclarationsP5.table.status                     = Status
+viewDepartureDeclarationsP5.table.action                     = Actions
 viewDepartureDeclarationsP5.link.manage                      = Manage your transit movements
 
 movement.status.P5.arrivalNotificationSubmitted                         = Arrival notification sent
