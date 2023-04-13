@@ -14,39 +14,40 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.arrivalP5.ArrivalMovementAndMessage
+import models.departureP5.DepartureMovementAndMessage
 import viewModels.{ViewMovement, ViewMovementAction}
 
 import java.time._
 
-final case class ViewArrivalP5(
+final case class ViewDepartureP5(
   updatedDate: LocalDate,
   updatedTime: LocalTime,
-  movementReferenceNumber: String,
+  movementReferenceNumber: Option[String],
   status: String,
   actions: Seq[ViewMovementAction]
 ) extends ViewMovement {
 
-  override val referenceNumber: String = movementReferenceNumber
+  //TODO need to revisit
+  override val referenceNumber = movementReferenceNumber.get
 }
 
-object ViewArrivalP5 {
+object ViewDepartureP5 {
 
-  def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewArrivalP5 = {
+  def apply(movementAndMessage: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewDepartureP5 = {
 
-    val arrivalStatus: ArrivalStatusP5ViewModel = ArrivalStatusP5ViewModel(movementAndMessage)
+    val departureStatus: DepartureStatusP5ViewModel = DepartureStatusP5ViewModel(movementAndMessage)
 
-    val systemTime = movementAndMessage.arrivalMovement.updated
+    val systemTime = movementAndMessage.departureMovement.updated
 
-    ViewArrivalP5(
+    ViewDepartureP5(
       updatedDate = systemTime.toLocalDate,
       updatedTime = systemTime.toLocalTime,
-      movementReferenceNumber = movementAndMessage.arrivalMovement.movementReferenceNumber,
-      status = arrivalStatus.status,
-      actions = arrivalStatus.actions
+      movementReferenceNumber = movementAndMessage.departureMovement.movementReferenceNumber,
+      status = departureStatus.status,
+      actions = departureStatus.actions
     )
   }
 }

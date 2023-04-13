@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.arrival
 
-import viewModels.pagination.PaginationViewModel
+import viewModels.ViewMovements
 
-case class ViewAllArrivalMovementsP5ViewModel(
-  dataRows: Seq[(String, Seq[ViewArrivalP5])],
-  paginationViewModel: PaginationViewModel
+case class ViewArrivalMovementsP5(
+  dataRows: Seq[(String, Seq[ViewArrivalP5])]
 )
 
-object ViewAllArrivalMovementsP5ViewModel {
+object ViewArrivalMovementsP5 extends ViewMovements {
 
   def apply(
-    movementsAndMessages: Seq[ViewArrivalP5],
-    paginationViewModel: PaginationViewModel
-  )(implicit d: DummyImplicit): ViewAllArrivalMovementsP5ViewModel =
-    new ViewAllArrivalMovementsP5ViewModel(
-      ViewArrivalMovementsP5(movementsAndMessages).dataRows,
-      paginationViewModel
-    )
-
+    movements: Seq[ViewArrivalP5]
+  )(implicit d: DummyImplicit): ViewArrivalMovementsP5 =
+    ViewArrivalMovementsP5(format(movements))
 }

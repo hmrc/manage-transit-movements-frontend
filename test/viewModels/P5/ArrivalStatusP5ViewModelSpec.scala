@@ -22,6 +22,7 @@ import generators.Generators
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5.{ArrivalMessage, ArrivalMessageType, ArrivalMovement, ArrivalMovementAndMessage, MessagesForArrivalMovement}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import viewModels.P5.arrival.ArrivalStatusP5ViewModel
 import viewModels.ViewMovementAction
 
 import java.time.LocalDateTime

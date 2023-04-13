@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.arrival
 
 import config.FrontendAppConfig
 import models.arrivalP5.ArrivalMessageType._
