@@ -133,7 +133,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.declarationAmendmentAccepted",
         actions = Seq(
           ViewMovementAction(
-            s"",
+            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           )
         )
