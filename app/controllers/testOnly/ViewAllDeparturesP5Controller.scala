@@ -68,8 +68,8 @@ class ViewAllDeparturesP5Controller @Inject() (
             val paginationViewModel = MovementsPaginationViewModel(
               totalNumberOfMovements = movementsAndMessages.length,
               currentPage = 1,
-              numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
-              href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
+              numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
+              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url
             )
 
             block(

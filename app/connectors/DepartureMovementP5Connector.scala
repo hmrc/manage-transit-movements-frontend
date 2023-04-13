@@ -19,7 +19,6 @@ package connectors
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
-import models.arrivalP5.{ArrivalMovements, MessagesForArrivalMovement}
 import models.departureP5.{DepartureMovements, MessagesForDepartureMovement}
 import play.api.http.Status.{NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
