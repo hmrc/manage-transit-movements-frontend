@@ -21,10 +21,11 @@ import play.api.libs.json.{Json, OFormat}
 import java.time.LocalDateTime
 
 case class IE060MessageData(
-  TransitOperation: TransitOperation
+  TransitOperation: TransitOperation,
+  CustomsOfficeOfDeparture: CustomsOfficeOfDeparture
 )
 
-case class TransitOperation(MRN: String)
+case class TransitOperation(MRN: String, LRN: String, controlNotificationDateAndTime: LocalDateTime, notificationType: String)
 
 object TransitOperation {
   implicit val formats: OFormat[TransitOperation] = Json.format[TransitOperation]

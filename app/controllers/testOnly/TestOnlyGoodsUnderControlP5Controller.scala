@@ -42,7 +42,7 @@ class TestOnlyGoodsUnderControlP5Controller @Inject() (
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       departureP5MessageService
-        .getGoodsUnderControl("64395a8a3b437ce8")
+        .getGoodsUnderControl("6439611ca615bec4")
         .map {
 
           x =>
