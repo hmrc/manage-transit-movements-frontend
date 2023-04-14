@@ -28,7 +28,7 @@ class DashboardViewSpec extends A11ySpecBase {
     val component = app.injector.instanceOf[DashboardView]
 
     val formProvider = new SearchFormProvider()
-    val form         = formProvider()
+    val form         = formProvider("departures.search.form.value.invalid")
 
     "pass accessibility checks" when {
 
