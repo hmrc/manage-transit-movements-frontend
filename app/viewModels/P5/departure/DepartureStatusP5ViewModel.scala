@@ -36,7 +36,7 @@ object DepartureStatusP5ViewModel {
             prelodgedDeclarationSent,
             movementNotArrivedResponseSent,
             movementNotArrived,
-            declarationAmendmentAccepted,
+            declarationAmendmentAccepted(),
             cancellationDecision(),
             discrepancies,
             invalidMRN(),

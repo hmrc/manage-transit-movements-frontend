@@ -62,7 +62,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
 
   val dateTime: LocalDateTime = LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
 
-  val departureMovement = DepartureMovement(
+  val departureMovement: DepartureMovement = DepartureMovement(
     "63651574c3447b12",
     None,
     dateTime,
@@ -103,7 +103,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
       when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
         .thenReturn(Future.successful(Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse))))
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url)
+      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url)
 
       val result = route(app, request).value
 
@@ -115,7 +115,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         totalNumberOfMovements = mockDepartureMovementResponse.movements.length,
         currentPage = 1,
         numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
-        href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url
+        href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
       )
       val expectedViewModel = ViewAllDepartureMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
@@ -128,7 +128,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
       when(mockDepartureMovementConnector.getAllMovements()(any()))
         .thenReturn(Future.successful(None))
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url)
+      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url)
 
       val result = route(app, request).value
 

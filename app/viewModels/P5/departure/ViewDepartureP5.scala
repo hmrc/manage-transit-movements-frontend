@@ -31,12 +31,12 @@ final case class ViewDepartureP5(
 ) extends ViewMovement {
 
   //TODO need to revisit
-  override val referenceNumber = movementReferenceNumber.getOrElse("")
+  override val referenceNumber: String = movementReferenceNumber.getOrElse("")
 }
 
 object ViewDepartureP5 {
 
-  def apply(movementAndMessage: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewDepartureP5 = {
+  def apply(movementAndMessage: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ViewDepartureP5 = {
 
     val departureStatus: DepartureStatusP5ViewModel = DepartureStatusP5ViewModel(movementAndMessage)
 

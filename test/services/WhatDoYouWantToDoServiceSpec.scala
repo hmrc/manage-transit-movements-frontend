@@ -111,7 +111,7 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with Generators {
       "must get correct URL when phase 5 enabled" in {
 
         whatDoYouWantToDoService.fetchArrivalsUrl(phase5ArrivalEnabled = true) mustBe
-          controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
+          controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
       }
 
       "must get correct URL when phase 5 disabled" in {

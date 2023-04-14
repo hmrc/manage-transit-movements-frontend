@@ -17,7 +17,6 @@
 package models.departureP5
 
 import models.Movement
-import models.arrivalP5.ArrivalMovement
 import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime

@@ -37,7 +37,7 @@ class WhatDoYouWantToDoService @Inject() (arrivalMovementConnector: ArrivalMovem
 
   def fetchArrivalsUrl(phase5ArrivalEnabled: Boolean): String =
     if (phase5ArrivalEnabled) {
-      controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
+      controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
     } else {
       controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
     }

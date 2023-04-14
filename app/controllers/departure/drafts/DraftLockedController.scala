@@ -23,15 +23,13 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.departure.drafts.DraftLockedView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class DraftLockedController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view: DraftLockedView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+) extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (Action andThen identify) {

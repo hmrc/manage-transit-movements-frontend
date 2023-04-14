@@ -52,7 +52,7 @@ class TestOnlyP5ArrivalsAPIController @Inject() (
   def inboundArrivalMessage(arrivalId: String): Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector
-        .arrivalInbound(request.body, arrivalId, request.headers)
+        .arrivalInbound(request.body, arrivalId)
         .map(
           x => Accepted(x.body)
         )

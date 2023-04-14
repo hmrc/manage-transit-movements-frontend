@@ -27,12 +27,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
 import services.DepartureP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels.pagination.MovementsPaginationViewModel
 import views.html.departure.P5.ViewAllDeparturesP5View
 
-import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,18 +43,18 @@ class ViewAllDeparturesP5Controller @Inject() (
   departureP5MessageService: DepartureP5MessageService,
   departureMovementP5Connector: DepartureMovementP5Connector,
   view: ViewAllDeparturesP5View
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(page, form)(Ok(_))
+      buildView(form)(Ok(_))
   }
 
-  private def buildView(page: Option[Int], form: Form[String])(
+  private def buildView(form: Form[String])(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] =
     departureMovementP5Connector.getAllMovements().flatMap {
@@ -69,7 +67,7 @@ class ViewAllDeparturesP5Controller @Inject() (
               totalNumberOfMovements = movementsAndMessages.length,
               currentPage = 1,
               numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
-              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url
+              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
             )
 
             block(

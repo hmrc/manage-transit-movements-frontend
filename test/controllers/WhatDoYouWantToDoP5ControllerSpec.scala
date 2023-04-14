@@ -38,7 +38,7 @@ class WhatDoYouWantToDoP5ControllerSpec extends SpecBase with Generators {
   private val mockArrivalMovementP5Connector: ArrivalMovementP5Connector     = mock[ArrivalMovementP5Connector]
   private val mockDepartureMovementConnector: DeparturesMovementConnector    = mock[DeparturesMovementConnector]
   private val mockDepartureMovementsP5Connector: DeparturesDraftsP5Connector = mock[DeparturesDraftsP5Connector]
-  private val viewAllUrl                                                     = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
+  private val viewAllUrl                                                     = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)

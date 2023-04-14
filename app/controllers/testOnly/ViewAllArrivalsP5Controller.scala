@@ -31,7 +31,6 @@ import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.pagination.MovementsPaginationViewModel
 import views.html.arrival.P5.ViewAllArrivalsP5View
 
-import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,18 +43,18 @@ class ViewAllArrivalsP5Controller @Inject() (
   arrivalMovementP5Connector: ArrivalMovementP5Connector,
   formProvider: SearchFormProvider,
   view: ViewAllArrivalsP5View
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(page, form)(Ok(_))
+      buildView(form)(Ok(_))
   }
 
-  private def buildView(page: Option[Int], form: Form[String])(
+  private def buildView(form: Form[String])(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] =
     arrivalMovementP5Connector.getAllMovements().flatMap {
@@ -68,7 +67,7 @@ class ViewAllArrivalsP5Controller @Inject() (
               totalNumberOfMovements = movementsAndMessages.length,
               currentPage = 1,
               numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
-              href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
+              href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
             )
 
             block(
