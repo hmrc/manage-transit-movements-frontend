@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TestOnlyP5DepartureMovementsConnector @Inject() (config: FrontendAppConfig, http: HttpClient) {
 
-  def getMessageMetaData(departureId: DepartureId)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Messages] = {
+  def getMessageMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Messages] = {
     val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
 
     val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures/${departureId.value}/messages"

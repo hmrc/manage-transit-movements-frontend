@@ -43,7 +43,7 @@ class TestOnlyP5DeparturesAPIController @Inject() (
   def inboundDepartureMessage(departureId: String): Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector
-        .departureInbound(request.body, departureId)
+        .departureInbound(request.body, departureId, request.headers)
         .map(
           x => Accepted(x.body)
         )
@@ -52,7 +52,7 @@ class TestOnlyP5DeparturesAPIController @Inject() (
   def addMessageToDeparture(departureId: String): Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector
-        .departureAddMessage(request.body, departureId)
+        .departureAddMessage(request.body, departureId, request.headers)
         .map(
           x => Accepted(x.body)
         )

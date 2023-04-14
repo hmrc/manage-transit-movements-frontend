@@ -44,9 +44,9 @@ class DepartureP5MessageService @Inject() (testOnlyP5DepartureMovementsConnector
           )
     }
 
-  def getGoodsUnderControlMessage(departureId: DepartureId)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+  def getGoodsUnderControlMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
     testOnlyP5DepartureMovementsConnector
-      .getMessageMetaData(departureId: DepartureId)
+      .getMessageMetaData(departureId: String)
       .map(
         _.messages
           .filter(_.messageType == GoodsUnderControl)
@@ -55,7 +55,7 @@ class DepartureP5MessageService @Inject() (testOnlyP5DepartureMovementsConnector
           .headOption
       )
 
-  def getGoodsUnderControl(departureId: DepartureId)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[IE060Data]] =
+  def getGoodsUnderControl(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[IE060Data]] =
     (
       for {
         goodsUnderControlMessage <- OptionT(getGoodsUnderControlMessage(departureId))

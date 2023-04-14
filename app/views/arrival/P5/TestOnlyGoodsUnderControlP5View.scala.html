@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.departureP5
+@import controllers.routes._
+@import models.departureP5.IE060Data
 
-import play.api.libs.json.{__, Json, OWrites, Reads}
 
-case class IE060Data(data: IE060MessageData)
+@this(
+    mainTemplate: MainTemplate
+)
 
-object IE060Data {
-  implicit val reads: Reads[IE060Data]    = (__ \ "body" \ "n1:CC060C").read[IE060MessageData].map(IE060Data.apply)
-  implicit val writes: OWrites[IE060Data] = Json.writes[IE060Data]
+@(
+    models: Option[IE060Data]
+)(implicit request: Request[_], messages: Messages)
+
+@mainTemplate(
+    title = messages("viewArrivalNotificationsP5.title"),
+    showBackLink = false,
+    fullWidth = true
+) {
+
+   <p>@models</p>
+
 }
