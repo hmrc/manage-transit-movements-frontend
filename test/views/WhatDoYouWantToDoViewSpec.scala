@@ -33,11 +33,12 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     arrivalsAvailability: Availability = sampleAvailability,
     departuresAvailability: Availability = sampleAvailability,
     draftDeparturesAvailability: Option[DraftAvailability] = Some(sampleDraftAvailability),
-    viewAllUrl: String = " "
+    viewAllArrivals: String = " ",
+    viewAllDepartures: String = " "
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[WhatDoYouWantToDoView]
-      .apply(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllUrl)(fakeRequest, messages)
+      .apply(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivals, viewAllDepartures)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable = applyView()
 
@@ -91,7 +92,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   }
 
   "when we have arrivals must" - {
-    val doc  = parseView(applyView(arrivalsAvailability = Availability.NonEmpty, viewAllUrl = "/manage-transit-movements/view-arrivals"))
+    val doc  = parseView(applyView(arrivalsAvailability = Availability.NonEmpty, viewAllArrivals = "/manage-transit-movements/view-arrivals"))
     val link = getElementById(doc, "view-arrival-notifications")
 
     "have the correct text for the view arrivals link" in {
