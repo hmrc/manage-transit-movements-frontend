@@ -40,7 +40,7 @@ class DashboardControllerSpec extends SpecBase {
   private val draftDepartureService = mock[DraftDepartureService]
 
   private val formProvider                 = new SearchFormProvider()
-  private val form                         = formProvider()
+  private val form                         = formProvider("departures.search.form.value.invalid")
   private lazy val draftDashboardGetRoute  = routes.DashboardController.onPageLoad(None, None, None).url
   private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit(None).url
 

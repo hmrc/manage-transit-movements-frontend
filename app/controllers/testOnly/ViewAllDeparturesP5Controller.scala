@@ -38,7 +38,7 @@ class ViewAllDeparturesP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  private val form = formProvider()
+  private val form = formProvider("departures.search.form.value.invalid")
 
   def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify) {
     implicit request =>

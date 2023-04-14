@@ -47,7 +47,7 @@ class ViewAllDeparturesController @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  private val form = formProvider()
+  private val form = formProvider("departures.search.form.value.invalid")
 
   def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>

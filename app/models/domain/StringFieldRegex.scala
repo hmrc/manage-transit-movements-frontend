@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package forms
+package models.domain
 
-import forms.mappings.Mappings
-import models.domain.StringFieldRegex.alphaNumericRegex
-import play.api.data.Form
+import scala.util.matching.Regex
 
-class SearchFormProvider extends Mappings {
+object StringFieldRegex {
 
-  def apply(errorMsg: String): Form[String] =
-    Form(
-      "value" -> play.api.data.Forms
-        .text()
-        .verifying(
-          regexp(alphaNumericRegex.toString(), errorMsg)
-        )
-    )
+  val stringFieldRegex: Regex            = "[\\sa-zA-Z0-9&'@/.\\-? ]*".r
+  val stringFieldRegexAsterisk: Regex    = "[\\sa-zA-Z0-9&'*/.\\-? ]*".r
+  val alphaNumericRegex: Regex           = "^[a-zA-Z0-9]*$".r
+  val numericRegex: Regex                = "^[0-9]*$".r
+  val alphaNumericWithSpacesRegex: Regex = "^[a-zA-Z\\s0-9]*$".r
 }

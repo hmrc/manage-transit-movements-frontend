@@ -49,7 +49,7 @@ class DashboardController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider()
+  private val form = formProvider("departure.search.form.value.invalid")
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 

@@ -46,7 +46,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with ScalaCheck
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
   private val formProvider = new SearchFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider("departures.search.form.value.invalid")
 
   private def mockDepartureSearchResponse(retrievedDepartures: Int, totalMatched: Int): Departures =
     Departures(

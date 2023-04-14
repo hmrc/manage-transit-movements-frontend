@@ -47,7 +47,7 @@ class ViewDeparturesSearchResultsController @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  private val form = formProvider()
+  private val form = formProvider("departures.search.form.value.invalid")
 
   private lazy val pageSize = searchResultsAppConfig.maxSearchResults
 

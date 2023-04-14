@@ -48,7 +48,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
   val dataRows: Seq[DraftDepartureRow] = viewAllDepartureMovementsViewModel.dataRows
 
   private val formProvider = new SearchFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider("departures.search.form.value.invalid")
 
   override val prefix = "departure.drafts.dashboard"
 

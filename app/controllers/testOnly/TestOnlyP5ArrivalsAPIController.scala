@@ -17,12 +17,11 @@
 package controllers.testOnly
 
 import connectors.testOnly.TestOnlyP5ArrivalsAPIConnector
-import play.api.libs.json.Json
 import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
 class TestOnlyP5ArrivalsAPIController @Inject() (

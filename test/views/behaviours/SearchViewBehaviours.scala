@@ -26,7 +26,7 @@ import viewModels.ViewMovement
 trait SearchViewBehaviours[T <: ViewMovement] extends InputTextViewBehaviours[String] {
   self: MovementsTableViewBehaviours[T] =>
 
-  override def form: Form[String] = new SearchFormProvider()()
+  override def form: Form[String] = new SearchFormProvider()("departures.search.form.value.invalid")
 
   val dataRows: Seq[(String, Seq[T])]
 

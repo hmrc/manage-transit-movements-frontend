@@ -42,7 +42,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
   private val mockArrivalMovementConnector = mock[ArrivalMovementP5Connector]
 
   private val formProvider = new SearchFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider("arrivals.search.form.value.invalid")
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)

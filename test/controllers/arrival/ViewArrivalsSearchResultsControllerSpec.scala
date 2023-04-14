@@ -47,7 +47,7 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with ScalaCheckPr
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
   private val formProvider = new SearchFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider("arrivals.search.form.value.invalid")
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)

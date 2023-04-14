@@ -17,13 +17,15 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import models.domain.StringFieldRegex.alphaNumericRegex
 import org.scalacheck.Gen
+import play.api.data.FormError
 
 class SearchFormProviderSpec extends StringFieldBehaviours {
 
-  private val form = new SearchFormProvider()()
+  ".value departures" - {
 
-  ".value" - {
+    val form = new SearchFormProvider()("departures.search.form.value.invalid")
 
     val fieldName = "value"
 
@@ -31,6 +33,41 @@ class SearchFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       Gen.alphaNumStr
+    )
+
+    behave like nonMandatoryField(
+      form,
+      fieldName
+    )
+
+    behave like fieldWithInvalidCharacters(
+      form,
+      fieldName,
+      error = FormError(fieldName, "departures.search.form.value.invalid", Seq(alphaNumericRegex.regex))
+    )
+  }
+
+  ".value arrivals" - {
+
+    val form = new SearchFormProvider()("arrivals.search.form.value.invalid")
+
+    val fieldName = "value"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      Gen.alphaNumStr
+    )
+
+    behave like nonMandatoryField(
+      form,
+      fieldName
+    )
+
+    behave like fieldWithInvalidCharacters(
+      form,
+      fieldName,
+      error = FormError(fieldName, "arrivals.search.form.value.invalid", Seq(alphaNumericRegex.regex))
     )
   }
 }

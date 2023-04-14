@@ -45,7 +45,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
   private val formProvider = new SearchFormProvider()
-  private val form         = formProvider()
+  private val form         = formProvider("departures.search.form.value.invalid")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
