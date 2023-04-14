@@ -17,8 +17,9 @@
 package models.departureP5
 
 import models.{Enumerable, WithName}
+import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
 
-trait DepartureMessageType extends WithName
+sealed trait DepartureMessageType extends WithName
 
 object DepartureMessageType extends Enumerable.Implicits {
 
@@ -43,7 +44,9 @@ object DepartureMessageType extends Enumerable.Implicits {
   case object GoodsBeingRecovered extends WithName("IE035") with DepartureMessageType
   case object GuaranteeWrittenOff extends WithName("IE045") with DepartureMessageType
 
-  val values = Seq(
+  case class UnknownMessageType(status: String) extends WithName(status) with DepartureMessageType
+
+  val values: Seq[DepartureMessageType] = Seq(
     DepartureNotification,
     CancellationRequested,
     AmendmentSubmitted,
@@ -72,4 +75,16 @@ object DepartureMessageType extends Enumerable.Implicits {
         v => v.toString -> v
       ): _*
     )
+
+  implicit def readsDepartureMessageType(implicit ev: Enumerable[DepartureMessageType]): Reads[DepartureMessageType] =
+    Reads {
+      case JsString(str) =>
+        ev.withName(str)
+          .map(JsSuccess(_))
+          .getOrElse(
+            JsSuccess(UnknownMessageType(str))
+          )
+      case _ =>
+        JsError("error.invalid")
+    }
 }
