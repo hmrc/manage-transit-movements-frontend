@@ -32,7 +32,7 @@ class SearchSpec extends A11ySpecBase {
     val title  = nonEmptyString.sample.value
     val action = arbitrary[Call].sample.value
     val label  = nonEmptyString.sample.value
-    val form   = new SearchFormProvider()()
+    val form   = new SearchFormProvider()("departures.search.form.value.invalid")
 
     val content = template.apply(title) {
       component.apply(form, action, label).withHeading(title)
