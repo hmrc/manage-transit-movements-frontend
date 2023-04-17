@@ -43,7 +43,7 @@ class DepartureP5MessageService @Inject() (
           )
     }
 
-  def getGoodsUnderControlMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+  private def getGoodsUnderControlMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
     departureMovementP5Connector
       .getMessageMetaData(departureId: String)
       .map(
