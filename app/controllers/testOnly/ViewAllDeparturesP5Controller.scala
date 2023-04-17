@@ -18,7 +18,7 @@ package controllers.testOnly
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -32,7 +32,7 @@ class ViewAllDeparturesP5Controller @Inject() (
   cc: MessagesControllerComponents,
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
-  formProvider: SearchFormProvider,
+  formProvider: DeparturesSearchFormProvider,
   view: ViewAllDeparturesP5View
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)

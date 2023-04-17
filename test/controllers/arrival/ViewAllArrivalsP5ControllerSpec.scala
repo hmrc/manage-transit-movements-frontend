@@ -19,7 +19,7 @@ package controllers.arrival
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.ArrivalMovementP5Connector
-import forms.SearchFormProvider
+import forms.ArrivalsSearchFormProvider
 import generators.Generators
 import models.arrivalP5._
 import org.mockito.ArgumentMatchers.any
@@ -41,7 +41,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementP5Connector]
 
-  private val formProvider = new SearchFormProvider()
+  private val formProvider = new ArrivalsSearchFormProvider()
   private val form         = formProvider()
 
   override def beforeEach(): Unit = {

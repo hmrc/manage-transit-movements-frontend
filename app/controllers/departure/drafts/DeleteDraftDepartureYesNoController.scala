@@ -16,14 +16,14 @@
 
 package controllers.departure.drafts
 
-import controllers.actions.{IdentifierAction, LockAction, LockActionProvider}
+import controllers.actions.{IdentifierAction, LockActionProvider}
 import forms.YesNoFormProvider
+import play.api.http.Status.{OK => StatusOK}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.departure.drafts.DeleteDraftDepartureYesNoView
-import play.api.http.Status.{OK => StatusOK}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
