@@ -22,13 +22,35 @@ import java.time.LocalDateTime
 
 case class IE060MessageData(
   TransitOperation: TransitOperation,
-  CustomsOfficeOfDeparture: CustomsOfficeOfDeparture
+  CustomsOfficeOfDeparture: CustomsOfficeOfDeparture,
+  TypeOfControls: Option[Seq[TypeOfControls]],
+  RequestedDocument: Option[Seq[RequestedDocument]]
 )
 
 case class TransitOperation(MRN: String, LRN: String, controlNotificationDateAndTime: LocalDateTime, notificationType: String)
 
 object TransitOperation {
   implicit val formats: OFormat[TransitOperation] = Json.format[TransitOperation]
+}
+
+case class TypeOfControls(
+  sequenceNumber: String,
+  `type`: String,
+  text: Option[String]
+)
+
+object TypeOfControls {
+  implicit val formats: OFormat[TypeOfControls] = Json.format[TypeOfControls]
+}
+
+case class RequestedDocument(
+  sequenceNumber: String,
+  documentType: String,
+  description: Option[String]
+)
+
+object RequestedDocument {
+  implicit val formats: OFormat[RequestedDocument] = Json.format[RequestedDocument]
 }
 
 object IE060MessageData {
