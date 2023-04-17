@@ -115,7 +115,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   }
 
   "when we have departures must" - {
-    val doc  = parseView(applyView(departuresAvailability = Availability.NonEmpty))
+    val doc  = parseView(applyView(departuresAvailability = Availability.NonEmpty, viewAllDepartures = "/manage-transit-movements/view-departures"))
     val link = getElementById(doc, "view-departure-declarations")
 
     "have the correct text for the view departures link" in {

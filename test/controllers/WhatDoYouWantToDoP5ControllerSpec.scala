@@ -59,6 +59,7 @@ class WhatDoYouWantToDoP5ControllerSpec extends SpecBase with Generators {
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
         bind[ArrivalMovementP5Connector].toInstance(mockArrivalMovementP5Connector),
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
+        bind[DepartureMovementP5Connector].toInstance(mockDepartureMovementsP5Connector),
         bind[DeparturesDraftsP5Connector].toInstance(mockDeparturesDraftsP5Connector)
       )
       .configure("microservice.services.features.phase5Enabled.departure" -> true)
