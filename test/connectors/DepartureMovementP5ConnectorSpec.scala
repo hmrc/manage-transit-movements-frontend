@@ -29,6 +29,7 @@ import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
@@ -212,6 +213,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         connector.getMessagesForMovement(s"movements/departures/$departureId/messages").futureValue mustBe expectedResult
       }
+
     }
   }
 

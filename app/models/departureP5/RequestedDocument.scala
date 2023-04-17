@@ -18,15 +18,12 @@ package models.departureP5
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDateTime
-
-case class IE060MessageData(
-  TransitOperation: TransitOperation,
-  CustomsOfficeOfDeparture: CustomsOfficeOfDeparture,
-  TypeOfControls: Option[Seq[TypeOfControls]],
-  RequestedDocument: Option[Seq[RequestedDocument]]
+case class RequestedDocument(
+  sequenceNumber: String,
+  documentType: String,
+  description: Option[String]
 )
 
-object IE060MessageData {
-  implicit val formats: OFormat[IE060MessageData] = Json.format[IE060MessageData]
+object RequestedDocument {
+  implicit val formats: OFormat[RequestedDocument] = Json.format[RequestedDocument]
 }

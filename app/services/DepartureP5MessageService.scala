@@ -19,7 +19,6 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.DepartureMovementP5Connector
-import connectors.testOnly.TestOnlyP5DepartureMovementsConnector
 import models.DepartureId
 import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5.{DepartureMovementAndMessage, DepartureMovements, IE060Data, MessageMetaData}
@@ -28,8 +27,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureP5MessageService @Inject() (testOnlyP5DepartureMovementsConnector: TestOnlyP5DepartureMovementsConnector,
-                                           departureMovementP5Connector: DepartureMovementP5Connector
+class DepartureP5MessageService @Inject() (
+  departureMovementP5Connector: DepartureMovementP5Connector
 ) {
 
   def getMessagesForAllMovements(
@@ -45,7 +44,7 @@ class DepartureP5MessageService @Inject() (testOnlyP5DepartureMovementsConnector
     }
 
   def getGoodsUnderControlMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
-    testOnlyP5DepartureMovementsConnector
+    departureMovementP5Connector
       .getMessageMetaData(departureId: String)
       .map(
         _.messages
@@ -59,7 +58,7 @@ class DepartureP5MessageService @Inject() (testOnlyP5DepartureMovementsConnector
     (
       for {
         goodsUnderControlMessage <- OptionT(getGoodsUnderControlMessage(departureId))
-        goodsUnderControl        <- OptionT.liftF(testOnlyP5DepartureMovementsConnector.getGoodsUnderControl(goodsUnderControlMessage.path))
+        goodsUnderControl        <- OptionT.liftF(departureMovementP5Connector.getGoodsUnderControl(goodsUnderControlMessage.path))
       } yield goodsUnderControl
     ).value
 
