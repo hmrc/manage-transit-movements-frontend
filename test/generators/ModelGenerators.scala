@@ -21,6 +21,7 @@ import models._
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departure._
+import models.departureP5.{DepartureMovement, DepartureMovements}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
@@ -233,6 +234,20 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryArrivalMovements: Arbitrary[ArrivalMovements] = Arbitrary {
     Gen.nonEmptyListOf(arbitrary[ArrivalMovement]).map(ArrivalMovements(_))
+  }
+
+  implicit lazy val arbitraryDepartureMovement: Arbitrary[DepartureMovement] =
+    Arbitrary {
+      for {
+        departureId      <- arbitrary[String]
+        mrn              <- arbitrary[String]
+        updated          <- arbitrary[LocalDateTime]
+        messagesLocation <- arbitrary[String]
+      } yield DepartureMovement(departureId, Some(mrn), updated, messagesLocation)
+    }
+
+  implicit lazy val arbitraryDepartureMovements: Arbitrary[DepartureMovements] = Arbitrary {
+    Gen.nonEmptyListOf(arbitrary[DepartureMovement]).map(DepartureMovements(_))
   }
 
   implicit lazy val arbitraryDepartures: Arbitrary[Departures] =

@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors._
 import generators.Generators
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
+import models.departureP5.{DepartureMovement, DepartureMovements}
 import models.{Availability, DraftAvailability}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verifyNoInteractions, when}
@@ -31,21 +32,29 @@ import scala.concurrent.Future
 
 class WhatDoYouWantToDoServiceSpec extends SpecBase with Generators {
 
-  val mockArrivalConnector: ArrivalMovementConnector                  = mock[ArrivalMovementConnector]
-  val mockDeparturesMovementConnector: DeparturesMovementConnector    = mock[DeparturesMovementConnector]
-  val mockDeparturesMovementsP5Connector: DeparturesDraftsP5Connector = mock[DeparturesDraftsP5Connector]
-  val mockArrivalMovementP5Connector: ArrivalMovementP5Connector      = mock[ArrivalMovementP5Connector]
+  val mockArrivalConnector: ArrivalMovementConnector                   = mock[ArrivalMovementConnector]
+  val mockDeparturesMovementConnector: DeparturesMovementConnector     = mock[DeparturesMovementConnector]
+  val mockDeparturesDraftsP5Connector: DeparturesDraftsP5Connector     = mock[DeparturesDraftsP5Connector]
+  val mockDeparturesMovementsP5Connector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
+  val mockArrivalMovementP5Connector: ArrivalMovementP5Connector       = mock[ArrivalMovementP5Connector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalConnector)
     reset(mockDeparturesMovementConnector)
     reset(mockDeparturesMovementsP5Connector)
+    reset(mockDeparturesDraftsP5Connector)
     reset(mockArrivalMovementP5Connector)
   }
 
   val whatDoYouWantToDoService =
-    new WhatDoYouWantToDoService(mockArrivalConnector, mockDeparturesMovementConnector, mockDeparturesMovementsP5Connector, mockArrivalMovementP5Connector)
+    new WhatDoYouWantToDoService(
+      mockArrivalConnector,
+      mockDeparturesMovementConnector,
+      mockDeparturesMovementsP5Connector,
+      mockDeparturesDraftsP5Connector,
+      mockArrivalMovementP5Connector
+    )
 
   "WhatDoYouWantToDoService" - {
 
@@ -78,21 +87,39 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with Generators {
       }
     }
 
-    "getDeparturesAvailability" - {
+    "fetchDeparturesAvailability" - {
+      "must get availability when phase 5 enabled" in {
 
-      "must get availability" in {
+        val expectedResult = DepartureMovements(
+          Seq(
+            DepartureMovement(
+              "63651574c3447b12",
+              Some("27WF9X1FQ9RCKN0TM3"),
+              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
+              "movements/arrivals/63651574c3447b12/messages"
+            )
+          )
+        )
+
+        when(mockDeparturesMovementsP5Connector.getAllMovements()(any())).thenReturn(Future.successful(Some(expectedResult)))
+        whatDoYouWantToDoService.fetchDeparturesAvailability(phase5DepartureEnabled = true).futureValue mustBe Availability.NonEmpty
+
+        verifyNoInteractions(mockDeparturesMovementConnector)
+      }
+
+      "must get availability when phase 5 disabled" in {
 
         when(mockDeparturesMovementConnector.getDeparturesAvailability()(any())).thenReturn(Future.successful(Availability.NonEmpty))
-        whatDoYouWantToDoService.getDeparturesAvailability.futureValue mustBe Availability.NonEmpty
+        whatDoYouWantToDoService.fetchDeparturesAvailability(phase5DepartureEnabled = false).futureValue mustBe Availability.NonEmpty
 
-        verifyNoInteractions(mockDeparturesMovementsP5Connector)
+        verifyNoInteractions(mockArrivalMovementP5Connector)
       }
     }
 
-    "fetchDraftArrivalsAvailability" - {
+    "fetchDraftDeparturesAvailability" - {
       "must get availability when phase 5 enabled" in {
 
-        when(mockDeparturesMovementsP5Connector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(DraftAvailability.NonEmpty))
+        when(mockDeparturesDraftsP5Connector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(DraftAvailability.NonEmpty))
         whatDoYouWantToDoService.fetchDraftDepartureAvailability(phase5DepartureEnabled = true).futureValue.value mustBe DraftAvailability.NonEmpty
 
         verifyNoInteractions(mockDeparturesMovementConnector)
@@ -102,7 +129,7 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with Generators {
 
         whatDoYouWantToDoService.fetchDraftDepartureAvailability(phase5DepartureEnabled = false).futureValue mustBe None
 
-        verifyNoInteractions(mockDeparturesMovementsP5Connector)
+        verifyNoInteractions(mockDeparturesDraftsP5Connector)
         verifyNoInteractions(mockDeparturesMovementConnector)
       }
     }
@@ -118,6 +145,20 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with Generators {
 
         whatDoYouWantToDoService.fetchArrivalsUrl(phase5ArrivalEnabled = false) mustBe
           controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
+      }
+    }
+
+    "fetchDeparturesUrl" - {
+      "must get correct URL when phase 5 enabled" in {
+
+        whatDoYouWantToDoService.fetchDeparturesUrl(phase5DepartureEnabled = true) mustBe
+          controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
+      }
+
+      "must get correct URL when phase 5 disabled" in {
+
+        whatDoYouWantToDoService.fetchDeparturesUrl(phase5DepartureEnabled = false) mustBe
+          controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
       }
     }
 
