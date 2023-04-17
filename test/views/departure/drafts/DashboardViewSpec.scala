@@ -17,6 +17,7 @@
 package views.departure.drafts
 
 import forms.SearchFormProvider
+import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
 import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -48,7 +49,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
   val dataRows: Seq[DraftDepartureRow] = viewAllDepartureMovementsViewModel.dataRows
 
   private val formProvider = new SearchFormProvider()
-  private val form         = formProvider("departures.search.form.value.invalid")
+  private val form         = formProvider("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
 
   override val prefix = "departure.drafts.dashboard"
 

@@ -34,6 +34,12 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
       }
     }
 
+  def allowsHyphensAndUnderscores(form: Form[_], fieldName: String): Unit =
+    "must bind hyphens and underscores" in {
+      val result = form.bind(Map(fieldName -> "-_")).apply(fieldName)
+      result.value.value mustBe "-_"
+    }
+
   def nonMandatoryField(form: Form[_], fieldName: String): Unit =
     "must bind blank data" in {
       val result = form.bind(Map(fieldName -> "")).apply(fieldName)

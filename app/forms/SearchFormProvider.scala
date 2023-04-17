@@ -20,14 +20,16 @@ import forms.mappings.Mappings
 import models.domain.StringFieldRegex.alphaNumericRegex
 import play.api.data.Form
 
+import scala.util.matching.Regex
+
 class SearchFormProvider extends Mappings {
 
-  def apply(errorMsg: String): Form[String] =
+  def apply(errorMsg: String, regex: Regex = alphaNumericRegex): Form[String] =
     Form(
       "value" -> play.api.data.Forms
         .text()
         .verifying(
-          regexp(alphaNumericRegex.toString(), errorMsg)
+          regexp(regex.toString(), errorMsg)
         )
     )
 }

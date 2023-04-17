@@ -21,6 +21,7 @@ import connectors.DeparturesMovementConnector
 import forms.SearchFormProvider
 import generators.Generators
 import models.departure.DepartureStatus.DepartureSubmitted
+import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber, RichLocalDateTime}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -45,7 +46,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
   private val formProvider = new SearchFormProvider()
-  private val form         = formProvider("departures.search.form.value.invalid")
+  private val form         = formProvider("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

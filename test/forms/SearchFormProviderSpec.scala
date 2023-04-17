@@ -17,7 +17,7 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import models.domain.StringFieldRegex.alphaNumericRegex
+import models.domain.StringFieldRegex.{alphaNumericRegex, alphaNumericRegexHyphensUnderscores}
 import org.scalacheck.Gen
 import play.api.data.FormError
 
@@ -25,7 +25,7 @@ class SearchFormProviderSpec extends StringFieldBehaviours {
 
   ".value departures" - {
 
-    val form = new SearchFormProvider()("departures.search.form.value.invalid")
+    val form = new SearchFormProvider()("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
 
     val fieldName = "value"
 
@@ -33,6 +33,11 @@ class SearchFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       Gen.alphaNumStr
+    )
+
+    behave like allowsHyphensAndUnderscores(
+      form,
+      fieldName
     )
 
     behave like nonMandatoryField(
@@ -43,7 +48,7 @@ class SearchFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithInvalidCharacters(
       form,
       fieldName,
-      error = FormError(fieldName, "departures.search.form.value.invalid", Seq(alphaNumericRegex.regex))
+      error = FormError(fieldName, "departures.search.form.value.invalid", Seq(alphaNumericRegexHyphensUnderscores.regex))
     )
   }
 

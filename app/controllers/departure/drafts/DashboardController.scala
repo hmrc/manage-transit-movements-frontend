@@ -21,6 +21,7 @@ import controllers.actions._
 import forms.SearchFormProvider
 import models.Sort.SortByCreatedAtDesc
 import models.departure.drafts.{Limit, Skip}
+import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
 import models.requests.IdentifierRequest
 import models.{DeparturesSummary, Sort}
 import play.api.data.Form
@@ -49,7 +50,7 @@ class DashboardController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("departure.search.form.value.invalid")
+  private val form = formProvider("departure.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 

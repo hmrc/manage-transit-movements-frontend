@@ -18,6 +18,7 @@ package components
 
 import a11ySpecBase.A11ySpecBase
 import forms.SearchFormProvider
+import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.mvc.Call
 import views.html.components.Search
@@ -32,7 +33,7 @@ class SearchSpec extends A11ySpecBase {
     val title  = nonEmptyString.sample.value
     val action = arbitrary[Call].sample.value
     val label  = nonEmptyString.sample.value
-    val form   = new SearchFormProvider()("departures.search.form.value.invalid")
+    val form   = new SearchFormProvider()("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
 
     val content = template.apply(title) {
       component.apply(form, action, label).withHeading(title)
