@@ -18,10 +18,9 @@ package controllers.departure.drafts
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import models.Sort.SortByCreatedAtDesc
 import models.departure.drafts.{Limit, Skip}
-import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
 import models.requests.IdentifierRequest
 import models.{DeparturesSummary, Sort}
 import play.api.data.Form
@@ -43,14 +42,14 @@ class DashboardController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   draftDepartureService: DraftDepartureService,
   view: DashboardView,
-  formProvider: SearchFormProvider,
+  formProvider: DeparturesSearchFormProvider,
   paginationAppConfig: PaginationAppConfig,
   appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider("departure.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
+  private val form = formProvider()
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 

@@ -19,9 +19,8 @@ package controllers.departure
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
 import controllers.actions._
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import handlers.ErrorHandler
-import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
 import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -41,14 +40,14 @@ class ViewDeparturesSearchResultsController @Inject() (
   cc: MessagesControllerComponents,
   connector: DeparturesMovementConnector,
   searchResultsAppConfig: SearchResultsAppConfig,
-  formProvider: SearchFormProvider,
+  formProvider: DeparturesSearchFormProvider,
   view: ViewDeparturesSearchResultsView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 
-  private val form = formProvider("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
+  private val form = formProvider()
 
   private lazy val pageSize = searchResultsAppConfig.maxSearchResults
 

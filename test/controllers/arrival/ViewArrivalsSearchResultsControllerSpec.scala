@@ -19,7 +19,7 @@ package controllers.arrival
 import base.{FakeSearchResultsAppConfig, SpecBase}
 import config.SearchResultsAppConfig
 import connectors.ArrivalMovementConnector
-import forms.SearchFormProvider
+import forms.ArrivalsSearchFormProvider
 import generators.Generators
 import models.arrival.ArrivalStatus.ArrivalSubmitted
 import models.{Arrival, ArrivalId, Arrivals, RichLocalDateTime}
@@ -46,8 +46,8 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with ScalaCheckPr
   private val time: LocalDateTime              = LocalDateTime.now()
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
-  private val formProvider = new SearchFormProvider()
-  private val form         = formProvider("arrivals.search.form.value.invalid")
+  private val formProvider = new ArrivalsSearchFormProvider()
+  private val form         = formProvider()
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)

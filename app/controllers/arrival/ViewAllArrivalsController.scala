@@ -19,7 +19,7 @@ package controllers.arrival
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.actions._
-import forms.SearchFormProvider
+import forms.ArrivalsSearchFormProvider
 import handlers.ErrorHandler
 import models.requests.IdentifierRequest
 import play.api.data.Form
@@ -41,14 +41,14 @@ class ViewAllArrivalsController @Inject() (
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
   arrivalMovementConnector: ArrivalMovementConnector,
-  formProvider: SearchFormProvider,
+  formProvider: ArrivalsSearchFormProvider,
   view: ViewAllArrivalsView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 
-  private val form = formProvider("arrivals.search.form.value.invalid")
+  private val form = formProvider()
 
   def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>

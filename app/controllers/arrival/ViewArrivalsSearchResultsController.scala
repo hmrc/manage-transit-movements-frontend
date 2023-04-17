@@ -19,7 +19,7 @@ package controllers.arrival
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.ArrivalMovementConnector
 import controllers.actions.IdentifierAction
-import forms.SearchFormProvider
+import forms.ArrivalsSearchFormProvider
 import handlers.ErrorHandler
 import models.requests.IdentifierRequest
 import play.api.data.Form
@@ -40,14 +40,14 @@ class ViewArrivalsSearchResultsController @Inject() (
   cc: MessagesControllerComponents,
   connector: ArrivalMovementConnector,
   searchResultsAppConfig: SearchResultsAppConfig,
-  formProvider: SearchFormProvider,
+  formProvider: ArrivalsSearchFormProvider,
   view: ViewArrivalsSearchResultsView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 
-  private val form = formProvider("arrivals.search.form.value.invalid")
+  private val form = formProvider()
 
   private lazy val pageSize = searchResultsAppConfig.maxSearchResults
 

@@ -25,7 +25,7 @@ class SearchFormProviderSpec extends StringFieldBehaviours {
 
   ".value departures" - {
 
-    val form = new SearchFormProvider()("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
+    val form = new DeparturesSearchFormProvider()()
 
     val fieldName = "value"
 
@@ -54,7 +54,7 @@ class SearchFormProviderSpec extends StringFieldBehaviours {
 
   ".value arrivals" - {
 
-    val form = new SearchFormProvider()("arrivals.search.form.value.invalid")
+    val form = new ArrivalsSearchFormProvider()()
 
     val fieldName = "value"
 

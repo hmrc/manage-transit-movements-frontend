@@ -19,9 +19,8 @@ package controllers.departure
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DeparturesMovementConnector
 import controllers.actions._
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import handlers.ErrorHandler
-import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
 import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -41,14 +40,14 @@ class ViewAllDeparturesController @Inject() (
   cc: MessagesControllerComponents,
   paginationAppConfig: PaginationAppConfig,
   departuresMovementConnector: DeparturesMovementConnector,
-  formProvider: SearchFormProvider,
+  formProvider: DeparturesSearchFormProvider,
   view: ViewAllDeparturesView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 
-  private val form = formProvider("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
+  private val form = formProvider()
 
   def onPageLoad(page: Option[Int]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>

@@ -16,8 +16,7 @@
 
 package views.behaviours
 
-import forms.SearchFormProvider
-import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
+import forms.DeparturesSearchFormProvider
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.Form
@@ -27,7 +26,7 @@ import viewModels.ViewMovement
 trait SearchViewBehaviours[T <: ViewMovement] extends InputTextViewBehaviours[String] {
   self: MovementsTableViewBehaviours[T] =>
 
-  override def form: Form[String] = new SearchFormProvider()("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
+  override def form: Form[String] = new DeparturesSearchFormProvider()()
 
   val dataRows: Seq[(String, Seq[T])]
 

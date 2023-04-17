@@ -17,10 +17,9 @@
 package controllers.departure.drafts
 
 import base.SpecBase
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import models.Sort.{SortByCreatedAtAsc, SortByCreatedAtDesc, SortByLRNAsc, SortByLRNDesc}
 import models.departure.drafts.{Limit, Skip}
-import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
 import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -40,8 +39,8 @@ class DashboardControllerSpec extends SpecBase {
 
   private val draftDepartureService = mock[DraftDepartureService]
 
-  private val formProvider                 = new SearchFormProvider()
-  private val form                         = formProvider("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
+  private val formProvider                 = new DeparturesSearchFormProvider()
+  private val form                         = formProvider()
   private lazy val draftDashboardGetRoute  = routes.DashboardController.onPageLoad(None, None, None).url
   private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit(None).url
 
