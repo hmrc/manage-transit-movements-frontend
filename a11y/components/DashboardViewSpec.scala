@@ -17,8 +17,7 @@
 package components
 
 import a11ySpecBase.A11ySpecBase
-import forms.SearchFormProvider
-import models.domain.StringFieldRegex.alphaNumericRegexHyphensUnderscores
+import forms.DeparturesSearchFormProvider
 import org.scalacheck.Arbitrary.arbitrary
 import viewModels.drafts.AllDraftDeparturesViewModel
 import views.html.departure.drafts.DashboardView
@@ -28,8 +27,8 @@ class DashboardViewSpec extends A11ySpecBase {
   "the 'dashboard view' component" must {
     val component = app.injector.instanceOf[DashboardView]
 
-    val formProvider = new SearchFormProvider()
-    val form         = formProvider("departures.search.form.value.invalid", alphaNumericRegexHyphensUnderscores)
+    val formProvider = new DeparturesSearchFormProvider()
+    val form         = formProvider()
 
     "pass accessibility checks" when {
 
