@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package models.departure
+package models.departureP5
 
 import base.SpecBase
-import models.departureP5.{DepartureMovement, DepartureMovements}
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime

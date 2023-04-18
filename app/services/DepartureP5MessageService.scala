@@ -20,8 +20,9 @@ import cats.data.OptionT
 import cats.implicits._
 import connectors.DepartureMovementP5Connector
 import models.DepartureId
-import models.departureP5.DepartureMessageType.GoodsUnderControl
-import models.departureP5.{DepartureMovementAndMessage, DepartureMovements, IE060Data, MessageMetaData}
+import models.departureP5.DepartureMessageType._
+import models.departureP5._
+
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -38,9 +39,18 @@ class DepartureP5MessageService @Inject() (
       movement =>
         departureMovementP5Connector
           .getMessagesForMovement(movement.messagesLocation)
-          .map(
-            messagesForMovement => DepartureMovementAndMessage(movement, messagesForMovement)
-          )
+          .flatMap {
+            messagesForMovement =>
+              messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
+                case Some(departureMessage) =>
+                  departureMovementP5Connector.getLRN(departureMessage.bodyPath).map {
+                    body =>
+                      DepartureMovementAndMessage(movement, messagesForMovement, body.referenceNumber)
+                  }
+                case None =>
+                  Future.successful(DepartureMovementAndMessage(movement, messagesForMovement, ""))
+              }
+          }
     }
 
   private def getGoodsUnderControlMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =

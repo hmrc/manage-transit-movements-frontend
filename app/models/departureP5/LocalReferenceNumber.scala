@@ -16,8 +16,12 @@
 
 package models.departureP5
 
-case class DepartureMovementAndMessage(
-  departureMovement: DepartureMovement,
-  messagesForMovement: MessagesForDepartureMovement,
-  localReferenceNumber: String
-)
+import play.api.libs.json.{__, Reads}
+
+case class LocalReferenceNumber(referenceNumber: String)
+
+object LocalReferenceNumber {
+
+  implicit val format: Reads[LocalReferenceNumber] =
+    (__ \ "body" \\ "TransitOperation" \ "LRN").read[String].map(LocalReferenceNumber(_))
+}

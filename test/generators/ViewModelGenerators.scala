@@ -131,10 +131,10 @@ trait ViewModelGenerators {
       for {
         date    <- arbitrary[LocalDate]
         time    <- arbitrary[LocalTime]
-        mrn     <- stringsWithMaxLength(17: Int)
+        lrn     <- stringsWithMaxLength(17: Int)
         status  <- nonEmptyString
         actions <- listWithMaxLength[ViewMovementAction]()
-      } yield ViewDepartureP5(date, time, Some(mrn), status, actions)
+      } yield ViewDepartureP5(date, time, lrn, status, actions)
     }
 
   implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =

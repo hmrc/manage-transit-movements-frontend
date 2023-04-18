@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package models.departure
+package models.departureP5
 
 import base.SpecBase
 import cats.data.NonEmptyList
-import models.departureP5.{DepartureMessage, DepartureMessageType, MessagesForDepartureMovement}
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class MessagesForMovementSpec extends SpecBase {
+class MessagesForDepartureMovementSpec extends SpecBase {
 
-  "MessagesForMovement" - {
+  "MessagesForDepartureMovement" - {
 
     "messageBeforeLatest" - {
 
@@ -34,17 +33,20 @@ class MessagesForMovementSpec extends SpecBase {
 
         val currentMessage = DepartureMessage(
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.ReleasedForTransit
+          DepartureMessageType.ReleasedForTransit,
+          "body/path"
         )
 
         val previousMessage = DepartureMessage(
           LocalDateTime.parse("2022-11-12T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.DepartureNotification
+          DepartureMessageType.DepartureNotification,
+          "body/path"
         )
 
         val lastMessage = DepartureMessage(
           LocalDateTime.parse("2022-11-11T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.RejectedByOfficeOfDeparture
+          DepartureMessageType.RejectedByOfficeOfDeparture,
+          "body/path"
         )
 
         val messagesForMovement = MessagesForDepartureMovement(
@@ -59,7 +61,8 @@ class MessagesForMovementSpec extends SpecBase {
 
         val currentMessage = DepartureMessage(
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.ReleasedForTransit
+          DepartureMessageType.ReleasedForTransit,
+          "body/path"
         )
 
         val messagesForMovement = MessagesForDepartureMovement(
@@ -78,14 +81,29 @@ class MessagesForMovementSpec extends SpecBase {
             |{
             |   "messages":[
             |      {
+            |         "_links":{
+            |             "self":{
+            |                "href":"/customs/transits/movements/departures/1/messages/1"
+            |             }
+            |         },
             |         "received":"2022-11-10T11:32:51.459Z",
             |         "type":"IE015"
             |      },
             |      {
+            |       "_links":{
+            |             "self":{
+            |                "href":"/customs/transits/movements/departures/1/messages/2"
+            |             }
+            |         },
             |         "received":"2022-11-10T10:32:51.459Z",
             |         "type":"IE028"
             |      },
             |      {
+            |        "_links":{
+            |             "self":{
+            |                "href":"/customs/transits/movements/departures/1/messages/3"
+            |             }
+            |         },
             |         "received":"2022-11-10T12:32:52.459Z",
             |         "type":"IE029"
             |      }
@@ -97,16 +115,19 @@ class MessagesForMovementSpec extends SpecBase {
         NonEmptyList(
           DepartureMessage(
             LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-            DepartureMessageType.ReleasedForTransit
+            DepartureMessageType.ReleasedForTransit,
+            "movements/departures/1/messages/3"
           ),
           List(
             DepartureMessage(
               LocalDateTime.parse("2022-11-10T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.DepartureNotification
+              DepartureMessageType.DepartureNotification,
+              "movements/departures/1/messages/1"
             ),
             DepartureMessage(
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.AllocatedMRN
+              DepartureMessageType.AllocatedMRN,
+              "movements/departures/1/messages/2"
             )
           )
         )
@@ -124,14 +145,29 @@ class MessagesForMovementSpec extends SpecBase {
             |{
             |   "messages":[
             |      {
+            |        "_links":{
+            |             "self":{
+            |                "href":"/customs/transits/movements/departures/1/messages/1"
+            |             }
+            |         },
             |         "received":"2022-11-10T11:32:51.459Z",
             |         "type":"IE015"
             |      },
             |      {
+            |        "_links":{
+            |             "self":{
+            |                "href":"/customs/transits/movements/departures/1/messages/2"
+            |             }
+            |         },
             |         "received":"2022-11-10T10:32:51.459Z",
             |         "type":"IE028"
             |      },
             |      {
+            |         "_links":{
+            |             "self":{
+            |                "href":"/customs/transits/movements/departures/1/messages/3"
+            |             }
+            |         },
             |         "received":"2022-11-10T12:32:52.459Z",
             |         "type":"IE029"
             |      }
@@ -143,16 +179,19 @@ class MessagesForMovementSpec extends SpecBase {
         NonEmptyList(
           DepartureMessage(
             LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-            DepartureMessageType.ReleasedForTransit
+            DepartureMessageType.ReleasedForTransit,
+            "movements/departures/1/messages/3"
           ),
           List(
             DepartureMessage(
               LocalDateTime.parse("2022-11-10T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.DepartureNotification
+              DepartureMessageType.DepartureNotification,
+              "movements/departures/1/messages/1"
             ),
             DepartureMessage(
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.AllocatedMRN
+              DepartureMessageType.AllocatedMRN,
+              "movements/departures/1/messages/2"
             )
           )
         )
