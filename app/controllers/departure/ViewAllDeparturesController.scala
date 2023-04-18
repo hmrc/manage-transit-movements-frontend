@@ -19,7 +19,7 @@ package controllers.departure
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DeparturesMovementConnector
 import controllers.actions._
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import handlers.ErrorHandler
 import models.requests.IdentifierRequest
 import play.api.data.Form
@@ -40,7 +40,7 @@ class ViewAllDeparturesController @Inject() (
   cc: MessagesControllerComponents,
   paginationAppConfig: PaginationAppConfig,
   departuresMovementConnector: DeparturesMovementConnector,
-  formProvider: SearchFormProvider,
+  formProvider: DeparturesSearchFormProvider,
   view: ViewAllDeparturesView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
