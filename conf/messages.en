@@ -144,7 +144,7 @@ movement.status.P5.incidentDuringTransit                                = Incide
 movement.status.P5.declarationSent                                      = Declaration sent
 movement.status.P5.goodsBeingRecovered                                  = Goods being recovered
 movement.status.P5.guaranteeWrittenOff                                  = Guarantee written off
-
+movement.status.P5.prelodgedDeclarationSent	                            = Prelodged declaration sent
 
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
