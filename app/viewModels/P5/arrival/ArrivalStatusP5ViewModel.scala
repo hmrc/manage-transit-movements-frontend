@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.arrival
 
 import config.FrontendAppConfig
 import models.arrivalP5.ArrivalMessageType._
@@ -27,7 +27,7 @@ object ArrivalStatusP5ViewModel {
 
   def apply(movementAndMessages: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ArrivalStatusP5ViewModel =
     movementAndMessages match {
-      case ArrivalMovementAndMessage(ArrivalMovement(arrivalId, _, _, _), MessagesForMovement(messages)) =>
+      case ArrivalMovementAndMessage(ArrivalMovement(arrivalId, _, _, _), MessagesForArrivalMovement(messages)) =>
         val allPfs: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] =
           Seq(
             arrivalNotification,
@@ -71,7 +71,9 @@ object ArrivalStatusP5ViewModel {
       ArrivalStatusP5ViewModel("movement.status.P5.goodsReleasedReceived", actions = Nil)
   }
 
-  private def rejectionFromOfficeOfDestinationUnloading(previousMessages: Seq[Message]): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
+  private def rejectionFromOfficeOfDestinationUnloading(
+    previousMessages: Seq[ArrivalMessage]
+  ): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case RejectionFromOfficeOfDestination if previousMessages.exists(_.messageType == UnloadingRemarks) =>
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",

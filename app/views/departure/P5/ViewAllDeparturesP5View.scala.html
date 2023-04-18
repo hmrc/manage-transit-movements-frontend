@@ -17,17 +17,22 @@
 @import config.FrontendAppConfig
 @import controllers.routes._
 @import controllers.arrival.routes._
-@import viewModels.P5.ViewAllArrivalMovementsP5ViewModel
+@import viewModels.P5.departure.ViewAllDepartureMovementsP5ViewModel
 @import views.html.components.{Heading, MovementsTable, Pagination, Search}
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
+    pagination: Pagination,
+    movementsTable: MovementsTable,
     search: Search,
     config: FrontendAppConfig
 )
 
-@(form: Form[_])(implicit request: Request[_], messages: Messages)
+@(
+    form: Form[_],
+    viewModel: ViewAllDepartureMovementsP5ViewModel
+)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("viewDepartureDeclarationsP5.title"),
@@ -45,10 +50,20 @@
 
     @search(
         form = form,
-        action = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None),
+        action = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(),
         label = "viewDepartureDeclarationsP5.search.title"
     )
 
+    @pagination(viewModel.paginationViewModel)
+    
+    @movementsTable(
+        dataRows = viewModel.dataRows,
+        visuallyHiddenHeader = messages("viewDepartureDeclarationsP5.heading.hidden"),
+        rowHeadingUpdated = messages("viewDepartureDeclarationsP5.table.updated"),
+        rowHeadingReferenceNumber = messages("viewDepartureDeclarationsP5.table.lrn"),
+        rowHeadingStatus = messages("viewDepartureDeclarationsP5.table.status"),
+        rowHeadingAction = messages("viewDepartureDeclarationsP5.table.action")
+    )
 
     <p class="govuk-body govuk-!-margin-top-3">
         <a id="go-to-manage-transit-movements" class="govuk-link" href=@WhatDoYouWantToDoController.onPageLoad()>

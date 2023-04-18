@@ -16,15 +16,17 @@
 
 package services
 
-import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
+import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DepartureMovementP5Connector, DeparturesDraftsP5Connector, DeparturesMovementConnector}
 import models.{Availability, DraftAvailability}
 import uk.gov.hmrc.http.HeaderCarrier
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatDoYouWantToDoService @Inject() (arrivalMovementConnector: ArrivalMovementConnector,
                                           departuresMovementConnector: DeparturesMovementConnector,
-                                          departuresMovementsP5Connector: DeparturesMovementsP5Connector,
+                                          departuresMovementP5Connector: DepartureMovementP5Connector,
+                                          departureDraftsP5Connector: DeparturesDraftsP5Connector,
                                           arrivalMovementsP5Connector: ArrivalMovementP5Connector
 ) {
 
@@ -37,17 +39,28 @@ class WhatDoYouWantToDoService @Inject() (arrivalMovementConnector: ArrivalMovem
 
   def fetchArrivalsUrl(phase5ArrivalEnabled: Boolean): String =
     if (phase5ArrivalEnabled) {
-      controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
+      controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
     } else {
       controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
     }
 
-  def getDeparturesAvailability(implicit hc: HeaderCarrier): Future[Availability] =
-    departuresMovementConnector.getDeparturesAvailability()
+  def fetchDeparturesAvailability(phase5DepartureEnabled: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Availability] =
+    if (phase5DepartureEnabled) {
+      departuresMovementP5Connector.getAllMovements().map(Availability(_)) //TODO update when we have API params
+    } else {
+      departuresMovementConnector.getDeparturesAvailability()
+    }
+
+  def fetchDeparturesUrl(phase5DepartureEnabled: Boolean): String =
+    if (phase5DepartureEnabled) {
+      controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
+    } else {
+      controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
+    }
 
   def fetchDraftDepartureAvailability(phase5DepartureEnabled: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[DraftAvailability]] =
     if (phase5DepartureEnabled) {
-      departuresMovementsP5Connector.getDraftDeparturesAvailability().map(Some(_))
+      departureDraftsP5Connector.getDraftDeparturesAvailability().map(Some(_))
     } else {
       Future.successful(None)
     }

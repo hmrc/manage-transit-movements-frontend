@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.{ArrivalMovementConnector, DeparturesMovementConnector, DeparturesMovementsP5Connector}
+import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DepartureMovementP5Connector, DeparturesDraftsP5Connector, DeparturesMovementConnector}
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -31,15 +31,20 @@ import scala.concurrent.Future
 
 class WhatDoYouWantToDoControllerSpec extends SpecBase {
 
-  private val mockArrivalMovementConnector: ArrivalMovementConnector            = mock[ArrivalMovementConnector]
-  private val mockDepartureMovementConnector: DeparturesMovementConnector       = mock[DeparturesMovementConnector]
-  private val mockDepartureMovementsP5Connector: DeparturesMovementsP5Connector = mock[DeparturesMovementsP5Connector]
-  private val viewAllUrl                                                        = controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
+  private val mockArrivalMovementConnector: ArrivalMovementConnector          = mock[ArrivalMovementConnector]
+  private val mockDepartureMovementConnector: DeparturesMovementConnector     = mock[DeparturesMovementConnector]
+  private val mockDraftDepartureP5Connector: DeparturesDraftsP5Connector      = mock[DeparturesDraftsP5Connector]
+  private val mockDepartureMovementsP5Connector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
+  private val mockArrivalMovementP5Connector: ArrivalMovementP5Connector      = mock[ArrivalMovementP5Connector]
+  private val viewAllArrivalsUrl                                              = controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
+  private val viewAllDeparturesUrl                                            = controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
     reset(mockDepartureMovementConnector)
+    reset(mockDraftDepartureP5Connector)
     reset(mockDepartureMovementsP5Connector)
+    reset(mockArrivalMovementP5Connector)
     super.beforeEach()
   }
 
@@ -49,9 +54,14 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
         bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
-        bind[DeparturesMovementsP5Connector].toInstance(mockDepartureMovementsP5Connector)
+        bind[DeparturesDraftsP5Connector].toInstance(mockDraftDepartureP5Connector),
+        bind[DepartureMovementP5Connector].toInstance(mockDepartureMovementsP5Connector),
+        bind[ArrivalMovementP5Connector].toInstance(mockArrivalMovementP5Connector)
       )
-      .configure("microservice.services.features.phase5Enabled.departure" -> false)
+      .configure(
+        "microservice.services.features.phase5Enabled.departure" -> false,
+        "microservice.services.features.phase5Enabled.arrival"   -> false
+      )
 
   "WhatDoYouWantToDoP4 Controller" - {
 
@@ -71,9 +81,11 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Availability.NonEmpty, Availability.NonEmpty, None, viewAllUrl)(request, messages).toString
+          view(Availability.NonEmpty, Availability.NonEmpty, None, viewAllArrivalsUrl, viewAllDeparturesUrl)(request, messages).toString
 
+        verifyNoInteractions(mockDraftDepartureP5Connector)
         verifyNoInteractions(mockDepartureMovementsP5Connector)
+        verifyNoInteractions(mockArrivalMovementP5Connector)
       }
 
       "No arrivals and no departures" in {
@@ -89,9 +101,11 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         val view = injector.instanceOf[WhatDoYouWantToDoView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Availability.Empty, Availability.Empty, None, viewAllUrl)(request, messages).toString
+          view(Availability.Empty, Availability.Empty, None, viewAllArrivalsUrl, viewAllDeparturesUrl)(request, messages).toString
 
+        verifyNoInteractions(mockDraftDepartureP5Connector)
         verifyNoInteractions(mockDepartureMovementsP5Connector)
+        verifyNoInteractions(mockArrivalMovementP5Connector)
       }
 
       "No response from arrivals and departures" in {
@@ -107,9 +121,11 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase {
         val view = injector.instanceOf[WhatDoYouWantToDoView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Availability.Unavailable, Availability.Unavailable, None, viewAllUrl)(request, messages).toString
+          view(Availability.Unavailable, Availability.Unavailable, None, viewAllArrivalsUrl, viewAllDeparturesUrl)(request, messages).toString
 
+        verifyNoInteractions(mockDraftDepartureP5Connector)
         verifyNoInteractions(mockDepartureMovementsP5Connector)
+        verifyNoInteractions(mockArrivalMovementP5Connector)
       }
     }
   }

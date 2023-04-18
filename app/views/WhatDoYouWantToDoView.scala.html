@@ -25,7 +25,7 @@
     config: FrontendAppConfig
 )
 
-@(arrivalsAvailability: Availability, departuresAvailability: Availability, draftDepartureAvailability: Option[DraftAvailability], viewAllUrl: String)(implicit request: Request[_], messages: Messages)
+@(arrivalsAvailability: Availability, departuresAvailability: Availability, draftDepartureAvailability: Option[DraftAvailability], viewAllArrivalUrl: String, viewAllDeparturesUrl: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("whatDoYouWantToDo.title")
@@ -40,7 +40,7 @@
     <p class="govuk-body">
         @arrivalsAvailability match {
             case Availability.NonEmpty => {
-                <a href=@viewAllUrl class="govuk-link" id="view-arrival-notifications">@messages("whatDoYouWantToDo.link.arrival.viewArrival")</a>
+                <a href=@viewAllArrivalUrl class="govuk-link" id="view-arrival-notifications">@messages("whatDoYouWantToDo.link.arrival.viewArrival")</a>
             }
             case Availability.Empty => {
                 @messages("whatDoYouWantToDo.arrival.noArrivals")
@@ -59,7 +59,7 @@
     <p class="govuk-body">
         @departuresAvailability match {
             case Availability.NonEmpty => {
-                <a href=@controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url class="govuk-link" id="view-departure-declarations">@messages("whatDoYouWantToDo.link.departure.viewDepartures")</a>
+                <a href=@viewAllDeparturesUrl class="govuk-link" id="view-departure-declarations">@messages("whatDoYouWantToDo.link.departure.viewDepartures")</a>
             }
             case Availability.Empty => {
                 @messages("whatDoYouWantToDo.departure.noDepartures")

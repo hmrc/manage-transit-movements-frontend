@@ -31,10 +31,10 @@ import play.api.test.Helpers.OK
 
 import java.time.LocalDateTime
 
-class DeparturesMovementsP5ConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
+class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
-  private lazy val connector: DeparturesMovementsP5Connector = app.injector.instanceOf[DeparturesMovementsP5Connector]
-  private val startUrl                                       = "manage-transit-movements-departure-cache"
+  private lazy val connector: DeparturesDraftsP5Connector = app.injector.instanceOf[DeparturesDraftsP5Connector]
+  private val startUrl                                    = "manage-transit-movements-departure-cache"
 
   private val errorResponses: Gen[Int] = Gen.chooseNum(400, 599).suchThat(_ != 404)
 

@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import viewModels.P5.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
+import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.pagination.MovementsPaginationViewModel
 import views.html.arrival.P5.ViewAllArrivalsP5View
 
@@ -56,7 +56,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
         bind[ArrivalMovementP5Connector].toInstance(mockArrivalMovementConnector)
       )
 
-  val dateTime = LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
+  val dateTime: LocalDateTime = LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
 
   val mockArrivalMovementResponse: ArrivalMovements = ArrivalMovements(
     Seq(
@@ -69,13 +69,13 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
     )
   )
 
-  val mockArrivalMessageResponse: MessagesForMovement = MessagesForMovement(
+  val mockArrivalMessageResponse: MessagesForArrivalMovement = MessagesForArrivalMovement(
     NonEmptyList(
-      Message(
+      ArrivalMessage(
         dateTime,
         ArrivalMessageType.ArrivalNotification
       ),
-      List.empty[Message]
+      List.empty[ArrivalMessage]
     )
   )
 
@@ -97,7 +97,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
       when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
         .thenReturn(Future.successful(mockArrivalMessageResponse))
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url)
+      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url)
 
       val result = route(app, request).value
 
@@ -109,7 +109,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
         totalNumberOfMovements = mockArrivalMovementResponse.movements.length,
         currentPage = 1,
         numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
-        href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url
+        href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
       )
       val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
@@ -122,7 +122,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
       when(mockArrivalMovementConnector.getAllMovements()(any()))
         .thenReturn(Future.successful(None))
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None).url)
+      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url)
 
       val result = route(app, request).value
 

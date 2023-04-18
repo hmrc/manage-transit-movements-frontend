@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.arrival
 
 import config.FrontendAppConfig
 import models.arrivalP5.ArrivalMovementAndMessage
@@ -35,7 +35,7 @@ final case class ViewArrivalP5(
 
 object ViewArrivalP5 {
 
-  def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewArrivalP5 = {
+  def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ViewArrivalP5 = {
 
     val arrivalStatus: ArrivalStatusP5ViewModel = ArrivalStatusP5ViewModel(movementAndMessage)
 

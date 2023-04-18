@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package models.arrivalP5
+package models.departureP5
 
 import play.api.libs.json.{__, Reads}
-import ArrivalMessageType._
 
-import java.time.LocalDateTime
+case class LocalReferenceNumber(referenceNumber: String)
 
-case class Message(received: LocalDateTime, messageType: ArrivalMessageType)
+object LocalReferenceNumber {
 
-object Message {
-
-  implicit lazy val reads: Reads[Message] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \ "received").read[LocalDateTime] and
-        (__ \ "type").read[ArrivalMessageType]
-    )(Message.apply _)
-  }
+  implicit val format: Reads[LocalReferenceNumber] =
+    (__ \ "body" \\ "TransitOperation" \ "LRN").read[String].map(LocalReferenceNumber(_))
 }

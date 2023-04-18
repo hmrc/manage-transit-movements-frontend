@@ -17,15 +17,23 @@
 package controllers.testOnly
 
 import config.{FrontendAppConfig, PaginationAppConfig}
+import connectors.DepartureMovementP5Connector
 import controllers.actions._
 import forms.DeparturesSearchFormProvider
+import forms.SearchFormProvider
+import models.requests.IdentifierRequest
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
+import services.DepartureP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.arrival.P5.ViewAllDeparturesP5View
+import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
+import viewModels.pagination.MovementsPaginationViewModel
+import views.html.departure.P5.ViewAllDeparturesP5View
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ViewAllDeparturesP5Controller @Inject() (
   identify: IdentifierAction,
@@ -33,16 +41,44 @@ class ViewAllDeparturesP5Controller @Inject() (
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
   formProvider: DeparturesSearchFormProvider,
+  departureP5MessageService: DepartureP5MessageService,
+  departureMovementP5Connector: DepartureMovementP5Connector,
   view: ViewAllDeparturesP5View
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(page: Option[Int] = None): Action[AnyContent] = (Action andThen identify) {
+  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      Ok(view(form))
+      buildView(form)(Ok(_))
   }
+
+  private def buildView(form: Form[String])(
+    block: HtmlFormat.Appendable => Result
+  )(implicit request: IdentifierRequest[_]): Future[Result] =
+    departureMovementP5Connector.getAllMovements().flatMap {
+      case Some(movements) =>
+        departureP5MessageService.getMessagesForAllMovements(movements).map {
+          movementsAndMessages =>
+            val viewDepartureP5: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
+
+            val paginationViewModel = MovementsPaginationViewModel(
+              totalNumberOfMovements = movementsAndMessages.length,
+              currentPage = 1,
+              numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
+              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
+            )
+
+            block(
+              view(
+                form = form,
+                viewModel = ViewAllDepartureMovementsP5ViewModel(viewDepartureP5, paginationViewModel)
+              )
+            )
+        }
+      case None => Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+    }
 
 }

@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package models.arrivalP5
 
-import viewModels.pagination.PaginationViewModel
+import play.api.libs.json.{__, Reads}
+import ArrivalMessageType._
 
-case class ViewAllArrivalMovementsP5ViewModel(
-  dataRows: Seq[(String, Seq[ViewArrivalP5])],
-  paginationViewModel: PaginationViewModel
-)
+import java.time.LocalDateTime
 
-object ViewAllArrivalMovementsP5ViewModel {
+case class ArrivalMessage(received: LocalDateTime, messageType: ArrivalMessageType)
 
-  def apply(
-    movementsAndMessages: Seq[ViewArrivalP5],
-    paginationViewModel: PaginationViewModel
-  )(implicit d: DummyImplicit): ViewAllArrivalMovementsP5ViewModel =
-    new ViewAllArrivalMovementsP5ViewModel(
-      ViewArrivalMovementsP5(movementsAndMessages).dataRows,
-      paginationViewModel
-    )
+object ArrivalMessage {
 
+  implicit lazy val reads: Reads[ArrivalMessage] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "received").read[LocalDateTime] and
+        (__ \ "type").read[ArrivalMessageType]
+    )(ArrivalMessage.apply _)
+  }
 }

@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package viewModels.P5.departure
 
-import connectors.DeparturesDraftsP5Connector
-import models.requests.IdentifierRequest
-import play.api.mvc.Result
+import viewModels.pagination.PaginationViewModel
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+case class ViewAllDepartureMovementsP5ViewModel(
+  dataRows: Seq[(String, Seq[ViewDepartureP5])],
+  paginationViewModel: PaginationViewModel
+)
 
-class FakeLockAction(lrn: String, connector: DeparturesDraftsP5Connector) extends LockAction(lrn, connector) {
+object ViewAllDepartureMovementsP5ViewModel {
 
-  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
-    Future.successful(None)
+  def apply(
+    movementsAndMessages: Seq[ViewDepartureP5],
+    paginationViewModel: PaginationViewModel
+  )(implicit d: DummyImplicit): ViewAllDepartureMovementsP5ViewModel =
+    new ViewAllDepartureMovementsP5ViewModel(
+      ViewDepartureMovementsP5(movementsAndMessages).dataRows,
+      paginationViewModel
+    )
+
 }

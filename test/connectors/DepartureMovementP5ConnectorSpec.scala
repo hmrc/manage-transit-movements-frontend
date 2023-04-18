@@ -21,7 +21,7 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.arrivalP5._
+import models.departureP5.{DepartureMessageType, _}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -30,16 +30,16 @@ import play.api.libs.json.{JsValue, Json}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
-  private lazy val connector: ArrivalMovementP5Connector = app.injector.instanceOf[ArrivalMovementP5Connector]
+  private lazy val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .configure(conf = "microservice.services.common-transit-convention-traders.port" -> server.port())
 
-  "ArrivalMovementP5Connector" - {
+  "DepartureMovementP5Connector" - {
 
     "getAllMovements" - {
 
@@ -48,17 +48,17 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
           |{
           |  "_links": {
           |    "self": {
-          |      "href": "/customs/transits/movements/arrivals"
+          |      "href": "/customs/transits/movements/departures"
           |    }
           |  },
-          |  "arrivals": [
+          |  "departures": [
           |    {
           |      "_links": {
           |        "self": {
-          |          "href": "/customs/transits/movements/arrivals/63651574c3447b12"
+          |          "href": "/customs/transits/movements/departures/63651574c3447b12"
           |        },
           |        "messages": {
-          |          "href": "/customs/transits/movements/arrivals/63651574c3447b12/messages"
+          |          "href": "/customs/transits/movements/departures/63651574c3447b12/messages"
           |        }
           |      },
           |      "id": "63651574c3447b12",
@@ -71,10 +71,10 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
           |    {
           |      "_links": {
           |        "self": {
-          |          "href": "/customs/transits/movements/arrivals/6365135ba5e821ee"
+          |          "href": "/customs/transits/movements/departures/6365135ba5e821ee"
           |        },
           |        "messages": {
-          |          "href": "/customs/transits/movements/arrivals/6365135ba5e821ee/messages"
+          |          "href": "/customs/transits/movements/departures/6365135ba5e821ee/messages"
           |        }
           |      },
           |      "id": "6365135ba5e821ee",
@@ -89,26 +89,26 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
           |""".stripMargin
       )
 
-      "must return ArrivalMovements" in {
+      "must return DepartureMovements" in {
 
         server.stubFor(
-          get(urlEqualTo(s"/movements/arrivals"))
+          get(urlEqualTo(s"/movements/departures"))
             .willReturn(okJson(responseJson.toString()))
         )
 
-        val expectedResult = ArrivalMovements(
+        val expectedResult = DepartureMovements(
           Seq(
-            ArrivalMovement(
+            DepartureMovement(
               "63651574c3447b12",
-              "27WF9X1FQ9RCKN0TM3",
+              Some("27WF9X1FQ9RCKN0TM3"),
               LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-              "movements/arrivals/63651574c3447b12/messages"
+              "movements/departures/63651574c3447b12/messages"
             ),
-            ArrivalMovement(
+            DepartureMovement(
               "6365135ba5e821ee",
-              "27WF9X1FQ9RCKN0TM3",
+              Some("27WF9X1FQ9RCKN0TM3"),
               LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
-              "movements/arrivals/6365135ba5e821ee/messages"
+              "movements/departures/6365135ba5e821ee/messages"
             )
           )
         )
@@ -116,14 +116,14 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
         connector.getAllMovements().futureValue mustBe Some(expectedResult)
       }
 
-      "must return empty ArrivalMovements when 404 is returned" in {
+      "must return empty DepartureMovements when 404 is returned" in {
 
         server.stubFor(
-          get(urlEqualTo(s"/movements/arrivals"))
+          get(urlEqualTo(s"/movements/departures"))
             .willReturn(aResponse().withStatus(404))
         )
 
-        connector.getAllMovements().futureValue mustBe Some(ArrivalMovements(Seq.empty))
+        connector.getAllMovements().futureValue mustBe Some(DepartureMovements(Seq.empty))
       }
 
       "must return None when an error is returned" in {
@@ -132,7 +132,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
         forAll(genError) {
           error =>
             server.stubFor(
-              get(urlEqualTo(s"/movements/arrivals"))
+              get(urlEqualTo(s"/movements/departures"))
                 .willReturn(aResponse().withStatus(error))
             )
 
@@ -143,47 +143,47 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
 
     "getMessagesForMovement" - {
 
-      val arrivalId = "63498209a2d89ad8"
+      val departureId = "63498209a2d89ad8"
 
       val responseJson =
         Json.parse("""
             |{
             |   "_links":{
             |      "self":{
-            |         "href":"/customs/transits/movements/arrivals/1/messages"
+            |         "href":"/customs/transits/movements/departures/1/messages"
             |      },
-            |      "arrival":{
-            |         "href":"/customs/transits/movements/arrivals/1"
+            |      "departure":{
+            |         "href":"/customs/transits/movements/departures/1"
             |      }
             |   },
             |   "messages":[
             |      {
             |         "_links":{
             |             "self":{
-            |                "href":"/customs/transits/movements/arrivals/1/messages/2"
+            |                "href":"/customs/transits/movements/departures/1/messages/2"
             |             },
-            |             "arrival":{
-            |                "href":"/customs/transits/movements/arrivals/1"
+            |             "departure":{
+            |                "href":"/customs/transits/movements/departures/1"
             |             }
             |         },
             |         "id":"634982098f02f00a",
-            |         "arrivalId":"1",
+            |         "departureId":"1",
             |         "received":"2022-11-10T12:32:51.459Z",
-            |         "type":"IE007"
+            |         "type":"IE015"
             |      },
             |      {
             |         "_links":{
             |             "self":{
-            |                "href":"/customs/transits/movements/arrivals/1/messages/1"
+            |                "href":"/customs/transits/movements/departures/1/messages/1"
             |             },
-            |             "arrival":{
-            |                "href":"/customs/transits/movements/arrivals/1"
+            |             "departure":{
+            |                "href":"/customs/transits/movements/departures/1"
             |             }
             |         },
             |         "id":"634982098f02f00a",
-            |         "arrivalId":"1",
+            |         "departureId":"1",
             |         "received":"2022-11-11T15:32:51.459Z",
-            |         "type":"IE043"
+            |         "type":"IE028"
             |      }
             |   ]
             |}
@@ -191,27 +191,74 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
 
       "must return MessagesForMovement" in {
         server.stubFor(
-          get(urlEqualTo(s"/movements/arrivals/$arrivalId/messages"))
+          get(urlEqualTo(s"/movements/departures/$departureId/messages"))
             .willReturn(okJson(responseJson.toString()))
         )
 
-        val expectedResult = MessagesForArrivalMovement(
+        val expectedResult = MessagesForDepartureMovement(
           NonEmptyList(
-            ArrivalMessage(
+            DepartureMessage(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              ArrivalMessageType.UnloadingPermission
+              DepartureMessageType.AllocatedMRN,
+              "movements/departures/1/messages/1"
             ),
             List(
-              ArrivalMessage(
+              DepartureMessage(
                 LocalDateTime.parse("2022-11-10T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-                ArrivalMessageType.ArrivalNotification
+                DepartureMessageType.DepartureNotification,
+                "movements/departures/1/messages/2"
               )
             )
           )
         )
 
-        connector.getMessagesForMovement(s"movements/arrivals/$arrivalId/messages").futureValue mustBe expectedResult
+        connector.getMessagesForMovement(s"movements/departures/$departureId/messages").futureValue mustBe expectedResult
       }
+    }
+
+    "getLRN" - {
+
+      "must return LocalReferenceNumber" in {
+
+        val ie015Body = Json.obj(
+          "CC015" -> Json.obj(
+            "TransitOperation" -> Json.obj(
+              "LRN" -> "AB123"
+            )
+          )
+        )
+
+        val responseJson = Json.parse(
+          s"""
+            |{
+            |  "_links": {
+            |    "self": {
+            |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
+            |    },
+            |    "departure": {
+            |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
+            |    }
+            |  },
+            |  "id": "62f4ebbb765ba8c2",
+            |  "departureId": "62f4ebbbf581d4aa",
+            |  "received": "2022-08-11T11:44:59.83705",
+            |  "type": "IE015",
+            |  "status": "Success",
+            |  "body": ${ie015Body.toString}
+            |}
+            |""".stripMargin
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureId/messages/ab123"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        val result = connector.getLRN(s"movements/departures/$departureId/messages/ab123").futureValue
+
+        result mustBe LocalReferenceNumber("AB123")
+      }
+
     }
   }
 

@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package models.departureP5
 
-import viewModels.ViewMovements
+import models.{Movement, Movements}
+import play.api.libs.json.{__, Reads}
 
-case class ViewArrivalMovementsP5(
-  dataRows: Seq[(String, Seq[ViewArrivalP5])]
-)
+case class DepartureMovements(departureMovements: Seq[DepartureMovement]) extends Movements {
+  override val movements: Seq[Movement]  = departureMovements
+  override val retrieved: Int            = departureMovements.length
+  override val totalMatched: Option[Int] = None
+}
 
-object ViewArrivalMovementsP5 extends ViewMovements {
+object DepartureMovements {
 
-  def apply(
-    movements: Seq[ViewArrivalP5]
-  )(implicit d: DummyImplicit): ViewArrivalMovementsP5 =
-    ViewArrivalMovementsP5(format(movements))
+  implicit lazy val reads: Reads[DepartureMovements] =
+    (__ \ "departures").read[Seq[DepartureMovement]].map(DepartureMovements.apply)
 }

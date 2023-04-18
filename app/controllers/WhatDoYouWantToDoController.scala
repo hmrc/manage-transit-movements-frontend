@@ -42,10 +42,11 @@ class WhatDoYouWantToDoController @Inject() (
       for {
         arrivalsAvailability <- whatDoYouWantToDoService.fetchArrivalsAvailability(appConfig.phase5ArrivalEnabled)
         viewAllArrivalUrl = whatDoYouWantToDoService.fetchArrivalsUrl(appConfig.phase5ArrivalEnabled)
-        departuresAvailability      <- whatDoYouWantToDoService.getDeparturesAvailability
+        departuresAvailability <- whatDoYouWantToDoService.fetchDeparturesAvailability(appConfig.phase5DepartureEnabled)
+        viewAllDeparturesUrl = whatDoYouWantToDoService.fetchDeparturesUrl(appConfig.phase5DepartureEnabled)
         draftDeparturesAvailability <- whatDoYouWantToDoService.fetchDraftDepartureAvailability(appConfig.phase5DepartureEnabled)
       } yield Ok(
-        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalUrl)
+        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalUrl, viewAllDeparturesUrl)
       )
   }
 }

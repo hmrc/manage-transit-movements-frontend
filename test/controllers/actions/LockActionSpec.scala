@@ -17,7 +17,7 @@
 package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.DeparturesMovementsP5Connector
+import connectors.DeparturesDraftsP5Connector
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
-  val dataRequest = IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], "id")
+  val dataRequest: IdentifierRequest[AnyContent] = IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], "id")
 
   class Harness(authAction: LockActionProvider) {
 
@@ -42,12 +42,12 @@ class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
     }
   }
 
-  val connector: DeparturesMovementsP5Connector = mock[DeparturesMovementsP5Connector]
+  val connector: DeparturesDraftsP5Connector = mock[DeparturesDraftsP5Connector]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[DeparturesMovementsP5Connector].toInstance(connector))
+      .overrides(bind[DeparturesDraftsP5Connector].toInstance(connector))
 
   override def beforeEach(): Unit = {
     super.beforeEach()

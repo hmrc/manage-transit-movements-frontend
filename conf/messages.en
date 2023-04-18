@@ -111,8 +111,8 @@ viewDepartureDeclarationsP5.label.postSearch                 = Showing {0} resul
 viewDepartureDeclarationsP5.declarationDate.h2               = {0}
 viewDepartureDeclarationsP5.table.updated                    = Updated
 viewDepartureDeclarationsP5.table.lrn                        = Local Reference Number (LRN)
-viewDepartureDeclarationsP5.table.header3.status             = Status
-viewDepartureDeclarationsP5.table.actions                    = Actions
+viewDepartureDeclarationsP5.table.status                     = Status
+viewDepartureDeclarationsP5.table.action                     = Actions
 viewDepartureDeclarationsP5.link.manage                      = Manage your transit movements
 
 movement.status.P5.arrivalNotificationSubmitted                         = Arrival notification sent
@@ -122,9 +122,53 @@ movement.status.P5.unloadingPermissionReceived                          = Unload
 movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading   = Unloading Rejected
 movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival     = Arrival Rejected
 
+movement.status.P5.departureNotificationSubmitted                       = Declaration sent
+movement.status.P5.cancellationSubmitted                                = Cancellation requested
+movement.status.P5.amendmentSubmitted                                   = Declaration amendment submitted
+movement.status.P5.prelodgedDeclarationSent1                            = Declaration sent
+movement.status.P5.prelodgedDeclarationSent2                            = Declaration sent - prelodge
+movement.status.P5.prelodgedDeclarationSent3                            = Prelodged declaration sent
+movement.status.P5.movementNotArrivedResponseSent                       = Movement not arrived - response sent
+movement.status.P5.movementNotArrived                                   = Movement not arrived
+movement.status.P5.declarationAmendmentAccepted                         = Declaration amendment accepted
+movement.status.P5.cancellationDecision                                 = Declaration cancelled
+movement.status.P5.discrepancies                                        = Goods not released - discrepancies
+movement.status.P5.invalidMRN                                           = Invalid MRN
+movement.status.P5.allocatedMRN                                         = MRN allocated
+movement.status.P5.releasedForTransit                                   = Released for transit
+movement.status.P5.goodsNotReleased                                     = Goods not released
+movement.status.P5.guaranteeRejected                                    = Guarantee rejected
+movement.status.P5.rejectedByOfficeOfDeparture                          = Rejected by office of departure
+movement.status.P5.goodsUnderControl                                    = Goods under control
+movement.status.P5.incidentDuringTransit                                = Incident during transit
+movement.status.P5.declarationSent                                      = Declaration sent
+movement.status.P5.goodsBeingRecovered                                  = Goods being recovered
+movement.status.P5.guaranteeWrittenOff                                  = Guarantee written off
+movement.status.P5.prelodgedDeclarationSent	                            = Prelodged declaration sent
+
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
 movement.status.P5.action.viewError = View Errors
+
+movement.status.P5.action.departureNotification.cancelDeclaration         = Cancel declaration
+movement.status.P5.action.movementNotArrivedResponseSent.viewErrors       = View errors
+movement.status.P5.action.movementNotArrived.respond                      = Respond
+movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration   = Amend declaration
+movement.status.P5.action.cancellationDecision.viewCancellation           = View cancellation
+movement.status.P5.action.invalidMRN.amendErrors                          = Amend errors
+movement.status.P5.action.allocatedMRN.cancelDeclaration                  = Cancel declaration
+movement.status.P5.action.releasedForTransit.viewAndPrintAccompanyingPDF  = View and print accompanying document PDF
+movement.status.P5.action.goodsNotReleased.viewDetails                    = View details
+movement.status.P5.action.guaranteeRejected.viewErrors                    = View errors
+movement.status.P5.action.guaranteeRejected.cancelDeclaration             = Cancel declaration
+movement.status.P5.action.rejectedByOfficeOfDeparture.amendErrors         = Amend errors
+movement.status.P5.action.goodsUnderControl.viewErrors                    = View errors
+movement.status.P5.action.goodsUnderControl.cancelDeclaration             = Cancel declaration
+movement.status.P5.action.incidentDuringTransit.viewErrors                = View errors
+movement.status.P5.action.declarationSent.amendDeclaration                = Amend declaration
+movement.status.P5.action.declarationSent.cancelDeclaration               = Cancel declaration
+movement.status.P5.action.goodsBeingRecovered.viewErrors                  = View errors
+
 
 movement.search.title = Search by movement reference number
 movement.search.departure.title = Search by local reference number

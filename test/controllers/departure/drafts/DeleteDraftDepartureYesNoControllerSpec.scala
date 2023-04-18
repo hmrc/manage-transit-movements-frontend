@@ -17,7 +17,7 @@
 package controllers.departure.drafts
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.DeparturesMovementsP5Connector
+import connectors.DeparturesDraftsP5Connector
 import controllers.actions.{FakeLockAction, LockActionProvider}
 import forms.YesNoFormProvider
 import org.mockito.ArgumentMatchers.any
@@ -42,7 +42,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
   val lrnString: String = lrn.toString()
 
   private val draftDepartureService = mock[DraftDepartureService]
-  private val mockConnector         = mock[DeparturesMovementsP5Connector]
+  private val mockConnector         = mock[DeparturesDraftsP5Connector]
 
   final val mockLockActionProvider: LockActionProvider = mock[LockActionProvider]
 
@@ -52,7 +52,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       .overrides(
         bind[DraftDepartureService].toInstance(draftDepartureService),
         bind[LockActionProvider].toInstance(mockLockActionProvider),
-        bind[DeparturesMovementsP5Connector].toInstance(mockConnector)
+        bind[DeparturesDraftsP5Connector].toInstance(mockConnector)
       )
 
   private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString, 1, 2, None).url

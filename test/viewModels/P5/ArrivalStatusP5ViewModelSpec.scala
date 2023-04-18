@@ -20,8 +20,9 @@ import base.SpecBase
 import cats.data.NonEmptyList
 import generators.Generators
 import models.arrivalP5.ArrivalMessageType._
-import models.arrivalP5.{ArrivalMessageType, ArrivalMovement, ArrivalMovementAndMessage, Message, MessagesForMovement}
+import models.arrivalP5.{ArrivalMessage, ArrivalMessageType, ArrivalMovement, ArrivalMovementAndMessage, MessagesForArrivalMovement}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import viewModels.P5.arrival.ArrivalStatusP5ViewModel
 import viewModels.ViewMovementAction
 
 import java.time.LocalDateTime
@@ -40,8 +41,8 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
           LocalDateTime.now(),
           "location"
         ),
-        MessagesForMovement(
-          NonEmptyList(Message(dateTimeNow, headMessage), List.empty)
+        MessagesForArrivalMovement(
+          NonEmptyList(ArrivalMessage(dateTimeNow, headMessage), List.empty)
         )
       )
 
@@ -100,11 +101,11 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
     "when given Message with head of RejectionFromOfficeOfDestination for unloading" in {
 
-      val messages = MessagesForMovement(
+      val messages = MessagesForArrivalMovement(
         NonEmptyList(
-          Message(dateTimeNow, RejectionFromOfficeOfDestination),
+          ArrivalMessage(dateTimeNow, RejectionFromOfficeOfDestination),
           List(
-            Message(dateTimeNow, UnloadingRemarks)
+            ArrivalMessage(dateTimeNow, UnloadingRemarks)
           )
         )
       )

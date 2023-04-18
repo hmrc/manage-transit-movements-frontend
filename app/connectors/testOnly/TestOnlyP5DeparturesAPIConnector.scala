@@ -20,14 +20,13 @@ import config.FrontendAppConfig
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
+class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
-  def arrivalOutbound(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+  def departureOutbound(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val newHeaders: HeaderCarrier = headerCarrier
       .copy(authorization = headers.get("Authorization").map(Authorization))
@@ -36,12 +35,12 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: Fr
         ("Accept", "application/vnd.hmrc.2.0+json")
       )
 
-    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/arrivals"
+    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures"
 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 
-  def unloadingOutbound(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+  def departureInbound(requestData: NodeSeq, departureId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val newHeaders: HeaderCarrier = headerCarrier
       .copy(authorization = headers.get("Authorization").map(Authorization))
@@ -51,12 +50,12 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: Fr
         ("X-Message-Type", headers.get("X-Message-Type").getOrElse("No x-message-type"))
       )
 
-    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
+    val serviceUrl = s"${config.transitMovementsUrl}transit-movements/traders/movements/$departureId/messages"
 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 
-  def arrivalInbound(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+  def departureAddMessage(requestData: NodeSeq, departureId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val newHeaders: HeaderCarrier = headerCarrier
       .copy(authorization = headers.get("Authorization").map(Authorization))
@@ -66,7 +65,7 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: Fr
         ("X-Message-Type", headers.get("X-Message-Type").getOrElse("No x-message-type"))
       )
 
-    val serviceUrl = s"${config.transitMovementsUrl}transit-movements/traders/movements/$arrivalId/messages"
+    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
