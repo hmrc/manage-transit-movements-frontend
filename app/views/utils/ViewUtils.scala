@@ -38,7 +38,6 @@ object ViewUtils {
       label = Label(
         content = messages(label).toText
       ),
-      formGroupClasses = "govuk-!-width-one-half",
       errorMessage = field.error.map {
         e =>
           ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))
