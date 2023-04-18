@@ -31,11 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class GoodsUnderControlActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService)(implicit ec: ExecutionContext) {
 
-  def apply(departureId: DepartureId): ActionRefiner[IdentifierRequest, GoodsUnderControlRequest] =
+  def apply(departureId: String): ActionRefiner[IdentifierRequest, GoodsUnderControlRequest] =
     new GoodsUnderControlAction(departureId, departureP5MessageService)
 }
 
-class GoodsUnderControlAction(departureId: DepartureId, departureP5MessageService: DepartureP5MessageService)(implicit
+class GoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService)(implicit
   protected val executionContext: ExecutionContext
 ) extends ActionRefiner[IdentifierRequest, GoodsUnderControlRequest] {
 
@@ -43,7 +43,7 @@ class GoodsUnderControlAction(departureId: DepartureId, departureP5MessageServic
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    OptionT(departureP5MessageService.getGoodsUnderControl(departureId.toString))
+    OptionT(departureP5MessageService.getGoodsUnderControl(departureId))
       .map {
         goodsUnderControl =>
           GoodsUnderControlRequest(request, request.eoriNumber, goodsUnderControl.data)

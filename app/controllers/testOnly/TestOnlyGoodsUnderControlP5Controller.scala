@@ -29,15 +29,14 @@ import scala.concurrent.ExecutionContext
 class TestOnlyGoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  goodsUnderControlAction: GoodsUnderControlAction,
+  goodsUnderControlAction: GoodsUnderControlActionProvider,
   cc: MessagesControllerComponents,
-  departureP5MessageService: DepartureP5MessageService,
   view: TestOnlyGoodsUnderControlP5View
 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction) {
+  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
     implicit request =>
       Ok(view(request.ie060MessageData, departureId))
   }
