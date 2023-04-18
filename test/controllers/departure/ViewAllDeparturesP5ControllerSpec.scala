@@ -77,7 +77,8 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
     NonEmptyList(
       DepartureMessage(
         dateTime,
-        DepartureMessageType.DepartureNotification
+        DepartureMessageType.DepartureNotification,
+        "body/path"
       ),
       List.empty[DepartureMessage]
     )
@@ -86,7 +87,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   private val mockViewMovement = ViewDepartureP5(
     updatedDate = dateTime.toLocalDate,
     updatedTime = dateTime.toLocalTime,
-    movementReferenceNumber = None,
+    referenceNumber = "AB123",
     status = "movement.status.P5.departureNotificationSubmitted",
     actions = Seq(
       ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}", "movement.status.P5.action.departureNotification.cancelDeclaration")
@@ -101,7 +102,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         .thenReturn(Future.successful(Some(mockDepartureMovementResponse)))
 
       when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
-        .thenReturn(Future.successful(Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse))))
+        .thenReturn(Future.successful(Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123"))))
 
       val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url)
 

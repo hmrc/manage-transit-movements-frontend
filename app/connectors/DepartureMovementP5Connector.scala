@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
-import models.departureP5.{DepartureMovements, MessagesForDepartureMovement}
+import models.departureP5.{DepartureMovements, LocalReferenceNumber, MessagesForDepartureMovement}
 import play.api.http.Status.{NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
@@ -59,5 +59,14 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     val url = s"${config.commonTransitConventionTradersUrl}$location"
 
     http.GET[MessagesForDepartureMovement](url)(HttpReads[MessagesForDepartureMovement], headers, ec)
+  }
+
+  def getLRN(location: String)(implicit hc: HeaderCarrier): Future[LocalReferenceNumber] = {
+
+    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
+
+    val url = s"${config.commonTransitConventionTradersUrl}$location"
+
+    http.GET[LocalReferenceNumber](url)(HttpReads[LocalReferenceNumber], headers, ec)
   }
 }

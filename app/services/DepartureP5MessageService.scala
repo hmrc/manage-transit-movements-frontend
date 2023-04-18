@@ -18,6 +18,7 @@ package services
 
 import cats.implicits._
 import connectors.DepartureMovementP5Connector
+import models.departureP5.DepartureMessageType.DepartureNotification
 import models.departureP5.{DepartureMovementAndMessage, DepartureMovements}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -33,9 +34,17 @@ class DepartureP5MessageService @Inject() (departureMovementP5Connector: Departu
       movement =>
         departureMovementP5Connector
           .getMessagesForMovement(movement.messagesLocation)
-          .map(
-            messagesForMovement => DepartureMovementAndMessage(movement, messagesForMovement)
-          )
+          .flatMap {
+            messagesForMovement =>
+              messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
+                case Some(departureMessage) =>
+                  departureMovementP5Connector.getLRN(departureMessage.bodyPath).map {
+                    body =>
+                      DepartureMovementAndMessage(movement, messagesForMovement, body.referenceNumber)
+                  }
+                case None =>
+                  Future.successful(DepartureMovementAndMessage(movement, messagesForMovement, ""))
+              }
+          }
     }
-
 }
