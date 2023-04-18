@@ -34,8 +34,6 @@ object GoodsUnderControlP5ViewModel {
     def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel = {
       val helper = new GoodsUnderControlP5Helper(ie060MessageData)
 
-
-
       new GoodsUnderControlP5ViewModel(ie060MessageData)
     }
   }

@@ -1,54 +1,55 @@
 @*
-* Copyright 2023 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
-@import views.html.components.{AnswerSections, Button, Heading}
-@import views.html.components.HeadingCaption
+@import views.html.components.{Button, Heading}
 @import controllers.routes._
 @import models.departureP5.IE060MessageData
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    answerSections: AnswerSections,
+
     button: Button,
-    caption: HeadingCaption,
     formHelper: FormWithCSRF
 )
 
-@(ie060: IE060MessageData)(implicit request: Request[_], messages: Messages)
+@(ie060: IE060MessageData, departureId: String)(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(
-    title = messages("checkYourAnswers.title"),
-    showBackLink = true
-) {
-
-@caption(mrn.toString)
-
-@heading(
-    heading = messages("checkYourAnswers.heading")
-)
-
-@answerSections(viewModel.sections)
-
-<h2 class="govuk-heading-m">@messages("checkYourAnswers.sendRemarks")</h2>
-
-<p class="govuk-body">@messages("checkYourAnswers.paragraph")</p>
+    @mainTemplate(
+        title = messages("departure.ie60.message.title"),
+        showBackLink = true
+    ) {
 
 
-@formHelper(action = routes.CheckYourAnswersController.onSubmit(arrivalId), Symbol("autoComplete") -> "off") {
-@button(attributes = Map("id" -> "submit"), messageKey = messages("site.confirmAndSend"))
-}
+    @heading(
+        heading = messages("departure.ie60.message.heading")
+    )
+
+    <p class="govuk-body">@messages("departure.ie60.message.paragraph1")</p>
+    <p class="govuk-body">@messages("departure.ie60.message.paragraph2")</p>
+    <p class="govuk-body">@messages("departure.ie60.message.paragraph3")</p>
+
+
+
+    <p class="govuk-body">@messages("departure.ie60.message.prefix")
+        <a class="govuk-link" rel="noreferrer noopener" href="" target="_blank" id="view-departures">@messages("departure.ie60.message.paragraph4.linkText")</a>
+        @messages("departure.ie60.message.suffix")
+    </p>
+
+
+    @button(attributes = Map("id" -> "submit"), messageKey = messages("site.confirmAndSend"))
+
 }

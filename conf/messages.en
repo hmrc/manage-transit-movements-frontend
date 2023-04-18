@@ -343,8 +343,13 @@ departure.ie60.message.heading = Goods under control
 departure.ie60.message.h2 = What happens next
 
 departure.ie60.message.subheading = LRN: {0}
-departure.ie60.message.paragraph1 = Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety. While under control, the goods will remain under supervision at the office of destination. Once Customs have completed their checks, they will notify you with the outcome.
-departure.ie60.message.paragraph2 = You must wait for the outcome of Customs’ checks. Check your departure declarations for further updates.
+departure.ie60.message.paragraph1 = Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety.
+departure.ie60.message.paragraph2 = While under control, the goods will remain under supervision at the office of destination.
+departure.ie60.message.paragraph3 = You must wait for the outcome of Customs’ checks.
+departure.ie60.message.paragraph4.prefix = You must wait for the outcome of Customs’ checks.
+departure.ie60.message.paragraph4.linkText = Check your departure declarations
+departure.ie60.message.paragraph4.suffix = for further updates.
+
 
 
 

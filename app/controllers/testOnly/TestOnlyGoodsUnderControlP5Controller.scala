@@ -37,8 +37,8 @@ class TestOnlyGoodsUnderControlP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction).async {
+  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction) {
     implicit request =>
-      Ok(view(request.ie060MessageData))
+      Ok(view(request.ie060MessageData, departureId))
   }
 }

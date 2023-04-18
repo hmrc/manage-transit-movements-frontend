@@ -22,25 +22,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 
 import java.time.LocalDate
 
-class GoodsUnderControlP5Helper(ie060MessageData: IE060MessageData)(implicit messages: Messages)  {
+class GoodsUnderControlP5Helper(ie060MessageData: IE060MessageData)(implicit messages: Messages) {
 
-  def unloadingType: Option[SummaryListRow] = getAnswerAndBuildRow[UnloadingType](
-    page = UnloadingTypePage,
-    formatAnswer = formatEnumAsText(UnloadingType.messageKeyPrefix),
-    prefix = "unloadingType.checkYourAnswers",
-    args = messages("unloadingType.hidden"),
-    id = Some("change-unloaded-type"),
-    call = Some(controllers.routes.UnloadingTypeController.onPageLoad(arrivalId, CheckMode))
-  )
-
-  def goodsUnloadedDate: Option[SummaryListRow] = getAnswerAndBuildRow[LocalDate](
-    page = DateGoodsUnloadedPage,
-    formatAnswer = formatAsDate,
-    prefix = "checkYourAnswers.rowHeadings.goodsUnloadedDate",
-    id = Some("change-goods-unloaded-date"),
-    call = Some(controllers.routes.DateGoodsUnloadedController.onPageLoad(arrivalId, CheckMode))
-  )
-
-
+  ???
 
 }
