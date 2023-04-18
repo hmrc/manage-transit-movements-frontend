@@ -46,6 +46,13 @@
     fullWidth: Boolean = false
 )(mainContent: Html)(implicit request: Request[_], messages: Messages)
 
+
+@header = {
+  <div class="govuk-width-container some-class-to-move-me-up-to-banner">
+    <p>@messages("site.user.research.text")</p>
+  </div>
+}
+
 @headScripts = {
     @if(canSignOut) {
         @hmrcTimeoutDialog(
@@ -70,15 +77,16 @@
     pageTitle = Some(breadCrumbTitle(title, mainContent)),
     additionalHeadBlock = Some(hmrcInternalHead(
         headBlock = Some(headScripts),
-        nonce = CSPNonce.get
+        nonce = CSPNonce.get,
     )),
     userResearchBannerUrl = if (appConfig.showUserResearchBanner) Some(appConfig.userResearchUrl) else None,
+    additionalBannersBlock = Some(header),
     serviceName = Some(messages("site.service_name")),
     serviceUrl = Some(routes.WhatDoYouWantToDoController.onPageLoad().url),
+    nonce = CSPNonce.get,
     signOutUrl = if (canSignOut) Some(appConfig.signOutUrl) else None,
     phaseBanner = Some(standardBetaBanner(url = appConfig.feedbackUrl)),
     backLinkUrl = if (showBackLink) Some("#") else None, // This is overridden in ctc.js
-    nonce = CSPNonce.get,
     additionalScriptsBlock = Some(javascripts()),
     mainContentLayout = if (fullWidth) Some(fullWidthContent(_)) else Some(twoThirdsMainContent(_))
 )(mainContentWithGetHelp)

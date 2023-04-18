@@ -14,6 +14,8 @@ site.search = Search
 site.service_name = Manage your transit movements
 site.section = This section is
 
+site.user.research.text = Hold onto your britches as P5 will soon land! If you want to help us suss it out then sign up to take part in user research above.
+
 site.ascending = ascending
 site.descending = descending
 
