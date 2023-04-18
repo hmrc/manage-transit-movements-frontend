@@ -19,7 +19,8 @@ package connectors
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
-import models.departureP5.{DepartureMovements, LocalReferenceNumber, MessagesForDepartureMovement}
+import models.departureP5.{DepartureMovements, IE060Data, LocalReferenceNumber, Messages, MessagesForDepartureMovement}
+
 import play.api.http.Status.{NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
@@ -59,6 +60,22 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     val url = s"${config.commonTransitConventionTradersUrl}$location"
 
     http.GET[MessagesForDepartureMovement](url)(HttpReads[MessagesForDepartureMovement], headers, ec)
+  }
+
+  def getMessageMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Messages] = {
+    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
+
+    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
+
+    http.GET[Messages](serviceUrl)(implicitly, headers, ec)
+  }
+
+  def getGoodsUnderControl(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IE060Data] = {
+    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
+
+    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
+
+    http.GET[IE060Data](serviceUrl)(implicitly, headers, ec)
   }
 
   def getLRN(location: String)(implicit hc: HeaderCarrier): Future[LocalReferenceNumber] = {

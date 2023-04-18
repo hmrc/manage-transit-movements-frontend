@@ -20,7 +20,6 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureMovementP5Connector
 import controllers.actions._
 import forms.DeparturesSearchFormProvider
-import forms.SearchFormProvider
 import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -40,9 +39,9 @@ class ViewAllDeparturesP5Controller @Inject() (
   cc: MessagesControllerComponents,
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
-  formProvider: DeparturesSearchFormProvider,
   departureP5MessageService: DepartureP5MessageService,
   departureMovementP5Connector: DepartureMovementP5Connector,
+  formProvider: DeparturesSearchFormProvider,
   view: ViewAllDeparturesP5View
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)

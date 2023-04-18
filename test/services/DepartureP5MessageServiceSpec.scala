@@ -19,20 +19,24 @@ package services
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
+import models.arrivalP5._
 import models.departureP5.{
-  DepartureMessage,
+  CustomsOfficeOfDeparture,
   DepartureMessageType,
-  DepartureMovement,
-  DepartureMovementAndMessage,
-  DepartureMovements,
-  LocalReferenceNumber,
-  MessagesForDepartureMovement
+  IE060Data,
+  IE060MessageData,
+  MessageMetaData,
+  Messages,
+  RequestedDocument,
+  TransitOperation,
+  TypeOfControls
 }
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, when}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DepartureP5MessageServiceSpec extends SpecBase {
@@ -46,93 +50,42 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
   val departureP5MessageService = new DepartureP5MessageService(mockConnector)
 
-  "getMessagesForAllMovements" - {
+  "DepartureP5MessageService" - {
 
-    val dateTimeNow = LocalDateTime.now(clock)
+    "getGoodsUnderControlMessage" - {
 
-    val departureMovements = DepartureMovements(
-      Seq(
-        DepartureMovement(
-          "AB123",
-          Some("MRN"),
-          dateTimeNow,
-          "location"
-        )
-      )
-    )
+      "must return a MessageMetaData when given Departure Id" in {
 
-    "must return departure movements with messages with an LRN" in {
-
-      val messagesForMovement =
-        MessagesForDepartureMovement(
-          NonEmptyList(
-            DepartureMessage(
-              dateTimeNow,
+        val messages = Messages(
+          List(
+            MessageMetaData(
+              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.DepartureNotification,
-              "body/path/1"
+              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
             ),
-            List(
-              DepartureMessage(
-                dateTimeNow,
-                DepartureMessageType.GoodsUnderControl,
-                "body/path/2"
-              )
+            MessageMetaData(
+              LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              DepartureMessageType.GoodsUnderControl,
+              "movements/departures/6365135ba5e821ee/message/634982098f02f00a"
             )
           )
         )
 
-      when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
-        Future.successful(messagesForMovement)
-      )
-
-      when(mockConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
-        Future.successful(LocalReferenceNumber("lrn123"))
-      )
-
-      val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
-
-      val expectedResult = Seq(
-        DepartureMovementAndMessage(
-          departureMovements.departureMovements.head,
-          messagesForMovement,
-          "lrn123"
-        )
-      )
-
-      result mustBe expectedResult
-    }
-
-    "must return departure movements with messages without an LRN" in {
-
-      val messagesForMovement =
-        MessagesForDepartureMovement(
-          NonEmptyList(
-            DepartureMessage(
-              dateTimeNow,
-              DepartureMessageType.GoodsUnderControl,
-              "body/path/2"
-            ),
-            List.empty
+        val ie060Data = IE060Data(
+          IE060MessageData(
+            TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            CustomsOfficeOfDeparture("22323323"),
+            Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
+            Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
           )
         )
 
-      when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
-        Future.successful(messagesForMovement)
-      )
+        when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
+        when(mockConnector.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(ie060Data))
 
-      val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
-
-      val expectedResult = Seq(
-        DepartureMovementAndMessage(
-          departureMovements.departureMovements.head,
-          messagesForMovement,
-          ""
-        )
-      )
-
-      result mustBe expectedResult
+        departureP5MessageService.getGoodsUnderControl(departureId = "6365135ba5e821ee").futureValue mustBe Some(ie060Data)
+      }
     }
-
   }
 
 }
