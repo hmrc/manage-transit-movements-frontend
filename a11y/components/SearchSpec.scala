@@ -17,7 +17,7 @@
 package components
 
 import a11ySpecBase.A11ySpecBase
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.mvc.Call
 import views.html.components.Search
@@ -32,7 +32,7 @@ class SearchSpec extends A11ySpecBase {
     val title  = nonEmptyString.sample.value
     val action = arbitrary[Call].sample.value
     val label  = nonEmptyString.sample.value
-    val form   = new SearchFormProvider()()
+    val form   = new DeparturesSearchFormProvider()()
 
     val content = template.apply(title) {
       component.apply(form, action, label).withHeading(title)

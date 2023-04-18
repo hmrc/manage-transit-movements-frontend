@@ -18,7 +18,7 @@ package controllers.departure.drafts
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import models.Sort.SortByCreatedAtDesc
 import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
@@ -42,7 +42,7 @@ class DashboardController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   draftDepartureService: DraftDepartureService,
   view: DashboardView,
-  formProvider: SearchFormProvider,
+  formProvider: DeparturesSearchFormProvider,
   paginationAppConfig: PaginationAppConfig,
   appConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext)

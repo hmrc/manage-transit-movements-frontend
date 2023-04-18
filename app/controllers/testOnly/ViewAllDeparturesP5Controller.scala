@@ -19,6 +19,7 @@ package controllers.testOnly
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureMovementP5Connector
 import controllers.actions._
+import forms.DeparturesSearchFormProvider
 import forms.SearchFormProvider
 import models.requests.IdentifierRequest
 import play.api.data.Form
@@ -39,7 +40,7 @@ class ViewAllDeparturesP5Controller @Inject() (
   cc: MessagesControllerComponents,
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
-  formProvider: SearchFormProvider,
+  formProvider: DeparturesSearchFormProvider,
   departureP5MessageService: DepartureP5MessageService,
   departureMovementP5Connector: DepartureMovementP5Connector,
   view: ViewAllDeparturesP5View
