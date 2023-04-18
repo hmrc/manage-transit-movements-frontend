@@ -37,12 +37,8 @@ class TestOnlyGoodsUnderControlP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction).async {
     implicit request =>
-      departureP5MessageService
-        .getGoodsUnderControl(departureId)
-        .map {
-          x => Ok(view(x))
-        }
+      Ok(view(request.ie060MessageData))
   }
 }

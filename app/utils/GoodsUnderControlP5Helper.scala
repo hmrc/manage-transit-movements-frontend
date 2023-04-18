@@ -16,13 +16,13 @@
 
 package utils
 
-import models.departureP5.IE060Data
+import models.departureP5.{IE060Data, IE060MessageData}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 
 import java.time.LocalDate
 
-class GoodsUnderControlP5Helper(ie060Data: Option[IE060Data])(implicit messages: Messages) extends AnswersHelper(userAnswers) {
+class GoodsUnderControlP5Helper(ie060MessageData: IE060MessageData)(implicit messages: Messages)  {
 
   def unloadingType: Option[SummaryListRow] = getAnswerAndBuildRow[UnloadingType](
     page = UnloadingTypePage,
@@ -41,36 +41,6 @@ class GoodsUnderControlP5Helper(ie060Data: Option[IE060Data])(implicit messages:
     call = Some(controllers.routes.DateGoodsUnloadedController.onPageLoad(arrivalId, CheckMode))
   )
 
-  def anySealsBroken: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
-    page = AreAnySealsBrokenPage,
-    formatAnswer = formatAsYesOrNo,
-    prefix = "checkYourAnswers.rowHeadings.anySealsBroken",
-    id = Some("change-any-seals-broken"),
-    call = Some(controllers.routes.AreAnySealsBrokenController.onPageLoad(arrivalId, CheckMode))
-  )
 
-  def canSealsBeRead: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
-    page = CanSealsBeReadPage,
-    formatAnswer = formatAsYesOrNo,
-    prefix = "checkYourAnswers.rowHeadings.canSealsBeRead",
-    id = Some("change-can-seals-be-read"),
-    call = Some(controllers.routes.CanSealsBeReadController.onPageLoad(arrivalId, CheckMode))
-  )
-
-  def unloadingCommentsYesNo: Option[SummaryListRow] = getAnswerAndBuildRow[Boolean](
-    page = AddUnloadingCommentsYesNoPage,
-    formatAnswer = formatAsYesOrNo,
-    prefix = "checkYourAnswers.rowHeadings.addUnloadingCommentsYesNo",
-    id = Some("change-add-unloading-comments"),
-    call = Some(controllers.routes.AddUnloadingCommentsYesNoController.onPageLoad(arrivalId, CheckMode))
-  )(intToBooleanReads)
-
-  def additionalComment: Option[SummaryListRow] = getAnswerAndBuildRow[String](
-    page = UnloadingCommentsPage,
-    formatAnswer = formatAsText,
-    prefix = "checkYourAnswers.rowHeadings.additionalComments",
-    id = Some("change-comment"),
-    call = Some(controllers.routes.UnloadingCommentsController.onPageLoad(arrivalId, CheckMode))
-  )
 
 }

@@ -16,26 +16,27 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.IE060Data
+import models.departureP5.{IE060Data, IE060MessageData}
 import play.api.i18n.Messages
+import utils.GoodsUnderControlP5Helper
 
 import javax.inject.Inject
 
-case class GoodsUnderControlP5ViewModel(ie060Data: Option[IE060Data])
+case class GoodsUnderControlP5ViewModel(ie060MessageData: IE060MessageData)
 
 object GoodsUnderControlP5ViewModel {
 
-  def apply(ie60Data: IE060Data)(implicit messages: Messages): GoodsUnderControlP5ViewModel =
-    new GoodsUnderControlP5ViewModelProvider()(ie60Data)
+  def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel =
+    new GoodsUnderControlP5ViewModelProvider()(ie060MessageData)
 
   class GoodsUnderControlP5ViewModelProvider @Inject() () {
 
-    def apply(ie60Data: IE060Data)(implicit messages: Messages): GoodsUnderControlP5ViewModel = {
-      val helper = new GoodsUnderControlP5Helper(ie60Data)
+    def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel = {
+      val helper = new GoodsUnderControlP5Helper(ie060MessageData)
 
 
 
-      new GoodsUnderControlP5ViewModel(Seq(headerSection, commentsSection))
+      new GoodsUnderControlP5ViewModel(ie060MessageData)
     }
   }
 }

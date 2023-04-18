@@ -17,28 +17,28 @@
 @import views.html.components.{AnswerSections, Button, Heading}
 @import views.html.components.HeadingCaption
 @import controllers.routes._
-@import models.departureP5.IE060Data
+@import models.departureP5.IE060MessageData
 
 @this(
-mainTemplate: MainTemplate,
-heading: Heading,
-answerSections: AnswerSections,
-button: Button,
-caption: HeadingCaption,
-formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    answerSections: AnswerSections,
+    button: Button,
+    caption: HeadingCaption,
+    formHelper: FormWithCSRF
 )
 
-@(ie060: Option[IE060Data])(implicit request: Request[_], messages: Messages)
+@(ie060: IE060MessageData)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-title = messages("checkYourAnswers.title"),
-showBackLink = true,
+    title = messages("checkYourAnswers.title"),
+    showBackLink = true
 ) {
 
 @caption(mrn.toString)
 
 @heading(
-heading = messages("checkYourAnswers.heading")
+    heading = messages("checkYourAnswers.heading")
 )
 
 @answerSections(viewModel.sections)
