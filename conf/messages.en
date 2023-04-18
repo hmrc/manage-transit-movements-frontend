@@ -337,3 +337,14 @@ departure.drafts.dashboard.draftLocked.title = You cannot delete this declaratio
 departure.drafts.dashboard.draftLocked.heading = You cannot delete this declaration right now
 departure.drafts.dashboard.draftLocked.paragraph = Another person from your organisation is currently working on this declaration. You cannot delete it until they’re finished.
 departure.drafts.dashboard.draftLocked.button = Return to drafts
+
+departure.ie60.message.title = Goods under control
+departure.ie60.message.heading = Goods under control
+departure.ie60.message.h2 = What happens next
+
+departure.ie60.message.subheading = LRN: {0}
+departure.ie60.message.paragraph1 = Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety. While under control, the goods will remain under supervision at the office of destination. Once Customs have completed their checks, they will notify you with the outcome.
+departure.ie60.message.paragraph2 = You must wait for the outcome of Customs’ checks. Check your departure declarations for further updates.
+
+
+
