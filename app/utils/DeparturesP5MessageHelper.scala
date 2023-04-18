@@ -31,7 +31,7 @@ class DeparturesP5MessageHelper(implicit messages: Messages) extends SummaryList
     id: Option[String],
     call: Option[Call],
     args: Any*
-  )(implicit rds: Reads[T]): Option[SummaryListRow] =
+  ): Option[SummaryListRow] =
     answer.map(
       ans =>
         buildRow(

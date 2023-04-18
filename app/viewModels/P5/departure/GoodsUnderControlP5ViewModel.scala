@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.{IE060Data, IE060MessageData}
+import models.departureP5.IE060MessageData
 import play.api.i18n.Messages
 import utils.GoodsUnderControlP5MessageHelper
 import viewModels.sections.Section

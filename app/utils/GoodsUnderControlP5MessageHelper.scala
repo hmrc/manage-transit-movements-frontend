@@ -21,6 +21,8 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
 
+import java.time.LocalDateTime
+
 class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(implicit messages: Messages) extends DeparturesP5MessageHelper {
 
   def buildLRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
@@ -39,19 +41,31 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
     call = None
   )
 
-  def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = ie060MessageData.TransitOperation.MRN,
+  def buildDateTimeControlRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDateTime](
+    answer = Some(ie060MessageData.TransitOperation.controlNotificationDateAndTime),
+    formatAnswer = formatAsDate,
+    prefix = messages("row.label.dateAndTimeOfControl"),
+    id = None,
+    call = None
+  )
+
+  def buildOfficeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(ie060MessageData.CustomsOfficeOfDeparture.referenceNumber),
     formatAnswer = formatAsText,
-    prefix = messages("row.label.movementReferenceNumber"),
+    prefix = messages("heading.label.controlInformation"),
     id = None,
     call = None
   )
 
   def buildGoodsUnderControlSection(): Section = {
 
-    val lrnRow = buildLRNRow.map(Seq(_)).getOrElse(Seq.empty)
-    val mrnRow = buildMRNRow.map(Seq(_)).getOrElse(Seq.empty)
-    val rows   = lrnRow ++ mrnRow
+    val lrnRow               = buildLRNRow.map(Seq(_)).getOrElse(Seq.empty)
+    val mrnRow               = buildMRNRow.map(Seq(_)).getOrElse(Seq.empty)
+    val dateTimeControlRow   = buildDateTimeControlRow.map(Seq(_)).getOrElse(Seq.empty)
+    val officeOfDepartureRow = buildOfficeOfDepartureRow.map(Seq(_)).getOrElse(Seq.empty)
+
+    val rows = lrnRow ++ mrnRow ++ dateTimeControlRow ++ officeOfDepartureRow
+
     Section(None, rows, None)
 
   }

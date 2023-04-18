@@ -18,8 +18,6 @@ package models.departureP5
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDateTime
-
 case class IE060MessageData(
   TransitOperation: TransitOperation,
   CustomsOfficeOfDeparture: CustomsOfficeOfDeparture,

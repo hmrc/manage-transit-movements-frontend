@@ -16,7 +16,6 @@
 
 package models.requests
 
-import models.EoriNumber
 import models.departureP5.IE060MessageData
 import play.api.mvc.{Request, WrappedRequest}
 

@@ -353,10 +353,10 @@ departure.ie060.message.paragraph4.suffix = for further updates.
 row.label.localReferenceNumber =     Local Reference Number (LRN)
 row.label.movementReferenceNumber =  Movement Reference Number (MRN)
 row.label.dateAndTimeOfControl =  Date and time of control
-row.label.type =  Type
-row.label.description =  Description
 row.label.officeOfDeparture =   Office of departure
 heading.label.controlInformation =  Control information
+row.label.type =  Type
+row.label.description =  Description
 
 
 

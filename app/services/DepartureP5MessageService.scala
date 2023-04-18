@@ -19,7 +19,6 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.DepartureMovementP5Connector
-import models.DepartureId
 import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5.{DepartureMovementAndMessage, DepartureMovements, IE060Data, MessageMetaData}
 import uk.gov.hmrc.http.HeaderCarrier

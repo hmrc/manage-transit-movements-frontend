@@ -24,7 +24,6 @@ import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5V
 import views.html.departure.P5.TestOnlyGoodsUnderControlP5View
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class TestOnlyGoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
