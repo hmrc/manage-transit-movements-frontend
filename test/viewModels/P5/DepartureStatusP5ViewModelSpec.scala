@@ -282,7 +282,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
         Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.viewErrors"),
+          ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.viewDetails"),
           ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.cancelDeclaration")
         )
       )
