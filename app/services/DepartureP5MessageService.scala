@@ -19,10 +19,8 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.DepartureMovementP5Connector
-import models.DepartureId
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
-
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

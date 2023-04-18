@@ -20,16 +20,23 @@ import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
 import models.arrivalP5._
-import models.departureP5._
+import models.departureP5.{
+  CustomsOfficeOfDeparture,
+  DepartureMessageType,
+  IE060Data,
+  IE060MessageData,
+  MessageMetaData,
+  Messages,
+  RequestedDocument,
+  TransitOperation,
+  TypeOfControls
+}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, when}
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import scala.concurrent.ExecutionContext.Implicits.global
-import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class DepartureP5MessageServiceSpec extends SpecBase {
@@ -60,38 +67,6 @@ class DepartureP5MessageServiceSpec extends SpecBase {
               LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.GoodsUnderControl,
               "movements/departures/6365135ba5e821ee/message/634982098f02f00a"
-
-  "getMessagesForAllMovements" - {
-
-    val dateTimeNow = LocalDateTime.now(clock)
-
-    val departureMovements = DepartureMovements(
-      Seq(
-        DepartureMovement(
-          "AB123",
-          Some("MRN"),
-          dateTimeNow,
-          "location"
-        )
-      )
-    )
-
-    "must return departure movements with messages with an LRN" in {
-
-      val messagesForMovement =
-        MessagesForDepartureMovement(
-          NonEmptyList(
-            DepartureMessage(
-              dateTimeNow,
-              DepartureMessageType.DepartureNotification,
-              "body/path/1"
-            ),
-            List(
-              DepartureMessage(
-                dateTimeNow,
-                DepartureMessageType.GoodsUnderControl,
-                "body/path/2"
-              )
             )
           )
         )
@@ -111,59 +86,6 @@ class DepartureP5MessageServiceSpec extends SpecBase {
         departureP5MessageService.getGoodsUnderControl(departureId = "6365135ba5e821ee").futureValue mustBe Some(ie060Data)
       }
     }
-    
-      when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
-        Future.successful(messagesForMovement)
-      )
-
-      when(mockConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
-        Future.successful(LocalReferenceNumber("lrn123"))
-      )
-
-      val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
-
-      val expectedResult = Seq(
-        DepartureMovementAndMessage(
-          departureMovements.departureMovements.head,
-          messagesForMovement,
-          "lrn123"
-        )
-      )
-
-      result mustBe expectedResult
-    }
-
-    "must return departure movements with messages without an LRN" in {
-
-      val messagesForMovement =
-        MessagesForDepartureMovement(
-          NonEmptyList(
-            DepartureMessage(
-              dateTimeNow,
-              DepartureMessageType.GoodsUnderControl,
-              "body/path/2"
-            ),
-            List.empty
-          )
-        )
-
-      when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
-        Future.successful(messagesForMovement)
-      )
-
-      val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
-
-      val expectedResult = Seq(
-        DepartureMovementAndMessage(
-          departureMovements.departureMovements.head,
-          messagesForMovement,
-          ""
-        )
-      )
-
-      result mustBe expectedResult
-    }
-
   }
 
 }
