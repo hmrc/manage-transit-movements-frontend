@@ -19,7 +19,7 @@ package controllers.departure
 import config.{FrontendAppConfig, SearchResultsAppConfig}
 import connectors.DeparturesMovementConnector
 import controllers.actions._
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import handlers.ErrorHandler
 import models.requests.IdentifierRequest
 import play.api.data.Form
@@ -40,7 +40,7 @@ class ViewDeparturesSearchResultsController @Inject() (
   cc: MessagesControllerComponents,
   connector: DeparturesMovementConnector,
   searchResultsAppConfig: SearchResultsAppConfig,
-  formProvider: SearchFormProvider,
+  formProvider: DeparturesSearchFormProvider,
   view: ViewDeparturesSearchResultsView,
   errorHandler: ErrorHandler
 )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig, clock: Clock)

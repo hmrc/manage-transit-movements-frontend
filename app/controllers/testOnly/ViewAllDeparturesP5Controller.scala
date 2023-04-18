@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.SearchFormProvider
 import models.requests.IdentifierRequest
 import play.api.data.Form
+import forms.DeparturesSearchFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
@@ -39,9 +40,9 @@ class ViewAllDeparturesP5Controller @Inject() (
   cc: MessagesControllerComponents,
   val config: FrontendAppConfig,
   val paginationAppConfig: PaginationAppConfig,
-  formProvider: SearchFormProvider,
   departureP5MessageService: DepartureP5MessageService,
   departureMovementP5Connector: DepartureMovementP5Connector,
+  formProvider: DeparturesSearchFormProvider,
   view: ViewAllDeparturesP5View
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendController(cc)

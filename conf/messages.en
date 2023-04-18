@@ -337,3 +337,6 @@ departure.drafts.dashboard.draftLocked.title = You cannot delete this declaratio
 departure.drafts.dashboard.draftLocked.heading = You cannot delete this declaration right now
 departure.drafts.dashboard.draftLocked.paragraph = Another person from your organisation is currently working on this declaration. You cannot delete it until they’re finished.
 departure.drafts.dashboard.draftLocked.button = Return to drafts
+
+departures.search.form.value.invalid = The Local Reference Number must only include letters a to z without accents, numbers 0 to 9, hyphens and underscores
+arrivals.search.form.value.invalid = The Movement Reference Number must only include letters a to z and numbers 0 to 9

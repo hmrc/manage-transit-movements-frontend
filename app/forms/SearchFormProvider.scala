@@ -16,13 +16,34 @@
 
 package forms
 
+import forms.mappings.Mappings
+import models.domain.StringFieldRegex.{alphaNumericRegex, alphaNumericRegexHyphensUnderscores}
 import play.api.data.Form
-import play.api.data.Forms.text
 
-class SearchFormProvider {
+import scala.util.matching.Regex
+
+trait SearchFormProvider extends Mappings {
+
+  val prefix: String
+
+  val regex: Regex
 
   def apply(): Form[String] =
     Form(
-      "value" -> text()
+      "value" -> play.api.data.Forms
+        .text()
+        .verifying(
+          regexp(regex.toString(), s"$prefix.search.form.value.invalid")
+        )
     )
+}
+
+class DeparturesSearchFormProvider extends SearchFormProvider {
+  override val prefix: String = "departures"
+  override val regex: Regex   = alphaNumericRegexHyphensUnderscores
+}
+
+class ArrivalsSearchFormProvider extends SearchFormProvider {
+  override val prefix: String = "arrivals"
+  override val regex: Regex   = alphaNumericRegex
 }
