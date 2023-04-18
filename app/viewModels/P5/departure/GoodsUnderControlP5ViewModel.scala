@@ -18,11 +18,12 @@ package viewModels.P5.departure
 
 import models.departureP5.{IE060Data, IE060MessageData}
 import play.api.i18n.Messages
-import utils.GoodsUnderControlP5Helper
+import utils.GoodsUnderControlP5MessageHelper
+import viewModels.sections.Section
 
 import javax.inject.Inject
 
-case class GoodsUnderControlP5ViewModel(ie060MessageData: IE060MessageData)
+case class GoodsUnderControlP5ViewModel(sections: Seq[Section])
 
 object GoodsUnderControlP5ViewModel {
 
@@ -32,9 +33,10 @@ object GoodsUnderControlP5ViewModel {
   class GoodsUnderControlP5ViewModelProvider @Inject() () {
 
     def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel = {
-      val helper = new GoodsUnderControlP5Helper(ie060MessageData)
+      val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData)
 
-      new GoodsUnderControlP5ViewModel(ie060MessageData)
+      val sections = Seq(helper.buildGoodsUnderControlSection())
+      new GoodsUnderControlP5ViewModel(sections)
     }
   }
 }

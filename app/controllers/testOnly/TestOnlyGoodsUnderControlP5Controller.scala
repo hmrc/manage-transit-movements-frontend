@@ -19,8 +19,8 @@ package controllers.testOnly
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.DepartureP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
 import views.html.departure.P5.TestOnlyGoodsUnderControlP5View
 
 import javax.inject.Inject
@@ -31,13 +31,14 @@ class TestOnlyGoodsUnderControlP5Controller @Inject() (
   identify: IdentifierAction,
   goodsUnderControlAction: GoodsUnderControlActionProvider,
   cc: MessagesControllerComponents,
+  viewModelProvider: GoodsUnderControlP5ViewModelProvider,
   view: TestOnlyGoodsUnderControlP5View
-)(implicit ec: ExecutionContext)
-    extends FrontendController(cc)
+) extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
     implicit request =>
-      Ok(view(request.ie060MessageData, departureId))
+      val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
+      Ok(view(goodsUnderControlP5ViewModel, departureId))
   }
 }

@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package utils
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import viewModels.sections.Section
 
-import models.departureP5.{IE060Data, IE060MessageData}
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+@this(govukSummaryList: GovukSummaryList)
 
-import java.time.LocalDate
+@(section: Section)(html: Html = Html(""))
 
-class GoodsUnderControlP5Helper(ie060MessageData: IE060MessageData)(implicit messages: Messages) {
+@if(section.rows.nonEmpty) {
+    @section.sectionTitle.map { title =>
+        <h2 class="govuk-heading-m">@title</h2>
+    }
 
-  ???
-
+    @govukSummaryList(
+        SummaryList(
+            rows = section.rows,
+            classes = "govuk-!-margin-bottom-9 ctc-add-to-a-list"
+        )
+    )
+} else {
+    @html
 }
