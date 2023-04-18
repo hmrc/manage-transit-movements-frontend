@@ -31,10 +31,28 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
     call = None
   )
 
+  def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = ie060MessageData.TransitOperation.MRN,
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.movementReferenceNumber"),
+    id = None,
+    call = None
+  )
+
+  def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = ie060MessageData.TransitOperation.MRN,
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.movementReferenceNumber"),
+    id = None,
+    call = None
+  )
+
   def buildGoodsUnderControlSection(): Section = {
 
     val lrnRow = buildLRNRow.map(Seq(_)).getOrElse(Seq.empty)
-    Section(None, lrnRow, None)
+    val mrnRow = buildMRNRow.map(Seq(_)).getOrElse(Seq.empty)
+    val rows   = lrnRow ++ mrnRow
+    Section(None, rows, None)
 
   }
 
