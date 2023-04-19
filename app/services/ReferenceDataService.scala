@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package models.requests
+package services
 
-import models.departureP5.IE060MessageData
+import com.google.inject.Inject
+import connectors.ReferenceDataConnector
 import models.referenceData.CustomsOffice
-import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.http.HeaderCarrier
 
-case class GoodsUnderControlRequest[A](
-  request: Request[A],
-  eoriNumber: String,
-  ie060MessageData: IE060MessageData,
-  customsOffice: Option[CustomsOffice]
-) extends WrappedRequest[A](request)
+import scala.concurrent.{ExecutionContext, Future}
+
+class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) extends ReferenceDataService {
+
+  def getCustomsOfficeByCode(customsOfficeCode: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]] =
+    connector.getCustomsOffice(customsOfficeCode)
+
+}
+
+trait ReferenceDataService {
+  def getCustomsOfficeByCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]]
+
+}

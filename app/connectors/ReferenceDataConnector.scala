@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import logging.Logging
+import models.referenceData.CustomsOffice
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
@@ -32,6 +33,18 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .GET(serviceUrl)
       .recover {
         case _ => Nil
+      }
+  }
+
+  def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]] = {
+    val serviceUrl = s"${config.referenceDataUrl}/customs-office/$code"
+    http
+      .GET[CustomsOffice](serviceUrl)
+      .map(Some(_))
+      .recover {
+        case _ =>
+          logger.error(s"Get Customs Office request failed to return data")
+          None
       }
   }
 
