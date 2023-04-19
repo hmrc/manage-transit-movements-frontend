@@ -7,3 +7,22 @@
     vertical-align: bottom;
   }
 }
+
+@media all and (max-width: 600px)
+{
+  .search-input-custom {
+    text-size-adjust: 100%;
+    margin-bottom: 30px;
+    display: inline-block;
+  }
+}
+
+@media all and (min-width: 601px) and (max-width: 1024px)
+{
+  .search-input-custom {
+    text-size-adjust: 100%;
+    margin-bottom: 30px;
+    width: 50% !important;
+    display: inline-block;
+  }
+}

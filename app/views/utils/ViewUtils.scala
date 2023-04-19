@@ -38,6 +38,7 @@ object ViewUtils {
       label = Label(
         content = messages(label).toText
       ),
+      formGroupClasses = "search-input-custom",
       errorMessage = field.error.map {
         e =>
           ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))
