@@ -26,6 +26,7 @@ object Format {
   def dateFormatted(dateTime: LocalDateTime): String = dateTime.format(dateFormatter)
 
   val controlDecisionDateFormatter: DateTimeFormatter               = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+  val controlDecisionDateTimeFormatter: DateTimeFormatter           = DateTimeFormatter.ofPattern("[dd MMMM yyyy] ['at' h:mm a]")
   def controlDecisionDateFormatted(date: LocalDate): String         = date.format(controlDecisionDateFormatter)
   def controlDecisionDateFormatted(dateTime: LocalDateTime): String = dateTime.format(controlDecisionDateFormatter)
 
