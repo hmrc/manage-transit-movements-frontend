@@ -53,3 +53,9 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+.some-class-to-move-me-up-to-banner {
+   margin-top: -215px;
+   color: white;
+   position: relative;
+}
