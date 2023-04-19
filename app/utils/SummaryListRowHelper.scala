@@ -28,6 +28,8 @@ import java.time.LocalDateTime
 
 class SummaryListRowHelper(implicit messages: Messages) {
 
+  def extractOptionalRow(x: Option[SummaryListRow]): Seq[SummaryListRow] = x.map(Seq(_)).getOrElse(Seq.empty)
+
   def formatAsYesOrNo(answer: Boolean): Content =
     messages {
       if (answer) {

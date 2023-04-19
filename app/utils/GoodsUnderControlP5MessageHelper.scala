@@ -59,15 +59,14 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
 
   def buildGoodsUnderControlSection(): Section = {
 
-    val lrnRow               = buildLRNRow.map(Seq(_)).getOrElse(Seq.empty)
-    val mrnRow               = buildMRNRow.map(Seq(_)).getOrElse(Seq.empty)
-    val dateTimeControlRow   = buildDateTimeControlRow.map(Seq(_)).getOrElse(Seq.empty)
-    val officeOfDepartureRow = buildOfficeOfDepartureRow.map(Seq(_)).getOrElse(Seq.empty)
+    val lrnRow               = extractOptionalRow(buildLRNRow)
+    val mrnRow               = extractOptionalRow(buildMRNRow)
+    val dateTimeControlRow   = extractOptionalRow(buildDateTimeControlRow)
+    val officeOfDepartureRow = extractOptionalRow(buildOfficeOfDepartureRow)
 
     val rows = lrnRow ++ mrnRow ++ dateTimeControlRow ++ officeOfDepartureRow
 
     Section(None, rows, None)
 
   }
-
 }
