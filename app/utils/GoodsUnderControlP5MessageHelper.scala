@@ -22,7 +22,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
 
 import java.time.LocalDateTime
-import scala.annotation.unused
 
 class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(implicit messages: Messages) extends DeparturesP5MessageHelper {
 
@@ -74,14 +73,6 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
     call = None
   )
 
-  def buildControlSequenceRow(controlSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(controlSequence),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.control"),
-    id = None,
-    call = None
-  )
-
   def buildDocumentSequenceRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(documentSequence),
     formatAnswer = formatAsText,
@@ -108,11 +99,10 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
 
   def buildTypeOfControlSection(typeOfControl: TypeOfControls): Section = {
 
-    val sequenceNumber: Seq[SummaryListRow]     = extractOptionalRow(buildControlSequenceRow(typeOfControl.sequenceNumber))
     val controlType: Seq[SummaryListRow]        = extractOptionalRow(buildControlTypeRow(typeOfControl.`type`))
     val controlDescription: Seq[SummaryListRow] = extractOptionalRow(buildControlDescriptionRow(typeOfControl.text))
-    val rows                                    = sequenceNumber ++ controlType ++ controlDescription
-    Section(None, rows, None)
+    val rows                                    =  controlType ++ controlDescription
+    Section(messages("heading.label.controlInformation", typeOfControl.sequenceNumber), rows, None)
 
   }
 
@@ -126,14 +116,11 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
 
   }
 
-  def documentSection(): Seq[Section] = {
-
-    val documentInformation: Seq[RequestedDocument] = ie060MessageData.requestedDocumentsToSeq
-    documentInformation.map {
+  def documentSection(): Seq[Section] = ie060MessageData.requestedDocumentsToSeq.map {
       document =>
         buildDocumentSection(document)
     }
-  }
+
 
   def buildGoodsUnderControlSection(): Section = {
 
