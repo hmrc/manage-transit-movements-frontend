@@ -35,7 +35,7 @@ object GoodsUnderControlP5ViewModel {
     def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel = {
       val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData)
 
-      val sections = Seq(helper.buildGoodsUnderControlSection())
+      val sections = Seq(helper.buildGoodsUnderControlSection()) ++ helper.controlInformationSection() ++ helper.documentSection()
       new GoodsUnderControlP5ViewModel(sections)
     }
   }

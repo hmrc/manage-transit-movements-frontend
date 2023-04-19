@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeGoodsUnderControlAction(departureId: DepartureId, departureP5MessageService: DepartureP5MessageService)
+class FakeGoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService)
     extends GoodsUnderControlAction(departureId, departureP5MessageService) {
 
   val message: IE060Data = IE060Data(

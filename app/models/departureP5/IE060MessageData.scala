@@ -23,7 +23,10 @@ case class IE060MessageData(
   CustomsOfficeOfDeparture: CustomsOfficeOfDeparture,
   TypeOfControls: Option[Seq[TypeOfControls]],
   RequestedDocument: Option[Seq[RequestedDocument]]
-)
+) {
+  val typeOfControlsToSeq     = TypeOfControls.getOrElse(Seq.empty)
+  val requestedDocumentsToSeq = RequestedDocument.getOrElse(Seq.empty)
+}
 
 object IE060MessageData {
   implicit val formats: OFormat[IE060MessageData] = Json.format[IE060MessageData]

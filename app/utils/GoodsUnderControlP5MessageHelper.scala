@@ -16,12 +16,13 @@
 
 package utils
 
-import models.departureP5.IE060MessageData
+import models.departureP5.{IE060MessageData, RequestedDocument, TypeOfControls}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
 
 import java.time.LocalDateTime
+import scala.annotation.unused
 
 class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(implicit messages: Messages) extends DeparturesP5MessageHelper {
 
@@ -57,6 +58,83 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
     call = None
   )
 
+  def buildControlTypeRow(typeOfControl: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(typeOfControl),
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.type"),
+    id = None,
+    call = None
+  )
+
+  def buildControlDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = description,
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.description"),
+    id = None,
+    call = None
+  )
+
+  def buildControlSequenceRow(controlSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(controlSequence),
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.control"),
+    id = None,
+    call = None
+  )
+
+  def buildDocumentSequenceRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(documentSequence),
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.document"),
+    id = None,
+    call = None
+  )
+
+  def buildDocumentTypeRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(documentSequence),
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.type"),
+    id = None,
+    call = None
+  )
+
+  def buildDocumentDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = description,
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.description"),
+    id = None,
+    call = None
+  )
+
+  def buildTypeOfControlSection(typeOfControl: TypeOfControls): Section = {
+
+    val sequenceNumber: Seq[SummaryListRow]     = extractOptionalRow(buildControlSequenceRow(typeOfControl.sequenceNumber))
+    val controlType: Seq[SummaryListRow]        = extractOptionalRow(buildControlTypeRow(typeOfControl.`type`))
+    val controlDescription: Seq[SummaryListRow] = extractOptionalRow(buildControlDescriptionRow(typeOfControl.text))
+    val rows                                    = sequenceNumber ++ controlType ++ controlDescription
+    Section(None, rows, None)
+
+  }
+
+  def buildDocumentSection(document: RequestedDocument): Section = {
+
+    val sequenceNumber: Seq[SummaryListRow]      = extractOptionalRow(buildDocumentSequenceRow(document.sequenceNumber))
+    val documentType: Seq[SummaryListRow]        = extractOptionalRow(buildDocumentTypeRow(document.documentType))
+    val documentDescription: Seq[SummaryListRow] = extractOptionalRow(buildDocumentDescriptionRow(document.description))
+    val rows                                     = sequenceNumber ++ documentType ++ documentDescription
+    Section(None, rows, None)
+
+  }
+
+  def documentSection(): Seq[Section] = {
+
+    val documentInformation: Seq[RequestedDocument] = ie060MessageData.requestedDocumentsToSeq
+    documentInformation.map {
+      document =>
+        buildDocumentSection(document)
+    }
+  }
+
   def buildGoodsUnderControlSection(): Section = {
 
     val lrnRow               = extractOptionalRow(buildLRNRow)
@@ -68,5 +146,14 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
 
     Section(None, rows, None)
 
+  }
+
+  def controlInformationSection(): Seq[Section] = {
+
+    val controlInformation: Seq[TypeOfControls] = ie060MessageData.typeOfControlsToSeq
+    controlInformation.map {
+      typeOfControl =>
+        buildTypeOfControlSection(typeOfControl)
+    }
   }
 }
