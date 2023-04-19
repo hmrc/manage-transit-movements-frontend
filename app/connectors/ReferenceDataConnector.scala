@@ -23,17 +23,16 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReferenceDataConnector @Inject()(config: FrontendAppConfig, http: HttpClient) extends Logging {
+class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClient) extends Logging {
 
-  def getCountries()(implicit ec: ExecutionContext, hc: HeaderCarrier)= {
+  def getCountries()(implicit ec: ExecutionContext, hc: HeaderCarrier) = {
     val serviceUrl = s"${config.referenceDataUrl}/countries"
 
-      http
-        .GET(serviceUrl)
-        .recover {
-          case _ => Nil
-        }
-    }
-
+    http
+      .GET(serviceUrl)
+      .recover {
+        case _ => Nil
+      }
+  }
 
 }

@@ -23,10 +23,19 @@ import models.arrival.ArrivalStatus.{ArrivalRejected, ArrivalSubmitted, GoodsRel
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject.guice.GuiceApplicationBuilder
 
 import java.time.{Clock, LocalDateTime, ZoneId}
 
 class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .configure(
+        "microservice.services.features.phase5Enabled.departure" -> false,
+        "microservice.services.features.phase5Enabled.arrival"   -> false
+      )
 
   "must display unloading permission" in {
     forAll(arbitrary[Arrival]) {

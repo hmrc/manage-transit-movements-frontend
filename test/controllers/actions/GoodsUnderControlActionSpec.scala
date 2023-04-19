@@ -61,7 +61,7 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
 
       when(mockService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
 
-      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockService)(implicitly))(departureId)
+      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
@@ -74,7 +74,7 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
 
       when(mockService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(None))
 
-      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockService)(implicitly))(departureId)
+      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 

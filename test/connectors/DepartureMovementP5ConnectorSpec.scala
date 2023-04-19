@@ -281,11 +281,11 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         )
 
         server.stubFor(
-          get(urlEqualTo(s"/movements/departures/${departureId.toString}/messages"))
+          get(urlEqualTo(s"/movements/departures/$departureIdP5/messages"))
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getMessageMetaData(departureId.toString).futureValue mustBe expectedResult
+        connector.getMessageMetaData(departureIdP5).futureValue mustBe expectedResult
 
       }
 
@@ -363,11 +363,11 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
           )
 
           server.stubFor(
-            get(urlEqualTo(s"/movements/departures/${departureId.toString}/messages"))
+            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2"))
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getGoodsUnderControl(departureId.toString).futureValue mustBe expectedResult
+          connector.getGoodsUnderControl(s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
 
         }
       }
