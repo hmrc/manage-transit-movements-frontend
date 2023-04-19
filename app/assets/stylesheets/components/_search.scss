@@ -8,7 +8,7 @@
   }
 }
 
-@media all and (max-width: 600px)
+@media all and (min-width: 0px) and (max-width: 600px)
 {
   .search-input-custom {
     text-size-adjust: 100%;
