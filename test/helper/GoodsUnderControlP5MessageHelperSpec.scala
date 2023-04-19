@@ -189,15 +189,14 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val result = helper.controlInformationSection()
 
         val firstRow =
-          Seq(SummaryListRow(key = Key("Control".toText), value = Value("1".toText)), SummaryListRow(key = Key("Type".toText), value = Value("44".toText)))
+          Seq(SummaryListRow(key = Key("Type".toText), value = Value("44".toText)))
 
         val secondRow = Seq(
-          SummaryListRow(key = Key("Control".toText), value = Value("2".toText)),
           SummaryListRow(key = Key("Type".toText), value = Value("45".toText)),
           SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
         )
 
-        val seqSummaryRow = Seq(Section(None, firstRow, None), Section(None, secondRow, None))
+        val seqSummaryRow = Seq(Section(Some("Control information 1"), firstRow, None), Section(Some("Control information 2"), secondRow, None))
 
         result mustBe seqSummaryRow
 
@@ -242,15 +241,14 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val result = helper.documentSection()
 
         val firstRow =
-          Seq(SummaryListRow(key = Key("Documents".toText), value = Value("1".toText)), SummaryListRow(key = Key("Type".toText), value = Value("44".toText)))
+          Seq(SummaryListRow(key = Key("Type".toText), value = Value("44".toText)))
 
         val secondRow = Seq(
-          SummaryListRow(key = Key("Documents".toText), value = Value("2".toText)),
           SummaryListRow(key = Key("Type".toText), value = Value("45".toText)),
           SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
         )
 
-        val seqSummaryRow = Seq(Section(None, firstRow, None), Section(None, secondRow, None))
+        val seqSummaryRow = Seq(Section(Some("Requested document 1"), firstRow, None), Section(Some("Requested document 2"), secondRow, None))
 
         result mustBe seqSummaryRow
 

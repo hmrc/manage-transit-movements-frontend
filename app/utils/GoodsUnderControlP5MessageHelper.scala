@@ -101,26 +101,23 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
 
     val controlType: Seq[SummaryListRow]        = extractOptionalRow(buildControlTypeRow(typeOfControl.`type`))
     val controlDescription: Seq[SummaryListRow] = extractOptionalRow(buildControlDescriptionRow(typeOfControl.text))
-    val rows                                    =  controlType ++ controlDescription
+    val rows                                    = controlType ++ controlDescription
     Section(messages("heading.label.controlInformation", typeOfControl.sequenceNumber), rows, None)
 
   }
 
   def buildDocumentSection(document: RequestedDocument): Section = {
 
-    val sequenceNumber: Seq[SummaryListRow]      = extractOptionalRow(buildDocumentSequenceRow(document.sequenceNumber))
     val documentType: Seq[SummaryListRow]        = extractOptionalRow(buildDocumentTypeRow(document.documentType))
     val documentDescription: Seq[SummaryListRow] = extractOptionalRow(buildDocumentDescriptionRow(document.description))
-    val rows                                     = sequenceNumber ++ documentType ++ documentDescription
-    Section(None, rows, None)
-
+    val rows                                     = documentType ++ documentDescription
+    Section(messages("heading.label.documentInformation", document.sequenceNumber), rows, None)
   }
 
   def documentSection(): Seq[Section] = ie060MessageData.requestedDocumentsToSeq.map {
-      document =>
-        buildDocumentSection(document)
-    }
-
+    document =>
+      buildDocumentSection(document)
+  }
 
   def buildGoodsUnderControlSection(): Section = {
 

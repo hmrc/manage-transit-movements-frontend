@@ -93,19 +93,6 @@ class SummaryListRowHelper(implicit messages: Messages) {
       args = args: _*
     )
 
-  protected def buildRowWithNoChangeLink(
-    prefix: String,
-    answer: Content,
-    args: Any*
-  ): SummaryListRow =
-    buildSimpleRow(
-      prefix = prefix,
-      label = messages(s"$prefix", args: _*),
-      answer = answer,
-      id = None,
-      call = None
-    )
-
   protected def buildSimpleRow(
     prefix: String,
     label: String,
@@ -132,63 +119,5 @@ class SummaryListRowHelper(implicit messages: Messages) {
             )
           )
       }
-    )
-
-  def buildRowFromPath(
-    prefix: String,
-    answer: Content,
-    id: Option[String],
-    call: Option[Call],
-    args: Any*
-  ): SummaryListRow =
-    SummaryListRow(
-      key = messages(s"$prefix", args: _*).toKey,
-      value = Value(answer),
-      actions = call.map {
-        x =>
-          Actions(items =
-            List(
-              ActionItem(
-                content = messages("site.edit").toText,
-                href = x.url,
-                visuallyHiddenText = Some(messages(s"$prefix.change.hidden", args: _*)),
-                attributes = id.fold[Map[String, String]](Map.empty)(
-                  id => Map("id" -> id)
-                )
-              )
-            )
-          )
-      }
-    )
-
-  def buildRemovableRow(
-    prefix: String,
-    answer: Content,
-    id: String,
-    changeCall: Call,
-    removeCall: Call,
-    args: Any*
-  ): SummaryListRow =
-    SummaryListRow(
-      key = messages(s"$prefix", args: _*).toKey,
-      value = Value(answer),
-      actions = Some(
-        Actions(items =
-          List(
-            ActionItem(
-              content = messages("site.edit").toText,
-              href = changeCall.url,
-              visuallyHiddenText = Some(messages(s"$prefix.change.hidden", args: _*)),
-              attributes = Map("id" -> s"change-$id")
-            ),
-            ActionItem(
-              content = messages("site.delete").toText,
-              href = removeCall.url,
-              visuallyHiddenText = Some(messages(s"$prefix.remove.hidden", args: _*)),
-              attributes = Map("id" -> s"remove-$id")
-            )
-          )
-        )
-      )
     )
 }
