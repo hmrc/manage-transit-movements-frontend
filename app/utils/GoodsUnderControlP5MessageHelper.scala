@@ -52,7 +52,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
   def buildOfficeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(ie060MessageData.CustomsOfficeOfDeparture.referenceNumber),
     formatAnswer = formatAsText,
-    prefix = messages("heading.label.controlInformation"),
+    prefix = messages("row.label.officeOfDeparture"),
     id = None,
     call = None
   )

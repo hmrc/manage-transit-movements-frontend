@@ -22,7 +22,7 @@ import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.Format.controlDecisionDateFormatter
+import utils.Format.{controlDecisionDateFormatter, controlDecisionDateTimeFormatter}
 
 import java.time.LocalDateTime
 
@@ -42,7 +42,7 @@ class SummaryListRowHelper(implicit messages: Messages) {
   protected def formatAsText[T](answer: T): Content = s"$answer".toText
 
   def formatAsDate(answer: LocalDateTime): Content =
-    answer.format(controlDecisionDateFormatter).toText
+    answer.format(controlDecisionDateTimeFormatter).toText
 
   protected def formatEnumAsText[T](messageKeyPrefix: String)(answer: T): Content =
     formatEnumAsString(messageKeyPrefix)(answer).toText
