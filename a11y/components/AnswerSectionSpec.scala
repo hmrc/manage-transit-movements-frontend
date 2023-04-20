@@ -20,6 +20,7 @@ import a11ySpecBase.A11ySpecBase
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.Html
 import viewModels.sections.Section
+import views.html.components.AnswerSection
 import views.html.templates.MainTemplate
 
 class AnswerSectionSpec extends A11ySpecBase {

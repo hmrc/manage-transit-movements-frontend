@@ -47,8 +47,6 @@ GET         /manage-transit-movements/test-only/view-arrival-notifications      
 + nocsrf
 GET         /manage-transit-movements/test-only/view-departure-declarations                 controllers.testOnly.ViewAllDeparturesP5Controller.onPageLoad()
 
-
-+ nocsfr
 GET         /manage-transit-movements/test-only/goods-under-control/:departureId   controllers.testOnly.TestOnlyGoodsUnderControlP5Controller.onPageLoad(departureId: String)
 
 

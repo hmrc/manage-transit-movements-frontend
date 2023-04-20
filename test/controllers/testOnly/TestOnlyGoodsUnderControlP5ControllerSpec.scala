@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import controllers.actions.{FakeGoodsUnderControlAction, GoodsUnderControlActionProvider}
 import generators.Generators
 import models.departureP5._
 import models.referenceData.CustomsOffice
@@ -43,7 +44,16 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
   private val mockGoodsUnderControlP5ViewModelProvider = mock[GoodsUnderControlP5ViewModelProvider]
   private val mockReferenceDataService                 = mock[ReferenceDataService]
   private val mockDepartureP5MessageService            = mock[DepartureP5MessageService]
+  private val mockGoodsUnderControlActionProvider      = mock[GoodsUnderControlActionProvider]
 
+  protected def goodsUnderControlAction(departureIdP5: String,
+                                        mockDepartureP5MessageService: DepartureP5MessageService,
+                                        mockReferenceDataService: ReferenceDataService
+  ): Unit =
+    when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn new FakeGoodsUnderControlAction(departureIdP5,
+                                                                                                      mockDepartureP5MessageService,
+                                                                                                      mockReferenceDataService
+    )
   lazy val goodsUnderControlController: String = controllers.testOnly.routes.TestOnlyGoodsUnderControlP5Controller.onPageLoad(departureIdP5).url
   private val sections                         = arbitrarySections.arbitrary.sample.value
 
@@ -51,6 +61,9 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
     super.beforeEach()
     reset(mockReferenceDataService)
     reset(mockDepartureP5MessageService)
+    reset(mockGoodsUnderControlP5ViewModelProvider)
+    reset(mockGoodsUnderControlActionProvider)
+
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =

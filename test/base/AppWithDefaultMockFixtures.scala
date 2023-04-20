@@ -17,20 +17,15 @@
 package base
 
 import controllers.actions._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import services.{DepartureP5MessageService, ReferenceDataService}
 
 trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar {
   self: TestSuite =>
-
-  final val mockGoodsUnderControlActionProvider = mock[GoodsUnderControlActionProvider]
 
   override def fakeApplication(): Application =
     guiceApplicationBuilder()
@@ -43,12 +38,4 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
         bind[IdentifierAction].to[FakeIdentifierAction]
       )
 
-  protected def goodsUnderControlAction(departureIdP5: String,
-                                        mockDepartureP5MessageService: DepartureP5MessageService,
-                                        mockReferenceDataService: ReferenceDataService
-  ): Unit =
-    when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn new FakeGoodsUnderControlAction(departureIdP5,
-                                                                                                      mockDepartureP5MessageService,
-                                                                                                      mockReferenceDataService
-    )
 }

@@ -341,3 +341,32 @@ departure.drafts.dashboard.draftLocked.button = Return to drafts
 
 departures.search.form.value.invalid = The Local Reference Number must only include letters a to z without accents, numbers 0 to 9, hyphens and underscores
 arrivals.search.form.value.invalid = The Movement Reference Number must only include letters a to z and numbers 0 to 9
+
+departure.ie060.message.title = Goods under control
+departure.ie060.message.heading = Goods under control
+departure.ie060.message.h2 = What happens next
+
+departure.ie060.message.subheading = LRN: {0}
+departure.ie060.message.paragraph1 = Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety.
+departure.ie060.message.paragraph2 = While under control, the goods will remain under supervision at the office of destination.
+departure.ie060.message.paragraph3 = You must wait for the outcome of Customs’ checks.
+departure.ie060.message.paragraph4.prefix = You must wait for the outcome of Customs’ checks.
+departure.ie060.message.paragraph4.linkText = Check your departure declarations
+departure.ie060.message.paragraph4.suffix = for further updates.
+
+row.label.localReferenceNumber =     Local Reference Number (LRN)
+row.label.movementReferenceNumber =  Movement Reference Number (MRN)
+row.label.dateAndTimeOfControl =  Date and time of control
+row.label.officeOfDeparture =   Office of departure
+heading.label.controlInformation =  Control information {0}
+heading.label.documentInformation =  Requested document {0}
+row.label.type =  Type
+row.label.control =  Control
+row.label.description =  Description
+
+goodsUnderControl.subHeading = What happens next
+
+customsOfficeContact.telephoneAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0} on {1}.
+customsOfficeContact.telephoneNotAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0}.
+customsOfficeContact.teleAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0} on {1}.
+customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0}.

@@ -19,8 +19,8 @@ package models.referenceData
 import play.api.libs.json.{Json, OFormat}
 
 case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  val nameOption  = if (name.isEmpty) None else Some(name)
-  val phoneOption = if (phoneNumber.isDefined && !phoneNumber.get.isEmpty) Some(phoneNumber.get) else None
+  val nameOption: Option[String] = if (name.isEmpty) None else Some(name)
+  val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
 }
 
 object CustomsOffice {
