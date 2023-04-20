@@ -46,9 +46,9 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             .willReturn(okJson(customsOfficeResponseJsonWithPhone))
         )
 
-        val expectedResult = Some(CustomsOffice("ID1", "NAME001", Seq("GB"), Some("004412323232345")))
+        val expectedResult = Some(CustomsOffice("ID1", "NAME001", Some("004412323232345")))
 
-        connector.getCustomsOffice("GB00001").futureValue mustBe expectedResult
+        connector.getCustomsOffice(code).futureValue mustBe expectedResult
       }
 
       "should handle a 200 response for customs office with code end point with no phone number" in {
@@ -57,9 +57,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             .willReturn(okJson(customsOfficeResponseJsonWithOutPhone))
         )
 
-        println(s">>>>>>>>> $customsOfficeUri/$code")
-
-        val expectedResult = Some(CustomsOffice("ID1", "NAME001", Seq("GB"), None))
+        val expectedResult = Some(CustomsOffice("ID1", "NAME001", None))
 
         connector.getCustomsOffice("GB00001").futureValue mustBe expectedResult
       }
@@ -86,31 +84,13 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
 object ReferenceDataConnectorSpec {
 
-  private val countryUri       = "/test-only/transit-movements-trader-reference-data/countries"
   private val customsOfficeUri = "/test-only/transit-movements-trader-reference-data/customs-office"
-
-  private val countryListResponseJson: String =
-    """
-      |[
-      | {
-      |   "code":"GB",
-      |   "state":"valid",
-      |   "description":"United Kingdom"
-      | },
-      | {
-      |   "code":"AD",
-      |   "state":"valid",
-      |   "description":"Andorra"
-      | }
-      |]
-      |""".stripMargin
 
   private val customsOfficeResponseJsonWithPhone: String =
     """
       | {
       |   "id":"ID1",
       |   "name":"NAME001",
-      |   "countryId":"GB",
       |   "phoneNumber":"004412323232345"
       | }
       |""".stripMargin

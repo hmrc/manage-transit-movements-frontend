@@ -45,13 +45,13 @@ object GoodsUnderControlP5ViewModel {
 
     def fetchWhatHappensNext(ie060MessageData: IE060MessageData, customsOffice: Option[CustomsOffice])(implicit messages: Messages): String =
       customsOffice match {
-        case Some(CustomsOffice(_, name, _, Some(phone))) =>
+        case Some(CustomsOffice(_, name, Some(phone))) =>
           (name.nonEmpty, phone.nonEmpty) match {
             case (true, true) => messages("goodsUnderControl.telephoneAvailable", name, phone)
             case _            => messages("goodsUnderControl.telephoneNotAvailable", name)
           }
-        case Some(CustomsOffice(_, name, _, None)) if name.nonEmpty        => messages("goodsUnderControl.telephoneNotAvailable", name)
-        case Some(CustomsOffice(id, "", _, Some(phone))) if phone.nonEmpty => messages("goodsUnderControl.teleAvailAndOfficeNameNotAvail", id, phone)
+        case Some(CustomsOffice(_, name, None)) if name.nonEmpty        => messages("goodsUnderControl.telephoneNotAvailable", name)
+        case Some(CustomsOffice(id, "", Some(phone))) if phone.nonEmpty => messages("goodsUnderControl.teleAvailAndOfficeNameNotAvail", id, phone)
         case _ =>
           messages("goodsUnderControl.teleNotAvailAndOfficeNameNotAvail", ie060MessageData.CustomsOfficeOfDeparture.referenceNumber)
       }

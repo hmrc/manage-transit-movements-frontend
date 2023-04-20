@@ -35,7 +35,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val customsOffice = CustomsOffice("ID1", "NAME001", Seq("GB"), None)
+  private val customsOffice = CustomsOffice("ID1", "NAME001", None)
 
   "ReferenceDataService" - {
 

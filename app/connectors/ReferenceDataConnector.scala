@@ -33,7 +33,6 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .map(Some(_))
       .recover {
         case _ =>
-          println(s"****** $serviceUrl     Get Customs Office request failed to return data******")
           logger.error(s"Get Customs Office request failed to return data")
           None
       }
