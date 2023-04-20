@@ -41,8 +41,16 @@ import scala.concurrent.Future
 class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockGoodsUnderControlP5ViewModelProvider = mock[GoodsUnderControlP5ViewModelProvider]
+  private val mockReferenceDataService                 = mock[ReferenceDataService]
+  private val mockDepartureP5MessageService            = mock[DepartureP5MessageService]
 
   lazy val checkYourAnswersRoute: String = controllers.testOnly.routes.TestOnlyGoodsUnderControlP5Controller.onPageLoad(departureIdP5).url
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockReferenceDataService);
+    reset(mockDepartureP5MessageService);
+  }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -63,8 +71,11 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
         )
       )
+      when(mockDepartureP5MessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
 
-      goodsUnderControlAction(departureIdP5, message, customsOffice)
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+
+      goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
       val sections = arbitrarySections.arbitrary.sample.value
 
