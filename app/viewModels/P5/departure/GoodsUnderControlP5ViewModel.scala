@@ -31,9 +31,6 @@ object GoodsUnderControlP5ViewModel {
   def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel =
     new GoodsUnderControlP5ViewModelProvider()(ie060MessageData)
 
-  def fetchWhatHappensNext(ie060MessageData: IE060MessageData, customsOffice: Option[CustomsOffice])(implicit messages: Messages): String =
-    new GoodsUnderControlP5ViewModelProvider().fetchWhatHappensNext(ie060MessageData: IE060MessageData, customsOffice: Option[CustomsOffice])
-
   class GoodsUnderControlP5ViewModelProvider @Inject() () {
 
     def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel = {

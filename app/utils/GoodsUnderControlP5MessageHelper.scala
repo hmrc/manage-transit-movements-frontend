@@ -73,14 +73,6 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
     call = None
   )
 
-  def buildDocumentSequenceRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(documentSequence),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.document"),
-    id = None,
-    call = None
-  )
-
   def buildDocumentTypeRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(documentSequence),
     formatAnswer = formatAsText,

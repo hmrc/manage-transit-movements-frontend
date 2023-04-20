@@ -88,6 +88,14 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001."
       }
+      "When Customs Office not fetched from reference data service" in {
+
+        val viewModelProvider = CustomsOfficeContactViewModel("GB000060", None)
+
+        val result: String = viewModelProvider.fetchWhatHappensNext
+
+        result mustBe "You must share the requested documentation with the office of destination. Contact Customs office GB000060."
+      }
 
     }
 
