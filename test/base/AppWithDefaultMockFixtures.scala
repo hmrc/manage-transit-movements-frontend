@@ -17,15 +17,26 @@
 package base
 
 import controllers.actions._
+import models.departureP5.IE060Data
+import models.referenceData.CustomsOffice
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import services.{DepartureP5MessageService, ReferenceDataService}
+
+import scala.concurrent.Future
 
 trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar {
   self: TestSuite =>
+
+  final val mockGoodsUnderControlActionProvider = mock[GoodsUnderControlActionProvider]
+  final val mockReferenceDataService            = mock[ReferenceDataService]
+  final val mockDepartureP5MessageService       = mock[DepartureP5MessageService]
 
   override def fakeApplication(): Application =
     guiceApplicationBuilder()
@@ -37,4 +48,13 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
       .overrides(
         bind[IdentifierAction].to[FakeIdentifierAction]
       )
+
+  protected def goodsUnderControlAction(departureIdP5: String, message: IE060Data, customsOffice: CustomsOffice): Unit = {
+    when(mockDepartureP5MessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+    when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+    when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn new FakeGoodsUnderControlAction(departureIdP5,
+                                                                                                      mockDepartureP5MessageService,
+                                                                                                      mockReferenceDataService
+    )
+  }
 }

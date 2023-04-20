@@ -18,7 +18,7 @@ package config
 
 import com.google.inject.AbstractModule
 import controllers.actions._
-import services.{DepartureP5MessageService, DraftDepartureService, MongoDraftDepartureService, ReferenceDataService, ReferenceDataServiceImpl}
+import services.{DraftDepartureService, MongoDraftDepartureService, ReferenceDataService, ReferenceDataServiceImpl}
 
 import java.time.Clock
 

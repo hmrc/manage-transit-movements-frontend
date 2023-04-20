@@ -16,7 +16,6 @@
 
 package controllers.actions
 
-import cats.data
 import cats.data.OptionT
 import controllers.routes
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}

@@ -22,7 +22,7 @@ import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.Format.{controlDecisionDateFormatter, controlDecisionDateTimeFormatter}
+import utils.Format.controlDecisionDateTimeFormatter
 
 import java.time.LocalDateTime
 

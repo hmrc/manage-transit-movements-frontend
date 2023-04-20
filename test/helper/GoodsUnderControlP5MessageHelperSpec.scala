@@ -20,11 +20,10 @@ import base.SpecBase
 import generators.Generators
 import models.departureP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.sections.Section
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryListRow, Value, _}
-import utils.GoodsUnderControlP5MessageHelper
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import utils.Format.controlDecisionDateTimeFormatter
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import utils.GoodsUnderControlP5MessageHelper
+import viewModels.sections.Section
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

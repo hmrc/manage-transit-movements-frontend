@@ -17,7 +17,6 @@
 package utils
 
 import play.api.i18n.Messages
-import play.api.libs.json.Reads
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
