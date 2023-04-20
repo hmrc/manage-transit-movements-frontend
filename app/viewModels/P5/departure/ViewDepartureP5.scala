@@ -25,14 +25,10 @@ import java.time._
 final case class ViewDepartureP5(
   updatedDate: LocalDate,
   updatedTime: LocalTime,
-  movementReferenceNumber: Option[String],
+  referenceNumber: String,
   status: String,
   actions: Seq[ViewMovementAction]
-) extends ViewMovement {
-
-  //TODO need to revisit
-  override val referenceNumber: String = movementReferenceNumber.getOrElse("")
-}
+) extends ViewMovement
 
 object ViewDepartureP5 {
 
@@ -45,7 +41,7 @@ object ViewDepartureP5 {
     ViewDepartureP5(
       updatedDate = systemTime.toLocalDate,
       updatedTime = systemTime.toLocalTime,
-      movementReferenceNumber = movementAndMessage.departureMovement.movementReferenceNumber,
+      referenceNumber = movementAndMessage.localReferenceNumber,
       status = departureStatus.status,
       actions = departureStatus.actions
     )

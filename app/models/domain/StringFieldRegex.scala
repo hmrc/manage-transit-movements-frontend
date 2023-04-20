@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package models.departureP5
+package models.domain
 
-case class DepartureMovementAndMessage(
-  departureMovement: DepartureMovement,
-  messagesForMovement: MessagesForDepartureMovement,
-  localReferenceNumber: String
-)
+import scala.util.matching.Regex
+
+object StringFieldRegex {
+
+  val stringFieldRegex: Regex                    = "[\\sa-zA-Z0-9&'@/.\\-? ]*".r
+  val stringFieldRegexAsterisk: Regex            = "[\\sa-zA-Z0-9&'*/.\\-? ]*".r
+  val alphaNumericRegex: Regex                   = "^[a-zA-Z0-9]*$".r
+  val alphaNumericRegexHyphensUnderscores: Regex = "^[a-zA-Z0-9-_]*$".r
+  val numericRegex: Regex                        = "^[0-9]*$".r
+  val alphaNumericWithSpacesRegex: Regex         = "^[a-zA-Z\\s0-9]*$".r
+}

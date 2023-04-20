@@ -38,7 +38,7 @@ object ViewUtils {
       label = Label(
         content = messages(label).toText
       ),
-      formGroupClasses = "govuk-!-width-one-half",
+      formGroupClasses = "search-input-custom",
       errorMessage = field.error.map {
         e =>
           ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))
@@ -183,7 +183,7 @@ object ViewUtils {
       }
 
     def withLegend(legend: String, legendIsVisible: Boolean = true): Radios = {
-      val legendClass = if (legendIsVisible) "govuk-fieldset__legend--m" else "govuk-visually-hidden"
+      val legendClass = if (legendIsVisible) "govuk-fieldset__legend--m" else "govuk-visually-hidden govuk-!-display-inline"
       radios.copy(
         fieldset = Some(Fieldset(legend = Some(Legend(content = Text(legend), classes = legendClass, isPageHeading = false))))
       )

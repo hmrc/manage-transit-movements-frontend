@@ -42,8 +42,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "location"
         ),
         MessagesForDepartureMovement(
-          NonEmptyList(DepartureMessage(dateTimeNow, headMessage), List.empty)
-        )
+          NonEmptyList(DepartureMessage(dateTimeNow, headMessage, "body/path"), List.empty)
+        ),
+        "AB123"
       )
 
     "when given Message with head of DepartureDeclaration" in {
@@ -281,7 +282,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
         Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.viewErrors"),
+          ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.viewDetails"),
           ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.cancelDeclaration")
         )
       )

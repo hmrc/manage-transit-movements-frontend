@@ -18,7 +18,7 @@ package controllers.departure
 
 import base.SpecBase
 import connectors.DeparturesMovementConnector
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import generators.Generators
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber, RichLocalDateTime}
@@ -44,7 +44,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
   private val time: LocalDateTime              = LocalDateTime.now()
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
-  private val formProvider = new SearchFormProvider()
+  private val formProvider = new DeparturesSearchFormProvider()
   private val form         = formProvider()
 
   override def beforeEach(): Unit = {

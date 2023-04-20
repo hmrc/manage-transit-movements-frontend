@@ -200,12 +200,14 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
           NonEmptyList(
             DepartureMessage(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.AllocatedMRN
+              DepartureMessageType.AllocatedMRN,
+              "movements/departures/1/messages/1"
             ),
             List(
               DepartureMessage(
                 LocalDateTime.parse("2022-11-10T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-                DepartureMessageType.DepartureNotification
+                DepartureMessageType.DepartureNotification,
+                "movements/departures/1/messages/2"
               )
             )
           )
@@ -371,6 +373,51 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         }
       }
+    }
+
+    "getLRN" - {
+
+      "must return LocalReferenceNumber" in {
+
+        val ie015Body = Json.obj(
+          "CC015" -> Json.obj(
+            "TransitOperation" -> Json.obj(
+              "LRN" -> "AB123"
+            )
+          )
+        )
+
+        val responseJson = Json.parse(
+          s"""
+            |{
+            |  "_links": {
+            |    "self": {
+            |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
+            |    },
+            |    "departure": {
+            |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
+            |    }
+            |  },
+            |  "id": "62f4ebbb765ba8c2",
+            |  "departureId": "62f4ebbbf581d4aa",
+            |  "received": "2022-08-11T11:44:59.83705",
+            |  "type": "IE015",
+            |  "status": "Success",
+            |  "body": ${ie015Body.toString}
+            |}
+            |""".stripMargin
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureId/messages/ab123"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        val result = connector.getLRN(s"movements/departures/$departureId/messages/ab123").futureValue
+
+        result mustBe LocalReferenceNumber("AB123")
+      }
+
     }
   }
 

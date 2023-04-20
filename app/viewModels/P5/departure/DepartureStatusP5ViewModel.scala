@@ -27,7 +27,7 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
-      case DepartureMovementAndMessage(DepartureMovement(_, _, _, _), MessagesForDepartureMovement(messages)) =>
+      case DepartureMovementAndMessage(DepartureMovement(_, _, _, _), MessagesForDepartureMovement(messages), _) =>
         val allPfs: PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] =
           Seq(
             departureNotification,
@@ -211,7 +211,7 @@ object DepartureStatusP5ViewModel {
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
         actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.viewErrors"),
+          ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.viewDetails"),
           ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.cancelDeclaration")
         )
       )

@@ -19,7 +19,7 @@ package controllers.departure
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
-import forms.SearchFormProvider
+import forms.{DeparturesSearchFormProvider, SearchFormProvider}
 import generators.Generators
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
@@ -34,6 +34,7 @@ import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepart
 import viewModels.pagination.MovementsPaginationViewModel
 import views.html.departure.P5.ViewAllDeparturesP5View
 import viewModels.ViewMovementAction
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
@@ -43,7 +44,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   private val mockDepartureMovementConnector = mock[DepartureMovementP5Connector]
   private val mockDepartureMovementService   = mock[DepartureP5MessageService]
 
-  private val formProvider = new SearchFormProvider()
+  private val formProvider = new DeparturesSearchFormProvider()
   private val form         = formProvider()
 
   override def beforeEach(): Unit = {
@@ -77,7 +78,8 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
     NonEmptyList(
       DepartureMessage(
         dateTime,
-        DepartureMessageType.DepartureNotification
+        DepartureMessageType.DepartureNotification,
+        "body/path"
       ),
       List.empty[DepartureMessage]
     )
@@ -86,7 +88,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   private val mockViewMovement = ViewDepartureP5(
     updatedDate = dateTime.toLocalDate,
     updatedTime = dateTime.toLocalTime,
-    movementReferenceNumber = None,
+    referenceNumber = "AB123",
     status = "movement.status.P5.departureNotificationSubmitted",
     actions = Seq(
       ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}", "movement.status.P5.action.departureNotification.cancelDeclaration")
@@ -101,7 +103,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         .thenReturn(Future.successful(Some(mockDepartureMovementResponse)))
 
       when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
-        .thenReturn(Future.successful(Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse))))
+        .thenReturn(Future.successful(Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123"))))
 
       val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url)
 

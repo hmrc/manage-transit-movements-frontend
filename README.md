@@ -44,6 +44,7 @@ Setting a feature to `true` will ensure that journey points to the new `manage-t
 
 The above are set to true in service-manager-config for profile `MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5_FEATURE`.
 
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").

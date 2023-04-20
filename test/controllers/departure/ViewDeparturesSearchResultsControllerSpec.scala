@@ -19,7 +19,7 @@ package controllers.departure
 import base.{FakeSearchResultsAppConfig, SpecBase}
 import config.SearchResultsAppConfig
 import connectors.DeparturesMovementConnector
-import forms.SearchFormProvider
+import forms.DeparturesSearchFormProvider
 import generators.Generators
 import models.departure.DepartureStatus.DepartureSubmitted
 import models.{Departure, DepartureId, Departures, LocalReferenceNumber, RichLocalDateTime}
@@ -45,7 +45,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with ScalaCheck
   private val time: LocalDateTime              = LocalDateTime.now()
   private val systemDefaultTime: LocalDateTime = time.toSystemDefaultTime
 
-  private val formProvider = new SearchFormProvider()
+  private val formProvider = new DeparturesSearchFormProvider()
   private val form         = formProvider()
 
   private def mockDepartureSearchResponse(retrievedDepartures: Int, totalMatched: Int): Departures =
