@@ -39,6 +39,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
         val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
 
         val result: String = viewModelProvider.fetchWhatHappensNext
+        println(result)
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover on 00443243543."
       }

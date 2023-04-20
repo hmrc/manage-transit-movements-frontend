@@ -22,21 +22,18 @@ import play.api.i18n.Messages
 case class CustomsOfficeContactViewModel(customsOfficeReferenceID: String, customsOffice: Option[CustomsOffice]) {
 
   def fetchWhatHappensNext(implicit messages: Messages): String =
-//    val cc = customsOffice.map(c => c.copy(phoneNumber = c.phoneNumber.getOrElse("")))
     customsOffice match {
-      case Some(CustomsOffice(id, name, Some(phone))) =>
-        (name.nonEmpty, phone.nonEmpty) match {
-          case (true, true)  => messages("customsOfficeContact.telephoneAvailable", name, phone)
-          case (false, true) => messages("customsOfficeContact.teleAvailAndOfficeNameNotAvail", id, phone)
-          case (true, false) => messages("customsOfficeContact.telephoneNotAvailable", name)
-          case _             => messages("customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", id)
-        }
-      case Some(CustomsOffice(id, name, None)) =>
-        name.nonEmpty match {
-          case true => messages("customsOfficeContact.telephoneNotAvailable", name)
-          case _    => messages("customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", id)
-        }
+      case Some(CustomsOffice(id, _, _)) =>
+        matchNameAndNumber(messages, id)
       case _ =>
         messages("customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceID)
+    }
+
+  private def matchNameAndNumber(messages: Messages, id: String) =
+    (customsOffice.get.nameOption, customsOffice.get.phoneOption) match {
+      case (Some(name), Some(phone)) => messages("customsOfficeContact.telephoneAvailable", name, phone)
+      case (None, Some(phone))       => messages("customsOfficeContact.teleAvailAndOfficeNameNotAvail", id, phone)
+      case (Some(name), None)        => messages("customsOfficeContact.telephoneNotAvailable", name)
+      case _                         => messages("customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", id)
     }
 }
