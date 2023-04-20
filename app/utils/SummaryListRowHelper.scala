@@ -42,7 +42,10 @@ class SummaryListRowHelper(implicit messages: Messages) {
   protected def formatAsText[T](answer: T): Content = s"$answer".toText
 
   def formatAsDate(answer: LocalDateTime): Content =
-    answer.format(controlDecisionDateTimeFormatter).toText
+    answer.format(controlDecisionDateTimeFormatter)
+      .replace("PM", "pm")
+      .replace("AM", "am")
+      .toText
 
   protected def formatEnumAsText[T](messageKeyPrefix: String)(answer: T): Content =
     formatEnumAsString(messageKeyPrefix)(answer).toText
