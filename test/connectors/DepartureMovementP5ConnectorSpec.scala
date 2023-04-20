@@ -265,7 +265,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                     }
                 ]
             }
-            """.stripMargin)
+            """)
 
         val expectedResult = Messages(
           List(
@@ -330,7 +330,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                                                                   }
                                                              ]
                                                           }
-                                  }""".stripMargin)
+                                  }""")
 
           val responseJson: JsValue = Json.parse(s"""
               {
@@ -349,7 +349,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 "status": "Success",
                 "body": ${IE060.toString()}
               }
-              """.stripMargin)
+              """)
 
           val expectedResult = IE060Data(
             IE060MessageData(
