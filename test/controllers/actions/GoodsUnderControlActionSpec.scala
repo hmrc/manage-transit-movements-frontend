@@ -50,7 +50,7 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
     )
   )
 
-  val customsOffice = CustomsOffice("GB000060", "name", Seq.empty, Some("999"))
+  val customsOffice: CustomsOffice = CustomsOffice("GB000060", "name", Seq.empty, Some("999"))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
