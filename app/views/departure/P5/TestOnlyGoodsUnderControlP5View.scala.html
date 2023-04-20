@@ -47,11 +47,11 @@
 
 
     @answerSections(goodsUnderControlP5ViewModel.sections)
-    <h2 class="govuk-heading-m">@messages("unloadingRemarksSent.subHeading")</h2>
+    <h2 class="govuk-heading-m">@messages("goodsUnderControl.subHeading")</h2>
 
 
     <p class="govuk-body">@{
-        goodsUnderControlP5ViewModel.fetchWhatHappensNext(ie060, customsOffice)
+        viewModels.P5.departure.GoodsUnderControlP5ViewModel.fetchWhatHappensNext(ie060, customsOffice)
     }</p>
 
 }
