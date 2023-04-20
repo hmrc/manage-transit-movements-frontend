@@ -19,6 +19,7 @@ package controllers.actions
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.routes
 import models.departureP5._
+import models.referenceData.CustomsOffice
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
@@ -28,7 +29,7 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.DepartureP5MessageService
+import services.{DepartureP5MessageService, ReferenceDataService}
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -37,7 +38,8 @@ import scala.concurrent.Future
 
 class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with AppWithDefaultMockFixtures {
 
-  val mockService: DepartureP5MessageService = mock[DepartureP5MessageService]
+  val mockMessageService: DepartureP5MessageService  = mock[DepartureP5MessageService]
+  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   val message: IE060Data = IE060Data(
     IE060MessageData(
@@ -48,9 +50,11 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
     )
   )
 
+  val customsOffice = CustomsOffice("GB000060", "name", Seq.empty, Some("999"))
+
   override def beforeEach(): Unit = {
     super.beforeEach()
-    Mockito.reset(mockService)
+    Mockito.reset(mockMessageService)
   }
 
   private def fakeOkResult[A]: A => Future[Result] =
@@ -59,9 +63,10 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
   "GoodsUnderControlAction" - {
     "must return 200 when an unloading permission is available" in {
 
-      when(mockService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
-      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockService)(implicitly))(departureIdP5)
+      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
@@ -72,9 +77,10 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
 
     "must return 303 and redirect to technical difficulties when no unloading permission is available" in {
 
-      when(mockService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockMessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
-      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockService)(implicitly))(departureIdP5)
+      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 

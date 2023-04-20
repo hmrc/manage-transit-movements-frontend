@@ -17,21 +17,9 @@
 package services
 
 import base.SpecBase
-import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
-import models.arrivalP5._
-import models.departureP5.{
-  CustomsOfficeOfDeparture,
-  DepartureMessageType,
-  IE060Data,
-  IE060MessageData,
-  MessageMetaData,
-  Messages,
-  RequestedDocument,
-  TransitOperation,
-  TypeOfControls
-}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import models.departureP5._
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 
 import java.time.LocalDateTime

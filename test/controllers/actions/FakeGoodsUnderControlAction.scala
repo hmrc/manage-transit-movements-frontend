@@ -16,19 +16,19 @@
 
 package controllers.actions
 
-import models.DepartureId
 import models.departureP5._
+import models.referenceData.CustomsOffice
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}
 import play.api.mvc.Result
-import services.DepartureP5MessageService
+import services.{DepartureP5MessageService, ReferenceDataService}
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeGoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService)
-    extends GoodsUnderControlAction(departureId, departureP5MessageService) {
+class FakeGoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)
+    extends GoodsUnderControlAction(departureId, departureP5MessageService, referenceDataService) {
 
   val message: IE060Data = IE060Data(
     IE060MessageData(
@@ -40,6 +40,6 @@ class FakeGoodsUnderControlAction(departureId: String, departureP5MessageService
   )
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, GoodsUnderControlRequest[A]]] =
-    Future.successful(Right(GoodsUnderControlRequest(request, "AB123", message.data)))
+    Future.successful(Right(GoodsUnderControlRequest(request, "AB123", message.data, Some(CustomsOffice("GB000060", "name", Seq.empty, Some("999"))))))
 
 }

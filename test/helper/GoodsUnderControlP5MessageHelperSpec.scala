@@ -24,6 +24,7 @@ import viewModels.sections.Section
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryListRow, Value, _}
 import utils.GoodsUnderControlP5MessageHelper
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import utils.Format.controlDecisionDateTimeFormatter
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -125,7 +126,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val result = helper.buildDateTimeControlRow
 
         result mustBe
-          Some(SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15 PM".toText)))
+          Some(SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15 pm".toText)))
       }
     }
 
@@ -275,7 +276,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           Seq(
             SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value("LRN1".toText)),
             SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("MRN1".toText)),
-            SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15 PM".toText)),
+            SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15 pm".toText)),
             SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText))
           )
 
