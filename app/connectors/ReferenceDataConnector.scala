@@ -26,16 +26,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClient) extends Logging {
 
-  def getCountries()(implicit ec: ExecutionContext, hc: HeaderCarrier) = {
-    val serviceUrl = s"${config.referenceDataUrl}/countries"
-
-    http
-      .GET(serviceUrl)
-      .recover {
-        case _ => Nil
-      }
-  }
-
   def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]] = {
     val serviceUrl = s"${config.referenceDataUrl}/customs-office/$code"
     http
@@ -43,6 +33,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .map(Some(_))
       .recover {
         case _ =>
+          println(s"****** $serviceUrl     Get Customs Office request failed to return data******")
           logger.error(s"Get Customs Office request failed to return data")
           None
       }
