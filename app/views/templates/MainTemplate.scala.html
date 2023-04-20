@@ -23,6 +23,7 @@
 @import resources._
 @import views.html.components.FullWidthContent
 @import views.utils.ViewUtils._
+@import viewHelpers.UserResearchBannerHelper
 
 @this(
     appConfig: FrontendAppConfig,
@@ -35,7 +36,8 @@
     govukBackLink: GovukBackLink,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     twoThirdsMainContent: TwoThirdsMainContent,
-    fullWidthContent: FullWidthContent
+    fullWidthContent: FullWidthContent,
+    userResearchBannerHelper: UserResearchBannerHelper
 )
 
 @(
@@ -79,8 +81,8 @@
         headBlock = Some(headScripts),
         nonce = CSPNonce.get,
     )),
-    userResearchBannerUrl = if (appConfig.showUserResearchBanner) Some(appConfig.userResearchUrl) else None,
-    additionalBannersBlock = Some(header),
+    userResearchBannerUrl = None,
+    additionalBannersBlock = userResearchBannerHelper.ctcUrBanner()(messages, appConfig),
     serviceName = Some(messages("site.service_name")),
     serviceUrl = Some(routes.WhatDoYouWantToDoController.onPageLoad().url),
     nonce = CSPNonce.get,

@@ -14,10 +14,12 @@ site.search = Search
 site.service_name = Manage your transit movements
 site.section = This section is
 
-site.user.research.text = HMRC will be moving to the New Computerised Transit System (NCTS) Phase 5 by 30 November 2023
-
 site.ascending = ascending
-site.descending = descending
+site.descending = descending\
+
+manage.user.banner.helpImprove = Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+manage.user.banner.emcs.signUp = Sign up to take part in user research (opens in a new tab)
+manage.user.banner.noThanks = No thanks
 
 viewAllMovements.link.title = View all movements
 search.results.singular = Showing {0} result matching {1}.
