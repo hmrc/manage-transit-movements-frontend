@@ -20,16 +20,17 @@
 @import viewModels.P5.departure.GoodsUnderControlP5ViewModel
 @import viewModels.P5.departure.GoodsUnderControlP5ViewModel._
 @import models.referenceData.CustomsOffice
+@import viewModels.P5.departure.CustomsOfficeContactViewModel
 
 @this(
-    mainTemplate: MainTemplate,
-    heading: Heading,
-    answerSections: AnswerSections,
-    button: Button,
-    formHelper: FormWithCSRF
+mainTemplate: MainTemplate,
+heading: Heading,
+answerSections: AnswerSections,
+button: Button,
+formHelper: FormWithCSRF
 )
 
-@(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String, ie060: IE060MessageData, customsOffice: Option[CustomsOffice])(implicit request: Request[_], messages: Messages)
+@(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[_], messages: Messages)
 
     @mainTemplate(
         title = messages("departure.ie060.message.title"),
@@ -50,8 +51,6 @@
     <h2 class="govuk-heading-m">@messages("goodsUnderControl.subHeading")</h2>
 
 
-    <p class="govuk-body">@{
-        viewModels.P5.departure.GoodsUnderControlP5ViewModel.fetchWhatHappensNext(ie060, customsOffice)
-    }</p>
+    <p class="govuk-body">@customsOfficeContactViewModel.fetchWhatHappensNext</p>
 
 }

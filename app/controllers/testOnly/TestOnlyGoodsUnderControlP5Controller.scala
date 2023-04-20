@@ -20,6 +20,7 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewModels.P5.departure.CustomsOfficeContactViewModel
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
 import views.html.departure.P5.TestOnlyGoodsUnderControlP5View
 
@@ -38,7 +39,7 @@ class TestOnlyGoodsUnderControlP5Controller @Inject() (
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
     implicit request =>
       val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
-      val whatHappensNext              = viewModelProvider.fetchWhatHappensNext(request.ie060MessageData, request.customsOffice)
-      Ok(view(goodsUnderControlP5ViewModel, departureId, request.ie060MessageData, request.customsOffice))
+      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(request.ie060MessageData.CustomsOfficeOfDeparture.referenceNumber,request.customsOffice)
+      Ok(view(goodsUnderControlP5ViewModel, departureId, customsOfficeContactViewModel))
   }
 }
