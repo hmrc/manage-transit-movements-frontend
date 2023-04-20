@@ -18,7 +18,15 @@ package models.referenceData
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomsOffice(id: String, name: String, roles: Seq[String], phoneNumber: Option[String])
+case class CustomsOffice(id: String, name: String, roles: Seq[String], phoneNumber: Option[String]) {
+  private val phoneasString: String = phoneNumber.getOrElse("")
+
+  val phoneAsOption = if (phoneasString.isEmpty) {
+    None
+  } else
+    phoneasString
+
+}
 
 object CustomsOffice {
   implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]

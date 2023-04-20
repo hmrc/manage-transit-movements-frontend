@@ -18,6 +18,8 @@
 @import controllers.routes._
 @import models.departureP5.IE060MessageData
 @import viewModels.P5.departure.GoodsUnderControlP5ViewModel
+@import viewModels.P5.departure.GoodsUnderControlP5ViewModel._
+@import models.referenceData.CustomsOffice
 
 @this(
     mainTemplate: MainTemplate,
@@ -27,7 +29,7 @@
     formHelper: FormWithCSRF
 )
 
-@(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages)
+@(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String, ie060: IE060MessageData, customsOffice: Option[CustomsOffice])(implicit request: Request[_], messages: Messages)
 
     @mainTemplate(
         title = messages("departure.ie060.message.title"),
@@ -45,10 +47,11 @@
 
 
     @answerSections(goodsUnderControlP5ViewModel.sections)
+    <h2 class="govuk-heading-m">@messages("unloadingRemarksSent.subHeading")</h2>
 
-    <p class="govuk-body">@messages("departure.ie060.message.paragraph4.prefix")
-        <a class="govuk-link" rel="noreferrer noopener" href="" target="_blank" id="view-departures">@messages("departure.ie060.message.paragraph4.linkText")</a>
-        @messages("departure.ie060.message.paragraph4.suffix")
-    </p>
+
+    <p class="govuk-body">@{
+        goodsUnderControlP5ViewModel.fetchWhatHappensNext(ie060, customsOffice)
+    }</p>
 
 }

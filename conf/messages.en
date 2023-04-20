@@ -360,6 +360,13 @@ row.label.type =  Type
 row.label.control =  Control
 row.label.description =  Description
 
+goodsUnderControl.subHeading = What happens next
+goodsUnderControl.telephoneAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0} on {1}.
+goodsUnderControl.telephoneNotAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0}.
+goodsUnderControl.teleAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0} on {0}.
+goodsUnderControl.teleNotAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0}.
+
+
 
 
 

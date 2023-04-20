@@ -38,6 +38,7 @@ class TestOnlyGoodsUnderControlP5Controller @Inject() (
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
     implicit request =>
       val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
-      Ok(view(goodsUnderControlP5ViewModel, departureId))
+      val whatHappensNext              = viewModelProvider.fetchWhatHappensNext(request.ie060MessageData, request.customsOffice)
+      Ok(view(goodsUnderControlP5ViewModel, departureId, request.ie060MessageData, request.customsOffice))
   }
 }

@@ -19,8 +19,6 @@ package controllers.actions
 import cats.data
 import cats.data.OptionT
 import controllers.routes
-import models.departureP5.IE060Data
-import models.referenceData.CustomsOffice
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
@@ -49,11 +47,8 @@ class GoodsUnderControlAction(departureId: String, departureP5MessageService: De
 
     (for {
       ie060 <- OptionT(departureP5MessageService.getGoodsUnderControl(departureId))
-      cust <- OptionT.liftF(referenceDataService.getCustomsOfficeByCode(code = ie060.data.CustomsOfficeOfDeparture.referenceNumber))
-    } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, cust)).toRight(Redirect(routes.ErrorController.technicalDifficulties()))
-      .value
-
-
+      cust  <- OptionT.liftF(referenceDataService.getCustomsOfficeByCode(code = ie060.data.CustomsOfficeOfDeparture.referenceNumber))
+    } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, cust)).toRight(Redirect(routes.ErrorController.technicalDifficulties())).value
 
   }
 }

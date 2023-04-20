@@ -18,7 +18,7 @@ package config
 
 import com.google.inject.AbstractModule
 import controllers.actions._
-import services.{DepartureP5MessageService, DraftDepartureService, MongoDraftDepartureService}
+import services.{DepartureP5MessageService, DraftDepartureService, MongoDraftDepartureService, ReferenceDataService, ReferenceDataServiceImpl}
 
 import java.time.Clock
 
@@ -30,5 +30,7 @@ class Module extends AbstractModule {
     bind(classOf[PaginationAppConfig]).asEagerSingleton()
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
     bind(classOf[DraftDepartureService]).to(classOf[MongoDraftDepartureService])
+    bind(classOf[ReferenceDataService]).to(classOf[ReferenceDataServiceImpl]).asEagerSingleton()
+
   }
 }
