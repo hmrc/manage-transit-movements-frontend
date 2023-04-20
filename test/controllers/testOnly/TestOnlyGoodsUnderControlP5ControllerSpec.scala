@@ -44,18 +44,21 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
   private val mockReferenceDataService                 = mock[ReferenceDataService]
   private val mockDepartureP5MessageService            = mock[DepartureP5MessageService]
 
-  lazy val checkYourAnswersRoute: String = controllers.testOnly.routes.TestOnlyGoodsUnderControlP5Controller.onPageLoad(departureIdP5).url
+  lazy val goodsUnderControlController: String = controllers.testOnly.routes.TestOnlyGoodsUnderControlP5Controller.onPageLoad(departureIdP5).url
+  private val sections                         = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockReferenceDataService);
-    reset(mockDepartureP5MessageService);
+    reset(mockReferenceDataService)
+    reset(mockDepartureP5MessageService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind[GoodsUnderControlP5ViewModelProvider].toInstance(mockGoodsUnderControlP5ViewModelProvider))
+      .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
+      .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
   private val customsOffice          = arbitrary[CustomsOffice].sample.value
@@ -72,20 +75,16 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
         )
       )
       when(mockDepartureP5MessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
-
       when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-
-      goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
-
-      val sections = arbitrarySections.arbitrary.sample.value
-
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any()))
         .thenReturn(GoodsUnderControlP5ViewModel(sections))
 
-      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections)
-      val customsOfficeContactViewModel = new CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
+      goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
-      val request = FakeRequest(GET, checkYourAnswersRoute)
+      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections)
+      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
+
+      val request = FakeRequest(GET, goodsUnderControlController)
 
       val result = route(app, request).value
 
@@ -96,51 +95,5 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
       contentAsString(result) mustEqual
         view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
     }
-
-    //    "must redirect to the next page when valid data is submitted" ignore {
-    //      checkArrivalStatus()
-    //      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-    //
-    //      setExistingUserAnswers(emptyUserAnswers)
-    //
-    //      val request =
-    //        FakeRequest(POST, checkYourAnswersRoute)
-    //          .withFormUrlEncodedBody(("value", "true"))
-    //
-    //      val result = route(app, request).value
-    //
-    //      status(result) mustEqual SEE_OTHER
-    //
-    //      redirectLocation(result).value mustEqual controllers.routes.UnloadingRemarksSentController.onPageLoad(arrivalId).url
-    //    }
-    //
-    //    "must redirect to Session Expired for a GET if no existing data is found" in {
-    //      checkArrivalStatus()
-    //      setNoExistingUserAnswers()
-    //
-    //      val request = FakeRequest(GET, checkYourAnswersRoute)
-    //
-    //      val result = route(app, request).value
-    //
-    //      status(result) mustEqual SEE_OTHER
-    //
-    //      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-    //    }
-    //
-    //    "must redirect to Session Expired for a POST if no existing data is found" ignore {
-    //      checkArrivalStatus()
-    //      setNoExistingUserAnswers()
-    //
-    //      val request =
-    //        FakeRequest(POST, checkYourAnswersRoute)
-    //          .withFormUrlEncodedBody(("value", "true"))
-    //
-    //      val result = route(app, request).value
-    //
-    //      status(result) mustEqual SEE_OTHER
-    //
-    //      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-    //    }
-    //  }
   }
 }

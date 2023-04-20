@@ -46,10 +46,9 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
   protected def goodsUnderControlAction(departureIdP5: String,
                                         mockDepartureP5MessageService: DepartureP5MessageService,
                                         mockReferenceDataService: ReferenceDataService
-  ): Unit = {
+  ): Unit =
     when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn new FakeGoodsUnderControlAction(departureIdP5,
-      mockDepartureP5MessageService,
-      mockReferenceDataService
+                                                                                                      mockDepartureP5MessageService,
+                                                                                                      mockReferenceDataService
     )
-  }
 }

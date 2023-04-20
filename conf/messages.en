@@ -364,7 +364,7 @@ goodsUnderControl.subHeading = What happens next
 
 customsOfficeContact.telephoneAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0} on {1}.
 customsOfficeContact.telephoneNotAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0}.
-customsOfficeContact.teleAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0} on {0}.
+customsOfficeContact.teleAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0} on {1}.
 customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0}.
 
 
