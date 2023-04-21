@@ -81,7 +81,7 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
     "must return OK and the correct view for a GET" in {
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+          TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
@@ -89,12 +89,12 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
       )
       when(mockDepartureP5MessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
-        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections)))
+      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any()))
+        .thenReturn(GoodsUnderControlP5ViewModel(sections, "0"))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
-      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections)
+      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, "0")
       val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
 
       val request = FakeRequest(GET, goodsUnderControlController)
