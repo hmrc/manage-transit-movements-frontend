@@ -19,6 +19,7 @@ package viewModels
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.departureP5.{CustomsOfficeOfDeparture, IE060Data, IE060MessageData, RequestedDocument, TransitOperation, TypeOfControls}
+import models.referenceData.ControlType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
 
@@ -26,6 +27,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+  private val controlTypes = Some(Seq(ControlType("42", "Intrusive"), ControlType("44", "Non Intrusive")))
 
   "headerSection" - {
 
@@ -41,7 +43,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       )
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data)
+      val result            = viewModelProvider.apply(message.data, controlTypes)
 
       result.sections.length mustBe 1
       result.sections.head.rows.size mustBe 4
@@ -62,7 +64,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       )
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data)
+      val result            = viewModelProvider.apply(message.data, controlTypes)
 
       result.sections.length mustBe 1
 
@@ -81,7 +83,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       )
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data)
+      val result            = viewModelProvider.apply(message.data, controlTypes)
 
       result.sections.length mustBe 3
       result.sections(1).rows.size mustBe 1
@@ -107,7 +109,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       )
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data)
+      val result            = viewModelProvider.apply(message.data, controlTypes)
 
       result.sections.length mustBe 1
 
@@ -126,7 +128,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       )
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data)
+      val result            = viewModelProvider.apply(message.data, controlTypes)
 
       result.sections.length mustBe 3
       result.sections(1).rows.size mustBe 1

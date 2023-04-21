@@ -61,15 +61,14 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, contr
 
   private def buildControlTypeRow(typeOfControl: String): Option[SummaryListRow] = {
 
-    val answerFormatted = controlType.map(
-      ct =>
-        ct.find(
-          p => p.code == typeOfControl
-        ).map(
-          ct => s"${ct.code} - ${ct.description}"
-        ).getOrElse(typeOfControl)
-    )
 
+    val answerFormatted = controlType match {
+      case Some(ct) => ct.find(_.code == typeOfControl)
+        .map(d => s"${d.code} - ${d.description}").getOrElse(Some(typeOfControl))
+      case None => Some(typeOfControl)
+
+    }
+    println(s"********buildControlTypeRow.answerFormatted is $answerFormatted")
     buildRowFromAnswer[String](
       answer = answerFormatted,
       formatAnswer = formatAsText,

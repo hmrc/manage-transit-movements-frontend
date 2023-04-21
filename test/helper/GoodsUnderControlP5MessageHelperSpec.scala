@@ -19,6 +19,7 @@ package helper
 import base.SpecBase
 import generators.Generators
 import models.departureP5._
+import models.referenceData.ControlType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
@@ -29,6 +30,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+  private val controlTypes = Some(Seq(ControlType("42", "Intrusive"), ControlType("44", "Non Intrusive")))
 
   "GoodsUnderControlP5MessageHelper" - {
     "buildLRNRow" - {
@@ -42,7 +44,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.buildLRNRow
 
@@ -60,7 +62,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.buildLRNRow
 
@@ -80,7 +82,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.buildMRNRow
 
@@ -98,7 +100,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.buildMRNRow
 
@@ -120,7 +122,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.buildDateTimeControlRow
 
@@ -142,7 +144,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.buildOfficeOfDepartureRow
 
@@ -164,7 +166,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.controlInformationSection()
 
@@ -172,7 +174,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
       }
 
-      "must return Sequence of Sections" in {
+      "must return Sequence of Sections when one typeOfControl is found in referenceData" in {
 
         val typeOfControls = Some(Seq(TypeOfControls("1", "44", None), TypeOfControls("2", "45", Some("Desc1"))))
         val message: IE060Data = IE060Data(
@@ -184,7 +186,37 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+
+        val result = helper.controlInformationSection()
+
+        val firstRow =
+          Seq(SummaryListRow(key = Key("Type".toText), value = Value("44 - Non Intrusive".toText)))
+
+        val secondRow = Seq(
+          SummaryListRow(key = Key("Type".toText), value = Value("45".toText)),
+          SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
+        )
+
+        val seqSummaryRow = Seq(Section(Some("Control information 1"), firstRow, None), Section(Some("Control information 2"), secondRow, None))
+
+        result mustBe seqSummaryRow
+
+      }
+
+      "must return Sequence of Sections when no typeOfControl is found in referenceData" in {
+
+        val typeOfControls = Some(Seq(TypeOfControls("1", "44", None), TypeOfControls("2", "45", Some("Desc1"))))
+        val message: IE060Data = IE060Data(
+          IE060MessageData(
+            TransitOperation(None, None, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            CustomsOfficeOfDeparture("22323323"),
+            typeOfControls,
+            None
+          )
+        )
+
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, None)
 
         val result = helper.controlInformationSection()
 
@@ -216,7 +248,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.documentSection()
 
@@ -236,7 +268,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.documentSection()
 
@@ -268,7 +300,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
 
         val result = helper.buildGoodsUnderControlSection()
         val firstRow =

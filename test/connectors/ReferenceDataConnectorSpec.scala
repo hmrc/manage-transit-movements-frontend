@@ -19,7 +19,7 @@ package connectors
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnectorSpec._
-import models.referenceData.CustomsOffice
+import models.referenceData.{ControlType, CustomsOffice}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -40,44 +40,77 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
     "GET" - {
 
-      "should handle a 200 response for customs office with code end point with valid phone number" in {
-        server.stubFor(
-          get(urlEqualTo(s"$customsOfficeUri/$code"))
-            .willReturn(okJson(customsOfficeResponseJsonWithPhone))
-        )
+      "getCustomsOffice" - {
 
-        val expectedResult = Some(CustomsOffice("ID1", "NAME001", Some("004412323232345")))
+        "should handle a 200 response for customs office with code end point with valid phone number" in {
+          server.stubFor(
+            get(urlEqualTo(s"$customsOfficeUri/$code"))
+              .willReturn(okJson(customsOfficeResponseJsonWithPhone))
+          )
 
-        connector.getCustomsOffice(code).futureValue mustBe expectedResult
-      }
+          val expectedResult = Some(CustomsOffice("ID1", "NAME001", Some("004412323232345")))
 
-      "should handle a 200 response for customs office with code end point with no phone number" in {
-        server.stubFor(
-          get(urlEqualTo(s"$customsOfficeUri/$code"))
-            .willReturn(okJson(customsOfficeResponseJsonWithOutPhone))
-        )
+          connector.getCustomsOffice(code).futureValue mustBe expectedResult
+        }
 
-        val expectedResult = Some(CustomsOffice("ID1", "NAME001", None))
+        "should handle a 200 response for customs office with code end point with no phone number" in {
+          server.stubFor(
+            get(urlEqualTo(s"$customsOfficeUri/$code"))
+              .willReturn(okJson(customsOfficeResponseJsonWithOutPhone))
+          )
 
-        connector.getCustomsOffice("GB00001").futureValue mustBe expectedResult
-      }
-      "should handle client and server errors for customs office end point" in {
-        val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
+          val expectedResult = Some(CustomsOffice("ID1", "NAME001", None))
 
-        forAll(errorResponseCodes) {
-          errorResponse =>
-            server.stubFor(
-              get(urlEqualTo(s"$customsOfficeUri/$code"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(errorResponse)
-                )
-            )
+          connector.getCustomsOffice("GB00001").futureValue mustBe expectedResult
+        }
+        "should handle client and server errors for customs office end point" in {
+          val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
 
-            connector.getCustomsOffice("GB00001").futureValue mustBe None
+          forAll(errorResponseCodes) {
+            errorResponse =>
+              server.stubFor(
+                get(urlEqualTo(s"$customsOfficeUri/$code"))
+                  .willReturn(
+                    aResponse()
+                      .withStatus(errorResponse)
+                  )
+              )
+
+              connector.getCustomsOffice("GB00001").futureValue mustBe None
+          }
         }
       }
 
+      "getControlType" - {
+
+        "should handle a 200 response for control types" in {
+          server.stubFor(
+            get(urlEqualTo(s"$controlTypeUri"))
+              .willReturn(okJson(controlTypes))
+          )
+
+          val expectedResult = Some(Seq(ControlType("42", "Intrusive"), ControlType("44", "Non Intrusive")))
+
+          connector.getControlTypes().futureValue mustBe expectedResult
+        }
+
+        "should handle client and server errors for control type end point" in {
+          val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
+
+          forAll(errorResponseCodes) {
+            errorResponse =>
+              server.stubFor(
+                get(urlEqualTo(s"$controlTypeUri"))
+                  .willReturn(
+                    aResponse()
+                      .withStatus(errorResponse)
+                  )
+              )
+
+              connector.getControlTypes().futureValue mustBe None
+          }
+        }
+      }
     }
   }
 }
@@ -85,6 +118,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 object ReferenceDataConnectorSpec {
 
   private val customsOfficeUri = "/test-only/transit-movements-trader-reference-data/customs-office"
+  private val controlTypeUri   = "/test-only/transit-movements-trader-reference-data/control-types"
 
   private val customsOfficeResponseJsonWithPhone: String =
     """
@@ -102,5 +136,19 @@ object ReferenceDataConnectorSpec {
       |   "name":"NAME001",
       |   "countryId":"GB"
       | }
+      |""".stripMargin
+
+  private val controlTypes: String =
+    """
+      |[
+      | {
+      |   "code":"42",
+      |   "description":"Intrusive"
+      | },
+      | {
+      |   "code":"44",
+      |   "description":"Non Intrusive"
+      | }
+      |]
       |""".stripMargin
 }
