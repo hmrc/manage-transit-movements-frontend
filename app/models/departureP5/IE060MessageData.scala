@@ -24,8 +24,8 @@ case class IE060MessageData(
   TypeOfControls: Option[Seq[TypeOfControls]],
   RequestedDocument: Option[Seq[RequestedDocument]]
 ) {
-  val typeOfControlsToSeq     = TypeOfControls.getOrElse(Seq.empty)
-  val requestedDocumentsToSeq = RequestedDocument.getOrElse(Seq.empty)
+  val typeOfControlsToSeq: Seq[TypeOfControls]        = TypeOfControls.getOrElse(Seq.empty)
+  val requestedDocumentsToSeq: Seq[RequestedDocument] = RequestedDocument.getOrElse(Seq.empty)
 }
 
 object IE060MessageData {

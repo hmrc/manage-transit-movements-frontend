@@ -29,7 +29,7 @@ case class CustomsOfficeContactViewModel(customsOfficeReferenceID: String, custo
         messages("customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceID)
     }
 
-  private def matchNameAndNumber(messages: Messages, id: String) =
+  private def matchNameAndNumber(messages: Messages, id: String): String =
     (customsOffice.get.nameOption, customsOffice.get.phoneOption) match {
       case (Some(name), Some(phone)) => messages("customsOfficeContact.telephoneAvailable", name, phone)
       case (None, Some(phone))       => messages("customsOfficeContact.teleAvailAndOfficeNameNotAvail", id, phone)
