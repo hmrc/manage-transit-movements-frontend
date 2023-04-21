@@ -24,7 +24,19 @@ import viewModels.sections.Section
 
 import javax.inject.Inject
 
-case class GoodsUnderControlP5ViewModel(sections: Seq[Section])
+case class GoodsUnderControlP5ViewModel(sections: Seq[Section], notificationType: String)(implicit messages: Messages) {
+
+  def notificationTypeTitle(implicit messages: Messages): String = notificationType match {
+    case "1" => messages("departure.ie060.message.notificationType1.title")
+    case _ => messages("departure.ie060.message.title")
+  }
+
+  def notificationTypeHeading(implicit messages: Messages): String = notificationType match {
+    case "1" => messages("departure.ie060.message.notificationType1.heading")
+    case _ => messages("departure.ie060.message.heading")
+  }
+
+}
 
 object GoodsUnderControlP5ViewModel {
 
@@ -33,8 +45,10 @@ object GoodsUnderControlP5ViewModel {
     def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel = {
       val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData)
 
+      val notificationType = ie060MessageData.TransitOperation.notificationType
+
       val sections = Seq(helper.buildGoodsUnderControlSection()) ++ helper.controlInformationSection() ++ helper.documentSection()
-      new GoodsUnderControlP5ViewModel(sections)
+      new GoodsUnderControlP5ViewModel(sections, notificationType)
     }
   }
 }

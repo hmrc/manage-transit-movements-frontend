@@ -33,13 +33,13 @@ formHelper: FormWithCSRF
 @(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[_], messages: Messages)
 
     @mainTemplate(
-        title = messages("departure.ie060.message.title"),
+        title = goodsUnderControlP5ViewModel.notificationTypeTitle,
         showBackLink = true
     ) {
 
 
     @heading(
-        heading = messages("departure.ie060.message.heading")
+        heading = goodsUnderControlP5ViewModel.notificationTypeHeading
     )
 
     <p class="govuk-body">@messages("departure.ie060.message.paragraph1")</p>
