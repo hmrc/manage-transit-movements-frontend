@@ -140,6 +140,11 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
       button => assertElementContainsId(button, "submit")
     }
 
+  def pageWithoutSubmitButton(): Unit =
+    "must not render submit" in {
+      assertElementDoesNotExist(doc, "submit")
+    }
+
   private def pageWithButton(expectedText: String)(additionalAssertions: Element => Assertion*): Unit =
     s"must render $expectedText button" in {
       val button = getElementByClass(doc, "govuk-button")
@@ -198,6 +203,11 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
     "must render form with action" in {
       val formAction = getElementByTag(doc, "form").attr("action")
       formAction mustBe expectedUrl
+    }
+
+  def pageWithoutFormAction(): Unit =
+    "must render form with action" in {
+      assertElementDoesNotExist(doc, "form")
     }
 
   def pageWithFullWidth(): Unit =
