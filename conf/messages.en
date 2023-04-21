@@ -344,6 +344,8 @@ arrivals.search.form.value.invalid = The Movement Reference Number must only inc
 
 departure.ie060.message.title = Goods under control
 departure.ie060.message.heading = Goods under control
+departure.ie060.message.notificationType1.title = Goods under control - document requested
+departure.ie060.message.notificationType1.heading = Goods under control - document requested
 departure.ie060.message.h2 = What happens next
 
 departure.ie060.message.subheading = LRN: {0}
