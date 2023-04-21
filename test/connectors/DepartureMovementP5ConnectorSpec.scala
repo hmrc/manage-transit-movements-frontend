@@ -87,7 +87,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               }
             ]
           }
-          """.stripMargin
+          """
       )
 
       "must return DepartureMovements" in {
@@ -188,7 +188,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                   }
                ]
             }
-            """.stripMargin)
+            """)
 
       "must return MessagesForMovement" in {
         server.stubFor(
