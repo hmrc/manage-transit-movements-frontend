@@ -27,7 +27,51 @@ import java.time.format.DateTimeFormatter
 
 class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  "headerSection" - {
+  "GoodsUnderControlP5ViewModel" - {
+
+    "when notification type" - {
+      "is 0" - {
+        val message: IE060Data = IE060Data(
+          IE060MessageData(
+            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
+            CustomsOfficeOfDeparture("22323323"),
+            None,
+            None
+          )
+        )
+
+        val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
+        val result            = viewModelProvider.apply(message.data)
+
+        "must return correct title" in {
+          result.notificationTypeTitle mustBe "Goods under control"
+        }
+        "must return correct heading" in {
+          result.notificationTypeHeading mustBe "Goods under control"
+        }
+      }
+
+      "is 1" - {
+        val message: IE060Data = IE060Data(
+          IE060MessageData(
+            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "1"),
+            CustomsOfficeOfDeparture("22323323"),
+            None,
+            None
+          )
+        )
+
+        val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
+        val result            = viewModelProvider.apply(message.data)
+
+        "must return correct title" in {
+          result.notificationTypeTitle mustBe "Goods under control - document requested"
+        }
+        "must return correct heading" in {
+          result.notificationTypeHeading mustBe "Goods under control - document requested"
+        }
+      }
+    }
 
     "must render rows" in {
 

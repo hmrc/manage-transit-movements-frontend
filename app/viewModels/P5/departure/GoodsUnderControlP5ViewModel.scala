@@ -17,23 +17,22 @@
 package viewModels.P5.departure
 
 import models.departureP5.IE060MessageData
-import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import utils.GoodsUnderControlP5MessageHelper
 import viewModels.sections.Section
 
 import javax.inject.Inject
 
-case class GoodsUnderControlP5ViewModel(sections: Seq[Section], notificationType: String)(implicit messages: Messages) {
+case class GoodsUnderControlP5ViewModel(sections: Seq[Section], notificationType: String) {
 
   def notificationTypeTitle(implicit messages: Messages): String = notificationType match {
     case "1" => messages("departure.ie060.message.notificationType1.title")
-    case _ => messages("departure.ie060.message.title")
+    case _   => messages("departure.ie060.message.title")
   }
 
   def notificationTypeHeading(implicit messages: Messages): String = notificationType match {
     case "1" => messages("departure.ie060.message.notificationType1.heading")
-    case _ => messages("departure.ie060.message.heading")
+    case _   => messages("departure.ie060.message.heading")
   }
 
 }
