@@ -17,7 +17,7 @@
 package viewModels.P5.departure
 
 import models.departureP5.IE060MessageData
-import models.referenceData.CustomsOffice
+import models.referenceData.{ControlType, CustomsOffice}
 import play.api.i18n.Messages
 import utils.GoodsUnderControlP5MessageHelper
 import viewModels.sections.Section
@@ -30,8 +30,8 @@ object GoodsUnderControlP5ViewModel {
 
   class GoodsUnderControlP5ViewModelProvider @Inject() () {
 
-    def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel = {
-      val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData)
+    def apply(ie060MessageData: IE060MessageData, controlTypes: Option[Seq[ControlType]])(implicit messages: Messages): GoodsUnderControlP5ViewModel = {
+      val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData, controlTypes)
 
       val sections = Seq(helper.buildGoodsUnderControlSection()) ++ helper.controlInformationSection() ++ helper.documentSection()
       new GoodsUnderControlP5ViewModel(sections)

@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import logging.Logging
-import models.referenceData.CustomsOffice
+import models.referenceData.{ControlType, CustomsOffice}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
@@ -34,6 +34,19 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .recover {
         case _ =>
           logger.error(s"Get Customs Office request failed to return data")
+          None
+      }
+  }
+
+  def getControlTypes()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[Seq[ControlType]]] = {
+    val serviceUrl = s"${config.referenceDataUrl}/control-types"
+    http
+      .GET[Seq[ControlType]](serviceUrl)
+      .map(Some(_))
+      .recover {
+        case _ =>
+          println(s"$serviceUrl")
+          logger.error(s"Get Control Types  request failed to return data")
           None
       }
   }

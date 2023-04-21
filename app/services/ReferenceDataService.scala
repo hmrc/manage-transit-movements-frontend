@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
-import models.referenceData.CustomsOffice
+import models.referenceData.{ControlType, CustomsOffice}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,9 +28,12 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
   def getCustomsOfficeByCode(customsOfficeCode: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]] =
     connector.getCustomsOffice(customsOfficeCode)
 
+  def getControlTypes()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[Seq[ControlType]]] =
+    connector.getControlTypes()
 }
 
 trait ReferenceDataService {
   def getCustomsOfficeByCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]]
+  def getControlTypes()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[Seq[ControlType]]]
 
 }

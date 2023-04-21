@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.referenceData
 
-import models.departureP5.IE060MessageData
-import models.referenceData.{ControlType, CustomsOffice}
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.{Json, OWrites, Reads}
 
-case class GoodsUnderControlRequest[A](
-  request: Request[A],
-  eoriNumber: String,
-  ie060MessageData: IE060MessageData,
-  customsOffice: Option[CustomsOffice],
-  controlTypes: Option[Seq[ControlType]]
-) extends WrappedRequest[A](request)
+case class ControlType(code: String, description: String)
+
+object ControlType {
+
+  implicit val writes: OWrites[ControlType] = Json.writes[ControlType]
+
+  implicit val readFromFile: Reads[ControlType] = Json.reads[ControlType]
+}

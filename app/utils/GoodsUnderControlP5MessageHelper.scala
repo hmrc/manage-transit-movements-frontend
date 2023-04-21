@@ -17,13 +17,15 @@
 package utils
 
 import models.departureP5.{IE060MessageData, RequestedDocument, TypeOfControls}
+import models.referenceData.ControlType
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
 
 import java.time.LocalDateTime
 
-class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(implicit messages: Messages) extends DeparturesP5MessageHelper {
+class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, controlType: Option[Seq[ControlType]])(implicit messages: Messages)
+    extends DeparturesP5MessageHelper {
 
   def buildLRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = ie060MessageData.TransitOperation.LRN,
@@ -57,13 +59,25 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData)(impli
     call = None
   )
 
-  def buildControlTypeRow(typeOfControl: String): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(typeOfControl),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.type"),
-    id = None,
-    call = None
-  )
+  private def buildControlTypeRow(typeOfControl: String): Option[SummaryListRow] = {
+
+    val answerFormatted = controlType.map(
+      ct =>
+        ct.find(
+          p => p.code == typeOfControl
+        ).map(
+          ct => s"${ct.code} - ${ct.description}"
+        ).getOrElse(typeOfControl)
+    )
+
+    buildRowFromAnswer[String](
+      answer = answerFormatted,
+      formatAnswer = formatAsText,
+      prefix = messages("row.label.type"),
+      id = None,
+      call = None
+    )
+  }
 
   def buildControlDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = description,
