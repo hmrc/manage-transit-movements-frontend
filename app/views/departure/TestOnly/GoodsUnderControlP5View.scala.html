@@ -53,7 +53,7 @@ formHelper: FormWithCSRF
     @if(goodsUnderControlP5ViewModel.requestedDocuments) {
         <p class="govuk-body">@customsOfficeContactViewModel.fetchWhatHappensNext</p>
     }else{
-        <p class="govuk-body"><a href="@goodsUnderControlP5ViewModel.type0ParagraphLink">@goodsUnderControlP5ViewModel.type0LinkText </a>@goodsUnderControlP5ViewModel.type0LinkTextSuffix</p>
+        <p class="govuk-body">@goodsUnderControlP5ViewModel.type0LinkPrefix <a href="@goodsUnderControlP5ViewModel.type0ParagraphLink">@goodsUnderControlP5ViewModel.type0LinkText </a>@goodsUnderControlP5ViewModel.type0LinkTextSuffix</p>
     }
 
 }

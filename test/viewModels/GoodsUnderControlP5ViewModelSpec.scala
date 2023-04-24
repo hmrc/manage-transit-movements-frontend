@@ -48,10 +48,6 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       "no requested documents" - {
 
-        val controlType44 = ControlType("44", "Nature and characteristics of the goods")
-        val controlType45 = ControlType("45", "")
-        when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
-        when(mockReferenceDataService.getControlType("45")).thenReturn(Future.successful(controlType45))
         val message: IE060Data = IE060Data(
           IE060MessageData(
             TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
@@ -67,10 +63,20 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         result.sections.length mustBe 3
 
         "must return correct title" in {
-          result.notificationTypeTitle mustBe "Goods under control"
+          result.title mustBe "Goods under control"
         }
         "must return correct heading" in {
-          result.notificationTypeHeading mustBe "Goods under control"
+          result.heading mustBe "Goods under control"
+        }
+        "must return correct paragraphs" in {
+          result.paragraph1 mustBe "Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety."
+          result.paragraph2 mustBe "While under control, the goods will remain under supervision at the office of destination."
+          result.paragraph3 mustBe "You must wait for the outcome of Customs’ checks."
+        }
+        "must return correct end paragraph" in {
+          result.type0LinkPrefix mustBe "You must wait for the outcome of Customs’ checks."
+          result.type0LinkText mustBe "Check your departure declarations"
+          result.type0LinkTextSuffix mustBe "for further updates."
         }
       }
 
@@ -92,10 +98,15 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         }
 
         "must return correct title" in {
-          result.notificationTypeTitle mustBe "Goods under control - document requested"
+          result.title mustBe "Goods under control - document requested"
         }
         "must return correct heading" in {
-          result.notificationTypeHeading mustBe "Goods under control - document requested"
+          result.heading mustBe "Goods under control - document requested"
+        }
+        "must return correct paragraphs" in {
+          result.paragraph1 mustBe "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
+          result.paragraph2 mustBe "While awaiting the documentation, the goods will remain under supervision at the office of destination."
+          result.paragraph3 mustBe "You must contact the office of destination directly to share the requested documentation."
         }
       }
     }
