@@ -25,7 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.departure.{CustomsOfficeContactViewModel, GoodsUnderControlP5ViewModel}
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.departure.P5.TestOnlyGoodsUnderControlP5View
+import views.html.departure.TestOnly.GoodsUnderControlP5View
 
 class GoodsUnderControlP5Type1ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
@@ -40,7 +40,7 @@ class GoodsUnderControlP5Type1ViewSpec extends CheckYourAnswersViewBehaviours wi
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[TestOnlyGoodsUnderControlP5View]
+      .instanceOf[GoodsUnderControlP5View]
       .apply(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(fakeRequest, messages)
 
   override def summaryLists: Seq[SummaryList] = sections.map(

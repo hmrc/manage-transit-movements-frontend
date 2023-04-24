@@ -17,7 +17,7 @@
 package models.requests
 
 import models.departureP5.IE060MessageData
-import models.referenceData.{ControlType, CustomsOffice}
+import models.referenceData.CustomsOffice
 import play.api.mvc.{Request, WrappedRequest}
 
 case class GoodsUnderControlRequest[A](

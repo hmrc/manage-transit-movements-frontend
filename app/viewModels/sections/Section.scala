@@ -23,8 +23,6 @@ case class Section(sectionTitle: Option[String], rows: Seq[SummaryListRow], id: 
 object Section {
   def apply(sectionTitle: String, rows: Seq[SummaryListRow]): Section = new Section(Some(sectionTitle), rows)
 
-  def apply(rows: Seq[SummaryListRow]): Section = new Section(None, rows, None)
-
   def apply(sectionTitle: String, rows: Seq[SummaryListRow], id: Option[String]): Section =
     new Section(Some(sectionTitle), rows, id)
 

@@ -33,7 +33,7 @@ import play.api.test.Helpers._
 import services.{DepartureP5MessageService, ReferenceDataService}
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
 import viewModels.P5.departure.{CustomsOfficeContactViewModel, GoodsUnderControlP5ViewModel}
-import views.html.departure.P5.TestOnlyGoodsUnderControlP5View
+import views.html.departure.TestOnly.GoodsUnderControlP5View
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -89,8 +89,8 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       )
       when(mockDepartureP5MessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any()))
-        .thenReturn(GoodsUnderControlP5ViewModel(sections, "0"))
+      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
+        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, "0")))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
@@ -103,7 +103,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[TestOnlyGoodsUnderControlP5View]
+      val view = injector.instanceOf[GoodsUnderControlP5View]
 
       contentAsString(result) mustEqual
         view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString

@@ -16,26 +16,29 @@
 
 package services
 
+import base.SpecBase
 import connectors.ReferenceDataConnector
-import models.referenceData.CustomsOffice
+import models.referenceData.{ControlType, CustomsOffice}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matchers with MockitoSugar {
+class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matchers with MockitoSugar with SpecBase {
 
   private val mockConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  private val customsOffice             = CustomsOffice("ID1", "NAME001", None)
+  private val controlTypeForValidCode   = ControlType("44", "Intrusive")
+  private val controlTypeForInvalidCode = ControlType("999", "")
 
-  private val customsOffice = CustomsOffice("ID1", "NAME001", None)
+  override def beforeEach(): Unit =
+    reset(mockConnector)
 
   "ReferenceDataService" - {
 
@@ -59,6 +62,30 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
         val service = new ReferenceDataServiceImpl(mockConnector)
 
         service.getCustomsOfficeByCode("GB00001").futureValue mustBe None
+      }
+    }
+
+    "getControlType should" - {
+      "return a controlType when typeofControl code is present in reference data" in {
+
+        when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(controlTypeForValidCode))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getControlType("44").futureValue mustBe controlTypeForValidCode
+
+        verify(mockConnector).getControlType(any())(any(), any())
+      }
+
+      "return a controlType when typeofControl code is not present in reference data" in {
+
+        when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(controlTypeForInvalidCode))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getControlType("999").futureValue mustBe controlTypeForInvalidCode
+
+        verify(mockConnector).getControlType(any())(any(), any())
       }
     }
 

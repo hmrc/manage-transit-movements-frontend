@@ -44,25 +44,20 @@ object GoodsUnderControlP5ViewModel {
 
   class GoodsUnderControlP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
-    def apply(ie060MessageData: IE060MessageData)(implicit messages: Messages): GoodsUnderControlP5ViewModel = {
-      val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData)
-
-      val notificationType = ie060MessageData.TransitOperation.notificationType
-
-      val sections = notificationType match {
-        case "1" => Seq(helper.buildGoodsUnderControlSection()) ++ helper.documentSection()
-        case _   => Seq(helper.buildGoodsUnderControlSection()) ++ helper.controlInformationSection() ++ helper.documentSection()
-      }
-
-      new GoodsUnderControlP5ViewModel(sections, notificationType)
     def apply(
       ie060MessageData: IE060MessageData
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[GoodsUnderControlP5ViewModel] = {
       val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData, referenceDataService)
+
       helper.controlInformationSection().map {
         controlInfoSections =>
-          val sections = Seq(helper.buildGoodsUnderControlSection()) ++ controlInfoSections ++ helper.documentSection()
-          new GoodsUnderControlP5ViewModel(sections)
+          val notificationType = ie060MessageData.TransitOperation.notificationType
+
+          val sections = notificationType match {
+            case "1" => Seq(helper.buildGoodsUnderControlSection()) ++ helper.documentSection()
+            case _   => Seq(helper.buildGoodsUnderControlSection()) ++ controlInfoSections ++ helper.documentSection()
+          }
+          new GoodsUnderControlP5ViewModel(sections, notificationType)
       }
     }
   }

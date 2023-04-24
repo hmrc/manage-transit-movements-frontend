@@ -45,8 +45,13 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
     "when notification type" - {
       val typeOfControls    = Some(Seq(TypeOfControls("1", "44", None)))
       val requestedDocument = Some(Seq(RequestedDocument("1", "44", None)))
+
       "is 0" - {
 
+        val controlType44 = ControlType("44", "Nature and characteristics of the goods")
+        val controlType45 = ControlType("45", "")
+        when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
+        when(mockReferenceDataService.getControlType("45")).thenReturn(Future.successful(controlType45))
         val message: IE060Data = IE060Data(
           IE060MessageData(
             TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
@@ -56,8 +61,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
           )
         )
 
-        val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-        val result            = viewModelProvider.apply(message.data)
+        val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
+        val result            = viewModelProvider.apply(message.data).futureValue
 
         result.sections.length mustBe 3
 
@@ -79,8 +84,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
           )
         )
 
-        val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-        val result            = viewModelProvider.apply(message.data)
+        val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
+        val result            = viewModelProvider.apply(message.data).futureValue
 
         "must not render type of control if present" in {
           result.sections.length mustBe 2
