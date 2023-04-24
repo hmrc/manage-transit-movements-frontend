@@ -39,14 +39,15 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   }
 
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
-    val serviceUrl = s"${config.referenceDataUrl}/control-type/$code"
+    def onFailControlType(code: String): ControlType = ControlType(code, "")
+    val serviceUrl                                   = s"${config.referenceDataUrl}/control-type/$code"
     http
       .GET[Option[ControlType]](serviceUrl)
-      .map(_.getOrElse(ControlType(code, "")))
+      .map(_.getOrElse(onFailControlType(code)))
       .recover {
         case _ =>
           logger.error(s"Get Control Types  request failed to return data")
-          ControlType(code, "")
+          onFailControlType(code)
       }
   }
 
