@@ -28,12 +28,12 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
   def getCustomsOfficeByCode(customsOfficeCode: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]] =
     connector.getCustomsOffice(customsOfficeCode)
 
-  def getControlTypes()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[Seq[ControlType]]] =
-    connector.getControlTypes()
+  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] =
+    connector.getControlType(code)
 }
 
 trait ReferenceDataService {
   def getCustomsOfficeByCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]]
-  def getControlTypes()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[Seq[ControlType]]]
+  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
 
 }

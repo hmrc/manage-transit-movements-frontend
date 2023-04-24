@@ -16,16 +16,23 @@
 
 package utils
 
+import cats.data.OptionT
 import models.departureP5.{IE060MessageData, RequestedDocument, TypeOfControls}
 import models.referenceData.ControlType
 import play.api.i18n.Messages
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 
+import scala.concurrent.{ExecutionContext, Future}
 import java.time.LocalDateTime
 
-class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, controlType: Option[Seq[ControlType]])(implicit messages: Messages)
-    extends DeparturesP5MessageHelper {
+class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, referenceDataService: ReferenceDataService)(implicit
+  messages: Messages,
+  hc: HeaderCarrier,
+  ec: ExecutionContext
+) extends DeparturesP5MessageHelper {
 
   def buildLRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = ie060MessageData.TransitOperation.LRN,
@@ -59,24 +66,23 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, contr
     call = None
   )
 
-  private def buildControlTypeRow(typeOfControl: String): Option[SummaryListRow] = {
-
-
-    val answerFormatted = controlType match {
-      case Some(ct) => ct.find(_.code == typeOfControl)
-        .map(d => s"${d.code} - ${d.description}").getOrElse(Some(typeOfControl))
-      case None => Some(typeOfControl)
-
-    }
-    println(s"********buildControlTypeRow.answerFormatted is $answerFormatted")
-    buildRowFromAnswer[String](
-      answer = answerFormatted,
-      formatAnswer = formatAsText,
-      prefix = messages("row.label.type"),
-      id = None,
-      call = None
+  private def buildControlTypeRow(typeOfControl: String): Future[Option[SummaryListRow]] =
+    getControlTypeDescription(typeOfControl).map(
+      desc =>
+        buildRowFromAnswer[String](
+          answer = desc,
+          formatAnswer = formatAsText,
+          prefix = messages("row.label.type"),
+          id = None,
+          call = None
+        )
     )
-  }
+
+  private def getControlTypeDescription(typeOfControl: String): Future[Option[String]] =
+    (for {
+      y <- OptionT.liftF(referenceDataService.getControlType(typeOfControl)(ec, hc))
+      x = y.toString
+    } yield x).value
 
   def buildControlDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = description,
@@ -102,14 +108,14 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, contr
     call = None
   )
 
-  def buildTypeOfControlSection(typeOfControl: TypeOfControls): Section = {
-
-    val controlType: Seq[SummaryListRow]        = extractOptionalRow(buildControlTypeRow(typeOfControl.`type`))
-    val controlDescription: Seq[SummaryListRow] = extractOptionalRow(buildControlDescriptionRow(typeOfControl.text))
-    val rows                                    = controlType ++ controlDescription
-    Section(messages("heading.label.controlInformation", typeOfControl.sequenceNumber), rows, None)
-
-  }
+  def buildTypeOfControlSection(typeOfControl: TypeOfControls): Future[Section] =
+    buildControlTypeRow(typeOfControl.`type`).map {
+      x =>
+        val controlType: Seq[SummaryListRow]        = extractOptionalRow(x)
+        val controlDescription: Seq[SummaryListRow] = extractOptionalRow(buildControlDescriptionRow(typeOfControl.text))
+        val rows                                    = controlType ++ controlDescription
+        Section(messages("heading.label.controlInformation", typeOfControl.sequenceNumber), rows, None)
+    }
 
   def buildDocumentSection(document: RequestedDocument): Section = {
 
@@ -137,12 +143,12 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, contr
 
   }
 
-  def controlInformationSection(): Seq[Section] = {
+  def controlInformationSection(): Future[Seq[Section]] = {
 
     val controlInformation: Seq[TypeOfControls] = ie060MessageData.typeOfControlsToSeq
-    controlInformation.map {
+    Future.sequence(controlInformation.map {
       typeOfControl =>
         buildTypeOfControlSection(typeOfControl)
-    }
+    })
   }
 }

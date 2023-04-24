@@ -18,7 +18,14 @@ package models.referenceData
 
 import play.api.libs.json.{Json, OWrites, Reads}
 
-case class ControlType(code: String, description: String)
+case class ControlType(code: String, description: String) {
+
+  override def toString: String =
+    description match {
+      case "" => code
+      case _  => s"$code - $description"
+    }
+}
 
 object ControlType {
 

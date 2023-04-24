@@ -20,17 +20,29 @@ import base.SpecBase
 import generators.Generators
 import models.departureP5._
 import models.referenceData.ControlType
+import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject
+import play.api.inject.guice.GuiceApplicationBuilder
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.GoodsUnderControlP5MessageHelper
 import viewModels.sections.Section
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import scala.concurrent.Future
 
 class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
-  private val controlTypes = Some(Seq(ControlType("42", "Intrusive"), ControlType("44", "Non Intrusive")))
+  private val controlTypes     = Some(Seq(ControlType("42", "Intrusive"), ControlType("44", "Non Intrusive")))
+  val mockReferenceDataService = mock[ReferenceDataService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "GoodsUnderControlP5MessageHelper" - {
     "buildLRNRow" - {
@@ -44,7 +56,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.buildLRNRow
 
@@ -62,7 +74,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.buildLRNRow
 
@@ -82,7 +94,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.buildMRNRow
 
@@ -100,7 +112,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.buildMRNRow
 
@@ -122,7 +134,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.buildDateTimeControlRow
 
@@ -144,7 +156,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.buildOfficeOfDepartureRow
 
@@ -166,9 +178,9 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
-        val result = helper.controlInformationSection()
+        val result = helper.controlInformationSection().futureValue
 
         result mustBe Seq.empty
 
@@ -177,6 +189,10 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
       "must return Sequence of Sections when one typeOfControl is found in referenceData" in {
 
         val typeOfControls = Some(Seq(TypeOfControls("1", "44", None), TypeOfControls("2", "45", Some("Desc1"))))
+        val controlType44  = ControlType("44", "Nature and characteristics of the goods")
+        val controlType45  = ControlType("45", "")
+        when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
+        when(mockReferenceDataService.getControlType("45")).thenReturn(Future.successful(controlType45))
         val message: IE060Data = IE060Data(
           IE060MessageData(
             TransitOperation(None, None, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
@@ -186,12 +202,12 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
-        val result = helper.controlInformationSection()
+        val result = helper.controlInformationSection().futureValue
 
         val firstRow =
-          Seq(SummaryListRow(key = Key("Type".toText), value = Value("44 - Non Intrusive".toText)))
+          Seq(SummaryListRow(key = Key("Type".toText), value = Value("44 - Nature and characteristics of the goods".toText)))
 
         val secondRow = Seq(
           SummaryListRow(key = Key("Type".toText), value = Value("45".toText)),
@@ -207,6 +223,10 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
       "must return Sequence of Sections when no typeOfControl is found in referenceData" in {
 
         val typeOfControls = Some(Seq(TypeOfControls("1", "44", None), TypeOfControls("2", "45", Some("Desc1"))))
+        val controlType44  = ControlType("44", "")
+        val controlType45  = ControlType("45", "")
+        when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
+        when(mockReferenceDataService.getControlType("45")).thenReturn(Future.successful(controlType45))
         val message: IE060Data = IE060Data(
           IE060MessageData(
             TransitOperation(None, None, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
@@ -216,9 +236,9 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, None)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
-        val result = helper.controlInformationSection()
+        val result = helper.controlInformationSection().futureValue
 
         val firstRow =
           Seq(SummaryListRow(key = Key("Type".toText), value = Value("44".toText)))
@@ -248,7 +268,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.documentSection()
 
@@ -268,7 +288,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.documentSection()
 
@@ -300,7 +320,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, controlTypes)
+        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.buildGoodsUnderControlSection()
         val firstRow =

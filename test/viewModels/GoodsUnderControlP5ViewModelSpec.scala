@@ -18,16 +18,27 @@ package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
-import models.departureP5.{CustomsOfficeOfDeparture, IE060Data, IE060MessageData, RequestedDocument, TransitOperation, TypeOfControls}
+import models.departureP5._
 import models.referenceData.ControlType
+import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api
+import play.api.inject.guice.GuiceApplicationBuilder
+import services.ReferenceDataService
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
-  private val controlTypes = Some(Seq(ControlType("42", "Intrusive"), ControlType("44", "Non Intrusive")))
+  val mockReferenceDataService = mock[ReferenceDataService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(api.inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "headerSection" - {
 
@@ -42,8 +53,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         )
       )
 
-      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data, controlTypes)
+      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message.data).futureValue
 
       result.sections.length mustBe 1
       result.sections.head.rows.size mustBe 4
@@ -63,8 +74,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         )
       )
 
-      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data, controlTypes)
+      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message.data).futureValue
 
       result.sections.length mustBe 1
 
@@ -72,6 +83,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
     "must render control section with  2 rows if controls are present" in {
       val typeOfControls = Some(Seq(TypeOfControls("1", "44", None), TypeOfControls("2", "45", Some("Desc1"))))
+      val controlType44  = ControlType("44", "Nature and characteristics of the goods")
+      val controlType45  = ControlType("45", "")
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
@@ -82,8 +95,10 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         )
       )
 
-      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data, controlTypes)
+      when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
+      when(mockReferenceDataService.getControlType("45")).thenReturn(Future.successful(controlType45))
+      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message.data).futureValue
 
       result.sections.length mustBe 3
       result.sections(1).rows.size mustBe 1
@@ -108,8 +123,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         )
       )
 
-      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data, controlTypes)
+      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message.data).futureValue
 
       result.sections.length mustBe 1
 
@@ -127,8 +142,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         )
       )
 
-      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
-      val result            = viewModelProvider.apply(message.data, controlTypes)
+      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message.data).futureValue
 
       result.sections.length mustBe 3
       result.sections(1).rows.size mustBe 1

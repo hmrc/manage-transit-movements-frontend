@@ -24,6 +24,5 @@ case class GoodsUnderControlRequest[A](
   request: Request[A],
   eoriNumber: String,
   ie060MessageData: IE060MessageData,
-  customsOffice: Option[CustomsOffice],
-  controlTypes: Option[Seq[ControlType]]
+  customsOffice: Option[CustomsOffice]
 ) extends WrappedRequest[A](request)

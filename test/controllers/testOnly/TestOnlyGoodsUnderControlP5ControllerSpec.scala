@@ -89,8 +89,8 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
       )
       when(mockDepartureP5MessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-      when(mockGoodsUnderControlP5ViewModelProvider.apply(any(), any())(any()))
-        .thenReturn(GoodsUnderControlP5ViewModel(sections))
+      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
+        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections)))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 

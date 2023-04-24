@@ -45,10 +45,9 @@ class GoodsUnderControlAction(departureId: String, departureP5MessageService: De
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (for {
-      ie060        <- OptionT(departureP5MessageService.getGoodsUnderControl(departureId))
-      cust         <- OptionT.liftF(referenceDataService.getCustomsOfficeByCode(code = ie060.data.CustomsOfficeOfDeparture.referenceNumber))
-      controlTypes <- OptionT.liftF(referenceDataService.getControlTypes())
-    } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, cust, controlTypes))
+      ie060 <- OptionT(departureP5MessageService.getGoodsUnderControl(departureId))
+      cust  <- OptionT.liftF(referenceDataService.getCustomsOfficeByCode(code = ie060.data.CustomsOfficeOfDeparture.referenceNumber))
+    } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, cust))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
 

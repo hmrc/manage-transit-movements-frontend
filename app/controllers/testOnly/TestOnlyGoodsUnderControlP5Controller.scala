@@ -19,12 +19,14 @@ package controllers.testOnly
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.CustomsOfficeContactViewModel
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
 import views.html.departure.P5.TestOnlyGoodsUnderControlP5View
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class TestOnlyGoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -33,14 +35,18 @@ class TestOnlyGoodsUnderControlP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: GoodsUnderControlP5ViewModelProvider,
   view: TestOnlyGoodsUnderControlP5View
-) extends FrontendController(cc)
+)(implicit val executionContext: ExecutionContext)
+    extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
+  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)).async {
     implicit request =>
-      val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData, request.controlTypes)
+      val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
       val customsOfficeContactViewModel =
         CustomsOfficeContactViewModel(request.ie060MessageData.CustomsOfficeOfDeparture.referenceNumber, request.customsOffice)
-      Ok(view(goodsUnderControlP5ViewModel, departureId, customsOfficeContactViewModel))
+      goodsUnderControlP5ViewModel.map {
+        viewModel =>
+          Ok(view(viewModel, departureId, customsOfficeContactViewModel))
+      }
   }
 }

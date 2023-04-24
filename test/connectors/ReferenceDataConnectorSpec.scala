@@ -35,6 +35,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
   private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
   val code                                           = "GB00001"
+  val typeOfControl                                  = "44"
 
   "Reference Data" - {
 
@@ -86,12 +87,12 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         "should handle a 200 response for control types" in {
           server.stubFor(
             get(urlEqualTo(s"$controlTypeUri"))
-              .willReturn(okJson(controlTypes))
+              .willReturn(okJson(controlType))
           )
 
-          val expectedResult = Some(Seq(ControlType("42", "Intrusive"), ControlType("44", "Non Intrusive")))
+          val expectedResult = ControlType("44", "Intrusive")
 
-          connector.getControlTypes().futureValue mustBe expectedResult
+          connector.getControlType(typeOfControl).futureValue mustBe expectedResult
         }
 
         "should handle client and server errors for control type end point" in {
@@ -107,7 +108,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
                   )
               )
 
-              connector.getControlTypes().futureValue mustBe None
+              connector.getControlType(typeOfControl).futureValue mustBe ControlType(typeOfControl, "")
           }
         }
       }
@@ -117,8 +118,9 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
 object ReferenceDataConnectorSpec {
 
+  private val typeOfControl    = "44"
   private val customsOfficeUri = "/test-only/transit-movements-trader-reference-data/customs-office"
-  private val controlTypeUri   = "/test-only/transit-movements-trader-reference-data/control-types"
+  private val controlTypeUri   = s"/test-only/transit-movements-trader-reference-data/control-type/$typeOfControl"
 
   private val customsOfficeResponseJsonWithPhone: String =
     """
@@ -138,17 +140,11 @@ object ReferenceDataConnectorSpec {
       | }
       |""".stripMargin
 
-  private val controlTypes: String =
+  private val controlType: String =
     """
-      |[
-      | {
-      |   "code":"42",
-      |   "description":"Intrusive"
-      | },
       | {
       |   "code":"44",
-      |   "description":"Non Intrusive"
+      |   "description":"Intrusive"
       | }
-      |]
       |""".stripMargin
 }
