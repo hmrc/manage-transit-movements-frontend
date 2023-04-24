@@ -344,14 +344,17 @@ arrivals.search.form.value.invalid = The Movement Reference Number must only inc
 
 departure.ie060.message.title = Goods under control
 departure.ie060.message.heading = Goods under control
-departure.ie060.message.notificationType1.title = Goods under control - document requested
-departure.ie060.message.notificationType1.heading = Goods under control - document requested
+departure.ie060.message.requestedDocuments.title = Goods under control - document requested
+departure.ie060.message.requestedDocuments.heading = Goods under control - document requested
 departure.ie060.message.h2 = What happens next
 
 departure.ie060.message.subheading = LRN: {0}
 departure.ie060.message.paragraph1 = Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety.
 departure.ie060.message.paragraph2 = While under control, the goods will remain under supervision at the office of destination.
 departure.ie060.message.paragraph3 = You must wait for the outcome of Customs’ checks.
+departure.ie060.message.requestedDocuments.paragraph1 = Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety.
+departure.ie060.message.requestedDocuments.paragraph2 = While awaiting the documentation, the goods will remain under supervision at the office of destination.
+departure.ie060.message.requestedDocuments.paragraph3 = You must contact the office of destination directly to share the requested documentation.
 departure.ie060.message.paragraph4.prefix = You must wait for the outcome of Customs’ checks.
 departure.ie060.message.paragraph4.linkText = Check your departure declarations
 departure.ie060.message.paragraph4.suffix = for further updates.

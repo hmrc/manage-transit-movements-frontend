@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
-  val mockReferenceDataService = mock[ReferenceDataService]
+  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -42,11 +42,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
   "GoodsUnderControlP5ViewModel" - {
 
-    "when notification type" - {
+    "when there is" - {
       val typeOfControls    = Some(Seq(TypeOfControls("1", "44", None)))
       val requestedDocument = Some(Seq(RequestedDocument("1", "44", None)))
 
-      "is 0" - {
+      "no requested documents" - {
 
         val controlType44 = ControlType("44", "Nature and characteristics of the goods")
         val controlType45 = ControlType("45", "")
@@ -57,7 +57,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
             TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
             CustomsOfficeOfDeparture("22323323"),
             typeOfControls,
-            requestedDocument
+            None
           )
         )
 
@@ -74,7 +74,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         }
       }
 
-      "is 1" - {
+      "requested documents" - {
         val message: IE060Data = IE060Data(
           IE060MessageData(
             TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "1"),

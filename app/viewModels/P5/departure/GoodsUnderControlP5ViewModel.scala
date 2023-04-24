@@ -18,6 +18,7 @@ package viewModels.P5.departure
 
 import models.departureP5.IE060MessageData
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GoodsUnderControlP5MessageHelper
@@ -26,17 +27,41 @@ import viewModels.sections.Section
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class GoodsUnderControlP5ViewModel(sections: Seq[Section], notificationType: String) {
+case class GoodsUnderControlP5ViewModel(sections: Seq[Section], requestedDocuments: Boolean) {
 
-  def notificationTypeTitle(implicit messages: Messages): String = notificationType match {
-    case "1" => messages("departure.ie060.message.notificationType1.title")
-    case _   => messages("departure.ie060.message.title")
+  def title(implicit messages: Messages): String = if (requestedDocuments) {
+    messages("departure.ie060.message.requestedDocuments.title")
+  } else {
+    messages("departure.ie060.message.title")
   }
 
-  def notificationTypeHeading(implicit messages: Messages): String = notificationType match {
-    case "1" => messages("departure.ie060.message.notificationType1.heading")
-    case _   => messages("departure.ie060.message.heading")
+  def heading(implicit messages: Messages): String = if (requestedDocuments) {
+    messages("departure.ie060.message.requestedDocuments.heading")
+  } else {
+    messages("departure.ie060.message.heading")
   }
+
+  def paragraph1(implicit messages: Messages): String = if (requestedDocuments) {
+    messages("departure.ie060.message.requestedDocuments.paragraph1")
+  } else {
+    messages("departure.ie060.message.paragraph1")
+  }
+
+  def paragraph2(implicit messages: Messages): String = if (requestedDocuments) {
+    messages("departure.ie060.message.requestedDocuments.paragraph2")
+  } else {
+    messages("departure.ie060.message.paragraph2")
+  }
+
+  def paragraph3(implicit messages: Messages): String = if (requestedDocuments) {
+    messages("departure.ie060.message.requestedDocuments.paragraph3")
+  } else {
+    messages("departure.ie060.message.paragraph3")
+  }
+
+  val type0ParagraphLink: Call = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad()
+  def type0LinkText(implicit messages: Messages): String = messages("departure.ie060.message.paragraph4.linkText")
+  def type0LinkTextSuffix(implicit messages: Messages): String = messages("departure.ie060.message.paragraph4.suffix")
 
 }
 
@@ -49,15 +74,19 @@ object GoodsUnderControlP5ViewModel {
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[GoodsUnderControlP5ViewModel] = {
       val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData, referenceDataService)
 
+      val notificationType: String = ie060MessageData.TransitOperation.notificationType
+      val requestedDocuments: String = if(ie060MessageData.requestedDocumentsToSeq.nonEmpty || notificationType == "1") "1" else "0"
+      def isDocumentsRequested: Int = {
+        if(notificationType == "1") 1 else if(ie060MessageData.requestedDocumentsToSeq.nonEmpty) 2 else 3
+      }
+
       helper.controlInformationSection().map {
         controlInfoSections =>
-          val notificationType = ie060MessageData.TransitOperation.notificationType
 
-          val sections = notificationType match {
-            case "1" => Seq(helper.buildGoodsUnderControlSection()) ++ helper.documentSection()
-            case _   => Seq(helper.buildGoodsUnderControlSection()) ++ controlInfoSections ++ helper.documentSection()
-          }
-          new GoodsUnderControlP5ViewModel(sections, notificationType)
+          val sections = Seq(helper.buildGoodsUnderControlSection()) ++ controlInfoSections ++ helper.documentSection()
+
+
+          new GoodsUnderControlP5ViewModel(sections, requestedDocuments)
       }
     }
   }
