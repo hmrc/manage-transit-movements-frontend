@@ -12,53 +12,53 @@
 # Test routes
 
 + nocsrf
-POST        /manage-transit-movements/test-only/arrival/submit                              controllers.testOnly.ArrivalsRouterController.arrivalNotificationMessageToCore()
+POST        /manage-transit-movements/test-only/arrival/submit                              controllers.testOnly.TestOnlyArrivalsRouterController.arrivalNotificationMessageToCore()
 
 + nocsrf
-PUT         /manage-transit-movements/test-only/arrival/resubmit                            controllers.testOnly.ArrivalsRouterController.resubmitArrivalNotificationMessageToCore()
+PUT         /manage-transit-movements/test-only/arrival/resubmit                            controllers.testOnly.TestOnlyArrivalsRouterController.resubmitArrivalNotificationMessageToCore()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/arrival/message                             controllers.testOnly.ArrivalsRouterController.messageToCore()
+POST        /manage-transit-movements/test-only/arrival/message                             controllers.testOnly.TestOnlyArrivalsRouterController.messageToCore()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/message                                     controllers.testOnly.RouterController.fromCoreMessage()
+POST        /manage-transit-movements/test-only/message                                     controllers.testOnly.TestOnlyRouterController.fromCoreMessage()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/departure/submit                            controllers.testOnly.DeparturesRouterController.declarationMessageToCore()
+POST        /manage-transit-movements/test-only/departure/submit                            controllers.testOnly.TestOnlyDeparturesRouterController.declarationMessageToCore()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/departure/message                           controllers.testOnly.DeparturesRouterController.messageToCore()
+POST        /manage-transit-movements/test-only/departure/message                           controllers.testOnly.TestOnlyDeparturesRouterController.messageToCore()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/departure-outbound                         controllers.testOnly.P5DeparturesAPIController.outboundDepartureMessage()
+POST        /manage-transit-movements/test-only/departure-outbound                         controllers.testOnly.TestOnlyP5DeparturesAPIController.outboundDepartureMessage()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/departure-inbound/:departureId             controllers.testOnly.P5DeparturesAPIController.inboundDepartureMessage(departureId: String)
+POST        /manage-transit-movements/test-only/departure-inbound/:departureId             controllers.testOnly.TestOnlyP5DeparturesAPIController.inboundDepartureMessage(departureId: String)
 
 + nocsrf
-POST        /manage-transit-movements/test-only/departure-outbound-message/:departureId    controllers.testOnly.P5DeparturesAPIController.addMessageToDeparture(departureId: String)
+POST        /manage-transit-movements/test-only/departure-outbound-message/:departureId    controllers.testOnly.TestOnlyP5DeparturesAPIController.addMessageToDeparture(departureId: String)
 
 + nocsrf
-POST        /manage-transit-movements/test-only/cancellation/submit                         controllers.testOnly.DeparturesRouterController.declarationCancellationMessageToCore()
+POST        /manage-transit-movements/test-only/cancellation/submit                         controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
 + nocsrf
-GET         /manage-transit-movements/test-only/view-arrival-notifications                   controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad()
+GET         /manage-transit-movements/test-only/view-arrival-notifications                  controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad()
 
 + nocsrf
 GET         /manage-transit-movements/test-only/view-departure-declarations                 controllers.testOnly.ViewAllDeparturesP5Controller.onPageLoad()
 
-GET         /manage-transit-movements/test-only/goods-under-control/:departureId   controllers.testOnly.GoodsUnderControlP5Controller.onPageLoad(departureId: String)
+GET         /manage-transit-movements/test-only/goods-under-control/:departureId            controllers.testOnly.GoodsUnderControlP5Controller.onPageLoad(departureId: String)
 GET         /manage-transit-movements/test-only/goods-under-control-document-requested/:departureId   controllers.testOnly.GoodsUnderControlP5Controller.onPageLoad(departureId: String)
 
 
 + nocsrf
-POST        /manage-transit-movements/test-only/arrival-outbound                            controllers.testOnly.P5ArrivalsAPIController.outboundArrivalMessage()
+POST        /manage-transit-movements/test-only/arrival-outbound                            controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()
 
 + nocsrf
-POST        /manage-transit-movements/test-only/unloading-outbound/:arrivalId               controllers.testOnly.P5ArrivalsAPIController.outboundUnloadingMessage(arrivalId: String)
+POST        /manage-transit-movements/test-only/unloading-outbound/:arrivalId               controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundUnloadingMessage(arrivalId: String)
 
 + nocsrf
-POST        /manage-transit-movements/test-only/arrival-inbound/:arrivalId                  controllers.testOnly.P5ArrivalsAPIController.inboundArrivalMessage(arrivalId: String)
+POST        /manage-transit-movements/test-only/arrival-inbound/:arrivalId                  controllers.testOnly.TestOnlyP5ArrivalsAPIController.inboundArrivalMessage(arrivalId: String)
 
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes

@@ -16,7 +16,7 @@
 
 package controllers.testOnly
 
-import connectors.testOnly.P5DeparturesAPIConnector
+import connectors.testOnly.TestOnlyP5DeparturesAPIConnector
 import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -24,9 +24,9 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
-class P5DeparturesAPIController @Inject() (
+class TestOnlyP5DeparturesAPIController @Inject() (
   cc: MessagesControllerComponents,
-  connector: P5DeparturesAPIConnector,
+  connector: TestOnlyP5DeparturesAPIConnector,
   action: DefaultActionBuilder
 )(implicit val ec: ExecutionContext)
     extends FrontendController(cc) {

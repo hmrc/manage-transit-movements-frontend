@@ -27,7 +27,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class DeparturesRouterConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
+class TestOnlyDeparturesRouterConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private def newHeaders(headers: Headers, contentType: String)(implicit hc: HeaderCarrier): HeaderCarrier =
     hc

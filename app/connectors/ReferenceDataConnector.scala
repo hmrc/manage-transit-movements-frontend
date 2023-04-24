@@ -42,7 +42,6 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     def onFailControlType(code: String): ControlType = ControlType(code, "")
     val serviceUrl                                   = s"${config.referenceDataUrl}/control-type/$code"
 
-    println("***** In Connector.....")
     http
       .GET[Option[ControlType]](serviceUrl)
       .map(_.getOrElse(onFailControlType(code)))

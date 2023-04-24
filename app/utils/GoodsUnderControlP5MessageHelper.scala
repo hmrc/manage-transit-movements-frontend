@@ -18,15 +18,14 @@ package utils
 
 import cats.data.OptionT
 import models.departureP5.{IE060MessageData, RequestedDocument, TypeOfControls}
-import models.referenceData.ControlType
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 
-import scala.concurrent.{ExecutionContext, Future}
 import java.time.LocalDateTime
+import scala.concurrent.{ExecutionContext, Future}
 
 class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, referenceDataService: ReferenceDataService)(implicit
   messages: Messages,
@@ -84,7 +83,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
       x = y.toString
     } yield x).value
 
-  def buildControlDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
+  private def buildControlDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = description,
     formatAnswer = formatAsText,
     prefix = messages("row.label.description"),
@@ -92,7 +91,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     call = None
   )
 
-  def buildDocumentTypeRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+  private def buildDocumentTypeRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(documentSequence),
     formatAnswer = formatAsText,
     prefix = messages("row.label.type"),
@@ -100,7 +99,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     call = None
   )
 
-  def buildDocumentDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
+  private def buildDocumentDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = description,
     formatAnswer = formatAsText,
     prefix = messages("row.label.description"),
@@ -108,7 +107,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     call = None
   )
 
-  def buildTypeOfControlSection(typeOfControl: TypeOfControls): Future[Section] =
+  private def buildTypeOfControlSection(typeOfControl: TypeOfControls): Future[Section] =
     buildControlTypeRow(typeOfControl.`type`).map {
       x =>
         val controlType: Seq[SummaryListRow]        = extractOptionalRow(x)
@@ -117,7 +116,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
         Section(messages("heading.label.controlInformation", typeOfControl.sequenceNumber), rows, None)
     }
 
-  def buildDocumentSection(document: RequestedDocument): Section = {
+  private def buildDocumentSection(document: RequestedDocument): Section = {
 
     val documentType: Seq[SummaryListRow]        = extractOptionalRow(buildDocumentTypeRow(document.documentType))
     val documentDescription: Seq[SummaryListRow] = extractOptionalRow(buildDocumentDescriptionRow(document.description))

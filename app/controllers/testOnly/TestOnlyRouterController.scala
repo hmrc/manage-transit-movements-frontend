@@ -16,7 +16,7 @@
 
 package controllers.testOnly
 
-import connectors.testOnly.RouterConnector
+import connectors.testOnly.TestOnlyRouterConnector
 import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -24,9 +24,9 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
-class RouterController @Inject() (
+class TestOnlyRouterController @Inject() (
   cc: MessagesControllerComponents,
-  connector: RouterConnector,
+  connector: TestOnlyRouterConnector,
   action: DefaultActionBuilder
 )(implicit val ec: ExecutionContext)
     extends FrontendController(cc) {
