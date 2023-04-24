@@ -43,18 +43,23 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
   "GoodsUnderControlP5ViewModel" - {
 
     "when notification type" - {
+      val typeOfControls    = Some(Seq(TypeOfControls("1", "44", None)))
+      val requestedDocument = Some(Seq(RequestedDocument("1", "44", None)))
       "is 0" - {
+
         val message: IE060Data = IE060Data(
           IE060MessageData(
             TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
             CustomsOfficeOfDeparture("22323323"),
-            None,
-            None
+            typeOfControls,
+            requestedDocument
           )
         )
 
         val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
         val result            = viewModelProvider.apply(message.data)
+
+        result.sections.length mustBe 3
 
         "must return correct title" in {
           result.notificationTypeTitle mustBe "Goods under control"
@@ -69,13 +74,17 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
           IE060MessageData(
             TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "1"),
             CustomsOfficeOfDeparture("22323323"),
-            None,
-            None
+            typeOfControls,
+            requestedDocument
           )
         )
 
         val viewModelProvider = new GoodsUnderControlP5ViewModelProvider()
         val result            = viewModelProvider.apply(message.data)
+
+        "must not render type of control if present" in {
+          result.sections.length mustBe 2
+        }
 
         "must return correct title" in {
           result.notificationTypeTitle mustBe "Goods under control - document requested"
