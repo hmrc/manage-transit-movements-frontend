@@ -39,7 +39,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
-class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockGoodsUnderControlP5ViewModelProvider = mock[GoodsUnderControlP5ViewModelProvider]
   private val mockReferenceDataService                 = mock[ReferenceDataService]
@@ -54,7 +54,7 @@ class TestOnlyGoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDef
                                                                                                       mockDepartureP5MessageService,
                                                                                                       mockReferenceDataService
     )
-  lazy val goodsUnderControlController: String = controllers.testOnly.routes.TestOnlyGoodsUnderControlP5Controller.onPageLoad(departureIdP5).url
+  lazy val goodsUnderControlController: String = controllers.testOnly.routes.GoodsUnderControlP5Controller.onPageLoad(departureIdP5).url
   private val sections                         = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {

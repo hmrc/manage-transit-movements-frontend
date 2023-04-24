@@ -28,15 +28,14 @@ import views.html.departure.P5.TestOnlyGoodsUnderControlP5View
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TestOnlyGoodsUnderControlP5Controller @Inject() (
+class GoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   goodsUnderControlAction: GoodsUnderControlActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: GoodsUnderControlP5ViewModelProvider,
-  view: TestOnlyGoodsUnderControlP5View
-)(implicit val executionContext: ExecutionContext)
-    extends FrontendController(cc)
+  view: GoodsUnderControlP5View
+) extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)).async {
