@@ -18,24 +18,25 @@ package views.departure.testOnly
 
 import generators.Generators
 import models.referenceData.CustomsOffice
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.departure.{CustomsOfficeContactViewModel, GoodsUnderControlP5ViewModel}
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
 import views.html.departure.P5.TestOnlyGoodsUnderControlP5View
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 
-class TestOnlyGoodsUnderControlP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class GoodsUnderControlP5Type1ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
-  override val prefix: String = "departure.ie060.message"
+  private val customsOffice: CustomsOffice   = arbitrary[CustomsOffice].sample.value
+  private val customsReferenceNumber: String = Gen.alphaNumStr.sample.value
+  private val notificationType               = "1"
 
-  val customsOffice: CustomsOffice   = arbitrary[CustomsOffice].sample.value
-  val customsReferenceNumber: String = Gen.alphaNumStr.sample.value
+  override val prefix: String = "departure.ie060.message.notificationType1"
 
-  val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel   = new GoodsUnderControlP5ViewModel(sections)
-  val customsOfficeContactViewModel: CustomsOfficeContactViewModel = new CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
+  private val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel   = new GoodsUnderControlP5ViewModel(sections, notificationType)
+  private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
@@ -64,5 +65,4 @@ class TestOnlyGoodsUnderControlP5ViewSpec extends CheckYourAnswersViewBehaviours
         behave like pageWithContent("h2", sectionTitle)
     })
   }
-
 }

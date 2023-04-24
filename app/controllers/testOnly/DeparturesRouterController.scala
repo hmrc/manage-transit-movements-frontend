@@ -16,7 +16,8 @@
 
 package controllers.testOnly
 
-import connectors.testOnly.TestOnlyArrivalsRouterConnector
+import connectors.testOnly.DeparturesRouterConnector
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -24,59 +25,60 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyArrivalsRouterController @Inject() (
+class DeparturesRouterController @Inject() (
   cc: MessagesControllerComponents,
-  connector: TestOnlyArrivalsRouterConnector,
+  connector: DeparturesRouterConnector,
   action: DefaultActionBuilder
 )(implicit val ec: ExecutionContext)
     extends FrontendController(cc) {
 
-  def arrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
+  def declarationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector
-        .createArrivalNotificationMessage(request.body, request.headers)
+        .createDeclarationMessage(request.body, request.headers)
         .map {
           response =>
             val location = response.header("Location").getOrElse("Location is missing")
             Status(response.status)
               .withHeaders(
-                "Location"  -> location,
-                "arrivalId" -> location.split("/").last
+                "Location"    -> location,
+                "departureId" -> location.split("/").last
               )
         }
   }
 
-  def resubmitArrivalNotificationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
+  def declarationCancellationMessageToCore: Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
-      request.headers.get("arrivalId") match {
-        case Some(arrivalId) =>
+      request.headers.get("departureId") match {
+        case Some(departureId) =>
           connector
-            .resubmitArrivalNotificationMessage(request.body, arrivalId, request.headers)
+            .createDeclarationCancellationMessage(request.body, departureId, request.headers)
             .map {
               response =>
                 val location = response.header("Location").getOrElse("Location is missing")
                 Status(response.status)
                   .withHeaders(
-                    "Location"  -> location,
-                    "arrivalId" -> location.split("/").last
+                    "Location"    -> location,
+                    "departureId" -> location.split("/").last
                   )
             }
 
-        case _ => Future.successful(BadRequest("ArrivalId is missing"))
+        case _ => Future.successful(BadRequest("DepartureId is missing"))
+
       }
   }
 
-  def messageToCore: Action[NodeSeq] = action.async(parse.xml) {
+  def messageToCore: Action[JsValue] = action.async(parse.json) {
     implicit request =>
-      request.headers.get("arrivalId") match {
-        case Some(arrivalId) =>
+      request.headers.get("departureId") match {
+        case Some(departureId) =>
           connector
-            .submitMessageToCore(request.body, arrivalId, request.headers)
+            .submitMessageToCore(request.body, departureId, request.headers)
             .map(
               response => Status(response.status)
             )
 
-        case _ => Future.successful(BadRequest("ArrivalId is missing"))
+        case _ => Future.successful(BadRequest("DepartureId is missing"))
       }
   }
 }

@@ -22,17 +22,17 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.CustomsOfficeContactViewModel
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
-import views.html.departure.P5.TestOnlyGoodsUnderControlP5View
+import views.html.departure.P5.GoodsUnderControlP5View
 
 import javax.inject.Inject
 
-class TestOnlyGoodsUnderControlP5Controller @Inject() (
+class GoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   goodsUnderControlAction: GoodsUnderControlActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: GoodsUnderControlP5ViewModelProvider,
-  view: TestOnlyGoodsUnderControlP5View
+  view: GoodsUnderControlP5View
 ) extends FrontendController(cc)
     with I18nSupport {
 
