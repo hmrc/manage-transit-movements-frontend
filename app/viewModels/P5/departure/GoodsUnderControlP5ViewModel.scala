@@ -46,7 +46,11 @@ object GoodsUnderControlP5ViewModel {
 
       val notificationType = ie060MessageData.TransitOperation.notificationType
 
-      val sections = Seq(helper.buildGoodsUnderControlSection()) ++ helper.controlInformationSection() ++ helper.documentSection()
+      val sections = notificationType match {
+        case "1" => Seq(helper.buildGoodsUnderControlSection()) ++ helper.documentSection()
+        case _   => Seq(helper.buildGoodsUnderControlSection()) ++ helper.controlInformationSection() ++ helper.documentSection()
+      }
+
       new GoodsUnderControlP5ViewModel(sections, notificationType)
     }
   }
