@@ -32,7 +32,7 @@ import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels.pagination.MovementsPaginationViewModel
-import views.html.departure.P5.ViewAllDeparturesP5View
+import views.html.departure.TestOnly.ViewAllDeparturesP5View
 import viewModels.ViewMovementAction
 
 import java.time.LocalDateTime
