@@ -44,16 +44,16 @@ formHelper: FormWithCSRF
 
     <p class="govuk-body" id="paragraph1">@goodsUnderControlP5ViewModel.paragraph1</p>
     <p class="govuk-body" id="paragraph2">@goodsUnderControlP5ViewModel.paragraph2</p>
-    <p class="govuk-body" id="""paragraph3">@goodsUnderControlP5ViewModel.paragraph3</p>
+    <p class="govuk-body" id="paragraph3">@goodsUnderControlP5ViewModel.paragraph3</p>
 
 
     @answerSections(goodsUnderControlP5ViewModel.sections)
-    <h2 class="govuk-heading-m">@messages("goodsUnderControl.subHeading")</h2>
+    <h2 class="govuk-heading-m" id="subheading">@messages("goodsUnderControl.subHeading")</h2>
 
     @if(goodsUnderControlP5ViewModel.requestedDocuments) {
-        <p class="govuk-body">@customsOfficeContactViewModel.fetchWhatHappensNext</p>
+        <p class="govuk-body" id="what-happens-next">@customsOfficeContactViewModel.fetchWhatHappensNext</p>
     }else{
-        <p class="govuk-body">@goodsUnderControlP5ViewModel.type0LinkPrefix <a href="@goodsUnderControlP5ViewModel.type0ParagraphLink">@goodsUnderControlP5ViewModel.type0LinkText </a>@goodsUnderControlP5ViewModel.type0LinkTextSuffix</p>
+        <p class="govuk-body" id="link-text">@goodsUnderControlP5ViewModel.type0LinkPrefix <a id="view-all-declarations" href="@goodsUnderControlP5ViewModel.type0ParagraphLink">@goodsUnderControlP5ViewModel.type0LinkText</a> @goodsUnderControlP5ViewModel.type0LinkTextSuffix</p>
     }
 
 }
