@@ -37,9 +37,9 @@ formHelper: FormWithCSRF
         showBackLink = true
     ) {
 
-
     @heading(
-        heading = goodsUnderControlP5ViewModel.heading
+        heading = goodsUnderControlP5ViewModel.heading,
+        caption = goodsUnderControlP5ViewModel.lrn.map(x => messages("departure.ie060.message.subheading", x))
     )
 
     <p class="govuk-body" id="paragraph1">@goodsUnderControlP5ViewModel.paragraph1</p>

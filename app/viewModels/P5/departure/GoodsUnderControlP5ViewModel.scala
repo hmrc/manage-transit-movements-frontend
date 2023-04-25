@@ -27,7 +27,7 @@ import viewModels.sections.Section
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class GoodsUnderControlP5ViewModel(sections: Seq[Section], requestedDocuments: Boolean) {
+case class GoodsUnderControlP5ViewModel(sections: Seq[Section], requestedDocuments: Boolean, lrn: Option[String]) {
 
   def title(implicit messages: Messages): String = if (requestedDocuments) {
     messages("departure.ie060.message.requestedDocuments.title")
@@ -78,6 +78,7 @@ object GoodsUnderControlP5ViewModel {
 
       val notificationType: String    = ie060MessageData.TransitOperation.notificationType
       val requestedDocuments: Boolean = if (ie060MessageData.requestedDocumentsToSeq.nonEmpty || notificationType == "1") true else false
+      val lrn                         = ie060MessageData.TransitOperation.LRN
 
       helper.controlInformationSection().map {
         controlInfoSections =>
@@ -86,7 +87,7 @@ object GoodsUnderControlP5ViewModel {
             case _   => Seq(helper.buildGoodsUnderControlSection()) ++ controlInfoSections ++ helper.documentSection()
           }
 
-          new GoodsUnderControlP5ViewModel(sections, requestedDocuments)
+          new GoodsUnderControlP5ViewModel(sections, requestedDocuments, lrn)
       }
     }
   }

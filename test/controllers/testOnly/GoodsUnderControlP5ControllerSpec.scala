@@ -90,11 +90,11 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       when(mockDepartureP5MessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
-        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false)))
+        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
-      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false)
+      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
       val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
 
       val request = FakeRequest(GET, goodsUnderControlController)

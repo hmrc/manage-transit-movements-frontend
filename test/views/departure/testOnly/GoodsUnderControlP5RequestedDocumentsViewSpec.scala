@@ -34,7 +34,7 @@ class GoodsUnderControlP5RequestedDocumentsViewSpec extends CheckYourAnswersView
 
   override val prefix: String = "departure.ie060.message.requestedDocuments"
 
-  private val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel   = new GoodsUnderControlP5ViewModel(sections, true)
+  private val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel   = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
   private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
@@ -49,6 +49,8 @@ class GoodsUnderControlP5RequestedDocumentsViewSpec extends CheckYourAnswersView
   behave like pageWithTitle()
 
   behave like pageWithBackLink()
+
+  behave like pageWithSectionCaption(s"LRN: $lrn")
 
   behave like pageWithHeading()
 

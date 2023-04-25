@@ -34,7 +34,7 @@ class GoodsUnderControlP5ViewSpec extends CheckYourAnswersViewBehaviours with Ge
 
   override val prefix: String = "departure.ie060.message"
 
-  private val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel   = new GoodsUnderControlP5ViewModel(sections, false)
+  private val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel   = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
   private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
@@ -49,6 +49,8 @@ class GoodsUnderControlP5ViewSpec extends CheckYourAnswersViewBehaviours with Ge
   behave like pageWithTitle()
 
   behave like pageWithBackLink()
+
+  behave like pageWithSectionCaption(s"LRN: $lrn")
 
   behave like pageWithHeading()
 
