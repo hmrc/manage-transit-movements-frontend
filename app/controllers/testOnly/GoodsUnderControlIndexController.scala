@@ -18,6 +18,7 @@ package controllers.testOnly
 
 import controllers.actions._
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -34,13 +35,16 @@ class GoodsUnderControlIndexController @Inject() (
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
     implicit request =>
-      val notificationType: String = request.ie060MessageData.TransitOperation.notificationType
-      if (request.ie060MessageData.requestedDocumentsToSeq.nonEmpty || notificationType == "1") {
-        Redirect(controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId))
-      } else {
-        Redirect(controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId))
-      }
+      val ie060         = "ie060"         -> Json.toJson(request.ie060MessageData).toString()
+      val customsOffice = "customsOffice" -> Json.toJson(request.customsOffice.get).toString()
 
+      val notificationType: String = request.ie060MessageData.TransitOperation.notificationType
+      val call = if (request.ie060MessageData.requestedDocumentsToSeq.nonEmpty || notificationType == "1") {
+        controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId)
+      } else {
+        controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId)
+      }
+      Redirect(call).addingToSession(ie060, customsOffice)
   }
 
 }
