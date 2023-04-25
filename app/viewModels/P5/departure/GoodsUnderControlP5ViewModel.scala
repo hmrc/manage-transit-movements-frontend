@@ -61,8 +61,8 @@ case class GoodsUnderControlP5ViewModel(sections: Seq[Section], requestedDocumen
 
   def type0LinkPrefix(implicit messages: Messages): String = messages("departure.ie060.message.paragraph4.prefix")
 
-  val type0ParagraphLink: Call = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad()
-  def type0LinkText(implicit messages: Messages): String = messages("departure.ie060.message.paragraph4.linkText")
+  val type0ParagraphLink: Call                                 = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad()
+  def type0LinkText(implicit messages: Messages): String       = messages("departure.ie060.message.paragraph4.linkText")
   def type0LinkTextSuffix(implicit messages: Messages): String = messages("departure.ie060.message.paragraph4.suffix")
 
 }
@@ -76,12 +76,11 @@ object GoodsUnderControlP5ViewModel {
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[GoodsUnderControlP5ViewModel] = {
       val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData, referenceDataService)
 
-      val notificationType: String = ie060MessageData.TransitOperation.notificationType
-      val requestedDocuments: Boolean = if(ie060MessageData.requestedDocumentsToSeq.nonEmpty || notificationType == "1") true else false
+      val notificationType: String    = ie060MessageData.TransitOperation.notificationType
+      val requestedDocuments: Boolean = if (ie060MessageData.requestedDocumentsToSeq.nonEmpty || notificationType == "1") true else false
 
       helper.controlInformationSection().map {
         controlInfoSections =>
-
           val sections = Seq(helper.buildGoodsUnderControlSection()) ++ controlInfoSections ++ helper.documentSection()
 
           new GoodsUnderControlP5ViewModel(sections, requestedDocuments)
