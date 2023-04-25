@@ -17,7 +17,7 @@
 package controllers.testOnly
 
 import connectors.testOnly.TestOnlyP5DeparturesAPIConnector
-import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -55,6 +55,15 @@ class TestOnlyP5DeparturesAPIController @Inject() (
         .departureAddMessage(request.body, departureId, request.headers)
         .map(
           x => Accepted(x.body)
+        )
+  }
+
+  def departureMessage(departureId: String, messageId: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      connector
+        .departureInboundMessage(departureId, messageId, request.headers)
+        .map(
+          x => Ok(x)
         )
   }
 }

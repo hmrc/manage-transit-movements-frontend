@@ -17,9 +17,11 @@
 package connectors.testOnly
 
 import config.FrontendAppConfig
+import play.api.libs.json.JsValue
 import play.api.mvc.Headers
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
@@ -68,5 +70,16 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClient, config: 
     val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
+  }
+
+  def departureInboundMessage(departureId: String, messageId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[JsValue] = {
+
+    val newHeaders: HeaderCarrier = headerCarrier
+      .copy(authorization = headers.get("Authorization").map(Authorization))
+      .withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json")
+
+    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId"
+
+    http.GET[JsValue](serviceUrl)(rds = implicitly, hc = newHeaders, ec = ec)
   }
 }

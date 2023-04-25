@@ -36,15 +36,13 @@ class DepartureP5MessageService @Inject() (departureMovementP5Connector: Departu
           .getMessagesForMovement(movement.messagesLocation)
           .flatMap {
             messagesForMovement =>
-              messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
+              val lrn: Future[String] = messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
                 case Some(departureMessage) =>
-                  departureMovementP5Connector.getLRN(departureMessage.bodyPath).map {
-                    body =>
-                      DepartureMovementAndMessage(movement, messagesForMovement, body.referenceNumber)
-                  }
+                  departureMovementP5Connector.getLRN(departureMessage.bodyPath).map(_.referenceNumber)
                 case None =>
-                  Future.successful(DepartureMovementAndMessage(movement, messagesForMovement, ""))
+                  Future.successful("")
               }
+              lrn.map(DepartureMovementAndMessage(movement, messagesForMovement, _))
           }
     }
 }
