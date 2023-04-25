@@ -36,8 +36,7 @@ import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
-  private val controlTypes     = Some(Seq(ControlType("42", "Intrusive"), ControlType("44", "Non Intrusive")))
-  val mockReferenceDataService = mock[ReferenceDataService]
+  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super

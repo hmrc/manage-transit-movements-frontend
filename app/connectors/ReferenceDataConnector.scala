@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import logging.Logging
 import models.referenceData.{ControlType, CustomsOffice}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.departureP5._
-import models.referenceData.{ControlType, CustomsOffice}
+import models.referenceData.CustomsOffice
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}
 import play.api.mvc.Result
 import services.{DepartureP5MessageService, ReferenceDataService}
@@ -29,7 +29,6 @@ import scala.concurrent.Future
 
 class FakeGoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)
     extends GoodsUnderControlAction(departureId, departureP5MessageService, referenceDataService) {
-  private val controlTypes = Some(Seq(ControlType("42", "Intrusive"), ControlType("44", "Non Intrusive")))
 
   val message: IE060Data = IE060Data(
     IE060MessageData(
