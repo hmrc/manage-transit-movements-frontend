@@ -211,7 +211,9 @@ object DepartureStatusP5ViewModel {
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
         actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.viewDetails"),
+          ViewMovementAction(controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(),
+                             "movement.status.P5.action.goodsUnderControl.viewDetails"
+          ),
           ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.cancelDeclaration")
         )
       )
