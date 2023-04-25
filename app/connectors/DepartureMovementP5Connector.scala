@@ -69,13 +69,4 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
 
     http.GET[LocalReferenceNumber](url)(HttpReads[LocalReferenceNumber], headers, ec)
   }
-
-  def getMessageForMovement(location: String)(implicit hc: HeaderCarrier): Future[LocalReferenceNumber] = {
-
-    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
-
-    val url = s"${config.commonTransitConventionTradersUrl}$location"
-
-    http.GET[LocalReferenceNumber](url)(HttpReads[LocalReferenceNumber], headers, ec)
-  }
 }

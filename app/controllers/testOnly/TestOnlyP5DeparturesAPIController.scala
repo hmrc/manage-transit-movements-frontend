@@ -61,7 +61,7 @@ class TestOnlyP5DeparturesAPIController @Inject() (
   def departureMessage(departureId: String, messageId: String): Action[AnyContent] = Action.async {
     implicit request =>
       connector
-        .departureInboundMessage(departureId, messageId, request.headers)
+        .departureMessage(departureId, messageId, request.headers)
         .map(
           x => Ok(x)
         )
