@@ -16,40 +16,29 @@
 
 package controllers.testOnly
 
-import config.{FrontendAppConfig, PaginationAppConfig}
-import connectors.DepartureMovementP5Connector
 import controllers.actions._
-import forms.DeparturesSearchFormProvider
-import models.requests.IdentifierRequest
-import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import play.twirl.api.HtmlFormat
-import services.DepartureP5MessageService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
-import viewModels.pagination.MovementsPaginationViewModel
-import views.html.departure.TestOnly.ViewAllDeparturesP5View
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class GoodsUnderControlIndexController @Inject()(
+class GoodsUnderControlIndexController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  goodsUnderControlAction: GoodsUnderControlActionProvider,
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  goodsUnderControlAction: GoodsUnderControlActionProvider
+)(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
-
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
     implicit request =>
       val notificationType: String = request.ie060MessageData.TransitOperation.notificationType
       if (request.ie060MessageData.requestedDocumentsToSeq.nonEmpty || notificationType == "1") {
-        Redirect(controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId))
-      } else {
         Redirect(controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId))
+      } else {
+        Redirect(controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId))
       }
 
   }

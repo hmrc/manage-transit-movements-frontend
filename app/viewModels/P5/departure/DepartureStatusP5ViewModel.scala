@@ -28,6 +28,7 @@ object DepartureStatusP5ViewModel {
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
       case DepartureMovementAndMessage(DepartureMovement(_, _, _, _), MessagesForDepartureMovement(messages), _) =>
+        val departureId = movementAndMessages.departureMovement.departureId
         val allPfs: PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] =
           Seq(
             departureNotification,
@@ -45,7 +46,7 @@ object DepartureStatusP5ViewModel {
             goodsNotReleased(),
             guaranteeRejected(),
             rejectedByOfficeOfDeparture(),
-            goodsUnderControl(),
+            goodsUnderControl(departureId)(),
             incidentDuringTransit(),
             declarationSent(),
             goodsBeingRecovered(),
@@ -205,13 +206,13 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def goodsUnderControl(
+  private def goodsUnderControl(departureId: String)(
   ): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case GoodsUnderControl =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
         actions = Seq(
-          ViewMovementAction(controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(),
+          ViewMovementAction(controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureId).url,
                              "movement.status.P5.action.goodsUnderControl.viewDetails"
           ),
           ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.cancelDeclaration")
