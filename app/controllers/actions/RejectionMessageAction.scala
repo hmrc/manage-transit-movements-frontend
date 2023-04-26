@@ -46,8 +46,7 @@ class RejectionMessageAction(departureId: String, departureP5MessageService: Dep
 
     (for {
       ie056 <- OptionT(departureP5MessageService.getRejectionMessage(departureId))
-      cust  <- OptionT.liftF(referenceDataService.getCustomsOfficeByCode(code = ie056.data.CustomsOfficeOfDeparture.referenceNumber))
-    } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data, cust))
+    } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
 

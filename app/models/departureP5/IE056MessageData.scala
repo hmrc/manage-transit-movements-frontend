@@ -20,8 +20,11 @@ import play.api.libs.json.{Json, OFormat}
 
 case class IE056MessageData(
   TransitOperation: TransitOperation,
-  CustomsOfficeOfDeparture: CustomsOfficeOfDeparture
-)
+  functionalError: Option[Seq[FunctionalError]]
+) {
+  val functionalErrorToSeq: Seq[FunctionalError] = functionalError.getOrElse(Seq.empty)
+
+}
 
 object IE056MessageData {
   implicit val formats: OFormat[IE056MessageData] = Json.format[IE056MessageData]

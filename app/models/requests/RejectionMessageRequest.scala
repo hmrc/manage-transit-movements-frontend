@@ -23,6 +23,5 @@ import play.api.mvc.{Request, WrappedRequest}
 case class RejectionMessageRequest[A](
   request: Request[A],
   eoriNumber: String,
-  ie056MessageData: IE056MessageData,
-  customsOffice: Option[CustomsOffice]
+  ie056MessageData: IE056MessageData
 ) extends WrappedRequest[A](request)

@@ -19,8 +19,6 @@
 @import models.departureP5.IE056MessageData
 @import viewModels.P5.departure.RejectionMessageP5ViewModel
 @import viewModels.P5.departure.RejectionMessageP5ViewModel._
-@import models.referenceData.CustomsOffice
-@import viewModels.P5.departure.CustomsOfficeContactViewModel
 
 @this(
 mainTemplate: MainTemplate,
@@ -30,10 +28,10 @@ button: Button,
 formHelper: FormWithCSRF
 )
 
-@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[_], messages: Messages)
+@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages)
 
     @mainTemplate(
-        title = goodsUnderControlP5ViewModel.title,
+        title = rejectionMessageP5ViewModel.title,
         showBackLink = true
     ) {
 
@@ -42,18 +40,8 @@ formHelper: FormWithCSRF
         caption = rejectionMessageP5ViewModel.lrn.map(x => messages("departure.ie056.message.subheading", x))
     )
 
-    <p class="govuk-body" id="paragraph1">@rejectionMessageP5ViewModel.paragraph1</p>
-    <p class="govuk-body" id="paragraph2">@rejectionMessageP5ViewModel.paragraph2</p>
-    <p class="govuk-body" id="paragraph3">@rejectionMessageP5ViewModel.paragraph3</p>
-
 
     @answerSections(rejectionMessageP5ViewModel.sections)
     <h2 class="govuk-heading-m" id="subheading">@messages("rejectionMessage.subHeading")</h2>
-
-    @if(rejectionMessageP5ViewModel.requestedDocuments) {
-        <p class="govuk-body" id="what-happens-next">@customsOfficeContactViewModel.fetchWhatHappensNext</p>
-    }else{
-        <p class="govuk-body" id="link-text">@rejectionMessageP5ViewModel.type0LinkPrefix <a id="view-all-declarations" href="@rejectionMessageP5ViewModel.type0ParagraphLink">@rejectionMessageP5ViewModel.type0LinkText</a> @rejectionMessageP5ViewModel.type0LinkTextSuffix</p>
-    }
 
 }

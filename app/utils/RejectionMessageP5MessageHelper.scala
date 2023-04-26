@@ -17,7 +17,7 @@
 package utils
 
 import cats.data.OptionT
-import models.departureP5.{IE056MessageData, RequestedDocument, TypeOfControls}
+import models.departureP5.{FunctionalError, IE056MessageData, RequestedDocument, TypeOfControls}
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -33,103 +33,37 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
   ec: ExecutionContext
 ) extends DeparturesP5MessageHelper {
 
-  def buildLRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = ie056MessageData.TransitOperation.LRN,
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.localReferenceNumber"),
-    id = None,
-    call = None
-  )
+//  private def getControlTypeDescription(typeOfControl: String): Future[Option[String]] =
+//    (for {
+//      y <- OptionT.liftF(referenceDataService.getControlType(typeOfControl)(ec, hc))
+//      x = y.toString
+//    } yield x).value
 
-  def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = ie056MessageData.TransitOperation.MRN,
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.movementReferenceNumber"),
-    id = None,
-    call = None
-  )
-
-  def buildDateTimeControlRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDateTime](
-    answer = Some(ie056MessageData.TransitOperation.controlNotificationDateAndTime),
-    formatAnswer = formatAsDate,
-    prefix = messages("row.label.dateAndTimeOfControl"),
-    id = None,
-    call = None
-  )
-
-  def buildOfficeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(ie056MessageData.CustomsOfficeOfDeparture.referenceNumber),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.officeOfDeparture"),
-    id = None,
-    call = None
-  )
-
-  private def buildControlTypeRow(typeOfControl: String): Future[Option[SummaryListRow]] =
-    getControlTypeDescription(typeOfControl).map(
-      desc =>
-        buildRowFromAnswer[String](
-          answer = desc,
-          formatAnswer = formatAsText,
-          prefix = messages("row.label.type"),
-          id = None,
-          call = None
-        )
-    )
-
-  private def getControlTypeDescription(typeOfControl: String): Future[Option[String]] =
-    (for {
-      y <- OptionT.liftF(referenceDataService.getControlType(typeOfControl)(ec, hc))
-      x = y.toString
-    } yield x).value
-
-  private def buildControlDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = description,
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.description"),
-    id = None,
-    call = None
-  )
-
-  private def buildDocumentTypeRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(documentSequence),
+  private def buildErrorCodeRow(errorCode: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(errorCode),
     formatAnswer = formatAsText,
     prefix = messages("row.label.type"),
     id = None,
     call = None
   )
 
-  private def buildDocumentDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = description,
+  private def buildErrorReasonRow(reason: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(reason),
     formatAnswer = formatAsText,
     prefix = messages("row.label.description"),
     id = None,
     call = None
   )
 
-  private def buildDocumentSection(document: RequestedDocument): Section = {
+  private def buildErrorSection(errors: FunctionalError): Section = {
 
-    val documentType: Seq[SummaryListRow]        = extractOptionalRow(buildDocumentTypeRow(document.documentType))
-    val documentDescription: Seq[SummaryListRow] = extractOptionalRow(buildDocumentDescriptionRow(document.description))
-    val rows                                     = documentType ++ documentDescription
-    Section(messages("heading.label.documentInformation", document.sequenceNumber), rows, None)
+    val errorCode: Seq[SummaryListRow]   = extractOptionalRow(buildErrorCodeRow(errors.errorCode))
+    val errorReason: Seq[SummaryListRow] = extractOptionalRow(buildErrorReasonRow(errors.errorReason))
+    val rows                             = errorCode ++ errorReason
+    Section(messages("heading.label.documentInformation"), rows, None)
   }
 
-  def documentSection(): Seq[Section] = ie056MessageData.requestedDocumentsToSeq.map {
-    document =>
-      buildDocumentSection(document)
-  }
-
-  def buildRejectionMessageSection(): Section = {
-
-    val lrnRow               = extractOptionalRow(buildLRNRow)
-    val mrnRow               = extractOptionalRow(buildMRNRow)
-    val dateTimeControlRow   = extractOptionalRow(buildDateTimeControlRow)
-    val officeOfDepartureRow = extractOptionalRow(buildOfficeOfDepartureRow)
-
-    val rows = lrnRow ++ mrnRow ++ dateTimeControlRow ++ officeOfDepartureRow
-
-    Section(None, rows, None)
-
-  }
+  def errorSection(): Seq[Section] = ie056MessageData.functionalErrorToSeq.map(
+    error => buildErrorSection(error)
+  )
 }

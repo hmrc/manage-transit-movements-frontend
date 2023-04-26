@@ -16,7 +16,7 @@
 
 package models.departureP5
 
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.{Json, OFormat, Reads}
 
 case class FunctionalError(
   errorPointer: String,
@@ -26,5 +26,5 @@ case class FunctionalError(
 
 object FunctionalError {
 
-  implicit val reads: Reads[FunctionalError] = Json.reads[FunctionalError]
+  implicit val formats: OFormat[FunctionalError] = Json.format[FunctionalError]
 }
