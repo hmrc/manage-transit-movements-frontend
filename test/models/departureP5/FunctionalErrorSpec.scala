@@ -44,7 +44,7 @@ class FunctionalErrorSpec extends SpecBase {
             |""".stripMargin)
 
         json.as[Seq[FunctionalError]] mustBe Seq(
-          FunctionalError("/CC014C", "12", "N/A")
+          FunctionalError("/CC014C", "12", "N/A", None)
         )
       }
 
@@ -57,16 +57,17 @@ class FunctionalErrorSpec extends SpecBase {
             |        "errorReason": "N/A"
             |    },
             |    {
-            |        "errorPointer": "/CC015C",
-            |        "errorCode": "13",
-            |        "errorReason": "Value too long"
+            |        "errorPointer": "/CC015C/Authorisation[1]/referenceNumber",
+            |        "errorCode": "14",
+            |        "errorReason": "G0033",
+            |        "originalAttributeValue": "XIDEP01"
             |    }
             |]
             |""".stripMargin)
 
         json.as[Seq[FunctionalError]] mustBe Seq(
-          FunctionalError("/CC014C", "12", "N/A"),
-          FunctionalError("/CC015C", "13", "Value too long")
+          FunctionalError("/CC014C", "12", "N/A", None),
+          FunctionalError("/CC015C/Authorisation[1]/referenceNumber", "14", "G0033", Some("XIDEP01"))
         )
       }
     }

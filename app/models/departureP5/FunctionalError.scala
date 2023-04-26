@@ -21,7 +21,8 @@ import play.api.libs.json.{Json, Reads}
 case class FunctionalError(
   errorPointer: String,
   errorCode: String,
-  errorReason: String
+  errorReason: String,
+  originalAttributeValue: Option[String]
 )
 
 object FunctionalError {
