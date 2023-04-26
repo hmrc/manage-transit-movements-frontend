@@ -17,20 +17,15 @@
 package controllers.testOnly
 
 import controllers.actions._
-import models.departureP5.IE060MessageData
-import models.referenceData.CustomsOffice
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
-import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json, OFormat}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.CustomsOfficeContactViewModel
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
 import views.html.departure.TestOnly.GoodsUnderControlP5View
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class GoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -45,13 +40,13 @@ class GoodsUnderControlP5Controller @Inject() (
 
   def goodsUnderControlOnPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)).async {
     implicit request =>
-          val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
-          val customsOfficeContactViewModel =
-            CustomsOfficeContactViewModel(request.ie060MessageData.CustomsOfficeOfDeparture.referenceNumber, request.customsOffice)
-          goodsUnderControlP5ViewModel.map {
-            viewModel =>
-              Ok(view(viewModel, departureId, customsOfficeContactViewModel))
-          }
+      val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
+      val customsOfficeContactViewModel =
+        CustomsOfficeContactViewModel(request.ie060MessageData.CustomsOfficeOfDeparture.referenceNumber, request.customsOffice)
+      goodsUnderControlP5ViewModel.map {
+        viewModel =>
+          Ok(view(viewModel, departureId, customsOfficeContactViewModel))
+      }
   }
 
   def noRequestedDocuments(departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId)
