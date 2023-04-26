@@ -20,14 +20,31 @@ import generators.Generators
 import org.scalatest.EitherValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.libs.json.JsString
+import play.api.libs.json.Json
 
 class LocalReferenceNumberSpec extends AnyFreeSpec with Generators with Matchers with EitherValues {
 
   "a Local Reference Number" - {
 
     "must deserialise" in {
-      val json   = JsString("TRATESTXI12304231054")
+      val json = Json.parse("""
+          |{
+          |    "body": {
+          |        "n1:CC015C": {
+          |            "TransitOperation": {
+          |                "LRN": "TRATESTXI12304231054",
+          |                "declarationType": "T1",
+          |                "additionalDeclarationType": "A",
+          |                "security": "0",
+          |                "reducedDatasetIndicator": "0",
+          |                "bindingItinerary": "0",
+          |                "limitDate": "2023-05-07"
+          |            }
+          |        }
+          |    }
+          |}
+          |""".stripMargin)
+
       val result = json.as[LocalReferenceNumber]
       result mustBe LocalReferenceNumber("TRATESTXI12304231054")
     }

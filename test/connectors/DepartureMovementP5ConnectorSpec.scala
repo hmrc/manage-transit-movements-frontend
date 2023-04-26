@@ -200,13 +200,15 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             DepartureMessage(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.AllocatedMRN,
-              "movements/departures/1/messages/1"
+              "movements/departures/1/messages/1",
+              Nil
             ),
             List(
               DepartureMessage(
                 LocalDateTime.parse("2022-11-10T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
                 DepartureMessageType.DepartureNotification,
-                "movements/departures/1/messages/2"
+                "movements/departures/1/messages/2",
+                Nil
               )
             )
           )

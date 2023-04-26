@@ -20,7 +20,7 @@ import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime
 
-case class DepartureMessage(received: LocalDateTime, messageType: DepartureMessageType, bodyPath: String)
+case class DepartureMessage(received: LocalDateTime, messageType: DepartureMessageType, bodyPath: String, functionalErrors: Seq[FunctionalError])
 
 object DepartureMessage {
 
@@ -29,9 +29,8 @@ object DepartureMessage {
     (
       (__ \ "received").read[LocalDateTime] and
         (__ \ "type").read[DepartureMessageType] and
-        (__ \ "_links" \ "self" \ "href")
-          .read[String]
-          .map(_.replace("/customs/transits/", ""))
+        (__ \ "_links" \ "self" \ "href").read[String].map(_.replace("/customs/transits/", "")) and
+        (__ \ "body" \\ "FunctionalError").readWithDefault[Seq[FunctionalError]](Nil)
     )(DepartureMessage.apply _)
   }
 }

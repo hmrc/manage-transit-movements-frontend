@@ -22,6 +22,6 @@ case class LocalReferenceNumber(referenceNumber: String)
 
 object LocalReferenceNumber {
 
-  implicit val reads: Reads[LocalReferenceNumber] =
-    __.read[String].map(LocalReferenceNumber(_))
+  implicit val format: Reads[LocalReferenceNumber] =
+    (__ \ "body" \\ "TransitOperation" \ "LRN").read[String].map(LocalReferenceNumber(_))
 }

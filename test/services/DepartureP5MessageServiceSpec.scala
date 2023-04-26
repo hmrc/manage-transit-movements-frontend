@@ -69,13 +69,15 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             DepartureMessage(
               dateTimeNow,
               DepartureMessageType.DepartureNotification,
-              "body/path/1"
+              "body/path/1",
+              Nil
             ),
             List(
               DepartureMessage(
                 dateTimeNow,
                 DepartureMessageType.GoodsUnderControl,
-                "body/path/2"
+                "body/path/2",
+                Nil
               )
             )
           )
@@ -110,7 +112,8 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             DepartureMessage(
               dateTimeNow,
               DepartureMessageType.GoodsUnderControl,
-              "body/path/2"
+              "body/path/2",
+              Nil
             ),
             List.empty
           )
