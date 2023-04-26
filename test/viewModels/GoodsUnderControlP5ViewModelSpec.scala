@@ -79,7 +79,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       "must return correct paragraphs" in {
         result.paragraph1 mustBe "Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety."
         result.paragraph2 mustBe "While under control, the goods will remain under supervision at the office of destination."
-        result.paragraph3 mustBe "You must wait for the outcome of Customs’ checks."
+        result.paragraph3 mustBe "Once Customs have completed their checks, they will notify you with the outcome."
       }
       "must return correct end paragraph" in {
         result.type0LinkPrefix mustBe "You must wait for the outcome of Customs’ checks."

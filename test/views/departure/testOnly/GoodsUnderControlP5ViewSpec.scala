@@ -87,7 +87,7 @@ class GoodsUnderControlP5ViewSpec extends CheckYourAnswersViewBehaviours with Ge
     )
     assertSpecificElementContainsText(
       "paragraph3",
-      "You must wait for the outcome of Customs’ checks."
+      "Once Customs have completed their checks, they will notify you with the outcome."
     )
   }
 
