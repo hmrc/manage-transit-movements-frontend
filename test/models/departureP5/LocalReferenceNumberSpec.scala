@@ -16,12 +16,20 @@
 
 package models.departureP5
 
-import play.api.libs.json.{__, Reads}
+import generators.Generators
+import org.scalatest.EitherValues
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import play.api.libs.json.JsString
 
-case class LocalReferenceNumber(referenceNumber: String)
+class LocalReferenceNumberSpec extends AnyFreeSpec with Generators with Matchers with EitherValues {
 
-object LocalReferenceNumber {
+  "a Local Reference Number" - {
 
-  implicit val reads: Reads[LocalReferenceNumber] =
-    __.read[String].map(LocalReferenceNumber(_))
+    "must deserialise" in {
+      val json   = JsString("TRATESTXI12304231054")
+      val result = json.as[LocalReferenceNumber]
+      result mustBe LocalReferenceNumber("TRATESTXI12304231054")
+    }
+  }
 }

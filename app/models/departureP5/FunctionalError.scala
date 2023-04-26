@@ -16,12 +16,15 @@
 
 package models.departureP5
 
-import play.api.libs.json.{__, Reads}
+import play.api.libs.json.{Json, Reads}
 
-case class LocalReferenceNumber(referenceNumber: String)
+case class FunctionalError(
+  errorPointer: String,
+  errorCode: String,
+  errorReason: String
+)
 
-object LocalReferenceNumber {
+object FunctionalError {
 
-  implicit val reads: Reads[LocalReferenceNumber] =
-    __.read[String].map(LocalReferenceNumber(_))
+  implicit val reads: Reads[FunctionalError] = Json.reads[FunctionalError]
 }

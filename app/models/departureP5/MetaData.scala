@@ -16,12 +16,15 @@
 
 package models.departureP5
 
+import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
 
-case class LocalReferenceNumber(referenceNumber: String)
+case class MetaData(lrn: Option[LocalReferenceNumber], functionalErrors: Seq[FunctionalError])
 
-object LocalReferenceNumber {
+object MetaData {
 
-  implicit val reads: Reads[LocalReferenceNumber] =
-    __.read[String].map(LocalReferenceNumber(_))
+  implicit val reads: Reads[MetaData] = (
+    (__ \ "body" \\ "TransitOperation" \ "LRN").readNullable[LocalReferenceNumber] and
+      (__ \ "body" \\ "FunctionalError").readWithDefault[Seq[FunctionalError]](Nil)
+  )(MetaData.apply _)
 }
