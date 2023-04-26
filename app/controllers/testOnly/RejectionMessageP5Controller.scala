@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext
 class RejectionMessageP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  goodsUnderControlAction: RejectionMessageActionProvider,
+  rejectionMessageAction: RejectionMessageActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
   view: RejectionMessageP5View
@@ -39,7 +39,7 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
+  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)) {
     implicit request =>
       val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData)
       Ok(view(rejectionMessageP5ViewModel, departureId))

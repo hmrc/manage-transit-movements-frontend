@@ -19,7 +19,7 @@ package models.departureP5
 import play.api.libs.json.{Json, OFormat}
 
 case class IE056MessageData(
-  TransitOperation: TransitOperation,
+  TransitOperation: TransitOperationIE056,
   functionalError: Option[Seq[FunctionalError]]
 ) {
   val functionalErrorToSeq: Seq[FunctionalError] = functionalError.getOrElse(Seq.empty)
