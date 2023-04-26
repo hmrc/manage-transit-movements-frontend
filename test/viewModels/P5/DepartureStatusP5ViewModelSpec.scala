@@ -42,7 +42,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "location"
         ),
         MessagesForDepartureMovement(
-          NonEmptyList(DepartureMessage(dateTimeNow, headMessage, "body/path"), List.empty)
+          NonEmptyList(DepartureMessage(dateTimeNow, headMessage, "body/path", Nil), List.empty)
         ),
         "AB123"
       )

@@ -23,6 +23,7 @@ import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,94 +41,97 @@ class DepartureP5MessageServiceSpec extends SpecBase {
   val departureP5MessageService = new DepartureP5MessageService(mockConnector)
   "DepartureP5MessageService" - {
 
-    "getMessagesForAllMovements" - {
+  "getMessagesForAllMovements" - {
 
-      val dateTimeNow = LocalDateTime.now(clock)
+    val dateTimeNow = LocalDateTime.now(clock)
 
-      val departureMovements = DepartureMovements(
-        Seq(
-          DepartureMovement(
-            "AB123",
-            Some("MRN"),
-            dateTimeNow,
-            "location"
-          )
+    val departureMovements = DepartureMovements(
+      Seq(
+        DepartureMovement(
+          "AB123",
+          Some("MRN"),
+          dateTimeNow,
+          "location"
         )
       )
+    )
 
-      "must return departure movements with messages with an LRN" in {
+    "must return departure movements with messages with an LRN" in {
 
-        val messagesForMovement =
-          MessagesForDepartureMovement(
-            NonEmptyList(
-              DepartureMessage(
-                dateTimeNow,
-                DepartureMessageType.DepartureNotification,
-                "body/path/1"
-              ),
-              List(
-                DepartureMessage(
-                  dateTimeNow,
-                  DepartureMessageType.GoodsUnderControl,
-                  "body/path/2"
-                )
-              )
-            )
-          )
-
-        when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
-          Future.successful(messagesForMovement)
-        )
-
-        when(mockConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
-          Future.successful(LocalReferenceNumber("lrn123"))
-        )
-
-        val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
-
-        val expectedResult = Seq(
-          DepartureMovementAndMessage(
-            departureMovements.departureMovements.head,
-            messagesForMovement,
-            "lrn123"
-          )
-        )
-
-        result mustBe expectedResult
-      }
-
-      "must return departure movements with messages without an LRN" in {
-
-        val messagesForMovement =
-          MessagesForDepartureMovement(
-            NonEmptyList(
+      val messagesForMovement =
+        MessagesForDepartureMovement(
+          NonEmptyList(
+            DepartureMessage(
+              dateTimeNow,
+              DepartureMessageType.DepartureNotification,
+              "body/path/1",
+              Nil
+            ),
+            List(
               DepartureMessage(
                 dateTimeNow,
                 DepartureMessageType.GoodsUnderControl,
-                "body/path/2"
-              ),
-              List.empty
+                "body/path/2",
+                Nil
+              )
             )
           )
-
-        when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
-          Future.successful(messagesForMovement)
         )
 
-        val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
+      when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
+        Future.successful(messagesForMovement)
+      )
 
-        val expectedResult = Seq(
-          DepartureMovementAndMessage(
-            departureMovements.departureMovements.head,
-            messagesForMovement,
-            ""
+      when(mockConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
+        Future.successful(LocalReferenceNumber("lrn123"))
+      )
+
+      val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
+
+      val expectedResult = Seq(
+        DepartureMovementAndMessage(
+          departureMovements.departureMovements.head,
+          messagesForMovement,
+          "lrn123"
+        )
+      )
+
+      result mustBe expectedResult
+    }
+
+    "must return departure movements with messages without an LRN" in {
+
+      val messagesForMovement =
+        MessagesForDepartureMovement(
+          NonEmptyList(
+            DepartureMessage(
+              dateTimeNow,
+              DepartureMessageType.GoodsUnderControl,
+              "body/path/2",
+              Nil
+            ),
+            List.empty
           )
         )
 
-        result mustBe expectedResult
-      }
+      when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
+        Future.successful(messagesForMovement)
+      )
 
+      val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
+
+      val expectedResult = Seq(
+        DepartureMovementAndMessage(
+          departureMovements.departureMovements.head,
+          messagesForMovement,
+          ""
+        )
+      )
+
+      result mustBe expectedResult
     }
+
+  }
 
     "getGoodsUnderControlMessage" - {
 

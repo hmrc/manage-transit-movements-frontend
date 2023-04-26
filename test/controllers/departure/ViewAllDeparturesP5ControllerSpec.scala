@@ -34,6 +34,9 @@ import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepart
 import viewModels.ViewMovementAction
 import viewModels.pagination.MovementsPaginationViewModel
 import views.html.departure.TestOnly.ViewAllDeparturesP5View
+import viewModels.ViewMovementAction
+import viewModels.pagination.MovementsPaginationViewModel
+import views.html.departure.P5.ViewAllDeparturesP5View
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -79,7 +82,8 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
       DepartureMessage(
         dateTime,
         DepartureMessageType.DepartureNotification,
-        "body/path"
+        "body/path",
+        Nil
       ),
       List.empty[DepartureMessage]
     )
