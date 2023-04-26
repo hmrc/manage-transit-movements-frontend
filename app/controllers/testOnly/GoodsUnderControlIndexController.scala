@@ -20,6 +20,7 @@ import controllers.actions._
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -29,14 +30,14 @@ class GoodsUnderControlIndexController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   goodsUnderControlAction: GoodsUnderControlActionProvider
-)(implicit ec: ExecutionContext)
+                                                 )(implicit ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
     implicit request =>
-      val ie060         = "ie060"         -> Json.toJson(request.ie060MessageData).toString()
-      val customsOffice = "customsOffice" -> Json.toJson(request.customsOffice.get).toString()
+      val ie060         = s"$departureId" -> Json.toJson(request.ie060MessageData).toString
+      val customsOffice = "customsOffice" -> Json.toJson(request.customsOffice).toString
 
       val notificationType: String = request.ie060MessageData.TransitOperation.notificationType
       val call = if (request.ie060MessageData.requestedDocumentsToSeq.nonEmpty || notificationType == "1") {

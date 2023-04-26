@@ -32,40 +32,41 @@ import views.html.departure.TestOnly.GoodsUnderControlP5View
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GoodsUnderControlP5Controller @Inject() (
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  goodsUnderControlAction: GoodsUnderControlActionProvider,
-  cc: MessagesControllerComponents,
-  viewModelProvider: GoodsUnderControlP5ViewModelProvider,
-  view: GoodsUnderControlP5View
-)(implicit val executionContext: ExecutionContext)
-    extends FrontendController(cc)
+class GoodsUnderControlP5Controller @Inject()(
+                                               override val messagesApi: MessagesApi,
+                                               identify: IdentifierAction,
+                                               goodsUnderControlAction: GoodsUnderControlActionProvider,
+                                               cc: MessagesControllerComponents,
+                                               viewModelProvider: GoodsUnderControlP5ViewModelProvider,
+                                               view: GoodsUnderControlP5View
+                                             )(implicit val executionContext: ExecutionContext)
+  extends FrontendController(cc)
     with I18nSupport {
 
   def goodsUnderControlOnPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      val customsOffice = parseJson[CustomsOffice]("customsOffice") match {
-        case JsSuccess(value, _) => Some(value)
-        case _                   => None
-      }
-      parseJson[IE060MessageData]("ie060") match {
-        case JsSuccess(ie060, _) =>
-          val goodsUnderControlP5ViewModel = viewModelProvider.apply(ie060)
-          val customsOfficeContactViewModel =
-            CustomsOfficeContactViewModel(ie060.CustomsOfficeOfDeparture.referenceNumber, customsOffice)
-          goodsUnderControlP5ViewModel.map {
-            viewModel =>
-              Ok(view(viewModel, departureId, customsOfficeContactViewModel))
-          }
-        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-      }
-  }
-
-  def parseJson[T](key: String)(implicit format: OFormat[T], request: Request[_]): JsResult[T] =
-    Json.fromJson[T](Json.parse(request.session.data(key)))
-
-  def noRequestedDocuments(departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId)
-
-  def requestedDocuments(departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId)
+      println("\n\n\n**** " + request.session.data + "****\n\n\n")
+      //      val customsOffice = parseJson[CustomsOffice]("customsOffice") match {
+      //        case JsSuccess(value, _) => Some(value)
+      //        case _                   => None
+      //      }
+      //      parseJson[IE060MessageData](s"$departureId") match {
+      //        case JsSuccess(ie060, _) =>
+      //          val goodsUnderControlP5ViewModel = viewModelProvider.apply(ie060)
+      //          val customsOfficeContactViewModel =
+      //            CustomsOfficeContactViewModel(ie060.CustomsOfficeOfDeparture.referenceNumber, customsOffice)
+      //          goodsUnderControlP5ViewModel.map {
+      //            viewModel =>
+      //              Ok(view(viewModel, departureId, customsOfficeContactViewModel))
+      //          }
+      //        case _ =>
+      Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
 }
+
+def parseJson[T] (key: String) (implicit format: OFormat[T], request: Request[_] ): JsResult[T] =
+  Json.fromJson[T] (Json.parse (request.session.data (key) ) )
+
+  def noRequestedDocuments (departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad (departureId)
+
+  def requestedDocuments (departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad (departureId)
+  }
