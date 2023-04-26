@@ -21,6 +21,8 @@ import cats.data.NonEmptyList
 import generators.Generators
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.departure.DepartureStatusP5ViewModel
 import viewModels.ViewMovementAction
@@ -33,14 +35,16 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
   "DepartureStatusP5ViewModel" - {
 
+    val departureMovement = DepartureMovement(
+      departureIdP5,
+      Some("mrn"),
+      LocalDateTime.now(),
+      "location"
+    )
+
     def movementAndMessages(headMessage: DepartureMessageType): DepartureMovementAndMessage =
       DepartureMovementAndMessage(
-        DepartureMovement(
-          s"$departureIdP5",
-          Some("mrn"),
-          LocalDateTime.now(),
-          "location"
-        ),
+        departureMovement,
         MessagesForDepartureMovement(
           NonEmptyList(DepartureMessage(dateTimeNow, headMessage, "body/path", Nil), List.empty)
         ),
@@ -260,20 +264,118 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result mustBe expectedResult
     }
 
-    "when given Message with head of rejectedByOfficeOfDeparture" in {
+    "when given Message with head of rejectedByOfficeOfDeparture" - {
 
-      val movementAndMessage = movementAndMessages(RejectedByOfficeOfDeparture)
+      "and ten or fewer errors and at least one of them is amendable and the departure exists in the cache" in {
+        val numberOfErrorsGen = Gen.choose(1, 10: Int)
+        forAll(arbitrary[FunctionalError], arbitrary[FunctionalError](arbitraryAmendableFunctionalError), numberOfErrorsGen) {
+          (functionalError, amendableFunctionalError, numberOfErrors) =>
+            val functionalErrors = Seq.fill(numberOfErrors - 1)(functionalError) :+ amendableFunctionalError
 
-      val result = DepartureStatusP5ViewModel(movementAndMessage)
+            val movementAndMessage = DepartureMovementAndMessage(
+              departureMovement,
+              MessagesForDepartureMovement(
+                NonEmptyList(DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path", functionalErrors), List.empty)
+              ),
+              "AB123",
+              isMovementInCache = true
+            )
 
-      val expectedResult = DepartureStatusP5ViewModel(
-        "movement.status.P5.rejectedByOfficeOfDeparture",
-        Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.amendErrors")
-        )
-      )
+            val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-      result mustBe expectedResult
+            val expectedResult = DepartureStatusP5ViewModel(
+              "movement.status.P5.rejectedByOfficeOfDeparture",
+              Seq(
+                ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.amendErrors")
+              )
+            )
+
+            result mustBe expectedResult
+        }
+      }
+
+      "and more than 10 errors and at least one of them is amendable and the departure exists in the cache" in {
+        forAll(arbitrary[FunctionalError], arbitrary[FunctionalError](arbitraryAmendableFunctionalError)) {
+          (functionalError, amendableFunctionalError) =>
+            val functionalErrors = Seq.fill(10: Int)(functionalError) :+ amendableFunctionalError
+
+            val movementAndMessage = DepartureMovementAndMessage(
+              departureMovement,
+              MessagesForDepartureMovement(
+                NonEmptyList(DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path", functionalErrors), List.empty)
+              ),
+              "AB123",
+              isMovementInCache = true
+            )
+
+            val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+            val expectedResult = DepartureStatusP5ViewModel(
+              "movement.status.P5.rejectedByOfficeOfDeparture",
+              Seq(
+                ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors")
+              )
+            )
+
+            result mustBe expectedResult
+        }
+      }
+
+      "and ten or fewer errors and none of them are amendable and the departure exists in the cache" in {
+        val numberOfErrorsGen = Gen.choose(1, 10: Int)
+        forAll(arbitrary[FunctionalError], numberOfErrorsGen) {
+          (functionalError, numberOfErrors) =>
+            val functionalErrors = Seq.fill(numberOfErrors)(functionalError)
+
+            val movementAndMessage = DepartureMovementAndMessage(
+              departureMovement,
+              MessagesForDepartureMovement(
+                NonEmptyList(DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path", functionalErrors), List.empty)
+              ),
+              "AB123",
+              isMovementInCache = true
+            )
+
+            val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+            val expectedResult = DepartureStatusP5ViewModel(
+              "movement.status.P5.rejectedByOfficeOfDeparture",
+              Seq(
+                ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors")
+              )
+            )
+
+            result mustBe expectedResult
+        }
+      }
+
+      "and ten or fewer errors and at least one of them is amendable and the departure doesn't exist in the cache" in {
+        val numberOfErrorsGen = Gen.choose(1, 10: Int)
+        forAll(arbitrary[FunctionalError], arbitrary[FunctionalError](arbitraryAmendableFunctionalError), numberOfErrorsGen) {
+          (functionalError, amendableFunctionalError, numberOfErrors) =>
+            val functionalErrors = Seq.fill(numberOfErrors - 1)(functionalError) :+ amendableFunctionalError
+
+            val movementAndMessage = DepartureMovementAndMessage(
+              departureMovement,
+              MessagesForDepartureMovement(
+                NonEmptyList(DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path", functionalErrors), List.empty)
+              ),
+              "AB123",
+              isMovementInCache = false
+            )
+
+            val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+            val expectedResult = DepartureStatusP5ViewModel(
+              "movement.status.P5.rejectedByOfficeOfDeparture",
+              Seq(
+                ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors")
+              )
+            )
+
+            result mustBe expectedResult
+        }
+      }
     }
 
     "when given Message with head of goodsUnderControl" in {

@@ -193,10 +193,19 @@ object DepartureStatusP5ViewModel {
     isDepartureInCache: Boolean
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case DepartureMessage(_, RejectedByOfficeOfDeparture, _, functionalErrors) =>
+      val errorLimit: Int = 10
+      val key = if (functionalErrors.size <= errorLimit && functionalErrors.exists(_.isAmendable) && isDepartureInCache) {
+        "amendErrors"
+      } else {
+        "viewErrors"
+      }
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.amendErrors")
+          ViewMovementAction(
+            s"", // TODO
+            s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
+          )
         )
       )
   }

@@ -162,6 +162,7 @@ movement.status.P5.action.goodsNotReleased.viewDetails                    = View
 movement.status.P5.action.guaranteeRejected.viewErrors                    = View errors
 movement.status.P5.action.guaranteeRejected.cancelDeclaration             = Cancel declaration
 movement.status.P5.action.rejectedByOfficeOfDeparture.amendErrors         = Amend errors
+movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors          = View errors
 movement.status.P5.action.goodsUnderControl.viewErrors                    = View errors
 movement.status.P5.action.goodsUnderControl.viewDetails                   = View details
 movement.status.P5.action.goodsUnderControl.cancelDeclaration             = Cancel declaration
