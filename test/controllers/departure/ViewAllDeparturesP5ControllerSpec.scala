@@ -19,7 +19,7 @@ package controllers.departure
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
-import forms.{DeparturesSearchFormProvider, SearchFormProvider}
+import forms.DeparturesSearchFormProvider
 import generators.Generators
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
@@ -31,9 +31,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
-import viewModels.pagination.MovementsPaginationViewModel
-import views.html.departure.P5.ViewAllDeparturesP5View
 import viewModels.ViewMovementAction
+import viewModels.pagination.MovementsPaginationViewModel
+import views.html.departure.TestOnly.ViewAllDeparturesP5View
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

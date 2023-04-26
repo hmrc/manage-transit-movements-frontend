@@ -37,6 +37,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val mrn: String               = "mrn"
 
   val departureId: DepartureId = DepartureId(1)
+  val departureIdP5: String    = "643cffea2dca70b2"
 
   def injector: Injector                               = app.injector
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")

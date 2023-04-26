@@ -20,7 +20,6 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureMovementP5Connector
 import controllers.actions._
 import forms.DeparturesSearchFormProvider
-import forms.SearchFormProvider
 import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -30,7 +29,7 @@ import services.DepartureP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels.pagination.MovementsPaginationViewModel
-import views.html.departure.P5.ViewAllDeparturesP5View
+import views.html.departure.TestOnly.ViewAllDeparturesP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

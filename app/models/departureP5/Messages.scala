@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package models.referenceData
+package models.departureP5
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, Reads}
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  val nameOption: Option[String]  = if (name.isEmpty) None else Some(name)
-  val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
-}
+case class Messages(messages: List[MessageMetaData])
 
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
+object Messages {
+  implicit val reads: Reads[Messages] = Json.reads[Messages]
 }

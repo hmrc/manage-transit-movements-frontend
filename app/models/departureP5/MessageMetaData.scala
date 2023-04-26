@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package models.referenceData
+package models.departureP5
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{__, Reads}
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  val nameOption: Option[String]  = if (name.isEmpty) None else Some(name)
-  val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
-}
+import java.time.LocalDateTime
 
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
+case class MessageMetaData(received: LocalDateTime, messageType: DepartureMessageType, path: String)
+
+object MessageMetaData {
+
+  implicit lazy val reads: Reads[MessageMetaData] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "received").read[LocalDateTime] and
+        (__ \ "type").read[DepartureMessageType] and
+        (__ \ "_links" \ "self" \ "href")
+          .read[String]
+          .map(_.replace("/customs/transits/", ""))
+    )(MessageMetaData.apply _)
+  }
 }

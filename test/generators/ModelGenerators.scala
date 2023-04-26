@@ -22,6 +22,7 @@ import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessag
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departure._
 import models.departureP5.{DepartureMovement, DepartureMovements}
+import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
 import org.scalacheck.{Arbitrary, Gen}
@@ -249,6 +250,15 @@ trait ModelGenerators {
   implicit lazy val arbitraryDepartureMovements: Arbitrary[DepartureMovements] = Arbitrary {
     Gen.nonEmptyListOf(arbitrary[DepartureMovement]).map(DepartureMovements(_))
   }
+
+  implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] =
+    Arbitrary {
+      for {
+        id          <- arbitrary[String]
+        name        <- arbitrary[String]
+        phoneNumber <- arbitrary[Option[String]]
+      } yield CustomsOffice(id, name, phoneNumber)
+    }
 
   implicit lazy val arbitraryDepartures: Arbitrary[Departures] =
     Arbitrary {

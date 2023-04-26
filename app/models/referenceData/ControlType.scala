@@ -16,13 +16,20 @@
 
 package models.referenceData
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, OWrites, Reads}
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  val nameOption: Option[String]  = if (name.isEmpty) None else Some(name)
-  val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
+case class ControlType(code: String, description: String) {
+
+  override def toString: String =
+    description match {
+      case "" => code
+      case _  => s"$code - $description"
+    }
 }
 
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
+object ControlType {
+
+  implicit val writes: OWrites[ControlType] = Json.writes[ControlType]
+
+  implicit val readFromFile: Reads[ControlType] = Json.reads[ControlType]
 }

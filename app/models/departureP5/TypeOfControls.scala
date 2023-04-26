@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package models.referenceData
+package models.departureP5
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  val nameOption: Option[String]  = if (name.isEmpty) None else Some(name)
-  val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
-}
+case class TypeOfControls(
+  sequenceNumber: String,
+  `type`: String,
+  text: Option[String]
+)
 
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
+object TypeOfControls {
+  implicit val formats: OFormat[TypeOfControls] = Json.format[TypeOfControls]
 }
