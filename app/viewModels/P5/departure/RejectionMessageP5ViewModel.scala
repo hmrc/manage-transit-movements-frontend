@@ -27,10 +27,33 @@ import viewModels.sections.Section
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class RejectionMessageP5ViewModel(sections: Seq[Section], lrn: Option[String]) {
-  def title(implicit messages: Messages): String = messages("departure.ie060.message.requestedDocuments.title")
+case class RejectionMessageP5ViewModel(sections: Seq[Section], lrn: Option[String], multipleErrors: Boolean) {
+  def title(implicit messages: Messages): String = messages("departure.ie056.message.title")
 
-  def heading(implicit messages: Messages): String = messages("departure.ie060.message.requestedDocuments.heading")
+  def heading(implicit messages: Messages): String = messages("departure.ie056.message.heading")
+
+  def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph1.prefix", lrn.getOrElse(""))
+
+  def paragraph1Suffix(implicit messages: Messages): String = if (multipleErrors) {
+    messages(
+      "departure.ie056.message.paragraph1.plural.suffix"
+    )
+  } else {
+    messages(
+      "departure.ie056.message.paragraph1.singular.suffix"
+    )
+  }
+
+  def paragraph2Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph2.prefix")
+  def paragraph2Link(implicit messages: Messages): String   = messages("departure.ie056.message.paragraph2.link")
+
+  def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors) {
+    messages("departure.ie056.message.paragraph2.plural.suffix")
+  } else {
+    messages("departure.ie056.message.paragraph2.singular.suffix")
+  }
+
+  def hyperlink(implicit messages: Messages): String = messages("departure.ie056.message.hyperlink")
 
 }
 
@@ -43,9 +66,10 @@ object RejectionMessageP5ViewModel {
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): RejectionMessageP5ViewModel = {
       val helper = new RejectionMessageP5MessageHelper(ie056MessageData, referenceDataService)
 
-      val lrn      = ie056MessageData.TransitOperation.LRN
-      val sections = helper.errorSection()
-      RejectionMessageP5ViewModel(sections, lrn)
+      val lrn            = ie056MessageData.TransitOperation.LRN
+      val multipleErrors = ie056MessageData.functionalErrorToSeq.length > 1
+      val sections       = Seq(helper.errorSection())
+      RejectionMessageP5ViewModel(sections, lrn, multipleErrors)
 
     }
   }

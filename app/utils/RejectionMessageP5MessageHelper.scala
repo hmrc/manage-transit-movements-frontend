@@ -42,7 +42,7 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
   private def buildErrorCodeRow(errorCode: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(errorCode),
     formatAnswer = formatAsText,
-    prefix = messages("row.label.type"),
+    prefix = messages("row.label.error"),
     id = None,
     call = None
   )
@@ -50,20 +50,22 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
   private def buildErrorReasonRow(reason: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(reason),
     formatAnswer = formatAsText,
-    prefix = messages("row.label.description"),
+    prefix = messages("row.label.reason"),
     id = None,
     call = None
   )
 
-  private def buildErrorSection(errors: FunctionalError): Section = {
+  private def buildErrorRows(errors: FunctionalError): Seq[SummaryListRow] = {
 
     val errorCode: Seq[SummaryListRow]   = extractOptionalRow(buildErrorCodeRow(errors.errorCode))
     val errorReason: Seq[SummaryListRow] = extractOptionalRow(buildErrorReasonRow(errors.errorReason))
-    val rows                             = errorCode ++ errorReason
-    Section(messages("heading.label.documentInformation"), rows, None)
+    errorCode ++ errorReason
   }
 
-  def errorSection(): Seq[Section] = ie056MessageData.functionalErrorToSeq.map(
-    error => buildErrorSection(error)
+  def errorSection(): Section = Section(None,
+                                        ie056MessageData.functionalErrorToSeq.flatMap(
+                                          error => buildErrorRows(error)
+                                        ),
+                                        None
   )
 }

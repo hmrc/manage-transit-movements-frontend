@@ -20,9 +20,9 @@ import play.api.libs.json.{Json, OFormat}
 
 case class IE056MessageData(
   TransitOperation: TransitOperationIE056,
-  functionalError: Option[Seq[FunctionalError]]
+  FunctionalError: Option[Seq[FunctionalError]]
 ) {
-  val functionalErrorToSeq: Seq[FunctionalError] = functionalError.getOrElse(Seq.empty)
+  val functionalErrorToSeq: Seq[FunctionalError] = FunctionalError.getOrElse(Seq.empty)
 
 }
 

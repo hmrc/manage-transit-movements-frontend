@@ -19,6 +19,7 @@
 @import models.departureP5.IE056MessageData
 @import viewModels.P5.departure.RejectionMessageP5ViewModel
 @import viewModels.P5.departure.RejectionMessageP5ViewModel._
+@import config.FrontendAppConfig
 
 @this(
 mainTemplate: MainTemplate,
@@ -27,21 +28,31 @@ answerSections: AnswerSections,
 button: Button,
 formHelper: FormWithCSRF
 )
-
-@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages)
+@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,
         showBackLink = true
     ) {
 
-    @heading(
-        heading = rejectionMessageP5ViewModel.heading,
-        caption = rejectionMessageP5ViewModel.lrn.map(x => messages("departure.ie056.message.subheading", x))
+        @heading(
+            heading = rejectionMessageP5ViewModel.heading,
+            caption = rejectionMessageP5ViewModel.lrn.map(x => messages("departure.messages.caption", x))
+        )
+
+        <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1Prefix</p>
+        <p id="paragraph-1-suffix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1Suffix</p>
+
+        @answerSections(rejectionMessageP5ViewModel.sections)
+
+        <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
+
+    @button(
+        messageKey = messages("site.amendErrors"),
+        href = None
     )
 
+    <p id="create-another-declaration" class="govuk-body">Or <a class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
 
-    @answerSections(rejectionMessageP5ViewModel.sections)
-    <h2 class="govuk-heading-m" id="subheading">@messages("rejectionMessage.subHeading")</h2>
 
-}
+    }

@@ -16,6 +16,7 @@
 
 package controllers.testOnly
 
+import config.FrontendAppConfig
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,7 +36,7 @@ class RejectionMessageP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
   view: RejectionMessageP5View
-)(implicit val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 

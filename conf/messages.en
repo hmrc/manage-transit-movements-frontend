@@ -13,6 +13,7 @@ site.youMust = You must
 site.search = Search
 site.service_name = Manage your transit movements
 site.section = This section is
+site.amendErrors = Amend errors
 
 site.ascending = ascending
 site.descending = descending
@@ -342,6 +343,8 @@ departure.drafts.dashboard.draftLocked.button = Return to drafts
 departures.search.form.value.invalid = The Local Reference Number must only include letters a to z without accents, numbers 0 to 9, hyphens and underscores
 arrivals.search.form.value.invalid = The Movement Reference Number must only include letters a to z and numbers 0 to 9
 
+departure.messages.caption = LRN: {0}
+
 departure.ie060.message.title = Goods under control
 departure.ie060.message.heading = Goods under control
 departure.ie060.message.requestedDocuments.title = Goods under control - document requested
@@ -375,3 +378,18 @@ customsOfficeContact.telephoneAvailable = You must share the requested documenta
 customsOfficeContact.telephoneNotAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0}.
 customsOfficeContact.teleAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0} on {1}.
 customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0}.
+
+departure.ie056.message.title = Amend declaration errors
+departure.ie056.message.heading = Amend declaration errors
+
+departure.ie056.message.paragraph1.prefix = There is a problem with departure declaration {0}.
+departure.ie056.message.paragraph1.singular.suffix = Amend the error and resend the declaration.
+departure.ie056.message.paragraph1.plural.suffix = Amend the errors and resend the declaration.
+
+departure.ie056.message.paragraph2.prefix = Contact the
+departure.ie056.message.paragraph2.link = New Computerised Transit System helpdesk
+departure.ie056.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
+departure.ie056.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
+departure.ie056.message.hyperlink = create another departure declaration
+row.label.error =  Error
+row.label.reason =  Reason
