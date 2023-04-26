@@ -33,7 +33,7 @@ class GoodsUnderControlIndexController @Inject() (
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
     implicit request =>
       val notificationType: String = request.ie060MessageData.TransitOperation.notificationType
-      val call = if (request.ie060MessageData.requestedDocumentsToSeq.nonEmpty || notificationType == "1") {
+      val call = if (request.ie060MessageData.requestedDocuments) {
         controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId)
       } else {
         controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId)
