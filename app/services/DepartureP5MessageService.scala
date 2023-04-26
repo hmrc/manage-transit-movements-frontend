@@ -36,13 +36,14 @@ class DepartureP5MessageService @Inject() (departureMovementP5Connector: Departu
           .getMessagesForMovement(movement.messagesLocation)
           .flatMap {
             messagesForMovement =>
-              val lrn: Future[String] = messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
+              messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
                 case Some(departureMessage) =>
-                  departureMovementP5Connector.getLRN(departureMessage.bodyPath).map(_.referenceNumber)
+                  departureMovementP5Connector.getLRN(departureMessage.bodyPath).map(_.referenceNumber).map {
+                    DepartureMovementAndMessage(movement, messagesForMovement, _)
+                  }
                 case None =>
-                  Future.successful("")
+                  Future.failed(new Throwable("Movement did not contain an IE015 message"))
               }
-              lrn.map(DepartureMovementAndMessage(movement, messagesForMovement, _))
           }
     }
 }

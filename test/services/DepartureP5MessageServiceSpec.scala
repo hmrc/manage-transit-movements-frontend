@@ -19,20 +19,12 @@ package services
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
-import models.departureP5.{
-  DepartureMessage,
-  DepartureMessageType,
-  DepartureMovement,
-  DepartureMovementAndMessage,
-  DepartureMovements,
-  LocalReferenceNumber,
-  MessagesForDepartureMovement
-}
+import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDateTime
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DepartureP5MessageServiceSpec extends SpecBase {
@@ -123,17 +115,9 @@ class DepartureP5MessageServiceSpec extends SpecBase {
         Future.successful(messagesForMovement)
       )
 
-      val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
+      val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).failed.futureValue
 
-      val expectedResult = Seq(
-        DepartureMovementAndMessage(
-          departureMovements.departureMovements.head,
-          messagesForMovement,
-          ""
-        )
-      )
-
-      result mustBe expectedResult
+      result mustBe a[Throwable]
     }
 
   }
