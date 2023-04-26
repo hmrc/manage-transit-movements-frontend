@@ -19,5 +19,6 @@ package models.departureP5
 case class DepartureMovementAndMessage(
   departureMovement: DepartureMovement,
   messagesForMovement: MessagesForDepartureMovement,
-  localReferenceNumber: String
+  localReferenceNumber: String,
+  isMovementInCache: Boolean
 )

@@ -17,7 +17,7 @@
 package services
 
 import cats.implicits._
-import connectors.DepartureMovementP5Connector
+import connectors.{CacheConnector, DepartureMovementP5Connector}
 import models.departureP5.DepartureMessageType.DepartureNotification
 import models.departureP5.{DepartureMovementAndMessage, DepartureMovements}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -25,7 +25,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureP5MessageService @Inject() (departureMovementP5Connector: DepartureMovementP5Connector) {
+class DepartureP5MessageService @Inject() (
+  departureMovementP5Connector: DepartureMovementP5Connector,
+  cacheConnector: CacheConnector
+) {
 
   def getMessagesForAllMovements(
     departureMovements: DepartureMovements
@@ -38,9 +41,10 @@ class DepartureP5MessageService @Inject() (departureMovementP5Connector: Departu
             messagesForMovement =>
               messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
                 case Some(departureMessage) =>
-                  departureMovementP5Connector.getLRN(departureMessage.bodyPath).map(_.referenceNumber).map {
-                    DepartureMovementAndMessage(movement, messagesForMovement, _)
-                  }
+                  for {
+                    lrn               <- departureMovementP5Connector.getLRN(departureMessage.bodyPath).map(_.referenceNumber)
+                    isDocumentInCache <- cacheConnector.doesDocumentStillExist(lrn)
+                  } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, isDocumentInCache)
                 case None =>
                   Future.failed(new Throwable("Movement did not contain an IE015 message"))
               }

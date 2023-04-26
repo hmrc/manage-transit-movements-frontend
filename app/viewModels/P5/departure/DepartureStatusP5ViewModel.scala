@@ -27,7 +27,7 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
-      case DepartureMovementAndMessage(DepartureMovement(_, _, _, _), MessagesForDepartureMovement(messages), _) =>
+      case DepartureMovementAndMessage(DepartureMovement(_, _, _, _), MessagesForDepartureMovement(messages), lrn, isMovementInCache) =>
         val allPfs: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
           Seq(
             departureNotification,
@@ -44,7 +44,7 @@ object DepartureStatusP5ViewModel {
             releasedForTransit(),
             goodsNotReleased(),
             guaranteeRejected(),
-            rejectedByOfficeOfDeparture(),
+            rejectedByOfficeOfDeparture(lrn, isMovementInCache),
             goodsUnderControl(),
             incidentDuringTransit(),
             declarationSent(),
@@ -188,7 +188,10 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def rejectedByOfficeOfDeparture(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def rejectedByOfficeOfDeparture(
+    lrn: String,
+    isDepartureInCache: Boolean
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case DepartureMessage(_, RejectedByOfficeOfDeparture, _, functionalErrors) =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",

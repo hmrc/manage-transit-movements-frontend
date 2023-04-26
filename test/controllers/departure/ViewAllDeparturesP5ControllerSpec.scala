@@ -104,7 +104,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         .thenReturn(Future.successful(Some(mockDepartureMovementResponse)))
 
       when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
-        .thenReturn(Future.successful(Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123"))))
+        .thenReturn(Future.successful(Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123", isMovementInCache = true))))
 
       val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url)
 

@@ -44,7 +44,8 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         MessagesForDepartureMovement(
           NonEmptyList(DepartureMessage(dateTimeNow, headMessage, "body/path", Nil), List.empty)
         ),
-        "AB123"
+        "AB123",
+        isMovementInCache = true
       )
 
     "when given Message with head of DepartureDeclaration" in {
@@ -56,8 +57,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.departureNotificationSubmitted",
         Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
-                             "movement.status.P5.action.departureNotification.cancelDeclaration"
+          ViewMovementAction(
+            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+            "movement.status.P5.action.departureNotification.cancelDeclaration"
           )
         )
       )
@@ -140,8 +142,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.declarationAmendmentAccepted",
         Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
-                             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
+          ViewMovementAction(
+            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+            "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           )
         )
       )

@@ -18,10 +18,11 @@ package services
 
 import base.SpecBase
 import cats.data.NonEmptyList
-import connectors.DepartureMovementP5Connector
+import connectors.{CacheConnector, DepartureMovementP5Connector}
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -29,14 +30,17 @@ import scala.concurrent.Future
 
 class DepartureP5MessageServiceSpec extends SpecBase {
 
-  val mockConnector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
+  val mockMovementConnector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
+  val mockCacheConnector: CacheConnector                  = mock[CacheConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockConnector)
+    reset(mockMovementConnector); reset(mockCacheConnector)
   }
 
-  val departureP5MessageService = new DepartureP5MessageService(mockConnector)
+  val departureP5MessageService = new DepartureP5MessageService(mockMovementConnector, mockCacheConnector)
+
+  private val doesDocumentStillExist = arbitrary[Boolean].sample.value
 
   "getMessagesForAllMovements" - {
 
@@ -75,12 +79,16 @@ class DepartureP5MessageServiceSpec extends SpecBase {
           )
         )
 
-      when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
+      when(mockMovementConnector.getMessagesForMovement(any())(any())).thenReturn(
         Future.successful(messagesForMovement)
       )
 
-      when(mockConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
+      when(mockMovementConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
         Future.successful(LocalReferenceNumber("lrn123"))
+      )
+
+      when(mockCacheConnector.doesDocumentStillExist(any())(any())).thenReturn(
+        Future.successful(doesDocumentStillExist)
       )
 
       val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
@@ -89,14 +97,15 @@ class DepartureP5MessageServiceSpec extends SpecBase {
         DepartureMovementAndMessage(
           departureMovements.departureMovements.head,
           messagesForMovement,
-          "lrn123"
+          "lrn123",
+          isMovementInCache = doesDocumentStillExist
         )
       )
 
       result mustBe expectedResult
     }
 
-    "must return departure movements with messages without an LRN" in {
+    "must throw exception when movement doesn't contain an IE015" in {
 
       val messagesForMovement =
         MessagesForDepartureMovement(
@@ -111,7 +120,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
           )
         )
 
-      when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
+      when(mockMovementConnector.getMessagesForMovement(any())(any())).thenReturn(
         Future.successful(messagesForMovement)
       )
 

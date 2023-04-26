@@ -20,7 +20,6 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureMovementP5Connector
 import controllers.actions._
 import forms.DeparturesSearchFormProvider
-import forms.SearchFormProvider
 import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
