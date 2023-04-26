@@ -22,14 +22,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class GoodsUnderControlIndexController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   goodsUnderControlAction: GoodsUnderControlActionProvider
-)(implicit ec: ExecutionContext)
-    extends FrontendController(cc)
+) extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {

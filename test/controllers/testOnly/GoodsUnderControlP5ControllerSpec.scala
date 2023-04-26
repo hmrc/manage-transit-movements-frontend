@@ -54,7 +54,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
                                                                                                       mockDepartureP5MessageService,
                                                                                                       mockReferenceDataService
     )
-  lazy val goodsUnderControlController: String = controllers.testOnly.routes.GoodsUnderControlP5Controller.onPageLoad(departureIdP5).url
+  lazy val goodsUnderControlController: String = controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5).url
   private val sections                         = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {

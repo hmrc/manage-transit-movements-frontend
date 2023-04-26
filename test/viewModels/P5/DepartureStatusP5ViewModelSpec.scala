@@ -36,7 +36,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
     def movementAndMessages(headMessage: DepartureMessageType): DepartureMovementAndMessage =
       DepartureMovementAndMessage(
         DepartureMovement(
-          "departureId",
+          s"$departureIdP5",
           Some("mrn"),
           LocalDateTime.now(),
           "location"
@@ -282,7 +282,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
         Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.viewDetails"),
+          ViewMovementAction(controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url,
+                             "movement.status.P5.action.goodsUnderControl.viewDetails"
+          ),
           ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.cancelDeclaration")
         )
       )
