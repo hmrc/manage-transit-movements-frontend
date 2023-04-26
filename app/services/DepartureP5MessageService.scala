@@ -60,11 +60,30 @@ class DepartureP5MessageService @Inject() (departureMovementP5Connector: Departu
           .headOption
       )
 
+  private def getRejectionMetaDataMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+    departureMovementP5Connector
+      .getMessageMetaData(departureId: String)
+      .map(
+        _.messages
+          .filter(_.messageType == RejectedByOfficeOfDeparture)
+          .sortBy(_.received)
+          .reverse
+          .headOption
+      )
+
   def getGoodsUnderControl(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[IE060Data]] =
     (
       for {
         goodsUnderControlMessage <- OptionT(getGoodsUnderControlMessage(departureId))
         goodsUnderControl        <- OptionT.liftF(departureMovementP5Connector.getGoodsUnderControl(goodsUnderControlMessage.path))
       } yield goodsUnderControl
+    ).value
+
+  def getRejectionMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[IE056Data]] =
+    (
+      for {
+        rejectionMessage <- OptionT(getRejectionMetaDataMessage(departureId))
+        rejection        <- OptionT.liftF(departureMovementP5Connector.getRejectionMessage(rejectionMessage.path))
+      } yield rejection
     ).value
 }
