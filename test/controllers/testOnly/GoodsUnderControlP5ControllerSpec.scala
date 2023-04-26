@@ -54,8 +54,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
                                                                                                       mockDepartureP5MessageService,
                                                                                                       mockReferenceDataService
     )
-  lazy val goodsUnderControlController: String = controllers.testOnly.routes.GoodsUnderControlP5Controller.onPageLoad(departureIdP5).url
-  private val sections                         = arbitrarySections.arbitrary.sample.value
+  private val sections = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -78,13 +77,51 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
   "UnloadingFindingsController Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when requestedDocuments" in {
+      val goodsUnderControlRequestedDocumentsController: String =
+        controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5).url
+
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
+        )
+      )
+      when(mockDepartureP5MessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
+        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
+
+      goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
+
+      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
+      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
+
+      val request = FakeRequest(GET, goodsUnderControlRequestedDocumentsController)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+
+      val view = injector.instanceOf[GoodsUnderControlP5View]
+
+      contentAsString(result) mustEqual
+        view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+    }
+
+    "must return OK and the correct view for a GET when noRequestedDocuments" in {
+
+      val goodsUnderControlNoRequestedDocumentsController: String =
+        controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureIdP5).url
+
+      val message: IE060Data = IE060Data(
+        IE060MessageData(
+          TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
+          CustomsOfficeOfDeparture("22323323"),
+          Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
+          None
         )
       )
       when(mockDepartureP5MessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
@@ -97,7 +134,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
       val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
 
-      val request = FakeRequest(GET, goodsUnderControlController)
+      val request = FakeRequest(GET, goodsUnderControlNoRequestedDocumentsController)
 
       val result = route(app, request).value
 
