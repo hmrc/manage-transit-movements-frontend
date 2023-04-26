@@ -18,7 +18,7 @@ package services
 
 import cats.data.OptionT
 import cats.implicits._
-import connectors.{CacheConnector, DepartureMovementP5Connector}
+import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.departureP5.DepartureMessageType.{DepartureNotification, _}
 import models.departureP5._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DepartureP5MessageService @Inject() (
   departureMovementP5Connector: DepartureMovementP5Connector,
-  cacheConnector: CacheConnector
+  cacheConnector: DepartureCacheConnector
 ) {
 
   def getMessagesForAllMovements(

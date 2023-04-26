@@ -22,14 +22,14 @@ import helper.WireMockServerHandler
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 
-class CacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockServerHandler {
+class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockServerHandler {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .configure(conf = "microservice.services.manage-transit-movements-departure-cache.port" -> server.port())
 
-  private lazy val connector: CacheConnector = app.injector.instanceOf[CacheConnector]
+  private lazy val connector: DepartureCacheConnector = app.injector.instanceOf[DepartureCacheConnector]
 
   private val json: String =
     s"""
@@ -44,7 +44,7 @@ class CacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with W
       |}
       |""".stripMargin
 
-  "CacheConnector" - {
+  "DepartureCacheConnector" - {
 
     "doesDocumentStillExist" - {
 
@@ -65,6 +65,17 @@ class CacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with W
         server.stubFor(
           get(urlEqualTo(url))
             .willReturn(notFound())
+        )
+
+        val result: Boolean = await(connector.doesDocumentStillExist(lrn.toString))
+
+        result mustBe false
+      }
+
+      "return false when internal server error returned from cache" in {
+        server.stubFor(
+          get(urlEqualTo(url))
+            .willReturn(serverError())
         )
 
         val result: Boolean = await(connector.doesDocumentStillExist(lrn.toString))

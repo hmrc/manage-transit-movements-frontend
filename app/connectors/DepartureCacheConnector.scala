@@ -25,20 +25,20 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CacheConnector @Inject() (
+class DepartureCacheConnector @Inject() (
   config: FrontendAppConfig,
   http: HttpClient
 )(implicit ec: ExecutionContext)
     extends Logging {
 
-  private val baseUrl = s"${config.cacheUrl}"
+  private val baseUrl = s"${config.departureCacheUrl}"
 
   def doesDocumentStillExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val url = s"$baseUrl/user-answers/$lrn"
 
     http.GET[HttpResponse](url).map(_.status).map {
-      case NOT_FOUND => false
-      case _         => true
+      case OK => true
+      case _  => false
     }
   }
 }

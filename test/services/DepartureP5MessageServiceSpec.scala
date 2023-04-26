@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import cats.data.NonEmptyList
-import connectors.{CacheConnector, DepartureMovementP5Connector}
+import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -32,7 +32,7 @@ import scala.concurrent.Future
 class DepartureP5MessageServiceSpec extends SpecBase {
 
   val mockMovementConnector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
-  val mockCacheConnector: CacheConnector                  = mock[CacheConnector]
+  val mockCacheConnector: DepartureCacheConnector         = mock[DepartureCacheConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
