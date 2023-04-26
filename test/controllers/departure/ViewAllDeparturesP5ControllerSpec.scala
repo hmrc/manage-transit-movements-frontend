@@ -33,7 +33,7 @@ import services.DepartureP5MessageService
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels.ViewMovementAction
 import viewModels.pagination.MovementsPaginationViewModel
-import views.html.departure.P5.ViewAllDeparturesP5View
+import views.html.departure.TestOnly.ViewAllDeparturesP5View
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

@@ -37,4 +37,5 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
       .overrides(
         bind[IdentifierAction].to[FakeIdentifierAction]
       )
+
 }

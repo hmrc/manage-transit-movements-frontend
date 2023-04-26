@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package models.referenceData
+package models.departureP5
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{__, Json, OWrites, Reads}
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  val nameOption: Option[String]  = if (name.isEmpty) None else Some(name)
-  val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
-}
+case class IE060Data(data: IE060MessageData)
 
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
+object IE060Data {
+  implicit val reads: Reads[IE060Data]    = (__ \ "body" \ "n1:CC060C").read[IE060MessageData].map(IE060Data.apply)
+  implicit val writes: OWrites[IE060Data] = Json.writes[IE060Data]
 }

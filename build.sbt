@@ -9,13 +9,12 @@ lazy val appName: String = "manage-transit-movements-frontend"
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
-  .settings(DefaultBuildSettings.scalaSettings: _*)
-  .settings(DefaultBuildSettings.defaultSettings(): _*)
-  .settings(SbtDistributablesPlugin.publishingSettings: _*)
-  .settings(inConfig(Test)(testSettings): _*)
+  .settings(DefaultBuildSettings.scalaSettings *)
+  .settings(DefaultBuildSettings.defaultSettings() *)
+  .settings(inConfig(Test)(testSettings) *)
   .configs(A11yTest)
-  .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings): _*)
-  .settings(headerSettings(A11yTest): _*)
+  .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings) *)
+  .settings(headerSettings(A11yTest) *)
   .settings(automateHeaderSettings(A11yTest))
   .settings(majorVersion := 0)
   .settings(scalaVersion := "2.13.8")
@@ -63,7 +62,7 @@ lazy val root = (project in file("."))
     ThisBuild / scalafmtOnCompile := true
   )
 
-lazy val testSettings: Seq[Def.Setting[_]] = Seq(
+lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork := true,
   javaOptions ++= Seq(
     "-Dconfig.resource=test.application.conf",

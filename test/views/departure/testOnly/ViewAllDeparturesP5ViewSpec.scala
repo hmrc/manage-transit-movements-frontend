@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.departure
+package views.departure.testOnly
 
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
@@ -24,7 +24,7 @@ import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels.pagination.MovementsPaginationViewModel
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
-import views.html.departure.P5.ViewAllDeparturesP5View
+import views.html.departure.TestOnly.ViewAllDeparturesP5View
 
 class ViewAllDeparturesP5ViewSpec
     extends MovementsTableViewBehaviours[ViewDepartureP5]

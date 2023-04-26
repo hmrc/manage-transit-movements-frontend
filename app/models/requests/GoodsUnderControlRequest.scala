@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package models.referenceData
+package models.requests
 
-import play.api.libs.json.{Json, OFormat}
+import models.departureP5.IE060MessageData
+import models.referenceData.CustomsOffice
+import play.api.mvc.{Request, WrappedRequest}
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  val nameOption: Option[String]  = if (name.isEmpty) None else Some(name)
-  val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
-}
-
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
-}
+case class GoodsUnderControlRequest[A](
+  request: Request[A],
+  eoriNumber: String,
+  ie060MessageData: IE060MessageData,
+  customsOffice: Option[CustomsOffice]
+) extends WrappedRequest[A](request)

@@ -17,7 +17,6 @@
 package models.departureP5
 
 import base.SpecBase
-import models.arrival.ArrivalStatus._
 import models.departureP5.DepartureMessageType.UnknownMessageType
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll

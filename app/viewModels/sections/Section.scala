@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package models.referenceData
+package viewModels.sections
 
-import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  val nameOption: Option[String]  = if (name.isEmpty) None else Some(name)
-  val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
-}
+case class Section(sectionTitle: Option[String], rows: Seq[SummaryListRow], id: Option[String] = None)
 
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
+object Section {
+  def apply(sectionTitle: String, rows: Seq[SummaryListRow]): Section = new Section(Some(sectionTitle), rows)
+
+  def apply(sectionTitle: String, rows: Seq[SummaryListRow], id: Option[String]): Section =
+    new Section(Some(sectionTitle), rows, id)
+
 }

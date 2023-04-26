@@ -16,10 +16,11 @@
 
 package services
 
+import cats.data.OptionT
 import cats.implicits._
 import connectors.{CacheConnector, DepartureMovementP5Connector}
-import models.departureP5.DepartureMessageType.DepartureNotification
-import models.departureP5.{DepartureMovementAndMessage, DepartureMovements}
+import models.departureP5.DepartureMessageType.{DepartureNotification, _}
+import models.departureP5._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -50,4 +51,23 @@ class DepartureP5MessageService @Inject() (
               }
           }
     }
+
+  private def getGoodsUnderControlMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+    departureMovementP5Connector
+      .getMessageMetaData(departureId: String)
+      .map(
+        _.messages
+          .filter(_.messageType == GoodsUnderControl)
+          .sortBy(_.received)
+          .reverse
+          .headOption
+      )
+
+  def getGoodsUnderControl(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[IE060Data]] =
+    (
+      for {
+        goodsUnderControlMessage <- OptionT(getGoodsUnderControlMessage(departureId))
+        goodsUnderControl        <- OptionT.liftF(departureMovementP5Connector.getGoodsUnderControl(goodsUnderControlMessage.path))
+      } yield goodsUnderControl
+    ).value
 }

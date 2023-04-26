@@ -20,11 +20,20 @@ import generators.Generators
 import models.{Availability, DraftAvailability}
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.WhatDoYouWantToDoView
 
 class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .configure(
+        "microservice.services.features.phase5Enabled.departure" -> false,
+        "microservice.services.features.phase5Enabled.arrival"   -> false
+      )
 
   private val sampleAvailability      = arbitrary[Availability].sample.value
   private val sampleDraftAvailability = arbitrary[DraftAvailability].sample.value

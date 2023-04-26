@@ -1,0 +1,59 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components.{Button, Heading, AnswerSections}
+@import controllers.routes._
+@import models.departureP5.IE060MessageData
+@import viewModels.P5.departure.GoodsUnderControlP5ViewModel
+@import viewModels.P5.departure.GoodsUnderControlP5ViewModel._
+@import models.referenceData.CustomsOffice
+@import viewModels.P5.departure.CustomsOfficeContactViewModel
+
+@this(
+mainTemplate: MainTemplate,
+heading: Heading,
+answerSections: AnswerSections,
+button: Button,
+formHelper: FormWithCSRF
+)
+
+@(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[_], messages: Messages)
+
+    @mainTemplate(
+        title = goodsUnderControlP5ViewModel.title,
+        showBackLink = true
+    ) {
+
+    @heading(
+        heading = goodsUnderControlP5ViewModel.heading,
+        caption = goodsUnderControlP5ViewModel.lrn.map(x => messages("departure.ie060.message.subheading", x))
+    )
+
+    <p class="govuk-body" id="paragraph1">@goodsUnderControlP5ViewModel.paragraph1</p>
+    <p class="govuk-body" id="paragraph2">@goodsUnderControlP5ViewModel.paragraph2</p>
+    <p class="govuk-body" id="paragraph3">@goodsUnderControlP5ViewModel.paragraph3</p>
+
+
+    @answerSections(goodsUnderControlP5ViewModel.sections)
+    <h2 class="govuk-heading-m" id="subheading">@messages("goodsUnderControl.subHeading")</h2>
+
+    @if(goodsUnderControlP5ViewModel.requestedDocuments) {
+        <p class="govuk-body" id="what-happens-next">@customsOfficeContactViewModel.fetchWhatHappensNext</p>
+    }else{
+        <p class="govuk-body" id="link-text">@goodsUnderControlP5ViewModel.type0LinkPrefix <a id="view-all-declarations" href="@goodsUnderControlP5ViewModel.type0ParagraphLink">@goodsUnderControlP5ViewModel.type0LinkText</a> @goodsUnderControlP5ViewModel.type0LinkTextSuffix</p>
+    }
+
+}

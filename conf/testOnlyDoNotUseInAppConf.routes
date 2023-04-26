@@ -45,10 +45,14 @@ GET         /manage-transit-movements/test-only/departure/:departureId/message/:
 POST        /manage-transit-movements/test-only/cancellation/submit                         controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
 + nocsrf
-GET         /manage-transit-movements/test-only/view-arrival-notifications                   controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad()
+GET         /manage-transit-movements/test-only/view-arrival-notifications                  controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad()
 
 + nocsrf
 GET         /manage-transit-movements/test-only/view-departure-declarations                 controllers.testOnly.ViewAllDeparturesP5Controller.onPageLoad()
+
+GET         /manage-transit-movements/test-only/goods-under-control/:departureId            controllers.testOnly.GoodsUnderControlP5Controller.onPageLoad(departureId: String)
+GET         /manage-transit-movements/test-only/goods-under-control-document-requested/:departureId   controllers.testOnly.GoodsUnderControlP5Controller.onPageLoad(departureId: String)
+
 
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                            controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()

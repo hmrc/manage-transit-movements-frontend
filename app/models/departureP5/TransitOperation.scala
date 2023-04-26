@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package models.referenceData
+package models.departureP5
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  val nameOption: Option[String]  = if (name.isEmpty) None else Some(name)
-  val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
-}
+import java.time.LocalDateTime
+case class TransitOperation(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
 
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
+object TransitOperation {
+  implicit val formats: OFormat[TransitOperation] = Json.format[TransitOperation]
 }

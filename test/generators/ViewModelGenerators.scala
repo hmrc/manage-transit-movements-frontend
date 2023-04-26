@@ -21,16 +21,23 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
 import play.twirl.api.Html
+import uk.gov.hmrc.govukfrontend.views.Aliases.Content
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination._
+import viewModels.sections.Section
 
 import java.time.{LocalDate, LocalTime}
 
 trait ViewModelGenerators {
   self: Generators =>
+
+  private val maxSeqLength = 10
 
   implicit lazy val arbitraryViewAllArrivalMovementsViewModel: Arbitrary[ViewAllArrivalMovementsViewModel] =
     Arbitrary {
@@ -182,4 +189,52 @@ trait ViewModelGenerators {
         pagination      <- arbitrary[DraftsPaginationViewModel]
       } yield AllDraftDeparturesViewModel(draftDepartures, pageSize, lrn, url, pagination)
     }
+
+  implicit lazy val arbitraryText: Arbitrary[Text] = Arbitrary {
+    for {
+      content <- nonEmptyString
+    } yield content.toText
+  }
+
+  implicit lazy val arbitraryContent: Arbitrary[Content] = Arbitrary {
+    arbitrary[Text]
+  }
+
+  implicit lazy val arbitraryKey: Arbitrary[Key] = Arbitrary {
+    for {
+      content <- arbitrary[Content]
+      classes <- Gen.alphaNumStr
+    } yield Key(content, classes)
+  }
+
+  implicit lazy val arbitraryValue: Arbitrary[Value] = Arbitrary {
+    for {
+      content <- arbitrary[Content]
+      classes <- Gen.alphaNumStr
+    } yield Value(content, classes)
+  }
+
+  implicit lazy val arbitrarySummaryListRow: Arbitrary[SummaryListRow] = Arbitrary {
+    for {
+      key     <- arbitrary[Key]
+      value   <- arbitrary[Value]
+      classes <- Gen.alphaNumStr
+    } yield SummaryListRow(key, value, classes, None)
+  }
+
+  implicit lazy val arbitrarySection: Arbitrary[Section] = Arbitrary {
+    for {
+      sectionTitle <- nonEmptyString
+      length       <- Gen.choose(1, maxSeqLength)
+      rows         <- Gen.containerOfN[Seq, SummaryListRow](length, arbitrary[SummaryListRow])
+    } yield Section(sectionTitle, rows)
+  }
+
+  implicit lazy val arbitrarySections: Arbitrary[List[Section]] = Arbitrary {
+    listWithMaxLength[Section]().retryUntil {
+      sections =>
+        val sectionTitles = sections.map(_.sectionTitle)
+        sectionTitles.distinct.size == sectionTitles.size
+    }
+  }
 }
