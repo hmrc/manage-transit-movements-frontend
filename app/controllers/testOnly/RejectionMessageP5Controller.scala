@@ -40,9 +40,11 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)) {
+  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
       val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData)
-      Ok(view(rejectionMessageP5ViewModel, departureId))
+      rejectionMessageP5ViewModel.map(
+        vmp => Ok(view(vmp, departureId))
+      )
   }
 }

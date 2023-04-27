@@ -33,19 +33,23 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
   ec: ExecutionContext
 ) extends DeparturesP5MessageHelper {
 
-//  private def getControlTypeDescription(typeOfControl: String): Future[Option[String]] =
-//    (for {
-//      y <- OptionT.liftF(referenceDataService.getControlType(typeOfControl)(ec, hc))
-//      x = y.toString
-//    } yield x).value
+  private def getFunctionalErrorType(errorCode: String): Future[Option[String]] =
+    (for {
+      y <- OptionT.liftF(referenceDataService.getFunctionalErrorType(errorCode)(ec, hc))
+      x = y.toString
+    } yield x).value
 
-  private def buildErrorCodeRow(errorCode: String): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(errorCode),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.error"),
-    id = None,
-    call = None
-  )
+  private def buildErrorCodeRow(errorCode: String): Future[Option[SummaryListRow]] =
+    getFunctionalErrorType(errorCode).map(
+      code =>
+        buildRowFromAnswer[String](
+          answer = code,
+          formatAnswer = formatAsText,
+          prefix = messages("row.label.error"),
+          id = None,
+          call = None
+        )
+    )
 
   private def buildErrorReasonRow(reason: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(reason),
@@ -55,17 +59,26 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
     call = None
   )
 
-  private def buildErrorRows(errors: FunctionalError): Seq[SummaryListRow] = {
+  private def buildErrorRows(errors: FunctionalError): Future[Seq[SummaryListRow]] =
+    buildErrorCodeRow(errors.errorCode).map {
+      code =>
+        val errorCode: Seq[SummaryListRow]   = extractOptionalRow(code)
+        val errorReason: Seq[SummaryListRow] = extractOptionalRow(buildErrorReasonRow(errors.errorReason))
+        errorCode ++ errorReason
+    }
 
-    val errorCode: Seq[SummaryListRow]   = extractOptionalRow(buildErrorCodeRow(errors.errorCode))
-    val errorReason: Seq[SummaryListRow] = extractOptionalRow(buildErrorReasonRow(errors.errorReason))
-    errorCode ++ errorReason
+  def errorSection(): Future[Section] = {
+
+    val summaryListRows: Future[Seq[SummaryListRow]] = Future
+      .sequence(
+        ie056MessageData.functionalErrorToSeq.map(
+          error => buildErrorRows(error)
+        )
+      )
+      .map(_.flatten)
+
+    summaryListRows.map(
+      slr => Section(None, slr, None)
+    )
   }
-
-  def errorSection(): Section = Section(None,
-                                        ie056MessageData.functionalErrorToSeq.flatMap(
-                                          error => buildErrorRows(error)
-                                        ),
-                                        None
-  )
 }

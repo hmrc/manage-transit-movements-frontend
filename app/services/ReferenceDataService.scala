@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
-import models.referenceData.{ControlType, CustomsOffice}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalError}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,10 +30,14 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
 
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] =
     connector.getControlType(code)
+
+  def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalError] =
+    connector.getFunctionalErrorType(code)
 }
 
 trait ReferenceDataService {
   def getCustomsOfficeByCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]]
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
+  def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalError]
 
 }

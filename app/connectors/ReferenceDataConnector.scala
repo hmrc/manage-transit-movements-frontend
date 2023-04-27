@@ -18,9 +18,10 @@ package connectors
 
 import config.FrontendAppConfig
 import logging.Logging
-import models.referenceData.{ControlType, CustomsOffice}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalError}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,6 +49,20 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .recover {
         case _ =>
           logger.error(s"Get Control Types  request failed to return data")
+          onFailControlType(code)
+      }
+  }
+
+  def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalError] = {
+    def onFailControlType(code: String): FunctionalError = FunctionalError(code, "")
+    val serviceUrl                                       = s"${config.referenceDataUrl}/functional-error-type/$code"
+
+    http
+      .GET[Option[FunctionalError]](serviceUrl)
+      .map(_.getOrElse(onFailControlType(code)))
+      .recover {
+        case _ =>
+          logger.error(s"Get Functional Error Type  request failed to return data")
           onFailControlType(code)
       }
   }
