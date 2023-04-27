@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.ReferenceDataConnector
-import models.referenceData.{ControlType, CustomsOffice}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
@@ -33,9 +33,11 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
   private val mockConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
 
-  private val customsOffice             = CustomsOffice("ID1", "NAME001", None)
-  private val controlTypeForValidCode   = ControlType("44", "Intrusive")
-  private val controlTypeForInvalidCode = ControlType("999", "")
+  private val customsOffice                 = CustomsOffice("ID1", "NAME001", None)
+  private val controlTypeForValidCode       = ControlType("44", "Intrusive")
+  private val functionalErrorForValidCode   = FunctionalError("14", "Rule violation")
+  private val controlTypeForInvalidCode     = ControlType("44", "Intrusive")
+  private val functionalErrorForInValidCode = FunctionalError("999", "")
 
   override def beforeEach(): Unit =
     reset(mockConnector)
@@ -86,6 +88,30 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
         service.getControlType("999").futureValue mustBe controlTypeForInvalidCode
 
         verify(mockConnector).getControlType(any())(any(), any())
+      }
+    }
+
+    "getFunctionalError should" - {
+      "return a functionalError when error code is present in reference data" in {
+
+        when(mockConnector.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorForValidCode))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getFunctionalErrorType("14").futureValue mustBe functionalErrorForValidCode
+
+        verify(mockConnector).getFunctionalErrorType(any())(any(), any())
+      }
+
+      "return a controlType when typeofControl code is not present in reference data" in {
+
+        when(mockConnector.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorForInValidCode))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getFunctionalErrorType("999").futureValue mustBe functionalErrorForInValidCode
+
+        verify(mockConnector).getFunctionalErrorType(any())(any(), any())
       }
     }
 

@@ -19,7 +19,7 @@ package connectors
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnectorSpec._
-import models.referenceData.{ControlType, CustomsOffice}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalError}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -112,15 +112,48 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
           }
         }
       }
+
+      "getFunctionalErrorType" - {
+
+        "should handle a 200 response for functional errors" in {
+          server.stubFor(
+            get(urlEqualTo(s"$functionalErrorUri"))
+              .willReturn(okJson(functionalErrorJson))
+          )
+
+          val expectedResult = FunctionalError("14", "Rule violation")
+
+          connector.getFunctionalErrorType(functionalError).futureValue mustBe expectedResult
+        }
+
+        "should handle client and server errors for control type end point" in {
+          val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
+
+          forAll(errorResponseCodes) {
+            errorResponse =>
+              server.stubFor(
+                get(urlEqualTo(s"$functionalErrorUri"))
+                  .willReturn(
+                    aResponse()
+                      .withStatus(errorResponse)
+                  )
+              )
+
+              connector.getFunctionalErrorType(functionalError).futureValue mustBe FunctionalError(functionalError, "")
+          }
+        }
+      }
     }
   }
 }
 
 object ReferenceDataConnectorSpec {
 
-  private val typeOfControl    = "44"
-  private val customsOfficeUri = "/test-only/transit-movements-trader-reference-data/customs-office"
-  private val controlTypeUri   = s"/test-only/transit-movements-trader-reference-data/control-type/$typeOfControl"
+  private val typeOfControl      = "44"
+  private val functionalError    = "14"
+  private val customsOfficeUri   = "/test-only/transit-movements-trader-reference-data/customs-office"
+  private val controlTypeUri     = s"/test-only/transit-movements-trader-reference-data/control-type/$typeOfControl"
+  private val functionalErrorUri = s"/test-only/transit-movements-trader-reference-data/functional-error-type/$functionalError"
 
   private val customsOfficeResponseJsonWithPhone: String =
     """
@@ -145,6 +178,14 @@ object ReferenceDataConnectorSpec {
       | {
       |   "code":"44",
       |   "description":"Intrusive"
+      | }
+      |""".stripMargin
+
+  private val functionalErrorJson: String =
+    """
+      | {
+      |   "code":"14",
+      |   "description":"Rule violation"
       | }
       |""".stripMargin
 }
