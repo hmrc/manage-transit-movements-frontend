@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.ReferenceDataConnector
-import models.referenceData.{ControlType, CustomsOffice, FunctionalError}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
@@ -35,9 +35,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
   private val customsOffice                 = CustomsOffice("ID1", "NAME001", None)
   private val controlTypeForValidCode       = ControlType("44", "Intrusive")
-  private val functionalErrorForValidCode   = FunctionalError("14", "Rule violation")
+  private val functionalErrorForValidCode   = FunctionalErrorWithDesc("14", "Rule violation")
   private val controlTypeForInvalidCode     = ControlType("44", "Intrusive")
-  private val functionalErrorForInValidCode = FunctionalError("999", "")
+  private val functionalErrorForInValidCode = FunctionalErrorWithDesc("999", "")
 
   override def beforeEach(): Unit =
     reset(mockConnector)

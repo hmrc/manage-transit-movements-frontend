@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import logging.Logging
-import models.referenceData.{ControlType, CustomsOffice, FunctionalError}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
@@ -53,12 +53,12 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       }
   }
 
-  def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalError] = {
-    def onFailControlType(code: String): FunctionalError = FunctionalError(code, "")
+  def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
+    def onFailControlType(code: String): FunctionalErrorWithDesc = FunctionalErrorWithDesc(code, "")
     val serviceUrl                                       = s"${config.referenceDataUrl}/functional-error-type/$code"
 
     http
-      .GET[Option[FunctionalError]](serviceUrl)
+      .GET[Option[FunctionalErrorWithDesc]](serviceUrl)
       .map(_.getOrElse(onFailControlType(code)))
       .recover {
         case _ =>

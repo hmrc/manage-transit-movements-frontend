@@ -19,7 +19,7 @@ package connectors
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnectorSpec._
-import models.referenceData.{ControlType, CustomsOffice, FunctionalError}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -121,7 +121,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(functionalErrorJson))
           )
 
-          val expectedResult = FunctionalError("14", "Rule violation")
+          val expectedResult = FunctionalErrorWithDesc("14", "Rule violation")
 
           connector.getFunctionalErrorType(functionalError).futureValue mustBe expectedResult
         }
@@ -139,7 +139,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
                   )
               )
 
-              connector.getFunctionalErrorType(functionalError).futureValue mustBe FunctionalError(functionalError, "")
+              connector.getFunctionalErrorType(functionalError).futureValue mustBe FunctionalErrorWithDesc(functionalError, "")
           }
         }
       }

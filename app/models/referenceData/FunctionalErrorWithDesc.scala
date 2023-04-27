@@ -18,7 +18,7 @@ package models.referenceData
 
 import play.api.libs.json.{Format, Json}
 
-case class FunctionalError(code: String, description: String) {
+case class FunctionalErrorWithDesc(code: String, description: String) {
 
   override def toString: String =
     description match {
@@ -27,7 +27,7 @@ case class FunctionalError(code: String, description: String) {
     }
 }
 
-object FunctionalError {
+object FunctionalErrorWithDesc {
 
-  implicit val format: Format[FunctionalError] = Json.format[FunctionalError]
+  implicit val format: Format[FunctionalErrorWithDesc] = Json.format[FunctionalErrorWithDesc]
 }

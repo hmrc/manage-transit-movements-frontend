@@ -19,7 +19,7 @@ package models.departureP5
 import base.SpecBase
 import play.api.libs.json.Json
 
-class FunctionalErrorSpec extends SpecBase {
+class FunctionalErrorWithDescSpec extends SpecBase {
 
   "FunctionalError" - {
 

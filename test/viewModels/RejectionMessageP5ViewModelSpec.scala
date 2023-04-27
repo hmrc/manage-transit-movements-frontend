@@ -19,7 +19,7 @@ package viewModels
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.departureP5._
-import models.referenceData.ControlType
+import models.referenceData.{ControlType, FunctionalErrorWithDesc}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -47,23 +47,22 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
 
   "RejectionMessageP5ViewModel" - {
 
-    val typeOfControls    = Some(Seq(TypeOfControls("1", "44", None)))
-    val controlType44     = ControlType("44", "")
-    val requestedDocument = Some(Seq(RequestedDocument("1", "44", None)))
+    val functionalErrors = Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
+    val functionalError12 = FunctionalErrorWithDesc("12", "Codelist violation")
 
-    "when no requested documents" - {
+    "when there is one error" - {
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
+          functionalErrors
         )
       )
 
-      when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
+      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalError12))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data).futureValue
+      val result = viewModelProvider.apply(message.data).futureValue
 
       "must return correct section length" in {
         result.sections.length mustBe 2
@@ -76,65 +75,31 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.heading mustBe "Amend declaration errors"
       }
       "must return correct paragraphs" in {
-        result.paragraph1 mustBe "Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety."
-        result.paragraph2 mustBe "While under control, the goods will remain under supervision at the office of destination."
-        result.paragraph3 mustBe "You must wait for the outcome of Customs’ checks."
+        result.paragraph1Prefix mustBe "Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety."
+        result.paragraph1Suffix mustBe "While under control, the goods will remain under supervision at the office of destination."
       }
       "must return correct end paragraph" in {
-        result.type0LinkPrefix mustBe "You must wait for the outcome of Customs’ checks."
-        result.type0LinkText mustBe "Check your departure declarations"
-        result.type0LinkTextSuffix mustBe "for further updates."
+        result.paragraph2Link mustBe "You must wait for the outcome of Customs’ checks."
+        result.paragraph2Prefix mustBe "Check your departure declarations"
+        result.paragraph1Suffix mustBe "for further updates."
       }
     }
 
-    "when there is requested documents and type 0" - {
-      val message: IE060Data = IE060Data(
-        IE060MessageData(
-          TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
-          CustomsOfficeOfDeparture("22323323"),
-          typeOfControls,
-          requestedDocument
+    "when there is multiple errors" - {
+      val message: IE056Data = IE056Data(
+        IE056MessageData(
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
         )
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data).futureValue
+      val result = viewModelProvider.apply(message.data).futureValue
 
       "must not render type of control if present" in {
         result.sections.length mustBe 3
-      }
-
-      "must return correct title" in {
-        result.title mustBe "Goods under control - document requested"
-      }
-      "must return correct heading" in {
-        result.heading mustBe "Goods under control - document requested"
-      }
-      "must return correct paragraphs" in {
-        result.paragraph1 mustBe "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
-        result.paragraph2 mustBe "While awaiting the documentation, the goods will remain under supervision at the office of destination."
-        result.paragraph3 mustBe "You must contact the office of destination directly to share the requested documentation."
-      }
-    }
-    "when there is requested documents and type 1" - {
-      val message: IE060Data = IE060Data(
-        IE060MessageData(
-          TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "1"),
-          CustomsOfficeOfDeparture("22323323"),
-          None,
-          requestedDocument
-        )
-      )
-
-      when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
-
-      val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data).futureValue
-
-      "must not render type of control if present" in {
-        result.sections.length mustBe 2
       }
 
       "must return correct title" in {
@@ -152,115 +117,18 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
 
     "must render rows" in {
 
-      val message: IE060Data = IE060Data(
-        IE060MessageData(
-          TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
-          CustomsOfficeOfDeparture("22323323"),
-          None,
-          None
+      val message: IE056Data = IE056Data(
+        IE056MessageData(
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
         )
       )
-
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data).futureValue
+      val result = viewModelProvider.apply(message.data).futureValue
 
       result.sections.length mustBe 1
       result.sections.head.rows.size mustBe 4
     }
 
-    "control section" - {
-
-      "must not render control information section if controls not present" in {
-
-        val message: IE060Data = IE060Data(
-          IE060MessageData(
-            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
-            CustomsOfficeOfDeparture("22323323"),
-            None,
-            None
-          )
-        )
-
-        val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-        val result            = viewModelProvider.apply(message.data).futureValue
-
-        result.sections.length mustBe 1
-
-      }
-
-      "must render control section with  2 rows if controls are present" in {
-        val typeOfControls = Some(Seq(TypeOfControls("1", "44", None), TypeOfControls("2", "45", Some("Desc1"))))
-        val controlType44  = ControlType("44", "Nature and characteristics of the goods")
-        val controlType45  = ControlType("45", "")
-
-        val message: IE060Data = IE060Data(
-          IE060MessageData(
-            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
-            CustomsOfficeOfDeparture("22323323"),
-            typeOfControls,
-            None
-          )
-        )
-
-        when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
-        when(mockReferenceDataService.getControlType("45")).thenReturn(Future.successful(controlType45))
-        val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-        val result            = viewModelProvider.apply(message.data).futureValue
-
-        result.sections.length mustBe 3
-        result.sections(1).rows.size mustBe 1
-        result.sections(2).rows.size mustBe 2
-
-        result.sections(1).sectionTitle.value mustBe "Control information 1"
-
-      }
-
-    }
-
-    "document section" - {
-
-      "must not render document information section if documents not present" in {
-
-        val message: IE060Data = IE060Data(
-          IE060MessageData(
-            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
-            CustomsOfficeOfDeparture("22323323"),
-            None,
-            None
-          )
-        )
-
-        val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-        val result            = viewModelProvider.apply(message.data).futureValue
-
-        result.sections.length mustBe 1
-
-      }
-
-      "must render document section with  2 rows if documents are present" in {
-
-        val requestedDocument = Some(Seq(RequestedDocument("1", "44", None), RequestedDocument("2", "45", Some("Desc1"))))
-        val message: IE060Data = IE060Data(
-          IE060MessageData(
-            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
-            CustomsOfficeOfDeparture("22323323"),
-            None,
-            requestedDocument
-          )
-        )
-
-        val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-        val result            = viewModelProvider.apply(message.data).futureValue
-
-        result.sections.length mustBe 3
-        result.sections(1).rows.size mustBe 1
-        result.sections(2).rows.size mustBe 2
-
-        result.sections(1).sectionTitle.value mustBe "Requested document 1"
-        result.sections(2).sectionTitle.value mustBe "Requested document 2"
-
-      }
-
-    }
   }
 }
