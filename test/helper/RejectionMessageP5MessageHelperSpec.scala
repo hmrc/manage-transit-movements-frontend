@@ -59,7 +59,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
           val message: IE056Data = IE056Data(
             IE056MessageData(
               TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
-              Some(Seq(FunctionalError("14", code, "MRN incorrect")))
+              Some(Seq(FunctionalError("14", code, "MRN incorrect", None)))
             )
           )
 
@@ -79,7 +79,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
           val message: IE056Data = IE056Data(
             IE056MessageData(
               TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
-              Some(Seq(FunctionalError("14", "12", "MRN incorrect")))
+              Some(Seq(FunctionalError("14", "12", "MRN incorrect", None)))
             )
           )
 
@@ -101,7 +101,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
         val message: IE056Data = IE056Data(
           IE056MessageData(
             TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
-            Some(Seq(FunctionalError("14", "12", "MRN incorrect")))
+            Some(Seq(FunctionalError("14", "12", "MRN incorrect", None)))
           )
         )
 
@@ -117,7 +117,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
     "buildErrorRows" - {
       "must return sequence of summaryListRow when errors present" in {
 
-        val functionalErrors = Some(Seq(FunctionalError("1", "12", "Codelist violation")))
+        val functionalErrors = Some(Seq(FunctionalError("1", "12", "Codelist violation", None)))
 
         val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "MRN Invalid")
 
@@ -153,7 +153,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
     "errorSection" - {
       "must return a section of errors when errors present" in {
 
-        val functionalErrors = Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("1", "14", "Invalid declaration")))
+        val functionalErrors = Some(Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("1", "14", "Invalid declaration", None)))
 
         val functionalErrorReferenceData1 = FunctionalErrorWithDesc("12", "MRN Invalid")
         val functionalErrorReferenceData2 = FunctionalErrorWithDesc("14", "Rule Violation")

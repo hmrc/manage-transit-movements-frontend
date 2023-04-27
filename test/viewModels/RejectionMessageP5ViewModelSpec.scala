@@ -53,7 +53,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
-          Some(Seq(FunctionalError("14", "12", "MRN incorrect")))
+          Some(Seq(FunctionalError("14", "12", "MRN incorrect", None)))
         )
       )
 
@@ -87,7 +87,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
     }
 
     "when there is multiple errors" - {
-      val functionalErrors = Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
+      val functionalErrors = Some(Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None)))
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
@@ -126,7 +126,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
+          Some(Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None)))
         )
       )
 

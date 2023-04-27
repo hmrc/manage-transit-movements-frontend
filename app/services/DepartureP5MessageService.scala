@@ -16,17 +16,20 @@
 
 package services
 
+import cats.data.OptionT
 import cats.implicits._
-import connectors.DepartureMovementP5Connector
-import models.departureP5.DepartureMessageType._
+import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
+import models.departureP5.DepartureMessageType.{DepartureNotification, _}
 import models.departureP5._
 import uk.gov.hmrc.http.HeaderCarrier
-import cats.data.OptionT
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureP5MessageService @Inject() (departureMovementP5Connector: DepartureMovementP5Connector) {
+class DepartureP5MessageService @Inject() (
+  departureMovementP5Connector: DepartureMovementP5Connector,
+  cacheConnector: DepartureCacheConnector
+) {
 
   def getMessagesForAllMovements(
     departureMovements: DepartureMovements
@@ -37,13 +40,17 @@ class DepartureP5MessageService @Inject() (departureMovementP5Connector: Departu
           .getMessagesForMovement(movement.messagesLocation)
           .flatMap {
             messagesForMovement =>
-              val lrn: Future[String] = messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
-                case Some(departureMessage) =>
-                  departureMovementP5Connector.getLRN(departureMessage.bodyPath).map(_.referenceNumber)
+              messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
+                case Some(ie015) =>
+                  for {
+                    lrn <- departureMovementP5Connector.getLRN(ie015.bodyPath).map(_.referenceNumber)
+                    ie056  = messagesForMovement.messages.find(_.messageType == RejectedByOfficeOfDeparture)
+                    xPaths = ie056.map(_.functionalErrors.map(_.errorPointer))
+                    isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false))(cacheConnector.isDeclarationAmendable(lrn, _))
+                  } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, isDeclarationAmendable)
                 case None =>
-                  Future.successful("")
+                  Future.failed(new Throwable("Movement did not contain an IE015 message"))
               }
-              lrn.map(DepartureMovementAndMessage(movement, messagesForMovement, _))
           }
     }
 

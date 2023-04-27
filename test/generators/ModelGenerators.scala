@@ -291,5 +291,40 @@ trait ModelGenerators {
     listWithMaxLength[DepartureUserAnswerSummary](9).map(DeparturesSummary(0, 0, _))
   }
 
+  implicit lazy val arbitraryFunctionalError: Arbitrary[models.departureP5.FunctionalError] =
+    Arbitrary {
+      for {
+        errorPointer           <- nonEmptyString
+        errorCode              <- nonEmptyString
+        errorReason            <- nonEmptyString
+        originalAttributeValue <- Gen.option(nonEmptyString)
+      } yield models.departureP5.FunctionalError(errorPointer, errorCode, errorReason, originalAttributeValue)
+    }
+
+  lazy val arbitraryAmendableFunctionalError: Arbitrary[models.departureP5.FunctionalError] =
+    Arbitrary {
+      for {
+        errorPointer           <- nonEmptyString
+        errorCode              <- nonEmptyString
+        errorReason            <- nonEmptyString
+        originalAttributeValue <- Gen.option(nonEmptyString)
+      } yield models.departureP5.FunctionalError(s"/CC015C/$errorPointer", errorCode, errorReason, originalAttributeValue)
+    }
+
+  implicit lazy val arbitraryDepartureMessageType: Arbitrary[models.departureP5.DepartureMessageType] =
+    Arbitrary {
+      Gen.oneOf(models.departureP5.DepartureMessageType.values)
+    }
+
+  implicit lazy val arbitraryDepartureMessage: Arbitrary[models.departureP5.DepartureMessage] =
+    Arbitrary {
+      for {
+        received         <- arbitrary[LocalDateTime]
+        messageType      <- arbitrary[models.departureP5.DepartureMessageType]
+        bodyPath         <- nonEmptyString
+        functionalErrors <- listWithMaxLength[models.departureP5.FunctionalError]()
+      } yield models.departureP5.DepartureMessage(received, messageType, bodyPath, functionalErrors)
+    }
+
 }
 // scalastyle:on magic.number

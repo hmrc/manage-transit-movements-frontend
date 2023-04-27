@@ -18,7 +18,10 @@ package models.departureP5
 
 import play.api.libs.json.{__, Reads}
 
-case class LocalReferenceNumber(referenceNumber: String)
+case class LocalReferenceNumber(referenceNumber: String) {
+
+  override def toString: String = referenceNumber
+}
 
 object LocalReferenceNumber {
 

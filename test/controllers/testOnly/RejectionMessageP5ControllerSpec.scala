@@ -77,7 +77,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
+          Some(Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None)))
         )
       )
       when(mockDepartureP5MessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))

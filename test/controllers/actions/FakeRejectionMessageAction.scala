@@ -19,7 +19,7 @@ package controllers.actions
 import models.departureP5._
 import models.requests.{IdentifierRequest, RejectionMessageRequest}
 import play.api.mvc.Result
-import services.{DepartureP5MessageService, ReferenceDataService}
+import services.{DepartureP5MessageService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -30,7 +30,7 @@ class FakeRejectionMessageAction(departureId: String, departureP5MessageService:
   val message: IE056Data = IE056Data(
     IE056MessageData(
       TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-      Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
+      Some(Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None)))
     )
   )
 

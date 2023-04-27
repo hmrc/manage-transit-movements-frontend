@@ -27,7 +27,7 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
-      case DepartureMovementAndMessage(DepartureMovement(_, _, _, _), MessagesForDepartureMovement(messages), _) =>
+      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _), MessagesForDepartureMovement(messages), lrn, isDeclarationAmendable) =>
         val allPfs: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
           Seq(
             departureNotification,
@@ -44,8 +44,8 @@ object DepartureStatusP5ViewModel {
             releasedForTransit(),
             goodsNotReleased(),
             guaranteeRejected(),
-            rejectedByOfficeOfDeparture(),
-            goodsUnderControl(),
+            rejectedByOfficeOfDeparture(lrn, isDeclarationAmendable),
+            goodsUnderControl(departureId),
             incidentDuringTransit(),
             declarationSent(),
             goodsBeingRecovered(),
@@ -188,22 +188,32 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def rejectedByOfficeOfDeparture(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
-    case DepartureMessage(_, RejectedByOfficeOfDeparture, _, functionalErrors) =>
+  private def rejectedByOfficeOfDeparture(
+    lrn: String,
+    isDeclarationAmendable: Boolean
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+    case DepartureMessage(_, RejectedByOfficeOfDeparture, _, _) =>
+      val key = if (isDeclarationAmendable) "amendErrors" else "viewErrors"
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.amendErrors")
+          ViewMovementAction(
+            s"", // TODO
+            s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
+          )
         )
       )
   }
 
-  private def goodsUnderControl(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def goodsUnderControl(departureId: String): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case DepartureMessage(_, GoodsUnderControl, _, _) =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
         actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.viewDetails"),
+          ViewMovementAction(
+            controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureId).url,
+            "movement.status.P5.action.goodsUnderControl.viewDetails"
+          ),
           ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.cancelDeclaration")
         )
       )

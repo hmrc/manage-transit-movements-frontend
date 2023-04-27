@@ -17,59 +17,24 @@
 package models.departureP5
 
 import base.SpecBase
+import generators.Generators
+import models.referenceData.FunctionalErrorWithDesc
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 
-class FunctionalErrorWithDescSpec extends SpecBase {
+class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "FunctionalError" - {
 
-    "must deserialise" - {
-      "when there are no functional errors" in {
-        val json = Json.parse("""
-            |[]
-            |""".stripMargin)
-
-        json.as[Seq[FunctionalError]] mustBe Nil
-      }
-
-      "when there is one functional error" in {
-        val json = Json.parse("""
-            |[
+    "must deserialise" in {
+      val json = Json.parse("""
             |    {
-            |        "errorPointer": "/CC014C",
-            |        "errorCode": "12",
-            |        "errorReason": "N/A"
+            |        "code": "12",
+            |        "description": "Invalid MRN"
             |    }
-            |]
             |""".stripMargin)
 
-        json.as[Seq[FunctionalError]] mustBe Seq(
-          FunctionalError("/CC014C", "12", "N/A")
-        )
-      }
-
-      "when there are multiple functional errors" in {
-        val json = Json.parse("""
-            |[
-            |    {
-            |        "errorPointer": "/CC014C",
-            |        "errorCode": "12",
-            |        "errorReason": "N/A"
-            |    },
-            |    {
-            |        "errorPointer": "/CC015C",
-            |        "errorCode": "13",
-            |        "errorReason": "Value too long"
-            |    }
-            |]
-            |""".stripMargin)
-
-        json.as[Seq[FunctionalError]] mustBe Seq(
-          FunctionalError("/CC014C", "12", "N/A"),
-          FunctionalError("/CC015C", "13", "Value too long")
-        )
-      }
+      json.as[FunctionalErrorWithDesc] mustBe FunctionalErrorWithDesc("12", "Invalid MRN")
     }
   }
-
 }
