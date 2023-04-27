@@ -48,10 +48,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
                              mockDepartureP5MessageService: DepartureP5MessageService,
                              mockReferenceDataService: ReferenceDataService
   ): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeRejectionMessageAction(departureIdP5,
-                                                                                                    mockDepartureP5MessageService,
-                                                                                                    mockReferenceDataService
-    )
+    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeRejectionMessageAction(departureIdP5, mockDepartureP5MessageService)
 
   lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value

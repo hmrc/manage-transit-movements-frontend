@@ -17,7 +17,6 @@
 package models.requests
 
 import models.departureP5.IE056MessageData
-import models.referenceData.CustomsOffice
 import play.api.mvc.{Request, WrappedRequest}
 
 case class RejectionMessageRequest[A](

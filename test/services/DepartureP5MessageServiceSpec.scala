@@ -26,7 +26,6 @@ import org.mockito.Mockito.{reset, when}
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DepartureP5MessageServiceSpec extends SpecBase {

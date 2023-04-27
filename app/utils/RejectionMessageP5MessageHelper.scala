@@ -17,14 +17,13 @@
 package utils
 
 import cats.data.OptionT
-import models.departureP5.{FunctionalError, IE056MessageData, RequestedDocument, TypeOfControls}
+import models.departureP5.{FunctionalError, IE056MessageData}
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 
-import java.time.LocalDateTime
 import scala.concurrent.{ExecutionContext, Future}
 
 class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, referenceDataService: ReferenceDataService)(implicit

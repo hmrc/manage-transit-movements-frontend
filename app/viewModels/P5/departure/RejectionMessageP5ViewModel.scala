@@ -18,7 +18,6 @@ package viewModels.P5.departure
 
 import models.departureP5.IE056MessageData
 import play.api.i18n.Messages
-import play.api.mvc.Call
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.RejectionMessageP5MessageHelper

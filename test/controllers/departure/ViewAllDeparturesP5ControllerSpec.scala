@@ -34,8 +34,6 @@ import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepart
 import viewModels.ViewMovementAction
 import viewModels.pagination.MovementsPaginationViewModel
 import views.html.departure.TestOnly.ViewAllDeparturesP5View
-import viewModels.ViewMovementAction
-import viewModels.pagination.MovementsPaginationViewModel
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

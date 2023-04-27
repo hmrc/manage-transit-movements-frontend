@@ -58,7 +58,7 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
 
       when(mockMessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
 
-      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
@@ -71,7 +71,7 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
 
       when(mockMessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(None))
 
-      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 

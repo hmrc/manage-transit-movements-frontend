@@ -17,18 +17,15 @@
 package controllers.actions
 
 import models.departureP5._
-import models.referenceData.CustomsOffice
-import models.requests.{GoodsUnderControlRequest, IdentifierRequest, RejectionMessageRequest}
+import models.requests.{IdentifierRequest, RejectionMessageRequest}
 import play.api.mvc.Result
 import services.{DepartureP5MessageService, ReferenceDataService}
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeRejectionMessageAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)
-    extends RejectionMessageAction(departureId, departureP5MessageService, referenceDataService) {
+class FakeRejectionMessageAction(departureId: String, departureP5MessageService: DepartureP5MessageService)
+    extends RejectionMessageAction(departureId, departureP5MessageService) {
 
   val message: IE056Data = IE056Data(
     IE056MessageData(

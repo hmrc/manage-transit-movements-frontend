@@ -18,25 +18,25 @@ package controllers.actions
 
 import cats.data.OptionT
 import controllers.routes
-import models.requests.{GoodsUnderControlRequest, IdentifierRequest, RejectionMessageRequest}
+import models.requests.{IdentifierRequest, RejectionMessageRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import services.{DepartureP5MessageService, ReferenceDataService}
+import services.DepartureP5MessageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RejectionMessageActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)(implicit
+class RejectionMessageActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService)(implicit
   ec: ExecutionContext
 ) {
 
   def apply(departureId: String): ActionRefiner[IdentifierRequest, RejectionMessageRequest] =
-    new RejectionMessageAction(departureId, departureP5MessageService, referenceDataService)
+    new RejectionMessageAction(departureId, departureP5MessageService)
 }
 
-class RejectionMessageAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)(implicit
+class RejectionMessageAction(departureId: String, departureP5MessageService: DepartureP5MessageService)(implicit
   protected val executionContext: ExecutionContext
 ) extends ActionRefiner[IdentifierRequest, RejectionMessageRequest] {
 
