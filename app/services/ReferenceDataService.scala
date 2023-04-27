@@ -32,7 +32,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
     connector.getControlType(code)
 
   def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] =
-    connector.getFunctionalErrorType(code)
+    connector.getFunctionalErrorDescription(code)
 }
 
 trait ReferenceDataService {

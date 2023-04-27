@@ -94,24 +94,24 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
     "getFunctionalError should" - {
       "return a functionalError when error code is present in reference data" in {
 
-        when(mockConnector.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorForValidCode))
+        when(mockConnector.getFunctionalErrorDescription(any())(any(), any())).thenReturn(Future.successful(functionalErrorForValidCode))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
         service.getFunctionalErrorType("14").futureValue mustBe functionalErrorForValidCode
 
-        verify(mockConnector).getFunctionalErrorType(any())(any(), any())
+        verify(mockConnector).getFunctionalErrorDescription(any())(any(), any())
       }
 
       "return a controlType when typeofControl code is not present in reference data" in {
 
-        when(mockConnector.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorForInValidCode))
+        when(mockConnector.getFunctionalErrorDescription(any())(any(), any())).thenReturn(Future.successful(functionalErrorForInValidCode))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
         service.getFunctionalErrorType("999").futureValue mustBe functionalErrorForInValidCode
 
-        verify(mockConnector).getFunctionalErrorType(any())(any(), any())
+        verify(mockConnector).getFunctionalErrorDescription(any())(any(), any())
       }
     }
 

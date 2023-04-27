@@ -53,17 +53,17 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       }
   }
 
-  def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
-    def onFailControlType(code: String): FunctionalErrorWithDesc = FunctionalErrorWithDesc(code, "")
-    val serviceUrl                                               = s"${config.referenceDataUrl}/functional-error-type/$code"
+  def getFunctionalErrorDescription(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
+    def onFailFunctionalError(code: String): FunctionalErrorWithDesc = FunctionalErrorWithDesc(code, "")
+    val serviceUrl                                                   = s"${config.referenceDataUrl}/functional-error-type/$code"
 
     http
       .GET[Option[FunctionalErrorWithDesc]](serviceUrl)
-      .map(_.getOrElse(onFailControlType(code)))
+      .map(_.getOrElse(onFailFunctionalError(code)))
       .recover {
         case _ =>
           logger.error(s"Get Functional Error Type  request failed to return data")
-          onFailControlType(code)
+          onFailFunctionalError(code)
       }
   }
 }

@@ -39,7 +39,7 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
       x = y.toString
     } yield x).value
 
-  private def buildErrorCodeRow(errorCode: String): Future[Option[SummaryListRow]] =
+  def buildErrorCodeRow(errorCode: String): Future[Option[SummaryListRow]] =
     getFunctionalErrorType(errorCode).map(
       code =>
         buildRowFromAnswer[String](
@@ -51,7 +51,7 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
         )
     )
 
-  private def buildErrorReasonRow(reason: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+  def buildErrorReasonRow(reason: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(reason),
     formatAnswer = formatAsText,
     prefix = messages("row.label.reason"),
@@ -59,7 +59,7 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
     call = None
   )
 
-  private def buildErrorRows(errors: FunctionalError): Future[Seq[SummaryListRow]] =
+  def buildErrorRows(errors: FunctionalError): Future[Seq[SummaryListRow]] =
     buildErrorCodeRow(errors.errorCode).map {
       code =>
         val errorCode: Seq[SummaryListRow]   = extractOptionalRow(code)

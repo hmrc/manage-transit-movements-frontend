@@ -113,7 +113,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         }
       }
 
-      "getFunctionalErrorType" - {
+      "getFunctionalErrorDescription" - {
 
         "should handle a 200 response for functional errors" in {
           server.stubFor(
@@ -123,7 +123,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
           val expectedResult = FunctionalErrorWithDesc("14", "Rule violation")
 
-          connector.getFunctionalErrorType(functionalError).futureValue mustBe expectedResult
+          connector.getFunctionalErrorDescription(functionalError).futureValue mustBe expectedResult
         }
 
         "should handle client and server errors for control type end point" in {
@@ -139,7 +139,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
                   )
               )
 
-              connector.getFunctionalErrorType(functionalError).futureValue mustBe FunctionalErrorWithDesc(functionalError, "")
+              connector.getFunctionalErrorDescription(functionalError).futureValue mustBe FunctionalErrorWithDesc(functionalError, "")
           }
         }
       }
