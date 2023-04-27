@@ -19,18 +19,15 @@ package viewModels
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.departureP5._
-import models.referenceData.{ControlType, FunctionalErrorWithDesc}
+import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
-import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -45,27 +42,28 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
   override def beforeEach(): Unit =
     reset(mockReferenceDataService)
 
+  val lrnString = "LRNAB123"
+
   "RejectionMessageP5ViewModel" - {
 
-    val functionalErrors = Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
-    val functionalError12 = FunctionalErrorWithDesc("12", "Codelist violation")
+    val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "Codelist violation")
 
     "when there is one error" - {
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          functionalErrors
+          TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+          Some(Seq(FunctionalError("14", "12", "MRN incorrect")))
         )
       )
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalError12))
+      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result = viewModelProvider.apply(message.data).futureValue
+      val result            = viewModelProvider.apply(message.data).futureValue
 
       "must return correct section length" in {
-        result.sections.length mustBe 2
+        result.sections.length mustBe 1
       }
 
       "must return correct title" in {
@@ -74,44 +72,52 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       "must return correct heading" in {
         result.heading mustBe "Amend declaration errors"
       }
-      "must return correct paragraphs" in {
-        result.paragraph1Prefix mustBe "Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety."
-        result.paragraph1Suffix mustBe "While under control, the goods will remain under supervision at the office of destination."
+      "must return correct paragraph 1" in {
+        result.paragraph1Prefix mustBe s"There is a problem with departure declaration $lrnString."
+        result.paragraph1Suffix mustBe "Amend the error and resend the declaration."
       }
-      "must return correct end paragraph" in {
-        result.paragraph2Link mustBe "You must wait for the outcome of Customs’ checks."
-        result.paragraph2Prefix mustBe "Check your departure declarations"
-        result.paragraph1Suffix mustBe "for further updates."
+      "must return correct paragraph 2 prefix, link and suffix" in {
+        result.paragraph2Prefix mustBe "Contact the"
+        result.paragraph2Link mustBe "New Computerised Transit System helpdesk"
+        result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
+      }
+      "must return correct hyperlink text" in {
+        result.hyperlink mustBe "create another departure declaration"
       }
     }
 
     "when there is multiple errors" - {
+      val functionalErrors = Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
+
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
+          functionalErrors
         )
       )
 
-      when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
+      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result = viewModelProvider.apply(message.data).futureValue
-
-      "must not render type of control if present" in {
-        result.sections.length mustBe 3
-      }
+      val result            = viewModelProvider.apply(message.data).futureValue
 
       "must return correct title" in {
-        result.title mustBe "Goods under control - document requested"
+        result.title mustBe "Amend declaration errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Goods under control - document requested"
+        result.heading mustBe "Amend declaration errors"
       }
-      "must return correct paragraphs" in {
-        result.paragraph1 mustBe "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
-        result.paragraph2 mustBe "While awaiting the documentation, the goods will remain under supervision at the office of destination."
-        result.paragraph3 mustBe "You must contact the office of destination directly to share the requested documentation."
+      "must return correct paragraph 1" in {
+        result.paragraph1Prefix mustBe s"There is a problem with departure declaration $lrnString."
+        result.paragraph1Suffix mustBe "Amend the errors and resend the declaration."
+      }
+      "must return correct paragraph 2 prefix, link and suffix" in {
+        result.paragraph2Prefix mustBe "Contact the"
+        result.paragraph2Link mustBe "New Computerised Transit System helpdesk"
+        result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
+      }
+      "must return correct hyperlink text" in {
+        result.hyperlink mustBe "create another departure declaration"
       }
     }
 
@@ -123,8 +129,11 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
           Some(Seq(FunctionalError("1", "12", "Codelist violation"), FunctionalError("2", "14", "Rule violation")))
         )
       )
+
+      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result = viewModelProvider.apply(message.data).futureValue
+      val result            = viewModelProvider.apply(message.data).futureValue
 
       result.sections.length mustBe 1
       result.sections.head.rows.size mustBe 4

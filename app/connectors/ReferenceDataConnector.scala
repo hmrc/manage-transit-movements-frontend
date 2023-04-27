@@ -55,7 +55,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
 
   def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
     def onFailControlType(code: String): FunctionalErrorWithDesc = FunctionalErrorWithDesc(code, "")
-    val serviceUrl                                       = s"${config.referenceDataUrl}/functional-error-type/$code"
+    val serviceUrl                                               = s"${config.referenceDataUrl}/functional-error-type/$code"
 
     http
       .GET[Option[FunctionalErrorWithDesc]](serviceUrl)
