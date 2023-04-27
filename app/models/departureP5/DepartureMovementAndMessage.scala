@@ -20,5 +20,5 @@ case class DepartureMovementAndMessage(
   departureMovement: DepartureMovement,
   messagesForMovement: MessagesForDepartureMovement,
   localReferenceNumber: String,
-  isMovementInCache: Boolean
+  isDeclarationAmendable: Boolean
 )

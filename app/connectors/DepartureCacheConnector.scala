@@ -18,9 +18,8 @@ package connectors
 
 import config.FrontendAppConfig
 import play.api.Logging
-import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,12 +32,9 @@ class DepartureCacheConnector @Inject() (
 
   private val baseUrl = s"${config.departureCacheUrl}"
 
-  def doesDocumentStillExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = s"$baseUrl/user-answers/$lrn"
+  def isDeclarationAmendable(lrn: String, xPaths: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val url = s"$baseUrl/x-paths/$lrn/is-declaration-amendable"
 
-    http.GET[HttpResponse](url).map(_.status).map {
-      case OK => true
-      case _  => false
-    }
+    http.POST[Seq[String], Boolean](url, xPaths)
   }
 }

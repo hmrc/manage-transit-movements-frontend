@@ -41,11 +41,13 @@ class DepartureP5MessageService @Inject() (
           .flatMap {
             messagesForMovement =>
               messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
-                case Some(departureMessage) =>
+                case Some(ie015) =>
                   for {
-                    lrn               <- departureMovementP5Connector.getLRN(departureMessage.bodyPath).map(_.referenceNumber)
-                    isDocumentInCache <- cacheConnector.doesDocumentStillExist(lrn)
-                  } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, isDocumentInCache)
+                    lrn <- departureMovementP5Connector.getLRN(ie015.bodyPath).map(_.referenceNumber)
+                    ie056  = messagesForMovement.messages.find(_.messageType == RejectedByOfficeOfDeparture)
+                    xPaths = ie056.map(_.functionalErrors.map(_.errorPointer))
+                    isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false))(cacheConnector.isDeclarationAmendable(lrn, _))
+                  } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, isDeclarationAmendable)
                 case None =>
                   Future.failed(new Throwable("Movement did not contain an IE015 message"))
               }

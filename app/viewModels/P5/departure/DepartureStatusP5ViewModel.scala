@@ -27,7 +27,7 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
-      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _), MessagesForDepartureMovement(messages), lrn, isMovementInCache) =>
+      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _), MessagesForDepartureMovement(messages), lrn, isDeclarationAmendable) =>
         val allPfs: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
           Seq(
             departureNotification,
@@ -44,7 +44,7 @@ object DepartureStatusP5ViewModel {
             releasedForTransit(),
             goodsNotReleased(),
             guaranteeRejected(),
-            rejectedByOfficeOfDeparture(lrn, isMovementInCache),
+            rejectedByOfficeOfDeparture(lrn, isDeclarationAmendable),
             goodsUnderControl(departureId),
             incidentDuringTransit(),
             declarationSent(),
@@ -190,15 +190,10 @@ object DepartureStatusP5ViewModel {
 
   private def rejectedByOfficeOfDeparture(
     lrn: String,
-    isDepartureInCache: Boolean
+    isDeclarationAmendable: Boolean
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
-    case DepartureMessage(_, RejectedByOfficeOfDeparture, _, functionalErrors) =>
-      val errorLimit: Int = 10
-      val key = if (functionalErrors.size <= errorLimit && functionalErrors.exists(_.isAmendable) && isDepartureInCache) {
-        "amendErrors"
-      } else {
-        "viewErrors"
-      }
+    case DepartureMessage(_, RejectedByOfficeOfDeparture, _, _) =>
+      val key = if (isDeclarationAmendable) "amendErrors" else "viewErrors"
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions = Seq(

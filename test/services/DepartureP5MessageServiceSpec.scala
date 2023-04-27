@@ -20,8 +20,8 @@ import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.departureP5._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 
 import java.time.LocalDateTime
@@ -41,11 +41,11 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
   val departureP5MessageService = new DepartureP5MessageService(mockMovementConnector, mockCacheConnector)
 
-  private val doesDocumentStillExist = arbitrary[Boolean].sample.value
-
   "DepartureP5MessageService" - {
 
     "getMessagesForAllMovements" - {
+
+      val lrn = LocalReferenceNumber("lrn123")
 
       val dateTimeNow = LocalDateTime.now(clock)
 
@@ -60,52 +60,155 @@ class DepartureP5MessageServiceSpec extends SpecBase {
         )
       )
 
-      "must return departure movements with messages with an LRN" in {
+      "must return departure movements with messages with an LRN" - {
+        "when there isn't a IE056" in {
 
-        val messagesForMovement =
-          MessagesForDepartureMovement(
-            NonEmptyList(
-              DepartureMessage(
-                dateTimeNow,
-                DepartureMessageType.DepartureNotification,
-                "body/path/1",
-                Nil
-              ),
-              List(
+          val messagesForMovement =
+            MessagesForDepartureMovement(
+              NonEmptyList(
                 DepartureMessage(
                   dateTimeNow,
-                  DepartureMessageType.GoodsUnderControl,
-                  "body/path/2",
+                  DepartureMessageType.DepartureNotification,
+                  "body/path/1",
                   Nil
+                ),
+                List(
+                  DepartureMessage(
+                    dateTimeNow,
+                    DepartureMessageType.GoodsUnderControl,
+                    "body/path/2",
+                    Nil
+                  )
                 )
               )
             )
+
+          when(mockMovementConnector.getMessagesForMovement(any())(any())).thenReturn(
+            Future.successful(messagesForMovement)
           )
 
-        when(mockMovementConnector.getMessagesForMovement(any())(any())).thenReturn(
-          Future.successful(messagesForMovement)
-        )
-
-        when(mockMovementConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
-          Future.successful(LocalReferenceNumber("lrn123"))
-        )
-
-        when(mockCacheConnector.doesDocumentStillExist(any())(any())).thenReturn(
-          Future.successful(doesDocumentStillExist)
-        )
-
-        val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
-
-        val expectedResult = Seq(
-          DepartureMovementAndMessage(
-            departureMovements.departureMovements.head,
-            messagesForMovement,
-            "lrn123",
-            isMovementInCache = doesDocumentStillExist
+          when(mockMovementConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
+            Future.successful(lrn)
           )
-        )
 
-        result mustBe expectedResult
+          val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
+
+          val expectedResult = Seq(
+            DepartureMovementAndMessage(
+              departureMovements.departureMovements.head,
+              messagesForMovement,
+              lrn.toString,
+              isDeclarationAmendable = false
+            )
+          )
+
+          result mustBe expectedResult
+
+          verify(mockCacheConnector, never()).isDeclarationAmendable(any(), any())(any())
+        }
+
+        "when there is a IE056" - {
+          "with functional errors" in {
+
+            val isDeclarationAmendable = arbitrary[Boolean].sample.value
+
+            val messagesForMovement =
+              MessagesForDepartureMovement(
+                NonEmptyList(
+                  DepartureMessage(
+                    dateTimeNow,
+                    DepartureMessageType.DepartureNotification,
+                    "body/path/1",
+                    Nil
+                  ),
+                  List(
+                    DepartureMessage(
+                      dateTimeNow,
+                      DepartureMessageType.RejectedByOfficeOfDeparture,
+                      "body/path/2",
+                      Seq(
+                        FunctionalError("pointer1", "code1", "reason1", None),
+                        FunctionalError("pointer2", "code2", "reason2", None)
+                      )
+                    )
+                  )
+                )
+              )
+
+            when(mockMovementConnector.getMessagesForMovement(any())(any())).thenReturn(
+              Future.successful(messagesForMovement)
+            )
+
+            when(mockMovementConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
+              Future.successful(lrn)
+            )
+
+            when(mockCacheConnector.isDeclarationAmendable(any(), any())(any())).thenReturn(
+              Future.successful(isDeclarationAmendable)
+            )
+
+            val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
+
+            val expectedResult = Seq(
+              DepartureMovementAndMessage(
+                departureMovements.departureMovements.head,
+                messagesForMovement,
+                lrn.toString,
+                isDeclarationAmendable = isDeclarationAmendable
+              )
+            )
+
+            result mustBe expectedResult
+
+            verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.toString), eqTo(Seq("pointer1", "pointer2")))(any())
+          }
+
+          "without functional errors" in {
+
+            val messagesForMovement =
+              MessagesForDepartureMovement(
+                NonEmptyList(
+                  DepartureMessage(
+                    dateTimeNow,
+                    DepartureMessageType.DepartureNotification,
+                    "body/path/1",
+                    Nil
+                  ),
+                  List(
+                    DepartureMessage(
+                      dateTimeNow,
+                      DepartureMessageType.RejectedByOfficeOfDeparture,
+                      "body/path/2",
+                      Nil
+                    )
+                  )
+                )
+              )
+
+            when(mockMovementConnector.getMessagesForMovement(any())(any())).thenReturn(
+              Future.successful(messagesForMovement)
+            )
+
+            when(mockMovementConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
+              Future.successful(lrn)
+            )
+
+            val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
+
+            val expectedResult = Seq(
+              DepartureMovementAndMessage(
+                departureMovements.departureMovements.head,
+                messagesForMovement,
+                lrn.toString,
+                isDeclarationAmendable = false
+              )
+            )
+
+            result mustBe expectedResult
+
+            verify(mockCacheConnector, never()).isDeclarationAmendable(any(), any())(any())
+          }
+        }
       }
 
       "must throw exception when movement doesn't contain an IE015" in {

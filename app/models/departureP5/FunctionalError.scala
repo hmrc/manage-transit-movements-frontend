@@ -23,10 +23,7 @@ case class FunctionalError(
   errorCode: String,
   errorReason: String,
   originalAttributeValue: Option[String]
-) {
-
-  def isAmendable: Boolean = errorPointer.startsWith("/CC015C/")
-}
+)
 
 object FunctionalError {
 

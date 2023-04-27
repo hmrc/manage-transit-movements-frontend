@@ -18,7 +18,6 @@ package models.departureP5
 
 import base.SpecBase
 import generators.Generators
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 
@@ -72,28 +71,6 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           FunctionalError("/CC014C", "12", "N/A", None),
           FunctionalError("/CC015C/Authorisation[1]/referenceNumber", "14", "G0033", Some("XIDEP01"))
         )
-      }
-    }
-
-    "isAmendable" - {
-      "must return true" - {
-        "when error pointer starts with /CC015C/" in {
-          val errorPointer = "/CC015C/Authorisation[1]/referenceNumber"
-          forAll(arbitrary[FunctionalError].map(_.copy(errorPointer = errorPointer))) {
-            functionalError =>
-              functionalError.isAmendable mustBe true
-          }
-        }
-      }
-
-      "must return false" - {
-        "when error pointer doesn't start with /CC015C/" in {
-          val errorPointer = "/CC014C"
-          forAll(arbitrary[FunctionalError].map(_.copy(errorPointer = errorPointer))) {
-            functionalError =>
-              functionalError.isAmendable mustBe false
-          }
-        }
       }
     }
   }

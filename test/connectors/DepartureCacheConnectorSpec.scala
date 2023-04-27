@@ -20,6 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.{JsArray, JsBoolean, JsString, Json}
 import play.api.test.Helpers._
 
 class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockServerHandler {
@@ -31,54 +32,33 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
 
   private lazy val connector: DepartureCacheConnector = app.injector.instanceOf[DepartureCacheConnector]
 
-  private val json: String =
-    s"""
-      |{
-      |    "_id" : "2e8ede47-dbfb-44ea-a1e3-6c57b1fe6fe2",
-      |    "lrn" : "$lrn",
-      |    "eoriNumber" : "GB1234567",
-      |    "data" : {},
-      |    "tasks" : {},
-      |    "createdAt" : "2022-09-05T15:58:44.188Z",
-      |    "lastUpdated" : "2022-09-07T10:33:23.472Z"
-      |}
-      |""".stripMargin
-
   "DepartureCacheConnector" - {
 
-    "doesDocumentStillExist" - {
+    "isDeclarationAmendable" - {
 
-      val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn"
+      val url    = s"/manage-transit-movements-departure-cache/x-paths/$lrn/is-declaration-amendable"
+      val xPaths = Seq("foo", "bar")
 
-      "must return true when status is Ok" in {
+      "must return true when response body contains true" in {
         server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(okJson(json))
+          post(urlEqualTo(url))
+            .withRequestBody(equalToJson(Json.stringify(JsArray(xPaths.map(JsString)))))
+            .willReturn(okJson(Json.stringify(JsBoolean(true))))
         )
 
-        val result: Boolean = await(connector.doesDocumentStillExist(lrn.toString))
+        val result: Boolean = await(connector.isDeclarationAmendable(lrn.toString, xPaths))
 
         result mustBe true
       }
 
-      "return false when no cached data found for provided LRN" in {
+      "must return false when response body contains false" in {
         server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(notFound())
+          post(urlEqualTo(url))
+            .withRequestBody(equalToJson(Json.stringify(JsArray(xPaths.map(JsString)))))
+            .willReturn(okJson(Json.stringify(JsBoolean(false))))
         )
 
-        val result: Boolean = await(connector.doesDocumentStillExist(lrn.toString))
-
-        result mustBe false
-      }
-
-      "return false when internal server error returned from cache" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(serverError())
-        )
-
-        val result: Boolean = await(connector.doesDocumentStillExist(lrn.toString))
+        val result: Boolean = await(connector.isDeclarationAmendable(lrn.toString, xPaths))
 
         result mustBe false
       }
