@@ -25,7 +25,7 @@ import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5Vie
 import views.html.departure.TestOnly.RejectionMessageP5View
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class RejectionMessageP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -40,9 +40,13 @@ class RejectionMessageP5Controller @Inject() (
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
-      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData)
-      rejectionMessageP5ViewModel.map(
-        vmp => Ok(view(vmp, departureId))
-      )
+      if (request.isDeclarationAmendable) {
+        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData)
+        rejectionMessageP5ViewModel.map(
+          vmp => Ok(view(vmp, departureId))
+        )
+      } else {
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      }
   }
 }

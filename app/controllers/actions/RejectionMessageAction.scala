@@ -17,6 +17,7 @@
 package controllers.actions
 
 import cats.data.OptionT
+import connectors.DepartureCacheConnector
 import controllers.routes
 import models.requests.{IdentifierRequest, RejectionMessageRequest}
 import play.api.mvc.Results.Redirect
@@ -28,15 +29,15 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RejectionMessageActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService)(implicit
+class RejectionMessageActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService, cacheConnector: DepartureCacheConnector)(implicit
   ec: ExecutionContext
 ) {
 
   def apply(departureId: String): ActionRefiner[IdentifierRequest, RejectionMessageRequest] =
-    new RejectionMessageAction(departureId, departureP5MessageService)
+    new RejectionMessageAction(departureId, departureP5MessageService, cacheConnector)
 }
 
-class RejectionMessageAction(departureId: String, departureP5MessageService: DepartureP5MessageService)(implicit
+class RejectionMessageAction(departureId: String, departureP5MessageService: DepartureP5MessageService, cacheConnector: DepartureCacheConnector)(implicit
   protected val executionContext: ExecutionContext
 ) extends ActionRefiner[IdentifierRequest, RejectionMessageRequest] {
 
@@ -46,7 +47,10 @@ class RejectionMessageAction(departureId: String, departureP5MessageService: Dep
 
     (for {
       ie056 <- OptionT(departureP5MessageService.getRejectionMessage(departureId))
-    } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data))
+      lrn    = ie056.data.TransitOperation.LRN.getOrElse("")
+      xPaths = ie056.data.functionalErrorToSeq.map(_.errorPointer)
+      isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
+    } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
 
