@@ -105,5 +105,28 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       contentAsString(result) mustEqual
         view(rejectionMessageP5ViewModel, departureIdP5)(request, messages, frontendAppConfig).toString
     }
+
+    "must redirect to session expired when declaration amendable is false" in {
+      val message: IE056Data = IE056Data(
+        IE056MessageData(
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          Some(Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None)))
+        )
+      )
+      when(mockDepartureP5MessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
+
+      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+
+      val request = FakeRequest(GET, rejectionMessageController)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url // TODO: Change to generic error page
+
+    }
+
   }
 }
