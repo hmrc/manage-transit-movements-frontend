@@ -46,7 +46,9 @@ class RejectionMessageP5Controller @Inject() (
           vmp => Ok(view(vmp, departureId))
         )
       } else {
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        Future.successful(
+          Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+        ) // TODO: Redirect to generic error page with link back to dashboard?
       }
   }
 }
