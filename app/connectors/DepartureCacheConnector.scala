@@ -37,4 +37,10 @@ class DepartureCacheConnector @Inject() (
 
     http.POST[Seq[String], Boolean](url, xPaths)
   }
+
+  def areFunctionalErrorsAmendable(lrn: String, xPaths: Seq[String])(implicit hc: HeaderCarrier): Future[Option[Seq[String]]] = {
+    val url = s"$baseUrl/x-paths/$lrn/are-errors-amendable"
+
+    http.POST[Seq[String], Option[Seq[String]]](url, xPaths)
+  }
 }

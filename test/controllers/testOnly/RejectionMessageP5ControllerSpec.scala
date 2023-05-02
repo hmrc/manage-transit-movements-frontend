@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import connectors.DepartureCacheConnector
 import controllers.actions.{FakeRejectionMessageAction, RejectionMessageActionProvider}
 import generators.Generators
 import models.departureP5._
@@ -39,16 +40,17 @@ import scala.concurrent.Future
 
 class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockRejectionMessageP5ViewModelProvider = mock[RejectionMessageP5ViewModelProvider]
-  private val mockReferenceDataService                = mock[ReferenceDataService]
-  private val mockDepartureP5MessageService           = mock[DepartureP5MessageService]
-  private val mockRejectionMessageActionProvider      = mock[RejectionMessageActionProvider]
+  private val mockRejectionMessageP5ViewModelProvider   = mock[RejectionMessageP5ViewModelProvider]
+  private val mockReferenceDataService                  = mock[ReferenceDataService]
+  private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
+  private val mockRejectionMessageActionProvider        = mock[RejectionMessageActionProvider]
+  private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
 
-  def rejectionMessageAction(departureIdP5: String,
-                             mockDepartureP5MessageService: DepartureP5MessageService,
-                             mockReferenceDataService: ReferenceDataService
-  ): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeRejectionMessageAction(departureIdP5, mockDepartureP5MessageService)
+  def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
+    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeRejectionMessageAction(departureIdP5,
+                                                                                                    mockDepartureP5MessageService,
+                                                                                                    mockCacheService
+    )
 
   lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
@@ -59,6 +61,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     reset(mockDepartureP5MessageService)
     reset(mockRejectionMessageP5ViewModelProvider)
     reset(mockRejectionMessageActionProvider)
+    reset(mockCacheService)
 
   }
 
@@ -68,6 +71,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       .overrides(bind[RejectionMessageP5ViewModelProvider].toInstance(mockRejectionMessageP5ViewModelProvider))
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
+      .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
 
   private val customsOffice = arbitrary[CustomsOffice].sample.value
 
@@ -82,10 +86,11 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       )
       when(mockDepartureP5MessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(RejectionMessageP5ViewModel(sections, Some(lrn.toString), multipleErrors = true)))
 
-      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
+      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
       val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, Some(lrn.toString), true)
 

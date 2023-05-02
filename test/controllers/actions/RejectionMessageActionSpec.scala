@@ -17,6 +17,7 @@
 package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import connectors.DepartureCacheConnector
 import controllers.routes
 import models.departureP5._
 import models.requests.IdentifierRequest
@@ -36,18 +37,23 @@ import scala.concurrent.Future
 class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with AppWithDefaultMockFixtures {
 
   val mockMessageService: DepartureP5MessageService  = mock[DepartureP5MessageService]
+  val mockCacheService: DepartureCacheConnector      = mock[DepartureCacheConnector]
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+
+  val functionalError1: FunctionalError = FunctionalError("1", "12", "Codelist violation", None)
+  val functionalError2: FunctionalError = FunctionalError("2", "14", "Rule violation", None)
 
   val message: IE056Data = IE056Data(
     IE056MessageData(
       TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-      Some(Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None)))
+      Some(Seq(functionalError1, functionalError2))
     )
   )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     Mockito.reset(mockMessageService)
+    Mockito.reset(mockCacheService)
   }
 
   private def fakeOkResult[A]: A => Future[Result] =
@@ -57,8 +63,9 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
     "must return 200 when an unloading permission is available" in {
 
       when(mockMessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
-      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
@@ -67,11 +74,12 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
       status(result) mustEqual OK
     }
 
-    "must return 303 and redirect to technical difficulties when no unloading permission is available" in {
+    "must return 303 and redirect to technical difficulties when unavailable" in {
 
       when(mockMessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
-      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
