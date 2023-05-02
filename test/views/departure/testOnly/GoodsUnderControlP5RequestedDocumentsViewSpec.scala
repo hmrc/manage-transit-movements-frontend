@@ -50,7 +50,7 @@ class GoodsUnderControlP5RequestedDocumentsViewSpec extends CheckYourAnswersView
 
   behave like pageWithBackLink()
 
-  behave like pageWithSectionCaption(s"LRN: $lrn")
+  behave like pageWithCaption(s"LRN: $lrn")
 
   behave like pageWithHeading()
 

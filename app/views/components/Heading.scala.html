@@ -22,7 +22,7 @@
     heading: String,
     caption: Option[String] = None,
     classes: Option[String] = None
-)(implicit messages: Messages)
+)
 
 @headingClasses = @{
     toClasses("govuk-heading-xl", "hmrc-page-heading", classes.getOrElse(""))
@@ -32,7 +32,6 @@
     @heading
     @caption.map { caption =>
         <span class="hmrc-caption govuk-caption-xl">
-            <span class="govuk-visually-hidden">@messages("site.section")</span>
             @caption
         </span>
     }
