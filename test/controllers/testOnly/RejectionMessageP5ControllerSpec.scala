@@ -21,16 +21,14 @@ import connectors.DepartureCacheConnector
 import controllers.actions.{FakeRejectionMessageAction, RejectionMessageActionProvider}
 import generators.Generators
 import models.departureP5._
-import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{DepartureP5MessageService, ReferenceDataService}
+import services.DepartureP5MessageService
 import viewModels.P5.departure.RejectionMessageP5ViewModel
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
 import viewModels.sections.Section
@@ -41,7 +39,6 @@ import scala.concurrent.Future
 class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockRejectionMessageP5ViewModelProvider   = mock[RejectionMessageP5ViewModelProvider]
-  private val mockReferenceDataService                  = mock[ReferenceDataService]
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockRejectionMessageActionProvider        = mock[RejectionMessageActionProvider]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
@@ -57,7 +54,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockReferenceDataService)
     reset(mockDepartureP5MessageService)
     reset(mockRejectionMessageP5ViewModelProvider)
     reset(mockRejectionMessageActionProvider)
@@ -69,11 +65,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     super
       .guiceApplicationBuilder()
       .overrides(bind[RejectionMessageP5ViewModelProvider].toInstance(mockRejectionMessageP5ViewModelProvider))
-      .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
-
-  private val customsOffice = arbitrary[CustomsOffice].sample.value
 
   "UnloadingFindingsController Controller" - {
 
@@ -85,7 +78,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         )
       )
       when(mockDepartureP5MessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(RejectionMessageP5ViewModel(sections, Some(lrn.toString), multipleErrors = true)))
@@ -114,7 +106,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         )
       )
       when(mockDepartureP5MessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
