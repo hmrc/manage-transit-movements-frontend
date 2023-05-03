@@ -78,6 +78,20 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     http.GET[Messages](serviceUrl)(implicitly, headers, ec)
   }
 
+  def getSpecificMessage[MessageModel](
+                                        path: String
+                                      )
+                                      (implicit ec: ExecutionContext,
+                                       hc: HeaderCarrier,
+                                       HttpReads: HttpReads[MessageModel]
+                                      ): Future[MessageModel] = {
+
+    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
+
+    val serviceUrl = s"${config.commonTransitConventionTradersUrl}$path"
+
+    http.GET[MessageModel](serviceUrl)(implicitly, headers, ec)
+  }
   def getGoodsUnderControl(path: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IE060Data] = {
     val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
 

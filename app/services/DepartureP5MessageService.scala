@@ -21,7 +21,7 @@ import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.departureP5.DepartureMessageType.{DepartureNotification, _}
 import models.departureP5._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,12 +54,9 @@ class DepartureP5MessageService @Inject() (
               }
           }
     }
-
-  private def getGoodsUnderControlMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
-    getMessageMetaData(departureId, GoodsUnderControl)
-
-  private def getRejectionMetaDataMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
-    getMessageMetaData(departureId, RejectedByOfficeOfDeparture)
+  private def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String,
+                                                                    typeOfMessage: T)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+    getMessageMetaData(departureId, typeOfMessage)
 
   private def getDepartureNofiticationMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
     getMessageMetaData(departureId, DepartureNotification)
@@ -78,21 +75,21 @@ class DepartureP5MessageService @Inject() (
           .headOption
       )
 
-  def getGoodsUnderControl(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[IE060Data]] =
-    (
-      for {
-        goodsUnderControlMessage <- OptionT(getGoodsUnderControlMessage(departureId))
-        goodsUnderControl        <- OptionT.liftF(departureMovementP5Connector.getGoodsUnderControl(goodsUnderControlMessage.path))
-      } yield goodsUnderControl
-    ).value
 
-  def getRejectionMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[IE056Data]] =
+  def getMessage[MessageModel, T <: DepartureMessageType](
+                                                           departureId: String,
+                                                           typeOfMessage: T
+                                                         )(
+    implicit ec: ExecutionContext,
+    hc: HeaderCarrier,
+    httpReads: HttpReads[MessageModel]
+  ): Future[Option[MessageModel]] =
     (
       for {
-        rejectionMessage <- OptionT(getRejectionMetaDataMessage(departureId))
-        rejection        <- OptionT.liftF(departureMovementP5Connector.getRejectionMessage(rejectionMessage.path))
-      } yield rejection
-    ).value
+        messageMetaData <- OptionT(getSpecificMessageMetaData(departureId, typeOfMessage))
+        message <- OptionT.liftF(departureMovementP5Connector.getSpecificMessage[MessageModel](messageMetaData.path))
+      } yield message
+      ).value
 
   def getLRNFromDeclarationMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] =
     (
