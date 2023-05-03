@@ -29,7 +29,8 @@ import java.time.LocalDateTime
 
 class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  private val dateTimeNow = LocalDateTime.now()
+  private val dateTimeNow  = LocalDateTime.now()
+  private val dateTimePast = dateTimeNow.minusHours(1)
 
   "DepartureStatusP5ViewModel" - {
 
@@ -264,48 +265,129 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of rejectedByOfficeOfDeparture" - {
 
-      "and declaration is amendable" in {
-        val movementAndMessage = DepartureMovementAndMessage(
-          departureMovement,
-          MessagesForDepartureMovement(
-            NonEmptyList(DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"), List.empty)
-          ),
-          "AB123",
-          isDeclarationAmendable = true
-        )
-
-        val result = DepartureStatusP5ViewModel(movementAndMessage)
-
-        val expectedResult = DepartureStatusP5ViewModel(
-          "movement.status.P5.rejectedByOfficeOfDeparture",
-          Seq(
-            ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.amendErrors")
+      "and head of tail is IE015" - {
+        "and declaration is amendable" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage(dateTimePast, DepartureNotification, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = true
           )
-        )
 
-        result mustBe expectedResult
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+
+        "and declaration is not amendable" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage(dateTimePast, DepartureNotification, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = false
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                "",
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
       }
 
-      "and declaration is not amendable" in {
-        val movementAndMessage = DepartureMovementAndMessage(
-          departureMovement,
-          MessagesForDepartureMovement(
-            NonEmptyList(DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"), List.empty)
-          ),
-          "AB123",
-          isDeclarationAmendable = false
-        )
+      "and head of tail is not IE015" - {
 
-        val result = DepartureStatusP5ViewModel(movementAndMessage)
-
-        val expectedResult = DepartureStatusP5ViewModel(
-          "movement.status.P5.rejectedByOfficeOfDeparture",
-          Seq(
-            ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors")
+        "and declaration is amendable" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage(dateTimePast, CancellationRequested, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = true
           )
-        )
 
-        result mustBe expectedResult
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                "",
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+
+        "and declaration is not amendable" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage(dateTimePast, CancellationRequested, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = false
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                "",
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
       }
     }
 

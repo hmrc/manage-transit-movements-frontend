@@ -16,9 +16,10 @@
 
 package viewModels.P5.departure
 
+import cats.data.NonEmptyList
 import config.FrontendAppConfig
 import models.departureP5.DepartureMessageType._
-import models.departureP5.{DepartureMessageType, DepartureMovement, DepartureMovementAndMessage, MessagesForDepartureMovement}
+import models.departureP5._
 import viewModels.ViewMovementAction
 
 case class DepartureStatusP5ViewModel(status: String, actions: Seq[ViewMovementAction])
@@ -27,7 +28,7 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
-      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _), MessagesForDepartureMovement(messages), lrn, isDeclarationAmendable) =>
+      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _), MessagesForDepartureMovement(messages), _, isDeclarationAmendable) =>
         val allPfs: PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] =
           Seq(
             departureNotification,
@@ -44,7 +45,7 @@ object DepartureStatusP5ViewModel {
             releasedForTransit(),
             goodsNotReleased(),
             guaranteeRejected(),
-            rejectedByOfficeOfDeparture(lrn, isDeclarationAmendable),
+            rejectedByOfficeOfDeparture(departureId, messages, isDeclarationAmendable),
             goodsUnderControl(departureId),
             incidentDuringTransit(),
             declarationSent(),
@@ -193,16 +194,22 @@ object DepartureStatusP5ViewModel {
   }
 
   private def rejectedByOfficeOfDeparture(
-    lrn: String,
+    departureId: String,
+    messages: NonEmptyList[DepartureMessage],
     isDeclarationAmendable: Boolean
   ): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case RejectedByOfficeOfDeparture =>
-      val key = if (isDeclarationAmendable) "amendErrors" else "viewErrors"
+      val (key, href) = messages.map(_.messageType) match {
+        case NonEmptyList(RejectedByOfficeOfDeparture, DepartureNotification :: _) if isDeclarationAmendable =>
+          ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
+        case _ =>
+          ("viewErrors", "")
+      }
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions = Seq(
           ViewMovementAction(
-            s"", // TODO
+            href,
             s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
           )
         )
