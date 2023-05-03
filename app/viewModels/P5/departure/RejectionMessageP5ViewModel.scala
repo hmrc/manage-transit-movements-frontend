@@ -65,8 +65,8 @@ object RejectionMessageP5ViewModel {
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[RejectionMessageP5ViewModel] = {
       val helper = new RejectionMessageP5MessageHelper(ie056MessageData, referenceDataService)
 
-      val lrn            = ie056MessageData.TransitOperation.LRN
-      val multipleErrors = ie056MessageData.functionalErrorToSeq.length > 1
+      val lrn            = ie056MessageData.transitOperation.LRN
+      val multipleErrors = ie056MessageData.functionalErrors.length > 1
       val sections       = Seq(helper.errorSection())
       Future
         .sequence(sections)

@@ -42,7 +42,7 @@ class MessageSpec extends SpecBase {
               |       }
               |   },
               |   "id":"634982098f02f00a",
-              |   "arrivalId":"63498209a2d89ad8",
+              |   "departureId":"$departureIdP5",
               |   "received":"2022-11-10T15:32:51.459Z",
               |   "type": "${messageType.toString}"
               |}
@@ -50,10 +50,10 @@ class MessageSpec extends SpecBase {
           )
 
           val expectedResult = DepartureMessage(
+            departureIdP5,
             LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
             messageType,
-            "movements/departures/63498209a2d89ad8/messages/634982098f02f00a",
-            Nil
+            "movements/departures/63498209a2d89ad8/messages/634982098f02f00a"
           )
 
           val result: DepartureMessage = json.validate[DepartureMessage].asOpt.value

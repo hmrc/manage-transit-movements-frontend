@@ -70,7 +70,7 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
 
     val summaryListRows: Future[Seq[SummaryListRow]] = Future
       .sequence(
-        ie056MessageData.functionalErrorToSeq.map(
+        ie056MessageData.functionalErrors.map(
           error => buildErrorRows(error)
         )
       )

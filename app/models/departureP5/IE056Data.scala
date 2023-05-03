@@ -16,11 +16,11 @@
 
 package models.departureP5
 
-import play.api.libs.json.{__, Json, OWrites, Reads}
+import play.api.libs.json.{__, Reads}
 
 case class IE056Data(data: IE056MessageData)
 
 object IE056Data {
-  implicit val reads: Reads[IE056Data]    = (__ \ "body" \ "n1:CC056C").read[IE056MessageData].map(IE056Data.apply)
-  implicit val writes: OWrites[IE056Data] = Json.writes[IE056Data]
+
+  implicit val reads: Reads[IE056Data] = (__ \ "body" \ "n1:CC056C").read[IE056MessageData].map(IE056Data.apply)
 }

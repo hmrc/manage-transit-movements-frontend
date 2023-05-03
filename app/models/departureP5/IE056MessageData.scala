@@ -16,16 +16,18 @@
 
 package models.departureP5
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{__, Reads}
 
 case class IE056MessageData(
-  TransitOperation: TransitOperationIE056,
-  FunctionalError: Option[Seq[FunctionalError]]
-) {
-  val functionalErrorToSeq: Seq[FunctionalError] = FunctionalError.getOrElse(Seq.empty)
-
-}
+  transitOperation: TransitOperationIE056,
+  functionalErrors: Seq[FunctionalError]
+)
 
 object IE056MessageData {
-  implicit val formats: OFormat[IE056MessageData] = Json.format[IE056MessageData]
+
+  implicit lazy val reads: Reads[IE056MessageData] = (
+    (__ \ "TransitOperation").read[TransitOperationIE056] and
+      (__ \ "FunctionalError").readWithDefault[Seq[FunctionalError]](Nil)
+  )(IE056MessageData.apply _)
 }

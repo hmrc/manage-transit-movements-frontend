@@ -23,10 +23,9 @@ import java.time.LocalDateTime
 
 class DepartureMessageSpec extends SpecBase {
 
-  "must deserialise" - {
+  "must deserialise" in {
 
-    "when no functional errors" in {
-      val json = Json.parse("""
+    val json = Json.parse("""
           |{
           |    "_links": {
           |        "self": {
@@ -46,98 +45,12 @@ class DepartureMessageSpec extends SpecBase {
           |}
           |""".stripMargin)
 
-      json.as[DepartureMessage] mustBe DepartureMessage(
-        received = LocalDateTime.of(2023, 4, 23, 9, 54, 25),
-        messageType = DepartureMessageType.RejectedByOfficeOfDeparture,
-        bodyPath = "movements/departures/64450051db689fad/messages/6445005176e4e834",
-        functionalErrors = Nil
-      )
-    }
-
-    "and one functional error" in {
-      val json = Json.parse("""
-          |{
-          |    "_links": {
-          |        "self": {
-          |            "href": "/customs/transits/movements/departures/64450051db689fad/messages/6445005176e4e834"
-          |        },
-          |        "departure": {
-          |            "href": "/customs/transits/movements/departures/64450051db689fad"
-          |        }
-          |    },
-          |    "id": "6445005176e4e834",
-          |    "departureId": "64450051db689fad",
-          |    "received": "2023-04-23T09:54:25.000Z",
-          |    "type": "IE056",
-          |    "body": {
-          |        "n1:CC056C": {
-          |            "FunctionalError": [
-          |                {
-          |                    "errorPointer": "/CC014C",
-          |                    "errorCode": "12",
-          |                    "errorReason": "N/A"
-          |                }
-          |            ]
-          |        }
-          |    }
-          |}
-          |""".stripMargin)
-
-      json.as[DepartureMessage] mustBe DepartureMessage(
-        received = LocalDateTime.of(2023, 4, 23, 9, 54, 25),
-        messageType = DepartureMessageType.RejectedByOfficeOfDeparture,
-        bodyPath = "movements/departures/64450051db689fad/messages/6445005176e4e834",
-        functionalErrors = Seq(
-          FunctionalError("/CC014C", "12", "N/A", None)
-        )
-      )
-    }
-
-    "and multiple functional errors" in {
-      val json = Json.parse("""
-          |{
-          |    "_links": {
-          |        "self": {
-          |            "href": "/customs/transits/movements/departures/64450051db689fad/messages/6445005176e4e834"
-          |        },
-          |        "departure": {
-          |            "href": "/customs/transits/movements/departures/64450051db689fad"
-          |        }
-          |    },
-          |    "id": "6445005176e4e834",
-          |    "departureId": "64450051db689fad",
-          |    "received": "2023-04-23T09:54:25.000Z",
-          |    "type": "IE056",
-          |    "body": {
-          |        "n1:CC056C": {
-          |            "FunctionalError": [
-          |                {
-          |                    "errorPointer": "/CC014C",
-          |                    "errorCode": "12",
-          |                    "errorReason": "N/A"
-          |                },
-          |                {
-          |                    "errorPointer": "/CC015C/Authorisation[1]/referenceNumber",
-          |                    "errorCode": "14",
-          |                    "errorReason": "G0033",
-          |                    "originalAttributeValue": "XIDEP01"
-          |                }
-          |            ]
-          |        }
-          |    }
-          |}
-          |""".stripMargin)
-
-      json.as[DepartureMessage] mustBe DepartureMessage(
-        received = LocalDateTime.of(2023, 4, 23, 9, 54, 25),
-        messageType = DepartureMessageType.RejectedByOfficeOfDeparture,
-        bodyPath = "movements/departures/64450051db689fad/messages/6445005176e4e834",
-        functionalErrors = Seq(
-          FunctionalError("/CC014C", "12", "N/A", None),
-          FunctionalError("/CC015C/Authorisation[1]/referenceNumber", "14", "G0033", Some("XIDEP01"))
-        )
-      )
-    }
+    json.as[DepartureMessage] mustBe DepartureMessage(
+      departureId = "64450051db689fad",
+      received = LocalDateTime.of(2023, 4, 23, 9, 54, 25),
+      messageType = DepartureMessageType.RejectedByOfficeOfDeparture,
+      bodyPath = "movements/departures/64450051db689fad/messages/6445005176e4e834"
+    )
   }
 
 }

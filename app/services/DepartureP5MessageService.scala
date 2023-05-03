@@ -43,9 +43,9 @@ class DepartureP5MessageService @Inject() (
               messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
                 case Some(ie015) =>
                   for {
-                    lrn <- departureMovementP5Connector.getLRN(ie015.bodyPath).map(_.referenceNumber)
-                    ie056  = messagesForMovement.messages.find(_.messageType == RejectedByOfficeOfDeparture)
-                    xPaths = ie056.map(_.functionalErrors.map(_.errorPointer))
+                    lrn   <- departureMovementP5Connector.getLRN(ie015.bodyPath).map(_.referenceNumber)
+                    ie056 <- getRejectionMessage(ie015.departureId)
+                    xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
                     isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false))(cacheConnector.isDeclarationAmendable(lrn, _))
                   } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, isDeclarationAmendable)
                 case None =>
@@ -55,22 +55,20 @@ class DepartureP5MessageService @Inject() (
     }
 
   private def getGoodsUnderControlMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
-    departureMovementP5Connector
-      .getMessageMetaData(departureId: String)
-      .map(
-        _.messages
-          .filter(_.messageType == GoodsUnderControl)
-          .sortBy(_.received)
-          .reverse
-          .headOption
-      )
+    getMessageMetaData(departureId, GoodsUnderControl)
 
   private def getRejectionMetaDataMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+    getMessageMetaData(departureId, RejectedByOfficeOfDeparture)
+
+  private def getMessageMetaData(departureId: String, messageType: DepartureMessageType)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[Option[MessageMetaData]] =
     departureMovementP5Connector
-      .getMessageMetaData(departureId: String)
+      .getMessageMetaData(departureId)
       .map(
         _.messages
-          .filter(_.messageType == RejectedByOfficeOfDeparture)
+          .filter(_.messageType == messageType)
           .sortBy(_.received)
           .reverse
           .headOption

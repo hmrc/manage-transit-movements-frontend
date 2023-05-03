@@ -46,7 +46,7 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
   val message: IE056Data = IE056Data(
     IE056MessageData(
       TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-      Some(Seq(functionalError1, functionalError2))
+      Seq(functionalError1, functionalError2)
     )
   )
 

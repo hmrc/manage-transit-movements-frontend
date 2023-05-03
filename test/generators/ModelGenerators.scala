@@ -319,11 +319,11 @@ trait ModelGenerators {
   implicit lazy val arbitraryDepartureMessage: Arbitrary[models.departureP5.DepartureMessage] =
     Arbitrary {
       for {
-        received         <- arbitrary[LocalDateTime]
-        messageType      <- arbitrary[models.departureP5.DepartureMessageType]
-        bodyPath         <- nonEmptyString
-        functionalErrors <- listWithMaxLength[models.departureP5.FunctionalError]()
-      } yield models.departureP5.DepartureMessage(received, messageType, bodyPath, functionalErrors)
+        departureId <- nonEmptyString
+        received    <- arbitrary[LocalDateTime]
+        messageType <- arbitrary[models.departureP5.DepartureMessageType]
+        bodyPath    <- nonEmptyString
+      } yield models.departureP5.DepartureMessage(departureId, received, messageType, bodyPath)
     }
 
 }
