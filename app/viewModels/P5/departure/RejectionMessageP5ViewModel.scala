@@ -26,12 +26,12 @@ import viewModels.sections.Section
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class RejectionMessageP5ViewModel(sections: Seq[Section], lrn: Option[String], multipleErrors: Boolean) {
+case class RejectionMessageP5ViewModel(sections: Seq[Section], lrn: String, multipleErrors: Boolean) {
   def title(implicit messages: Messages): String = messages("departure.ie056.message.title")
 
   def heading(implicit messages: Messages): String = messages("departure.ie056.message.heading")
 
-  def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph1.prefix", lrn.getOrElse(""))
+  def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph1.prefix", lrn)
 
   def paragraph1Suffix(implicit messages: Messages): String = if (multipleErrors) {
     messages(
@@ -61,11 +61,11 @@ object RejectionMessageP5ViewModel {
   class RejectionMessageP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
-      ie056MessageData: IE056MessageData
+      ie056MessageData: IE056MessageData,
+      lrn: String
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[RejectionMessageP5ViewModel] = {
       val helper = new RejectionMessageP5MessageHelper(ie056MessageData, referenceDataService)
 
-      val lrn            = ie056MessageData.transitOperation.LRN
       val multipleErrors = ie056MessageData.functionalErrors.length > 1
       val sections       = Seq(helper.errorSection())
       Future
