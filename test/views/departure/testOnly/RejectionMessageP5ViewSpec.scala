@@ -28,7 +28,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   override val prefix: String = "departure.ie056.message"
 
-  private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, Some(lrn.toString), false)
+  private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, lrn.toString, false)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
