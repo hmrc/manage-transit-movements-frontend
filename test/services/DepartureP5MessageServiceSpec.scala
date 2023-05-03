@@ -24,9 +24,9 @@ import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DepartureP5MessageServiceSpec extends SpecBase {
@@ -67,14 +67,12 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             MessagesForDepartureMovement(
               NonEmptyList(
                 DepartureMessage(
-                  departureIdP5,
                   dateTimeNow,
                   DepartureMessageType.DepartureNotification,
                   "body/path/1"
                 ),
                 List(
                   DepartureMessage(
-                    departureIdP5,
                     dateTimeNow,
                     DepartureMessageType.GoodsUnderControl,
                     "body/path/2"
@@ -108,6 +106,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
           result mustBe expectedResult
 
+          verify(mockMovementConnector).getMessageMetaData(eqTo("AB123"))(any(), any())
           verify(mockCacheConnector, never()).isDeclarationAmendable(any(), any())(any())
         }
 
@@ -119,14 +118,12 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             MessagesForDepartureMovement(
               NonEmptyList(
                 DepartureMessage(
-                  departureIdP5,
                   dateTimeNow,
                   DepartureMessageType.DepartureNotification,
                   "body/path/1"
                 ),
                 List(
                   DepartureMessage(
-                    departureIdP5,
                     dateTimeNow,
                     DepartureMessageType.RejectedByOfficeOfDeparture,
                     "body/path/2"
@@ -198,7 +195,6 @@ class DepartureP5MessageServiceSpec extends SpecBase {
           MessagesForDepartureMovement(
             NonEmptyList(
               DepartureMessage(
-                departureIdP5,
                 dateTimeNow,
                 DepartureMessageType.GoodsUnderControl,
                 "body/path/2"

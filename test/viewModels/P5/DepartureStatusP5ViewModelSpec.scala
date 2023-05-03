@@ -44,7 +44,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       DepartureMovementAndMessage(
         departureMovement,
         MessagesForDepartureMovement(
-          NonEmptyList(DepartureMessage(departureIdP5, dateTimeNow, headMessage, "body/path"), List.empty)
+          NonEmptyList(DepartureMessage(dateTimeNow, headMessage, "body/path"), List.empty)
         ),
         "AB123",
         isDeclarationAmendable = true
@@ -268,7 +268,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         val movementAndMessage = DepartureMovementAndMessage(
           departureMovement,
           MessagesForDepartureMovement(
-            NonEmptyList(DepartureMessage(departureIdP5, dateTimeNow, RejectedByOfficeOfDeparture, "body/path"), List.empty)
+            NonEmptyList(DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"), List.empty)
           ),
           "AB123",
           isDeclarationAmendable = true
@@ -290,7 +290,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         val movementAndMessage = DepartureMovementAndMessage(
           departureMovement,
           MessagesForDepartureMovement(
-            NonEmptyList(DepartureMessage(departureIdP5, dateTimeNow, RejectedByOfficeOfDeparture, "body/path"), List.empty)
+            NonEmptyList(DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"), List.empty)
           ),
           "AB123",
           isDeclarationAmendable = false

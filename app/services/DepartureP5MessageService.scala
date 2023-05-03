@@ -44,7 +44,7 @@ class DepartureP5MessageService @Inject() (
                 case Some(ie015) =>
                   for {
                     lrn   <- departureMovementP5Connector.getLRN(ie015.bodyPath).map(_.referenceNumber)
-                    ie056 <- getRejectionMessage(ie015.departureId)
+                    ie056 <- getRejectionMessage(movement.departureId)
                     xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
                     isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false))(cacheConnector.isDeclarationAmendable(lrn, _))
                   } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, isDeclarationAmendable)
