@@ -43,6 +43,7 @@ class DepartureP5MessageService @Inject() (
               messagesForMovement.messages.find(_.messageType == DepartureNotification) match {
                 case Some(ie015) =>
                   for {
+                    // TODO - the data will be manipulated in the backend to make the LRN more accessible in the frontend
                     lrn   <- departureMovementP5Connector.getLRN(ie015.bodyPath).map(_.referenceNumber)
                     ie056 <- getRejectionMessage(movement.departureId)
                     xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
