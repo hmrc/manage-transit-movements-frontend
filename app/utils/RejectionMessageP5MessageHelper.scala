@@ -32,21 +32,23 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
   ec: ExecutionContext
 ) extends DeparturesP5MessageHelper {
 
-  private def getFunctionalErrorType(errorCode: String): Future[String] =
-    referenceDataService.getFunctionalErrorType(errorCode)(ec, hc).map(_.toString)
+  private def getFunctionalErrorType(errorCode: String): Future[Option[String]] =
+    (for {
+      y <- OptionT.liftF(referenceDataService.getFunctionalErrorType(errorCode)(ec, hc))
+      x = y.toString
+    } yield x).value
 
   def buildErrorCodeRow(errorCode: String): Future[Option[SummaryListRow]] =
-    getFunctionalErrorType(errorCode).map {
+    getFunctionalErrorType(errorCode).map (
       code =>
-        println(s"\n\n\n\n\n******************* In buildErrorCodeRow $code")
         buildRowFromAnswer[String](
-          answer = Some(code),
+          answer = code,
           formatAnswer = formatAsText,
           prefix = messages("row.label.error"),
           id = None,
           call = None
-        )
-    }
+        ))
+
 
   def buildErrorReasonRow(reason: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(reason),
