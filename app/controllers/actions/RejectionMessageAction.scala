@@ -48,7 +48,7 @@ class RejectionMessageAction(departureId: String, departureP5MessageService: Dep
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (for {
-      ie056 <- OptionT(departureP5MessageService.getMessage[IE056Data, RejectedByOfficeOfDeparture](departureId, RejectedByOfficeOfDeparture))
+      ie056 <- OptionT(departureP5MessageService.getMessage[IE056Data](departureId, RejectedByOfficeOfDeparture))
       lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId))
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
       isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))

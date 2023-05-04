@@ -19,6 +19,7 @@ package services
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
+import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
@@ -163,7 +164,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             Future.successful(messages)
           )
 
-          when(mockMovementConnector.getRejectionMessage(any())(any(), any())).thenReturn(
+          when(mockMovementConnector.getSpecificMessage[IE056Data](any())(any(), any(), any())).thenReturn(
             Future.successful(ie056)
           )
 
@@ -242,9 +243,9 @@ class DepartureP5MessageServiceSpec extends SpecBase {
         )
 
         when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-        when(mockMovementConnector.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(ie060Data))
+        when(mockMovementConnector.getSpecificMessage[IE060Data](any())(any(), any(), any())).thenReturn(Future.successful(ie060Data))
 
-        departureP5MessageService.getGoodsUnderControl(departureId = "6365135ba5e821ee").futureValue mustBe Some(ie060Data)
+        departureP5MessageService.getMessage[IE060Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie060Data)
       }
     }
 

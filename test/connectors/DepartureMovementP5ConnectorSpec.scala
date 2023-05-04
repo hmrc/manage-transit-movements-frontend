@@ -369,7 +369,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getGoodsUnderControl(s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+          connector.getSpecificMessage[IE060Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
 
         }
       }
@@ -434,7 +434,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getRejectionMessage(s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+          connector.getSpecificMessage[IE056Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
 
         }
       }

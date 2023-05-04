@@ -45,7 +45,7 @@ class DepartureP5MessageService @Inject() (
                   for {
                     // TODO - the data will be manipulated in the backend to make the LRN more accessible in the frontend
                     lrn   <- departureMovementP5Connector.getLRN(ie015.bodyPath).map(_.referenceNumber)
-                    ie056 <- getRejectionMessage(movement.departureId)
+                    ie056 <- getMessage[IE056Data](movement.departureId, RejectedByOfficeOfDeparture)
                     xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
                     isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false))(cacheConnector.isDeclarationAmendable(lrn, _))
                   } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, isDeclarationAmendable)
@@ -54,11 +54,14 @@ class DepartureP5MessageService @Inject() (
               }
           }
     }
-  private def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String,
-                                                                    typeOfMessage: T)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+
+  private def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String, typeOfMessage: T)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[Option[MessageMetaData]] =
     getMessageMetaData(departureId, typeOfMessage)
 
-  private def getDepartureNofiticationMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+  private def getDepartureNotificationMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
     getMessageMetaData(departureId, DepartureNotification)
 
   private def getMessageMetaData(departureId: String, messageType: DepartureMessageType)(implicit
@@ -75,26 +78,25 @@ class DepartureP5MessageService @Inject() (
           .headOption
       )
 
-
-  def getMessage[MessageModel, T <: DepartureMessageType](
-                                                           departureId: String,
-                                                           typeOfMessage: T
-                                                         )(
-    implicit ec: ExecutionContext,
+  def getMessage[MessageModel](
+    departureId: String,
+    typeOfMessage: DepartureMessageType
+  )(implicit
+    ec: ExecutionContext,
     hc: HeaderCarrier,
     httpReads: HttpReads[MessageModel]
   ): Future[Option[MessageModel]] =
     (
       for {
         messageMetaData <- OptionT(getSpecificMessageMetaData(departureId, typeOfMessage))
-        message <- OptionT.liftF(departureMovementP5Connector.getSpecificMessage[MessageModel](messageMetaData.path))
+        message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessage[MessageModel](messageMetaData.path))
       } yield message
-      ).value
+    ).value
 
   def getLRNFromDeclarationMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] =
     (
       for {
-        declarationMessage <- OptionT(getDepartureNofiticationMetaData(departureId))
+        declarationMessage <- OptionT(getDepartureNotificationMetaData(departureId))
         lrn                <- OptionT.liftF(departureMovementP5Connector.getLRN(declarationMessage.path).map(_.referenceNumber))
       } yield lrn
     ).value
