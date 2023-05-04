@@ -23,5 +23,6 @@ case class RejectionMessageRequest[A](
   request: Request[A],
   eoriNumber: String,
   ie056MessageData: IE056MessageData,
-  isDeclarationAmendable: Boolean
+  isDeclarationAmendable: Boolean,
+  lrn: String
 ) extends WrappedRequest[A](request)

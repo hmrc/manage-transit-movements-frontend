@@ -61,6 +61,9 @@ class DepartureP5MessageService @Inject() (
   private def getRejectionMetaDataMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
     getMessageMetaData(departureId, RejectedByOfficeOfDeparture)
 
+  private def getDepartureNofiticationMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+    getMessageMetaData(departureId, DepartureNotification)
+
   private def getMessageMetaData(departureId: String, messageType: DepartureMessageType)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier
@@ -89,5 +92,13 @@ class DepartureP5MessageService @Inject() (
         rejectionMessage <- OptionT(getRejectionMetaDataMessage(departureId))
         rejection        <- OptionT.liftF(departureMovementP5Connector.getRejectionMessage(rejectionMessage.path))
       } yield rejection
+    ).value
+
+  def getLRNFromDeclarationMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] =
+    (
+      for {
+        declarationMessage <- OptionT(getDepartureNofiticationMetaData(departureId))
+        lrn                <- OptionT.liftF(departureMovementP5Connector.getLRN(declarationMessage.path).map(_.referenceNumber))
+      } yield lrn
     ).value
 }

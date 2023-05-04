@@ -60,7 +60,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data).futureValue
+      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
 
       "must return correct section length" in {
         result.sections.length mustBe 1
@@ -99,7 +99,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data).futureValue
+      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
 
       "must return correct title" in {
         result.title mustBe "Amend declaration errors"
@@ -133,7 +133,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data).futureValue
+      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
 
       result.sections.length mustBe 1
       result.sections.head.rows.size mustBe 4

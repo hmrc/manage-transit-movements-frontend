@@ -36,6 +36,6 @@ class FakeRejectionMessageAction(departureId: String, departureP5MessageService:
   )
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, RejectionMessageRequest[A]]] =
-    Future.successful(Right(RejectionMessageRequest(request, "AB123", message.data, isDeclarationAmendable = true)))
+    Future.successful(Right(RejectionMessageRequest(request, "AB123", message.data, isDeclarationAmendable = true, lrn = "LRNAB123")))
 
 }

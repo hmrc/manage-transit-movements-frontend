@@ -47,10 +47,10 @@ class RejectionMessageAction(departureId: String, departureP5MessageService: Dep
 
     (for {
       ie056 <- OptionT(departureP5MessageService.getRejectionMessage(departureId))
-      lrn    = ie056.data.transitOperation.LRN.getOrElse("") // TODO: Grab LRN from IE015
+      lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId))
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
       isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
-    } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable))
+    } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
 

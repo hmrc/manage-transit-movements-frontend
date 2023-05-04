@@ -63,6 +63,7 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
     "must return 200 when an unloading permission is available" in {
 
       when(mockMessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
       val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)

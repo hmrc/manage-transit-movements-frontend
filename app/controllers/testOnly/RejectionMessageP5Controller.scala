@@ -41,7 +41,7 @@ class RejectionMessageP5Controller @Inject() (
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
       if (request.isDeclarationAmendable) {
-        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData)
+        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
         rejectionMessageP5ViewModel.map(
           vmp => Ok(view(vmp, departureId))
         )

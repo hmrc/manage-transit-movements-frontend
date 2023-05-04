@@ -68,7 +68,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
 
-  "UnloadingFindingsController Controller" - {
+  "RejectionMessageP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
       val message: IE056Data = IE056Data(
@@ -78,13 +78,14 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         )
       )
       when(mockDepartureP5MessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-      when(mockRejectionMessageP5ViewModelProvider.apply(any())(any(), any(), any()))
-        .thenReturn(Future.successful(RejectionMessageP5ViewModel(sections, Some(lrn.toString), multipleErrors = true)))
+      when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(RejectionMessageP5ViewModel(sections, lrn.toString, multipleErrors = true)))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, Some(lrn.toString), true)
+      val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, lrn.toString, true)
 
       val request = FakeRequest(GET, rejectionMessageController)
 
@@ -106,6 +107,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         )
       )
       when(mockDepartureP5MessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
