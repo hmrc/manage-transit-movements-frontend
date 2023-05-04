@@ -41,11 +41,13 @@ class RejectionMessageP5Controller @Inject() (
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
       if (request.isDeclarationAmendable) {
+        println(s"*************************In RejectionMessageP5Controller onPageLoad")
         val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
         rejectionMessageP5ViewModel.map(
           vmp => Ok(view(vmp, departureId))
         )
       } else {
+        println(s"*************************In RejectionMessageP5Controller onPageLoad")
         Future.successful(
           Redirect(controllers.routes.SessionExpiredController.onPageLoad())
         ) // TODO: Redirect to generic error page with link back to dashboard?

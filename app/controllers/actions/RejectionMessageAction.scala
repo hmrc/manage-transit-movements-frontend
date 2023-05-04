@@ -46,10 +46,19 @@ class RejectionMessageAction(departureId: String, departureP5MessageService: Dep
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (for {
-      ie056 <- OptionT(departureP5MessageService.getRejectionMessage(departureId))
-      lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId))
+      ie056 <- {
+        println(s"\n\n\n\n\n *********************** Before OptionT(departureP5MessageService.getRejectionMessage(departureId)) in Action.....")
+        OptionT(departureP5MessageService.getRejectionMessage(departureId))
+      }
+      lrn <- {
+        println(s"\n\n\n\n\n *********************** Before OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId)) in Action.....")
+        OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId))
+      }
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
-      isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
+      isDeclarationAmendable <- {
+        println(s"\n\n\n\n\n *********************** Before OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths)) in Action.....")
+        OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
+      }
     } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value

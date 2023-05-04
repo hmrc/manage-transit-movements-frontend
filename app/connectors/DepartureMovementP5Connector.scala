@@ -75,7 +75,14 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
 
     val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
 
-    http.GET[Messages](serviceUrl)(implicitly, headers, ec)
+    println(s"\n\n\n\n*******************&&&&&&&&&&&&&&&&& in getMessageMetaData Connector")
+    http
+      .GET[Messages](serviceUrl)(implicitly, headers, ec)
+      .recover {
+        case _ =>
+          logger.error(s"***********************>>>>>>>>>>>>>>>>>>>>getMessageMetaData Failed with exception")
+          Messages(Nil)
+      }
   }
 
   def getGoodsUnderControl(path: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IE060Data] = {
