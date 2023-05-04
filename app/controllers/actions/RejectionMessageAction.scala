@@ -47,9 +47,8 @@ class RejectionMessageAction(departureId: String, departureP5MessageService: Dep
 
     (for {
       ie056 <- OptionT(departureP5MessageService.getRejectionMessage(departureId))
-
+      //TODO that we can remove the LRN retrieval when this ticket is done
       lrn <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId))
-
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
       isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
 
