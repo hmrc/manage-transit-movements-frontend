@@ -18,13 +18,9 @@ package models.departureP5
 
 import play.api.libs.json.{__, Reads}
 
-case class LocalReferenceNumber(referenceNumber: String) {
+case class IE056Data(data: IE056MessageData)
 
-  override def toString: String = referenceNumber
-}
+object IE056Data {
 
-object LocalReferenceNumber {
-
-  implicit val format: Reads[LocalReferenceNumber] =
-    (__ \ "body" \\ "TransitOperation" \ "LRN").read[String].map(LocalReferenceNumber(_))
+  implicit val reads: Reads[IE056Data] = (__ \ "body" \ "n1:CC056C").read[IE056MessageData].map(IE056Data.apply)
 }

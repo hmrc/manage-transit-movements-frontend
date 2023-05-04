@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package models.departureP5
+package models.referenceData
 
-import play.api.libs.json.{__, Reads}
+import play.api.libs.json.{Format, Json}
 
-case class LocalReferenceNumber(referenceNumber: String) {
+case class FunctionalErrorWithDesc(code: String, description: String) {
 
-  override def toString: String = referenceNumber
+  override def toString: String =
+    description match {
+      case "" => code
+      case _  => s"$code - $description"
+    }
 }
 
-object LocalReferenceNumber {
+object FunctionalErrorWithDesc {
 
-  implicit val format: Reads[LocalReferenceNumber] =
-    (__ \ "body" \\ "TransitOperation" \ "LRN").read[String].map(LocalReferenceNumber(_))
+  implicit val format: Format[FunctionalErrorWithDesc] = Json.format[FunctionalErrorWithDesc]
 }

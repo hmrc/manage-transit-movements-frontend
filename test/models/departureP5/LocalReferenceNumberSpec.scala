@@ -1,0 +1,52 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package models.departureP5
+
+import generators.Generators
+import org.scalatest.EitherValues
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import play.api.libs.json.Json
+
+class LocalReferenceNumberSpec extends AnyFreeSpec with Generators with Matchers with EitherValues {
+
+  "a Local Reference Number" - {
+
+    "must deserialise" in {
+      val json = Json.parse("""
+          |{
+          |    "body": {
+          |        "n1:CC015C": {
+          |            "TransitOperation": {
+          |                "LRN": "TRATESTXI12304231054",
+          |                "declarationType": "T1",
+          |                "additionalDeclarationType": "A",
+          |                "security": "0",
+          |                "reducedDatasetIndicator": "0",
+          |                "bindingItinerary": "0",
+          |                "limitDate": "2023-05-07"
+          |            }
+          |        }
+          |    }
+          |}
+          |""".stripMargin)
+
+      val result = json.as[LocalReferenceNumber]
+      result mustBe LocalReferenceNumber("TRATESTXI12304231054")
+    }
+  }
+}

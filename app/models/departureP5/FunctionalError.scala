@@ -16,15 +16,16 @@
 
 package models.departureP5
 
-import play.api.libs.json.{__, Reads}
+import play.api.libs.json.{Json, OFormat}
 
-case class LocalReferenceNumber(referenceNumber: String) {
+case class FunctionalError(
+  errorPointer: String,
+  errorCode: String,
+  errorReason: String,
+  originalAttributeValue: Option[String]
+)
 
-  override def toString: String = referenceNumber
-}
+object FunctionalError {
 
-object LocalReferenceNumber {
-
-  implicit val format: Reads[LocalReferenceNumber] =
-    (__ \ "body" \\ "TransitOperation" \ "LRN").read[String].map(LocalReferenceNumber(_))
+  implicit val formats: OFormat[FunctionalError] = Json.format[FunctionalError]
 }

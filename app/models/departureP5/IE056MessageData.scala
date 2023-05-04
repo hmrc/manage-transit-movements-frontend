@@ -16,15 +16,18 @@
 
 package models.departureP5
 
+import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
 
-case class LocalReferenceNumber(referenceNumber: String) {
+case class IE056MessageData(
+  transitOperation: TransitOperationIE056,
+  functionalErrors: Seq[FunctionalError]
+)
 
-  override def toString: String = referenceNumber
-}
+object IE056MessageData {
 
-object LocalReferenceNumber {
-
-  implicit val format: Reads[LocalReferenceNumber] =
-    (__ \ "body" \\ "TransitOperation" \ "LRN").read[String].map(LocalReferenceNumber(_))
+  implicit lazy val reads: Reads[IE056MessageData] = (
+    (__ \ "TransitOperation").read[TransitOperationIE056] and
+      (__ \ "FunctionalError").readWithDefault[Seq[FunctionalError]](Nil)
+  )(IE056MessageData.apply _)
 }

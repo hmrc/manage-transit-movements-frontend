@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package models.departureP5
+package models.requests
 
-import play.api.libs.json.{__, Reads}
+import models.departureP5.IE056MessageData
+import play.api.mvc.{Request, WrappedRequest}
 
-case class LocalReferenceNumber(referenceNumber: String) {
-
-  override def toString: String = referenceNumber
-}
-
-object LocalReferenceNumber {
-
-  implicit val format: Reads[LocalReferenceNumber] =
-    (__ \ "body" \\ "TransitOperation" \ "LRN").read[String].map(LocalReferenceNumber(_))
-}
+case class RejectionMessageRequest[A](
+  request: Request[A],
+  eoriNumber: String,
+  ie056MessageData: IE056MessageData,
+  isDeclarationAmendable: Boolean,
+  lrn: String
+) extends WrappedRequest[A](request)

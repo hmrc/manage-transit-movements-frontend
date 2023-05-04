@@ -20,7 +20,12 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 case class TransitOperation(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
+case class TransitOperationIE056(MRN: Option[String], LRN: Option[String])
 
 object TransitOperation {
   implicit val formats: OFormat[TransitOperation] = Json.format[TransitOperation]
+}
+
+object TransitOperationIE056 {
+  implicit val formats: OFormat[TransitOperationIE056] = Json.format[TransitOperationIE056]
 }

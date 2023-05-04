@@ -77,7 +77,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
     "must deserialize and sort by time" in {
 
       val json =
-        Json.parse("""
+        Json.parse(s"""
             |{
             |   "messages":[
             |      {
@@ -86,6 +86,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/1"
             |             }
             |         },
+            |         "departureId":"$departureIdP5",
             |         "received":"2022-11-10T11:32:51.459Z",
             |         "type":"IE015"
             |      },
@@ -95,6 +96,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/2"
             |             }
             |         },
+            |         "departureId":"$departureIdP5",
             |         "received":"2022-11-10T10:32:51.459Z",
             |         "type":"IE028"
             |      },
@@ -104,6 +106,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/3"
             |             }
             |         },
+            |         "departureId":"$departureIdP5",
             |         "received":"2022-11-10T12:32:52.459Z",
             |         "type":"IE029"
             |      }
@@ -141,7 +144,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
     "must deserialize and sort by date and time" in {
 
       val json =
-        Json.parse("""
+        Json.parse(s"""
             |{
             |   "messages":[
             |      {
@@ -150,6 +153,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/1"
             |             }
             |         },
+            |         "departureId":"$departureIdP5",
             |         "received":"2022-11-10T11:32:51.459Z",
             |         "type":"IE015"
             |      },
@@ -159,6 +163,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/2"
             |             }
             |         },
+            |         "departureId":"$departureIdP5",
             |         "received":"2022-11-10T10:32:51.459Z",
             |         "type":"IE028"
             |      },
@@ -168,6 +173,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/3"
             |             }
             |         },
+            |         "departureId":"$departureIdP5",
             |         "received":"2022-11-10T12:32:52.459Z",
             |         "type":"IE029"
             |      }

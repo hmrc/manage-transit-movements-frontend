@@ -16,15 +16,25 @@
 
 package models.departureP5
 
-import play.api.libs.json.{__, Reads}
+import base.SpecBase
+import generators.Generators
+import models.referenceData.FunctionalErrorWithDesc
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.Json
 
-case class LocalReferenceNumber(referenceNumber: String) {
+class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  override def toString: String = referenceNumber
-}
+  "FunctionalError" - {
 
-object LocalReferenceNumber {
+    "must deserialise" in {
+      val json = Json.parse("""
+            |    {
+            |        "code": "12",
+            |        "description": "Invalid MRN"
+            |    }
+            |""".stripMargin)
 
-  implicit val format: Reads[LocalReferenceNumber] =
-    (__ \ "body" \\ "TransitOperation" \ "LRN").read[String].map(LocalReferenceNumber(_))
+      json.as[FunctionalErrorWithDesc] mustBe FunctionalErrorWithDesc("12", "Invalid MRN")
+    }
+  }
 }

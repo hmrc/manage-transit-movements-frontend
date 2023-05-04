@@ -29,22 +29,26 @@ import java.time.LocalDateTime
 
 class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  private val dateTimeNow = LocalDateTime.now()
+  private val dateTimeNow  = LocalDateTime.now()
+  private val dateTimePast = dateTimeNow.minusHours(1)
 
   "DepartureStatusP5ViewModel" - {
 
+    val departureMovement = DepartureMovement(
+      departureIdP5,
+      Some("mrn"),
+      LocalDateTime.now(),
+      "location"
+    )
+
     def movementAndMessages(headMessage: DepartureMessageType): DepartureMovementAndMessage =
       DepartureMovementAndMessage(
-        DepartureMovement(
-          s"$departureIdP5",
-          Some("mrn"),
-          LocalDateTime.now(),
-          "location"
-        ),
+        departureMovement,
         MessagesForDepartureMovement(
           NonEmptyList(DepartureMessage(dateTimeNow, headMessage, "body/path"), List.empty)
         ),
-        "AB123"
+        "AB123",
+        isDeclarationAmendable = true
       )
 
     "when given Message with head of DepartureDeclaration" in {
@@ -56,8 +60,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.departureNotificationSubmitted",
         Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
-                             "movement.status.P5.action.departureNotification.cancelDeclaration"
+          ViewMovementAction(
+            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+            "movement.status.P5.action.departureNotification.cancelDeclaration"
           )
         )
       )
@@ -140,8 +145,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.declarationAmendmentAccepted",
         Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
-                             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
+          ViewMovementAction(
+            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+            "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           )
         )
       )
@@ -257,20 +263,132 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result mustBe expectedResult
     }
 
-    "when given Message with head of rejectedByOfficeOfDeparture" in {
+    "when given Message with head of rejectedByOfficeOfDeparture" - {
 
-      val movementAndMessage = movementAndMessages(RejectedByOfficeOfDeparture)
+      "and head of tail is IE015" - {
+        "and declaration is amendable" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage(dateTimePast, DepartureNotification, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = true
+          )
 
-      val result = DepartureStatusP5ViewModel(movementAndMessage)
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-      val expectedResult = DepartureStatusP5ViewModel(
-        "movement.status.P5.rejectedByOfficeOfDeparture",
-        Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.rejectedByOfficeOfDeparture.amendErrors")
-        )
-      )
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
+              )
+            )
+          )
 
-      result mustBe expectedResult
+          result mustBe expectedResult
+        }
+
+        "and declaration is not amendable" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage(dateTimePast, DepartureNotification, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = false
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                "",
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+      }
+
+      "and head of tail is not IE015" - {
+
+        "and declaration is amendable" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage(dateTimePast, CancellationRequested, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = true
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                "",
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+
+        "and declaration is not amendable" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage(dateTimePast, CancellationRequested, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = false
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                "",
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+      }
     }
 
     "when given Message with head of goodsUnderControl" in {
@@ -282,8 +400,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
         Seq(
-          ViewMovementAction(controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url,
-                             "movement.status.P5.action.goodsUnderControl.viewDetails"
+          ViewMovementAction(
+            controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url,
+            "movement.status.P5.action.goodsUnderControl.viewDetails"
           ),
           ViewMovementAction(s"", "movement.status.P5.action.goodsUnderControl.cancelDeclaration")
         )

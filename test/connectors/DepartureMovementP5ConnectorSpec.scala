@@ -147,7 +147,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       val departureId = "63498209a2d89ad8"
 
       val responseJson =
-        Json.parse("""
+        Json.parse(s"""
             {
                "_links":{
                   "self":{
@@ -168,7 +168,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                          }
                      },
                      "id":"634982098f02f00a",
-                     "departureId":"1",
+                     "departureId":"$departureId",
                      "received":"2022-11-10T12:32:51.459Z",
                      "type":"IE015"
                   },
@@ -182,7 +182,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                          }
                      },
                      "id":"634982098f02f00a",
-                     "departureId":"1",
+                     "departureId":"$departureId",
                      "received":"2022-11-11T15:32:51.459Z",
                      "type":"IE028"
                   }
@@ -373,6 +373,71 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         }
       }
+
+      "getRejectionMessage" - {
+
+        "must return Messages" in {
+
+          val IEO56 = Json.parse(
+            """
+              |{
+              |  "n1:CC056C": {
+              |    "TransitOperation": {
+              |      "LRN": "AB123",
+              |      "MRN": "CD3232"
+              |    },
+              |    "FunctionalError": [
+              |      {
+              |        "errorPointer": "1",
+              |        "errorCode": "12",
+              |        "errorReason": "Codelist violation"
+              |      },
+              |      {
+              |        "errorPointer": "2",
+              |        "errorCode": "14",
+              |        "errorReason": "Rule violation"
+              |      }
+              |    ]
+              |  }
+              |}
+              |""".stripMargin
+          )
+
+          val responseJson: JsValue = Json.parse(s"""
+    {
+      "_links": {
+        "self": {
+          "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
+        },
+        "departure": {
+          "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
+        }
+      },
+      "id": "62f4ebbb765ba8c2",
+      "departureId": "62f4ebbbf581d4aa",
+      "received": "2022-08-11T11:44:59.83705",
+      "type": "IE060",
+      "status": "Success",
+      "body": ${IEO56.toString()}
+    }
+    """)
+
+          val expectedResult: IE056Data = IE056Data(
+            IE056MessageData(
+              TransitOperationIE056(Some("CD3232"), Some("AB123")),
+              Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+            )
+          )
+
+          server.stubFor(
+            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getRejectionMessage(s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+
+        }
+      }
     }
 
     "getLRN" - {
@@ -389,23 +454,23 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         val responseJson = Json.parse(
           s"""
-            |{
-            |  "_links": {
-            |    "self": {
-            |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
-            |    },
-            |    "departure": {
-            |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
-            |    }
-            |  },
-            |  "id": "62f4ebbb765ba8c2",
-            |  "departureId": "62f4ebbbf581d4aa",
-            |  "received": "2022-08-11T11:44:59.83705",
-            |  "type": "IE015",
-            |  "status": "Success",
-            |  "body": ${ie015Body.toString}
-            |}
-            |""".stripMargin
+             |{
+             |  "_links": {
+             |    "self": {
+             |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
+             |    },
+             |    "departure": {
+             |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
+             |    }
+             |  },
+             |  "id": "62f4ebbb765ba8c2",
+             |  "departureId": "62f4ebbbf581d4aa",
+             |  "received": "2022-08-11T11:44:59.83705",
+             |  "type": "IE015",
+             |  "status": "Success",
+             |  "body": ${ie015Body.toString}
+             |}
+             |""".stripMargin
         )
 
         server.stubFor(
