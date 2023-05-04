@@ -58,6 +58,8 @@ GET         /manage-transit-movements/test-only/goods-under-control-document-req
 
 GET        /manage-transit-movements/test-only/amend-departure-declaration-errors/:departureId                                 controllers.testOnly.RejectionMessageP5Controller.onPageLoad(departureId: String)
 
+GET        /manage-transit-movements/test-only/review-departure-declaration-errors/:departureId                                controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(departureId: String)
+
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                            controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()
 
