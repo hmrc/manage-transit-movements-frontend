@@ -52,11 +52,9 @@ class AmendErrorsController @Inject() (
       if (xPaths.nonEmpty) {
         cacheConnector.handleErrors(lrn, xPaths).map {
           case true =>
-            println("\n\n\n Sent \n\n\n")
             Redirect(controllers.routes.SessionExpiredController.onPageLoad())
           // Redirect to departures frontend on success}
           case false =>
-            println("\n\n\n Fail \n\n\n")
             Redirect(controllers.routes.SessionExpiredController.onPageLoad())
         }
       } else {
