@@ -18,6 +18,7 @@ package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.routes
+import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5._
 import models.referenceData.CustomsOffice
 import models.requests.IdentifierRequest
@@ -63,7 +64,7 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
   "GoodsUnderControlAction" - {
     "must return 200 when an unloading permission is available" in {
 
-      when(mockMessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)
@@ -77,7 +78,7 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
 
     "must return 303 and redirect to technical difficulties when no unloading permission is available" in {
 
-      when(mockMessageService.getGoodsUnderControl(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockMessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
       when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)

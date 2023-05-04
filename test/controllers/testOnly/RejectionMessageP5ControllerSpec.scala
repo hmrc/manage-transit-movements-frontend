@@ -20,6 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{FakeRejectionMessageAction, RejectionMessageActionProvider}
 import generators.Generators
+import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -77,7 +78,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
@@ -106,7 +108,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.getRejectionMessage(any())(any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 

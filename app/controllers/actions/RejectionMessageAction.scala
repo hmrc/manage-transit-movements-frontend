@@ -19,6 +19,8 @@ package controllers.actions
 import cats.data.OptionT
 import connectors.DepartureCacheConnector
 import controllers.routes
+import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
+import models.departureP5.IE056Data
 import models.requests.{IdentifierRequest, RejectionMessageRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
@@ -46,12 +48,10 @@ class RejectionMessageAction(departureId: String, departureP5MessageService: Dep
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (for {
-      ie056 <- OptionT(departureP5MessageService.getRejectionMessage(departureId))
-      //TODO that we can remove the LRN retrieval when this ticket is done
-      lrn <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId))
+      ie056 <- OptionT(departureP5MessageService.getMessage[IE056Data](departureId, RejectedByOfficeOfDeparture))
+      lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId))
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
       isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
-
     } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
