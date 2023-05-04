@@ -394,3 +394,13 @@ departure.ie056.message.paragraph2.plural.suffix = for help understanding the er
 departure.ie056.message.hyperlink = create another departure declaration
 row.label.error =  Error
 row.label.reason =  Reason
+
+departure.declaration.errors.message.title   = Declaration errors
+departure.declaration.errors.message.heading = Declaration errors
+departure.declaration.errors.message.noerrors = There are one or more errors in departure declaration {0} that cannot be amended.
+departure.declaration.errors.message.elevenpluserrors = There are a number of errors in departure declaration {0}.
+departure.declaration.errors.message.paragraph2 = Make/create a new departure declaration with the right information.
+departure.declaration.errors.message.paragraph3.prefix = Contact the
+departure.declaration.errors.message.paragraph3.link = New Computerised Transit System helpdesk
+departure.declaration.errors.message.paragraph3.suffix = for help understanding the errors (opens in a new tab).
+departure.declaration.errors.message.hyperlink = create another departure declaration
