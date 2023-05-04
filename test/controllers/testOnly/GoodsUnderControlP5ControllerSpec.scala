@@ -19,7 +19,6 @@ package controllers.testOnly
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.actions.{FakeGoodsUnderControlAction, GoodsUnderControlActionProvider}
 import generators.Generators
-import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5._
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any

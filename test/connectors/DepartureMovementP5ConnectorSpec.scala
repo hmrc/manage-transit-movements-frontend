@@ -26,7 +26,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -290,153 +290,146 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         connector.getMessageMetaData(departureIdP5).futureValue mustBe expectedResult
 
       }
+    }
 
-      "getGoodsUnderControl" - {
+    "getSpecificMessage" - {
 
-        "must return Messages" in {
+      "must return an IE060 Message" in {
 
-          val IE060 = Json.parse("""{
-                                                          "n1:CC060C":
-                                                          {
-                                                          "TransitOperation":
-                                                          { "LRN": "AB123",
-                                                                  "MRN": "CD3232",
-                                                                  "controlNotificationDateAndTime": "2014-06-09T16:15:04+01:00",
-                                                                 "notificationType": "notification1"
-                                                             },
-                                                              "CustomsOfficeOfDeparture": {
-                                                                  "referenceNumber": "22323323"
-                                                              },
-                                                              "TypeOfControls": [
-                                                                 {
-                                                                      "sequenceNumber": "1",
-                                                                      "type": "type1",
-                                                                      "text": "text1"
-                                                                  },
-                                                                  {
-                                                                      "sequenceNumber": "2",
-                                                                      "type": "type2"
-                                                                  }
-                                                              ],
-                                                              "RequestedDocument": [
-                                                                  {
-                                                                      "sequenceNumber": "3",
-                                                                      "documentType": "doc1",
-                                                                      "description": "desc1"
-                                                                  },
-                                                                  {
-                                                                      "sequenceNumber": "4",
-                                                                      "documentType": "doc2"
-                                                                  }
-                                                             ]
-                                                          }
-                                  }""")
+        val IE060 = Json.parse("""{
+                                                        "n1:CC060C":
+                                                        {
+                                                        "TransitOperation":
+                                                        { "LRN": "AB123",
+                                                                "MRN": "CD3232",
+                                                                "controlNotificationDateAndTime": "2014-06-09T16:15:04+01:00",
+                                                               "notificationType": "notification1"
+                                                           },
+                                                            "CustomsOfficeOfDeparture": {
+                                                                "referenceNumber": "22323323"
+                                                            },
+                                                            "TypeOfControls": [
+                                                               {
+                                                                    "sequenceNumber": "1",
+                                                                    "type": "type1",
+                                                                    "text": "text1"
+                                                                },
+                                                                {
+                                                                    "sequenceNumber": "2",
+                                                                    "type": "type2"
+                                                                }
+                                                            ],
+                                                            "RequestedDocument": [
+                                                                {
+                                                                    "sequenceNumber": "3",
+                                                                    "documentType": "doc1",
+                                                                    "description": "desc1"
+                                                                },
+                                                                {
+                                                                    "sequenceNumber": "4",
+                                                                    "documentType": "doc2"
+                                                                }
+                                                           ]
+                                                        }
+                                }""")
 
-          val responseJson: JsValue = Json.parse(s"""
-              {
-                "_links": {
-                  "self": {
-                    "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
-                  },
-                  "departure": {
-                    "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
-                  }
+        val responseJson: JsValue = Json.parse(s"""
+            {
+              "_links": {
+                "self": {
+                  "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
                 },
-                "id": "62f4ebbb765ba8c2",
-                "departureId": "62f4ebbbf581d4aa",
-                "received": "2022-08-11T11:44:59.83705",
-                "type": "IE060",
-                "status": "Success",
-                "body": ${IE060.toString()}
-              }
-              """)
+                "departure": {
+                  "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
+                }
+              },
+              "id": "62f4ebbb765ba8c2",
+              "departureId": "62f4ebbbf581d4aa",
+              "received": "2022-08-11T11:44:59.83705",
+              "type": "IE060",
+              "status": "Success",
+              "body": ${IE060.toString()}
+            }
+            """)
 
-          val expectedResult = IE060Data(
-            IE060MessageData(
-              TransitOperation(Some("CD3232"),
-                               Some("AB123"),
-                               LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                               "notification1"
-              ),
-              CustomsOfficeOfDeparture("22323323"),
-              Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
-              Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
-            )
+        val expectedResult = IE060Data(
+          IE060MessageData(
+            TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            CustomsOfficeOfDeparture("22323323"),
+            Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
+            Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
           )
+        )
 
-          server.stubFor(
-            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2"))
-              .willReturn(okJson(responseJson.toString()))
-          )
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2"))
+            .willReturn(okJson(responseJson.toString()))
+        )
 
-          connector.getSpecificMessage[IE060Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+        connector.getSpecificMessage[IE060Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
 
-        }
       }
 
-      "getRejectionMessage" - {
+      "must return an IE056 Message" in {
 
-        "must return Messages" in {
+        val IEO56 = Json.parse(
+          """
+            |{
+            |  "n1:CC056C": {
+            |    "TransitOperation": {
+            |      "LRN": "AB123",
+            |      "MRN": "CD3232"
+            |    },
+            |    "FunctionalError": [
+            |      {
+            |        "errorPointer": "1",
+            |        "errorCode": "12",
+            |        "errorReason": "Codelist violation"
+            |      },
+            |      {
+            |        "errorPointer": "2",
+            |        "errorCode": "14",
+            |        "errorReason": "Rule violation"
+            |      }
+            |    ]
+            |  }
+            |}
+            |""".stripMargin
+        )
 
-          val IEO56 = Json.parse(
-            """
-              |{
-              |  "n1:CC056C": {
-              |    "TransitOperation": {
-              |      "LRN": "AB123",
-              |      "MRN": "CD3232"
-              |    },
-              |    "FunctionalError": [
-              |      {
-              |        "errorPointer": "1",
-              |        "errorCode": "12",
-              |        "errorReason": "Codelist violation"
-              |      },
-              |      {
-              |        "errorPointer": "2",
-              |        "errorCode": "14",
-              |        "errorReason": "Rule violation"
-              |      }
-              |    ]
-              |  }
-              |}
-              |""".stripMargin
-          )
-
-          val responseJson: JsValue = Json.parse(s"""
-    {
-      "_links": {
-        "self": {
-          "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
-        },
-        "departure": {
-          "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
-        }
+        val responseJson: JsValue = Json.parse(s"""
+  {
+    "_links": {
+      "self": {
+        "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
       },
-      "id": "62f4ebbb765ba8c2",
-      "departureId": "62f4ebbbf581d4aa",
-      "received": "2022-08-11T11:44:59.83705",
-      "type": "IE060",
-      "status": "Success",
-      "body": ${IEO56.toString()}
-    }
-    """)
+      "departure": {
+        "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
+      }
+    },
+    "id": "62f4ebbb765ba8c2",
+    "departureId": "62f4ebbbf581d4aa",
+    "received": "2022-08-11T11:44:59.83705",
+    "type": "IE060",
+    "status": "Success",
+    "body": ${IEO56.toString()}
+  }
+  """)
 
-          val expectedResult: IE056Data = IE056Data(
-            IE056MessageData(
-              TransitOperationIE056(Some("CD3232"), Some("AB123")),
-              Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-            )
+        val expectedResult: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperationIE056(Some("CD3232"), Some("AB123")),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
+        )
 
-          server.stubFor(
-            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2"))
-              .willReturn(okJson(responseJson.toString()))
-          )
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2"))
+            .willReturn(okJson(responseJson.toString()))
+        )
 
-          connector.getSpecificMessage[IE056Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+        connector.getSpecificMessage[IE056Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
 
-        }
       }
     }
 

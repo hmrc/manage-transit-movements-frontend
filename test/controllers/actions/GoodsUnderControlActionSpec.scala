@@ -18,7 +18,6 @@ package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.routes
-import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5._
 import models.referenceData.CustomsOffice
 import models.requests.IdentifierRequest

@@ -22,7 +22,7 @@ import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.departureP5.DepartureMessageType.{DepartureNotification, _}
 import models.departureP5._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

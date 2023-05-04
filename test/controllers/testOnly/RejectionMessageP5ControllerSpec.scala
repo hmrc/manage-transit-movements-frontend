@@ -20,7 +20,6 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{FakeRejectionMessageAction, RejectionMessageActionProvider}
 import generators.Generators
-import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}

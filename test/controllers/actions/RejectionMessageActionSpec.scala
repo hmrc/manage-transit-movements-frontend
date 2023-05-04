@@ -19,7 +19,6 @@ package controllers.actions
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.routes
-import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import models.departureP5._
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
