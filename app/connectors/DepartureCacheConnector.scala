@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,5 +36,11 @@ class DepartureCacheConnector @Inject() (
     val url = s"$baseUrl/x-paths/$lrn/is-declaration-amendable"
 
     http.POST[Seq[String], Boolean](url, xPaths)
+  }
+
+  def handleErrors(lrn: String, functionalErrors: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val url = s"$baseUrl/x-paths/$lrn/handle-errors"
+
+    http.POST[Seq[String], Boolean](url, functionalErrors)
   }
 }

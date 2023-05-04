@@ -43,7 +43,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   behave like pageWithBackLink()
 
-  behave like pageWithSectionCaption(s"LRN: $lrn")
+  behave like pageWithCaption(s"LRN: $lrn")
 
   behave like pageWithHeading()
 

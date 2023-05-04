@@ -59,6 +59,9 @@ GET         /manage-transit-movements/test-only/goods-under-control-document-req
 GET        /manage-transit-movements/test-only/amend-departure-declaration-errors/:departureId                                 controllers.testOnly.RejectionMessageP5Controller.onPageLoad(departureId: String)
 
 + nocsrf
+GET        /manage-transit-movements/test-only/send-departure-declaration-errors/                                 controllers.testOnly.AmendErrorsController.onAmend()
+
++ nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                            controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()
 
 + nocsrf
