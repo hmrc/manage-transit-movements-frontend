@@ -40,10 +40,8 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)) {
     implicit request =>
-      val noErrors   = if (request.ie056MessageData.functionalErrors.isEmpty) true else false
-      val moreErrors = if (request.ie056MessageData.functionalErrors.size > config.maxErrorsForAmendableDeclaration) true else false
-      if (noErrors || moreErrors) {
-        Ok(view(viewModelProvider.apply(request.lrn, noErrors)))
+      if (request.ie056MessageData.functionalErrors.isEmpty || (request.ie056MessageData.functionalErrors.size > config.maxErrorsForAmendableDeclaration)) {
+        Ok(view(viewModelProvider.apply(request.lrn, request.ie056MessageData.functionalErrors.isEmpty)))
       } else {
         Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
