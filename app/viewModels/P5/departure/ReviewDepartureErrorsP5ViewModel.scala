@@ -26,7 +26,7 @@ import viewModels.sections.Section
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class ReviewDepartureErrorMessageP5ViewModel(sections: Seq[Section], lrn: String, multipleErrors: Boolean) {
+case class ReviewDepartureErrorsP5ViewModel(sections: Seq[Section], lrn: String, multipleErrors: Boolean) {
 
   def title(implicit messages: Messages): String = messages("departure.ie056.review.message.title")
 
@@ -48,23 +48,23 @@ case class ReviewDepartureErrorMessageP5ViewModel(sections: Seq[Section], lrn: S
   def paragraph2Link(implicit messages: Messages): String   = messages("departure.ie056.review.message.paragraph2.link")
 
   def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors) {
-    messages("departure.ie056.review.message.paragraph2.singular.suffix")
-  } else {
     messages("departure.ie056.review.message.paragraph2.plural.suffix")
+  } else {
+    messages("departure.ie056.review.message.paragraph2.singular.suffix")
   }
 
   def hyperlink(implicit messages: Messages): String = messages("departure.ie056.review.message.hyperlink")
 
 }
 
-object ReviewDepartureErrorMessageP5ViewModel {
+object ReviewDepartureErrorsP5ViewModel {
 
-  class ReviewDepartureErrorMessageP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class ReviewDepartureErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
       ie056MessageData: IE056MessageData,
       lrn: String
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewDepartureErrorMessageP5ViewModel] = {
+    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewDepartureErrorsP5ViewModel] = {
       val helper = new RejectionMessageP5MessageHelper(ie056MessageData, referenceDataService)
 
       val multipleErrors = ie056MessageData.functionalErrors.length > 1
@@ -72,7 +72,7 @@ object ReviewDepartureErrorMessageP5ViewModel {
       Future
         .sequence(sections)
         .map(
-          sec => ReviewDepartureErrorMessageP5ViewModel(sec, lrn, multipleErrors)
+          sec => ReviewDepartureErrorsP5ViewModel(sec, lrn, multipleErrors)
         )
 
     }

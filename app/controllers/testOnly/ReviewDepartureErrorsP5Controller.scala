@@ -21,7 +21,7 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.ReviewDepartureErrorMessageP5ViewModel.ReviewDepartureErrorMessageP5ViewModelProvider
+import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
 import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
 import javax.inject.Inject
@@ -32,7 +32,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
   identify: IdentifierAction,
   rejectionMessageAction: RejectionMessageActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: ReviewDepartureErrorMessageP5ViewModelProvider,
+  viewModelProvider: ReviewDepartureErrorsP5ViewModelProvider,
   view: ReviewDepartureErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)

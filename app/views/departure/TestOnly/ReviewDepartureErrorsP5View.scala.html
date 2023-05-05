@@ -16,7 +16,7 @@
 
 @import views.html.components.{Button, Heading, AnswerSections}
 @import config.FrontendAppConfig
-@import viewModels.P5.departure.ReviewDepartureErrorMessageP5ViewModel
+@import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 
 @this(
 mainTemplate: MainTemplate,
@@ -26,7 +26,7 @@ button: Button,
 formHelper: FormWithCSRF
 )
 
-@(rejectionMessageP5ViewModel: ReviewDepartureErrorMessageP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,
