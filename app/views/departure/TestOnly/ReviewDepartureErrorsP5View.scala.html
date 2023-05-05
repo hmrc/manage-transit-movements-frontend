@@ -34,8 +34,7 @@ formHelper: FormWithCSRF
     ) {
 
         @heading(
-            heading = rejectionMessageP5ViewModel.heading,
-            caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
+            heading = rejectionMessageP5ViewModel.heading
         )
 
         <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1Prefix</p>

@@ -44,8 +44,6 @@ class ReviewDepartureErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours wit
 
   behave like pageWithBackLink()
 
-  behave like pageWithSectionCaption(s"LRN: $lrn")
-
   behave like pageWithHeading()
 
   behave like pageWithSummaryLists()
