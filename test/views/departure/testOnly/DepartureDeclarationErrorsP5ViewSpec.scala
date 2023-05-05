@@ -18,7 +18,6 @@ package views.departure.testOnly
 
 import generators.Generators
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
@@ -29,7 +28,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   override val prefix: String = "departure.declaration.errors.message"
   val lrnString               = "LRNAB123"
 
-  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString)
+  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString, true)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
@@ -52,7 +51,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1",
-      s"There are a number of errors in departure declaration $lrnString."
+      s"There are one or more errors in departure declaration $lrnString that cannot be amended."
     )
   }
 

@@ -16,22 +16,19 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.IE056MessageData
 import play.api.i18n.Messages
-import services.ReferenceDataService
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.RejectionMessageP5MessageHelper
-import viewModels.sections.Section
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-
-case class DepartureDeclarationErrorsP5ViewModel(lrn: String) {
+case class DepartureDeclarationErrorsP5ViewModel(lrn: String, noErrors: Boolean) {
   def title(implicit messages: Messages): String = messages("departure.declaration.errors.message.title")
 
   def heading(implicit messages: Messages): String = messages("departure.declaration.errors.message.heading")
 
-  def paragraph1(implicit messages: Messages): String = messages("departure.declaration.errors.message.elevenpluserrors", lrn)
+  def paragraph1(implicit messages: Messages): String =
+    if (noErrors) {
+      messages("departure.declaration.errors.message.noerrors", lrn)
+    } else {
+      messages("departure.declaration.errors.message.elevenpluserrors", lrn)
+    }
 
   def paragraph2(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph2")
 
@@ -46,11 +43,7 @@ case class DepartureDeclarationErrorsP5ViewModel(lrn: String) {
 object DepartureDeclarationErrorsP5ViewModel {
 
   class DepartureDeclarationErrorsP5ViewModelProvider {
-
-    def apply(
-      lrn: String
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): DepartureDeclarationErrorsP5ViewModel =
-      DepartureDeclarationErrorsP5ViewModel(lrn)
+    def apply(lrn: String, noErrors: Boolean): DepartureDeclarationErrorsP5ViewModel = DepartureDeclarationErrorsP5ViewModel(lrn, noErrors)
 
   }
 }

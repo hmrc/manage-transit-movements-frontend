@@ -21,25 +21,31 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel.DepartureDeclarationErrorsP5ViewModelProvider
-import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
-import views.html.departure.TestOnly.{DepartureDeclarationErrorsP5View, RejectionMessageP5View}
+import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel._
+import views.html.departure.TestOnly.DepartureDeclarationErrorsP5View
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DepartureDeclarationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
+  rejectionMessageAction: RejectionMessageActionProvider,
   viewModelProvider: DepartureDeclarationErrorsP5ViewModelProvider,
   view: DepartureDeclarationErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(lrn: String): Action[AnyContent] = (Action andThen identify) {
+  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)) {
     implicit request =>
-      Ok(view(viewModelProvider.apply(lrn)))
+      val noErrors   = if (request.ie056MessageData.functionalErrors.isEmpty) true else false
+      val moreErrors = if (request.ie056MessageData.functionalErrors.size > config.maxErrorsForAmendableDeclaration) true else false
+      if (noErrors || moreErrors) {
+        Ok(view(viewModelProvider.apply(request.lrn, noErrors)))
+      } else {
+        Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+      }
   }
 }

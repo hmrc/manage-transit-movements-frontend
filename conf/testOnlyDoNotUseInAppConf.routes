@@ -56,8 +56,9 @@ GET         /manage-transit-movements/test-only/goods-under-control-index/:depar
 GET         /manage-transit-movements/test-only/goods-under-control/:departureId            controllers.testOnly.GoodsUnderControlP5Controller.noRequestedDocuments(departureId: String)
 GET         /manage-transit-movements/test-only/goods-under-control-document-requested/:departureId   controllers.testOnly.GoodsUnderControlP5Controller.requestedDocuments(departureId: String)
 
-GET        /manage-transit-movements/test-only/amend-departure-declaration-errors/:departureId                                 controllers.testOnly.RejectionMessageP5Controller.onPageLoad(departureId: String)
-GET         /manage-transit-movements/test-only/departure-declaration-errors/:lrn                                                   controllers.testOnly.DepartureDeclarationErrorsP5Controller.onPageLoad(lrn: String)
+GET        /manage-transit-movements/test-only/amend-departure-declaration-errors/:departureId  controllers.testOnly.RejectionMessageP5Controller.onPageLoad(departureId: String)
+GET         /manage-transit-movements/test-only/departure-declaration-errors/:departureId    controllers.testOnly.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String)
+
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                            controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()
 

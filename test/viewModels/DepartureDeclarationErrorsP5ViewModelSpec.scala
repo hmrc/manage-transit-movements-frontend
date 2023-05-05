@@ -48,12 +48,41 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
 
     val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "Codelist violation")
 
-    "when there is one error" - {
+    "when there is no error" - {
 
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new DepartureDeclarationErrorsP5ViewModelProvider()
-      val result            = viewModelProvider.apply(lrnString)
+      val result            = viewModelProvider.apply(lrnString, true)
+
+      "must return correct title" in {
+        result.title mustBe "Declaration errors"
+      }
+      "must return correct heading" in {
+        result.heading mustBe "Declaration errors"
+      }
+      "must return correct paragraph 1" in {
+        result.paragraph1 mustBe s"There are one or more errors in departure declaration $lrnString that cannot be amended."
+      }
+      "must return correct paragraph 2" in {
+        result.paragraph2 mustBe s"Make/create a new departure declaration with the right information."
+      }
+      "must return correct paragraph 3 prefix, link and suffix" in {
+        result.paragraph3Prefix mustBe "Contact the"
+        result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
+        result.paragraph3Suffix mustBe "for help understanding the errors (opens in a new tab)."
+      }
+      "must return correct hyperlink text" in {
+        result.hyperlink mustBe "create another departure declaration"
+      }
+    }
+
+    "when there is more than 10 errors" - {
+
+      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+
+      val viewModelProvider = new DepartureDeclarationErrorsP5ViewModelProvider()
+      val result            = viewModelProvider.apply(lrnString, false)
 
       "must return correct title" in {
         result.title mustBe "Declaration errors"
