@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import config.FrontendAppConfig
+import connectors.DepartureCacheConnector
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,6 +34,7 @@ class RejectionMessageP5Controller @Inject() (
   rejectionMessageAction: RejectionMessageActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
+  cacheConnector: DepartureCacheConnector,
   view: RejectionMessageP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
@@ -51,4 +53,29 @@ class RejectionMessageP5Controller @Inject() (
         ) // TODO: Redirect to generic error page with link back to dashboard?
       }
   }
+
+  def onAmend(): Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      val lrn = "12345"
+      val xPaths = Seq(
+        "/CC015C/Authorisation/errorPath",
+        "/CC015C/Guarantee/errorPath",
+        "/CC015C/CustomsOfficeOfExitForTransitDeclared/errorPath",
+        "/CC015C/Consignment/errorPath",
+        "/CC015C/TransitOperation/errorPath"
+      )
+      if (xPaths.nonEmpty) {
+        cacheConnector.handleErrors(lrn, xPaths).map {
+          case true =>
+            Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          // Redirect to departures frontend on success}
+          case false =>
+            Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+        }
+      } else {
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())) //TODO: If no errors present redirect someone better
+      }
+
+  }
+
 }
