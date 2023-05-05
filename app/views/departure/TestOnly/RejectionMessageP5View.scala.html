@@ -48,8 +48,9 @@ formHelper: FormWithCSRF
         <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
 
     @button(
+        attributes = Map("id" -> "submit"),
         messageKey = messages("site.amendErrors"),
-        href = None
+        href = Some(controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureId).url)
     )
 
     <p id="create-another-declaration" class="govuk-body">Or <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>

@@ -112,6 +112,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   val phase5DepartureEnabled: Boolean = phase5Switch.Departures.enabled
   val phase5ArrivalEnabled: Boolean   = phase5Switch.Arrivals.enabled
 
+  def departureFrontendTaskListUrl(lrn: String)                     = s"$departureFrontendUrl/$lrn/task-list"
   def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
 

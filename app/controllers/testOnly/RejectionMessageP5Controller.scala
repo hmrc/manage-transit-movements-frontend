@@ -54,28 +54,19 @@ class RejectionMessageP5Controller @Inject() (
       }
   }
 
-  def onAmend(): Action[AnyContent] = (Action andThen identify).async {
+  def onAmend(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
-      val lrn = "12345"
-      val xPaths = Seq(
-        "/CC015C/Authorisation/errorPath",
-        "/CC015C/Guarantee/errorPath",
-        "/CC015C/CustomsOfficeOfExitForTransitDeclared/errorPath",
-        "/CC015C/Consignment/errorPath",
-        "/CC015C/TransitOperation/errorPath"
-      )
-      if (xPaths.nonEmpty) {
-        cacheConnector.handleErrors(lrn, xPaths).map {
+      val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
+      if (request.isDeclarationAmendable && xPaths.nonEmpty) {
+        cacheConnector.handleErrors(request.lrn, xPaths).map {
           case true =>
-            Redirect(controllers.routes.SessionExpiredController.onPageLoad())
-          // Redirect to departures frontend on success}
+            Redirect(config.departureFrontendTaskListUrl(request.lrn))
           case false =>
-            Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+            Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
       } else {
         Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())) //TODO: If no errors present redirect someone better
       }
-
   }
 
 }
