@@ -39,8 +39,6 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
 
   behave like pageWithBackLink()
 
-  behave like pageWithSectionCaption(s"LRN: $lrnString")
-
   behave like pageWithHeading()
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
@@ -68,7 +66,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   }
 
   "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-declaration", "create another departure declaration")
+    assertSpecificElementContainsText("create-another-declaration", "Create another departure declaration")
   }
 
   behave like pageWithLink(
@@ -79,7 +77,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
 
   behave like pageWithLink(
     "departure-link",
-    "create another departure declaration",
+    "Create another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
 

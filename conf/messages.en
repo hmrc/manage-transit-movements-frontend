@@ -403,4 +403,4 @@ departure.declaration.errors.message.paragraph2 = Make/create a new departure de
 departure.declaration.errors.message.paragraph3.prefix = Contact the
 departure.declaration.errors.message.paragraph3.link = New Computerised Transit System helpdesk
 departure.declaration.errors.message.paragraph3.suffix = for help understanding the errors (opens in a new tab).
-departure.declaration.errors.message.hyperlink = create another departure declaration
+departure.declaration.errors.message.hyperlink = Create another departure declaration
