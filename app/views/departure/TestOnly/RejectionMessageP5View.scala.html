@@ -37,7 +37,7 @@ formHelper: FormWithCSRF
 
         @heading(
             heading = rejectionMessageP5ViewModel.heading,
-            caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
+            caption = None
         )
 
         <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1Prefix</p>
@@ -45,7 +45,7 @@ formHelper: FormWithCSRF
 
         @answerSections(rejectionMessageP5ViewModel.sections)
 
-        <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
+        <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
 
     @button(
         messageKey = messages("site.amendErrors"),

@@ -18,13 +18,15 @@ package controllers.actions
 
 import cats.data.OptionT
 import controllers.routes
+import models.departureP5.DepartureMessageType.GoodsUnderControl
+import models.departureP5.IE060Data
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import services.{DepartureP5MessageService, ReferenceDataService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +47,7 @@ class GoodsUnderControlAction(departureId: String, departureP5MessageService: De
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (for {
-      ie060 <- OptionT(departureP5MessageService.getGoodsUnderControl(departureId))
+      ie060 <- OptionT(departureP5MessageService.getMessage[IE060Data](departureId, GoodsUnderControl))
       cust  <- OptionT.liftF(referenceDataService.getCustomsOfficeByCode(code = ie060.data.CustomsOfficeOfDeparture.referenceNumber))
     } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, cust))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
