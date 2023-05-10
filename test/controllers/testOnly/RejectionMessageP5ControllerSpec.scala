@@ -126,7 +126,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
     "onAmend" - {
 
-      "must redirect to session expired when declaration is not amendable" in {
+      "must redirect to technical difficulties when declaration is not amendable" in {
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
@@ -145,11 +145,11 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url // TODO: Change to generic error page
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
 
       }
 
-      "must redirect to session expired when there are no errors" in {
+      "must redirect to technical difficulties when there are no errors" in {
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
@@ -168,7 +168,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url // TODO: Change to generic error page
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
 
       }
 
@@ -195,6 +195,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         redirectLocation(result).value mustEqual frontendAppConfig.departureFrontendTaskListUrl("LRNAB123")
 
       }
+
       "must redirect to technical difficulties on failure of handleErrors" in {
 
         val message: IE056Data = IE056Data(

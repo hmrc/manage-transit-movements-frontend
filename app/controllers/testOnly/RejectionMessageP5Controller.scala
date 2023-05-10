@@ -65,7 +65,7 @@ class RejectionMessageP5Controller @Inject() (
             Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
       } else {
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())) //TODO: If no errors present redirect someone better
+        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
       }
   }
 
