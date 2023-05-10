@@ -25,7 +25,7 @@ import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureE
 import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ReviewDepartureErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -41,13 +41,9 @@ class ReviewDepartureErrorsP5Controller @Inject() (
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
-      if (request.ie056MessageData.functionalErrors.isEmpty || (request.ie056MessageData.functionalErrors.size > config.maxErrorsForAmendableDeclaration)) {
-        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
-      } else {
-        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
-        rejectionMessageP5ViewModel.map(
-          viewModel => Ok(view(viewModel, departureId))
-        )
-      }
+      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
+      rejectionMessageP5ViewModel.map(
+        viewModel => Ok(view(viewModel, departureId))
+      )
   }
 }
