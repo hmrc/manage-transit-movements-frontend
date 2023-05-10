@@ -25,7 +25,7 @@ import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureE
 import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ReviewDepartureErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -33,16 +33,21 @@ class ReviewDepartureErrorsP5Controller @Inject() (
   rejectionMessageAction: RejectionMessageActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: ReviewDepartureErrorsP5ViewModelProvider,
-  view: ReviewDepartureErrorsP5View
+  view: ReviewDepartureErrorsP5View,
+  departureDeclarationErrorsP5Controller: DepartureDeclarationErrorsP5Controller
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
-      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
-      rejectionMessageP5ViewModel.map(
-        viewModel => Ok(view(viewModel, departureId))
-      )
+      if (request.ie056MessageData.functionalErrors.isEmpty || (request.ie056MessageData.functionalErrors.size > config.maxErrorsForAmendableDeclaration)) {
+        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+      } else {
+        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
+        rejectionMessageP5ViewModel.map(
+          viewModel => Ok(view(viewModel, departureId))
+        )
+      }
   }
 }
