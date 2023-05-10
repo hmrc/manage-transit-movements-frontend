@@ -33,8 +33,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
   rejectionMessageAction: RejectionMessageActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: ReviewDepartureErrorsP5ViewModelProvider,
-  view: ReviewDepartureErrorsP5View,
-  departureDeclarationErrorsP5Controller: DepartureDeclarationErrorsP5Controller
+  view: ReviewDepartureErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
