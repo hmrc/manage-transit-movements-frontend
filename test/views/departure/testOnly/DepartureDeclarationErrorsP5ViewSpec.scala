@@ -18,45 +18,28 @@ package views.departure.testOnly
 
 import generators.Generators
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewModels.P5.departure.RejectionMessageP5ViewModel
+import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.departure.TestOnly.RejectionMessageP5View
+import views.html.departure.TestOnly.DepartureDeclarationErrorsP5View
 
-class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
-  override val prefix: String = "departure.ie056.message"
+  override val prefix: String = "departure.declaration.errors.message"
+  val lrnString               = "LRNAB123"
 
-  private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, lrn.toString, false)
+  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString, true)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[RejectionMessageP5View]
-      .apply(rejectionMessageP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
-
-  override def summaryLists: Seq[SummaryList] = sections.map(
-    section => SummaryList(section.rows)
-  )
+      .instanceOf[DepartureDeclarationErrorsP5View]
+      .apply(departureDeclarationErrorsP5ViewModel)(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 
   behave like pageWithBackLink()
 
   behave like pageWithHeading()
-
-  behave like pageWithSummaryLists()
-
-  behave like pageWithoutFormAction()
-
-  behave like pageWithSubmitButton("Amend errors")
-
-  "must render section titles when rows are non-empty" - {
-    sections.foreach(_.sectionTitle.map {
-      sectionTitle =>
-        behave like pageWithContent("h2", sectionTitle)
-    })
-  }
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
@@ -65,19 +48,15 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
-      "paragraph-1-prefix",
-      s"There is a problem with departure declaration $lrn."
-    )
-    assertSpecificElementContainsText(
-      "paragraph-1-suffix",
-      "Amend the error and resend the declaration."
+      "paragraph-1",
+      s"There are one or more errors in departure declaration $lrnString that cannot be amended."
     )
   }
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
       "paragraph-2",
-      "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
+      "Make/create a new departure declaration with the right information."
     )
     assertSpecificElementContainsText(
       "helpdesk-link",
@@ -87,7 +66,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
   }
 
   "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-declaration", "Or create another departure declaration")
+    assertSpecificElementContainsText("create-another-declaration", "Create another departure declaration")
   }
 
   behave like pageWithLink(
@@ -98,7 +77,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   behave like pageWithLink(
     "departure-link",
-    "create another departure declaration",
+    "Create another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
 

@@ -49,7 +49,7 @@ class RejectionMessageAction(departureId: String, departureP5MessageService: Dep
 
     (for {
       ie056 <- OptionT(departureP5MessageService.getMessage[IE056Data](departureId, RejectedByOfficeOfDeparture))
-      lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId))
+      lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId)) // TODO: Remove once LRN is exposed to use in metadata
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
       isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
     } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))

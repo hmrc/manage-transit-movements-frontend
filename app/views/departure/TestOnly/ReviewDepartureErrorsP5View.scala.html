@@ -15,11 +15,8 @@
  *@
 
 @import views.html.components.{Button, Heading, AnswerSections}
-@import controllers.routes._
-@import models.departureP5.IE056MessageData
-@import viewModels.P5.departure.RejectionMessageP5ViewModel
-@import viewModels.P5.departure.RejectionMessageP5ViewModel._
 @import config.FrontendAppConfig
+@import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 
 @this(
 mainTemplate: MainTemplate,
@@ -28,7 +25,8 @@ answerSections: AnswerSections,
 button: Button,
 formHelper: FormWithCSRF
 )
-@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+
+@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,
@@ -36,8 +34,7 @@ formHelper: FormWithCSRF
     ) {
 
         @heading(
-            heading = rejectionMessageP5ViewModel.heading,
-            caption = None
+            heading = rejectionMessageP5ViewModel.heading
         )
 
         <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1Prefix</p>
@@ -47,13 +44,7 @@ formHelper: FormWithCSRF
 
         <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
 
-    @button(
-        attributes = Map("id" -> "submit"),
-        messageKey = messages("site.amendErrors"),
-        href = Some(controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureId).url)
-    )
-
-    <p id="create-another-declaration" class="govuk-body">Or <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
-
-
-    }
+        <p class="govuk-body">
+            <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a>
+        </p>
+}

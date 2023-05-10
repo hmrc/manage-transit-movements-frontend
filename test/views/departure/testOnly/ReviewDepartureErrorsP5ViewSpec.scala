@@ -19,21 +19,22 @@ package views.departure.testOnly
 import generators.Generators
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewModels.P5.departure.RejectionMessageP5ViewModel
+import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.departure.TestOnly.RejectionMessageP5View
+import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
-class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class ReviewDepartureErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
-  override val prefix: String = "departure.ie056.message"
+  override val prefix: String = "departure.ie056.review.message"
 
-  private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, lrn.toString, false)
+  private val reviewRejectionMessageP5ViewModel =
+    new ReviewDepartureErrorsP5ViewModel(sections, lrn.toString, false)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[RejectionMessageP5View]
-      .apply(rejectionMessageP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
+      .instanceOf[ReviewDepartureErrorsP5View]
+      .apply(reviewRejectionMessageP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)
@@ -49,7 +50,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   behave like pageWithoutFormAction()
 
-  behave like pageWithSubmitButton("Amend errors")
+  behave like pageWithoutSubmitButton()
 
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
@@ -70,7 +71,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
     )
     assertSpecificElementContainsText(
       "paragraph-1-suffix",
-      "Amend the error and resend the declaration."
+      "Review the error and make/create a new departure declaration with the right information."
     )
   }
 
@@ -86,10 +87,6 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   }
 
-  "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-declaration", "Or create another departure declaration")
-  }
-
   behave like pageWithLink(
     "helpdesk-link",
     "New Computerised Transit System helpdesk",
@@ -98,7 +95,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   behave like pageWithLink(
     "departure-link",
-    "create another departure declaration",
+    "Create another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
 
