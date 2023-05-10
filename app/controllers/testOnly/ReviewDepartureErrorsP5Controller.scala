@@ -21,34 +21,28 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
-import views.html.departure.TestOnly.RejectionMessageP5View
+import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
+import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class RejectionMessageP5Controller @Inject() (
+class ReviewDepartureErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   rejectionMessageAction: RejectionMessageActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: RejectionMessageP5ViewModelProvider,
-  view: RejectionMessageP5View
+  viewModelProvider: ReviewDepartureErrorsP5ViewModelProvider,
+  view: ReviewDepartureErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
-      if (request.isDeclarationAmendable) {
-        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
-        rejectionMessageP5ViewModel.map(
-          vmp => Ok(view(vmp, departureId))
-        )
-      } else {
-        Future.successful(
-          Redirect(controllers.routes.SessionExpiredController.onPageLoad())
-        )
-      }
+      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
+      rejectionMessageP5ViewModel.map(
+        viewModel => Ok(view(viewModel, departureId))
+      )
   }
 }
