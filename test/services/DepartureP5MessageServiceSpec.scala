@@ -24,7 +24,7 @@ import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -214,9 +214,9 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
     }
 
-    "getGoodsUnderControlMessage" - {
+    "getMessage" - {
 
-      "must return a MessageMetaData when given Departure Id" in {
+      "must return an IE060Data when given Departure Id" in {
 
         val messages = Messages(
           List(
@@ -246,6 +246,36 @@ class DepartureP5MessageServiceSpec extends SpecBase {
         when(mockMovementConnector.getSpecificMessage[IE060Data](any())(any(), any(), any())).thenReturn(Future.successful(ie060Data))
 
         departureP5MessageService.getMessage[IE060Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie060Data)
+      }
+
+      "must return an IE056Data when given Departure Id" in {
+
+        val messages = Messages(
+          List(
+            MessageMetaData(
+              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              DepartureMessageType.DepartureNotification,
+              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
+            ),
+            MessageMetaData(
+              LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              DepartureMessageType.GoodsUnderControl,
+              "movements/departures/6365135ba5e821ee/message/634982098f02f00a"
+            )
+          )
+        )
+
+        val ie056Data: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperationIE056(Some("CD3232"), None),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+
+        when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
+        when(mockMovementConnector.getSpecificMessage[IE056Data](any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
+
+        departureP5MessageService.getMessage[IE056Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie056Data)
       }
     }
 
