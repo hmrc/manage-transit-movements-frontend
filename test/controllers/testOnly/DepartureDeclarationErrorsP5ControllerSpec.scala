@@ -137,7 +137,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
         view(departureDeclarationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
     }
 
-    "must redirect to session expired when functionalErrors is between 1 to 10" in {
+    "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
@@ -156,7 +156,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url // TODO: Change to generic error page
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
 
     }
   }
