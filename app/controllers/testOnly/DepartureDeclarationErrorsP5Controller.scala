@@ -43,7 +43,7 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
       if (request.ie056MessageData.functionalErrors.isEmpty || (request.ie056MessageData.functionalErrors.size > config.maxErrorsForAmendableDeclaration)) {
         Ok(view(viewModelProvider.apply(request.lrn, request.ie056MessageData.functionalErrors.isEmpty)))
       } else {
-        Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+        Redirect(controllers.routes.ErrorController.technicalDifficulties())
       }
   }
 }
