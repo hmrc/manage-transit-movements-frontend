@@ -35,14 +35,13 @@ class DraftLockedViewSpec extends ViewBehaviours {
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p",
-                              "Another person from your organisation is currently working on this declaration. You cannot delete it until they’re finished."
+  behave like pageWithContent(
+    "p",
+    "Another person from your organisation is currently working on this declaration. You cannot delete it until they’re finished."
   )
 
-  s"must render button" in {
-    val button = getElementByClass(doc, "govuk-button")
-    assertElementContainsText(button, "Return to drafts")
-    assertElementContainsHref(button, controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
+  behave like pageWithButton("Return to drafts") {
+    assertElementContainsHref(_, controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
   }
 
 }
