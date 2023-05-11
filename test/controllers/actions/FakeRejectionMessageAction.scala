@@ -31,6 +31,7 @@ class FakeRejectionMessageAction(departureId: String, departureP5MessageService:
   val message: IE056Data = IE056Data(
     IE056MessageData(
       TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+      CustomsOfficeOfDeparture("AB123"),
       Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
     )
   )

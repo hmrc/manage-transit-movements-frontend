@@ -40,7 +40,7 @@ case class CancellationNotificationErrorsP5ViewModel(
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {
       case Some(CustomsOffice(id, _, _)) => customsOfficeNameAndNumber(messages, id)
-      case _ => messages("cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceId)
+      case _                             => messages("cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceId)
     }
 
   private def customsOfficeNameAndNumber(messages: Messages, id: String): String =
