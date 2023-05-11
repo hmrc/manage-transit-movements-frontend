@@ -21,8 +21,9 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel.ReviewCancellationErrorsP5ViewModelProvider
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
-import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
+import views.html.departure.TestOnly.{ReviewCancellationErrorsP5View, ReviewDepartureErrorsP5View}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -32,8 +33,8 @@ class ReviewCancellationErrorsP5Controller @Inject() (
   identify: IdentifierAction,
   rejectionMessageAction: RejectionMessageActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: ReviewDepartureErrorsP5ViewModelProvider,
-  view: ReviewDepartureErrorsP5View
+  viewModelProvider: ReviewCancellationErrorsP5ViewModelProvider,
+  view: ReviewCancellationErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {

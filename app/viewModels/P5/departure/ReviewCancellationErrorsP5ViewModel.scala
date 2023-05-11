@@ -28,32 +28,34 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class ReviewCancellationErrorsP5ViewModel(sections: Seq[Section], lrn: String, multipleErrors: Boolean) {
 
-  def title(implicit messages: Messages): String = messages("departure.ie056.review.message.title")
+  def title(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.title")
 
-  def heading(implicit messages: Messages): String = messages("departure.ie056.review.message.heading")
+  def heading(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.heading")
 
-  def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.review.message.paragraph1.prefix", lrn)
+  def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.paragraph1.prefix", lrn)
 
   def paragraph1Suffix(implicit messages: Messages): String = if (multipleErrors) {
     messages(
-      "departure.ie056.review.message.paragraph1.plural.suffix"
+      "departure.ie056.review.cancellation.message.paragraph1.plural.suffix"
     )
   } else {
     messages(
-      "departure.ie056.review.message.paragraph1.singular.suffix"
+      "departure.ie056.review.cancellation.message.paragraph1.singular.suffix"
     )
   }
 
-  def paragraph2Prefix(implicit messages: Messages): String = messages("departure.ie056.review.message.paragraph2.prefix")
-  def paragraph2Link(implicit messages: Messages): String   = messages("departure.ie056.review.message.paragraph2.link")
+  def paragraph2Prefix(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.paragraph2.prefix")
+  def paragraph2Link(implicit messages: Messages): String   = messages("departure.ie056.review.cancellation.message.paragraph2.link")
 
   def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors) {
-    messages("departure.ie056.review.message.paragraph2.plural.suffix")
+    messages("departure.ie056.review.cancellation.message.paragraph2.plural.suffix")
   } else {
-    messages("departure.ie056.review.message.paragraph2.singular.suffix")
+    messages("departure.ie056.review.cancellation.message.paragraph2.singular.suffix")
   }
 
-  def hyperlink(implicit messages: Messages): String = messages("departure.ie056.review.message.hyperlink")
+  def hyperlink(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.hyperlink")
+
+  val viewDeparturesLink: String = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
 
 }
 
