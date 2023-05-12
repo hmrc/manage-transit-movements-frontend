@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import config.FrontendAppConfig
+import connectors.DepartureCacheConnector
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,6 +34,7 @@ class RejectionMessageP5Controller @Inject() (
   rejectionMessageAction: RejectionMessageActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
+  cacheConnector: DepartureCacheConnector,
   view: RejectionMessageP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
@@ -51,4 +53,20 @@ class RejectionMessageP5Controller @Inject() (
         )
       }
   }
+
+  def onAmend(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
+    implicit request =>
+      val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
+      if (request.isDeclarationAmendable && xPaths.nonEmpty) {
+        cacheConnector.handleErrors(request.lrn, xPaths).map {
+          case true =>
+            Redirect(config.departureFrontendTaskListUrl(request.lrn))
+          case false =>
+            Redirect(controllers.routes.ErrorController.technicalDifficulties())
+        }
+      } else {
+        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+      }
+  }
+
 }
