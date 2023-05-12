@@ -35,8 +35,9 @@ class DraftLockedViewSpec extends ViewBehaviours {
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p",
-                              "Another person from your organisation is currently working on this declaration. You cannot delete it until they’re finished."
+  behave like pageWithContent(
+    "p",
+    "Another person from your organisation is currently working on this declaration. You cannot delete it until they’re finished."
   )
 
   behave like pageWithButton("Return to drafts") {

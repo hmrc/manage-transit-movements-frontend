@@ -18,6 +18,11 @@ site.amendErrors = Amend errors
 site.ascending = ascending
 site.descending = descending
 
+site.userResearch.h2 = NCTS Phase 5 coming soon. Help us improve it
+site.userResearch.yes = Sign up to our user research and we’ll pay you for your feedback (opens in new tab)
+site.userResearch.no = No thanks
+site.userResearch.no.hidden = No thanks. I do not want to take part in research
+
 viewAllMovements.link.title = View all movements
 search.results.singular = Showing {0} result matching {1}.
 search.results.plural = Showing {0} results matching {1}.
