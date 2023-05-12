@@ -145,7 +145,7 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
       assertElementDoesNotExist(doc, "submit")
     }
 
-  def pageWithButton(expectedText: String)(additionalAssertions: Element => Assertion*): Unit =
+  private def pageWithButton(doc: Document, expectedText: String)(additionalAssertions: Element => Assertion*): Unit =
     s"must render $expectedText button" in {
       val button = doc.getElementsByClass("govuk-button").toList.find(_.text() == expectedText).value
       additionalAssertions.map(_(button))
@@ -215,4 +215,7 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
     }
 
   def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").toList.map(_.text())
+
+  def pageWithButton(expectedText: String)(additionalAssertions: Element => Assertion*): Unit =
+    pageWithButton(doc, expectedText)(additionalAssertions: _*)
 }
