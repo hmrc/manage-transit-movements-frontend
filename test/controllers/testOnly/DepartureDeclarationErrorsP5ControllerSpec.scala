@@ -29,20 +29,17 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
-import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel.DepartureDeclarationErrorsP5ViewModelProvider
 import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
-import viewModels.sections.Section
 import views.html.departure.TestOnly.DepartureDeclarationErrorsP5View
 
 import scala.concurrent.Future
 
 class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockDepartureDeclarationErrorsP5ViewModelProvider = mock[DepartureDeclarationErrorsP5ViewModelProvider]
-  private val mockDepartureP5MessageService                     = mock[DepartureP5MessageService]
-  private val mockCacheService: DepartureCacheConnector         = mock[DepartureCacheConnector]
-  private val mockRejectionMessageActionProvider                = mock[RejectionMessageActionProvider]
-  lazy val departureDeclarationErrorsController: String         = controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5).url
+  private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
+  private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
+  private val mockRejectionMessageActionProvider        = mock[RejectionMessageActionProvider]
+  lazy val departureDeclarationErrorsController: String = controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5).url
 
   private val lrnString = "LRNAB123"
 

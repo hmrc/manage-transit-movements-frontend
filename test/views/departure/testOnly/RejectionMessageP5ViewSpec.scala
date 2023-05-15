@@ -49,7 +49,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   behave like pageWithoutFormAction()
 
-  behave like pageWithoutSubmitButton()
+  behave like pageWithSubmitButton("Amend errors")
 
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
