@@ -16,29 +16,28 @@
 
 package controllers.actions
 
-import connectors.DepartureCacheConnector
+import models.arrivalP5.{IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
-import models.requests.{DepartureRejectionMessageRequest, IdentifierRequest}
+import models.requests.{ArrivalRejectionMessageRequest, IdentifierRequest}
 import play.api.mvc.Result
-import services.DepartureP5MessageService
+import services.ArrivalP5MessageService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeDepartureRejectionMessageAction(
-  departureId: String,
-  departureP5MessageService: DepartureP5MessageService,
-  departureCacheConnector: DepartureCacheConnector
-) extends DepartureRejectionMessageAction(departureId, departureP5MessageService, departureCacheConnector) {
+class FakeArrivalRejectionMessageAction(
+  arrivalId: String,
+  arrivalP5MessageService: ArrivalP5MessageService
+) extends ArrivalRejectionMessageAction(arrivalId, arrivalP5MessageService) {
 
-  val message: IE056Data = IE056Data(
-    IE056MessageData(
-      TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+  val message: IE057Data = IE057Data(
+    IE057MessageData(
+      TransitOperationIE057("MRNCD3232"),
       Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
     )
   )
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, DepartureRejectionMessageRequest[A]]] =
-    Future.successful(Right(DepartureRejectionMessageRequest(request, "AB123", message.data, isDeclarationAmendable = true, lrn = "LRNAB123")))
+  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, ArrivalRejectionMessageRequest[A]]] =
+    Future.successful(Right(ArrivalRejectionMessageRequest(request, "MRNCD3232", message.data)))
 
 }

@@ -21,7 +21,7 @@ import connectors.DepartureCacheConnector
 import controllers.routes
 import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import models.departureP5.IE056Data
-import models.requests.{IdentifierRequest, RejectionMessageRequest}
+import models.requests.{DepartureRejectionMessageRequest, IdentifierRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import services.DepartureP5MessageService
@@ -35,7 +35,7 @@ class DepartureRejectionMessageActionProvider @Inject() (departureP5MessageServi
   ec: ExecutionContext
 ) {
 
-  def apply(departureId: String): ActionRefiner[IdentifierRequest, RejectionMessageRequest] =
+  def apply(departureId: String): ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] =
     new DepartureRejectionMessageAction(departureId, departureP5MessageService, cacheConnector)
 }
 
@@ -44,9 +44,9 @@ class DepartureRejectionMessageAction(
   departureP5MessageService: DepartureP5MessageService,
   cacheConnector: DepartureCacheConnector
 )(implicit protected val executionContext: ExecutionContext)
-    extends ActionRefiner[IdentifierRequest, RejectionMessageRequest] {
+    extends ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] {
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, RejectionMessageRequest[A]]] = {
+  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, DepartureRejectionMessageRequest[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
@@ -55,7 +55,7 @@ class DepartureRejectionMessageAction(
       lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId)) // TODO: Remove once LRN is exposed to use in metadata
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
       isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
-    } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))
+    } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
 

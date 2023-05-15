@@ -19,7 +19,7 @@ package models.requests
 import models.departureP5.IE056MessageData
 import play.api.mvc.{Request, WrappedRequest}
 
-case class RejectionMessageRequest[A](
+case class DepartureRejectionMessageRequest[A](
   request: Request[A],
   eoriNumber: String,
   ie056MessageData: IE056MessageData,
