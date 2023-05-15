@@ -267,14 +267,14 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             }
             """)
 
-        val expectedResult = Messages(
+        val expectedResult = DepartureMessages(
           List(
-            MessageMetaData(
+            DepartureMessageMetaData(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.DepartureNotification,
               "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
             ),
-            MessageMetaData(
+            DepartureMessageMetaData(
               LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.AllocatedMRN,
               "movements/departures/6365135ba5e821ee/message/634982098f02f00a"
@@ -297,40 +297,40 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       "must return an IE060 Message" in {
 
         val IE060 = Json.parse("""{
-                                                        "n1:CC060C":
-                                                        {
-                                                        "TransitOperation":
-                                                        { "LRN": "AB123",
-                                                                "MRN": "CD3232",
-                                                                "controlNotificationDateAndTime": "2014-06-09T16:15:04+01:00",
-                                                               "notificationType": "notification1"
-                                                           },
-                                                            "CustomsOfficeOfDeparture": {
-                                                                "referenceNumber": "22323323"
-                                                            },
-                                                            "TypeOfControls": [
-                                                               {
-                                                                    "sequenceNumber": "1",
-                                                                    "type": "type1",
-                                                                    "text": "text1"
-                                                                },
-                                                                {
-                                                                    "sequenceNumber": "2",
-                                                                    "type": "type2"
-                                                                }
-                                                            ],
-                                                            "RequestedDocument": [
-                                                                {
-                                                                    "sequenceNumber": "3",
-                                                                    "documentType": "doc1",
-                                                                    "description": "desc1"
-                                                                },
-                                                                {
-                                                                    "sequenceNumber": "4",
-                                                                    "documentType": "doc2"
-                                                                }
-                                                           ]
-                                                        }
+                                  "n1:CC060C":
+                                  {
+                                  "TransitOperation":
+                                  { "LRN": "AB123",
+                                          "MRN": "CD3232",
+                                          "controlNotificationDateAndTime": "2014-06-09T16:15:04+01:00",
+                                         "notificationType": "notification1"
+                                     },
+                                      "CustomsOfficeOfDeparture": {
+                                          "referenceNumber": "22323323"
+                                      },
+                                      "TypeOfControls": [
+                                         {
+                                              "sequenceNumber": "1",
+                                              "type": "type1",
+                                              "text": "text1"
+                                          },
+                                          {
+                                              "sequenceNumber": "2",
+                                              "type": "type2"
+                                          }
+                                      ],
+                                      "RequestedDocument": [
+                                          {
+                                              "sequenceNumber": "3",
+                                              "documentType": "doc1",
+                                              "description": "desc1"
+                                          },
+                                          {
+                                              "sequenceNumber": "4",
+                                              "documentType": "doc2"
+                                          }
+                                     ]
+                                  }
                                 }""")
 
         val responseJson: JsValue = Json.parse(s"""

@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package models.departureP5
+package models.arrivalP5
 
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.{__, Reads}
 
-case class Messages(messages: List[MessageMetaData])
+import java.time.LocalDateTime
 
-object Messages {
-  implicit val reads: Reads[Messages] = Json.reads[Messages]
+case class ArrivalMessageMetaData(received: LocalDateTime, messageType: ArrivalMessageType, path: String)
+
+object ArrivalMessageMetaData {
+
+  implicit lazy val reads: Reads[ArrivalMessageMetaData] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "received").read[LocalDateTime] and
+        (__ \ "type").read[ArrivalMessageType] and
+        (__ \ "_links" \ "self" \ "href").read[String].map(_.replace("/customs/transits/", ""))
+    )(ArrivalMessageMetaData.apply _)
+  }
 }

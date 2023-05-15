@@ -58,16 +58,18 @@ class DepartureP5MessageService @Inject() (
   private def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String, typeOfMessage: T)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier
-  ): Future[Option[MessageMetaData]] =
+  ): Future[Option[DepartureMessageMetaData]] =
     getMessageMetaData(departureId, typeOfMessage)
 
-  private def getDepartureNotificationMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[MessageMetaData]] =
+  private def getDepartureNotificationMetaData(
+    departureId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[DepartureMessageMetaData]] =
     getMessageMetaData(departureId, DepartureNotification)
 
   private def getMessageMetaData(departureId: String, messageType: DepartureMessageType)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier
-  ): Future[Option[MessageMetaData]] =
+  ): Future[Option[DepartureMessageMetaData]] =
     departureMovementP5Connector
       .getMessageMetaData(departureId)
       .map(
