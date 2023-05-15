@@ -31,17 +31,20 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RejectionMessageActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService, cacheConnector: DepartureCacheConnector)(implicit
+class DepartureRejectionMessageActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService, cacheConnector: DepartureCacheConnector)(implicit
   ec: ExecutionContext
 ) {
 
   def apply(departureId: String): ActionRefiner[IdentifierRequest, RejectionMessageRequest] =
-    new RejectionMessageAction(departureId, departureP5MessageService, cacheConnector)
+    new DepartureRejectionMessageAction(departureId, departureP5MessageService, cacheConnector)
 }
 
-class RejectionMessageAction(departureId: String, departureP5MessageService: DepartureP5MessageService, cacheConnector: DepartureCacheConnector)(implicit
-  protected val executionContext: ExecutionContext
-) extends ActionRefiner[IdentifierRequest, RejectionMessageRequest] {
+class DepartureRejectionMessageAction(
+  departureId: String,
+  departureP5MessageService: DepartureP5MessageService,
+  cacheConnector: DepartureCacheConnector
+)(implicit protected val executionContext: ExecutionContext)
+    extends ActionRefiner[IdentifierRequest, RejectionMessageRequest] {
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, RejectionMessageRequest[A]]] = {
 

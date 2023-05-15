@@ -25,8 +25,11 @@ import services.DepartureP5MessageService
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeRejectionMessageAction(departureId: String, departureP5MessageService: DepartureP5MessageService, departureCacheConnector: DepartureCacheConnector)
-    extends RejectionMessageAction(departureId, departureP5MessageService, departureCacheConnector) {
+class FakeDepartureRejectionMessageAction(
+  departureId: String,
+  departureP5MessageService: DepartureP5MessageService,
+  departureCacheConnector: DepartureCacheConnector
+) extends DepartureRejectionMessageAction(departureId, departureP5MessageService, departureCacheConnector) {
 
   val message: IE056Data = IE056Data(
     IE056MessageData(
