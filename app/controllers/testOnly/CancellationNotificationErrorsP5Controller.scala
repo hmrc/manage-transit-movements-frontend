@@ -23,9 +23,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel.CancellationNotificationErrorsP5ViewModelProvider
-import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel._
-import views.html.departure.TestOnly.{CancellationNotificationErrorsP5View, DepartureDeclarationErrorsP5View}
-
+import views.html.departure.TestOnly.CancellationNotificationErrorsP5View
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
