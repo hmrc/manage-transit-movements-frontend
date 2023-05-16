@@ -191,6 +191,7 @@ object DepartureStatusP5ViewModel {
         )
       )
   }
+
   // scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
@@ -204,8 +205,7 @@ object DepartureStatusP5ViewModel {
         case Some(DepartureNotification) =>
           if (isDeclarationAmendable) {
             ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
-          }
-          else if (xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration) {
+          } else if (xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration) {
             ("viewErrors", controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
             ("viewErrors", controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
@@ -232,6 +232,7 @@ object DepartureStatusP5ViewModel {
         )
       )
   }
+
   // scalastyle:on cyclomatic.complexity
   private def goodsUnderControl(departureId: String): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case GoodsUnderControl =>
