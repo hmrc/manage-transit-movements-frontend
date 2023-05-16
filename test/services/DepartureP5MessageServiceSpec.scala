@@ -100,7 +100,8 @@ class DepartureP5MessageServiceSpec extends SpecBase {
               departureMovements.departureMovements.head,
               messagesForMovement,
               lrnLocal.toString,
-              isDeclarationAmendable = false
+              isDeclarationAmendable = false,
+              xPaths = Seq.empty
             )
           )
 
@@ -180,7 +181,8 @@ class DepartureP5MessageServiceSpec extends SpecBase {
               departureMovements.departureMovements.head,
               messagesForMovement,
               lrnLocal.toString,
-              isDeclarationAmendable = isDeclarationAmendable
+              isDeclarationAmendable = isDeclarationAmendable,
+              xPaths = ie056.data.functionalErrors.map(_.errorPointer)
             )
           )
 

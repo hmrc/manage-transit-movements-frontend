@@ -20,5 +20,6 @@ case class DepartureMovementAndMessage(
   departureMovement: DepartureMovement,
   messagesForMovement: MessagesForDepartureMovement,
   localReferenceNumber: String,
-  isDeclarationAmendable: Boolean
+  isDeclarationAmendable: Boolean,
+  xPaths: Seq[String]
 )
