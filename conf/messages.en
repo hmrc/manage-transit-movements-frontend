@@ -18,6 +18,11 @@ site.amendErrors = Amend errors
 site.ascending = ascending
 site.descending = descending
 
+site.userResearch.h2 = NCTS Phase 5 coming soon. Help us improve it
+site.userResearch.yes = Sign up to our user research and we’ll pay you for your feedback (opens in new tab)
+site.userResearch.no = No thanks
+site.userResearch.no.hidden = No thanks. I do not want to take part in research
+
 viewAllMovements.link.title = View all movements
 search.results.singular = Showing {0} result matching {1}.
 search.results.plural = Showing {0} results matching {1}.
@@ -428,3 +433,13 @@ departure.declaration.errors.message.paragraph3.prefix = Contact the
 departure.declaration.errors.message.paragraph3.link = New Computerised Transit System helpdesk
 departure.declaration.errors.message.paragraph3.suffix = for help understanding the errors (opens in a new tab).
 departure.declaration.errors.message.hyperlink = Create another departure declaration
+
+cancellation.notification.errors.message.title   = Cancellation errors
+cancellation.notification.errors.message.heading = Cancellation errors
+cancellation.notification.errors.message.noerrors = There are one or more errors with the cancellation of departure declaration {0}.
+cancellation.notification.errors.message.elevenpluserrors = There are a number of errors with the cancellation of departure declaration {0}.
+cancellation.notification.errors.message.viewDepartureDeclarations = View departure declarations
+cancellation.notification.customsOfficeContact.telephoneAvailable = Try cancelling the declaration again. Or for more information, contact Customs at {0} on {1}.
+cancellation.notification.customsOfficeContact.telephoneNotAvailable = Try cancelling the declaration again. Or for more information, contact Customs at {0}.
+cancellation.notification.customsOfficeContact.teleAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0} on {1}.
+cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0}.

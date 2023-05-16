@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.timeoutdialog.TimeoutDialog
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.footer.{Footer, FooterItem, Meta}
 @import resources._
-@import views.html.components.FullWidthContent
+@import views.html.components.{FullWidthContent, UserResearchBanner}
 @import views.utils.ViewUtils._
 
 @this(
@@ -35,7 +35,8 @@
     govukBackLink: GovukBackLink,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     twoThirdsMainContent: TwoThirdsMainContent,
-    fullWidthContent: FullWidthContent
+    fullWidthContent: FullWidthContent,
+    userResearchBanner: UserResearchBanner
 )
 
 @(
@@ -69,16 +70,14 @@
 @hmrcLayout(
     pageTitle = Some(breadCrumbTitle(title, mainContent)),
     additionalHeadBlock = Some(hmrcInternalHead(
-        headBlock = Some(headScripts),
-        nonce = CSPNonce.get
+        headBlock = Some(headScripts)
     )),
-    userResearchBannerUrl = if (appConfig.showUserResearchBanner) Some(appConfig.userResearchUrl) else None,
+    additionalBannersBlock = if (appConfig.showUserResearchBanner) Some(userResearchBanner()) else None,
     serviceName = Some(messages("site.service_name")),
     serviceUrl = Some(routes.WhatDoYouWantToDoController.onPageLoad().url),
     signOutUrl = if (canSignOut) Some(appConfig.signOutUrl) else None,
     phaseBanner = Some(standardBetaBanner(url = appConfig.feedbackUrl)),
     backLinkUrl = if (showBackLink) Some("#") else None, // This is overridden in ctc.js
-    nonce = CSPNonce.get,
     additionalScriptsBlock = Some(javascripts()),
     mainContentLayout = if (fullWidth) Some(fullWidthContent(_)) else Some(twoThirdsMainContent(_))
 )(mainContentWithGetHelp)

@@ -44,6 +44,6 @@ object DepartureDeclarationErrorsP5ViewModel {
 
   class DepartureDeclarationErrorsP5ViewModelProvider {
     def apply(lrn: String, noErrors: Boolean): DepartureDeclarationErrorsP5ViewModel = DepartureDeclarationErrorsP5ViewModel(lrn, noErrors)
-
   }
+
 }

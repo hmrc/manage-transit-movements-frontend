@@ -17,56 +17,40 @@
 package controllers.testOnly
 
 import config.FrontendAppConfig
-import connectors.DepartureCacheConnector
+import connectors.ReferenceDataConnector
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
-import views.html.departure.TestOnly.RejectionMessageP5View
-
+import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel.CancellationNotificationErrorsP5ViewModelProvider
+import views.html.departure.TestOnly.CancellationNotificationErrorsP5View
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RejectionMessageP5Controller @Inject() (
+class CancellationNotificationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  rejectionMessageAction: RejectionMessageActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: RejectionMessageP5ViewModelProvider,
-  cacheConnector: DepartureCacheConnector,
-  view: RejectionMessageP5View
+  rejectionMessageAction: RejectionMessageActionProvider,
+  viewModelProvider: CancellationNotificationErrorsP5ViewModelProvider,
+  view: CancellationNotificationErrorsP5View,
+  referenceDataConnector: ReferenceDataConnector
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
-      if (request.isDeclarationAmendable) {
-        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
-        rejectionMessageP5ViewModel.map(
-          vmp => Ok(view(vmp, departureId))
-        )
-      } else {
-        Future.successful(
-          Redirect(controllers.routes.SessionExpiredController.onPageLoad())
-        )
-      }
-  }
+      val functionalErrors       = request.ie056MessageData.functionalErrors
+      val customsOfficeReference = request.ie056MessageData.customsOfficeOfDeparture.referenceNumber
 
-  def onAmend(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
-    implicit request =>
-      val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
-      if (request.isDeclarationAmendable && xPaths.nonEmpty) {
-        cacheConnector.handleErrors(request.lrn, xPaths).map {
-          case true =>
-            Redirect(config.departureFrontendTaskListUrl(request.lrn))
-          case false =>
-            Redirect(controllers.routes.ErrorController.technicalDifficulties())
+      if (functionalErrors.isEmpty || functionalErrors.size > config.maxErrorsForCancellationNotification) {
+        referenceDataConnector.getCustomsOffice(customsOfficeReference).map {
+          customsOffice =>
+            Ok(view(viewModelProvider.apply(request.lrn, functionalErrors.isEmpty, customsOfficeReference, customsOffice)))
         }
       } else {
         Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
       }
   }
-
 }

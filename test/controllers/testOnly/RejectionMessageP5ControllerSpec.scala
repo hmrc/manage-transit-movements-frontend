@@ -50,6 +50,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     )
 
   lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5).url
+  lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -74,6 +75,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
@@ -104,6 +106,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
@@ -121,6 +124,107 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url // TODO: Change to generic error page
 
+    }
+
+    "onAmend" - {
+
+      "must redirect to technical difficulties when declaration is not amendable" in {
+
+        val message: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            CustomsOfficeOfDeparture("12345"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+        when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
+        when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
+
+        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+
+        val request = FakeRequest(GET, rejectionMessageOnAmend)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+
+      }
+
+      "must redirect to technical difficulties when there are no errors" in {
+
+        val message: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            CustomsOfficeOfDeparture("12345"),
+            Seq.empty
+          )
+        )
+        when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
+        when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+
+        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+
+        val request = FakeRequest(GET, rejectionMessageOnAmend)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+
+      }
+
+      "must redirect to departure task-list on success of handleErrors" in {
+
+        val message: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            CustomsOfficeOfDeparture("12345"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+        when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
+        when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+        when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
+
+        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+
+        val request = FakeRequest(GET, rejectionMessageOnAmend)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual frontendAppConfig.departureFrontendTaskListUrl("LRNAB123")
+
+      }
+
+      "must redirect to technical difficulties on failure of handleErrors" in {
+
+        val message: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            CustomsOfficeOfDeparture("12345"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+        when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
+        when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+        when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(false))
+
+        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+
+        val request = FakeRequest(GET, rejectionMessageOnAmend)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+
+      }
     }
 
   }
