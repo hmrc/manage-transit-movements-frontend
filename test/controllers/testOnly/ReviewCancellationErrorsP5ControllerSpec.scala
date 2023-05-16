@@ -29,11 +29,10 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
+import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel.ReviewCancellationErrorsP5ViewModelProvider
-import viewModels.P5.departure.{ReviewCancellationErrorsP5ViewModel, ReviewDepartureErrorsP5ViewModel}
-import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
 import viewModels.sections.Section
-import views.html.departure.TestOnly.{ReviewCancellationErrorsP5View, ReviewDepartureErrorsP5View}
+import views.html.departure.TestOnly.ReviewCancellationErrorsP5View
 
 import scala.concurrent.Future
 
@@ -74,6 +73,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          CustomsOfficeOfDeparture("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
