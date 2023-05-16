@@ -96,7 +96,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
       val view = injector.instanceOf[CancellationNotificationErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(cancellationNotificationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
+        view(cancellationNotificationErrorsP5ViewModel)(request, messages).toString
     }
 
     "must return OK and the correct view for a GET when more than 10 Errors" in {
@@ -139,7 +139,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
       val view = injector.instanceOf[CancellationNotificationErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(cancellationNotificationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
+        view(cancellationNotificationErrorsP5ViewModel)(request, messages).toString
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {

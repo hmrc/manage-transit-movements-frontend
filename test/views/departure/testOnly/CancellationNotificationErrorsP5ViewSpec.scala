@@ -29,7 +29,7 @@ class CancellationNotificationErrorsP5ViewSpec extends ViewBehaviours {
   override def view: HtmlFormat.Appendable =
     injector
       .instanceOf[CancellationNotificationErrorsP5View]
-      .apply(cancellationNotificationErrorsP5ViewViewModel)(fakeRequest, messages, frontendAppConfig)
+      .apply(cancellationNotificationErrorsP5ViewViewModel)(fakeRequest, messages)
 
   override val prefix: String = "cancellation.notification.errors.message"
 
