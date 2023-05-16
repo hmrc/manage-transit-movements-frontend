@@ -192,6 +192,7 @@ object DepartureStatusP5ViewModel {
         )
       )
   }
+
   //scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
@@ -201,8 +202,6 @@ object DepartureStatusP5ViewModel {
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
 
     case RejectedByOfficeOfDeparture =>
-      val nonRejectedByOfficeOfDepartureMessages: List[DepartureMessage] = messages.filter(_.messageType != RejectedByOfficeOfDeparture)
-
       val (key, href) = messages.map(_.messageType) match {
         //TODO revisit when IE014 comes as tail
         case NonEmptyList(RejectedByOfficeOfDeparture, DepartureNotification :: _) if isDeclarationAmendable =>
@@ -222,12 +221,13 @@ object DepartureStatusP5ViewModel {
           ("", "")
       }
 
+      val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions = Seq(
           ViewMovementAction(
             href,
-            s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
+            keyFormatted
           )
         )
       )
