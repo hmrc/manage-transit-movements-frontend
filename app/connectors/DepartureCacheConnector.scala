@@ -37,4 +37,10 @@ class DepartureCacheConnector @Inject() (
 
     http.POST[Seq[String], Boolean](url, xPaths)
   }
+
+  def handleErrors(lrn: String, functionalErrors: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val url = s"$baseUrl/x-paths/$lrn/handle-errors"
+
+    http.POST[Seq[String], Boolean](url, functionalErrors)
+  }
 }
