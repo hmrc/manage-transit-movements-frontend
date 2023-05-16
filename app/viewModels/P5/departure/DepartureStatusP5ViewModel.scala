@@ -192,7 +192,6 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  // scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
     messagesForDepartureMovement: MessagesForDepartureMovement,
@@ -233,7 +232,6 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  // scalastyle:on cyclomatic.complexity
   private def goodsUnderControl(departureId: String): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
     case GoodsUnderControl =>
       DepartureStatusP5ViewModel(
