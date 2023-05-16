@@ -192,23 +192,36 @@ object DepartureStatusP5ViewModel {
         )
       )
   }
-
+  //scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
     messages: NonEmptyList[DepartureMessage],
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String]
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
+
     case RejectedByOfficeOfDeparture =>
+      val nonRejectedByOfficeOfDepartureMessages: List[DepartureMessage] = messages.filter(_.messageType != RejectedByOfficeOfDeparture)
+
       val (key, href) = messages.map(_.messageType) match {
         //TODO revisit when IE014 comes as tail
-        case NonEmptyList(RejectedByOfficeOfDeparture, _) if isDeclarationAmendable =>
+        case NonEmptyList(RejectedByOfficeOfDeparture, DepartureNotification :: _) if isDeclarationAmendable =>
           ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
-        case _ if xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration =>
+        case NonEmptyList(RejectedByOfficeOfDeparture, DepartureNotification :: _)
+            if xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration =>
           ("viewErrors", controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
-        case _ =>
+        case NonEmptyList(RejectedByOfficeOfDeparture, DepartureNotification :: _) if xPaths.nonEmpty =>
           ("viewErrors", controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
+
+        case NonEmptyList(RejectedByOfficeOfDeparture, CancellationRequested :: _)
+            if xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration =>
+          ("viewErrors", controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
+        case NonEmptyList(RejectedByOfficeOfDeparture, CancellationRequested :: _) if xPaths.nonEmpty =>
+          ("viewErrors", controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
+        case _ =>
+          ("", "")
       }
+
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions = Seq(
@@ -218,6 +231,8 @@ object DepartureStatusP5ViewModel {
           )
         )
       )
+    // scalastyle:on cyclomatic.complexity
+
   }
 
   private def goodsUnderControl(departureId: String): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {

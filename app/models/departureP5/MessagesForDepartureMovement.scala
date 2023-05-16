@@ -17,10 +17,13 @@
 package models.departureP5
 
 import cats.data.NonEmptyList
+import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import play.api.libs.json.{Json, JsonValidationError, Reads}
 
 case class MessagesForDepartureMovement(messages: NonEmptyList[DepartureMessage]) {
   val messageBeforeLatest: Option[DepartureMessage] = messages.tail.headOption
+
+  val nonRejectedByOfficeOfDepartureMessages: List[DepartureMessage] = messages.filter(_.messageType != RejectedByOfficeOfDeparture)
 }
 
 object MessagesForDepartureMovement {
