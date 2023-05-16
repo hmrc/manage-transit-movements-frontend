@@ -154,6 +154,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
           val ie056 = IE056Data(
             IE056MessageData(
               transitOperation = TransitOperationIE056(None, None),
+              customsOfficeOfDeparture = CustomsOfficeOfDeparture("AB123"),
               functionalErrors = Seq(
                 FunctionalError("pointer1", "code1", "reason1", None),
                 FunctionalError("pointer2", "code2", "reason2", None)
@@ -270,6 +271,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
         val ie056Data: IE056Data = IE056Data(
           IE056MessageData(
             TransitOperationIE056(Some("CD3232"), None),
+            CustomsOfficeOfDeparture("AB123"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
