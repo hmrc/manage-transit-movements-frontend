@@ -380,6 +380,9 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             |      "LRN": "AB123",
             |      "MRN": "CD3232"
             |    },
+            |    "CustomsOfficeOfDeparture": {
+            |     "referenceNumber": "22323323"
+            |     },
             |    "FunctionalError": [
             |      {
             |        "errorPointer": "1",
@@ -398,27 +401,28 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         )
 
         val responseJson: JsValue = Json.parse(s"""
-  {
-    "_links": {
-      "self": {
-        "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
-      },
-      "departure": {
-        "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
-      }
-    },
-    "id": "62f4ebbb765ba8c2",
-    "departureId": "62f4ebbbf581d4aa",
-    "received": "2022-08-11T11:44:59.83705",
-    "type": "IE060",
-    "status": "Success",
-    "body": ${IEO56.toString()}
-  }
-  """)
+          {
+            "_links": {
+              "self": {
+                "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
+              },
+              "departure": {
+                "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
+              }
+            },
+            "id": "62f4ebbb765ba8c2",
+            "departureId": "62f4ebbbf581d4aa",
+            "received": "2022-08-11T11:44:59.83705",
+            "type": "IE060",
+            "status": "Success",
+            "body": ${IEO56.toString()}
+          }
+          """)
 
         val expectedResult: IE056Data = IE056Data(
           IE056MessageData(
             TransitOperationIE056(Some("CD3232"), Some("AB123")),
+            CustomsOfficeOfDeparture("22323323"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )

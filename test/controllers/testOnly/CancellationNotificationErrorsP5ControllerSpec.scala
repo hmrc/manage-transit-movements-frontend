@@ -17,8 +17,8 @@
 package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.DepartureCacheConnector
-import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
+import connectors.{DepartureCacheConnector, ReferenceDataConnector}
+import controllers.actions.{FakeRejectionMessageAction, RejectionMessageActionProvider}
 import generators.Generators
 import models.departureP5.{FunctionalError, _}
 import org.mockito.ArgumentMatchers.any
@@ -29,24 +29,26 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
-import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
-import views.html.departure.TestOnly.DepartureDeclarationErrorsP5View
+import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel
+import views.html.departure.TestOnly.CancellationNotificationErrorsP5View
 
 import scala.concurrent.Future
 
-class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
-  private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
-  lazy val departureDeclarationErrorsController: String = controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5).url
+  private val mockRejectionMessageActionProvider        = mock[RejectionMessageActionProvider]
+  private val mockReferenceDataConnector                = mock[ReferenceDataConnector]
+
+  lazy val controllerRoute: String = controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5).url
 
   private val lrnString = "LRNAB123"
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                             mockDepartureP5MessageService,
-                                                                                                             mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeRejectionMessageAction(departureIdP5,
+                                                                                                    mockDepartureP5MessageService,
+                                                                                                    mockCacheService
     )
 
   override def beforeEach(): Unit = {
@@ -54,7 +56,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
     reset(mockDepartureP5MessageService)
     reset(mockRejectionMessageActionProvider)
     reset(mockCacheService)
-
+    reset(mockReferenceDataConnector)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -62,36 +64,39 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       .guiceApplicationBuilder()
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
+      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
 
-  "DepartureDeclarationErrorsP5Controller" - {
+  "CancellationNotificationErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET when no Errors" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          CustomsOfficeOfDeparture("22323323"),
+          CustomsOfficeOfDeparture("AB123"),
           Seq.empty
         )
       )
+
       when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrnString)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString, true)
+      val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrnString, true, "AB123", None)
 
-      val request = FakeRequest(GET, departureDeclarationErrorsController)
+      val request = FakeRequest(GET, controllerRoute)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[DepartureDeclarationErrorsP5View]
+      val view = injector.instanceOf[CancellationNotificationErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(departureDeclarationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
+        view(cancellationNotificationErrorsP5ViewModel)(request, messages).toString
     }
 
     "must return OK and the correct view for a GET when more than 10 Errors" in {
@@ -99,7 +104,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          CustomsOfficeOfDeparture("22323323"),
+          CustomsOfficeOfDeparture("AB123"),
           Seq(
             FunctionalError("1", "12", "Codelist violation", None),
             FunctionalError("2", "14", "Rule violation", None),
@@ -119,28 +124,29 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
         .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrnString)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString, false)
+      val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrnString, false, "AB123", None)
 
-      val request = FakeRequest(GET, departureDeclarationErrorsController)
+      val request = FakeRequest(GET, controllerRoute)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[DepartureDeclarationErrorsP5View]
+      val view = injector.instanceOf[CancellationNotificationErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(departureDeclarationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
+        view(cancellationNotificationErrorsP5ViewModel)(request, messages).toString
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
           TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          CustomsOfficeOfDeparture("22323323"),
+          CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
@@ -148,10 +154,11 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
         .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
+      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val request = FakeRequest(GET, departureDeclarationErrorsController)
+      val request = FakeRequest(GET, controllerRoute)
 
       val result = route(app, request).value
 
