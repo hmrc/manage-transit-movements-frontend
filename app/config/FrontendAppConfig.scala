@@ -97,6 +97,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val countdownSeconds: Int    = configuration.get[Int]("session.countdownSeconds")
 
   private val departureFrontendUrl: String    = phase5Switch.Departures.getFrontendUrl
+  private val arrivalFrontendUrl: String      = phase5Switch.Arrivals.getFrontendUrl
   lazy val draftDepartureFrontendUrl: String  = phase5Switch.Departures.getFrontendUrl
   private val cancellationFrontendUrl: String = phase5Switch.Cancellations.getFrontendUrl
 
@@ -107,6 +108,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
       departureFrontendUrl
     } else {
       s"$departureFrontendUrl/local-reference-number"
+    }
+
+  val declareArrivalStartWithMRNUrl: String =
+    if (phase5Switch.Arrivals.enabled) {
+      arrivalFrontendUrl
+    } else {
+      s"$arrivalFrontendUrl/movement-reference-number"
     }
 
   val phase5DepartureEnabled: Boolean = phase5Switch.Departures.enabled
