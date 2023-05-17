@@ -66,7 +66,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
           when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-          val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)
+          val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)()
 
           val result = helper.buildErrorCodeRow(code).futureValue
 
@@ -87,7 +87,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
           when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-          val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)
+          val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)()
 
           val result = helper.buildErrorCodeRow(code).futureValue
 
@@ -108,7 +108,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
           )
         )
 
-        val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)
+        val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)()
 
         val result = helper.buildErrorReasonRow("MRN incorrect")
 
@@ -134,7 +134,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
           )
         )
 
-        val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)
+        val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)()
 
         val result = helper.buildErrorRows(functionalErrors.head).futureValue
 
@@ -173,7 +173,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
           )
         )
 
-        val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)
+        val helper = new RejectionMessageP5MessageHelper(message.data, mockReferenceDataService)()
 
         val result = helper.errorSection().futureValue
 
