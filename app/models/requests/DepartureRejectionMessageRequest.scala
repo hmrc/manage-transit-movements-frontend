@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package models.departureP5
+package models.requests
 
-import play.api.libs.json.{Json, Reads}
+import models.departureP5.IE056MessageData
+import play.api.mvc.{Request, WrappedRequest}
 
-case class Messages(messages: List[MessageMetaData])
-
-object Messages {
-  implicit val reads: Reads[Messages] = Json.reads[Messages]
-}
+case class DepartureRejectionMessageRequest[A](
+  request: Request[A],
+  eoriNumber: String,
+  ie056MessageData: IE056MessageData,
+  isDeclarationAmendable: Boolean,
+  lrn: String
+) extends WrappedRequest[A](request)

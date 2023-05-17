@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext
 class ReviewDepartureErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  rejectionMessageAction: RejectionMessageActionProvider,
+  rejectionMessageAction: DepartureRejectionMessageActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: ReviewDepartureErrorsP5ViewModelProvider,
   view: ReviewDepartureErrorsP5View

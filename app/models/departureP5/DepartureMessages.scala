@@ -16,20 +16,10 @@
 
 package models.departureP5
 
-import play.api.libs.json.{__, Reads}
+import play.api.libs.json.{Json, Reads}
 
-import java.time.LocalDateTime
+case class DepartureMessages(messages: List[DepartureMessageMetaData])
 
-case class MessageMetaData(received: LocalDateTime, messageType: DepartureMessageType, path: String)
-
-object MessageMetaData {
-
-  implicit lazy val reads: Reads[MessageMetaData] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \ "received").read[LocalDateTime] and
-        (__ \ "type").read[DepartureMessageType] and
-        (__ \ "_links" \ "self" \ "href").read[String].map(_.replace("/customs/transits/", ""))
-    )(MessageMetaData.apply _)
-  }
+object DepartureMessages {
+  implicit val reads: Reads[DepartureMessages] = Json.reads[DepartureMessages]
 }

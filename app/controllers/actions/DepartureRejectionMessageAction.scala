@@ -21,7 +21,7 @@ import connectors.DepartureCacheConnector
 import controllers.routes
 import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import models.departureP5.IE056Data
-import models.requests.{IdentifierRequest, RejectionMessageRequest}
+import models.requests.{DepartureRejectionMessageRequest, IdentifierRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import services.DepartureP5MessageService
@@ -31,19 +31,22 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RejectionMessageActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService, cacheConnector: DepartureCacheConnector)(implicit
+class DepartureRejectionMessageActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService, cacheConnector: DepartureCacheConnector)(implicit
   ec: ExecutionContext
 ) {
 
-  def apply(departureId: String): ActionRefiner[IdentifierRequest, RejectionMessageRequest] =
-    new RejectionMessageAction(departureId, departureP5MessageService, cacheConnector)
+  def apply(departureId: String): ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] =
+    new DepartureRejectionMessageAction(departureId, departureP5MessageService, cacheConnector)
 }
 
-class RejectionMessageAction(departureId: String, departureP5MessageService: DepartureP5MessageService, cacheConnector: DepartureCacheConnector)(implicit
-  protected val executionContext: ExecutionContext
-) extends ActionRefiner[IdentifierRequest, RejectionMessageRequest] {
+class DepartureRejectionMessageAction(
+  departureId: String,
+  departureP5MessageService: DepartureP5MessageService,
+  cacheConnector: DepartureCacheConnector
+)(implicit protected val executionContext: ExecutionContext)
+    extends ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] {
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, RejectionMessageRequest[A]]] = {
+  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, DepartureRejectionMessageRequest[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
@@ -52,7 +55,7 @@ class RejectionMessageAction(departureId: String, departureP5MessageService: Dep
       lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId)) // TODO: Remove once LRN is exposed to use in metadata
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
       isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
-    } yield RejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))
+    } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
 

@@ -90,7 +90,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
           )
 
           when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(
-            Future.successful(Messages(Nil))
+            Future.successful(DepartureMessages(Nil))
           )
 
           val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
@@ -141,9 +141,9 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             Future.successful(lrnLocal)
           )
 
-          val messages = Messages(
+          val messages = DepartureMessages(
             List(
-              MessageMetaData(
+              DepartureMessageMetaData(
                 LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
                 DepartureMessageType.RejectedByOfficeOfDeparture,
                 s"movements/departures/$departureIdP5/message/634982098f02f00a"
@@ -221,14 +221,14 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
       "must return an IE060Data when given Departure Id" in {
 
-        val messages = Messages(
+        val messages = DepartureMessages(
           List(
-            MessageMetaData(
+            DepartureMessageMetaData(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.DepartureNotification,
               "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
             ),
-            MessageMetaData(
+            DepartureMessageMetaData(
               LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.GoodsUnderControl,
               "movements/departures/6365135ba5e821ee/message/634982098f02f00a"
@@ -253,14 +253,14 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
       "must return an IE056Data when given Departure Id" in {
 
-        val messages = Messages(
+        val messages = DepartureMessages(
           List(
-            MessageMetaData(
+            DepartureMessageMetaData(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.DepartureNotification,
               "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
             ),
-            MessageMetaData(
+            DepartureMessageMetaData(
               LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.GoodsUnderControl,
               "movements/departures/6365135ba5e821ee/message/634982098f02f00a"
@@ -287,9 +287,9 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
       "must return a LRN when given a Departure Id" in {
 
-        val messages = Messages(
+        val messages = DepartureMessages(
           List(
-            MessageMetaData(
+            DepartureMessageMetaData(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.DepartureNotification,
               "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
@@ -305,9 +305,9 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
       "must return None when IE015 message not found in meta data when given a Departure Id" in {
 
-        val messages = Messages(
+        val messages = DepartureMessages(
           List(
-            MessageMetaData(
+            DepartureMessageMetaData(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.GoodsUnderControl,
               "movements/departures/6365135ba5e821ee/message/634982098f02f00b"

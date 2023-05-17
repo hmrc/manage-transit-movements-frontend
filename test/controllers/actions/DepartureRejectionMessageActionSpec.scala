@@ -34,7 +34,7 @@ import services.{DepartureP5MessageService, ReferenceDataService}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with AppWithDefaultMockFixtures {
+class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with AppWithDefaultMockFixtures {
 
   val mockMessageService: DepartureP5MessageService  = mock[DepartureP5MessageService]
   val mockCacheService: DepartureCacheConnector      = mock[DepartureCacheConnector]
@@ -67,7 +67,7 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
       when(mockMessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
-      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
@@ -81,7 +81,7 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
       when(mockMessageService.getMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
-      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
