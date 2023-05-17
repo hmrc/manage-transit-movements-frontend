@@ -60,6 +60,8 @@ GET        /manage-transit-movements/test-only/amend-departure-declaration-error
 GET        /manage-transit-movements/test-only/departure-declaration-errors/:departureId            controllers.testOnly.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String)
 GET        /manage-transit-movements/test-only/cancellation-errors/:departureId                     controllers.testOnly.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String)
 
+GET        /manage-transit-movements/test-only/notification-errors/:arrivalId            controllers.testOnly.ArrivalNotificationErrorP5Controller.onPageLoad(arrivalId: String)
+
 
 GET        /manage-transit-movements/test-only/review-departure-declaration-errors/:departureId     controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(departureId: String)
 
