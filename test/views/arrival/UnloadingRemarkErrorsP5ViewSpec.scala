@@ -17,18 +17,18 @@
 package views.arrival
 
 import play.twirl.api.HtmlFormat
-import viewModels.P5.arrival.UnloadingNotificationErrorsP5ViewModel
+import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
 import views.behaviours.ViewBehaviours
-import views.html.departure.TestOnly.UnloadingNotificationErrorsP5View
+import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
 
-class UnloadingNotificationErrorsP5ViewSpec extends ViewBehaviours {
+class UnloadingRemarkErrorsP5ViewSpec extends ViewBehaviours {
 
   private val unloadingNotificationErrorsP5ViewModel =
-    new UnloadingNotificationErrorsP5ViewModel("AB123", true, "CD123", None)
+    new UnloadingRemarkErrorsP5ViewModel("AB123", true, "CD123", None)
 
   override def view: HtmlFormat.Appendable =
     injector
-      .instanceOf[UnloadingNotificationErrorsP5View]
+      .instanceOf[UnloadingRemarkErrorsP5View]
       .apply(unloadingNotificationErrorsP5ViewModel)(fakeRequest, messages, frontendAppConfig)
 
   override val prefix: String = "arrival.notification.unloading.errors.message"

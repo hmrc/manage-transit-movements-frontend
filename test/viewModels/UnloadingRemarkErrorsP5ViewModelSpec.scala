@@ -20,19 +20,19 @@ import base.SpecBase
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.arrival.UnloadingNotificationErrorsP5ViewModel
-import viewModels.P5.arrival.UnloadingNotificationErrorsP5ViewModel.UnloadingNotificationErrorsP5ViewModelProvider
+import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
+import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel.UnloadingRemarkErrorsP5ViewModelProvider
 
-class UnloadingNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class UnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  "UnloadingNotificationErrorsP5ViewModel" - {
+  "UnloadingRemarkErrorsP5ViewModel" - {
 
     val mrn                = "AB123"
     val customsReferenceId = "CD123"
 
-    val viewModelProvider = new UnloadingNotificationErrorsP5ViewModelProvider()
+    val viewModelProvider = new UnloadingRemarkErrorsP5ViewModelProvider()
 
-    def viewModel(noErrors: Boolean = false, customsOffice: Option[CustomsOffice] = None): UnloadingNotificationErrorsP5ViewModel =
+    def viewModel(noErrors: Boolean = false, customsOffice: Option[CustomsOffice] = None): UnloadingRemarkErrorsP5ViewModel =
       viewModelProvider.apply(mrn, noErrors, customsReferenceId, customsOffice)
 
     "title" - {

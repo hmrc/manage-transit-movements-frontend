@@ -19,7 +19,7 @@ package viewModels.P5.arrival
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 
-case class UnloadingNotificationErrorsP5ViewModel(mrn: String, noErrors: Boolean, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]) {
+case class UnloadingRemarkErrorsP5ViewModel(mrn: String, noErrors: Boolean, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]) {
 
   def title(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.title")
 
@@ -50,12 +50,12 @@ case class UnloadingNotificationErrorsP5ViewModel(mrn: String, noErrors: Boolean
 
 }
 
-object UnloadingNotificationErrorsP5ViewModel {
+object UnloadingRemarkErrorsP5ViewModel {
 
-  class UnloadingNotificationErrorsP5ViewModelProvider {
+  class UnloadingRemarkErrorsP5ViewModelProvider {
 
-    def apply(mrn: String, noErrors: Boolean, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]): UnloadingNotificationErrorsP5ViewModel =
-      UnloadingNotificationErrorsP5ViewModel(mrn, noErrors, customsOfficeReferenceId, customsOffice)
+    def apply(mrn: String, noErrors: Boolean, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]): UnloadingRemarkErrorsP5ViewModel =
+      UnloadingRemarkErrorsP5ViewModel(mrn, noErrors, customsOfficeReferenceId, customsOffice)
   }
 
 }

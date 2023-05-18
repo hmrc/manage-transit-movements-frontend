@@ -22,19 +22,19 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.arrival.UnloadingNotificationErrorsP5ViewModel._
-import views.html.departure.TestOnly.UnloadingNotificationErrorsP5View
+import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel._
+import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UnloadingNotificationErrorsP5Controller @Inject() (
+class UnloadingRemarkErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
-  viewModelProvider: UnloadingNotificationErrorsP5ViewModelProvider,
-  view: UnloadingNotificationErrorsP5View,
+  viewModelProvider: UnloadingRemarkErrorsP5ViewModelProvider,
+  view: UnloadingRemarkErrorsP5View,
   referenceDataConnector: ReferenceDataConnector
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)

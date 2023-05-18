@@ -30,17 +30,17 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ArrivalP5MessageService
-import viewModels.P5.arrival.UnloadingNotificationErrorsP5ViewModel
-import views.html.departure.TestOnly.UnloadingNotificationErrorsP5View
+import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
+import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
 
 import scala.concurrent.Future
 
-class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockArrivalP5MessageService                = mock[ArrivalP5MessageService]
   private val mockRejectionMessageActionProvider         = mock[ArrivalRejectionMessageActionProvider]
   private val mockReferenceDataConnector                 = mock[ReferenceDataConnector]
-  lazy val unloadingNotificationErrorsController: String = controllers.testOnly.routes.UnloadingNotificationErrorsP5Controller.onPageLoad(arrivalIdP5).url
+  lazy val unloadingNotificationErrorsController: String = controllers.testOnly.routes.UnloadingRemarkErrorsP5Controller.onPageLoad(arrivalIdP5).url
 
   private val mrnString = "MRNAB123"
 
@@ -60,7 +60,7 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
       .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
 
-  "UnloadingNotificationErrorsP5Controller" - {
+  "UnloadingRemarkErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET when no Errors" in {
       val message: IE057Data = IE057Data(
@@ -79,7 +79,7 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 
-      val unloadingNotificationErrorsP5ViewModel = new UnloadingNotificationErrorsP5ViewModel(mrnString, true, "1234", Some(fakeCustomsOffice))
+      val unloadingNotificationErrorsP5ViewModel = new UnloadingRemarkErrorsP5ViewModel(mrnString, true, "1234", Some(fakeCustomsOffice))
 
       val request = FakeRequest(GET, unloadingNotificationErrorsController)
 
@@ -87,7 +87,7 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[UnloadingNotificationErrorsP5View]
+      val view = injector.instanceOf[UnloadingRemarkErrorsP5View]
 
       contentAsString(result) mustEqual
         view(unloadingNotificationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
@@ -122,7 +122,7 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 
-      val unloadingNotificationErrorsP5ViewModel = new UnloadingNotificationErrorsP5ViewModel(mrnString, false, "1234", Some(fakeCustomsOffice))
+      val unloadingNotificationErrorsP5ViewModel = new UnloadingRemarkErrorsP5ViewModel(mrnString, false, "1234", Some(fakeCustomsOffice))
 
       val request = FakeRequest(GET, unloadingNotificationErrorsController)
 
@@ -130,7 +130,7 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[UnloadingNotificationErrorsP5View]
+      val view = injector.instanceOf[UnloadingRemarkErrorsP5View]
 
       contentAsString(result) mustEqual
         view(unloadingNotificationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
