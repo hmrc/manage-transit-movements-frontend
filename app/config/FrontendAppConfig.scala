@@ -113,6 +113,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   val phase5ArrivalEnabled: Boolean   = phase5Switch.Arrivals.enabled
 
   val maxErrorsForAmendableDeclaration: Int     = configuration.get[Int]("maxErrorsForAmendableDeclaration")
+  val maxErrorsForArrivalNotification: Int      = configuration.get[Int]("maxErrorsForArrivalNotification")
   val maxErrorsForCancellationNotification: Int = configuration.get[Int]("maxErrorsForCancellationNotification")
 
   def departureFrontendTaskListUrl(lrn: String)                     = s"$departureFrontendUrl/$lrn/task-list"
