@@ -17,6 +17,7 @@
 package viewModels.P5.arrival
 
 import config.FrontendAppConfig
+import models.FunctionalError
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
 import viewModels.ViewMovementAction
@@ -27,15 +28,15 @@ object ArrivalStatusP5ViewModel {
 
   def apply(movementAndMessages: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ArrivalStatusP5ViewModel =
     movementAndMessages match {
-      case ArrivalMovementAndMessage(ArrivalMovement(arrivalId, _, _, _), MessagesForArrivalMovement(messages)) =>
+      case ArrivalMovementAndMessage(ArrivalMovement(arrivalId, _, _, _), MessagesForArrivalMovement(messages), functionalErrors) =>
         val allPfs: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] =
           Seq(
             arrivalNotification,
             unloadingRemarks,
             unloadingPermission(arrivalId),
             goodsReleased,
-            rejectionFromOfficeOfDestinationUnloading(messages.tail),
-            rejectionFromOfficeOfDestinationArrival
+            rejectionFromOfficeOfDestinationUnloading(messages.tail, functionalErrors),
+            rejectionFromOfficeOfDestinationArrival(functionalErrors)
           ).reduce(_ orElse _)
 
         allPfs.apply(messages.head.messageType)
@@ -72,7 +73,8 @@ object ArrivalStatusP5ViewModel {
   }
 
   private def rejectionFromOfficeOfDestinationUnloading(
-    previousMessages: Seq[ArrivalMessage]
+    previousMessages: Seq[ArrivalMessage],
+    functionalErrors: Seq[FunctionalError]
   ): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case RejectionFromOfficeOfDestination if previousMessages.exists(_.messageType == UnloadingRemarks) =>
       ArrivalStatusP5ViewModel(
@@ -83,7 +85,7 @@ object ArrivalStatusP5ViewModel {
       )
   }
 
-  private def rejectionFromOfficeOfDestinationArrival: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
+  private def rejectionFromOfficeOfDestinationArrival(functionalErrors: Seq[FunctionalError]: PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case RejectionFromOfficeOfDestination =>
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",

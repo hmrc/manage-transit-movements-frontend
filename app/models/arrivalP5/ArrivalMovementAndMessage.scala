@@ -16,7 +16,10 @@
 
 package models.arrivalP5
 
+import models.FunctionalError
+
 case class ArrivalMovementAndMessage(
   arrivalMovement: ArrivalMovement,
-  messagesForMovement: MessagesForArrivalMovement
+  messagesForMovement: MessagesForArrivalMovement,
+  functionalErrors: Seq[FunctionalError] = Seq.empty
 )
