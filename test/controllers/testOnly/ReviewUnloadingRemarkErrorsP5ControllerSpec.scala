@@ -61,7 +61,7 @@ class ReviewUnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithD
       .overrides(bind[ReviewUnloadingRemarkErrorsP5ViewModelProvider].toInstance(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider))
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
 
-  "RejectionUnloadingRemarkP5Controller" - {
+  "ReviewUnloadingRemarkErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
       val message: IE057Data = IE057Data(

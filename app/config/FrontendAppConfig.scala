@@ -110,13 +110,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
       s"$departureFrontendUrl/local-reference-number"
     }
 
-  val declareArrivalStartWithMRNUrl: String =
-    if (phase5Switch.Arrivals.enabled) {
-      arrivalFrontendUrl
-    } else {
-      s"$arrivalFrontendUrl/movement-reference-number"
-    }
-
   val phase5DepartureEnabled: Boolean = phase5Switch.Departures.enabled
   val phase5ArrivalEnabled: Boolean   = phase5Switch.Arrivals.enabled
 

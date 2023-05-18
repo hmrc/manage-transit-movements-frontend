@@ -96,7 +96,7 @@ class ReviewUnloadingRemarkErrorsP5ViewSpec extends CheckYourAnswersViewBehaviou
   behave like pageWithLink(
     "arrival-link",
     "View arrival notifications",
-    frontendAppConfig.declareArrivalStartWithMRNUrl
+    frontendAppConfig.declareArrivalNotificationStartUrl
   )
 
 }
