@@ -28,32 +28,32 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class ReviewUnloadingRemarkErrorsP5ViewModel(sections: Seq[Section], mrn: String, multipleErrors: Boolean) {
 
-  def title(implicit messages: Messages): String = messages("arrival.ie057.review.message.title")
+  def title(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.title")
 
-  def heading(implicit messages: Messages): String = messages("arrival.ie057.review.message.heading")
+  def heading(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.heading")
 
-  def paragraph1Prefix(implicit messages: Messages): String = messages("arrival.ie057.review.message.paragraph1.prefix", mrn)
+  def paragraph1Prefix(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.paragraph1.prefix", mrn)
 
   def paragraph1Suffix(implicit messages: Messages): String = if (multipleErrors) {
     messages(
-      "arrival.ie057.review.message.paragraph1.plural.suffix"
+      "arrival.ie057.review.unloading.message.paragraph1.plural.suffix"
     )
   } else {
     messages(
-      "arrival.ie057.review.message.paragraph1.singular.suffix"
+      "arrival.ie057.review.unloading.message.paragraph1.singular.suffix"
     )
   }
 
-  def paragraph2Prefix(implicit messages: Messages): String = messages("arrival.ie057.review.message.paragraph2.prefix")
-  def paragraph2Link(implicit messages: Messages): String   = messages("arrival.ie057.review.message.paragraph2.link")
+  def paragraph2Prefix(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.paragraph2.prefix")
+  def paragraph2Link(implicit messages: Messages): String   = messages("arrival.ie057.review.unloading.message.paragraph2.link")
 
   def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors) {
-    messages("arrival.ie057.review.message.paragraph2.plural.suffix")
+    messages("arrival.ie057.review.unloading.message.paragraph2.plural.suffix")
   } else {
-    messages("arrival.ie057.review.message.paragraph2.singular.suffix")
+    messages("arrival.ie057.review.unloading.message.paragraph2.singular.suffix")
   }
 
-  def hyperlink(implicit messages: Messages): String = messages("arrival.ie057.review.message.hyperlink")
+  def hyperlink(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.hyperlink")
 
 }
 
