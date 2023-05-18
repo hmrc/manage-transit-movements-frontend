@@ -16,35 +16,46 @@
 
 package viewModels.P5.arrival
 
+import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 
-case class UnloadingNotificationErrorsP5ViewModel(mrn: String, noErrors: Boolean) {
+case class UnloadingNotificationErrorsP5ViewModel(mrn: String, noErrors: Boolean, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]) {
 
-  def title(implicit messages: Messages): String = messages("departure.declaration.errors.message.title")
+  def title(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.title")
 
-  def heading(implicit messages: Messages): String = messages("departure.declaration.errors.message.heading")
+  def heading(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.heading")
 
   def paragraph1(implicit messages: Messages): String =
     if (noErrors) {
-      messages("departure.declaration.errors.message.noerrors", mrn)
+      messages("arrival.notification.unloading.errors.message.noerrors", mrn)
     } else {
-      messages("departure.declaration.errors.message.elevenpluserrors", mrn)
+      messages("arrival.notification.unloading.errors.message.elevenpluserrors", mrn)
     }
 
-  def paragraph2(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph2")
+  def customsOfficeContent(implicit messages: Messages): String =
+    customsOffice match {
+      case Some(CustomsOffice(id, _, _)) => customsOfficeNameAndNumber(messages, id)
+      case _ =>
+        messages("arrival.notification.unloading.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceId)
+    }
 
-  def paragraph3Prefix(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph3.prefix")
-  def paragraph3Suffix(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph3.suffix")
-  def paragraph3Link(implicit messages: Messages): String   = messages("departure.declaration.errors.message.paragraph3.link")
-
-  def hyperlink(implicit messages: Messages): String = messages("departure.declaration.errors.message.hyperlink")
+  private def customsOfficeNameAndNumber(messages: Messages, id: String): String =
+    (customsOffice.get.nameOption, customsOffice.get.phoneOption) match {
+      case (Some(name), Some(phone)) => messages("arrival.notification.unloading.customsOfficeContact.telephoneAvailable", name, phone)
+      case (None, Some(phone))       => messages("arrival.notification.unloading.customsOfficeContact.teleAvailAndOfficeNameNotAvail", id, phone)
+      case (Some(name), None)        => messages("arrival.notification.unloading.customsOfficeContact.telephoneNotAvailable", name)
+      case _                         => messages("arrival.notification.unloading.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", id)
+    }
+  def hyperlink(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.hyperlink")
 
 }
 
 object UnloadingNotificationErrorsP5ViewModel {
 
   class UnloadingNotificationErrorsP5ViewModelProvider {
-    def apply(mrn: String, noErrors: Boolean): UnloadingNotificationErrorsP5ViewModel = UnloadingNotificationErrorsP5ViewModel(mrn, noErrors)
+
+    def apply(mrn: String, noErrors: Boolean, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]): UnloadingNotificationErrorsP5ViewModel =
+      UnloadingNotificationErrorsP5ViewModel(mrn, noErrors, customsOfficeReferenceId, customsOffice)
   }
 
 }

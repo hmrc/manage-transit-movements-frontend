@@ -19,11 +19,11 @@
 @import viewModels.P5.arrival.UnloadingNotificationErrorsP5ViewModel
 
 @this(
-mainTemplate: MainTemplate,
-heading: Heading,
-answerSections: AnswerSections,
-button: Button,
-formHelper: FormWithCSRF
+        mainTemplate: MainTemplate,
+        heading: Heading,
+        answerSections: AnswerSections,
+        button: Button,
+        formHelper: FormWithCSRF
 )
 
 @(unloadingNotificationErrorsP5ViewModel: UnloadingNotificationErrorsP5ViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
@@ -40,12 +40,9 @@ formHelper: FormWithCSRF
 
         <p id="paragraph-1" class="govuk-body">@unloadingNotificationErrorsP5ViewModel.paragraph1</p>
 
-        <p id="paragraph-2" class="govuk-body">@unloadingNotificationErrorsP5ViewModel.paragraph2</p>
+        <p class="govuk-body" id="what-happens-next">@unloadingNotificationErrorsP5ViewModel.customsOfficeContent</p>
 
-        <p id="paragraph-3" class="govuk-body">@unloadingNotificationErrorsP5ViewModel.paragraph3Prefix <a id="helpdesk-link" class="govuk-link"  target="_blank" href=@config.nctsEnquiriesUrl>@unloadingNotificationErrorsP5ViewModel.paragraph3Link</a> @unloadingNotificationErrorsP5ViewModel.paragraph3Suffix</p>
-
-
-    <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.declareArrivalNotificationStartUrl">@unloadingNotificationErrorsP5ViewModel.hyperlink</a></p>
+        <p id="create-arrival-notification" class="govuk-body"><a id="arrival-link" class="govuk-link" href="@config.declareArrivalNotificationStartUrl">@unloadingNotificationErrorsP5ViewModel.hyperlink</a></p>
 
 
     }

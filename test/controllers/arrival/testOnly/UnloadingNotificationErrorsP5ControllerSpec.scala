@@ -17,9 +17,10 @@
 package controllers.arrival.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import connectors.ReferenceDataConnector
 import controllers.actions.{ArrivalRejectionMessageActionProvider, FakeArrivalRejectionMessageAction}
 import generators.Generators
-import models.arrivalP5.{IE057Data, IE057MessageData, TransitOperationIE057}
+import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -38,6 +39,7 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
 
   private val mockArrivalP5MessageService                = mock[ArrivalP5MessageService]
   private val mockRejectionMessageActionProvider         = mock[ArrivalRejectionMessageActionProvider]
+  private val mockReferenceDataConnector                 = mock[ReferenceDataConnector]
   lazy val unloadingNotificationErrorsController: String = controllers.testOnly.routes.UnloadingNotificationErrorsP5Controller.onPageLoad(arrivalIdP5).url
 
   private val mrnString = "MRNAB123"
@@ -49,12 +51,14 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
     super.beforeEach()
     reset(mockArrivalP5MessageService)
     reset(mockRejectionMessageActionProvider)
+    reset(mockReferenceDataConnector)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
+      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
 
   "UnloadingNotificationErrorsP5Controller" - {
 
@@ -62,6 +66,7 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057(s"$mrnString"),
+          CustomsOfficeOfDestinationActual("1234"),
           Seq.empty
         )
       )
@@ -69,9 +74,12 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
+      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
+        .thenReturn(Future.successful(Some(fakeCustomsOffice)))
+
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 
-      val unloadingNotificationErrorsP5ViewModel = new UnloadingNotificationErrorsP5ViewModel(mrnString, true)
+      val unloadingNotificationErrorsP5ViewModel = new UnloadingNotificationErrorsP5ViewModel(mrnString, true, "1234", Some(fakeCustomsOffice))
 
       val request = FakeRequest(GET, unloadingNotificationErrorsController)
 
@@ -90,6 +98,7 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057(s"$mrnString"),
+          CustomsOfficeOfDestinationActual("1234"),
           Seq(
             FunctionalError("1", "12", "Codelist violation", None),
             FunctionalError("2", "14", "Rule violation", None),
@@ -108,9 +117,12 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
+      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
+        .thenReturn(Future.successful(Some(fakeCustomsOffice)))
+
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 
-      val unloadingNotificationErrorsP5ViewModel = new UnloadingNotificationErrorsP5ViewModel(mrnString, false)
+      val unloadingNotificationErrorsP5ViewModel = new UnloadingNotificationErrorsP5ViewModel(mrnString, false, "1234", Some(fakeCustomsOffice))
 
       val request = FakeRequest(GET, unloadingNotificationErrorsController)
 
@@ -128,12 +140,16 @@ class UnloadingNotificationErrorsP5ControllerSpec extends SpecBase with AppWithD
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057(s"$mrnString"),
+          CustomsOfficeOfDestinationActual("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
 
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
+
+      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
+        .thenReturn(Future.successful(Some(fakeCustomsOffice)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 

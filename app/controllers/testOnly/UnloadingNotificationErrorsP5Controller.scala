@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import config.FrontendAppConfig
+import connectors.ReferenceDataConnector
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -25,7 +26,7 @@ import viewModels.P5.arrival.UnloadingNotificationErrorsP5ViewModel._
 import views.html.departure.TestOnly.UnloadingNotificationErrorsP5View
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class UnloadingNotificationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -33,17 +34,33 @@ class UnloadingNotificationErrorsP5Controller @Inject() (
   cc: MessagesControllerComponents,
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
   viewModelProvider: UnloadingNotificationErrorsP5ViewModelProvider,
-  view: UnloadingNotificationErrorsP5View
+  view: UnloadingNotificationErrorsP5View,
+  referenceDataConnector: ReferenceDataConnector
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)) {
+  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
     implicit request =>
-      if (request.ie057MessageData.functionalErrors.isEmpty || (request.ie057MessageData.functionalErrors.size > config.maxErrorsForArrivalNotification)) {
-        Ok(view(viewModelProvider.apply(request.ie057MessageData.transitOperation.MRN, request.ie057MessageData.functionalErrors.isEmpty)))
+      val functionalErrors       = request.ie057MessageData.functionalErrors
+      val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber
+
+      if (functionalErrors.isEmpty || (functionalErrors.size > config.maxErrorsForArrivalNotification)) {
+        referenceDataConnector.getCustomsOffice(customsOfficeReference).map {
+          customsOffice =>
+            Ok(
+              view(
+                viewModelProvider.apply(
+                  request.ie057MessageData.transitOperation.MRN,
+                  request.ie057MessageData.functionalErrors.isEmpty,
+                  customsOfficeReference,
+                  customsOffice
+                )
+              )
+            )
+        }
       } else {
-        Redirect(controllers.routes.ErrorController.technicalDifficulties())
+        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
       }
   }
 }
