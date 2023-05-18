@@ -43,7 +43,8 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
         ),
         MessagesForArrivalMovement(
           NonEmptyList(ArrivalMessage(dateTimeNow, headMessage), List.empty)
-        )
+        ),
+        functionalErrorCount = 0
       )
 
     "when given Message with head of ArrivalNotification" in {

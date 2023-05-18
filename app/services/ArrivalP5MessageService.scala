@@ -32,18 +32,19 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
     arrivalMovements.arrivalMovements.traverse {
       movement =>
         arrivalMovementP5Connector
-          .getMessagesForMovement(movement.messagesLocation).flatMap {
-          messagesForMovement =>
-            messagesForMovement.messages.find(_.messageType == ArrivalNotification) match {
-              case Some(_) =>
-                for {
-                  ie057 <- getMessage[IE057Data](movement.arrivalId, RejectionFromOfficeOfDestination)
-                  functionalErrors = ie057.map(_.data.functionalErrors).getOrElse(Seq.empty)
-                } yield ArrivalMovementAndMessage(movement, messagesForMovement, functionalErrors)
-              case None =>
-                Future.failed(new Throwable("Movement did not contain an IE007 message"))
-            }
-        }
+          .getMessagesForMovement(movement.messagesLocation)
+          .flatMap {
+            messagesForMovement =>
+              messagesForMovement.messages.find(_.messageType == ArrivalNotification) match {
+                case Some(_) =>
+                  for {
+                    ie057 <- getMessage[IE057Data](movement.arrivalId, RejectionFromOfficeOfDestination)
+                    functionalErrorsCount = ie057.map(_.data.functionalErrors.length).getOrElse(0)
+                  } yield ArrivalMovementAndMessage(movement, messagesForMovement, functionalErrorsCount)
+                case None =>
+                  Future.failed(new Throwable("Movement did not contain an IE007 message"))
+              }
+          }
     }
 
   def getMessage[MessageModel](

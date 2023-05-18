@@ -21,5 +21,5 @@ import models.departureP5.FunctionalError
 case class ArrivalMovementAndMessage(
   arrivalMovement: ArrivalMovement,
   messagesForMovement: MessagesForArrivalMovement,
-  functionalErrors: Seq[FunctionalError] = Seq.empty
+  functionalErrorCount: Int
 )
