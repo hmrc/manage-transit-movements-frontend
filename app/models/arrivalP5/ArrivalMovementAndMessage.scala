@@ -16,7 +16,7 @@
 
 package models.arrivalP5
 
-import models.FunctionalError
+import models.departureP5.FunctionalError
 
 case class ArrivalMovementAndMessage(
   arrivalMovement: ArrivalMovement,

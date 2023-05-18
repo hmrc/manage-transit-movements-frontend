@@ -19,7 +19,8 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.ArrivalMovementP5Connector
-import models.arrivalP5.{ArrivalMessageMetaData, ArrivalMessageType, ArrivalMovementAndMessage, ArrivalMovements}
+import models.arrivalP5.ArrivalMessageType.{ArrivalNotification, RejectionFromOfficeOfDestination}
+import models.arrivalP5.{ArrivalMessageMetaData, ArrivalMessageType, ArrivalMovementAndMessage, ArrivalMovements, IE057Data}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
 import javax.inject.Inject
@@ -31,10 +32,18 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
     arrivalMovements.arrivalMovements.traverse {
       movement =>
         arrivalMovementP5Connector
-          .getMessagesForMovement(movement.messagesLocation)
-          .map(
-            messagesForMovement => ArrivalMovementAndMessage(movement, messagesForMovement)
-          )
+          .getMessagesForMovement(movement.messagesLocation).flatMap {
+          messagesForMovement =>
+            messagesForMovement.messages.find(_.messageType == ArrivalNotification) match {
+              case Some(_) =>
+                for {
+                  ie057 <- getMessage[IE057Data](movement.arrivalId, RejectionFromOfficeOfDestination)
+                  functionalErrors = ie057.map(_.data.functionalErrors).getOrElse(Seq.empty)
+                } yield ArrivalMovementAndMessage(movement, messagesForMovement, functionalErrors)
+              case None =>
+                Future.failed(new Throwable("Movement did not contain an IE007 message"))
+            }
+        }
     }
 
   def getMessage[MessageModel](
