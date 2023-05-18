@@ -114,6 +114,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
 
   val maxErrorsForAmendableDeclaration: Int     = configuration.get[Int]("maxErrorsForAmendableDeclaration")
   val maxErrorsForCancellationNotification: Int = configuration.get[Int]("maxErrorsForCancellationNotification")
+  val maxErrorsForArrivaLNotification: Int      = configuration.get[Int]("maxErrorsForArrivalNotification")
 
   def departureFrontendTaskListUrl(lrn: String)                     = s"$departureFrontendUrl/$lrn/task-list"
   def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"

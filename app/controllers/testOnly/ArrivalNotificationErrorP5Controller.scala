@@ -40,7 +40,7 @@ class ArrivalNotificationErrorP5Controller @Inject() (
 
   def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)) {
     implicit request =>
-      if (request.ie057MessageData.functionalErrors.isEmpty || (request.ie057MessageData.functionalErrors.size > config.maxErrorsForAmendableDeclaration)) {
+      if (request.ie057MessageData.functionalErrors.isEmpty || (request.ie057MessageData.functionalErrors.size > config.maxErrorsForArrivaLNotification)) {
         Ok(view(viewModelProvider.apply(request.ie057MessageData.transitOperation.MRN, request.ie057MessageData.functionalErrors.isEmpty)))
       } else {
         Redirect(controllers.routes.ErrorController.technicalDifficulties())
