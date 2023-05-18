@@ -31,7 +31,6 @@ import play.api.test.Helpers._
 import services.ArrivalP5MessageService
 import viewModels.P5.arrival.ReviewUnloadingRemarkErrorsP5ViewModel
 import viewModels.P5.arrival.ReviewUnloadingRemarkErrorsP5ViewModel.ReviewUnloadingRemarkErrorsP5ViewModelProvider
-import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
 import viewModels.sections.Section
 import views.html.arrival.P5.ReviewUnloadingRemarkErrorsP5View
 
@@ -90,6 +89,75 @@ class ReviewUnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithD
 
       contentAsString(result) mustEqual
         view(rejectionMessageP5ViewModel, departureIdP5)(request, messages, frontendAppConfig).toString
+    }
+
+    "must redirect to technical difficulties page when functionalErrors is 0" in {
+      val message: IE057Data = IE057Data(
+        IE057MessageData(
+          TransitOperationIE057("MRNCD3232"),
+          Seq.empty
+        )
+      )
+      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(Some(message)))
+      when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(ReviewUnloadingRemarkErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
+
+      rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
+
+      val request = FakeRequest(GET, rejectionMessageController)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+
+    }
+
+    "must redirect to technical difficulties page when functionalErrors is > 10" in {
+      val message: IE057Data = IE057Data(
+        IE057MessageData(
+          TransitOperationIE057("MRNCD3232"),
+          Seq(
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None),
+            FunctionalError("1", "12", "Codelist violation", None),
+            FunctionalError("2", "14", "Rule violation", None)
+          )
+        )
+      )
+      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(Some(message)))
+      when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(ReviewUnloadingRemarkErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
+
+      rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
+
+      val request = FakeRequest(GET, rejectionMessageController)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+
     }
   }
 }

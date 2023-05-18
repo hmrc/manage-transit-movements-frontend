@@ -17,7 +17,7 @@
 package utils
 
 import cats.data.OptionT
-import models.departureP5.{FunctionalError, IE056MessageData}
+import models.departureP5.FunctionalError
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow

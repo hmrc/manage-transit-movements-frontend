@@ -16,7 +16,7 @@
 
 package models
 
-import com.lucidchart.open.xtract.{ParseError, ParseFailure, ParseResult, ParseSuccess, XmlReader}
+import com.lucidchart.open.xtract.{ParseError, ParseFailure, ParseSuccess, XmlReader}
 import play.api.libs.json.{JsNumber, Writes}
 
 import scala.xml.NodeSeq

@@ -17,7 +17,6 @@
 package viewModels.P5.arrival
 
 import models.arrivalP5.IE057MessageData
-import models.departureP5.IE056MessageData
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier

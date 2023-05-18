@@ -42,7 +42,13 @@ class ReviewUnloadingRemarkErrorsP5Controller @Inject() (
     implicit request =>
       val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie057MessageData, request.ie057MessageData.transitOperation.MRN)
       rejectionMessageP5ViewModel.map(
-        viewModel => Ok(view(viewModel, arrivalId))
+        viewModel =>
+          //TODO need to pick config value config.maxErrorsForArrivaLNotification once CTCP-2918 is merged
+          if (request.ie057MessageData.functionalErrors.isEmpty || (request.ie057MessageData.functionalErrors.size > 10)) {
+            Redirect(controllers.routes.ErrorController.technicalDifficulties())
+          } else {
+            Ok(view(viewModel, arrivalId))
+          }
       )
   }
 }
