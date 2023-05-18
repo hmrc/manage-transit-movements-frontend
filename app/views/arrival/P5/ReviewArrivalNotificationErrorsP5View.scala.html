@@ -29,22 +29,22 @@ formHelper: FormWithCSRF
 @(reviewArrivalNotificationErrorsP5ViewModel: ReviewArrivalNotificationErrorsP5ViewModel, arrivalId: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
-        title = reviewArrivalNotificationErrorsP5View.title,
+        title = reviewArrivalNotificationErrorsP5ViewModel.title,
         showBackLink = true
     ) {
 
         @heading(
-            heading = reviewArrivalNotificationErrorsP5View.heading
+            heading = reviewArrivalNotificationErrorsP5ViewModel.heading
         )
 
-        <p id="paragraph-1-prefix" class="govuk-body">@reviewArrivalNotificationErrorsP5View.paragraph1Prefix</p>
-        <p id="paragraph-1-suffix" class="govuk-body">@reviewArrivalNotificationErrorsP5View.paragraph1Suffix</p>
+        <p id="paragraph-1-prefix" class="govuk-body">@reviewArrivalNotificationErrorsP5ViewModel.paragraph1Prefix</p>
+        <p id="paragraph-1-suffix" class="govuk-body">@reviewArrivalNotificationErrorsP5ViewModel.paragraph1Suffix</p>
 
-        @answerSections(reviewArrivalNotificationErrorsP5View.sections)
+        @answerSections(reviewArrivalNotificationErrorsP5ViewModel.sections)
 
-        <p id="paragraph-2" class="govuk-body">@reviewArrivalNotificationErrorsP5View.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@reviewArrivalNotificationErrorsP5View.paragraph2Link</a> @reviewArrivalNotificationErrorsP5View.paragraph2Suffix</p>
+        <p id="paragraph-2" class="govuk-body">@reviewArrivalNotificationErrorsP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@reviewArrivalNotificationErrorsP5ViewModel.paragraph2Link</a> @reviewArrivalNotificationErrorsP5ViewModel.paragraph2Suffix</p>
 
         <p class="govuk-body">
-            <a id="arrival-link" class="govuk-link" href="@config.declareArrivalNotificationStartUrl">@reviewArrivalNotificationErrorsP5View.hyperlink</a>
+            <a id="arrival-link" class="govuk-link" href="@config.declareArrivalNotificationStartUrl">@reviewArrivalNotificationErrorsP5ViewModel.hyperlink</a>
         </p>
 }
