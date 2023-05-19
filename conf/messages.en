@@ -466,8 +466,8 @@ arrival.ie057.review.notification.message.paragraph2.singular.suffix = for help 
 arrival.ie057.review.notification.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
 arrival.ie057.review.notification.message.hyperlink = Create another arrival notification
 
-arrival.notification.errors.message.title   = Arrival errors
-arrival.notification.errors.message.heading = Arrival errors
+arrival.notification.errors.message.title   = Notification errors
+arrival.notification.errors.message.heading = Notification errors
 arrival.notification.errors.message.noerrors = There are one or more errors in arrival notification {0} that cannot be amended.
 arrival.notification.errors.message.elevenpluserrors = There are a number of errors in arrival notification {0}.
 arrival.notification.errors.message.paragraph2 = Make/create a new arrival notification with the right information.
