@@ -19,11 +19,9 @@ package views.arrival.testOnly
 import generators.Generators
 import play.twirl.api.HtmlFormat
 import viewModels.P5.arrival.ArrivalNotificationErrorP5ViewModel
-import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
 import views.html.arrival.TestOnly.ArrivalNotificationErrorP5View
-import views.html.departure.TestOnly.DepartureDeclarationErrorsP5View
 
 class ArrivalNotificationErrorP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 

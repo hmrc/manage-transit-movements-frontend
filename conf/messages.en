@@ -434,8 +434,8 @@ cancellation.notification.customsOfficeContact.telephoneNotAvailable = Try cance
 cancellation.notification.customsOfficeContact.teleAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0} on {1}.
 cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0}.
 
-arrival.notification.errors.message.title   = Arrival errors
-arrival.notification.errors.message.heading = Arrival errors
+arrival.notification.errors.message.title   = Notification errors
+arrival.notification.errors.message.heading = Notification errors
 arrival.notification.errors.message.noerrors = There are one or more errors in arrival notification {0} that cannot be amended.
 arrival.notification.errors.message.elevenpluserrors = There are a number of errors in arrival notification {0}.
 arrival.notification.errors.message.paragraph2 = Make/create a new arrival notification with the right information.
