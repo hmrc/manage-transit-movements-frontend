@@ -18,7 +18,7 @@ package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
-import models.arrivalP5.{IE057Data, IE057MessageData, TransitOperationIE057}
+import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
@@ -54,6 +54,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057("MRNCD3232"),
+          CustomsOfficeOfDestinationActual("1234"),
           Seq(FunctionalError("14", "12", "MRN incorrect", None))
         )
       )
@@ -93,6 +94,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057("MRNCD3232"),
+          CustomsOfficeOfDestinationActual("1234"),
           functionalErrors
         )
       )
@@ -127,6 +129,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057("MRNCD3232"),
+          CustomsOfficeOfDestinationActual("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )

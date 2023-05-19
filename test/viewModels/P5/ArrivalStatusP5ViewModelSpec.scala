@@ -104,6 +104,43 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
       "when given Message with head of RejectionFromOfficeOfDestination for unloading" - {
         "and there are over 10 functional errors or 0 functional errors" in {
+
+          val messages = MessagesForArrivalMovement(
+            NonEmptyList(
+              ArrivalMessage(dateTimeNow, RejectionFromOfficeOfDestination),
+              List(
+                ArrivalMessage(dateTimeNow, UnloadingRemarks)
+              )
+            )
+          )
+
+          val movementAndMessage0Errors = movementAndMessages(RejectionFromOfficeOfDestination).copy(
+            messagesForMovement = messages,
+            functionalErrorCount = 0
+          )
+
+          val movementAndMessageMoreThan10 = movementAndMessages(RejectionFromOfficeOfDestination).copy(
+            messagesForMovement = messages,
+            functionalErrorCount = frontendAppConfig.maxErrorsForArrivalNotification + 1
+          )
+
+          val result0Errors    = ArrivalStatusP5ViewModel(movementAndMessage0Errors)
+          val resultMoreThan10 = ArrivalStatusP5ViewModel(movementAndMessageMoreThan10)
+
+          val href = controllers.testOnly.routes.UnloadingRemarkErrorsP5Controller.onPageLoad("arrivalID")
+
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
+                                                        Seq(
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                        )
+          )
+
+          result0Errors mustBe expectedResult
+          resultMoreThan10 mustBe expectedResult
+        }
+
+        "and there are less than 10 functional errors, but more than 0" in {
+
           val messages = MessagesForArrivalMovement(
             NonEmptyList(
               ArrivalMessage(dateTimeNow, RejectionFromOfficeOfDestination),
@@ -114,23 +151,22 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
           )
 
           val movementAndMessage = movementAndMessages(RejectionFromOfficeOfDestination).copy(
-            messagesForMovement = messages
+            messagesForMovement = messages,
+            functionalErrorCount = frontendAppConfig.maxErrorsForArrivalNotification - 1
           )
 
           val result = ArrivalStatusP5ViewModel(movementAndMessage)
 
-          val href = controllers.testOnly.routes.UnloadingRemarkErrorsP5Controller.onPageLoad("arrivalID")
+          val href = controllers.testOnly.routes.ReviewUnloadingRemarkErrorsP5Controller.onPageLoad("arrivalID")
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
-                                                        Seq(
-                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
-                                                        )
+            Seq(
+              ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+            )
           )
 
           result mustBe expectedResult
         }
-
-        "and there are less than 10 functional errors" ignore {}
       }
 
       "when given Message with head of rejectionFromOfficeOfDestinationArrival for arrival" in {

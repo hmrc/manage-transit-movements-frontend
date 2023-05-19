@@ -29,7 +29,7 @@ class UnloadingRemarkErrorsP5ViewSpec extends ViewBehaviours {
   override def view: HtmlFormat.Appendable =
     injector
       .instanceOf[UnloadingRemarkErrorsP5View]
-      .apply(unloadingNotificationErrorsP5ViewModel)(fakeRequest, messages, frontendAppConfig)
+      .apply(unloadingNotificationErrorsP5ViewModel)(fakeRequest, messages)
 
   override val prefix: String = "arrival.notification.unloading.errors.message"
 
