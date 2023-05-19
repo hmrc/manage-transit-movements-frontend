@@ -95,7 +95,7 @@ class ReviewArrivalNotificationErrorsP5ViewSpec extends CheckYourAnswersViewBeha
 
   behave like pageWithLink(
     "arrival-link",
-    "Create another arrival notifications",
+    "Create another arrival notification",
     frontendAppConfig.declareArrivalNotificationStartUrl
   )
 
