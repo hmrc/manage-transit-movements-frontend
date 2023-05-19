@@ -72,9 +72,9 @@ object ArrivalStatusP5ViewModel {
   }
 
   private def rejectionFromOfficeOfDestinationUnloading(
-                                                         arrivalId: String,
-                                                         previousMessages: Seq[ArrivalMessage],
-                                                         functionalErrorCount: Int
+    arrivalId: String,
+    previousMessages: Seq[ArrivalMessage],
+    functionalErrorCount: Int
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case RejectionFromOfficeOfDestination if previousMessages.exists(_.messageType == UnloadingRemarks) =>
       val href = functionalErrorCount match {
@@ -98,7 +98,8 @@ object ArrivalStatusP5ViewModel {
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case RejectionFromOfficeOfDestination =>
       val href = functionalErrorCount match {
-        case errors if errors == 0 || errors > frontendAppConfig.maxErrorsForArrivalNotification => ??? // CTCP-2918
+        case errors if errors == 0 || errors > frontendAppConfig.maxErrorsForArrivalNotification =>
+          controllers.testOnly.routes.ArrivalNotificationErrorP5Controller.onPageLoad(arrivalId)
         case errors if errors > 0 && errors <= frontendAppConfig.maxErrorsForArrivalNotification => ??? //CTCP-2917
       }
       ArrivalStatusP5ViewModel(
