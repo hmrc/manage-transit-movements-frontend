@@ -22,8 +22,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.ReviewArrivalNotificationErrorsP5ViewModel.ReviewArrivalNotificationErrorsP5ViewModelProvider
-import viewModels.P5.arrival.ReviewUnloadingRemarkErrorsP5ViewModel.ReviewUnloadingRemarkErrorsP5ViewModelProvider
-import views.html.arrival.P5.{ReviewArrivalNotificationErrorsP5View, ReviewUnloadingRemarkErrorsP5View}
+import views.html.arrival.P5.ReviewArrivalNotificationErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
