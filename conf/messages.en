@@ -433,3 +433,13 @@ cancellation.notification.customsOfficeContact.telephoneAvailable = Try cancelli
 cancellation.notification.customsOfficeContact.telephoneNotAvailable = Try cancelling the declaration again. Or for more information, contact Customs at {0}.
 cancellation.notification.customsOfficeContact.teleAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0} on {1}.
 cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0}.
+
+arrival.notification.unloading.errors.message.title   = Unloading remarks errors
+arrival.notification.unloading.errors.message.heading = Unloading remarks errors
+arrival.notification.unloading.errors.message.noerrors = There are one or more errors with the unloading remarks for arrival notification {0}.
+arrival.notification.unloading.errors.message.elevenpluserrors = There are a number of errors with the unloading remarks for arrival notification {0}.
+arrival.notification.unloading.customsOfficeContact.telephoneAvailable = Try making the unloading remarks again. Or for more information, contact Customs at {0} on {1}.
+arrival.notification.unloading.customsOfficeContact.telephoneNotAvailable = Try making the unloading remarks again. Or for more information, contact Customs at {0}.
+arrival.notification.unloading.customsOfficeContact.teleAvailAndOfficeNameNotAvail = Try making the unloading remarks again. Or for more information, contact Customs office {0} on {1}.
+arrival.notification.unloading.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = Try making the unloading remarks again. Or for more information, contact Customs office {0}.
+arrival.notification.unloading.errors.message.hyperlink = View arrival notifications

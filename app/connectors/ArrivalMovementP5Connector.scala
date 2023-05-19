@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
 import models.arrivalP5.{ArrivalMessages, ArrivalMovements, MessagesForArrivalMovement}
-import models.departureP5.DepartureMessages
 import play.api.http.Status.{NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}

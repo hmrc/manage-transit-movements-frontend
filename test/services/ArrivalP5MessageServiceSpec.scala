@@ -24,7 +24,7 @@ import models.arrivalP5._
 import models.departureP5.FunctionalError
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, when}
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -189,6 +189,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
         val ie057Data: IE057Data = IE057Data(
           IE057MessageData(
             TransitOperationIE057("CD3232"),
+            CustomsOfficeOfDestinationActual("1234"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
