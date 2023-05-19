@@ -121,6 +121,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
           val ie057: IE057Data = IE057Data(
             IE057MessageData(
               TransitOperationIE057("CD3232"),
+              CustomsOfficeOfDestinationActual("1234"),
               Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
             )
           )
@@ -144,7 +145,6 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
         val movement1 = ArrivalMovement("arrivalId1", "movementReferenceNo1", dateTime, "/locationUrl1")
         val movement2 = ArrivalMovement("arrivalId2", "movementReferenceNo2", dateTime, "/locationUrl2")
 
-        val message1 = ArrivalMessage(dateTime.minusDays(1), ArrivalMessageType.ArrivalNotification)
         val message2 = ArrivalMessage(dateTime, ArrivalMessageType.UnloadingPermission)
         val message3 = ArrivalMessage(dateTime, ArrivalMessageType.RejectionFromOfficeOfDestination)
 

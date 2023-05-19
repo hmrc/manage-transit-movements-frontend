@@ -34,8 +34,8 @@ object ArrivalStatusP5ViewModel {
             unloadingRemarks,
             unloadingPermission(arrivalId),
             goodsReleased,
-            rejectionFromOfficeOfDestinationUnloading(messages.tail, functionalErrorCount),
-            rejectionFromOfficeOfDestinationArrival(functionalErrorCount)
+            rejectionFromOfficeOfDestinationUnloading(arrivalId, messages.tail, functionalErrorCount),
+            rejectionFromOfficeOfDestinationArrival(arrivalId, functionalErrorCount)
           ).reduce(_ orElse _)
 
         allPfs.apply(messages.head.messageType)
@@ -72,13 +72,15 @@ object ArrivalStatusP5ViewModel {
   }
 
   private def rejectionFromOfficeOfDestinationUnloading( //TODO: If count = 0 or > 10 go to CTCP-2930, if count <= 10 goto CTCP-2929
+                                                         arrivalId: String,
                                                          previousMessages: Seq[ArrivalMessage],
                                                          functionalErrorCount: Int
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case RejectionFromOfficeOfDestination if previousMessages.exists(_.messageType == UnloadingRemarks) =>
       val href = functionalErrorCount match {
-        case errors if errors == 0 || errors > frontendAppConfig.maxErrorsForAmendableDeclaration => ??? // CTCP-2930
-        case errors if errors > 0 && errors <= frontendAppConfig.maxErrorsForAmendableDeclaration => ??? //CTCP-2929
+        case errors if errors == 0 || errors > frontendAppConfig.maxErrorsForArrivalNotification =>
+          controllers.testOnly.routes.UnloadingRemarkErrorsP5Controller.onPageLoad(arrivalId)
+        case errors if errors > 0 && errors <= frontendAppConfig.maxErrorsForArrivalNotification => ??? //CTCP-2929
       }
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
@@ -90,12 +92,13 @@ object ArrivalStatusP5ViewModel {
 
   //TODO: If count = 0 or > 10 go to CTCP-2918, if count <= 10 goto CTCP-2917
   private def rejectionFromOfficeOfDestinationArrival(
+    arrivalId: String,
     functionalErrorCount: Int
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessageType, ArrivalStatusP5ViewModel] = {
     case RejectionFromOfficeOfDestination =>
       val href = functionalErrorCount match {
-        case errors if errors == 0 || errors > frontendAppConfig.maxErrorsForAmendableDeclaration => ??? // CTCP-2918
-        case errors if errors > 0 && errors <= frontendAppConfig.maxErrorsForAmendableDeclaration => ??? //CTCP-2917
+        case errors if errors == 0 || errors > frontendAppConfig.maxErrorsForArrivalNotification => ??? // CTCP-2918
+        case errors if errors > 0 && errors <= frontendAppConfig.maxErrorsForArrivalNotification => ??? //CTCP-2917
       }
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",

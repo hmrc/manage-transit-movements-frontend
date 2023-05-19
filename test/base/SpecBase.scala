@@ -35,7 +35,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
 
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
-  val mrn: String               = "mrn"
+  val mrn: String               = "ABCD1234567890123"
 
   val departureId: DepartureId = DepartureId(1)
   val departureIdP5: String    = "643cffea2dca70b2"
