@@ -54,10 +54,10 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
       val result            = viewModelProvider.apply(mrnString, true)
 
       "must return correct title" in {
-        result.title mustBe "Arrival errors"
+        result.title mustBe "Notification errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Arrival errors"
+        result.heading mustBe "Notification errors"
       }
       "must return correct paragraph 1" in {
         result.paragraph1 mustBe s"There are one or more errors in arrival notification $mrnString that cannot be amended."
@@ -83,10 +83,10 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
       val result            = viewModelProvider.apply(mrnString, false)
 
       "must return correct title" in {
-        result.title mustBe "Arrival errors"
+        result.title mustBe "Notification errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Arrival errors"
+        result.heading mustBe "Notification errors"
       }
       "must return correct paragraph 1" in {
         result.paragraph1 mustBe s"There are a number of errors in arrival notification $mrnString."
