@@ -190,7 +190,24 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
           result0Errors mustBe expectedResult
           resultMoreThan10 mustBe expectedResult
         }
-        "and there are less than 10 functional errors, but more than 0" ignore {}
+
+        "and there are less than 10 functional errors, but more than 0" in {
+
+          val movementAndMessage =
+            movementAndMessages(RejectionFromOfficeOfDestination).copy(functionalErrorCount = frontendAppConfig.maxErrorsForArrivalNotification - 1)
+
+          val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+          val href = controllers.testOnly.routes.ReviewArrivalNotificationErrorsP5Controller.onPageLoad("arrivalID")
+
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
+                                                        Seq(
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                        )
+          )
+
+          result mustBe expectedResult
+        }
       }
 
     }
