@@ -22,7 +22,7 @@ import connectors.ArrivalMovementP5Connector
 import models.arrivalP5.ArrivalMessageType.{ArrivalNotification, RejectionFromOfficeOfDestination}
 import models.arrivalP5.{ArrivalMessageMetaData, ArrivalMessageType, ArrivalMovementAndMessage, ArrivalMovements, IE057Data}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

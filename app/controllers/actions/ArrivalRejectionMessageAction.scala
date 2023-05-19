@@ -24,6 +24,7 @@ import models.requests.{ArrivalRejectionMessageRequest, IdentifierRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import services.ArrivalP5MessageService
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
