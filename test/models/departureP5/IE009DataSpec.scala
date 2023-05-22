@@ -35,6 +35,7 @@ class IE009DataSpec extends SpecBase {
 
       val json = Json.parse(s"""
           {
+          "body": {
               "n1:CC009C": {
                   "TransitOperation": {
                       "MRN": "$mrn"
@@ -49,6 +50,7 @@ class IE009DataSpec extends SpecBase {
                       "justification": "$justification"
                   }
               }
+          }
           }
           """)
 
@@ -68,21 +70,7 @@ class IE009DataSpec extends SpecBase {
           )
         )
       )
-
-      println("\n\n\n\n\n" + json + "\n\n\n\n")
-
-      println("\n\n\n\n\n" + expectedResult + "\n\n\n\n")
-
-      println("\n\n\n\n above result \n\n\n\n")
-
-      val result1 = json.validate[IE009Data]
-
-      println("\n\n\n\n\n" + result1 + "\n\n\n\n")
-
       val result = json.validate[IE009Data].asOpt.value
-
-      println("\n\n\n\n" + result + "\n\n\n\n")
-
       result mustBe expectedResult
     }
   }
