@@ -22,6 +22,7 @@ import play.api.libs.json.{__, Reads}
 
 case class IE057MessageData(
   transitOperation: TransitOperationIE057,
+  customsOfficeOfDestinationActual: CustomsOfficeOfDestinationActual,
   functionalErrors: Seq[FunctionalError]
 )
 
@@ -29,6 +30,7 @@ object IE057MessageData {
 
   implicit lazy val reads: Reads[IE057MessageData] = (
     (__ \ "TransitOperation").read[TransitOperationIE057] and
+      (__ \ "CustomsOfficeOfDestinationActual").read[CustomsOfficeOfDestinationActual] and
       (__ \ "FunctionalError").readWithDefault[Seq[FunctionalError]](Nil)
   )(IE057MessageData.apply _)
 }

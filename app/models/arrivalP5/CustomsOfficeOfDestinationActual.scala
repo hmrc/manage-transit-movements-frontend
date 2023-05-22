@@ -18,8 +18,8 @@ package models.arrivalP5
 
 import play.api.libs.json.{Json, OFormat}
 
-case class TransitOperationIE057(MRN: String)
+case class CustomsOfficeOfDestinationActual(referenceNumber: String)
 
-object TransitOperationIE057 {
-  implicit val formats: OFormat[TransitOperationIE057] = Json.format[TransitOperationIE057]
+object CustomsOfficeOfDestinationActual {
+  implicit val formats: OFormat[CustomsOfficeOfDestinationActual] = Json.format[CustomsOfficeOfDestinationActual]
 }
