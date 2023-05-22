@@ -33,6 +33,9 @@ class IE057DataSpec extends SpecBase {
           |     "TransitOperation": {
           |       "MRN": "AB123"
           |     },
+          |     "CustomsOfficeOfDestinationActual": {
+          |       "referenceNumber": "1234"
+          |     },
           |     "FunctionalError": [
           |     {
           |       "errorPointer": "1",
@@ -55,6 +58,9 @@ class IE057DataSpec extends SpecBase {
         IE057MessageData(
           TransitOperationIE057(
             "AB123"
+          ),
+          CustomsOfficeOfDestinationActual(
+            "1234"
           ),
           Seq(
             FunctionalError("1", "12", "Codelist violation", None),

@@ -155,6 +155,7 @@ movement.status.P5.prelodgedDeclarationSent	                            = Prelod
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
 movement.status.P5.action.viewError = View Errors
+movement.status.P5.action.viewErrors = View errors
 
 movement.status.P5.action.departureNotification.cancelDeclaration         = Cancel declaration
 movement.status.P5.action.movementNotArrivedResponseSent.viewErrors       = View errors
@@ -434,6 +435,37 @@ cancellation.notification.customsOfficeContact.telephoneNotAvailable = Try cance
 cancellation.notification.customsOfficeContact.teleAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0} on {1}.
 cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0}.
 
+arrival.notification.unloading.errors.message.title   = Unloading remarks errors
+arrival.notification.unloading.errors.message.heading = Unloading remarks errors
+arrival.notification.unloading.errors.message.noerrors = There are one or more errors with the unloading remarks for arrival notification {0}.
+arrival.notification.unloading.errors.message.elevenpluserrors = There are a number of errors with the unloading remarks for arrival notification {0}.
+arrival.notification.unloading.customsOfficeContact.telephoneAvailable = Try making the unloading remarks again. Or for more information, contact Customs at {0} on {1}.
+arrival.notification.unloading.customsOfficeContact.telephoneNotAvailable = Try making the unloading remarks again. Or for more information, contact Customs at {0}.
+arrival.notification.unloading.customsOfficeContact.teleAvailAndOfficeNameNotAvail = Try making the unloading remarks again. Or for more information, contact Customs office {0} on {1}.
+arrival.notification.unloading.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = Try making the unloading remarks again. Or for more information, contact Customs office {0}.
+arrival.notification.unloading.errors.message.hyperlink = View arrival notifications
+
+arrival.ie057.review.unloading.message.title = Review unloading remarks errors
+arrival.ie057.review.unloading.message.heading = Review unloading remarks errors
+arrival.ie057.review.unloading.message.paragraph1.prefix = There is a problem with the unloading remarks for arrival notification {0}.
+arrival.ie057.review.unloading.message.paragraph1.singular.suffix = Review the error and try making the unloading remarks again.
+arrival.ie057.review.unloading.message.paragraph1.plural.suffix = Review the errors and try making the unloading remarks again.
+arrival.ie057.review.unloading.message.paragraph2.prefix = Contact the
+arrival.ie057.review.unloading.message.paragraph2.link = New Computerised Transit System helpdesk
+arrival.ie057.review.unloading.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
+arrival.ie057.review.unloading.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
+arrival.ie057.review.unloading.message.hyperlink = View arrival notifications
+
+arrival.ie057.review.notification.message.title = Review notification errors
+arrival.ie057.review.notification.message.heading = Review notification errors
+arrival.ie057.review.notification.message.paragraph1.prefix = There is a problem with arrival notification {0}.
+arrival.ie057.review.notification.message.paragraph1.singular.suffix = Review the error and make/create a new arrival notification with the right information.
+arrival.ie057.review.notification.message.paragraph1.plural.suffix = Review the errors and make/create a new arrival notification with the right information.
+arrival.ie057.review.notification.message.paragraph2.prefix = Contact the
+arrival.ie057.review.notification.message.paragraph2.link = New Computerised Transit System helpdesk
+arrival.ie057.review.notification.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
+arrival.ie057.review.notification.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
+arrival.ie057.review.notification.message.hyperlink = Create another arrival notification
 
 departure.cancellation.message.title   = Declaration cancelled
 departure.cancellation.message.heading = Declaration cancelled

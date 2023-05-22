@@ -17,7 +17,7 @@
 package utils
 
 import cats.data.OptionT
-import models.departureP5.{FunctionalError, IE056MessageData}
+import models.departureP5.FunctionalError
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -26,7 +26,7 @@ import viewModels.sections.Section
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, referenceDataService: ReferenceDataService)(implicit
+class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], referenceDataService: ReferenceDataService)(implicit
   messages: Messages,
   hc: HeaderCarrier,
   ec: ExecutionContext
@@ -70,7 +70,7 @@ class RejectionMessageP5MessageHelper(ie056MessageData: IE056MessageData, refere
 
     val summaryListRows: Future[Seq[SummaryListRow]] = Future
       .sequence(
-        ie056MessageData.functionalErrors.map(
+        functionalErrors.map(
           error => buildErrorRows(error)
         )
       )

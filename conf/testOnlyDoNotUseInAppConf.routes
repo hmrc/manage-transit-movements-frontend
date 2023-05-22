@@ -61,11 +61,16 @@ GET        /manage-transit-movements/test-only/departure-declaration-errors/:dep
 GET        /manage-transit-movements/test-only/cancellation-errors/:departureId                     controllers.testOnly.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String)
 
 
+
 GET        /manage-transit-movements/test-only/review-departure-declaration-errors/:departureId     controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(departureId: String)
 
 GET        /manage-transit-movements/test-only/send-departure-declaration-errors/:departureId           controllers.testOnly.RejectionMessageP5Controller.onAmend(departureId: String)
 
 GET        /manage-transit-movements/test-only/cancellation/declaration-cancelled/:departureId           controllers.testOnly.DepartureCancelledP5Controller.onPageLoad(departureId: String)
+
+GET        /manage-transit-movements/test-only/unloading-remarks-errors/:arrivalId     controllers.testOnly.UnloadingRemarkErrorsP5Controller.onPageLoad(arrivalId: String)
+
+GET        /manage-transit-movements/test-only/review-unloading-remarks-errors/:arrivalId           controllers.testOnly.ReviewUnloadingRemarkErrorsP5Controller.onPageLoad(arrivalId: String)
 
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                            controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()

@@ -16,11 +16,10 @@
 
 package models.arrivalP5
 
-import play.api.libs.json.{__, Reads}
+import play.api.libs.json.{Json, OFormat}
 
-case class IE057Data(data: IE057MessageData)
+case class CustomsOfficeOfDestinationActual(referenceNumber: String)
 
-object IE057Data {
-
-  implicit val reads: Reads[IE057Data] = (__ \ "body" \ "n1:CC057C").read[IE057MessageData].map(IE057Data.apply)
+object CustomsOfficeOfDestinationActual {
+  implicit val formats: OFormat[CustomsOfficeOfDestinationActual] = Json.format[CustomsOfficeOfDestinationActual]
 }

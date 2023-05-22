@@ -18,8 +18,6 @@ package models.arrivalP5
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDateTime
-
 case class TransitOperationIE057(MRN: String)
 
 object TransitOperationIE057 {

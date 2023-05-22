@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.routes
-import models.arrivalP5.{IE057Data, IE057MessageData, TransitOperationIE057}
+import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
@@ -45,6 +45,7 @@ class ArrivalRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach
   val message: IE057Data = IE057Data(
     IE057MessageData(
       TransitOperationIE057("MRNCD3232"),
+      CustomsOfficeOfDestinationActual("1234"),
       Seq(functionalError1, functionalError2)
     )
   )
