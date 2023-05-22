@@ -55,6 +55,11 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
     def viewModel(customsOffice: Option[CustomsOffice] = None): DepartureCancelledP5ViewModel =
       viewModelProvider.apply(ie009Data.data, lrn, customsReferenceId, customsOffice)
 
+    "must return correct section" in {
+      viewModel().sections.head.sectionTitle mustBe None
+      viewModel().sections.head.rows.size mustBe 5
+    }
+
     "title" - {
       "must return correct message" in {
         viewModel().title mustBe "Declaration cancelled"
