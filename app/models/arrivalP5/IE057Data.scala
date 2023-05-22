@@ -16,7 +16,6 @@
 
 package models.arrivalP5
 
-import models.departureP5.IE056MessageData
 import play.api.libs.json.{__, Reads}
 
 case class IE057Data(data: IE057MessageData)
