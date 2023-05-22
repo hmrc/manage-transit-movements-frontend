@@ -15,13 +15,8 @@
  *@
 
 @import views.html.components.{Button, Heading, AnswerSections}
-@import controllers.routes._
-@import models.departureP5.IE060MessageData
-@import viewModels.P5.departure.GoodsUnderControlP5ViewModel
-@import viewModels.P5.departure.GoodsUnderControlP5ViewModel._
-@import models.referenceData.CustomsOffice
-@import viewModels.P5.departure.CustomsOfficeContactViewModel
-@import models.departureP5.IE009MessageData
+@import viewModels.P5.departure.DepartureCancelledP5ViewModel
+@import config.FrontendAppConfig
 
 @this(
 mainTemplate: MainTemplate,
@@ -31,23 +26,24 @@ button: Button,
 formHelper: FormWithCSRF
 )
 
-@(departureId: String, departureCancelledP5ViewModel: DepartureCancelledP5ViewModel, data: IE009MessageData)(implicit request: Request[_], messages: Messages)
+@(departureId: String, departureCancelledP5ViewModel: DepartureCancelledP5ViewModel)(implicit request: Request[_], messages: Messages, frontendAppConfig: FrontendAppConfig)
 
     @mainTemplate(
-        title = "goodsUnderControlP5ViewModel.title",
+        title = departureCancelledP5ViewModel.title,
         showBackLink = true
     ) {
 
     @heading(
-        heading = "goodsUnderControlP5ViewModel.heading",
-        caption = Some("lrn")
+        heading = departureCancelledP5ViewModel.heading,
+        caption = Some(departureCancelledP5ViewModel.caption)
     )
 
-    @data
+    <p class="govuk-body" id="paragraph">@departureCancelledP5ViewModel.paragraph</p>
 
+    @answerSections(departureCancelledP5ViewModel.sections)
 
-@*//    @answerSections(goodsUnderControlP5ViewModel.sections)*@
+    <p class="govuk-body" id="customs-office">@departureCancelledP5ViewModel.customsOfficeContent</p>
 
-
+    <p><a id="link" class="govuk-link" href="@frontendAppConfig.declareDepartureStartWithLRNUrl">@departureCancelledP5ViewModel.hyperlink</a></p>
 
 }

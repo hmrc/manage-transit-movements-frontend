@@ -16,13 +16,14 @@
 
 package controllers.testOnly
 
+import config.FrontendAppConfig
+import connectors.ReferenceDataConnector
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.CustomsOfficeContactViewModel
-import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
-import views.html.departure.TestOnly.{DepartureCancelledP5View, GoodsUnderControlP5View}
+import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
+import views.html.departure.TestOnly.DepartureCancelledP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -32,18 +33,21 @@ class DepartureCancelledP5Controller @Inject() (
   identify: IdentifierAction,
   departureCancelledActionProvider: DepartureCancelledActionProvider,
   cc: MessagesControllerComponents,
-  view: DepartureCancelledP5View
-)(implicit val executionContext: ExecutionContext)
+  viewModelProvider: DepartureCancelledP5ViewModelProvider,
+  view: DepartureCancelledP5View,
+  referenceDataConnector: ReferenceDataConnector
+)(implicit val executionContext: ExecutionContext, frontendAppConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)) {
+  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
     implicit request =>
-      // val departureCancelledP5ViewModel = viewModelProvider.apply(request.ie009MessageData)
-//      val customsOfficeContactViewModel =
-//        CustomsOfficeContactViewModel(request.ie060MessageData.CustomsOfficeOfDeparture.referenceNumber, request.customsOffice)
-//      goodsUnderControlP5ViewModel.map {
-      // viewModel =>
-      Ok(view(departureId, request.ie009MessageData))
+      val customsOfficeReferenceNumber = request.ie009MessageData.customsOfficeOfDeparture.referenceNumber
+      referenceDataConnector.getCustomsOffice(customsOfficeReferenceNumber).map {
+        customsOffice =>
+          val departureCancelledP5ViewModel = viewModelProvider.apply(request.ie009MessageData, request.lrn, customsOfficeReferenceNumber, customsOffice)
+
+          Ok(view(departureId, departureCancelledP5ViewModel))
+      }
   }
 }

@@ -433,3 +433,16 @@ cancellation.notification.customsOfficeContact.telephoneAvailable = Try cancelli
 cancellation.notification.customsOfficeContact.telephoneNotAvailable = Try cancelling the declaration again. Or for more information, contact Customs at {0}.
 cancellation.notification.customsOfficeContact.teleAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0} on {1}.
 cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0}.
+
+
+departure.cancellation.message.title   = Declaration cancelled
+departure.cancellation.message.heading = Declaration cancelled
+departure.cancellation.message.paragraph = The office of departure cancelled the declaration for LRN {0} as requested.
+departure.cancellation.message.hyperlink = Make another departure declaration
+departure.cancellation.message.customsOfficeContact.telephoneAvailable = If you have any questions, contact Customs at {0} on {1}.
+departure.cancellation.message.customsOfficeContact.telephoneNotAvailable = If you have any questions, contact Customs at {0}.
+departure.cancellation.message.customsOfficeContact.teleAvailAndOfficeNameNotAvail = If you have any questions, contact Customs office {0} on {1}.
+departure.cancellation.message.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = If you have any questions, contact Customs office {0}.
+row.label.dateAndTimeOfDecision =  Date and time of decision
+row.label.initiatedByCustoms =  Initiated by Customs?
+row.label.justification =  Comments

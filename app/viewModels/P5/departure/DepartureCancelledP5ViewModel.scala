@@ -16,35 +16,55 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.IE060MessageData
+import models.departureP5.IE009MessageData
+import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
-import play.api.mvc.Call
-import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.GoodsUnderControlP5MessageHelper
+import utils.DepartureCancelledP5Helper
 import viewModels.sections.Section
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-// sections: Seq[Section]
-case class DepartureCancelledP5ViewModel(sections: String) {
+case class DepartureCancelledP5ViewModel(sections: Seq[Section], lrn: String, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]) {
 
+  def title(implicit messages: Messages): String     = messages("departure.cancellation.message.title")
+  def heading(implicit messages: Messages): String   = messages("departure.cancellation.message.heading")
+  def paragraph(implicit messages: Messages): String = messages("departure.cancellation.message.paragraph", lrn)
+  def hyperlink(implicit messages: Messages): String = messages("departure.cancellation.message.hyperlink")
 
+  def caption(implicit messages: Messages): String = messages("departure.messages.caption", lrn)
+
+  def customsOfficeContent(implicit messages: Messages): String =
+    customsOffice match {
+      case Some(CustomsOffice(id, _, _)) => customsOfficeNameAndNumber(messages, id)
+      case _                             => messages("departure.cancellation.message.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceId)
+    }
+
+  private def customsOfficeNameAndNumber(messages: Messages, id: String): String =
+    (customsOffice.get.nameOption, customsOffice.get.phoneOption) match {
+      case (Some(name), Some(phone)) => messages("departure.cancellation.message.customsOfficeContact.telephoneAvailable", name, phone)
+      case (None, Some(phone))       => messages("departure.cancellation.message.customsOfficeContact.teleAvailAndOfficeNameNotAvail", id, phone)
+      case (Some(name), None)        => messages("departure.cancellation.message.customsOfficeContact.telephoneNotAvailable", name)
+      case _                         => messages("departure.cancellation.message.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", id)
+    }
 }
 
 object DepartureCancelledP5ViewModel {
 
-  class DepartureCancelledP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class DepartureCancelledP5ViewModelProvider @Inject() () {
 
     def apply(
-      ie060MessageData: IE060MessageData
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureCancelledP5ViewModel] = {
-      val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData, referenceDataService)
+      ie009MessageData: IE009MessageData,
+      lrn: String,
+      customsOfficeReferenceId: String,
+      customsOffice: Option[CustomsOffice]
+    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): DepartureCancelledP5ViewModel = {
+      val helper = new DepartureCancelledP5Helper(ie009MessageData)
 
+      val section = helper.buildInvalidationSection
 
-          new DepartureCancelledP5ViewModel(sections)
-      }
+      new DepartureCancelledP5ViewModel(Seq(section), lrn, customsOfficeReferenceId, customsOffice)
     }
   }
 }
