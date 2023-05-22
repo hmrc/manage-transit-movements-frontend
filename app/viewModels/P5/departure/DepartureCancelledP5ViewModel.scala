@@ -59,7 +59,7 @@ object DepartureCancelledP5ViewModel {
       lrn: String,
       customsOfficeReferenceId: String,
       customsOffice: Option[CustomsOffice]
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): DepartureCancelledP5ViewModel = {
+    )(implicit messages: Messages): DepartureCancelledP5ViewModel = {
       val helper = new DepartureCancelledP5Helper(ie009MessageData)
 
       val section = helper.buildInvalidationSection
