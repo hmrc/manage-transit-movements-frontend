@@ -49,7 +49,8 @@ class DepartureCancelledAction(departureId: String, departureP5MessageService: D
 
     (for {
       ie009 <- OptionT(departureP5MessageService.getMessage[IE009Data](departureId, CancellationDecision))
-    } yield DepartureCancelledRequest(request, request.eoriNumber, ie009.data))
+      lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId)) // TODO: Remove once LRN is exposed to use in metadata
+    } yield DepartureCancelledRequest(request, request.eoriNumber, ie009.data, lrn))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
 

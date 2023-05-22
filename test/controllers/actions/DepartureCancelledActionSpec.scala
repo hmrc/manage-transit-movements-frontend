@@ -67,6 +67,7 @@ class DepartureCancelledActionSpec extends SpecBase with BeforeAndAfterEach with
     "must return 200 when an departure cancellation is available" in {
 
       when(mockMessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("lrn123")))
 
       val departureCancelledActionProvider = (new DepartureCancelledActionProvider(mockMessageService)(implicitly))(departureIdP5)
 

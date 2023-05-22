@@ -46,6 +46,6 @@ class FakeDepartureCancelledAction(departureId: String, departureP5MessageServic
   )
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, DepartureCancelledRequest[A]]] =
-    Future.successful(Right(DepartureCancelledRequest(request, "AB123", message.data)))
+    Future.successful(Right(DepartureCancelledRequest(request, "AB123", message.data, "lrn123")))
 
 }
