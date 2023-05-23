@@ -19,7 +19,7 @@ package controllers.testOnly
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.actions.{ArrivalRejectionMessageActionProvider, FakeArrivalRejectionMessageAction}
 import generators.Generators
-import models.arrivalP5.{IE057Data, IE057MessageData, TransitOperationIE057}
+import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -63,6 +63,7 @@ class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefa
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057("MRNAB123"),
+          CustomsOfficeOfDestinationActual("1234"),
           Seq.empty
         )
       )
@@ -90,6 +91,7 @@ class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefa
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057("MRNAB123"),
+          CustomsOfficeOfDestinationActual("1234"),
           Seq(
             FunctionalError("1", "12", "Codelist violation", None),
             FunctionalError("2", "14", "Rule violation", None),
@@ -128,6 +130,7 @@ class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefa
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057("MRNCD3232"),
+          CustomsOfficeOfDestinationActual("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
