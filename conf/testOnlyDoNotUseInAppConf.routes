@@ -3,7 +3,7 @@
 # !!!WARNING!!! This file MUST NOT be referenced in the "application.conf" file to avoid risk of rolling test routes in the production environment.
 # If you need test routes when running tests in CI make sure that the profile for this micro-service (used by service-manager) defines this router as parameter.
 # To do so add the following line to the micro-service profile: "-Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
-    # To start the micro-service locally using the test routes run the following command: "sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
+# To start the micro-service locally using the test routes run the following command: "sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
 
 # Any test-only end-point should be defined here.
 # !!!WARNING!!! Every route defined in this file MUST be prefixed with "/test-only/". This is because NGINX is blocking every uri containing the string "test-only" in production.
@@ -61,7 +61,8 @@ GET        /manage-transit-movements/test-only/departure-declaration-errors/:dep
 GET        /manage-transit-movements/test-only/cancellation-errors/:departureId                     controllers.testOnly.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String)
 
 
-
+GET        /manage-transit-movements/test-only/review-departure-declaration-errors/:departureId                                controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(departureId: String)
+GET        /manage-transit-movements/test-only/review-cancellation-errors/:departureId                                controllers.testOnly.ReviewCancellationErrorsP5Controller.onPageLoad(departureId: String)
 GET        /manage-transit-movements/test-only/review-departure-declaration-errors/:departureId     controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(departureId: String)
 
 GET        /manage-transit-movements/test-only/send-departure-declaration-errors/:departureId           controllers.testOnly.RejectionMessageP5Controller.onAmend(departureId: String)
