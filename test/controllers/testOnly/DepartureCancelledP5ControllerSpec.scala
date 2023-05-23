@@ -17,7 +17,6 @@
 package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.ReferenceDataConnector
 import controllers.actions.{DepartureCancelledActionProvider, FakeDepartureCancelledAction}
 import generators.Generators
 import models.departureP5._
@@ -29,7 +28,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.DepartureP5MessageService
+import services.{DepartureP5MessageService, ReferenceDataService}
 import viewModels.P5.departure.DepartureCancelledP5ViewModel
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
 import views.html.departure.TestOnly.DepartureCancelledP5View
@@ -42,7 +41,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
   private val mockDepartureCancelledP5ViewModelProvider = mock[DepartureCancelledP5ViewModelProvider]
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockDepartureCancelledActionProvider      = mock[DepartureCancelledActionProvider]
-  private val mockReferenceDataConnector                = mock[ReferenceDataConnector]
+  private val mockReferenceDataService                  = mock[ReferenceDataService]
 
   protected def departureCancelledAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService): Unit =
     when(mockDepartureCancelledActionProvider.apply(any())) thenReturn new FakeDepartureCancelledAction(departureIdP5, mockDepartureP5MessageService)
@@ -51,7 +50,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
-    reset(mockReferenceDataConnector)
+    reset(mockReferenceDataService)
     reset(mockDepartureCancelledP5ViewModelProvider)
     reset(mockDepartureCancelledActionProvider)
 
@@ -62,7 +61,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       .guiceApplicationBuilder()
       .overrides(bind[DepartureCancelledP5ViewModelProvider].toInstance(mockDepartureCancelledP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
-      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+      .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
 
@@ -94,9 +93,9 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
       when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
-      when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any())(any()))
-        .thenReturn(departureCancelledP5ViewModel)
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
       departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
 

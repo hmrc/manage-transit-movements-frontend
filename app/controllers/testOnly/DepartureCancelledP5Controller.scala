@@ -21,6 +21,7 @@ import connectors.ReferenceDataConnector
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
 import views.html.departure.TestOnly.DepartureCancelledP5View
@@ -35,7 +36,7 @@ class DepartureCancelledP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: DepartureCancelledP5ViewModelProvider,
   view: DepartureCancelledP5View,
-  referenceDataConnector: ReferenceDataConnector
+  referenceDataService: ReferenceDataService
 )(implicit val executionContext: ExecutionContext, frontendAppConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
@@ -43,11 +44,12 @@ class DepartureCancelledP5Controller @Inject() (
   def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
     implicit request =>
       val customsOfficeReferenceNumber = request.ie009MessageData.customsOfficeOfDeparture.referenceNumber
-      referenceDataConnector.getCustomsOffice(customsOfficeReferenceNumber).map {
+      referenceDataService.getCustomsOfficeByCode(customsOfficeReferenceNumber).flatMap {
         customsOffice =>
-          val departureCancelledP5ViewModel = viewModelProvider.apply(request.ie009MessageData, request.lrn, customsOfficeReferenceNumber, customsOffice)
-
-          Ok(view(departureId, departureCancelledP5ViewModel))
+          viewModelProvider.apply(request.ie009MessageData, request.lrn, customsOfficeReferenceNumber, customsOffice).map {
+            viewModel =>
+              Ok(view(departureId, viewModel))
+          }
       }
   }
 }

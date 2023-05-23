@@ -20,13 +20,27 @@ import base.SpecBase
 import generators.Generators
 import models.departureP5._
 import models.referenceData.CustomsOffice
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api
+import play.api.inject.guice.GuiceApplicationBuilder
+import services.ReferenceDataService
 import viewModels.P5.departure.DepartureCancelledP5ViewModel
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
 
 import java.time.LocalDateTime
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+
+  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(api.inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "DepartureCancelledP5ViewModelSpec" - {
 
@@ -50,10 +64,12 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
       )
     )
 
-    val viewModelProvider = new DepartureCancelledP5ViewModelProvider()
+    val viewModelProvider = new DepartureCancelledP5ViewModelProvider(mockReferenceDataService)
+
+    when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
     def viewModel(customsOffice: Option[CustomsOffice] = None): DepartureCancelledP5ViewModel =
-      viewModelProvider.apply(ie009Data.data, lrn, customsReferenceId, customsOffice)
+      viewModelProvider.apply(ie009Data.data, lrn, customsReferenceId, customsOffice).futureValue
 
     "must return correct section" in {
       viewModel().sections.head.sectionTitle mustBe None

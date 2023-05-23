@@ -19,7 +19,13 @@ package helper
 import base.SpecBase
 import generators.Generators
 import models.departureP5._
+import models.referenceData.CustomsOffice
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api
+import play.api.inject.guice.GuiceApplicationBuilder
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.DepartureCancelledP5Helper
@@ -27,8 +33,17 @@ import viewModels.sections.Section
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+
+  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(api.inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "DepartureCancelledP5HelperSpec" - {
 
@@ -53,7 +68,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
           )
         )
 
-        val helper = new DepartureCancelledP5Helper(message.data)
+        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
         val result = helper.buildMRNRow
 
@@ -79,7 +94,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
           )
         )
 
-        val helper = new DepartureCancelledP5Helper(message.data)
+        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
         val result = helper.buildMRNRow
 
@@ -109,7 +124,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
           )
         )
 
-        val helper = new DepartureCancelledP5Helper(message.data)
+        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
         val result = helper.buildDateTimeDecisionRow
 
@@ -135,7 +150,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
           )
         )
 
-        val helper = new DepartureCancelledP5Helper(message.data)
+        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
         val result = helper.buildDateTimeDecisionRow
 
@@ -167,7 +182,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             )
           )
 
-          val helper = new DepartureCancelledP5Helper(message.data)
+          val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
           val result = helper.buildInitiatedByCustomsRow
 
@@ -194,7 +209,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             )
           )
 
-          val helper = new DepartureCancelledP5Helper(message.data)
+          val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
           val result = helper.buildInitiatedByCustomsRow
 
@@ -206,7 +221,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
     "buildOfficeOfDepartureRow" - {
 
-      "must return SummaryListRow" in {
+      "must return SummaryListRow with office name and code" in {
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
@@ -220,17 +235,51 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               Some("some justification")
             ),
             CustomsOfficeOfDeparture(
-              "1234"
+              "GB00060"
             )
           )
         )
 
-        val helper = new DepartureCancelledP5Helper(message.data)
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(CustomsOffice("GB00060", "BOSTON", None))))
 
-        val result = helper.buildOfficeOfDepartureRow
+        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
+
+        val result = helper.buildOfficeOfDepartureRow.futureValue
 
         result mustBe
-          Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText)))
+          Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("BOSTON (GB00060)".toText)))
+      }
+
+      "must return SummaryListRow with code" - {
+        "when customs office returns None" in {
+
+          val message: IE009Data = IE009Data(
+            IE009MessageData(
+              TransitOperationIE009(
+                Some("abd123")
+              ),
+              Invalidation(
+                Some(LocalDateTime.now()),
+                Some("0"),
+                "1",
+                Some("some justification")
+              ),
+              CustomsOfficeOfDeparture(
+                "GB00060"
+              )
+            )
+          )
+
+          when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+
+          val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
+
+          val result = helper.buildOfficeOfDepartureRow.futureValue
+
+          result mustBe
+            Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("GB00060".toText)))
+        }
+
       }
     }
 
@@ -255,7 +304,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
           )
         )
 
-        val helper = new DepartureCancelledP5Helper(message.data)
+        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
         val result = helper.buildCommentsRow
 
@@ -281,7 +330,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
           )
         )
 
-        val helper = new DepartureCancelledP5Helper(message.data)
+        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
         val result = helper.buildCommentsRow
 
@@ -311,9 +360,11 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
           )
         )
 
-        val helper = new DepartureCancelledP5Helper(message.data)
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
-        val result = helper.buildInvalidationSection
+        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
+
+        val result = helper.buildInvalidationSection.futureValue
         val firstRow =
           Seq(
             SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText)),

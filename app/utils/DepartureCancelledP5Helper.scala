@@ -17,7 +17,9 @@
 package utils
 
 import cats.data.OptionT
+import connectors.ReferenceDataConnector
 import models.departureP5.{IE009MessageData, IE060MessageData, RequestedDocument, TypeOfControls}
+import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,8 +29,10 @@ import viewModels.sections.Section
 import java.time.LocalDateTime
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData)(implicit
-  messages: Messages
+class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData, referenceDataService: ReferenceDataService)(implicit
+  messages: Messages,
+  ec: ExecutionContext,
+  hc: HeaderCarrier
 ) extends DeparturesP5MessageHelper {
 
   def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
@@ -58,13 +62,25 @@ class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData)(implicit
     call = None
   )
 
-  def buildOfficeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(ie009MessageData.customsOfficeOfDeparture.referenceNumber),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.officeOfDeparture"),
-    id = None,
-    call = None
-  )
+  private def getCustomsOffice(referenceNumber: String): Future[Option[CustomsOffice]] = referenceDataService.getCustomsOfficeByCode(referenceNumber)(ec, hc)
+
+  def buildOfficeOfDepartureRow: Future[Option[SummaryListRow]] = {
+    val referenceNumber = ie009MessageData.customsOfficeOfDeparture.referenceNumber
+    getCustomsOffice(referenceNumber).map {
+      customsOffice =>
+        val answerToDisplay = customsOffice match {
+          case Some(customsOffice) => customsOffice.nameAndCode
+          case _                   => referenceNumber
+        }
+        buildRowFromAnswer[String](
+          answer = Some(answerToDisplay),
+          formatAnswer = formatAsText,
+          prefix = messages("row.label.officeOfDeparture"),
+          id = None,
+          call = None
+        )
+    }
+  }
 
   def buildCommentsRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = ie009MessageData.invalidation.justification,
@@ -74,18 +90,18 @@ class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData)(implicit
     call = None
   )
 
-  def buildInvalidationSection: Section = {
+  def buildInvalidationSection: Future[Section] =
+    buildOfficeOfDepartureRow.map {
+      officeOfDeparture =>
+        val mrnRow                = extractOptionalRow(buildMRNRow)
+        val dateTimeRow           = extractOptionalRow(buildDateTimeDecisionRow)
+        val initiatedByCustomsRow = extractOptionalRow(buildInitiatedByCustomsRow)
+        val officeOfDepartureRow  = extractOptionalRow(officeOfDeparture)
+        val commentsRow           = extractOptionalRow(buildCommentsRow)
 
-    val mrnRow                = extractOptionalRow(buildMRNRow)
-    val dateTimeRow           = extractOptionalRow(buildDateTimeDecisionRow)
-    val initiatedByCustomsRow = extractOptionalRow(buildInitiatedByCustomsRow)
-    val officeOfDepartureRow  = extractOptionalRow(buildOfficeOfDepartureRow)
-    val commentsRow           = extractOptionalRow(buildCommentsRow)
+        val rows = mrnRow ++ dateTimeRow ++ initiatedByCustomsRow ++ officeOfDepartureRow ++ commentsRow
 
-    val rows = mrnRow ++ dateTimeRow ++ initiatedByCustomsRow ++ officeOfDepartureRow ++ commentsRow
-
-    Section(None, rows, None)
-
-  }
+        Section(None, rows, None)
+    }
 
 }

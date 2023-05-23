@@ -57,7 +57,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     call = None
   )
 
-  def buildOfficeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+  def buildOfficeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String]( //TODO: Call to reference data to get the customs office?
     answer = Some(ie060MessageData.CustomsOfficeOfDeparture.referenceNumber),
     formatAnswer = formatAsText,
     prefix = messages("row.label.officeOfDeparture"),

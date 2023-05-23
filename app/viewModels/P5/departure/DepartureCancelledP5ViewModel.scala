@@ -16,21 +16,26 @@
 
 package viewModels.P5.departure
 
+import connectors.ReferenceDataConnector
 import models.departureP5.IE009MessageData
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
+import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.DepartureCancelledP5Helper
 import viewModels.sections.Section
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 case class DepartureCancelledP5ViewModel(sections: Seq[Section], lrn: String, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]) {
 
-  def title(implicit messages: Messages): String     = messages("departure.cancellation.message.title")
-  def heading(implicit messages: Messages): String   = messages("departure.cancellation.message.heading")
+  def title(implicit messages: Messages): String = messages("departure.cancellation.message.title")
+
+  def heading(implicit messages: Messages): String = messages("departure.cancellation.message.heading")
+
   def paragraph(implicit messages: Messages): String = messages("departure.cancellation.message.paragraph", lrn)
+
   def hyperlink(implicit messages: Messages): String = messages("departure.cancellation.message.hyperlink")
 
   def caption(implicit messages: Messages): String = messages("departure.messages.caption", lrn)
@@ -52,19 +57,20 @@ case class DepartureCancelledP5ViewModel(sections: Seq[Section], lrn: String, cu
 
 object DepartureCancelledP5ViewModel {
 
-  class DepartureCancelledP5ViewModelProvider @Inject() () {
+  class DepartureCancelledP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
       ie009MessageData: IE009MessageData,
       lrn: String,
       customsOfficeReferenceId: String,
       customsOffice: Option[CustomsOffice]
-    )(implicit messages: Messages): DepartureCancelledP5ViewModel = {
-      val helper = new DepartureCancelledP5Helper(ie009MessageData)
+    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureCancelledP5ViewModel] = {
+      val helper = new DepartureCancelledP5Helper(ie009MessageData, referenceDataService)
 
-      val section = helper.buildInvalidationSection
-
-      new DepartureCancelledP5ViewModel(Seq(section), lrn, customsOfficeReferenceId, customsOffice)
+      helper.buildInvalidationSection.map {
+        section =>
+          new DepartureCancelledP5ViewModel(Seq(section), lrn, customsOfficeReferenceId, customsOffice)
+      }
     }
   }
 }

@@ -20,8 +20,8 @@ import generators.Generators
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.DepartureCancelledP5ViewModel
 import viewModels.sections.Section
-import views.behaviours.{CheckYourAnswersViewBehaviours, ViewBehaviours}
-import views.html.departure.TestOnly.{CancellationNotificationErrorsP5View, DepartureCancelledP5View}
+import views.behaviours.CheckYourAnswersViewBehaviours
+import views.html.departure.TestOnly.DepartureCancelledP5View
 
 class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
