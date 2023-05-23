@@ -18,7 +18,7 @@ package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import controllers.actions.{FakeRejectionMessageAction, RejectionMessageActionProvider}
+import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
@@ -40,13 +40,13 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
 
   private val mockReviewDepartureErrorMessageP5ViewModelProvider = mock[ReviewCancellationErrorsP5ViewModelProvider]
   private val mockDepartureP5MessageService                      = mock[DepartureP5MessageService]
-  private val mockRejectionMessageActionProvider                 = mock[RejectionMessageActionProvider]
+  private val mockRejectionMessageActionProvider                 = mock[DepartureRejectionMessageActionProvider]
   private val mockCacheService: DepartureCacheConnector          = mock[DepartureCacheConnector]
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeRejectionMessageAction(departureIdP5,
-                                                                                                    mockDepartureP5MessageService,
-                                                                                                    mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                             mockDepartureP5MessageService,
+                                                                                                             mockCacheService
     )
 
   lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureIdP5).url
