@@ -22,32 +22,42 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel.CancellationNotificationErrorsP5ViewModelProvider
-import views.html.departure.TestOnly.CancellationNotificationErrorsP5View
+import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel._
+import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CancellationNotificationErrorsP5Controller @Inject() (
+class UnloadingRemarkErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  rejectionMessageAction: DepartureRejectionMessageActionProvider,
-  viewModelProvider: CancellationNotificationErrorsP5ViewModelProvider,
-  view: CancellationNotificationErrorsP5View,
+  rejectionMessageAction: ArrivalRejectionMessageActionProvider,
+  viewModelProvider: UnloadingRemarkErrorsP5ViewModelProvider,
+  view: UnloadingRemarkErrorsP5View,
   referenceDataConnector: ReferenceDataConnector
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
+  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
     implicit request =>
-      val functionalErrors       = request.ie056MessageData.functionalErrors
-      val customsOfficeReference = request.ie056MessageData.customsOfficeOfDeparture.referenceNumber
+      val functionalErrors       = request.ie057MessageData.functionalErrors
+      val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber
 
-      if (functionalErrors.isEmpty || functionalErrors.size > config.maxErrorsForCancellationNotification) {
+      if (functionalErrors.isEmpty || (functionalErrors.size > config.maxErrorsForArrivalNotification)) {
         referenceDataConnector.getCustomsOffice(customsOfficeReference).map {
           customsOffice =>
-            Ok(view(viewModelProvider.apply(request.lrn, functionalErrors.isEmpty, customsOfficeReference, customsOffice)))
+            Ok(
+              view(
+                viewModelProvider.apply(
+                  request.ie057MessageData.transitOperation.MRN,
+                  request.ie057MessageData.functionalErrors.isEmpty,
+                  customsOfficeReference,
+                  customsOffice
+                )
+              )
+            )
         }
       } else {
         Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))

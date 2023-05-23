@@ -19,11 +19,14 @@ package services
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.ArrivalMovementP5Connector
+import models.arrivalP5.ArrivalMessageType.RejectionFromOfficeOfDestination
 import models.arrivalP5._
+import models.departureP5.FunctionalError
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, when}
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -69,6 +72,41 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
         arrivalP5MessageService.getMessagesForAllMovements(arrivalMovements).futureValue mustBe expectedResult
       }
     }
+
+    "getMessage" - {
+
+      "must return an IE057Data when given Arrival Id" in {
+
+        val messages = ArrivalMessages(
+          List(
+            ArrivalMessageMetaData(
+              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              ArrivalMessageType.ArrivalNotification,
+              "movements/arrivals/6365135ba5e821ee/message/634982098f02f00b"
+            ),
+            ArrivalMessageMetaData(
+              LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              ArrivalMessageType.RejectionFromOfficeOfDestination,
+              "movements/arrivals/6365135ba5e821ee/message/634982098f02f00a"
+            )
+          )
+        )
+
+        val ie057Data: IE057Data = IE057Data(
+          IE057MessageData(
+            TransitOperationIE057("CD3232"),
+            CustomsOfficeOfDestinationActual("1234"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+
+        when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
+        when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
+
+        arrivalP5MessageService.getMessage[IE057Data](arrivalId = "6365135ba5e821ee", RejectionFromOfficeOfDestination).futureValue mustBe Some(ie057Data)
+      }
+    }
+
   }
 
 }

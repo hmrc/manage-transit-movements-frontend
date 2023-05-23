@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models.departureP5
+package models.arrivalP5
 
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.{__, Reads}
 
-case class Messages(messages: List[MessageMetaData])
+case class IE057Data(data: IE057MessageData)
 
-object Messages {
-  implicit val reads: Reads[Messages] = Json.reads[Messages]
+object IE057Data {
+
+  implicit val reads: Reads[IE057Data] = (__ \ "body" \ "n1:CC057C").read[IE057MessageData].map(IE057Data.apply)
 }

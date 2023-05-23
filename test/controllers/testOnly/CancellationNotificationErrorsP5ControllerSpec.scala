@@ -18,7 +18,7 @@ package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.{DepartureCacheConnector, ReferenceDataConnector}
-import controllers.actions.{FakeRejectionMessageAction, RejectionMessageActionProvider}
+import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
 import models.departureP5.{FunctionalError, _}
 import org.mockito.ArgumentMatchers.any
@@ -38,7 +38,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
 
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
-  private val mockRejectionMessageActionProvider        = mock[RejectionMessageActionProvider]
+  private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
   private val mockReferenceDataConnector                = mock[ReferenceDataConnector]
 
   lazy val controllerRoute: String = controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5).url
@@ -46,9 +46,9 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
   private val lrnString = "LRNAB123"
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeRejectionMessageAction(departureIdP5,
-                                                                                                    mockDepartureP5MessageService,
-                                                                                                    mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                             mockDepartureP5MessageService,
+                                                                                                             mockCacheService
     )
 
   override def beforeEach(): Unit = {

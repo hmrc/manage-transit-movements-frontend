@@ -18,7 +18,7 @@ package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import controllers.actions.{FakeRejectionMessageAction, RejectionMessageActionProvider}
+import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
 import models.departureP5.{FunctionalError, _}
 import org.mockito.ArgumentMatchers.any
@@ -38,15 +38,15 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
 
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
-  private val mockRejectionMessageActionProvider        = mock[RejectionMessageActionProvider]
+  private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
   lazy val departureDeclarationErrorsController: String = controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5).url
 
   private val lrnString = "LRNAB123"
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeRejectionMessageAction(departureIdP5,
-                                                                                                    mockDepartureP5MessageService,
-                                                                                                    mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                             mockDepartureP5MessageService,
+                                                                                                             mockCacheService
     )
 
   override def beforeEach(): Unit = {

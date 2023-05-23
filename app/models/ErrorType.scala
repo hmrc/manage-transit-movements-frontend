@@ -16,7 +16,7 @@
 
 package models
 
-import com.lucidchart.open.xtract.{ParseError, ParseFailure, ParseResult, ParseSuccess, XmlReader}
+import com.lucidchart.open.xtract.{ParseError, ParseFailure, ParseSuccess, XmlReader}
 import play.api.libs.json.{JsNumber, Writes}
 
 import scala.xml.NodeSeq
@@ -61,21 +61,18 @@ object ErrorType extends Enumerable.Implicits {
   }
 
   implicit val xmlErrorTypeReads: XmlReader[ErrorType] =
-    new XmlReader[ErrorType] {
+    (xml: NodeSeq) => {
 
-      override def read(xml: NodeSeq): ParseResult[ErrorType] = {
-
-        case class ErrorTypeParseError(message: String) extends ParseError
-        genericValues.find(
-          x => x.code.toString == xml.text
-        ) match {
-          case Some(errorType) => ParseSuccess(errorType)
-          case None =>
-            try ParseSuccess(UnknownErrorCode(xml.text.toInt))
-            catch {
-              case _: Exception => ParseFailure(ErrorTypeParseError(s"Invalid or missing ErrorType: ${xml.text}"))
-            }
-        }
+      case class ErrorTypeParseError(message: String) extends ParseError
+      genericValues.find(
+        x => x.code.toString == xml.text
+      ) match {
+        case Some(errorType) => ParseSuccess(errorType)
+        case None =>
+          try ParseSuccess(UnknownErrorCode(xml.text.toInt))
+          catch {
+            case _: Exception => ParseFailure(ErrorTypeParseError(s"Invalid or missing ErrorType: ${xml.text}"))
+          }
       }
     }
 

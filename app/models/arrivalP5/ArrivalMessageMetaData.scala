@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.arrivalP5
 
-import models.departureP5.IE056MessageData
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.{__, Reads}
 
-case class RejectionMessageRequest[A](
-  request: Request[A],
-  eoriNumber: String,
-  ie056MessageData: IE056MessageData,
-  isDeclarationAmendable: Boolean,
-  lrn: String
-) extends WrappedRequest[A](request)
+import java.time.LocalDateTime
+
+case class ArrivalMessageMetaData(received: LocalDateTime, messageType: ArrivalMessageType, path: String)
+
+object ArrivalMessageMetaData {
+
+  implicit lazy val reads: Reads[ArrivalMessageMetaData] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "received").read[LocalDateTime] and
+        (__ \ "type").read[ArrivalMessageType] and
+        (__ \ "_links" \ "self" \ "href").read[String].map(_.replace("/customs/transits/", ""))
+    )(ArrivalMessageMetaData.apply _)
+  }
+}

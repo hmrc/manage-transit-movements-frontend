@@ -17,8 +17,8 @@
 package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.DepartureCacheConnector
 import controllers.routes
+import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
@@ -29,24 +29,23 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{DepartureP5MessageService, ReferenceDataService}
+import services.{ArrivalP5MessageService, ReferenceDataService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with AppWithDefaultMockFixtures {
+class ArrivalRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with AppWithDefaultMockFixtures {
 
-  val mockMessageService: DepartureP5MessageService  = mock[DepartureP5MessageService]
-  val mockCacheService: DepartureCacheConnector      = mock[DepartureCacheConnector]
+  val mockMessageService: ArrivalP5MessageService    = mock[ArrivalP5MessageService]
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   val functionalError1: FunctionalError = FunctionalError("1", "12", "Codelist violation", None)
   val functionalError2: FunctionalError = FunctionalError("2", "14", "Rule violation", None)
 
-  val message: IE056Data = IE056Data(
-    IE056MessageData(
-      TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-      CustomsOfficeOfDeparture("AB123"),
+  val message: IE057Data = IE057Data(
+    IE057MessageData(
+      TransitOperationIE057("MRNCD3232"),
+      CustomsOfficeOfDestinationActual("1234"),
       Seq(functionalError1, functionalError2)
     )
   )
@@ -54,20 +53,17 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
   override def beforeEach(): Unit = {
     super.beforeEach()
     Mockito.reset(mockMessageService)
-    Mockito.reset(mockCacheService)
   }
 
   private def fakeOkResult[A]: A => Future[Result] =
     _ => Future.successful(Ok)
 
-  "RejectionMessageAction" - {
-    "must return 200 when an unloading permission is available" in {
+  "Arrival RejectionMessageAction" - {
+    "must return 200 when rejection from office of destination is available" in {
 
-      when(mockMessageService.getMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockMessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
-      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+      when(mockMessageService.getMessage[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
 
-      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new ArrivalRejectionMessageActionProvider(mockMessageService)(implicitly))(arrivalIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
@@ -78,10 +74,9 @@ class RejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with A
 
     "must return 303 and redirect to technical difficulties when unavailable" in {
 
-      when(mockMessageService.getMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
-      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+      when(mockMessageService.getMessage[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
 
-      val rejectionMessageProvider = (new RejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new ArrivalRejectionMessageActionProvider(mockMessageService)(implicitly))(arrivalIdP5)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 

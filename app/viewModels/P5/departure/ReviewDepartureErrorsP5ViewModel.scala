@@ -65,7 +65,7 @@ object ReviewDepartureErrorsP5ViewModel {
       ie056MessageData: IE056MessageData,
       lrn: String
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewDepartureErrorsP5ViewModel] = {
-      val helper = new RejectionMessageP5MessageHelper(ie056MessageData, referenceDataService)
+      val helper = new RejectionMessageP5MessageHelper(ie056MessageData.functionalErrors, referenceDataService)
 
       val multipleErrors = ie056MessageData.functionalErrors.length > 1
       val sections       = Seq(helper.errorSection())
