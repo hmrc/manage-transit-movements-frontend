@@ -97,6 +97,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val countdownSeconds: Int    = configuration.get[Int]("session.countdownSeconds")
 
   private val departureFrontendUrl: String    = phase5Switch.Departures.getFrontendUrl
+  private val arrivalFrontendUrl: String      = phase5Switch.Arrivals.getFrontendUrl
   lazy val draftDepartureFrontendUrl: String  = phase5Switch.Departures.getFrontendUrl
   private val cancellationFrontendUrl: String = phase5Switch.Cancellations.getFrontendUrl
 
@@ -113,6 +114,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   val phase5ArrivalEnabled: Boolean   = phase5Switch.Arrivals.enabled
 
   val maxErrorsForAmendableDeclaration: Int     = configuration.get[Int]("maxErrorsForAmendableDeclaration")
+  val maxErrorsForArrivalNotification: Int      = configuration.get[Int]("maxErrorsForArrivalNotification")
   val maxErrorsForCancellationNotification: Int = configuration.get[Int]("maxErrorsForCancellationNotification")
   val maxErrorsForArrivaLNotification: Int      = configuration.get[Int]("maxErrorsForArrivalNotification")
 
