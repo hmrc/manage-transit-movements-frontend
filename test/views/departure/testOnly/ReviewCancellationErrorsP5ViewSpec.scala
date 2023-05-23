@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package views.arrival.P5
+package views.departure.testOnly
 
 import generators.Generators
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewModels.P5.arrival.ReviewArrivalNotificationErrorsP5ViewModel
+import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.arrival.P5.ReviewArrivalNotificationErrorsP5View
+import views.html.departure.TestOnly.ReviewCancellationErrorsP5View
 
-class ReviewArrivalNotificationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class ReviewCancellationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
-  override val prefix: String = "arrival.ie057.review.notification.message"
+  override val prefix: String = "departure.ie056.review.cancellation.message"
 
   private val reviewRejectionMessageP5ViewModel =
-    new ReviewArrivalNotificationErrorsP5ViewModel(sections, lrn.toString, false)
+    new ReviewCancellationErrorsP5ViewModel(sections, lrn.toString, false)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[ReviewArrivalNotificationErrorsP5View]
+      .instanceOf[ReviewCancellationErrorsP5View]
       .apply(reviewRejectionMessageP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
@@ -67,11 +67,11 @@ class ReviewArrivalNotificationErrorsP5ViewSpec extends CheckYourAnswersViewBeha
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1-prefix",
-      s"There is a problem with arrival notification $mrn."
+      s"The office of departure was not able to cancel departure declaration $lrn."
     )
     assertSpecificElementContainsText(
       "paragraph-1-suffix",
-      "Review the error and make/create a new arrival notification with the right information."
+      "Review the error - then if you still want to cancel the declaration, try cancelling it again."
     )
   }
 
@@ -94,9 +94,9 @@ class ReviewArrivalNotificationErrorsP5ViewSpec extends CheckYourAnswersViewBeha
   )
 
   behave like pageWithLink(
-    "arrival-link",
-    "Create another arrival notification",
-    frontendAppConfig.declareArrivalNotificationStartUrl
+    "departure-link",
+    "View departure declarations",
+    controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
   )
 
 }

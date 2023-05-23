@@ -17,6 +17,7 @@
 package base
 
 import config.{FrontendAppConfig, PaginationAppConfig}
+import models.referenceData.CustomsOffice
 import models.{DepartureId, LocalReferenceNumber}
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -39,6 +40,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val departureId: DepartureId = DepartureId(1)
   val departureIdP5: String    = "643cffea2dca70b2"
   val arrivalIdP5: String      = "62f4ebbb765ba8c2"
+
+  val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"))
 
   def injector: Injector                               = app.injector
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")

@@ -21,34 +21,28 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.arrival.ReviewArrivalNotificationErrorsP5ViewModel.ReviewArrivalNotificationErrorsP5ViewModelProvider
-import views.html.arrival.P5.ReviewArrivalNotificationErrorsP5View
+import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel.ReviewCancellationErrorsP5ViewModelProvider
+import views.html.departure.TestOnly.ReviewCancellationErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ReviewArrivalNotificationErrorsP5Controller @Inject() (
+class ReviewCancellationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  rejectionMessageAction: ArrivalRejectionMessageActionProvider,
+  rejectionMessageAction: DepartureRejectionMessageActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: ReviewArrivalNotificationErrorsP5ViewModelProvider,
-  view: ReviewArrivalNotificationErrorsP5View
+  viewModelProvider: ReviewCancellationErrorsP5ViewModelProvider,
+  view: ReviewCancellationErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
+  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
     implicit request =>
-      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie057MessageData, request.ie057MessageData.transitOperation.MRN)
+      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
       rejectionMessageP5ViewModel.map(
-        viewModel =>
-          //TODO need to pick config value config.maxErrorsForArrivaLNotification once CTCP-2918 is merged
-          if (request.ie057MessageData.functionalErrors.isEmpty || (request.ie057MessageData.functionalErrors.size > 10)) {
-            Redirect(controllers.routes.ErrorController.technicalDifficulties())
-          } else {
-            Ok(view(viewModel, arrivalId))
-          }
+        viewModel => Ok(view(viewModel, departureId))
       )
   }
 }

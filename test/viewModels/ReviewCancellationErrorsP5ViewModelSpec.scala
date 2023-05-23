@@ -18,7 +18,6 @@ package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
-import models.arrivalP5.{IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
@@ -27,12 +26,12 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
-import viewModels.P5.arrival.ReviewArrivalNotificationErrorsP5ViewModel.ReviewArrivalNotificationErrorsP5ViewModelProvider
+import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel.ReviewCancellationErrorsP5ViewModelProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -43,39 +42,40 @@ class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWi
   override def beforeEach(): Unit =
     reset(mockReferenceDataService)
 
-  val mrnString = "MRNAB123"
+  val lrnString = "LRNAB123"
 
-  "ReviewArrivalNotificationErrorsP5ViewModel" - {
+  "ReviewCancellationErrorsP5ViewModel" - {
 
     val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "Codelist violation")
 
     "when there is one error" - {
 
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232"),
+      val message: IE056Data = IE056Data(
+        IE056MessageData(
+          TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+          CustomsOfficeOfDeparture("1234"),
           Seq(FunctionalError("14", "12", "MRN incorrect", None))
         )
       )
 
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ReviewArrivalNotificationErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, mrnString).futureValue
+      val viewModelProvider = new ReviewCancellationErrorsP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
 
       "must return correct section length" in {
         result.sections.length mustBe 1
       }
 
       "must return correct title" in {
-        result.title mustBe "Review notification errors"
+        result.title mustBe "Review cancellation errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Review notification errors"
+        result.heading mustBe "Review cancellation errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"There is a problem with arrival notification $mrnString."
-        result.paragraph1Suffix mustBe "Review the error and make/create a new arrival notification with the right information."
+        result.paragraph1Prefix mustBe s"The office of departure was not able to cancel departure declaration $lrnString."
+        result.paragraph1Suffix mustBe "Review the error - then if you still want to cancel the declaration, try cancelling it again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -83,34 +83,43 @@ class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWi
         result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Create another arrival notification"
+        result.hyperlink mustBe "View departure declarations"
+      }
+
+      "must return correct url" in {
+        result.viewDeparturesLink mustBe controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
       }
     }
 
     "when there is multiple errors" - {
       val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232"),
+      val message: IE056Data = IE056Data(
+        IE056MessageData(
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          CustomsOfficeOfDeparture("1234"),
           functionalErrors
         )
       )
 
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ReviewArrivalNotificationErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, mrnString).futureValue
+      val viewModelProvider = new ReviewCancellationErrorsP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
+
+      "must return correct section length" in {
+        result.sections.length mustBe 1
+      }
 
       "must return correct title" in {
-        result.title mustBe "Review notification errors"
+        result.title mustBe "Review cancellation errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Review notification errors"
+        result.heading mustBe "Review cancellation errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"There is a problem with arrival notification $mrnString."
-        result.paragraph1Suffix mustBe "Review the errors and make/create a new arrival notification with the right information."
+        result.paragraph1Prefix mustBe s"The office of departure was not able to cancel departure declaration $lrnString."
+        result.paragraph1Suffix mustBe "Review the errors - then if you still want to cancel the declaration, try cancelling it again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -118,23 +127,28 @@ class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWi
         result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Create another arrival notification"
+        result.hyperlink mustBe "View departure declarations"
+      }
+
+      "must return correct url" in {
+        result.viewDeparturesLink mustBe controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
       }
     }
 
     "must render rows" in {
 
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232"),
+      val message: IE056Data = IE056Data(
+        IE056MessageData(
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          CustomsOfficeOfDeparture("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
 
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ReviewArrivalNotificationErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, mrnString).futureValue
+      val viewModelProvider = new ReviewCancellationErrorsP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
 
       result.sections.length mustBe 1
       result.sections.head.rows.size mustBe 4

@@ -27,7 +27,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -301,6 +301,9 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
             |    "TransitOperation": {
             |      "MRN": "CD3232"
             |    },
+            |    "CustomsOfficeOfDestinationActual": {
+            |      "referenceNumber": "1234"
+            |    },
             |    "FunctionalError": [
             |      {
             |        "errorPointer": "1",
@@ -340,6 +343,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
         val expectedResult: IE057Data = IE057Data(
           IE057MessageData(
             TransitOperationIE057("CD3232"),
+            CustomsOfficeOfDestinationActual("1234"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
