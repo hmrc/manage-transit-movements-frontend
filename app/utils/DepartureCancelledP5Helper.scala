@@ -16,9 +16,7 @@
 
 package utils
 
-import cats.data.OptionT
-import connectors.ReferenceDataConnector
-import models.departureP5.{IE009MessageData, IE060MessageData, RequestedDocument, TypeOfControls}
+import models.departureP5.IE009MessageData
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import services.ReferenceDataService

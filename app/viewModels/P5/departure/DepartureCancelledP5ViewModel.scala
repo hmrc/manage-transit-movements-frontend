@@ -16,7 +16,6 @@
 
 package viewModels.P5.departure
 
-import connectors.ReferenceDataConnector
 import models.departureP5.IE009MessageData
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
