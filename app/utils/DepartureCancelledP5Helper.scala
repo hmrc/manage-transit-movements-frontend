@@ -45,7 +45,7 @@ class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData, referenceDa
 
   def buildDateTimeDecisionRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDateTime](
     answer = ie009MessageData.invalidation.decisionDateAndTime,
-    formatAnswer = formatAsDate,
+    formatAnswer = formatAsDecisionDateTime,
     prefix = messages("row.label.dateAndTimeOfDecision"),
     id = None,
     call = None
@@ -85,7 +85,7 @@ class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData, referenceDa
   def buildCommentsRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = ie009MessageData.invalidation.justification,
     formatAnswer = formatAsText,
-    prefix = messages("row.label.justification"), // TODO CHANGE THIS
+    prefix = messages("row.label.justification"),
     id = None,
     call = None
   )

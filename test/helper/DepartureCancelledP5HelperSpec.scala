@@ -155,7 +155,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
         val result = helper.buildDateTimeDecisionRow
 
         result mustBe
-          Some(SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15 pm".toText)))
+          Some(SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText)))
       }
     }
 
@@ -368,7 +368,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
         val firstRow =
           Seq(
             SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText)),
-            SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15 pm".toText)),
+            SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText)),
             SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText)),
             SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText)),
             SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText))
