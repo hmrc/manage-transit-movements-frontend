@@ -21,6 +21,8 @@ import play.api.libs.json.{Json, OFormat}
 case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
   val nameOption: Option[String]  = if (name.isEmpty) None else Some(name)
   val phoneOption: Option[String] = phoneNumber.filter(_.nonEmpty)
+
+  def nameAndCode: String = s"${this.name} (${this.id})"
 }
 
 object CustomsOffice {

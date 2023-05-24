@@ -62,6 +62,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data).futureValue
@@ -99,6 +100,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data).futureValue
@@ -130,6 +132,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data).futureValue
@@ -162,6 +165,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         )
       )
 
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data).futureValue
 
@@ -181,6 +186,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
             None
           )
         )
+
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
         val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
         val result            = viewModelProvider.apply(message.data).futureValue
@@ -205,6 +212,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
         when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
         when(mockReferenceDataService.getControlType("45")).thenReturn(Future.successful(controlType45))
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+
         val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
         val result            = viewModelProvider.apply(message.data).futureValue
 
@@ -231,6 +240,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
           )
         )
 
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+
         val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
         val result            = viewModelProvider.apply(message.data).futureValue
 
@@ -249,6 +260,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
             requestedDocument
           )
         )
+
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
         val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
         val result            = viewModelProvider.apply(message.data).futureValue

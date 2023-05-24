@@ -19,7 +19,8 @@ package helper
 import base.SpecBase
 import generators.Generators
 import models.departureP5._
-import models.referenceData.ControlType
+import models.referenceData.{ControlType, CustomsOffice}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
@@ -144,23 +145,52 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
     "buildOfficeOfDepartureRow" - {
 
-      "must return SummaryListRow" in {
+      "must return SummaryListRow with customs office id and code" - {
+        "when reference data call returns a customs office" in {
 
-        val message: IE060Data = IE060Data(
-          IE060MessageData(
-            TransitOperation(None, None, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
-            CustomsOfficeOfDeparture("22323323"),
-            None,
-            None
+          val message: IE060Data = IE060Data(
+            IE060MessageData(
+              TransitOperation(None, None, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+              CustomsOfficeOfDeparture("22323323"),
+              None,
+              None
+            )
           )
-        )
 
-        val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
+          when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+            .thenReturn(Future.successful(Some(CustomsOffice("22323323", "Office", None))))
 
-        val result = helper.buildOfficeOfDepartureRow
+          val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
-        result mustBe
-          Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText)))
+          val result = helper.buildOfficeOfDepartureRow.futureValue
+
+          result mustBe
+            Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("Office (22323323)".toText)))
+        }
+      }
+
+      "must return SummaryListRow with customs office code" - {
+        "when reference data call returns None" in {
+
+          val message: IE060Data = IE060Data(
+            IE060MessageData(
+              TransitOperation(None, None, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+              CustomsOfficeOfDeparture("22323323"),
+              None,
+              None
+            )
+          )
+
+          when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+            .thenReturn(Future.successful(None))
+
+          val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
+
+          val result = helper.buildOfficeOfDepartureRow.futureValue
+
+          result mustBe
+            Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText)))
+        }
       }
     }
 
@@ -190,8 +220,10 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val typeOfControls = Some(Seq(TypeOfControls("1", "44", None), TypeOfControls("2", "45", Some("Desc1"))))
         val controlType44  = ControlType("44", "Nature and characteristics of the goods")
         val controlType45  = ControlType("45", "")
+
         when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
         when(mockReferenceDataService.getControlType("45")).thenReturn(Future.successful(controlType45))
+
         val message: IE060Data = IE060Data(
           IE060MessageData(
             TransitOperation(None, None, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
@@ -224,8 +256,10 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val typeOfControls = Some(Seq(TypeOfControls("1", "44", None), TypeOfControls("2", "45", Some("Desc1"))))
         val controlType44  = ControlType("44", "")
         val controlType45  = ControlType("45", "")
+
         when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
         when(mockReferenceDataService.getControlType("45")).thenReturn(Future.successful(controlType45))
+
         val message: IE060Data = IE060Data(
           IE060MessageData(
             TransitOperation(None, None, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
@@ -287,6 +321,8 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
         val result = helper.documentSection()
@@ -319,9 +355,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
-        val result = helper.buildGoodsUnderControlSection()
+        val result = helper.buildGoodsUnderControlSection().futureValue
         val firstRow =
           Seq(
             SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value("LRN1".toText)),
