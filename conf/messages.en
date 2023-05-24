@@ -155,6 +155,7 @@ movement.status.P5.prelodgedDeclarationSent	                            = Prelod
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
 movement.status.P5.action.viewError = View Errors
+movement.status.P5.action.viewErrors = View errors
 
 movement.status.P5.action.departureNotification.cancelDeclaration         = Cancel declaration
 movement.status.P5.action.movementNotArrivedResponseSent.viewErrors       = View errors
@@ -404,12 +405,22 @@ departure.ie056.review.message.heading = Review declaration errors
 departure.ie056.review.message.paragraph1.prefix = There is a problem with departure declaration {0}.
 departure.ie056.review.message.paragraph1.singular.suffix = Review the error and make/create a new departure declaration with the right information.
 departure.ie056.review.message.paragraph1.plural.suffix = Review the errors and make/create a new departure declaration with the right information.
-
 departure.ie056.review.message.paragraph2.prefix = Contact the
 departure.ie056.review.message.paragraph2.link = New Computerised Transit System helpdesk
 departure.ie056.review.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
 departure.ie056.review.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
 departure.ie056.review.message.hyperlink = Create another departure declaration
+
+departure.ie056.review.cancellation.message.title = Review cancellation errors
+departure.ie056.review.cancellation.message.heading = Review cancellation errors
+departure.ie056.review.cancellation.message.paragraph1.prefix = The office of departure was not able to cancel departure declaration {0}.
+departure.ie056.review.cancellation.message.paragraph1.singular.suffix = Review the error - then if you still want to cancel the declaration, try cancelling it again.
+departure.ie056.review.cancellation.message.paragraph1.plural.suffix = Review the errors - then if you still want to cancel the declaration, try cancelling it again.
+departure.ie056.review.cancellation.message.paragraph2.prefix = Contact the
+departure.ie056.review.cancellation.message.paragraph2.link = New Computerised Transit System helpdesk
+departure.ie056.review.cancellation.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
+departure.ie056.review.cancellation.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
+departure.ie056.review.cancellation.message.hyperlink = View departure declarations
 
 row.label.error =  Error
 row.label.reason =  Reason
@@ -433,6 +444,16 @@ cancellation.notification.customsOfficeContact.telephoneAvailable = Try cancelli
 cancellation.notification.customsOfficeContact.telephoneNotAvailable = Try cancelling the declaration again. Or for more information, contact Customs at {0}.
 cancellation.notification.customsOfficeContact.teleAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0} on {1}.
 cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = Try cancelling the declaration again. Or for more information, contact Customs office {0}.
+
+arrival.notification.errors.message.title   = Notification errors
+arrival.notification.errors.message.heading = Notification errors
+arrival.notification.errors.message.noerrors = There are one or more errors in arrival notification {0} that cannot be amended.
+arrival.notification.errors.message.elevenpluserrors = There are a number of errors in arrival notification {0}.
+arrival.notification.errors.message.paragraph2 = Make/create a new arrival notification with the right information.
+arrival.notification.errors.message.paragraph3.prefix = Contact the
+arrival.notification.errors.message.paragraph3.link = New Computerised Transit System helpdesk
+arrival.notification.errors.message.paragraph3.suffix = for help understanding the errors (opens in a new tab).
+arrival.notification.errors.message.hyperlink = Create another arrival notification
 
 arrival.notification.unloading.errors.message.title   = Unloading remarks errors
 arrival.notification.unloading.errors.message.heading = Unloading remarks errors
@@ -466,13 +487,4 @@ arrival.ie057.review.notification.message.paragraph2.singular.suffix = for help 
 arrival.ie057.review.notification.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
 arrival.ie057.review.notification.message.hyperlink = Create another arrival notification
 
-arrival.notification.errors.message.title   = Notification errors
-arrival.notification.errors.message.heading = Notification errors
-arrival.notification.errors.message.noerrors = There are one or more errors in arrival notification {0} that cannot be amended.
-arrival.notification.errors.message.elevenpluserrors = There are a number of errors in arrival notification {0}.
-arrival.notification.errors.message.paragraph2 = Make/create a new arrival notification with the right information.
-arrival.notification.errors.message.paragraph3.prefix = Contact the
-arrival.notification.errors.message.paragraph3.link = New Computerised Transit System helpdesk
-arrival.notification.errors.message.paragraph3.suffix = for help understanding the errors (opens in a new tab).
-arrival.notification.errors.message.hyperlink = Create another arrival notification
 
