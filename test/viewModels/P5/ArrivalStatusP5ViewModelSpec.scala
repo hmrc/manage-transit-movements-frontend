@@ -131,7 +131,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
                                                         Seq(
-                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewErrors")
                                                         )
           )
 
@@ -161,7 +161,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
                                                         Seq(
-                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewErrors")
                                                         )
           )
 
@@ -183,7 +183,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
                                                         Seq(
-                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewErrors")
                                                         )
           )
 
@@ -202,7 +202,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
                                                         Seq(
-                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewErrors")
                                                         )
           )
 

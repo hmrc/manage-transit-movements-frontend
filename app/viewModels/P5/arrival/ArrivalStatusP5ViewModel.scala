@@ -86,7 +86,7 @@ object ArrivalStatusP5ViewModel {
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
         actions = Seq(
-          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+          ViewMovementAction(s"$href", "movement.status.P5.action.viewErrors")
         )
       )
   }
@@ -105,7 +105,7 @@ object ArrivalStatusP5ViewModel {
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
         actions = Seq(
-          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+          ViewMovementAction(s"$href", "movement.status.P5.action.viewErrors")
         )
       )
   }
