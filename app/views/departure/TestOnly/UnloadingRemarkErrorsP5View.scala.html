@@ -26,7 +26,7 @@
         formHelper: FormWithCSRF
 )
 
-@(unloadingRemarkErrorsP5ViewModel: UnloadingRemarkErrorsP5ViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(unloadingRemarkErrorsP5ViewModel: UnloadingRemarkErrorsP5ViewModel)(implicit request: Request[_], messages: Messages)
 
     @mainTemplate(
         title = unloadingRemarkErrorsP5ViewModel.title,

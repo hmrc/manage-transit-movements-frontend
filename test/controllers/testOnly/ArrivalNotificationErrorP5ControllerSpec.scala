@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package controllers.arrival.testOnly
+package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.ReferenceDataConnector
 import controllers.actions.{ArrivalRejectionMessageActionProvider, FakeArrivalRejectionMessageAction}
 import generators.Generators
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
@@ -30,74 +29,68 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ArrivalP5MessageService
-import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
-import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
+import viewModels.P5.arrival.ArrivalNotificationErrorP5ViewModel
+import views.html.arrival.TestOnly.ArrivalNotificationErrorP5View
 
 import scala.concurrent.Future
 
-class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockArrivalP5MessageService                = mock[ArrivalP5MessageService]
-  private val mockRejectionMessageActionProvider         = mock[ArrivalRejectionMessageActionProvider]
-  private val mockReferenceDataConnector                 = mock[ReferenceDataConnector]
-  lazy val unloadingNotificationErrorsController: String = controllers.testOnly.routes.UnloadingRemarkErrorsP5Controller.onPageLoad(arrivalIdP5).url
+  private val mockArrivalP5MessageService             = mock[ArrivalP5MessageService]
+  private val mockRejectionMessageActionProvider      = mock[ArrivalRejectionMessageActionProvider]
+  lazy val arrivalNotificationErrorController: String = controllers.testOnly.routes.ArrivalNotificationErrorP5Controller.onPageLoad(arrivalIdP5).url
 
   private val mrnString = "MRNAB123"
 
-  def rejectionMessageAction(arrivalIdP5: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
+  def rejectionMessageAction(departureIdP5: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
+    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalP5MessageService)
     reset(mockRejectionMessageActionProvider)
-    reset(mockReferenceDataConnector)
+
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
-      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
 
-  "UnloadingRemarkErrorsP5Controller" - {
+  "ArrivalDeclarationErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET when no Errors" in {
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057(s"$mrnString"),
+          TransitOperationIE057("MRNAB123"),
           CustomsOfficeOfDestinationActual("1234"),
           Seq.empty
         )
       )
-
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
-        .thenReturn(Future.successful(Some(fakeCustomsOffice)))
+      rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
-      rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
+      val arrivalNotificationErrorP5ViewModel = new ArrivalNotificationErrorP5ViewModel(mrnString, true)
 
-      val unloadingNotificationErrorsP5ViewModel = new UnloadingRemarkErrorsP5ViewModel(mrnString, true, "1234", Some(fakeCustomsOffice))
-
-      val request = FakeRequest(GET, unloadingNotificationErrorsController)
+      val request = FakeRequest(GET, arrivalNotificationErrorController)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[UnloadingRemarkErrorsP5View]
+      val view = injector.instanceOf[ArrivalNotificationErrorP5View]
 
       contentAsString(result) mustEqual
-        view(unloadingNotificationErrorsP5ViewModel)(request, messages).toString
+        view(arrivalNotificationErrorP5ViewModel)(request, messages, frontendAppConfig).toString
     }
 
     "must return OK and the correct view for a GET when more than 10 Errors" in {
 
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057(s"$mrnString"),
+          TransitOperationIE057("MRNAB123"),
           CustomsOfficeOfDestinationActual("1234"),
           Seq(
             FunctionalError("1", "12", "Codelist violation", None),
@@ -117,43 +110,36 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
-        .thenReturn(Future.successful(Some(fakeCustomsOffice)))
+      rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
-      rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
+      val departureDeclarationErrorsP5ViewModel = new ArrivalNotificationErrorP5ViewModel(mrnString, false)
 
-      val unloadingNotificationErrorsP5ViewModel = new UnloadingRemarkErrorsP5ViewModel(mrnString, false, "1234", Some(fakeCustomsOffice))
-
-      val request = FakeRequest(GET, unloadingNotificationErrorsController)
+      val request = FakeRequest(GET, arrivalNotificationErrorController)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[UnloadingRemarkErrorsP5View]
+      val view = injector.instanceOf[ArrivalNotificationErrorP5View]
 
       contentAsString(result) mustEqual
-        view(unloadingNotificationErrorsP5ViewModel)(request, messages).toString
+        view(departureDeclarationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057(s"$mrnString"),
+          TransitOperationIE057("MRNCD3232"),
           CustomsOfficeOfDestinationActual("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
-        .thenReturn(Future.successful(Some(fakeCustomsOffice)))
+      rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
-      rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
-
-      val request = FakeRequest(GET, unloadingNotificationErrorsController)
+      val request = FakeRequest(GET, arrivalNotificationErrorController)
 
       val result = route(app, request).value
 

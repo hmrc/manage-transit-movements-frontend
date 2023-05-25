@@ -33,113 +33,183 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
   "ArrivalStatusP5ViewModel" - {
 
-    def movementAndMessages(headMessage: ArrivalMessageType): ArrivalMovementAndMessage =
-      ArrivalMovementAndMessage(
-        ArrivalMovement(
-          "arrivalID",
-          "mrn",
-          LocalDateTime.now(),
-          "location"
-        ),
-        MessagesForArrivalMovement(
-          NonEmptyList(ArrivalMessage(dateTimeNow, headMessage), List.empty)
-        )
-      )
+    "must return correct ArrivalStatusP5ViewModel" - {
 
-    "when given Message with head of ArrivalNotification" in {
-
-      val movementAndMessage = movementAndMessages(ArrivalNotification)
-
-      val result = ArrivalStatusP5ViewModel(movementAndMessage)
-
-      val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.arrivalNotificationSubmitted", Nil)
-
-      result mustBe expectedResult
-    }
-
-    "when given Message with head of UnloadingRemarks" in {
-
-      val movementAndMessage = movementAndMessages(UnloadingRemarks)
-
-      val result = ArrivalStatusP5ViewModel(movementAndMessage)
-
-      val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.unloadingRemarksSubmitted", Nil)
-
-      result mustBe expectedResult
-    }
-
-    "when given Message with head of UnloadingPermission" in {
-
-      val movementAndMessage = movementAndMessages(UnloadingPermission)
-
-      val result = ArrivalStatusP5ViewModel(movementAndMessage)
-
-      val expectedResult = ArrivalStatusP5ViewModel(
-        "movement.status.P5.unloadingPermissionReceived",
-        Seq(
-          ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/${movementAndMessage.arrivalMovement.arrivalId}",
-            "movement.status.P5.action.unloadingPermission.unloadingRemarks"
+      def movementAndMessages(headMessage: ArrivalMessageType): ArrivalMovementAndMessage =
+        ArrivalMovementAndMessage(
+          ArrivalMovement(
+            "arrivalID",
+            "mrn",
+            LocalDateTime.now(),
+            "location"
           ),
-          ViewMovementAction("#", "movement.status.P5.action.unloadingPermission.pdf")
+          MessagesForArrivalMovement(
+            NonEmptyList(ArrivalMessage(dateTimeNow, headMessage), List.empty)
+          ),
+          functionalErrorCount = 0
         )
-      )
 
-      result mustBe expectedResult
-    }
+      "when given Message with head of ArrivalNotification" in {
 
-    "when given Message with head of GoodsReleasedNotification" in {
+        val movementAndMessage = movementAndMessages(ArrivalNotification)
 
-      val movementAndMessage = movementAndMessages(GoodsReleasedNotification)
+        val result = ArrivalStatusP5ViewModel(movementAndMessage)
 
-      val result = ArrivalStatusP5ViewModel(movementAndMessage)
+        val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.arrivalNotificationSubmitted", Nil)
 
-      val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.goodsReleasedReceived", Nil)
+        result mustBe expectedResult
+      }
 
-      result mustBe expectedResult
-    }
+      "when given Message with head of UnloadingRemarks" in {
 
-    "when given Message with head of RejectionFromOfficeOfDestination for unloading" in {
+        val movementAndMessage = movementAndMessages(UnloadingRemarks)
 
-      val messages = MessagesForArrivalMovement(
-        NonEmptyList(
-          ArrivalMessage(dateTimeNow, RejectionFromOfficeOfDestination),
-          List(
-            ArrivalMessage(dateTimeNow, UnloadingRemarks)
+        val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.unloadingRemarksSubmitted", Nil)
+
+        result mustBe expectedResult
+      }
+
+      "when given Message with head of UnloadingPermission" in {
+
+        val movementAndMessage = movementAndMessages(UnloadingPermission)
+
+        val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = ArrivalStatusP5ViewModel(
+          "movement.status.P5.unloadingPermissionReceived",
+          Seq(
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/${movementAndMessage.arrivalMovement.arrivalId}",
+              "movement.status.P5.action.unloadingPermission.unloadingRemarks"
+            ),
+            ViewMovementAction("#", "movement.status.P5.action.unloadingPermission.pdf")
           )
         )
-      )
 
-      val movementAndMessage = movementAndMessages(RejectionFromOfficeOfDestination).copy(
-        messagesForMovement = messages
-      )
+        result mustBe expectedResult
+      }
 
-      val result = ArrivalStatusP5ViewModel(movementAndMessage)
+      "when given Message with head of GoodsReleasedNotification" in {
 
-      val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
-                                                    Seq(
-                                                      ViewMovementAction("#", "movement.status.P5.action.viewErrors")
-                                                    )
-      )
+        val movementAndMessage = movementAndMessages(GoodsReleasedNotification)
 
-      result mustBe expectedResult
+        val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.goodsReleasedReceived", Nil)
+
+        result mustBe expectedResult
+      }
+
+      "when given Message with head of RejectionFromOfficeOfDestination for unloading" - {
+        "and there are over 10 functional errors or 0 functional errors" in {
+
+          val messages = MessagesForArrivalMovement(
+            NonEmptyList(
+              ArrivalMessage(dateTimeNow, RejectionFromOfficeOfDestination),
+              List(
+                ArrivalMessage(dateTimeNow, UnloadingRemarks)
+              )
+            )
+          )
+
+          val movementAndMessage0Errors = movementAndMessages(RejectionFromOfficeOfDestination).copy(
+            messagesForMovement = messages,
+            functionalErrorCount = 0
+          )
+
+          val movementAndMessageMoreThan10 = movementAndMessages(RejectionFromOfficeOfDestination).copy(
+            messagesForMovement = messages,
+            functionalErrorCount = frontendAppConfig.maxErrorsForArrivalNotification + 1
+          )
+
+          val result0Errors    = ArrivalStatusP5ViewModel(movementAndMessage0Errors)
+          val resultMoreThan10 = ArrivalStatusP5ViewModel(movementAndMessageMoreThan10)
+
+          val href = controllers.testOnly.routes.UnloadingRemarkErrorsP5Controller.onPageLoad("arrivalID")
+
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
+                                                        Seq(
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                        )
+          )
+
+          result0Errors mustBe expectedResult
+          resultMoreThan10 mustBe expectedResult
+        }
+
+        "and there are less than 10 functional errors, but more than 0" in {
+
+          val messages = MessagesForArrivalMovement(
+            NonEmptyList(
+              ArrivalMessage(dateTimeNow, RejectionFromOfficeOfDestination),
+              List(
+                ArrivalMessage(dateTimeNow, UnloadingRemarks)
+              )
+            )
+          )
+
+          val movementAndMessage = movementAndMessages(RejectionFromOfficeOfDestination).copy(
+            messagesForMovement = messages,
+            functionalErrorCount = frontendAppConfig.maxErrorsForArrivalNotification - 1
+          )
+
+          val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+          val href = controllers.testOnly.routes.ReviewUnloadingRemarkErrorsP5Controller.onPageLoad("arrivalID")
+
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
+                                                        Seq(
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                        )
+          )
+
+          result mustBe expectedResult
+        }
+      }
+
+      "when given Message with head of rejectionFromOfficeOfDestinationArrival for arrival" - {
+        "and there are over 10 functional errors or 0 functional errors" in {
+
+          val movementAndMessage0Errors = movementAndMessages(RejectionFromOfficeOfDestination).copy(functionalErrorCount = 0)
+          val movementAndMessageMoreThan10 =
+            movementAndMessages(RejectionFromOfficeOfDestination).copy(functionalErrorCount = frontendAppConfig.maxErrorsForArrivalNotification + 1)
+
+          val result0Errors    = ArrivalStatusP5ViewModel(movementAndMessage0Errors)
+          val resultMoreThan10 = ArrivalStatusP5ViewModel(movementAndMessageMoreThan10)
+
+          val href = controllers.testOnly.routes.ArrivalNotificationErrorP5Controller.onPageLoad("arrivalID")
+
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
+                                                        Seq(
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                        )
+          )
+
+          result0Errors mustBe expectedResult
+          resultMoreThan10 mustBe expectedResult
+        }
+
+        "and there are less than 10 functional errors, but more than 0" in {
+
+          val movementAndMessage =
+            movementAndMessages(RejectionFromOfficeOfDestination).copy(functionalErrorCount = frontendAppConfig.maxErrorsForArrivalNotification - 1)
+
+          val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+          val href = controllers.testOnly.routes.ReviewArrivalNotificationErrorsP5Controller.onPageLoad("arrivalID")
+
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
+                                                        Seq(
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                        )
+          )
+
+          result mustBe expectedResult
+        }
+      }
+
     }
-
-    "when given Message with head of rejectionFromOfficeOfDestinationArrival for arrival" in {
-
-      val movementAndMessage = movementAndMessages(RejectionFromOfficeOfDestination)
-
-      val result = ArrivalStatusP5ViewModel(movementAndMessage)
-
-      val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
-                                                    Seq(
-                                                      ViewMovementAction("#", "movement.status.P5.action.viewErrors")
-                                                    )
-      )
-
-      result mustBe expectedResult
-    }
-
   }
-
 }

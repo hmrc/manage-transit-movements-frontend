@@ -29,6 +29,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.ArrivalP5MessageService
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.pagination.MovementsPaginationViewModel
 import views.html.arrival.P5.ViewAllArrivalsP5View
@@ -40,12 +41,14 @@ import scala.concurrent.Future
 class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private val mockArrivalMovementConnector = mock[ArrivalMovementP5Connector]
+  private val mockArrivalMovementService   = mock[ArrivalP5MessageService]
 
   private val formProvider = new ArrivalsSearchFormProvider()
   private val form         = formProvider()
 
   override def beforeEach(): Unit = {
     reset(mockArrivalMovementConnector)
+    reset(mockArrivalMovementService)
     super.beforeEach()
   }
 
@@ -53,19 +56,22 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[ArrivalMovementP5Connector].toInstance(mockArrivalMovementConnector)
+        bind[ArrivalMovementP5Connector].toInstance(mockArrivalMovementConnector),
+        bind[ArrivalP5MessageService].toInstance(mockArrivalMovementService)
       )
 
   val dateTime: LocalDateTime = LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
 
+  val arrivalMovement: ArrivalMovement = ArrivalMovement(
+    "63651574c3447b12",
+    mrn,
+    dateTime,
+    "movements/arrivals/63651574c3447b12/messages"
+  )
+
   val mockArrivalMovementResponse: ArrivalMovements = ArrivalMovements(
     Seq(
-      ArrivalMovement(
-        "63651574c3447b12",
-        mrn,
-        dateTime,
-        "movements/arrivals/63651574c3447b12/messages"
-      )
+      arrivalMovement
     )
   )
 
@@ -96,6 +102,13 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
       when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
         .thenReturn(Future.successful(mockArrivalMessageResponse))
+
+      when(mockArrivalMovementService.getMessagesForAllMovements(any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Seq(ArrivalMovementAndMessage(arrivalMovement, mockArrivalMessageResponse, 0))
+          )
+        )
 
       val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url)
 

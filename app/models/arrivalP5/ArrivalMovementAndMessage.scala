@@ -18,5 +18,6 @@ package models.arrivalP5
 
 case class ArrivalMovementAndMessage(
   arrivalMovement: ArrivalMovement,
-  messagesForMovement: MessagesForArrivalMovement
+  messagesForMovement: MessagesForArrivalMovement,
+  functionalErrorCount: Int
 )

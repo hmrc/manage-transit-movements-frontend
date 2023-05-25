@@ -80,14 +80,17 @@ object GoodsUnderControlP5ViewModel {
       val requestedDocuments: Boolean = ie060MessageData.requestedDocuments
       val lrn                         = ie060MessageData.TransitOperation.LRN
 
-      helper.controlInformationSection().map {
-        controlInfoSections =>
-          val sections = notificationType match {
-            case "1" => Seq(helper.buildGoodsUnderControlSection()) ++ helper.documentSection()
-            case _   => Seq(helper.buildGoodsUnderControlSection()) ++ controlInfoSections ++ helper.documentSection()
-          }
+      helper.buildGoodsUnderControlSection().flatMap {
+        goodsUnderControlSection =>
+          helper.controlInformationSection().map {
+            controlInfoSections =>
+              val sections = notificationType match {
+                case "1" => Seq(goodsUnderControlSection) ++ helper.documentSection()
+                case _   => Seq(goodsUnderControlSection) ++ controlInfoSections ++ helper.documentSection()
+              }
 
-          new GoodsUnderControlP5ViewModel(sections, requestedDocuments, lrn)
+              new GoodsUnderControlP5ViewModel(sections, requestedDocuments, lrn)
+          }
       }
     }
   }

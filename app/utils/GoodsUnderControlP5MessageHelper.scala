@@ -57,13 +57,21 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     call = None
   )
 
-  def buildOfficeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String]( //TODO: Call to reference data to get the customs office?
-    answer = Some(ie060MessageData.CustomsOfficeOfDeparture.referenceNumber),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.officeOfDeparture"),
-    id = None,
-    call = None
-  )
+  def getCustomsOfficeForDisplay(referenceNumber: String): Future[String] = referenceDataService.getCustomsOfficeByCode(referenceNumber).map {
+    case Some(customsOffice) => customsOffice.nameAndCode
+    case _                   => referenceNumber
+  }
+
+  def buildOfficeOfDepartureRow: Future[Option[SummaryListRow]] = getCustomsOfficeForDisplay(ie060MessageData.CustomsOfficeOfDeparture.referenceNumber).map {
+    customsOffice =>
+      buildRowFromAnswer[String](
+        answer = Some(customsOffice),
+        formatAnswer = formatAsText,
+        prefix = messages("row.label.officeOfDeparture"),
+        id = None,
+        call = None
+      )
+  }
 
   private def buildControlTypeRow(typeOfControl: String): Future[Option[SummaryListRow]] =
     getControlTypeDescription(typeOfControl).map(
@@ -129,18 +137,17 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
       buildDocumentSection(document)
   }
 
-  def buildGoodsUnderControlSection(): Section = {
+  def buildGoodsUnderControlSection(): Future[Section] =
+    buildOfficeOfDepartureRow.map {
+      officeOfDeparture =>
+        val lrnRow               = extractOptionalRow(buildLRNRow)
+        val mrnRow               = extractOptionalRow(buildMRNRow)
+        val dateTimeControlRow   = extractOptionalRow(buildDateTimeControlRow)
+        val officeOfDepartureRow = extractOptionalRow(officeOfDeparture)
+        val rows                 = lrnRow ++ mrnRow ++ dateTimeControlRow ++ officeOfDepartureRow
 
-    val lrnRow               = extractOptionalRow(buildLRNRow)
-    val mrnRow               = extractOptionalRow(buildMRNRow)
-    val dateTimeControlRow   = extractOptionalRow(buildDateTimeControlRow)
-    val officeOfDepartureRow = extractOptionalRow(buildOfficeOfDepartureRow)
-
-    val rows = lrnRow ++ mrnRow ++ dateTimeControlRow ++ officeOfDepartureRow
-
-    Section(None, rows, None)
-
-  }
+        Section(None, rows, None)
+    }
 
   def controlInformationSection(): Future[Seq[Section]] = {
 
