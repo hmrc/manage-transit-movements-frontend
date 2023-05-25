@@ -16,7 +16,6 @@
 
 package viewModels.P5.departure
 
-import cats.data.NonEmptyList
 import config.FrontendAppConfig
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
@@ -28,7 +27,7 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
-      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _), MessagesForDepartureMovement(messages), _, isDeclarationAmendable, xPaths) =>
+      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _), messagesForDepartureMovements, _, isDeclarationAmendable, xPaths) =>
         val allPfs: PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] =
           Seq(
             departureNotification,
@@ -45,7 +44,7 @@ object DepartureStatusP5ViewModel {
             releasedForTransit(),
             goodsNotReleased(),
             guaranteeRejected(),
-            rejectedByOfficeOfDeparture(departureId, messages, isDeclarationAmendable, xPaths),
+            rejectedByOfficeOfDeparture(departureId, messagesForDepartureMovements, isDeclarationAmendable, xPaths),
             goodsUnderControl(departureId),
             incidentDuringTransit(),
             declarationSent(),
@@ -53,7 +52,7 @@ object DepartureStatusP5ViewModel {
             guaranteeWrittenOff
           ).reduce(_ orElse _)
 
-        allPfs.apply(messages.head.messageType)
+        allPfs.apply(messagesForDepartureMovements.messages.head.messageType)
     }
 
   private def departureNotification(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
@@ -195,26 +194,39 @@ object DepartureStatusP5ViewModel {
 
   private def rejectedByOfficeOfDeparture(
     departureId: String,
-    messages: NonEmptyList[DepartureMessage],
+    messagesForDepartureMovement: MessagesForDepartureMovement,
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String]
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessageType, DepartureStatusP5ViewModel] = {
+
     case RejectedByOfficeOfDeparture =>
-      val (key, href) = messages.map(_.messageType) match {
-        //TODO revisit when IE014 comes as tail
-        case NonEmptyList(RejectedByOfficeOfDeparture, _) if isDeclarationAmendable =>
-          ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
-        case _ if xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration =>
-          ("viewErrors", controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
+      val (key, href) = messagesForDepartureMovement.messageBeforeLatest.map(_.messageType) match {
+        case Some(DepartureNotification) =>
+          if (isDeclarationAmendable) {
+            ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
+          } else if (xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration) {
+            ("viewErrors", controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
+          } else {
+            ("viewErrors", controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
+          }
+
+        case Some(CancellationRequested) =>
+          if (xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration) {
+            ("viewErrors", controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
+          } else {
+            ("viewErrors", controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
+          }
         case _ =>
-          ("viewErrors", controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
+          ("", "")
       }
+
+      val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions = Seq(
           ViewMovementAction(
             href,
-            s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
+            keyFormatted
           )
         )
       )
