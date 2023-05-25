@@ -66,49 +66,158 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
 
   val departureCancelledController: String =
-    controllers.testOnly.routes.DepartureCancelledP5Controller.onPageLoad(departureIdP5).url
+    controllers.testOnly.routes.DepartureCancelledP5Controller.fetchCancellationInformation(departureIdP5).url
 
   "DepartureCancelledP5Controller" - {
 
-    "must return OK and the correct view for a GET" in {
-
-      val message: IE009Data = IE009Data(
-        IE009MessageData(
-          TransitOperationIE009(
-            Some("abd123")
-          ),
-          Invalidation(
-            Some(LocalDateTime.now()),
-            Some("0"),
-            "1",
-            Some("some justification")
-          ),
-          CustomsOfficeOfDeparture(
-            s"$customsReferenceNumber"
+    "must redirect to correct controller" - {
+      "when decision is true" in {
+        val message: IE009Data = IE009Data(
+          IE009MessageData(
+            TransitOperationIE009(
+              Some("abd123")
+            ),
+            Invalidation(
+              Some(LocalDateTime.now()),
+              "1",
+              "1",
+              Some("some justification")
+            ),
+            CustomsOfficeOfDeparture(
+              s"$customsReferenceNumber"
+            )
           )
         )
-      )
 
-      val departureCancelledP5ViewModel = new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None)
+        when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
 
-      when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
-      when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(departureCancelledP5ViewModel))
+        departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
 
-      departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
+        val request = FakeRequest(GET, departureCancelledController)
 
-      val request = FakeRequest(GET, departureCancelledController)
+        val result = route(app, request).value
 
-      val result = route(app, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5).url
 
-      status(result) mustEqual OK
+      }
 
-      val view = injector.instanceOf[DepartureCancelledP5View]
+      "when decision is false" in {
+        val message: IE009Data = IE009Data(
+          IE009MessageData(
+            TransitOperationIE009(
+              Some("abd123")
+            ),
+            Invalidation(
+              Some(LocalDateTime.now()),
+              "0",
+              "1",
+              Some("some justification")
+            ),
+            CustomsOfficeOfDeparture(
+              s"$customsReferenceNumber"
+            )
+          )
+        )
 
-      contentAsString(result) mustEqual
-        view(departureIdP5, departureCancelledP5ViewModel)(request, messages, frontendAppConfig).toString
+        when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
+
+        departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
+
+        val request = FakeRequest(GET, departureCancelledController)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5).url
+      }
+    }
+
+    "must return OK and the correct view for a GET" - {
+
+      "when decision is true" in {
+
+        val message: IE009Data = IE009Data(
+          IE009MessageData(
+            TransitOperationIE009(
+              Some("abd123")
+            ),
+            Invalidation(
+              Some(LocalDateTime.now()),
+              "1",
+              "1",
+              Some("some justification")
+            ),
+            CustomsOfficeOfDeparture(
+              s"$customsReferenceNumber"
+            )
+          )
+        )
+
+        val departureCancelledP5ViewModel = new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None, isCancelled = true)
+
+        when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(departureCancelledP5ViewModel))
+
+        departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
+
+        val request = FakeRequest(GET, controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5).url)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual OK
+
+        val view = injector.instanceOf[DepartureCancelledP5View]
+
+        contentAsString(result) mustEqual
+          view(departureCancelledP5ViewModel)(request, messages, frontendAppConfig).toString
+      }
+
+      "when decision is false" in {
+
+        val message: IE009Data = IE009Data(
+          IE009MessageData(
+            TransitOperationIE009(
+              Some("abd123")
+            ),
+            Invalidation(
+              Some(LocalDateTime.now()),
+              "0",
+              "1",
+              Some("some justification")
+            ),
+            CustomsOfficeOfDeparture(
+              s"$customsReferenceNumber"
+            )
+          )
+        )
+
+        val departureCancelledP5ViewModel = new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None, isCancelled = false)
+
+        when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
+        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(departureCancelledP5ViewModel))
+
+        departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
+
+        val request = FakeRequest(GET, controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5).url)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual OK
+
+        val view = injector.instanceOf[DepartureCancelledP5View]
+
+        contentAsString(result) mustEqual
+          view(departureCancelledP5ViewModel)(request, messages, frontendAppConfig).toString
+      }
 
     }
 

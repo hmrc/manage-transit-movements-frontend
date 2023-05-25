@@ -54,7 +54,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
         ),
         Invalidation(
           Some(LocalDateTime.now()),
-          Some("0"),
+          "0",
           "1",
           Some("some justification")
         ),
@@ -68,28 +68,48 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
 
     when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
-    def viewModel(customsOffice: Option[CustomsOffice] = None): DepartureCancelledP5ViewModel =
-      viewModelProvider.apply(ie009Data.data, lrn, customsReferenceId, customsOffice).futureValue
+    def viewModel(customsOffice: Option[CustomsOffice] = None, isCancelled: Boolean = true): DepartureCancelledP5ViewModel =
+      viewModelProvider.apply(ie009Data.data, lrn, customsReferenceId, customsOffice, isCancelled).futureValue
 
     "must return correct section" in {
       viewModel().sections.head.sectionTitle mustBe None
       viewModel().sections.head.rows.size mustBe 5
     }
 
-    "title" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Declaration cancelled"
+    "when isCancelled is true" - {
+      "title" - {
+        "must return correct message" in {
+          viewModel().title mustBe "Declaration cancelled"
+        }
+      }
+
+      "heading" - {
+        "must return correct message" in {
+          viewModel().title mustBe "Declaration cancelled"
+        }
+      }
+
+      "paragraph" in {
+        viewModel().paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
       }
     }
 
-    "heading" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Declaration cancelled"
+    "when isCancelled is false" - {
+      "title" - {
+        "must return correct message" in {
+          viewModel(isCancelled = false).title mustBe "Declaration not cancelled"
+        }
       }
-    }
 
-    "paragraph" in {
-      viewModel().paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
+      "heading" - {
+        "must return correct message" in {
+          viewModel(isCancelled = false).title mustBe "Declaration not cancelled"
+        }
+      }
+
+      "paragraph" in {
+        viewModel(isCancelled = false).paragraph mustBe s"The office of departure could not cancel the declaration for LRN $lrn as requested."
+      }
     }
 
     "customsOfficeContent" - {

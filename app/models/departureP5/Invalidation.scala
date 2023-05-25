@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 
-case class Invalidation(decisionDateAndTime: Option[LocalDateTime], decision: Option[String], initiatedByCustoms: String, justification: Option[String])
+case class Invalidation(decisionDateAndTime: Option[LocalDateTime], decision: String, initiatedByCustoms: String, justification: Option[String])
 
 object Invalidation {
   implicit val formats: OFormat[Invalidation] = Json.format[Invalidation]

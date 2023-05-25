@@ -45,7 +45,7 @@ class DepartureCancelledActionSpec extends SpecBase with BeforeAndAfterEach with
       ),
       Invalidation(
         Some(LocalDateTime.now()),
-        Some("0"),
+        "0",
         "1",
         Some("some justification")
       ),

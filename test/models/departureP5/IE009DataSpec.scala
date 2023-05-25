@@ -61,7 +61,7 @@ class IE009DataSpec extends SpecBase {
           ),
           Invalidation(
             Some(decisionDateAndTime),
-            Some(decision),
+            decision,
             initiatedByCustoms,
             Some(justification)
           ),

@@ -26,7 +26,7 @@ button: Button,
 formHelper: FormWithCSRF
 )
 
-@(departureId: String, departureCancelledP5ViewModel: DepartureCancelledP5ViewModel)(implicit request: Request[_], messages: Messages, frontendAppConfig: FrontendAppConfig)
+@(departureCancelledP5ViewModel: DepartureCancelledP5ViewModel)(implicit request: Request[_], messages: Messages, frontendAppConfig: FrontendAppConfig)
 
     @mainTemplate(
         title = departureCancelledP5ViewModel.title,

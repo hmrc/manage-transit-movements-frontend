@@ -35,7 +35,7 @@ class FakeDepartureCancelledAction(departureId: String, departureP5MessageServic
       ),
       Invalidation(
         Some(LocalDateTime.now()),
-        Some("0"),
+        "0",
         "1",
         Some("some justification")
       ),

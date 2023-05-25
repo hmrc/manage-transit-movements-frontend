@@ -58,7 +58,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             ),
             Invalidation(
               Some(LocalDateTime.now()),
-              Some("0"),
+              "0",
               "1",
               Some("some justification")
             ),
@@ -84,7 +84,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             ),
             Invalidation(
               Some(LocalDateTime.now()),
-              Some("0"),
+              "0",
               "1",
               Some("some justification")
             ),
@@ -114,7 +114,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             ),
             Invalidation(
               None,
-              Some("0"),
+              "0",
               "1",
               Some("some justification")
             ),
@@ -140,7 +140,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             ),
             Invalidation(
               Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
-              Some("0"),
+              "0",
               "1",
               Some("some justification")
             ),
@@ -172,7 +172,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               ),
               Invalidation(
                 Some(LocalDateTime.now()),
-                Some("0"),
+                "0",
                 "1",
                 Some("some justification")
               ),
@@ -199,7 +199,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               ),
               Invalidation(
                 Some(LocalDateTime.now()),
-                Some("0"),
+                "0",
                 "0",
                 Some("some justification")
               ),
@@ -230,7 +230,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             ),
             Invalidation(
               Some(LocalDateTime.now()),
-              Some("0"),
+              "0",
               "1",
               Some("some justification")
             ),
@@ -260,7 +260,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               ),
               Invalidation(
                 Some(LocalDateTime.now()),
-                Some("0"),
+                "0",
                 "1",
                 Some("some justification")
               ),
@@ -294,7 +294,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             ),
             Invalidation(
               Some(LocalDateTime.now()),
-              Some("0"),
+              "0",
               "1",
               None
             ),
@@ -320,7 +320,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             ),
             Invalidation(
               Some(LocalDateTime.now()),
-              Some("0"),
+              "0",
               "1",
               Some("some justification")
             ),
@@ -350,7 +350,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             ),
             Invalidation(
               Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
-              Some("0"),
+              "0",
               "1",
               Some("some justification")
             ),

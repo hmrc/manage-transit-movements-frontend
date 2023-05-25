@@ -40,15 +40,35 @@ class DepartureCancelledP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
+  def declarationCancelled(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
     implicit request =>
       val customsOfficeReferenceNumber = request.ie009MessageData.customsOfficeOfDeparture.referenceNumber
       referenceDataService.getCustomsOfficeByCode(customsOfficeReferenceNumber).flatMap {
         customsOffice =>
-          viewModelProvider.apply(request.ie009MessageData, request.lrn, customsOfficeReferenceNumber, customsOffice).map {
-            viewModel =>
-              Ok(view(departureId, viewModel))
+          viewModelProvider.apply(request.ie009MessageData, request.lrn, customsOfficeReferenceNumber, customsOffice, isCancelled = true).map {
+            viewModel => Ok(view(viewModel))
           }
+      }
+  }
+
+  def declarationNotCancelled(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
+    implicit request =>
+      val customsOfficeReferenceNumber = request.ie009MessageData.customsOfficeOfDeparture.referenceNumber
+      referenceDataService.getCustomsOfficeByCode(customsOfficeReferenceNumber).flatMap {
+        customsOffice =>
+          viewModelProvider.apply(request.ie009MessageData, request.lrn, customsOfficeReferenceNumber, customsOffice, isCancelled = false).map {
+            viewModel => Ok(view(viewModel))
+          }
+      }
+  }
+
+  def fetchCancellationInformation(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)) {
+    implicit request =>
+      val isCancelled: String = request.ie009MessageData.invalidation.decision
+      if (isCancelled == "1") {
+        Redirect(controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureId))
+      } else {
+        Redirect(controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureId))
       }
   }
 }

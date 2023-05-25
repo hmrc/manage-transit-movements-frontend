@@ -468,8 +468,11 @@ arrival.ie057.review.notification.message.paragraph2.plural.suffix = for help un
 arrival.ie057.review.notification.message.hyperlink = Create another arrival notification
 
 departure.cancellation.message.title   = Declaration cancelled
+departure.cancellation.notCancelled.message.title = Declaration not cancelled
 departure.cancellation.message.heading = Declaration cancelled
+departure.cancellation.notCancelled.message.heading = Declaration not cancelled
 departure.cancellation.message.paragraph = The office of departure cancelled the declaration for LRN {0} as requested.
+departure.cancellation.notCancelled.message.paragraph = The office of departure could not cancel the declaration for LRN {0} as requested.
 departure.cancellation.message.hyperlink = Make another departure declaration
 departure.cancellation.message.customsOfficeContact.telephoneAvailable = If you have any questions, contact Customs at {0} on {1}.
 departure.cancellation.message.customsOfficeContact.telephoneNotAvailable = If you have any questions, contact Customs at {0}.

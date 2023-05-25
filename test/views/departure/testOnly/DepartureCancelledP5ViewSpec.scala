@@ -27,13 +27,10 @@ class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with G
 
   override val prefix: String = "departure.cancellation.message"
 
-  private val departureCancelledP5ViewViewModel =
-    new DepartureCancelledP5ViewModel(sections, "AB123", "CD123", None)
-
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[DepartureCancelledP5View]
-      .apply(departureIdP5, departureCancelledP5ViewViewModel)(fakeRequest, messages, frontendAppConfig)
+      .apply(DepartureCancelledP5ViewModel(sections, "AB123", "CD123", None, isCancelled = true))(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 
@@ -50,4 +47,24 @@ class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with G
     expectedText = "Make another departure declaration",
     expectedHref = frontendAppConfig.declareDepartureStartWithLRNUrl
   )
+
+  "when isCancelled is false" - {
+
+    val document = parseView(
+      injector
+        .instanceOf[DepartureCancelledP5View]
+        .apply(DepartureCancelledP5ViewModel(sections, "AB123", "CD123", None, isCancelled = false))(fakeRequest, messages, frontendAppConfig)
+    )
+
+    val prefixNotCancelled = "departure.cancellation.notCancelled.message"
+
+    behave like pageWithTitle(document, prefix = prefixNotCancelled)
+
+    behave like pageWithHeading(document, prefix = prefixNotCancelled)
+
+    behave like pageWithContent(doc = document, "p", "The office of departure could not cancel the declaration for LRN AB123 as requested.")
+
+    behave like pageWithContent(doc = document, "p", "If you have any questions, contact Customs office CD123.")
+
+  }
 }
