@@ -28,7 +28,7 @@ object ArrivalMessageType extends Enumerable.Implicits {
   case object UnloadingPermission extends WithName("IE043") with ArrivalMessageType
   case object RejectionFromOfficeOfDestination extends WithName("IE057") with ArrivalMessageType
 
-  val values = Seq(
+  val values: Seq[ArrivalMessageType] = Seq(
     ArrivalNotification,
     UnloadingRemarks,
     GoodsReleasedNotification,

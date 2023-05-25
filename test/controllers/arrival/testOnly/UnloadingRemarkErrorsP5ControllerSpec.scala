@@ -90,7 +90,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       val view = injector.instanceOf[UnloadingRemarkErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(unloadingNotificationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
+        view(unloadingNotificationErrorsP5ViewModel)(request, messages).toString
     }
 
     "must return OK and the correct view for a GET when more than 10 Errors" in {
@@ -133,7 +133,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       val view = injector.instanceOf[UnloadingRemarkErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(unloadingNotificationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
+        view(unloadingNotificationErrorsP5ViewModel)(request, messages).toString
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
