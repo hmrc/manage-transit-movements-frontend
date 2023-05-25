@@ -154,7 +154,6 @@ movement.status.P5.prelodgedDeclarationSent	                            = Prelod
 
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
-movement.status.P5.action.viewError = View Errors
 movement.status.P5.action.viewErrors = View errors
 
 movement.status.P5.action.departureNotification.cancelDeclaration         = Cancel declaration
