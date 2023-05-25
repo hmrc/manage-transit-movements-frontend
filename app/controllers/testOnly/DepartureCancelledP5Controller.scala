@@ -18,15 +18,17 @@ package controllers.testOnly
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.departureP5.IE009MessageData
+import models.referenceData.CustomsOffice
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
 import views.html.departure.TestOnly.DepartureCancelledP5View
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class DepartureCancelledP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -41,28 +43,25 @@ class DepartureCancelledP5Controller @Inject() (
     with I18nSupport {
 
   def declarationCancelled(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
-    implicit request =>
-      val customsOfficeReferenceNumber = request.ie009MessageData.customsOfficeOfDeparture.referenceNumber
-      referenceDataService.getCustomsOfficeByCode(customsOfficeReferenceNumber).flatMap {
-        customsOffice =>
-          viewModelProvider.apply(request.ie009MessageData, request.lrn, customsOfficeReferenceNumber, customsOffice, isCancelled = true).map {
-            viewModel => Ok(view(viewModel))
-          }
-      }
+    implicit request => buildView(request.ie009MessageData, request.lrn, isCancelled = true)
   }
+
+  def buildView(IE009MessageData: IE009MessageData, lrn: String, isCancelled: Boolean)(implicit request: Request[_]): Future[Result] = {
+    val customsOfficeReferenceNumber = IE009MessageData.customsOfficeOfDeparture.referenceNumber
+    referenceDataService.getCustomsOfficeByCode(customsOfficeReferenceNumber).flatMap {
+      customsOffice =>
+        viewModelProvider.apply(IE009MessageData, lrn, customsOfficeReferenceNumber, customsOffice, isCancelled).map {
+          viewModel => Ok(view(viewModel))
+        }
+    }
+  }
+
 
   def declarationNotCancelled(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
-    implicit request =>
-      val customsOfficeReferenceNumber = request.ie009MessageData.customsOfficeOfDeparture.referenceNumber
-      referenceDataService.getCustomsOfficeByCode(customsOfficeReferenceNumber).flatMap {
-        customsOffice =>
-          viewModelProvider.apply(request.ie009MessageData, request.lrn, customsOfficeReferenceNumber, customsOffice, isCancelled = false).map {
-            viewModel => Ok(view(viewModel))
-          }
-      }
+    implicit request => buildView(request.ie009MessageData, request.lrn, isCancelled = true)
   }
 
-  def fetchCancellationInformation(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)) {
+  def isDeclarationCancelled(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)) {
     implicit request =>
       val isCancelled: String = request.ie009MessageData.invalidation.decision
       if (isCancelled == "1") {

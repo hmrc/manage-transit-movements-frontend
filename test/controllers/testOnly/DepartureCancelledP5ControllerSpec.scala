@@ -66,7 +66,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
 
   val departureCancelledController: String =
-    controllers.testOnly.routes.DepartureCancelledP5Controller.fetchCancellationInformation(departureIdP5).url
+    controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5).url
 
   "DepartureCancelledP5Controller" - {
 

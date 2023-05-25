@@ -71,7 +71,7 @@ GET        /manage-transit-movements/test-only/review-cancellation-errors/:depar
 
 GET        /manage-transit-movements/test-only/send-departure-declaration-errors/:departureId                           controllers.testOnly.RejectionMessageP5Controller.onAmend(departureId: String)
 
-GET        /manage-transit-movements/test-only/cancellation/fetch-declaration-cancelled-information/:departureId        controllers.testOnly.DepartureCancelledP5Controller.fetchCancellationInformation(departureId: String)
+GET        /manage-transit-movements/test-only/cancellation/is-declaration-cancelled/:departureId                       controllers.testOnly.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String)
 
 GET        /manage-transit-movements/test-only/cancellation/declaration-cancelled/:departureId                          controllers.testOnly.DepartureCancelledP5Controller.declarationCancelled(departureId: String)
 
