@@ -57,7 +57,7 @@ class DepartureCancelledP5Controller @Inject() (
   }
 
   def declarationNotCancelled(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
-    implicit request => buildView(request.ie009MessageData, request.lrn, isCancelled = true)
+    implicit request => buildView(request.ie009MessageData, request.lrn, isCancelled = false)
   }
 
   def isDeclarationCancelled(departureId: String): Action[AnyContent] = (Action andThen identify andThen departureCancelledActionProvider(departureId)) {
