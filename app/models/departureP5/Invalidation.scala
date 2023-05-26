@@ -19,19 +19,9 @@ package models.departureP5
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
-case class TransitOperation(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
-case class TransitOperationIE056(MRN: Option[String], LRN: Option[String])
 
-case class TransitOperationIE009(MRN: Option[String])
+case class Invalidation(decisionDateAndTime: Option[LocalDateTime], decision: String, initiatedByCustoms: String, justification: Option[String])
 
-object TransitOperation {
-  implicit val formats: OFormat[TransitOperation] = Json.format[TransitOperation]
-}
-
-object TransitOperationIE056 {
-  implicit val formats: OFormat[TransitOperationIE056] = Json.format[TransitOperationIE056]
-}
-
-object TransitOperationIE009 {
-  implicit val formats: OFormat[TransitOperationIE009] = Json.format[TransitOperationIE009]
+object Invalidation {
+  implicit val formats: OFormat[Invalidation] = Json.format[Invalidation]
 }
