@@ -99,7 +99,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5).url
+        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5).url
 
       }
 
@@ -131,7 +131,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5).url
+        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5).url
       }
     }
 
