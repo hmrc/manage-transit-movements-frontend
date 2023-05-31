@@ -91,7 +91,10 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
     referenceNumber = "AB123",
     status = "movement.status.P5.departureNotificationSubmitted",
     actions = Seq(
-      ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}", "movement.status.P5.action.departureNotification.cancelDeclaration")
+      ViewMovementAction(
+        s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/63651574c3447b12",
+        "movement.status.P5.action.departureNotification.cancelDeclaration"
+      )
     )
   )
 
