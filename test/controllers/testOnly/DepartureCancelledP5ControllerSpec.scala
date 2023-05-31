@@ -79,7 +79,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
             ),
             Invalidation(
               Some(LocalDateTime.now()),
-              "1",
+              "0",
               "1",
               Some("some justification")
             ),
@@ -111,7 +111,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
             ),
             Invalidation(
               Some(LocalDateTime.now()),
-              "0",
+              "1",
               "1",
               Some("some justification")
             ),
