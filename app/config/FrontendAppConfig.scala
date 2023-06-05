@@ -103,6 +103,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   val manageTransitMovementsUnloadingFrontend: String    = configuration.get[String]("urls.manageTransitMovementsUnloadingFrontend")
   val manageTransitMovementsCancellationFrontend: String = configuration.get[String]("urls.manageTransitMovementsCancellationFrontend")
 
+  lazy val manageDocumentsUrl: String = configuration.get[Service]("microservice.services.manage-documents").fullServiceUrl
+
   val declareDepartureStartWithLRNUrl: String =
     if (phase5Switch.Departures.enabled) {
       departureFrontendUrl

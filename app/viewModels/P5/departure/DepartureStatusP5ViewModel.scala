@@ -174,7 +174,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.releasedForTransit",
         actions = Seq(
           ViewMovementAction(
-            s"",
+            controllers.testOnly.routes.TransitAccompanyingDocumentController.getTAD().url,
             "movement.status.P5.action.releasedForTransit.viewAndPrintAccompanyingPDF"
           )
         )
