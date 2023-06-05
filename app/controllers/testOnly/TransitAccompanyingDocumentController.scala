@@ -43,7 +43,7 @@ class TransitAccompanyingDocumentController @Inject() (
         result =>
           result.status match {
             case OK =>
-              Ok(result.body).withHeaders(headers(result): _*)
+              Ok(result.bodyAsBytes.toArray).withHeaders(headers(result): _*)
             case _ =>
               InternalServerError(s"${result.body}")
           }
