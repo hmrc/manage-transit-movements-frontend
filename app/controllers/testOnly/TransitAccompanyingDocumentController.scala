@@ -21,6 +21,7 @@ import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.libs.ws.WSResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -34,8 +35,9 @@ class TransitAccompanyingDocumentController @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def getTAD(): Action[AnyContent] = (Action andThen identify).async {
+  def getTAD: Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
+      // TODO set using above param's
       val testMessageId   = "6479b7811089a5eb"
       val testDepartureId = "6479b7813a79be10"
 
