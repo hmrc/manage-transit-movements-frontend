@@ -45,7 +45,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       DepartureMovementAndMessage(
         departureMovement,
         MessagesForDepartureMovement(
-          NonEmptyList(DepartureMessage(dateTimeNow, headMessage, "body/path"), List.empty)
+          NonEmptyList(DepartureMessage("messageId", dateTimeNow, headMessage, "body/path"), List.empty)
         ),
         "AB123",
         isDeclarationAmendable = true,
@@ -229,7 +229,10 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.releasedForTransit",
         Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.releasedForTransit.viewAndPrintAccompanyingPDF")
+          ViewMovementAction(
+            controllers.testOnly.routes.TransitAccompanyingDocumentController.getTAD(departureIdP5, "messageId").url,
+            "movement.status.P5.action.releasedForTransit.viewAndPrintAccompanyingPDF"
+          )
         )
       )
 
@@ -280,9 +283,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             departureMovement,
             MessagesForDepartureMovement(
               NonEmptyList(
-                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
                 List(
-                  DepartureMessage(dateTimePast, DepartureNotification, "body/path")
+                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
                 )
               )
             ),
@@ -311,9 +314,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             departureMovement,
             MessagesForDepartureMovement(
               NonEmptyList(
-                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
                 List(
-                  DepartureMessage(dateTimePast, DepartureNotification, "body/path")
+                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
                 )
               )
             ),
@@ -342,9 +345,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             departureMovement,
             MessagesForDepartureMovement(
               NonEmptyList(
-                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
                 List(
-                  DepartureMessage(dateTimePast, DepartureNotification, "body/path")
+                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
                 )
               )
             ),
@@ -373,9 +376,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             departureMovement,
             MessagesForDepartureMovement(
               NonEmptyList(
-                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
                 List(
-                  DepartureMessage(dateTimePast, DepartureNotification, "body/path")
+                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
                 )
               )
             ),
@@ -407,9 +410,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             departureMovement,
             MessagesForDepartureMovement(
               NonEmptyList(
-                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
                 List(
-                  DepartureMessage(dateTimePast, CancellationRequested, "body/path")
+                  DepartureMessage("messageId2", dateTimePast, CancellationRequested, "body/path")
                 )
               )
             ),
@@ -438,9 +441,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             departureMovement,
             MessagesForDepartureMovement(
               NonEmptyList(
-                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
                 List(
-                  DepartureMessage(dateTimePast, CancellationRequested, "body/path")
+                  DepartureMessage("messageId2", dateTimePast, CancellationRequested, "body/path")
                 )
               )
             ),
@@ -469,9 +472,9 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             departureMovement,
             MessagesForDepartureMovement(
               NonEmptyList(
-                DepartureMessage(dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
                 List(
-                  DepartureMessage(dateTimePast, CancellationRequested, "body/path")
+                  DepartureMessage("messageId2", dateTimePast, CancellationRequested, "body/path")
                 )
               )
             ),

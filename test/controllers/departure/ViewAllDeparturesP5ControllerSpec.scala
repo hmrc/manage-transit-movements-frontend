@@ -77,6 +77,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   val mockDepartureMessageResponse: MessagesForDepartureMovement = MessagesForDepartureMovement(
     NonEmptyList(
       DepartureMessage(
+        "messageId",
         dateTime,
         DepartureMessageType.DepartureNotification,
         "body/path"

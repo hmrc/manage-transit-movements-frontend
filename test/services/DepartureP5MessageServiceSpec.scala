@@ -67,12 +67,14 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             MessagesForDepartureMovement(
               NonEmptyList(
                 DepartureMessage(
+                  "messageId1",
                   dateTimeNow,
                   DepartureMessageType.DepartureNotification,
                   "body/path/1"
                 ),
                 List(
                   DepartureMessage(
+                    "messageId2",
                     dateTimeNow,
                     DepartureMessageType.GoodsUnderControl,
                     "body/path/2"
@@ -119,12 +121,14 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             MessagesForDepartureMovement(
               NonEmptyList(
                 DepartureMessage(
+                  "messageId1",
                   dateTimeNow,
                   DepartureMessageType.DepartureNotification,
                   "body/path/1"
                 ),
                 List(
                   DepartureMessage(
+                    "messageId2",
                     dateTimeNow,
                     DepartureMessageType.RejectedByOfficeOfDeparture,
                     "body/path/2"
@@ -198,6 +202,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
           MessagesForDepartureMovement(
             NonEmptyList(
               DepartureMessage(
+                "messageId1",
                 dateTimeNow,
                 DepartureMessageType.GoodsUnderControl,
                 "body/path/2"

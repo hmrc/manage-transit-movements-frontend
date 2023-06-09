@@ -26,7 +26,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ManageDocumentsConnector @Inject() (config: FrontendAppConfig, wsClient: WSClient)(implicit ec: ExecutionContext) extends Logging {
 
-  // TODO can I dont this via httpClient vs wsClient
   def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
 
     val serviceUrl: String = s"${config.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"

@@ -84,7 +84,7 @@ GET        /manage-transit-movements/test-only/review-unloading-remarks-errors/:
 GET        /manage-transit-movements/test-only/review-arrival-notification-errors/:arrivalId                            controllers.testOnly.ReviewArrivalNotificationErrorsP5Controller.onPageLoad(arrivalId: String)
 GET        /manage-transit-movements/test-only/review-arrival-notification-errors/:arrivalId                            controllers.testOnly.ReviewArrivalNotificationErrorsP5Controller.onPageLoad(arrivalId: String)
 
-GET        /manage-transit-movements/test-only/transit-accompanying-document                                            controllers.testOnly.TransitAccompanyingDocumentController.getTAD()
+GET        /manage-transit-movements/test-only/:departureId/transit-accompanying-document/:messageId                    controllers.testOnly.TransitAccompanyingDocumentController.getTAD(messageId: String, departureId: String)
 
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                                                        controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()
