@@ -39,7 +39,7 @@ POST        /manage-transit-movements/test-only/:departureId/departure-inbound  
 POST        /manage-transit-movements/test-only/:departureId/departure-outbound-message                               controllers.testOnly.TestOnlyP5DeparturesAPIController.addMessageToDeparture(departureId: String)
 
 + nocsrf
-GET         /manage-transit-movements/test-only/departure/:departureId/message/:messageId                               controllers.testOnly.TestOnlyP5DeparturesAPIController.departureMessage(departureId: String, messageId: String)
+GET         /manage-transit-movements/test-only/:departureId/departure/:messageId/message                               controllers.testOnly.TestOnlyP5DeparturesAPIController.departureMessage(departureId: String, messageId: String)
 
 + nocsrf
 POST        /manage-transit-movements/test-only/cancellation/submit                                                     controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
