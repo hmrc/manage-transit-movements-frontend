@@ -71,11 +71,11 @@ GET        /manage-transit-movements/test-only/:departureId/review-cancellation-
 
 GET        /manage-transit-movements/test-only/:departureId/send-departure-declaration-errors                         controllers.testOnly.RejectionMessageP5Controller.onAmend(departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/cancellation/is-declaration-cancelled                     controllers.testOnly.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String)
+GET        /manage-transit-movements/test-only/:departureId/is-declaration-cancelled                     controllers.testOnly.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/cancellation/declaration-cancelled                         controllers.testOnly.DepartureCancelledP5Controller.declarationCancelled(departureId: String)
+GET        /manage-transit-movements/test-only/:departureId/declaration-cancelled                         controllers.testOnly.DepartureCancelledP5Controller.declarationCancelled(departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/cancellation/declaration-not-cancelled                     controllers.testOnly.DepartureCancelledP5Controller.declarationNotCancelled(departureId: String)
+GET        /manage-transit-movements/test-only/:departureId/declaration-not-cancelled                     controllers.testOnly.DepartureCancelledP5Controller.declarationNotCancelled(departureId: String)
 
 GET        /manage-transit-movements/test-only/:arrivalId/unloading-remarks-errors                                     controllers.testOnly.UnloadingRemarkErrorsP5Controller.onPageLoad(arrivalId: String)
 
