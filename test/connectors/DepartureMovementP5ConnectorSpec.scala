@@ -181,7 +181,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                             "href":"/customs/transits/movements/departures/1"
                          }
                      },
-                     "id":"634982098f02f00a",
+                     "id":"634982098f02f00b",
                      "departureId":"$departureId",
                      "received":"2022-11-11T15:32:51.459Z",
                      "type":"IE028"
@@ -199,12 +199,14 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         val expectedResult = MessagesForDepartureMovement(
           NonEmptyList(
             DepartureMessage(
+              "634982098f02f00b",
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.AllocatedMRN,
               "movements/departures/1/messages/1"
             ),
             List(
               DepartureMessage(
+                "634982098f02f00a",
                 LocalDateTime.parse("2022-11-10T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
                 DepartureMessageType.DepartureNotification,
                 "movements/departures/1/messages/2"
