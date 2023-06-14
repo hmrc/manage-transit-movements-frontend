@@ -32,18 +32,21 @@ class MessagesForDepartureMovementSpec extends SpecBase {
       "must return previous message" in {
 
         val currentMessage = DepartureMessage(
+          "messageId1",
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
           DepartureMessageType.ReleasedForTransit,
           "body/path"
         )
 
         val previousMessage = DepartureMessage(
+          "messageId2",
           LocalDateTime.parse("2022-11-12T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
           DepartureMessageType.DepartureNotification,
           "body/path"
         )
 
         val lastMessage = DepartureMessage(
+          "messageId3",
           LocalDateTime.parse("2022-11-11T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
           DepartureMessageType.RejectedByOfficeOfDeparture,
           "body/path"
@@ -60,6 +63,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
       "must return None when no previous message" in {
 
         val currentMessage = DepartureMessage(
+          "messageId1",
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
           DepartureMessageType.ReleasedForTransit,
           "body/path"
@@ -86,7 +90,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/1"
             |             }
             |         },
-            |         "departureId":"$departureIdP5",
+            |         "id":"messageId1",
             |         "received":"2022-11-10T11:32:51.459Z",
             |         "type":"IE015"
             |      },
@@ -96,7 +100,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/2"
             |             }
             |         },
-            |         "departureId":"$departureIdP5",
+            |         "id":"messageId2",
             |         "received":"2022-11-10T10:32:51.459Z",
             |         "type":"IE028"
             |      },
@@ -106,7 +110,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/3"
             |             }
             |         },
-            |         "departureId":"$departureIdP5",
+            |         "id":"messageId3",
             |         "received":"2022-11-10T12:32:52.459Z",
             |         "type":"IE029"
             |      }
@@ -117,17 +121,20 @@ class MessagesForDepartureMovementSpec extends SpecBase {
       val expectedResult = MessagesForDepartureMovement(
         NonEmptyList(
           DepartureMessage(
+            "messageId3",
             LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
             DepartureMessageType.ReleasedForTransit,
             "movements/departures/1/messages/3"
           ),
           List(
             DepartureMessage(
+              "messageId1",
               LocalDateTime.parse("2022-11-10T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.DepartureNotification,
               "movements/departures/1/messages/1"
             ),
             DepartureMessage(
+              "messageId2",
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.AllocatedMRN,
               "movements/departures/1/messages/2"
@@ -153,7 +160,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/1"
             |             }
             |         },
-            |         "departureId":"$departureIdP5",
+            |         "id":"messageId1",
             |         "received":"2022-11-10T11:32:51.459Z",
             |         "type":"IE015"
             |      },
@@ -163,7 +170,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/2"
             |             }
             |         },
-            |         "departureId":"$departureIdP5",
+            |         "id":"messageId2",
             |         "received":"2022-11-10T10:32:51.459Z",
             |         "type":"IE028"
             |      },
@@ -173,7 +180,7 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |                "href":"/customs/transits/movements/departures/1/messages/3"
             |             }
             |         },
-            |         "departureId":"$departureIdP5",
+            |         "id":"messageId3",
             |         "received":"2022-11-10T12:32:52.459Z",
             |         "type":"IE029"
             |      }
@@ -184,17 +191,20 @@ class MessagesForDepartureMovementSpec extends SpecBase {
       val expectedResult = MessagesForDepartureMovement(
         NonEmptyList(
           DepartureMessage(
+            "messageId3",
             LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
             DepartureMessageType.ReleasedForTransit,
             "movements/departures/1/messages/3"
           ),
           List(
             DepartureMessage(
+              "messageId1",
               LocalDateTime.parse("2022-11-10T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.DepartureNotification,
               "movements/departures/1/messages/1"
             ),
             DepartureMessage(
+              "messageId2",
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               DepartureMessageType.AllocatedMRN,
               "movements/departures/1/messages/2"

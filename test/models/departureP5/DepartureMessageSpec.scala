@@ -36,7 +36,6 @@ class DepartureMessageSpec extends SpecBase {
           |        }
           |    },
           |    "id": "6445005176e4e834",
-          |    "departureId": "64450051db689fad",
           |    "received": "2023-04-23T09:54:25.000Z",
           |    "type": "IE056",
           |    "body": {
@@ -46,6 +45,7 @@ class DepartureMessageSpec extends SpecBase {
           |""".stripMargin)
 
     json.as[DepartureMessage] mustBe DepartureMessage(
+      messageId = "6445005176e4e834",
       received = LocalDateTime.of(2023, 4, 23, 9, 54, 25),
       messageType = DepartureMessageType.RejectedByOfficeOfDeparture,
       bodyPath = "movements/departures/64450051db689fad/messages/6445005176e4e834"
