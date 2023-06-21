@@ -26,13 +26,13 @@ case class DepartureDeclarationErrorsP5ViewModel(lrn: String) {
   def paragraph1(implicit messages: Messages): String =
     messages("departure.declaration.errors.message.noerrors")
 
-  def paragraph2(implicit messages: Messages): String = messages("departure.declaration.errors.message.noErrors.suffix")
+  def paragraph2(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph2")
 
   def paragraph3Prefix(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph3.prefix")
   def paragraph3Suffix(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph3.suffix")
   def paragraph3Link(implicit messages: Messages): String   = messages("departure.declaration.errors.message.paragraph3.link")
 
-  def hyperlink(implicit messages: Messages): String = messages("departure.declaration.errors.message.hyperlink.makeDeclaration")
+  def hyperlink(implicit messages: Messages): String = messages("departure.declaration.errors.message.hyperlink.text")
 
 }
 
