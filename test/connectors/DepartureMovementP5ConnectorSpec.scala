@@ -144,6 +144,82 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       }
     }
 
+    "getAllMovementsForSearchQuery" - {
+
+      val responseJson = Json.parse("""
+          |{
+          |  "_links": {
+          |    "self": {
+          |      "href": "/customs/transits/movements/departures"
+          |    }
+          |  },
+          |  "departures": [
+          |    {
+          |      "_links": {
+          |        "self": {
+          |          "href": "/customs/transits/movements/departures/63651574c3447b12"
+          |        },
+          |        "messages": {
+          |          "href": "/customs/transits/movements/departures/63651574c3447b12/messages"
+          |        }
+          |      },
+          |      "id": "63651574c3447b12",
+          |      "movementReferenceNumber": "LRN12345",
+          |      "created": "2022-11-04T13:36:52.332Z",
+          |      "updated": "2022-11-04T13:36:52.332Z",
+          |      "enrollmentEORINumber": "9999912345",
+          |      "movementEORINumber": "GB1234567890"
+          |    }
+          |  ]
+          |}
+          |""".stripMargin)
+
+      "when search param provided" - {
+        "must add value to request url" in {
+          val searchParam = "LRN123"
+          server.stubFor(
+            get(urlEqualTo(s"/movements/departures?localReferenceNumber=$searchParam"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          val expectedResult = DepartureMovements(
+            Seq(
+              DepartureMovement(
+                "63651574c3447b12",
+                Some("LRN12345"),
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
+                "movements/departures/63651574c3447b12/messages"
+              )
+            )
+          )
+
+          connector.getAllMovementsForSearchQuery(Some(searchParam)).futureValue mustBe Some(expectedResult)
+        }
+      }
+
+      "when search param not provided" - {
+        "must get all movements" in {
+          server.stubFor(
+            get(urlEqualTo("/movements/departures"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          val expectedResult = DepartureMovements(
+            Seq(
+              DepartureMovement(
+                "63651574c3447b12",
+                Some("LRN12345"),
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
+                "movements/departures/63651574c3447b12/messages"
+              )
+            )
+          )
+
+          connector.getAllMovementsForSearchQuery(None).futureValue mustBe Some(expectedResult)
+        }
+      }
+    }
+
     "getAvailability" - {
       "must return NonEmpty" - {
         "when departure returned" in {
