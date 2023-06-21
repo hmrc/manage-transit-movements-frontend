@@ -58,7 +58,7 @@ class WhatDoYouWantToDoService @Inject() (
 
   def fetchDeparturesUrl(): String =
     if (appConfig.phase5DepartureEnabled) {
-      controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
+      controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url
     } else {
       controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
     }

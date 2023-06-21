@@ -49,15 +49,32 @@ class ViewAllDeparturesP5Controller @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(lrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(form)(Ok(_))
+      val preparedForm = lrn match {
+        case Some(value) => form.fill(value)
+        case None        => form
+      }
+      buildView(preparedForm, lrn)(Ok(_))
   }
 
-  private def buildView(form: Form[String])(
+  def onSubmit(): Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => buildView(formWithErrors, None)(BadRequest(_)),
+          value => {
+            val lrn: Option[String] = Option(value).filter(_.trim.nonEmpty)
+            Future.successful(Redirect(controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(lrn)))
+          }
+        )
+  }
+
+  private def buildView(form: Form[String], searchParam: Option[String])(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[_]): Future[Result] =
-    departureMovementP5Connector.getAllMovements().flatMap {
+    departureMovementP5Connector.getAllMovementsForSearchQuery(searchParam).flatMap {
       case Some(movements) =>
         departureP5MessageService.getMessagesForAllMovements(movements).map {
           movementsAndMessages =>
@@ -67,7 +84,7 @@ class ViewAllDeparturesP5Controller @Inject() (
               totalNumberOfMovements = movementsAndMessages.length,
               currentPage = 1,
               numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
-              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
+              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(searchParam).url
             )
 
             block(

@@ -40,6 +40,15 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     getMovements(queryParams).map(Availability(_))
   }
 
+  def getAllMovementsForSearchQuery(searchParam: Option[String])(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] =
+    searchParam match {
+      case Some(value) =>
+        val queryParams = Seq("localReferenceNumber" -> value)
+        getMovements(queryParams)
+      case None =>
+        getAllMovements()
+    }
+
   private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures"
     http

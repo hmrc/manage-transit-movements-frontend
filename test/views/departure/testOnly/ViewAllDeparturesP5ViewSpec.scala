@@ -17,6 +17,7 @@
 package views.departure.testOnly
 
 import generators.Generators
+import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
@@ -46,6 +47,9 @@ class ViewAllDeparturesP5ViewSpec
   override val viewMovements: Seq[ViewDepartureP5] = dataRows.flatMap(_._2)
 
   override def viewWithSpecificPagination(paginationViewModel: MovementsPaginationViewModel): HtmlFormat.Appendable =
+    viewWithSpecificPagination(form, paginationViewModel)
+
+  private def viewWithSpecificPagination(form: Form[String], paginationViewModel: MovementsPaginationViewModel): HtmlFormat.Appendable =
     applyView(form, ViewAllDepartureMovementsP5ViewModel(Seq.empty[ViewDepartureP5], paginationViewModel))
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsP5ViewModel)
@@ -81,4 +85,25 @@ class ViewAllDeparturesP5ViewSpec
     expectedText = "Manage your transit movements",
     expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
   )
+
+  "must render search result text" - {
+    "when 1 page" - {
+      "and search param provided" in {
+        val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
+        val filledForm          = form.fill("LRN123")
+        val doc: Document       = parseView(viewWithSpecificPagination(filledForm, paginationViewModel))
+        val p                   = doc.getElementById("results-count")
+        p.text() mustBe "Showing 1 result matching LRN123"
+        boldWords(p) mustBe Seq("1")
+      }
+
+      "when search param not provided" in {
+        val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
+        val doc: Document       = parseView(viewWithSpecificPagination(form, paginationViewModel))
+        val p                   = doc.getElementById("results-count")
+        p.text() mustBe "Showing 1 result"
+        boldWords(p) mustBe Seq("1")
+      }
+    }
+  }
 }
