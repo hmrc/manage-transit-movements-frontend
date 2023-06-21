@@ -19,6 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
+import models.Availability
 import models.departureP5._
 import play.api.http.Status.{NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -29,14 +30,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends HttpReadsTry with Logging {
 
-  def getAllMovements()(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] = {
+  private def headers(implicit hc: HeaderCarrier): HeaderCarrier = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
 
-    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
+  def getAllMovements()(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] =
+    getMovements(Seq.empty)
 
+  def getAvailability()(implicit hc: HeaderCarrier): Future[Availability] = {
+    val queryParams = Seq("count" -> "1")
+    getMovements(queryParams).map(Availability(_))
+  }
+
+  private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures"
-
     http
-      .GET[HttpResponse](url)(rawHttpResponseHttpReads, headers, ec)
+      .GET[HttpResponse](url, queryParams)(rawHttpResponseHttpReads, headers, ec)
       .map {
         response =>
           response.status match {
@@ -53,39 +60,25 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
   }
 
   def getMessagesForMovement(location: String)(implicit hc: HeaderCarrier): Future[MessagesForDepartureMovement] = {
-
-    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
-
     val url = s"${config.commonTransitConventionTradersUrl}$location"
-
     http.GET[MessagesForDepartureMovement](url)(HttpReads[MessagesForDepartureMovement], headers, ec)
   }
 
   def getLRN(location: String)(implicit hc: HeaderCarrier): Future[LocalReferenceNumber] = {
-
-    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
-
     val url = s"${config.commonTransitConventionTradersUrl}$location"
-
     http.GET[LocalReferenceNumber](url)(HttpReads[LocalReferenceNumber], headers, ec)
   }
 
   def getMessageMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureMessages] = {
-    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
-
-    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
-    http.GET[DepartureMessages](serviceUrl)(implicitly, headers, ec)
+    val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
+    http.GET[DepartureMessages](url)(implicitly, headers, ec)
   }
 
   def getSpecificMessage[MessageModel](
     path: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, HttpReads: HttpReads[MessageModel]): Future[MessageModel] = {
-
-    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
-
-    val serviceUrl = s"${config.commonTransitConventionTradersUrl}$path"
-
-    http.GET[MessageModel](serviceUrl)(implicitly, headers, ec)
+    val url = s"${config.commonTransitConventionTradersUrl}$path"
+    http.GET[MessageModel](url)(implicitly, headers, ec)
   }
 
 }
