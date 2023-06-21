@@ -229,7 +229,7 @@ object DepartureStatusP5ViewModel {
           }
 
         case Some(CancellationRequested) =>
-          if (xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration) {
+          if (xPaths.isEmpty) {
             ("viewErrors", controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
             ("viewErrors", controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
