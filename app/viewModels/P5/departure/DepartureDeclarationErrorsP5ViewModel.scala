@@ -18,32 +18,28 @@ package viewModels.P5.departure
 
 import play.api.i18n.Messages
 
-case class DepartureDeclarationErrorsP5ViewModel(lrn: String, noErrors: Boolean) {
+case class DepartureDeclarationErrorsP5ViewModel(lrn: String) {
   def title(implicit messages: Messages): String = messages("departure.declaration.errors.message.title")
 
   def heading(implicit messages: Messages): String = messages("departure.declaration.errors.message.heading")
 
   def paragraph1(implicit messages: Messages): String =
-    if (noErrors) {
-      messages("departure.declaration.errors.message.noerrors", lrn)
-    } else {
-      messages("departure.declaration.errors.message.elevenpluserrors", lrn)
-    }
+    messages("departure.declaration.errors.message.noerrors")
 
-  def paragraph2(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph2")
+  def paragraph2(implicit messages: Messages): String = messages("departure.declaration.errors.message.noErrors.suffix")
 
   def paragraph3Prefix(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph3.prefix")
   def paragraph3Suffix(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph3.suffix")
   def paragraph3Link(implicit messages: Messages): String   = messages("departure.declaration.errors.message.paragraph3.link")
 
-  def hyperlink(implicit messages: Messages): String = messages("departure.declaration.errors.message.hyperlink")
+  def hyperlink(implicit messages: Messages): String = messages("departure.declaration.errors.message.hyperlink.makeDeclaration")
 
 }
 
 object DepartureDeclarationErrorsP5ViewModel {
 
   class DepartureDeclarationErrorsP5ViewModelProvider {
-    def apply(lrn: String, noErrors: Boolean): DepartureDeclarationErrorsP5ViewModel = DepartureDeclarationErrorsP5ViewModel(lrn, noErrors)
+    def apply(lrn: String): DepartureDeclarationErrorsP5ViewModel = DepartureDeclarationErrorsP5ViewModel(lrn)
   }
 
 }
