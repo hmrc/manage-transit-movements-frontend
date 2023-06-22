@@ -85,7 +85,7 @@ class ViewAllDeparturesP5Controller @Inject() (
               totalNumberOfMovements = movements.totalCount,
               currentPage = page.getOrElse(1),
               numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
-              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(page, searchParam).url,
+              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url,
               additionalParams = Seq(
                 searchParam.map("lrn" -> _)
               ).flatten

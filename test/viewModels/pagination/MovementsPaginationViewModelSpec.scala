@@ -55,8 +55,7 @@ class MovementsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyC
       "items" - {
 
         "must return [1] 2 … 100 when on page 1 of 100" in {
-          val currentPage = 1
-          val result      = MovementsPaginationViewModel(1000, currentPage, 10, s"href?page=$currentPage").items
+          val result = MovementsPaginationViewModel(1000, 1, 10, "href").items
 
           result mustBe Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(true)),
