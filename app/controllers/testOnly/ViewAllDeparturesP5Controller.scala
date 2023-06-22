@@ -43,19 +43,19 @@ class ViewAllDeparturesP5Controller @Inject() (
   departureP5MessageService: DepartureP5MessageService,
   departureMovementP5Connector: DepartureMovementP5Connector,
   view: ViewAllDeparturesP5View
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(lrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(page: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       val preparedForm = lrn match {
         case Some(value) => form.fill(value)
         case None        => form
       }
-      buildView(preparedForm, lrn)(Ok(_))
+      buildView(preparedForm, page, lrn)(Ok(_))
   }
 
   def onSubmit(): Action[AnyContent] = (Action andThen identify).async {
@@ -63,28 +63,32 @@ class ViewAllDeparturesP5Controller @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => buildView(formWithErrors, None)(BadRequest(_)),
+          formWithErrors => buildView(formWithErrors, None, None)(BadRequest(_)),
           value => {
             val lrn: Option[String] = Option(value).filter(_.trim.nonEmpty)
-            Future.successful(Redirect(controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(lrn)))
+            Future.successful(Redirect(controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, lrn)))
           }
         )
   }
 
-  private def buildView(form: Form[String], searchParam: Option[String])(
+  private def buildView(form: Form[String], page: Option[Int], searchParam: Option[String])(
     block: HtmlFormat.Appendable => Result
-  )(implicit request: IdentifierRequest[_]): Future[Result] =
-    departureMovementP5Connector.getAllMovementsForSearchQuery(searchParam).flatMap {
+  )(implicit request: IdentifierRequest[_]): Future[Result] = {
+    val currentPage = page.getOrElse(1)
+    departureMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.departuresNumberOfMovements, searchParam).flatMap {
       case Some(movements) =>
         departureP5MessageService.getMessagesForAllMovements(movements).map {
           movementsAndMessages =>
             val viewDepartureP5: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
 
             val paginationViewModel = MovementsPaginationViewModel(
-              totalNumberOfMovements = movementsAndMessages.length,
-              currentPage = 1,
+              totalNumberOfMovements = movements.totalCount,
+              currentPage = page.getOrElse(1),
               numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
-              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(searchParam).url
+              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url,
+              additionalParams = Seq(
+                searchParam.map("lrn" -> _)
+              ).flatten
             )
 
             block(
@@ -96,5 +100,6 @@ class ViewAllDeparturesP5Controller @Inject() (
         }
       case None => Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
     }
+  }
 
 }

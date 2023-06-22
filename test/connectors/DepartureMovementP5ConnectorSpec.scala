@@ -56,6 +56,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 "href": "/customs/transits/movements/departures"
               }
             },
+            "totalCount": 2,
             "departures": [
               {
                 "_links": {
@@ -102,7 +103,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         )
 
         val expectedResult = DepartureMovements(
-          Seq(
+          departureMovements = Seq(
             DepartureMovement(
               "63651574c3447b12",
               Some("27WF9X1FQ9RCKN0TM3"),
@@ -115,7 +116,8 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
               "movements/departures/6365135ba5e821ee/messages"
             )
-          )
+          ),
+          totalCount = 2
         )
 
         connector.getAllMovements().futureValue mustBe Some(expectedResult)
@@ -128,7 +130,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             .willReturn(aResponse().withStatus(404))
         )
 
-        connector.getAllMovements().futureValue mustBe Some(DepartureMovements(Seq.empty))
+        connector.getAllMovements().futureValue mustBe Some(DepartureMovements(Seq.empty, 0))
       }
 
       "must return None when an error is returned" in {
@@ -153,6 +155,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
           |      "href": "/customs/transits/movements/departures"
           |    }
           |  },
+          |  "totalCount": 1,
           |  "departures": [
           |    {
           |      "_links": {
@@ -175,47 +178,49 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
           |""".stripMargin)
 
       "when search param provided" - {
-        "must add value to request url" in {
+        "must add values to request url" in {
           val searchParam = "LRN123"
           server.stubFor(
-            get(urlEqualTo(s"/movements/departures?localReferenceNumber=$searchParam"))
+            get(urlEqualTo(s"/movements/departures?page=1&count=20&localReferenceNumber=$searchParam"))
               .willReturn(okJson(responseJson.toString()))
           )
 
           val expectedResult = DepartureMovements(
-            Seq(
+            departureMovements = Seq(
               DepartureMovement(
                 "63651574c3447b12",
                 Some("LRN12345"),
                 LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
                 "movements/departures/63651574c3447b12/messages"
               )
-            )
+            ),
+            totalCount = 1
           )
 
-          connector.getAllMovementsForSearchQuery(Some(searchParam)).futureValue mustBe Some(expectedResult)
+          connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue mustBe Some(expectedResult)
         }
       }
 
       "when search param not provided" - {
-        "must get all movements" in {
+        "must add values to request url" in {
           server.stubFor(
-            get(urlEqualTo("/movements/departures"))
+            get(urlEqualTo("/movements/departures?page=1&count=20"))
               .willReturn(okJson(responseJson.toString()))
           )
 
           val expectedResult = DepartureMovements(
-            Seq(
+            departureMovements = Seq(
               DepartureMovement(
                 "63651574c3447b12",
                 Some("LRN12345"),
                 LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
                 "movements/departures/63651574c3447b12/messages"
               )
-            )
+            ),
+            totalCount = 1
           )
 
-          connector.getAllMovementsForSearchQuery(None).futureValue mustBe Some(expectedResult)
+          connector.getAllMovementsForSearchQuery(1, 20, None).futureValue mustBe Some(expectedResult)
         }
       }
     }
@@ -230,6 +235,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               |      "href": "/customs/transits/movements/departures"
               |    }
               |  },
+              |  "totalCount": 1,
               |  "departures": [
               |    {
               |      "_links": {
@@ -269,6 +275,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               |      "href": "/customs/transits/movements/departures"
               |    }
               |  },
+              |  "totalCount": 0,
               |  "departures": []
               |}
               |""".stripMargin)

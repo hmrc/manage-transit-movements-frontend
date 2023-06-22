@@ -46,6 +46,6 @@ class CancellationNotificationErrorsP5ViewSpec extends ViewBehaviours {
   behave like pageWithLink(
     id = "view-departure-declaration",
     expectedText = "View departure declarations",
-    expectedHref = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url
+    expectedHref = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
   )
 }

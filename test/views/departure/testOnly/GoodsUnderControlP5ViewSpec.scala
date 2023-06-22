@@ -102,7 +102,7 @@ class GoodsUnderControlP5ViewSpec extends CheckYourAnswersViewBehaviours with Ge
   behave like pageWithLink(
     "view-all-declarations",
     "Check your departure declarations",
-    controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url
+    controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
   )
 
 }

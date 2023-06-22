@@ -96,7 +96,7 @@ class ReviewCancellationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours 
   behave like pageWithLink(
     "departure-link",
     "View departure declarations",
-    controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url
+    controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
   )
 
 }

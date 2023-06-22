@@ -24,6 +24,7 @@ import generators.Generators
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -71,7 +72,8 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   )
 
   val mockDepartureMovementResponse: DepartureMovements = DepartureMovements(
-    Seq(departureMovement)
+    departureMovements = Seq(departureMovement),
+    totalCount = 1
   )
 
   val mockDepartureMessageResponse: MessagesForDepartureMovement = MessagesForDepartureMovement(
@@ -103,8 +105,8 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
 
     "return OK and the correct view for a GET" - {
 
-      "when there is no search param" in {
-        when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any())(any()))
+      "when there is no search param or page" in {
+        when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockDepartureMovementResponse)))
 
         when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
@@ -114,7 +116,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
             )
           )
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url)
+        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
 
         val result = route(app, request).value
 
@@ -126,19 +128,20 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
           totalNumberOfMovements = mockDepartureMovementResponse.movements.length,
           currentPage = 1,
           numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
-          href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url
+          href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
         contentAsString(result) mustEqual
           view(form, expectedViewModel)(request, messages).toString
 
-        verify(mockDepartureMovementConnector).getAllMovementsForSearchQuery(eqTo(None))(any())
+        verify(mockDepartureMovementConnector).getAllMovementsForSearchQuery(eqTo(1), eqTo(paginationAppConfig.departuresNumberOfMovements), eqTo(None))(any())
       }
 
-      "when there is a search param defined" in {
+      "when there is a search param and page defined" in {
         val searchParam = "LRN123"
-        when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any())(any()))
+        val currentPage = Gen.chooseNum(2, 10: Int).sample.value
+        when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockDepartureMovementResponse)))
 
         when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
@@ -148,7 +151,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
             )
           )
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(Some(searchParam)).url)
+        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(Some(currentPage), Some(searchParam)).url)
 
         val result = route(app, request).value
 
@@ -162,23 +165,26 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
           totalNumberOfMovements = mockDepartureMovementResponse.movements.length,
           currentPage = 1,
           numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
-          href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url
+          href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
         contentAsString(result) mustEqual
           view(filledForm, expectedViewModel)(request, messages).toString
 
-        verify(mockDepartureMovementConnector).getAllMovementsForSearchQuery(eqTo(Some(searchParam)))(any())
+        verify(mockDepartureMovementConnector).getAllMovementsForSearchQuery(eqTo(currentPage),
+                                                                             eqTo(paginationAppConfig.departuresNumberOfMovements),
+                                                                             eqTo(Some(searchParam))
+        )(any())
       }
     }
 
     "redirect to technical difficulties when no movements found" in {
 
-      when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any())(any()))
+      when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
         .thenReturn(Future.successful(None))
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None).url)
+      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
 
       val result = route(app, request).value
 
