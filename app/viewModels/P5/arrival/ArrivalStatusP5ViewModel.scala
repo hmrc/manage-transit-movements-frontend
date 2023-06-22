@@ -58,8 +58,9 @@ object ArrivalStatusP5ViewModel {
       ArrivalStatusP5ViewModel(
         "movement.status.P5.unloadingPermissionReceived",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$arrivalId",
-                             "movement.status.P5.action.unloadingPermission.unloadingRemarks"
+          ViewMovementAction(
+            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/$arrivalId/unloading-remarks/${message.messageId}",
+            "movement.status.P5.action.unloadingPermission.unloadingRemarks"
           ),
           ViewMovementAction(
             controllers.testOnly.routes.UnloadingPermissionController.getUnloadingPermissionDocument(message.messageId, arrivalId).url,
