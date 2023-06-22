@@ -27,14 +27,19 @@ trait PaginationViewModel {
   val items: Seq[PaginationItem]
   val pageNumber: Int
 
-  def searchResult(implicit messages: Messages): String =
-    results.count match {
-      case 1 => messages("numberOfMovements.singular", "<b>1</b>")
-      case x => messages("numberOfMovements.plural", s"<b>$x</b>")
+  def searchResult(searchParam: Option[String] = None)(implicit messages: Messages): String =
+    (searchParam, results.count) match {
+      case (Some(value), 1) => messages("numberOfMovements.singular.withSearchParam", "<b>1</b>", value)
+      case (Some(value), x) => messages("numberOfMovements.plural.withSearchParam", s"<b>$x</b>", value)
+      case (None, 1)        => messages("numberOfMovements.singular", "<b>1</b>")
+      case (None, x)        => messages("numberOfMovements.plural", s"<b>$x</b>")
     }
 
-  def paginatedSearchResult(implicit messages: Messages): String =
-    messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
+  def paginatedSearchResult(searchParam: Option[String] = None)(implicit messages: Messages): String =
+    searchParam match {
+      case Some(value) => messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", value)
+      case None        => messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
+    }
 
   val pagination: Pagination = Pagination(Some(items), previous, next)
 }

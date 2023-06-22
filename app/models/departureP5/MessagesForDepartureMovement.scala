@@ -17,7 +17,6 @@
 package models.departureP5
 
 import cats.data.NonEmptyList
-import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import play.api.libs.json.{Json, JsonValidationError, Reads}
 
 case class MessagesForDepartureMovement(messages: NonEmptyList[DepartureMessage]) {

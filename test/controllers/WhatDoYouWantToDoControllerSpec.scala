@@ -17,115 +17,81 @@
 package controllers
 
 import base.SpecBase
-import connectors.{ArrivalMovementConnector, ArrivalMovementP5Connector, DepartureMovementP5Connector, DeparturesDraftsP5Connector, DeparturesMovementConnector}
+import generators.Generators
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.WhatDoYouWantToDoService
 import views.html.WhatDoYouWantToDoView
 
 import scala.concurrent.Future
 
-class WhatDoYouWantToDoControllerSpec extends SpecBase {
+class WhatDoYouWantToDoControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val mockArrivalMovementConnector: ArrivalMovementConnector          = mock[ArrivalMovementConnector]
-  private val mockDepartureMovementConnector: DeparturesMovementConnector     = mock[DeparturesMovementConnector]
-  private val mockDraftDepartureP5Connector: DeparturesDraftsP5Connector      = mock[DeparturesDraftsP5Connector]
-  private val mockDepartureMovementsP5Connector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
-  private val mockArrivalMovementP5Connector: ArrivalMovementP5Connector      = mock[ArrivalMovementP5Connector]
-  private val viewAllArrivalsUrl                                              = controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
-  private val viewAllDeparturesUrl                                            = controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
+  private lazy val mockWhatDoYouWantToDoService: WhatDoYouWantToDoService = mock[WhatDoYouWantToDoService]
 
   override def beforeEach(): Unit = {
-    reset(mockArrivalMovementConnector)
-    reset(mockDepartureMovementConnector)
-    reset(mockDraftDepartureP5Connector)
-    reset(mockDepartureMovementsP5Connector)
-    reset(mockArrivalMovementP5Connector)
     super.beforeEach()
+    reset(mockWhatDoYouWantToDoService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector),
-        bind[DeparturesMovementConnector].toInstance(mockDepartureMovementConnector),
-        bind[DeparturesDraftsP5Connector].toInstance(mockDraftDepartureP5Connector),
-        bind[DepartureMovementP5Connector].toInstance(mockDepartureMovementsP5Connector),
-        bind[ArrivalMovementP5Connector].toInstance(mockArrivalMovementP5Connector)
-      )
-      .configure(
-        "microservice.services.features.phase5Enabled.departure" -> false,
-        "microservice.services.features.phase5Enabled.arrival"   -> false
+        bind[WhatDoYouWantToDoService].toInstance(mockWhatDoYouWantToDoService)
       )
 
-  "WhatDoYouWantToDoP4 Controller" - {
+  "WhatDoYouWantToDo Controller" - {
 
-    "must return OK and the correct view for a GET with" - {
+    "must return OK and the correct view for a GET" in {
 
-      "Arrivals and departures" in {
+      forAll(
+        arbitrary[Availability],
+        arbitrary[Availability],
+        Gen.option(arbitrary[DraftAvailability]),
+        Gen.alphaNumStr,
+        Gen.alphaNumStr
+      ) {
+        (arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalsUrl, viewAllDeparturesUrl) =>
+          beforeEach()
 
-        when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
-          .thenReturn(Future.successful(Availability.NonEmpty))
+          when(mockWhatDoYouWantToDoService.fetchArrivalsAvailability()(any(), any()))
+            .thenReturn(Future.successful(arrivalsAvailability))
 
-        when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
-          .thenReturn(Future.successful(Availability.NonEmpty))
+          when(mockWhatDoYouWantToDoService.fetchArrivalsUrl())
+            .thenReturn(viewAllArrivalsUrl)
 
-        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result  = route(app, request).value
-        val view    = injector.instanceOf[WhatDoYouWantToDoView]
+          when(mockWhatDoYouWantToDoService.fetchDeparturesAvailability()(any()))
+            .thenReturn(Future.successful(departuresAvailability))
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(Availability.NonEmpty, Availability.NonEmpty, None, viewAllArrivalsUrl, viewAllDeparturesUrl)(request, messages).toString
+          when(mockWhatDoYouWantToDoService.fetchDeparturesUrl())
+            .thenReturn(viewAllDeparturesUrl)
 
-        verifyNoInteractions(mockDraftDepartureP5Connector)
-        verifyNoInteractions(mockDepartureMovementsP5Connector)
-        verifyNoInteractions(mockArrivalMovementP5Connector)
-      }
+          when(mockWhatDoYouWantToDoService.fetchDraftDepartureAvailability()(any(), any()))
+            .thenReturn(Future.successful(draftDeparturesAvailability))
 
-      "No arrivals and no departures" in {
-        when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
-          .thenReturn(Future.successful(Availability.Empty))
+          val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
+          val result  = route(app, request).value
 
-        when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
-          .thenReturn(Future.successful(Availability.Empty))
+          val view = injector.instanceOf[WhatDoYouWantToDoView]
 
-        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result  = route(app, request).value
+          status(result) mustEqual OK
 
-        val view = injector.instanceOf[WhatDoYouWantToDoView]
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(Availability.Empty, Availability.Empty, None, viewAllArrivalsUrl, viewAllDeparturesUrl)(request, messages).toString
+          contentAsString(result) mustEqual
+            view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalsUrl, viewAllDeparturesUrl)(
+              request,
+              messages
+            ).toString
 
-        verifyNoInteractions(mockDraftDepartureP5Connector)
-        verifyNoInteractions(mockDepartureMovementsP5Connector)
-        verifyNoInteractions(mockArrivalMovementP5Connector)
-      }
-
-      "No response from arrivals and departures" in {
-        when(mockArrivalMovementConnector.getArrivalsAvailability()(any()))
-          .thenReturn(Future.successful(Availability.Unavailable))
-
-        when(mockDepartureMovementConnector.getDeparturesAvailability()(any()))
-          .thenReturn(Future.successful(Availability.Unavailable))
-
-        val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
-        val result  = route(app, request).value
-
-        val view = injector.instanceOf[WhatDoYouWantToDoView]
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(Availability.Unavailable, Availability.Unavailable, None, viewAllArrivalsUrl, viewAllDeparturesUrl)(request, messages).toString
-
-        verifyNoInteractions(mockDraftDepartureP5Connector)
-        verifyNoInteractions(mockDepartureMovementsP5Connector)
-        verifyNoInteractions(mockArrivalMovementP5Connector)
+          verify(mockWhatDoYouWantToDoService).fetchDraftDepartureAvailability()(any(), any())
       }
     }
   }

@@ -21,12 +21,14 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.departureP5.{DepartureMessageType, _}
+import models.Availability
+import models.departureP5._
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,6 +41,8 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
     super
       .guiceApplicationBuilder()
       .configure(conf = "microservice.services.common-transit-convention-traders.port" -> server.port())
+
+  private val genError = Gen.chooseNum(400: Int, 599: Int).suchThat(_ != 404)
 
   "DepartureMovementP5Connector" - {
 
@@ -128,8 +132,6 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       }
 
       "must return None when an error is returned" in {
-        val genError = Gen.chooseNum(400, 599).suchThat(_ != 404)
-
         forAll(genError) {
           error =>
             server.stubFor(
@@ -138,6 +140,159 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             )
 
             connector.getAllMovements().futureValue mustBe None
+        }
+      }
+    }
+
+    "getAllMovementsForSearchQuery" - {
+
+      val responseJson = Json.parse("""
+          |{
+          |  "_links": {
+          |    "self": {
+          |      "href": "/customs/transits/movements/departures"
+          |    }
+          |  },
+          |  "departures": [
+          |    {
+          |      "_links": {
+          |        "self": {
+          |          "href": "/customs/transits/movements/departures/63651574c3447b12"
+          |        },
+          |        "messages": {
+          |          "href": "/customs/transits/movements/departures/63651574c3447b12/messages"
+          |        }
+          |      },
+          |      "id": "63651574c3447b12",
+          |      "movementReferenceNumber": "LRN12345",
+          |      "created": "2022-11-04T13:36:52.332Z",
+          |      "updated": "2022-11-04T13:36:52.332Z",
+          |      "enrollmentEORINumber": "9999912345",
+          |      "movementEORINumber": "GB1234567890"
+          |    }
+          |  ]
+          |}
+          |""".stripMargin)
+
+      "when search param provided" - {
+        "must add value to request url" in {
+          val searchParam = "LRN123"
+          server.stubFor(
+            get(urlEqualTo(s"/movements/departures?localReferenceNumber=$searchParam"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          val expectedResult = DepartureMovements(
+            Seq(
+              DepartureMovement(
+                "63651574c3447b12",
+                Some("LRN12345"),
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
+                "movements/departures/63651574c3447b12/messages"
+              )
+            )
+          )
+
+          connector.getAllMovementsForSearchQuery(Some(searchParam)).futureValue mustBe Some(expectedResult)
+        }
+      }
+
+      "when search param not provided" - {
+        "must get all movements" in {
+          server.stubFor(
+            get(urlEqualTo("/movements/departures"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          val expectedResult = DepartureMovements(
+            Seq(
+              DepartureMovement(
+                "63651574c3447b12",
+                Some("LRN12345"),
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
+                "movements/departures/63651574c3447b12/messages"
+              )
+            )
+          )
+
+          connector.getAllMovementsForSearchQuery(None).futureValue mustBe Some(expectedResult)
+        }
+      }
+    }
+
+    "getAvailability" - {
+      "must return NonEmpty" - {
+        "when departure returned" in {
+          val responseJson = Json.parse("""
+              |{
+              |  "_links": {
+              |    "self": {
+              |      "href": "/customs/transits/movements/departures"
+              |    }
+              |  },
+              |  "departures": [
+              |    {
+              |      "_links": {
+              |        "self": {
+              |          "href": "/customs/transits/movements/departures/63651574c3447b12"
+              |        },
+              |        "messages": {
+              |          "href": "/customs/transits/movements/departures/63651574c3447b12/messages"
+              |        }
+              |      },
+              |      "id": "63651574c3447b12",
+              |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+              |      "created": "2022-11-04T13:36:52.332Z",
+              |      "updated": "2022-11-04T13:36:52.332Z",
+              |      "enrollmentEORINumber": "9999912345",
+              |      "movementEORINumber": "GB1234567890"
+              |    }
+              |  ]
+              |}
+              |""".stripMargin)
+
+          server.stubFor(
+            get(urlEqualTo("/movements/departures?count=1"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getAvailability().futureValue mustBe Availability.NonEmpty
+        }
+      }
+
+      "must return Empty" - {
+        "when no departures returned" in {
+          val responseJson = Json.parse("""
+              |{
+              |  "_links": {
+              |    "self": {
+              |      "href": "/customs/transits/movements/departures"
+              |    }
+              |  },
+              |  "departures": []
+              |}
+              |""".stripMargin)
+
+          server.stubFor(
+            get(urlEqualTo("/movements/departures?count=1"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getAvailability().futureValue mustBe Availability.Empty
+        }
+      }
+
+      "must return Unavailable" - {
+        "when there is an error" in {
+          forAll(genError) {
+            error =>
+              server.stubFor(
+                get(urlEqualTo("/movements/departures?count=1"))
+                  .willReturn(aResponse().withStatus(error))
+              )
+
+              connector.getAvailability().futureValue mustBe Availability.Unavailable
+          }
         }
       }
     }

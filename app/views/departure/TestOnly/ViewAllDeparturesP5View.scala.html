@@ -30,7 +30,7 @@
 )
 
 @(
-    form: Form[_],
+    form: Form[String],
     viewModel: ViewAllDepartureMovementsP5ViewModel
 )(implicit request: Request[_], messages: Messages)
 
@@ -50,11 +50,11 @@
 
     @search(
         form = form,
-        action = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(),
+        action = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onSubmit(),
         label = "viewDepartureDeclarationsP5.search.title"
     )
 
-    @pagination(viewModel.paginationViewModel)
+    @pagination(viewModel.paginationViewModel, form.value)
     
     @movementsTable(
         dataRows = viewModel.dataRows,

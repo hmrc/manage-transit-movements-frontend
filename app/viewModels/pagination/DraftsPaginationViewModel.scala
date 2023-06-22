@@ -16,35 +16,16 @@
 
 package viewModels.pagination
 
-import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 
+// TODO - this is identical to MovementsPaginationViewModel. Consider removing.
 case class DraftsPaginationViewModel(
   results: MetaData,
   previous: Option[PaginationLink],
   next: Option[PaginationLink],
   items: Seq[PaginationItem],
-  pageNumber: Int,
-  lrn: Option[String]
-) extends PaginationViewModel {
-
-  override def searchResult(implicit messages: Messages): String =
-    lrn.fold(
-      super.searchResult
-    )(
-      results.count match {
-        case 1 => messages("numberOfMovements.singular.withLRN", "<b>1</b>", _)
-        case x => messages("numberOfMovements.plural.withLRN", s"<b>$x</b>", _)
-      }
-    )
-
-  override def paginatedSearchResult(implicit messages: Messages): String =
-    lrn.fold(
-      super.paginatedSearchResult
-    )(
-      messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", _)
-    )
-}
+  pageNumber: Int
+) extends PaginationViewModel
 
 object DraftsPaginationViewModel {
 
@@ -53,8 +34,7 @@ object DraftsPaginationViewModel {
     currentPage: Int,
     numberOfMovementsPerPage: Int,
     href: String,
-    additionalParams: Seq[(String, String)] = Seq.empty,
-    lrn: Option[String] = None
+    additionalParams: Seq[(String, String)] = Seq.empty
   ): DraftsPaginationViewModel =
     PaginationViewModel(
       totalNumberOfMovements,
@@ -63,6 +43,6 @@ object DraftsPaginationViewModel {
       href,
       additionalParams
     ) {
-      new DraftsPaginationViewModel(_, _, _, _, currentPage, lrn)
+      new DraftsPaginationViewModel(_, _, _, _, currentPage)
     }
 }

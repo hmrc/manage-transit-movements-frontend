@@ -78,7 +78,7 @@
         <p class="govuk-body" id="no-results-found">@messages("departure.drafts.dashboard.table.noResults")</p>
     }
 
-    @pagination(viewModel.paginationViewModel)
+    @pagination(viewModel.paginationViewModel, viewModel.lrn)
 
     <article class="ticket-panel" aria-label="Sub navigation 1">
         <section class="ticket-panel__content ticket-panel__content--blue" aria-label="Section 1">

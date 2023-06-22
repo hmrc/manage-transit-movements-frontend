@@ -18,13 +18,13 @@
 
 @this(govukPagination: GovukPagination)
 
-@(viewModel: PaginationViewModel)(implicit messages: Messages)
+@(viewModel: PaginationViewModel, searchParam: Option[String] = None)(implicit messages: Messages)
 
 @if(viewModel.results.totalPages == 1) {
-    <p id="results-count" class="govuk-body">@Html(viewModel.searchResult)</p>
+    <p id="results-count" class="govuk-body">@Html(viewModel.searchResult(searchParam))</p>
 } else if(viewModel.results.totalPages > 1) {
 
-    <p id="paginated-results-count" class="pagination__results">@Html(viewModel.paginatedSearchResult)</p>
+    <p id="paginated-results-count" class="pagination__results">@Html(viewModel.paginatedSearchResult(searchParam))</p>
 
     @govukPagination(viewModel.pagination)
 }

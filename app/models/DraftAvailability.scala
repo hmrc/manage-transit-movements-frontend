@@ -16,6 +16,7 @@
 
 package models
 
+// TODO - for all intents and purposes this is identical to Availability. Consider removing.
 sealed trait DraftAvailability
 
 object DraftAvailability {
