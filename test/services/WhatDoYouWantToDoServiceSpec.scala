@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors._
 import generators.Generators
-import models.{Availability, DraftAvailability}
+import models.Availability
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verifyNoInteractions, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -112,9 +112,9 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
     "fetchDraftDeparturesAvailability" - {
       "must get availability when phase 5 enabled" in {
         when(mockFrontendAppConfig.phase5DepartureEnabled).thenReturn(true)
-        when(mockDeparturesDraftsP5Connector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(DraftAvailability.NonEmpty))
+        when(mockDeparturesDraftsP5Connector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(Availability.NonEmpty))
 
-        whatDoYouWantToDoService.fetchDraftDepartureAvailability().futureValue.value mustBe DraftAvailability.NonEmpty
+        whatDoYouWantToDoService.fetchDraftDepartureAvailability().futureValue.value mustBe Availability.NonEmpty
 
         verifyNoInteractions(mockDeparturesMovementConnector)
       }

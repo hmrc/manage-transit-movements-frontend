@@ -37,7 +37,7 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
 
   def getAvailability()(implicit hc: HeaderCarrier): Future[Availability] = {
     val queryParams = Seq("count" -> "1")
-    getMovements(queryParams).map(Availability(_))
+    getMovements(queryParams).map(_.map(_.movements)).map(Availability(_))
   }
 
   def getAllMovementsForSearchQuery(

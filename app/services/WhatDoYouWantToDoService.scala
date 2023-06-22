@@ -18,7 +18,7 @@ package services
 
 import config.FrontendAppConfig
 import connectors._
-import models.{Availability, DraftAvailability}
+import models.Availability
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -61,7 +61,7 @@ class WhatDoYouWantToDoService @Inject() (
       controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
     }
 
-  def fetchDraftDepartureAvailability()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[DraftAvailability]] =
+  def fetchDraftDepartureAvailability()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Availability]] =
     if (appConfig.phase5DepartureEnabled) {
       departureDraftsP5Connector.getDraftDeparturesAvailability().map(Some(_))
     } else {

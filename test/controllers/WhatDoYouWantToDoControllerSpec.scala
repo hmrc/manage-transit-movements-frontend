@@ -56,7 +56,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with ScalaCheckPropertyCh
       forAll(
         arbitrary[Availability],
         arbitrary[Availability],
-        Gen.option(arbitrary[DraftAvailability]),
+        Gen.option(arbitrary[Availability]),
         Gen.alphaNumStr,
         Gen.alphaNumStr
       ) {

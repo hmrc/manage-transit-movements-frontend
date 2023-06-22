@@ -22,7 +22,7 @@ import generators.Generators
 import helper.WireMockServerHandler
 import models.Sort.{SortByCreatedAtAsc, SortByCreatedAtDesc, SortByLRNAsc, SortByLRNDesc}
 import models.departure.drafts.{Limit, Skip}
-import models.{DepartureUserAnswerSummary, DeparturesSummary, DraftAvailability, LocalReferenceNumber}
+import models.{Availability, DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -320,7 +320,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
-        connector.getDraftDeparturesAvailability().futureValue mustBe DraftAvailability.NonEmpty
+        connector.getDraftDeparturesAvailability().futureValue mustBe Availability.NonEmpty
       }
 
       "must return Empty when given a not found response" in {
@@ -332,7 +332,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
-        connector.getDraftDeparturesAvailability().futureValue mustBe DraftAvailability.Empty
+        connector.getDraftDeparturesAvailability().futureValue mustBe Availability.Empty
       }
 
       "must return unavailable when given an error response" in {
@@ -347,7 +347,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
                 )
             )
 
-            connector.getDraftDeparturesAvailability().futureValue mustBe DraftAvailability.Unavailable
+            connector.getDraftDeparturesAvailability().futureValue mustBe Availability.Unavailable
         }
       }
     }

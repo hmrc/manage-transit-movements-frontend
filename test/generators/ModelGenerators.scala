@@ -208,11 +208,6 @@ trait ModelGenerators {
       Gen.oneOf(Availability.NonEmpty, Availability.Empty, Availability.Unavailable)
     }
 
-  implicit lazy val arbitraryDraftAvailability: Arbitrary[DraftAvailability] =
-    Arbitrary {
-      Gen.oneOf(DraftAvailability.NonEmpty, DraftAvailability.Empty, DraftAvailability.Unavailable)
-    }
-
   implicit lazy val arbitraryArrivals: Arbitrary[Arrivals] =
     Arbitrary {
       for {
