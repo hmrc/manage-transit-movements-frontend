@@ -58,11 +58,10 @@ object PaginationViewModel {
 
     val results: MetaData = MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
 
-    def hrefWithParams(page: Int): String =
-      additionalParams.foldLeft(s"$href?page=$page") {
-        case (href, (key, value)) =>
-          href + s"&$key=$value"
-      }
+    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"$href?page=$page") {
+      case (href, (key, value)) =>
+        href + s"&$key=$value"
+    }
 
     val previous: Option[PaginationLink] = if (currentPage > 1) {
       Some(PaginationLink(hrefWithParams(currentPage - 1)))
