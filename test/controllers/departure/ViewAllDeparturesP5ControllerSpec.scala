@@ -141,6 +141,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
       "when there is a search param and page defined" in {
         val searchParam = "LRN123"
         val currentPage = Gen.chooseNum(2, 10: Int).sample.value
+
         when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockDepartureMovementResponse)))
 
@@ -163,7 +164,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
 
         val expectedPaginationViewModel = MovementsPaginationViewModel(
           totalNumberOfMovements = mockDepartureMovementResponse.movements.length,
-          currentPage = 1,
+          currentPage = currentPage,
           numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
           href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
         )
@@ -172,9 +173,10 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         contentAsString(result) mustEqual
           view(filledForm, expectedViewModel)(request, messages).toString
 
-        verify(mockDepartureMovementConnector).getAllMovementsForSearchQuery(eqTo(currentPage),
-                                                                             eqTo(paginationAppConfig.departuresNumberOfMovements),
-                                                                             eqTo(Some(searchParam))
+        verify(mockDepartureMovementConnector).getAllMovementsForSearchQuery(
+          eqTo(currentPage),
+          eqTo(paginationAppConfig.departuresNumberOfMovements),
+          eqTo(Some(searchParam))
         )(any())
       }
     }

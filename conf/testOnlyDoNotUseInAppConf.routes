@@ -45,7 +45,9 @@ GET         /manage-transit-movements/test-only/:departureId/departure/:messageI
 POST        /manage-transit-movements/test-only/cancellation/submit                                                     controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
 + nocsrf
-GET         /manage-transit-movements/test-only/view-arrival-notifications                                              controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad()
+GET         /manage-transit-movements/test-only/view-arrival-notifications                                              controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad(page: Option[Int], mrn: Option[String])
++ nocsrf
+POST        /manage-transit-movements/test-only/view-arrival-notifications                                              controllers.testOnly.ViewAllArrivalsP5Controller.onSubmit()
 
 + nocsrf
 GET         /manage-transit-movements/test-only/view-departure-declarations                                             controllers.testOnly.ViewAllDeparturesP5Controller.onPageLoad(page: Option[Int], lrn: Option[String])

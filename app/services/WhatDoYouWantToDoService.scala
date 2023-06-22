@@ -33,18 +33,16 @@ class WhatDoYouWantToDoService @Inject() (
   arrivalMovementsP5Connector: ArrivalMovementP5Connector
 ) {
 
-  def fetchArrivalsAvailability()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Availability] =
+  def fetchArrivalsAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
     if (appConfig.phase5ArrivalEnabled) {
-      arrivalMovementsP5Connector
-        .getAllMovements()
-        .map(Availability(_)) //TODO update when we have API params. Need to limit the search to 1 like in P4 to avoid performance hit.
+      arrivalMovementsP5Connector.getAvailability()
     } else {
       arrivalMovementConnector.getArrivalsAvailability()
     }
 
   def fetchArrivalsUrl(): String =
     if (appConfig.phase5ArrivalEnabled) {
-      controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
+      controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
     } else {
       controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
     }

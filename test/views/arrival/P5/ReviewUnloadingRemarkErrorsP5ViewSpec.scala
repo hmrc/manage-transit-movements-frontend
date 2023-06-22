@@ -96,7 +96,7 @@ class ReviewUnloadingRemarkErrorsP5ViewSpec extends CheckYourAnswersViewBehaviou
   behave like pageWithLink(
     "arrival-link",
     "View arrival notifications",
-    controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
+    controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
   )
 
 }

@@ -68,7 +68,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
           when(mockConnector.getMessageMetaData(eqTo(movement1.arrivalId))(any(), any())).thenReturn(Future.successful(ArrivalMessages(Nil)))
           when(mockConnector.getMessageMetaData(eqTo(movement2.arrivalId))(any(), any())).thenReturn(Future.successful(ArrivalMessages(Nil)))
 
-          val arrivalMovements = ArrivalMovements(Seq(movement1, movement2))
+          val arrivalMovements = ArrivalMovements(arrivalMovements = Seq(movement1, movement2), totalCount = 2)
 
           val expectedResult = Seq(
             movementAndMessages1,
@@ -129,7 +129,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
           when(mockConnector.getSpecificMessage[IE057Data](eqTo(arrivalMessages1.messages.head.path))(any(), any(), any())).thenReturn(Future.successful(ie057))
           when(mockConnector.getSpecificMessage[IE057Data](eqTo(arrivalMessages2.messages.head.path))(any(), any(), any())).thenReturn(Future.successful(ie057))
 
-          val arrivalMovements = ArrivalMovements(Seq(movement1, movement2))
+          val arrivalMovements = ArrivalMovements(arrivalMovements = Seq(movement1, movement2), totalCount = 2)
 
           val expectedResult = Seq(
             movementAndMessages1,
@@ -159,7 +159,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
           Future.successful(messages2)
         )
 
-        val arrivalMovements = ArrivalMovements(Seq(movement1, movement2))
+        val arrivalMovements = ArrivalMovements(arrivalMovements = Seq(movement1, movement2), totalCount = 2)
 
         val result = arrivalP5MessageService.getMessagesForAllMovements(arrivalMovements).failed.futureValue
 

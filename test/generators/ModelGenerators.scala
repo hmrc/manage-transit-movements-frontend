@@ -233,9 +233,13 @@ trait ModelGenerators {
       } yield ArrivalMovement(arrivalId, mrn, updated, messagesLocation)
     }
 
-  implicit lazy val arbitraryArrivalMovements: Arbitrary[ArrivalMovements] = Arbitrary {
-    Gen.nonEmptyListOf(arbitrary[ArrivalMovement]).map(ArrivalMovements(_))
-  }
+  implicit lazy val arbitraryArrivalMovements: Arbitrary[ArrivalMovements] =
+    Arbitrary {
+      for {
+        arrivalMovements <- Gen.nonEmptyListOf(arbitrary[ArrivalMovement])
+        totalCount       <- posNum[Int]
+      } yield ArrivalMovements(arrivalMovements, totalCount)
+    }
 
   implicit lazy val arbitraryDepartureMovement: Arbitrary[DepartureMovement] =
     Arbitrary {

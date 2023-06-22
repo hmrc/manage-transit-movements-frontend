@@ -37,8 +37,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class ViewAllDeparturesP5Controller @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  val config: FrontendAppConfig,
-  val paginationAppConfig: PaginationAppConfig,
   formProvider: DeparturesSearchFormProvider,
   departureP5MessageService: DepartureP5MessageService,
   departureMovementP5Connector: DepartureMovementP5Connector,
@@ -83,8 +81,8 @@ class ViewAllDeparturesP5Controller @Inject() (
 
             val paginationViewModel = MovementsPaginationViewModel(
               totalNumberOfMovements = movements.totalCount,
-              currentPage = page.getOrElse(1),
-              numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
+              currentPage = currentPage,
+              numberOfMovementsPerPage = paginationConfig.departuresNumberOfMovements,
               href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url,
               additionalParams = Seq(
                 searchParam.map("lrn" -> _)

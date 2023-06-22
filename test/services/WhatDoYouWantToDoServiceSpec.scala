@@ -20,15 +20,12 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors._
 import generators.Generators
-import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.{Availability, DraftAvailability}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verifyNoInteractions, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -65,23 +62,15 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
 
     "fetchArrivalsAvailability" - {
       "must get availability when phase 5 enabled" in {
-        val expectedResult = ArrivalMovements(
-          Seq(
-            ArrivalMovement(
-              "63651574c3447b12",
-              "27WF9X1FQ9RCKN0TM3",
-              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-              "movements/arrivals/63651574c3447b12/messages"
-            )
-          )
-        )
+        forAll(arbitrary[Availability]) {
+          availability =>
+            when(mockFrontendAppConfig.phase5ArrivalEnabled).thenReturn(true)
+            when(mockArrivalMovementP5Connector.getAvailability()(any())).thenReturn(Future.successful(availability))
 
-        when(mockFrontendAppConfig.phase5ArrivalEnabled).thenReturn(true)
-        when(mockArrivalMovementP5Connector.getAllMovements()(any())).thenReturn(Future.successful(Some(expectedResult)))
+            whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe availability
 
-        whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe Availability.NonEmpty
-
-        verifyNoInteractions(mockDeparturesMovementConnector)
+            verifyNoInteractions(mockArrivalConnector)
+        }
       }
 
       "must get availability when phase 5 disabled" in {
@@ -145,7 +134,7 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
         when(mockFrontendAppConfig.phase5ArrivalEnabled).thenReturn(true)
 
         whatDoYouWantToDoService.fetchArrivalsUrl() mustBe
-          controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
+          controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
       }
 
       "must get correct URL when phase 5 disabled" in {

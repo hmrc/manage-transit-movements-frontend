@@ -63,7 +63,7 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with ScalaCheckPropertyCh
         (arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalsUrl, viewAllDeparturesUrl) =>
           beforeEach()
 
-          when(mockWhatDoYouWantToDoService.fetchArrivalsAvailability()(any(), any()))
+          when(mockWhatDoYouWantToDoService.fetchArrivalsAvailability()(any()))
             .thenReturn(Future.successful(arrivalsAvailability))
 
           when(mockWhatDoYouWantToDoService.fetchArrivalsUrl())
