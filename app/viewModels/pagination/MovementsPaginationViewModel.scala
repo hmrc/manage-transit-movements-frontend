@@ -32,14 +32,15 @@ object MovementsPaginationViewModel {
     totalNumberOfMovements: Int,
     currentPage: Int,
     numberOfMovementsPerPage: Int,
-    href: String
+    href: String,
+    additionalParams: Seq[(String, String)] = Seq.empty
   ): MovementsPaginationViewModel =
     PaginationViewModel(
       totalNumberOfMovements,
       currentPage,
       numberOfMovementsPerPage,
       href,
-      Seq.empty
+      additionalParams
     ) {
       new MovementsPaginationViewModel(_, _, _, _, currentPage)
     }

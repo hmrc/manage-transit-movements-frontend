@@ -24,7 +24,7 @@ import models.departure._
 import models.departureP5.{DepartureMovement, DepartureMovements}
 import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
+import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar, posNum}
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
 
@@ -247,9 +247,13 @@ trait ModelGenerators {
       } yield DepartureMovement(departureId, Some(mrn), updated, messagesLocation)
     }
 
-  implicit lazy val arbitraryDepartureMovements: Arbitrary[DepartureMovements] = Arbitrary {
-    Gen.nonEmptyListOf(arbitrary[DepartureMovement]).map(DepartureMovements(_))
-  }
+  implicit lazy val arbitraryDepartureMovements: Arbitrary[DepartureMovements] =
+    Arbitrary {
+      for {
+        departureMovements <- Gen.nonEmptyListOf(arbitrary[DepartureMovement])
+        totalCount         <- posNum[Int]
+      } yield DepartureMovements(departureMovements, totalCount)
+    }
 
   implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] =
     Arbitrary {

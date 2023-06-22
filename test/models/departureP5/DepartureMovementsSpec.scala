@@ -36,6 +36,7 @@ class DepartureMovementsSpec extends SpecBase {
           |      "href": "/customs/transits/movements/departures"
           |    }
           |  },
+          |  "totalCount": 2,
           |  "departures": [
           |    {
           |      "_links": {
@@ -75,7 +76,7 @@ class DepartureMovementsSpec extends SpecBase {
       )
 
       val expectedResult = DepartureMovements(
-        Seq(
+        departureMovements = Seq(
           DepartureMovement(
             "63651574c3447b12",
             Some("27WF9X1FQ9RCKN0TM3"),
@@ -88,7 +89,8 @@ class DepartureMovementsSpec extends SpecBase {
             LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
             "movements/departures/6365135ba5e821ee/messages"
           )
-        )
+        ),
+        totalCount = 2
       )
 
       val result: DepartureMovements = json.validate[DepartureMovements].asOpt.value

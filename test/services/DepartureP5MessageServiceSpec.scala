@@ -50,14 +50,15 @@ class DepartureP5MessageServiceSpec extends SpecBase {
       val dateTimeNow = LocalDateTime.now(clock)
 
       val departureMovements = DepartureMovements(
-        Seq(
+        departureMovements = Seq(
           DepartureMovement(
             "AB123",
             Some("MRN"),
             dateTimeNow,
             "location"
           )
-        )
+        ),
+        totalCount = 1
       )
 
       "must return departure movements with messages with an LRN" - {

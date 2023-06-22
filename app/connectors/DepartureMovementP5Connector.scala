@@ -40,14 +40,21 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     getMovements(queryParams).map(Availability(_))
   }
 
-  def getAllMovementsForSearchQuery(searchParam: Option[String])(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] =
-    searchParam match {
-      case Some(value) =>
-        val queryParams = Seq("localReferenceNumber" -> value)
-        getMovements(queryParams)
-      case None =>
-        getAllMovements()
+  def getAllMovementsForSearchQuery(
+    page: Int,
+    resultsPerPage: Int,
+    searchParam: Option[String]
+  )(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] = {
+    val queryParams = Seq(
+      "page"                 -> Some(page),
+      "count"                -> Some(resultsPerPage),
+      "localReferenceNumber" -> searchParam
+    ).flatMap {
+      case (key, Some(value)) => Some((key, value.toString))
+      case _                  => None
     }
+    getMovements(queryParams)
+  }
 
   private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures"
@@ -57,7 +64,7 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
         response =>
           response.status match {
             case OK        => response.json.asOpt[DepartureMovements]
-            case NOT_FOUND => Some(DepartureMovements(Seq.empty))
+            case NOT_FOUND => Some(DepartureMovements(Seq.empty, 0))
             case _         => None
           }
       }
