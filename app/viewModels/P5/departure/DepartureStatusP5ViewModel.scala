@@ -17,7 +17,6 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.departureP5.DepartureMessage._
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import viewModels.ViewMovementAction

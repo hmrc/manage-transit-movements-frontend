@@ -44,7 +44,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
             "location"
           ),
           MessagesForArrivalMovement(
-            NonEmptyList(ArrivalMessage(dateTimeNow, headMessage), List.empty)
+            NonEmptyList(ArrivalMessage(messageId, dateTimeNow, headMessage), List.empty)
           ),
           functionalErrorCount = 0
         )
@@ -81,10 +81,15 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
           "movement.status.P5.unloadingPermissionReceived",
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/${movementAndMessage.arrivalMovement.arrivalId}",
+              s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/${movementAndMessage.arrivalMovement.arrivalId}/unloading-remarks/$messageId",
               "movement.status.P5.action.unloadingPermission.unloadingRemarks"
             ),
-            ViewMovementAction("#", "movement.status.P5.action.unloadingPermission.pdf")
+            ViewMovementAction(
+              controllers.testOnly.routes.UnloadingPermissionController
+                .getUnloadingPermissionDocument(messageId, movementAndMessage.arrivalMovement.arrivalId)
+                .url,
+              "movement.status.P5.action.unloadingPermission.pdf"
+            )
           )
         )
 
@@ -107,9 +112,9 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val messages = MessagesForArrivalMovement(
             NonEmptyList(
-              ArrivalMessage(dateTimeNow, RejectionFromOfficeOfDestination),
+              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination),
               List(
-                ArrivalMessage(dateTimeNow, UnloadingRemarks)
+                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks)
               )
             )
           )
@@ -143,9 +148,9 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val messages = MessagesForArrivalMovement(
             NonEmptyList(
-              ArrivalMessage(dateTimeNow, RejectionFromOfficeOfDestination),
+              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination),
               List(
-                ArrivalMessage(dateTimeNow, UnloadingRemarks)
+                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks)
               )
             )
           )
