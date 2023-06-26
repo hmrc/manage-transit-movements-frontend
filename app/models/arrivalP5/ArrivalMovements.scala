@@ -30,6 +30,6 @@ object ArrivalMovements {
 
   implicit lazy val reads: Reads[ArrivalMovements] = (
     (__ \ "arrivals").read[Seq[ArrivalMovement]] and
-      (__ \ "totalCount").readWithDefault[Int](100: Int) // TODO - remove the default when API starts returning this value
+      (__ \ "totalCount").read[Int]
   )(ArrivalMovements.apply _)
 }
