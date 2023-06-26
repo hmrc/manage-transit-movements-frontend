@@ -56,14 +56,18 @@
 
     @pagination(viewModel.paginationViewModel, form.value)
 
-    @movementsTable(
-        dataRows = viewModel.dataRows,
-        visuallyHiddenHeader = messages("viewArrivalNotificationsP5.heading.hidden"),
-        rowHeadingUpdated = messages("viewArrivalNotificationsP5.table.updated"),
-        rowHeadingReferenceNumber = messages("viewArrivalNotificationsP5.table.mrn"),
-        rowHeadingStatus = messages("viewArrivalNotificationsP5.table.status"),
-        rowHeadingAction = messages("viewArrivalNotificationsP5.table.action")
-    )
+    @if(viewModel.dataRows.nonEmpty) {
+        @movementsTable(
+            dataRows = viewModel.dataRows,
+            visuallyHiddenHeader = messages("viewArrivalNotificationsP5.heading.hidden"),
+            rowHeadingUpdated = messages("viewArrivalNotificationsP5.table.updated"),
+            rowHeadingReferenceNumber = messages("viewArrivalNotificationsP5.table.mrn"),
+            rowHeadingStatus = messages("viewArrivalNotificationsP5.table.status"),
+            rowHeadingAction = messages("viewArrivalNotificationsP5.table.action")
+        )
+    } else {
+        <p class="govuk-body" id="no-results-found">@messages("search.noResultsFound")</p>
+    }
 
     <p class="govuk-body govuk-!-margin-top-3">
         <a id="go-to-manage-transit-movements" class="govuk-link" href=@WhatDoYouWantToDoController.onPageLoad()>
