@@ -17,9 +17,10 @@
 package models.departureP5
 
 import models.{Movement, Movements}
+import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
 
-case class DepartureMovements(departureMovements: Seq[DepartureMovement]) extends Movements {
+case class DepartureMovements(departureMovements: Seq[DepartureMovement], totalCount: Int) extends Movements {
   override val movements: Seq[Movement]  = departureMovements
   override val retrieved: Int            = departureMovements.length
   override val totalMatched: Option[Int] = None
@@ -27,6 +28,8 @@ case class DepartureMovements(departureMovements: Seq[DepartureMovement]) extend
 
 object DepartureMovements {
 
-  implicit lazy val reads: Reads[DepartureMovements] =
-    (__ \ "departures").read[Seq[DepartureMovement]].map(DepartureMovements.apply)
+  implicit lazy val reads: Reads[DepartureMovements] = (
+    (__ \ "departures").read[Seq[DepartureMovement]] and
+      (__ \ "totalCount").read[Int]
+  )(DepartureMovements.apply _)
 }

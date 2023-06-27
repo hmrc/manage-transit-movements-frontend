@@ -17,9 +17,10 @@
 package models.arrivalP5
 
 import models.{Movement, Movements}
+import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
 
-case class ArrivalMovements(arrivalMovements: Seq[ArrivalMovement]) extends Movements {
+case class ArrivalMovements(arrivalMovements: Seq[ArrivalMovement], totalCount: Int) extends Movements {
   override val movements: Seq[Movement]  = arrivalMovements
   override val retrieved: Int            = arrivalMovements.length
   override val totalMatched: Option[Int] = None
@@ -27,6 +28,8 @@ case class ArrivalMovements(arrivalMovements: Seq[ArrivalMovement]) extends Move
 
 object ArrivalMovements {
 
-  implicit lazy val reads: Reads[ArrivalMovements] =
-    (__ \ "arrivals").read[Seq[ArrivalMovement]].map(ArrivalMovements.apply)
+  implicit lazy val reads: Reads[ArrivalMovements] = (
+    (__ \ "arrivals").read[Seq[ArrivalMovement]] and
+      (__ \ "totalCount").read[Int]
+  )(ArrivalMovements.apply _)
 }

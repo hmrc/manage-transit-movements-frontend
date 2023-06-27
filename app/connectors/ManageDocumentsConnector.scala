@@ -22,9 +22,9 @@ import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames => HMRCHeaderNames}
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class ManageDocumentsConnector @Inject() (config: FrontendAppConfig, wsClient: WSClient)(implicit ec: ExecutionContext) extends Logging {
+class ManageDocumentsConnector @Inject() (config: FrontendAppConfig, wsClient: WSClient) extends Logging {
 
   def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
 

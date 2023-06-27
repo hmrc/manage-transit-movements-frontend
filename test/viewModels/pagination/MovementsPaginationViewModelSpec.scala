@@ -158,7 +158,7 @@ class MovementsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyC
               viewModel =>
                 val result = viewModel
                   .copy(results = viewModel.results.copy(count = 1))
-                  .searchResult
+                  .searchResult(None)
 
                 result mustBe "Showing <b>1</b> result"
             }
@@ -169,7 +169,7 @@ class MovementsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyC
               (viewModel, count) =>
                 val result = viewModel
                   .copy(results = viewModel.results.copy(count = count))
-                  .searchResult
+                  .searchResult(None)
 
                 result mustBe s"Showing <b>$count</b> results"
             }
@@ -183,7 +183,7 @@ class MovementsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyC
             (viewModel, from, to, count) =>
               val result = viewModel
                 .copy(results = viewModel.results.copy(from = from, to = to, count = count))
-                .paginatedSearchResult
+                .paginatedSearchResult(None)
 
               result mustBe s"Showing <b>$from</b> to <b>$to</b> of <b>$count</b> results"
           }

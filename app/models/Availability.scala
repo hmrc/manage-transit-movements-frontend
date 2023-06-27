@@ -20,10 +20,10 @@ sealed trait Availability
 
 object Availability {
 
-  def apply[T <: Movements](movements: Option[T]): Availability = movements match {
-    case Some(value) if value.movements.nonEmpty => NonEmpty
-    case Some(_)                                 => Empty
-    case None                                    => Unavailable
+  def apply(ts: Option[Seq[_]]): Availability = ts match {
+    case Some(value) if value.nonEmpty => NonEmpty
+    case Some(_)                       => Empty
+    case None                          => Unavailable
   }
 
   sealed trait Available extends Availability

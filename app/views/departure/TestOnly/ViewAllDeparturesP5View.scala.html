@@ -30,7 +30,7 @@
 )
 
 @(
-    form: Form[_],
+    form: Form[String],
     viewModel: ViewAllDepartureMovementsP5ViewModel
 )(implicit request: Request[_], messages: Messages)
 
@@ -50,20 +50,24 @@
 
     @search(
         form = form,
-        action = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(),
+        action = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onSubmit(),
         label = "viewDepartureDeclarationsP5.search.title"
     )
 
-    @pagination(viewModel.paginationViewModel)
-    
-    @movementsTable(
-        dataRows = viewModel.dataRows,
-        visuallyHiddenHeader = messages("viewDepartureDeclarationsP5.heading.hidden"),
-        rowHeadingUpdated = messages("viewDepartureDeclarationsP5.table.updated"),
-        rowHeadingReferenceNumber = messages("viewDepartureDeclarationsP5.table.lrn"),
-        rowHeadingStatus = messages("viewDepartureDeclarationsP5.table.status"),
-        rowHeadingAction = messages("viewDepartureDeclarationsP5.table.action")
-    )
+    @pagination(viewModel.paginationViewModel, form.value)
+
+    @if(viewModel.dataRows.nonEmpty) {
+        @movementsTable(
+            dataRows = viewModel.dataRows,
+            visuallyHiddenHeader = messages("viewDepartureDeclarationsP5.heading.hidden"),
+            rowHeadingUpdated = messages("viewDepartureDeclarationsP5.table.updated"),
+            rowHeadingReferenceNumber = messages("viewDepartureDeclarationsP5.table.lrn"),
+            rowHeadingStatus = messages("viewDepartureDeclarationsP5.table.status"),
+            rowHeadingAction = messages("viewDepartureDeclarationsP5.table.action")
+        )
+    } else {
+        <p class="govuk-body" id="no-results-found">@messages("search.noResultsFound")</p>
+    }
 
     <p class="govuk-body govuk-!-margin-top-3">
         <a id="go-to-manage-transit-movements" class="govuk-link" href=@WhatDoYouWantToDoController.onPageLoad()>

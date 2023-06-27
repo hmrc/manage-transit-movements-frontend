@@ -22,8 +22,9 @@ import connectors.ArrivalMovementP5Connector
 import forms.ArrivalsSearchFormProvider
 import generators.Generators
 import models.arrivalP5._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -70,9 +71,8 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
   )
 
   val mockArrivalMovementResponse: ArrivalMovements = ArrivalMovements(
-    Seq(
-      arrivalMovement
-    )
+    arrivalMovements = Seq(arrivalMovement),
+    totalCount = 1
   )
 
   val mockArrivalMessageResponse: MessagesForArrivalMovement = MessagesForArrivalMovement(
@@ -95,47 +95,97 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
   "ViewAllArrivals Controller" - {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" - {
 
-      when(mockArrivalMovementConnector.getAllMovements()(any()))
-        .thenReturn(Future.successful(Some(mockArrivalMovementResponse)))
+      "when there is no search param or page" in {
 
-      when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
-        .thenReturn(Future.successful(mockArrivalMessageResponse))
+        when(mockArrivalMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
+          .thenReturn(Future.successful(Some(mockArrivalMovementResponse)))
 
-      when(mockArrivalMovementService.getMessagesForAllMovements(any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Seq(ArrivalMovementAndMessage(arrivalMovement, mockArrivalMessageResponse, 0))
+        when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
+          .thenReturn(Future.successful(mockArrivalMessageResponse))
+
+        when(mockArrivalMovementService.getMessagesForAllMovements(any())(any(), any()))
+          .thenReturn(
+            Future.successful(
+              Seq(ArrivalMovementAndMessage(arrivalMovement, mockArrivalMessageResponse, 0))
+            )
           )
+
+        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
+
+        val result = route(app, request).value
+
+        val view = injector.instanceOf[ViewAllArrivalsP5View]
+
+        status(result) mustEqual OK
+
+        val expectedPaginationViewModel = MovementsPaginationViewModel(
+          totalNumberOfMovements = mockArrivalMovementResponse.movements.length,
+          currentPage = 1,
+          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
         )
+        val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url)
+        contentAsString(result) mustEqual
+          view(form, expectedViewModel)(request, messages).toString
 
-      val result = route(app, request).value
+        verify(mockArrivalMovementConnector).getAllMovementsForSearchQuery(eqTo(1), eqTo(paginationAppConfig.departuresNumberOfMovements), eqTo(None))(any())
+      }
 
-      val view = injector.instanceOf[ViewAllArrivalsP5View]
+      "when there is a search param and page defined" in {
+        val searchParam = "MRN123"
+        val currentPage = Gen.chooseNum(2, 10: Int).sample.value
 
-      status(result) mustEqual OK
+        when(mockArrivalMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
+          .thenReturn(Future.successful(Some(mockArrivalMovementResponse)))
 
-      val expectedPaginationViewModel = MovementsPaginationViewModel(
-        totalNumberOfMovements = mockArrivalMovementResponse.movements.length,
-        currentPage = 1,
-        numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
-        href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
-      )
-      val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
+        when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
+          .thenReturn(Future.successful(mockArrivalMessageResponse))
 
-      contentAsString(result) mustEqual
-        view(form, expectedViewModel)(request, messages).toString
+        when(mockArrivalMovementService.getMessagesForAllMovements(any())(any(), any()))
+          .thenReturn(
+            Future.successful(
+              Seq(ArrivalMovementAndMessage(arrivalMovement, mockArrivalMessageResponse, 0))
+            )
+          )
+
+        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(Some(currentPage), Some(searchParam)).url)
+
+        val result = route(app, request).value
+
+        val filledForm = form.bind(Map("value" -> searchParam))
+
+        val view = injector.instanceOf[ViewAllArrivalsP5View]
+
+        status(result) mustEqual OK
+
+        val expectedPaginationViewModel = MovementsPaginationViewModel(
+          totalNumberOfMovements = mockArrivalMovementResponse.movements.length,
+          currentPage = currentPage,
+          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
+        )
+        val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
+
+        contentAsString(result) mustEqual
+          view(filledForm, expectedViewModel)(request, messages).toString
+
+        verify(mockArrivalMovementConnector).getAllMovementsForSearchQuery(
+          eqTo(currentPage),
+          eqTo(paginationAppConfig.departuresNumberOfMovements),
+          eqTo(Some(searchParam))
+        )(any())
+      }
     }
 
     "redirect to technical difficulties when no movements found" in {
 
-      when(mockArrivalMovementConnector.getAllMovements()(any()))
+      when(mockArrivalMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
         .thenReturn(Future.successful(None))
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
 
       val result = route(app, request).value
 

@@ -46,6 +46,6 @@ class UnloadingRemarkErrorsP5ViewSpec extends ViewBehaviours {
   behave like pageWithLink(
     id = "arrival-link",
     expectedText = "View arrival notifications",
-    expectedHref = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad().url
+    expectedHref = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
   )
 }

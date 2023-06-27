@@ -159,8 +159,7 @@ class DraftsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChec
                 (viewModel, lrn) =>
                   val result = viewModel
                     .copy(results = viewModel.results.copy(count = 1))
-                    .copy(lrn = Some(lrn))
-                    .searchResult
+                    .searchResult(Some(lrn))
 
                   result mustBe s"Showing <b>1</b> result matching $lrn"
               }
@@ -171,8 +170,7 @@ class DraftsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChec
                 (viewModel, count, lrn) =>
                   val result = viewModel
                     .copy(results = viewModel.results.copy(count = count))
-                    .copy(lrn = Some(lrn))
-                    .searchResult
+                    .searchResult(Some(lrn))
 
                   result mustBe s"Showing <b>$count</b> results matching $lrn"
               }
@@ -185,8 +183,7 @@ class DraftsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChec
                 viewModel =>
                   val result = viewModel
                     .copy(results = viewModel.results.copy(count = 1))
-                    .copy(lrn = None)
-                    .searchResult
+                    .searchResult(None)
 
                   result mustBe "Showing <b>1</b> result"
               }
@@ -197,8 +194,7 @@ class DraftsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChec
                 (viewModel, count) =>
                   val result = viewModel
                     .copy(results = viewModel.results.copy(count = count))
-                    .copy(lrn = None)
-                    .searchResult
+                    .searchResult(None)
 
                   result mustBe s"Showing <b>$count</b> results"
               }
@@ -214,8 +210,7 @@ class DraftsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChec
               (viewModel, from, to, count, lrn) =>
                 val result = viewModel
                   .copy(results = viewModel.results.copy(from = from, to = to, count = count))
-                  .copy(lrn = Some(lrn))
-                  .paginatedSearchResult
+                  .paginatedSearchResult(Some(lrn))
 
                 result mustBe s"Showing <b>$from</b> to <b>$to</b> of <b>$count</b> results matching $lrn"
             }
@@ -226,8 +221,7 @@ class DraftsPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChec
               (viewModel, from, to, count) =>
                 val result = viewModel
                   .copy(results = viewModel.results.copy(from = from, to = to, count = count))
-                  .copy(lrn = None)
-                  .paginatedSearchResult
+                  .paginatedSearchResult(None)
 
                 result mustBe s"Showing <b>$from</b> to <b>$to</b> of <b>$count</b> results"
             }

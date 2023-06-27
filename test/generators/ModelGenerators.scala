@@ -24,7 +24,7 @@ import models.departure._
 import models.departureP5.{DepartureMovement, DepartureMovements}
 import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar}
+import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar, posNum}
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
 
@@ -208,11 +208,6 @@ trait ModelGenerators {
       Gen.oneOf(Availability.NonEmpty, Availability.Empty, Availability.Unavailable)
     }
 
-  implicit lazy val arbitraryDraftAvailability: Arbitrary[DraftAvailability] =
-    Arbitrary {
-      Gen.oneOf(DraftAvailability.NonEmpty, DraftAvailability.Empty, DraftAvailability.Unavailable)
-    }
-
   implicit lazy val arbitraryArrivals: Arbitrary[Arrivals] =
     Arbitrary {
       for {
@@ -233,9 +228,13 @@ trait ModelGenerators {
       } yield ArrivalMovement(arrivalId, mrn, updated, messagesLocation)
     }
 
-  implicit lazy val arbitraryArrivalMovements: Arbitrary[ArrivalMovements] = Arbitrary {
-    Gen.nonEmptyListOf(arbitrary[ArrivalMovement]).map(ArrivalMovements(_))
-  }
+  implicit lazy val arbitraryArrivalMovements: Arbitrary[ArrivalMovements] =
+    Arbitrary {
+      for {
+        arrivalMovements <- Gen.nonEmptyListOf(arbitrary[ArrivalMovement])
+        totalCount       <- posNum[Int]
+      } yield ArrivalMovements(arrivalMovements, totalCount)
+    }
 
   implicit lazy val arbitraryDepartureMovement: Arbitrary[DepartureMovement] =
     Arbitrary {
@@ -247,9 +246,13 @@ trait ModelGenerators {
       } yield DepartureMovement(departureId, Some(mrn), updated, messagesLocation)
     }
 
-  implicit lazy val arbitraryDepartureMovements: Arbitrary[DepartureMovements] = Arbitrary {
-    Gen.nonEmptyListOf(arbitrary[DepartureMovement]).map(DepartureMovements(_))
-  }
+  implicit lazy val arbitraryDepartureMovements: Arbitrary[DepartureMovements] =
+    Arbitrary {
+      for {
+        departureMovements <- Gen.nonEmptyListOf(arbitrary[DepartureMovement])
+        totalCount         <- posNum[Int]
+      } yield DepartureMovements(departureMovements, totalCount)
+    }
 
   implicit lazy val arbitraryCustomsOffice: Arbitrary[CustomsOffice] =
     Arbitrary {

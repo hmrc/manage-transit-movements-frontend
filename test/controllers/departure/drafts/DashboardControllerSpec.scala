@@ -278,17 +278,17 @@ class DashboardControllerSpec extends SpecBase {
             1,
             4,
             routes.DashboardController.onSubmit(None).url,
-            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams)),
-            lrn = Some(lrn)
+            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams))
           )
 
           val viewModel =
-            AllDraftDeparturesViewModel(draftDeparture,
-                                        draftDeparture.userAnswers.length,
-                                        Some(lrn),
-                                        frontendAppConfig.draftDepartureFrontendUrl,
-                                        paginationViewModel,
-                                        sortParams = sortParam
+            AllDraftDeparturesViewModel(
+              draftDeparture,
+              draftDeparture.userAnswers.length,
+              Some(lrn),
+              frontendAppConfig.draftDepartureFrontendUrl,
+              paginationViewModel,
+              sortParams = sortParam
             )
 
           status(result) mustEqual OK
@@ -322,17 +322,17 @@ class DashboardControllerSpec extends SpecBase {
             1,
             4,
             routes.DashboardController.onSubmit(None).url,
-            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams)),
-            lrn = Some(lrn)
+            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams))
           )
 
           val viewModel =
-            AllDraftDeparturesViewModel(draftDeparture,
-                                        draftDeparture.userAnswers.length,
-                                        Some(lrn),
-                                        frontendAppConfig.draftDepartureFrontendUrl,
-                                        paginationViewModel,
-                                        sortParams = sortParam
+            AllDraftDeparturesViewModel(
+              draftDeparture,
+              draftDeparture.userAnswers.length,
+              Some(lrn),
+              frontendAppConfig.draftDepartureFrontendUrl,
+              paginationViewModel,
+              sortParams = sortParam
             )
 
           status(result) mustEqual OK
@@ -366,17 +366,17 @@ class DashboardControllerSpec extends SpecBase {
             1,
             4,
             routes.DashboardController.onSubmit(None).url,
-            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams)),
-            lrn = Some(lrn)
+            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams))
           )
 
           val viewModel =
-            AllDraftDeparturesViewModel(draftDeparture,
-                                        draftDeparture.userAnswers.length,
-                                        Some(lrn),
-                                        frontendAppConfig.draftDepartureFrontendUrl,
-                                        paginationViewModel,
-                                        sortParams = sortParam
+            AllDraftDeparturesViewModel(
+              draftDeparture,
+              draftDeparture.userAnswers.length,
+              Some(lrn),
+              frontendAppConfig.draftDepartureFrontendUrl,
+              paginationViewModel,
+              sortParams = sortParam
             )
 
           status(result) mustEqual OK
@@ -410,17 +410,17 @@ class DashboardControllerSpec extends SpecBase {
             1,
             4,
             routes.DashboardController.onSubmit(None).url,
-            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams)),
-            lrn = Some(lrn)
+            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams))
           )
 
           val viewModel =
-            AllDraftDeparturesViewModel(draftDeparture,
-                                        draftDeparture.userAnswers.length,
-                                        Some(lrn),
-                                        frontendAppConfig.draftDepartureFrontendUrl,
-                                        paginationViewModel,
-                                        sortParams = sortParam
+            AllDraftDeparturesViewModel(
+              draftDeparture,
+              draftDeparture.userAnswers.length,
+              Some(lrn),
+              frontendAppConfig.draftDepartureFrontendUrl,
+              paginationViewModel,
+              sortParams = sortParam
             )
 
           status(result) mustEqual OK

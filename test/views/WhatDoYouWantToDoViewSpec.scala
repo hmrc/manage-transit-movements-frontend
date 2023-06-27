@@ -17,7 +17,7 @@
 package views
 
 import generators.Generators
-import models.{Availability, DraftAvailability}
+import models.Availability
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -36,12 +36,12 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
       )
 
   private val sampleAvailability      = arbitrary[Availability].sample.value
-  private val sampleDraftAvailability = arbitrary[DraftAvailability].sample.value
+  private val sampleDraftAvailability = arbitrary[Availability].sample.value
 
   private def applyView(
     arrivalsAvailability: Availability = sampleAvailability,
     departuresAvailability: Availability = sampleAvailability,
-    draftDeparturesAvailability: Option[DraftAvailability] = Some(sampleDraftAvailability),
+    draftDeparturesAvailability: Option[Availability] = Some(sampleDraftAvailability),
     viewAllArrivals: String = " ",
     viewAllDepartures: String = " "
   ): HtmlFormat.Appendable =
@@ -137,17 +137,17 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   }
 
   "when we have no draft departures" - {
-    val doc = parseView(applyView(draftDeparturesAvailability = Some(DraftAvailability.Empty)))
+    val doc = parseView(applyView(draftDeparturesAvailability = Some(Availability.Empty)))
     behave like pageWithContent(doc, "p", "You have no draft departure declarations")
   }
 
   "when draft departures are unavailable" - {
-    val doc = parseView(applyView(draftDeparturesAvailability = Some(DraftAvailability.Unavailable)))
+    val doc = parseView(applyView(draftDeparturesAvailability = Some(Availability.Unavailable)))
     behave like pageWithContent(doc, "p", "Draft departure declarations unavailable")
   }
 
   "when we have draft departures must" - {
-    val doc  = parseView(applyView(draftDeparturesAvailability = Some(DraftAvailability.NonEmpty)))
+    val doc  = parseView(applyView(draftDeparturesAvailability = Some(Availability.NonEmpty)))
     val link = getElementById(doc, "view-draft-departures")
 
     "have the correct text for the view departures link" in {
