@@ -176,7 +176,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
       }
 
-      "must redirect to departure task-list on success of handleErrors" in {
+      "must redirect to new local reference number on success of handleErrors" in {
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
@@ -197,7 +197,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual frontendAppConfig.departureFrontendTaskListUrl("LRNAB123")
+        redirectLocation(result).value mustEqual frontendAppConfig.departureNewLocalReferenceNumberUrl("LRNAB123")
 
       }
 
