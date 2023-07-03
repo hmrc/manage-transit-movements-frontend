@@ -44,6 +44,8 @@ class ReviewCancellationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours 
 
   behave like pageWithBackLink()
 
+  behave like pageWithCaption(s"LRN: $lrn")
+
   behave like pageWithHeading()
 
   behave like pageWithSummaryLists()
@@ -66,12 +68,8 @@ class ReviewCancellationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours 
 
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
-      "paragraph-1-prefix",
-      s"The office of departure was not able to cancel departure declaration $lrn."
-    )
-    assertSpecificElementContainsText(
-      "paragraph-1-suffix",
-      "Review the error - then if you still want to cancel the declaration, try cancelling it again."
+      "paragraph-1",
+      s"The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again."
     )
   }
 

@@ -74,8 +74,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
         result.heading mustBe "Review cancellation errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"The office of departure was not able to cancel departure declaration $lrnString."
-        result.paragraph1Suffix mustBe "Review the error - then if you still want to cancel the declaration, try cancelling it again."
+        result.paragraph1 mustBe s"The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -118,8 +117,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
         result.heading mustBe "Review cancellation errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"The office of departure was not able to cancel departure declaration $lrnString."
-        result.paragraph1Suffix mustBe "Review the errors - then if you still want to cancel the declaration, try cancelling it again."
+        result.paragraph1 mustBe s"The office of departure was not able to cancel this declaration. Review the errors - then if you still want to cancel the declaration, try cancelling it again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
