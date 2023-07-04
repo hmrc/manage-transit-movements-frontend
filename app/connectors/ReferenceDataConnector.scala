@@ -65,4 +65,18 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
           onFailFunctionalError(code)
       }
   }
+
+  def getAllFunctionalErrorDescription()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] = {
+    def onFailFunctionalError(): Seq[FunctionalErrorWithDesc] = Nil
+
+    val serviceUrl = s"${config.referenceDataUrl}/get-all-functional-error-codes"
+
+    http
+      .GET[Seq[FunctionalErrorWithDesc]](serviceUrl)
+      .recover {
+        case _ =>
+          logger.error(s"Get All Functional Error Code to Description request failed to return data")
+          onFailFunctionalError()
+      }
+  }
 }
