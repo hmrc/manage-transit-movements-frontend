@@ -52,6 +52,8 @@ class ReviewDepartureErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours wit
 
   behave like pageWithoutSubmitButton()
 
+  behave like pageWithCaption(s"LRN: $lrn")
+
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
       sectionTitle =>
