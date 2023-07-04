@@ -390,8 +390,8 @@ departure.ie056.message.title = Amend declaration errors
 departure.ie056.message.heading = Amend declaration errors
 
 departure.ie056.message.paragraph1.prefix = There is a problem with departure declaration {0}.
-departure.ie056.message.paragraph1.singular.suffix = Amend the error and resend the declaration.
-departure.ie056.message.paragraph1.plural.suffix = Amend the errors and resend the declaration.
+departure.ie056.message.paragraph1.singular = There is a problem with this declaration. Amend the error and resend the declaration.
+departure.ie056.message.paragraph1.plural = There is a problem with this declaration. Amend the errors and resend the declaration.
 
 departure.ie056.message.paragraph2.prefix = Contact the
 departure.ie056.message.paragraph2.link = New Computerised Transit System helpdesk

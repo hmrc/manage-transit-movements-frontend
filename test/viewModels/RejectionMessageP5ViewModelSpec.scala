@@ -74,8 +74,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.heading mustBe "Amend declaration errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"There is a problem with departure declaration $lrnString."
-        result.paragraph1Suffix mustBe "Amend the error and resend the declaration."
+        result.paragraph1 mustBe s"There is a problem with this declaration. Amend the error and resend the declaration."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -110,8 +109,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.heading mustBe "Amend declaration errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"There is a problem with departure declaration $lrnString."
-        result.paragraph1Suffix mustBe "Amend the errors and resend the declaration."
+        result.paragraph1 mustBe s"There is a problem with this declaration. Amend the errors and resend the declaration."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"

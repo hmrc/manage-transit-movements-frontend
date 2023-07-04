@@ -31,15 +31,13 @@ case class RejectionMessageP5ViewModel(sections: Seq[Section], lrn: String, mult
 
   def heading(implicit messages: Messages): String = messages("departure.ie056.message.heading")
 
-  def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph1.prefix", lrn)
-
-  def paragraph1Suffix(implicit messages: Messages): String = if (multipleErrors) {
+  def paragraph1(implicit messages: Messages): String = if (multipleErrors) {
     messages(
-      "departure.ie056.message.paragraph1.plural.suffix"
+      "departure.ie056.message.paragraph1.plural"
     )
   } else {
     messages(
-      "departure.ie056.message.paragraph1.singular.suffix"
+      "departure.ie056.message.paragraph1.singular"
     )
   }
 

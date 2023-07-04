@@ -65,12 +65,8 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
-      "paragraph-1-prefix",
-      s"There is a problem with departure declaration $lrn."
-    )
-    assertSpecificElementContainsText(
-      "paragraph-1-suffix",
-      "Amend the error and resend the declaration."
+      "paragraph-1",
+      s"There is a problem with this declaration. Amend the error and resend the declaration."
     )
   }
 
