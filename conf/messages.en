@@ -350,6 +350,7 @@ departures.search.form.value.invalid = The Local Reference Number must only incl
 arrivals.search.form.value.invalid = The Movement Reference Number must only include letters a to z and numbers 0 to 9
 
 departure.messages.caption = LRN: {0}
+arrival.messages.caption = MRN: {0}
 
 departure.ie060.message.title = Goods under control
 departure.ie060.message.heading = Goods under control
@@ -455,7 +456,7 @@ arrival.notification.errors.message.hyperlink = Create another arrival notificat
 
 arrival.notification.unloading.errors.message.title   = Unloading remarks errors
 arrival.notification.unloading.errors.message.heading = Unloading remarks errors
-arrival.notification.unloading.errors.message.noerrors = There are one or more errors with the unloading remarks for arrival notification {0}.
+arrival.notification.unloading.errors.message.noerrors = There are one or more errors with the unloading remarks for this notification.
 arrival.notification.unloading.errors.message.elevenpluserrors = There are a number of errors with the unloading remarks for arrival notification {0}.
 arrival.notification.unloading.customsOfficeContact.telephoneAvailable = Try making the unloading remarks again. Or for more information, contact Customs at {0} on {1}.
 arrival.notification.unloading.customsOfficeContact.telephoneNotAvailable = Try making the unloading remarks again. Or for more information, contact Customs at {0}.

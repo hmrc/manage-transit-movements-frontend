@@ -39,7 +39,7 @@ class UnloadingRemarkErrorsP5ViewSpec extends ViewBehaviours {
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p", "There are one or more errors with the unloading remarks for arrival notification AB123.")
+  behave like pageWithContent("p", "There are one or more errors with the unloading remarks for this notification.")
 
   behave like pageWithContent("p", "Try making the unloading remarks again. Or for more information, contact Customs office CD123.")
 

@@ -49,7 +49,7 @@ class UnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPrope
 
     "paragraph1" - {
       "must return correct message when no error" in {
-        viewModel(noErrors = true).paragraph1 mustBe s"There are one or more errors with the unloading remarks for arrival notification $mrn."
+        viewModel(noErrors = true).paragraph1 mustBe s"There are one or more errors with the unloading remarks for this notification."
       }
 
       "must return correct message when multiple errors" in {
