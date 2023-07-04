@@ -41,6 +41,8 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
 
   behave like pageWithHeading()
 
+  behave like pageWithCaption(s"LRN: $lrnString")
+
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
     assertElementContainsText(element, expectedText)
@@ -49,7 +51,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1",
-      s"There are one or more errors in departure declaration $lrnString that cannot be amended."
+      s"There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
     )
   }
 

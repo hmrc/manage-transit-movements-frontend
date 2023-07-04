@@ -60,7 +60,7 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
         result.heading mustBe "Declaration errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There are one or more errors in departure declaration $lrnString that cannot be amended."
+        result.paragraph1 mustBe s"There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
       }
       "must return correct paragraph 2" in {
         result.paragraph2 mustBe s"Make/create a new departure declaration with the right information."
