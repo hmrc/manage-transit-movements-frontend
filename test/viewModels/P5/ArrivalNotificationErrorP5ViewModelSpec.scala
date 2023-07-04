@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels
+package viewModels.P5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
@@ -25,7 +25,10 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
-import viewModels.P5.arrival.ArrivalNotificationErrorP5ViewModel.ArrivalNotificationErrorP5ViewModelProvider
+import viewModels.P5.arrival.ArrivalNotificationWithoutFunctionalErrorP5ViewModel.{
+  ArrivalNotificationErrorP5ViewModelProvider,
+  ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider
+}
 
 import scala.concurrent.Future
 
@@ -50,8 +53,8 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
 
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ArrivalNotificationErrorP5ViewModelProvider()
-      val result            = viewModelProvider.apply(mrnString, true)
+      val viewModelProvider = new ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider()
+      val result            = viewModelProvider.apply(mrnString)
 
       "must return correct title" in {
         result.title mustBe "Notification errors"

@@ -14,32 +14,50 @@
  * limitations under the License.
  */
 
-package views.arrival.testOnly
+package views.arrival.P5
 
 import generators.Generators
 import play.twirl.api.HtmlFormat
-import viewModels.P5.arrival.ArrivalNotificationErrorP5ViewModel
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.arrival.TestOnly.ArrivalNotificationErrorP5View
+import views.html.arrival.P5.ArrivalNotificationWithFunctionalErrorsP5View
 
-class ArrivalNotificationErrorP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
-  override val prefix: String = "arrival.notification.errors.message"
-  val mrnString               = "MRNAB123"
+  override val prefix: String = "arrival.ie057.review.notification.message"
 
-  private val arrivalNotificationErrorP5ViewModel: ArrivalNotificationErrorP5ViewModel = new ArrivalNotificationErrorP5ViewModel(mrnString, true)
+  private val arrivalNotificationWithFunctionalErrorsP5ViewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel =
+    new ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, lrn.toString, false)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[ArrivalNotificationErrorP5View]
-      .apply(arrivalNotificationErrorP5ViewModel)(fakeRequest, messages, frontendAppConfig)
+      .instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
+      .apply(arrivalNotificationWithFunctionalErrorsP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
+
+  override def summaryLists: Seq[SummaryList] = sections.map(
+    section => SummaryList(section.rows)
+  )
 
   behave like pageWithTitle()
 
   behave like pageWithBackLink()
 
   behave like pageWithHeading()
+
+  behave like pageWithSummaryLists()
+
+  behave like pageWithoutFormAction()
+
+  behave like pageWithoutSubmitButton()
+
+  "must render section titles when rows are non-empty" - {
+    sections.foreach(_.sectionTitle.map {
+      sectionTitle =>
+        behave like pageWithContent("h2", sectionTitle)
+    })
+  }
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
@@ -48,25 +66,25 @@ class ArrivalNotificationErrorP5ViewSpec extends CheckYourAnswersViewBehaviours 
 
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
-      "paragraph-1",
-      s"There are one or more errors in arrival notification $mrnString that cannot be amended."
+      "paragraph-1-prefix",
+      s"There is a problem with arrival notification $mrn."
+    )
+    assertSpecificElementContainsText(
+      "paragraph-1-suffix",
+      "Review the error and make/create a new arrival notification with the right information."
     )
   }
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
       "paragraph-2",
-      "Make/create a new arrival notification with the right information."
+      "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
     )
     assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
 
-  }
-
-  "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-arrival-notification", "Create another arrival notification")
   }
 
   behave like pageWithLink(

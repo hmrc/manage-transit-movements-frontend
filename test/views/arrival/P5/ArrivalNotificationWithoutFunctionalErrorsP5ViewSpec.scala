@@ -18,46 +18,29 @@ package views.arrival.P5
 
 import generators.Generators
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewModels.P5.arrival.ReviewArrivalNotificationErrorsP5ViewModel
+import viewModels.P5.arrival.ArrivalNotificationWithoutFunctionalErrorP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.arrival.P5.ReviewArrivalNotificationErrorsP5View
+import views.html.arrival.P5.ArrivalNotificationWithoutFunctionalErrorsP5View
 
-class ReviewArrivalNotificationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
-  override val prefix: String = "arrival.ie057.review.notification.message"
+  override val prefix: String = "arrival.notification.errors.message"
+  val mrnString               = "MRNAB123"
 
-  private val reviewRejectionMessageP5ViewModel =
-    new ReviewArrivalNotificationErrorsP5ViewModel(sections, lrn.toString, false)
+  private val arrivalNotificationErrorP5ViewModel: ArrivalNotificationWithoutFunctionalErrorP5ViewModel =
+    new ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrnString)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[ReviewArrivalNotificationErrorsP5View]
-      .apply(reviewRejectionMessageP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
-
-  override def summaryLists: Seq[SummaryList] = sections.map(
-    section => SummaryList(section.rows)
-  )
+      .instanceOf[ArrivalNotificationWithoutFunctionalErrorsP5View]
+      .apply(arrivalNotificationErrorP5ViewModel)(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 
   behave like pageWithBackLink()
 
   behave like pageWithHeading()
-
-  behave like pageWithSummaryLists()
-
-  behave like pageWithoutFormAction()
-
-  behave like pageWithoutSubmitButton()
-
-  "must render section titles when rows are non-empty" - {
-    sections.foreach(_.sectionTitle.map {
-      sectionTitle =>
-        behave like pageWithContent("h2", sectionTitle)
-    })
-  }
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
@@ -66,25 +49,25 @@ class ReviewArrivalNotificationErrorsP5ViewSpec extends CheckYourAnswersViewBeha
 
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
-      "paragraph-1-prefix",
-      s"There is a problem with arrival notification $mrn."
-    )
-    assertSpecificElementContainsText(
-      "paragraph-1-suffix",
-      "Review the error and make/create a new arrival notification with the right information."
+      "paragraph-1",
+      s"There are one or more errors in arrival notification $mrnString that cannot be amended."
     )
   }
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
       "paragraph-2",
-      "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
+      "Make/create a new arrival notification with the right information."
     )
     assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
 
+  }
+
+  "must render correct link text" in {
+    assertSpecificElementContainsText("create-another-arrival-notification", "Create another arrival notification")
   }
 
   behave like pageWithLink(

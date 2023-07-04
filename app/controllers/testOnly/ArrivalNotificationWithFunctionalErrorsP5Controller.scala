@@ -21,29 +21,33 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.arrival.ArrivalNotificationErrorP5ViewModel.ArrivalNotificationErrorP5ViewModelProvider
-import views.html.arrival.TestOnly.ArrivalNotificationErrorP5View
+import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
+import views.html.arrival.P5.ArrivalNotificationWithFunctionalErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ArrivalNotificationErrorP5Controller @Inject() (
+class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  cc: MessagesControllerComponents,
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
-  viewModelProvider: ArrivalNotificationErrorP5ViewModelProvider,
-  view: ArrivalNotificationErrorP5View
+  cc: MessagesControllerComponents,
+  viewModelProvider: ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider,
+  view: ArrivalNotificationWithFunctionalErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)) {
+  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
     implicit request =>
-      if (request.ie057MessageData.functionalErrors.isEmpty || (request.ie057MessageData.functionalErrors.size > config.maxErrorsForArrivalNotification)) {
-        Ok(view(viewModelProvider.apply(request.ie057MessageData.transitOperation.MRN, request.ie057MessageData.functionalErrors.isEmpty)))
-      } else {
-        Redirect(controllers.routes.ErrorController.technicalDifficulties())
-      }
+      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie057MessageData, request.ie057MessageData.transitOperation.MRN)
+      rejectionMessageP5ViewModel.map(
+        viewModel =>
+          if (request.ie057MessageData.functionalErrors.nonEmpty) {
+            Ok(view(viewModel, arrivalId))
+          } else {
+            Redirect(controllers.routes.ErrorController.technicalDifficulties())
+          }
+      )
   }
 }

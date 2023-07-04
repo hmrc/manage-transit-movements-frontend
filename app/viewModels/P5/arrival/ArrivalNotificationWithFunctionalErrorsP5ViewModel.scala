@@ -26,7 +26,7 @@ import viewModels.sections.Section
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class ReviewArrivalNotificationErrorsP5ViewModel(sections: Seq[Section], mrn: String, multipleErrors: Boolean) {
+case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections: Seq[Section], mrn: String, multipleErrors: Boolean) {
 
   def title(implicit messages: Messages): String = messages("arrival.ie057.review.notification.message.title")
 
@@ -57,14 +57,14 @@ case class ReviewArrivalNotificationErrorsP5ViewModel(sections: Seq[Section], mr
 
 }
 
-object ReviewArrivalNotificationErrorsP5ViewModel {
+object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
 
-  class ReviewArrivalNotificationErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
       ie057MessageData: IE057MessageData,
       mrn: String
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewArrivalNotificationErrorsP5ViewModel] = {
+    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ArrivalNotificationWithFunctionalErrorsP5ViewModel] = {
       val helper = new RejectionMessageP5MessageHelper(ie057MessageData.functionalErrors, referenceDataService)
 
       val multipleErrors = ie057MessageData.functionalErrors.length > 1
@@ -72,7 +72,7 @@ object ReviewArrivalNotificationErrorsP5ViewModel {
       Future
         .sequence(sections)
         .map(
-          sec => ReviewArrivalNotificationErrorsP5ViewModel(sec, mrn, multipleErrors)
+          sec => ArrivalNotificationWithFunctionalErrorsP5ViewModel(sec, mrn, multipleErrors)
         )
 
     }

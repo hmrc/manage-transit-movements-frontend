@@ -27,12 +27,12 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
-import viewModels.P5.arrival.ReviewArrivalNotificationErrorsP5ViewModel.ReviewArrivalNotificationErrorsP5ViewModelProvider
+import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -45,7 +45,7 @@ class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWi
 
   val mrnString = "MRNAB123"
 
-  "ReviewArrivalNotificationErrorsP5ViewModel" - {
+  "ArrivalNotificationWithFunctionalErrorsP5ViewModel" - {
 
     val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "Codelist violation")
 
@@ -61,7 +61,7 @@ class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWi
 
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ReviewArrivalNotificationErrorsP5ViewModelProvider(mockReferenceDataService)
+      val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
 
       "must return correct section length" in {
@@ -101,7 +101,7 @@ class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWi
 
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ReviewArrivalNotificationErrorsP5ViewModelProvider(mockReferenceDataService)
+      val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
 
       "must return correct title" in {
@@ -136,7 +136,7 @@ class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWi
 
       when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ReviewArrivalNotificationErrorsP5ViewModelProvider(mockReferenceDataService)
+      val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
 
       result.sections.length mustBe 1
