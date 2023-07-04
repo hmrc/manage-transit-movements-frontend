@@ -75,8 +75,7 @@ class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWi
         result.heading mustBe "Review notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"There is a problem with arrival notification $mrnString."
-        result.paragraph1Suffix mustBe "Review the error and make/create a new arrival notification with the right information."
+        result.paragraph1 mustBe s"There is a problem with this notification. Review the error and make a new notification with the right information."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -111,8 +110,7 @@ class ReviewArrivalNotificationErrorsP5ViewModelSpec extends SpecBase with AppWi
         result.heading mustBe "Review notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"There is a problem with arrival notification $mrnString."
-        result.paragraph1Suffix mustBe "Review the errors and make/create a new arrival notification with the right information."
+        result.paragraph1 mustBe s"There is a problem with this notification. Review the errors and make a new notification with the right information."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
