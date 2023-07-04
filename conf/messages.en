@@ -403,8 +403,8 @@ departure.ie056.review.message.title = Review declaration errors
 departure.ie056.review.message.heading = Review declaration errors
 
 departure.ie056.review.message.paragraph1.prefix = There is a problem with departure declaration {0}.
-departure.ie056.review.message.paragraph1.singular.suffix = Review the error and make/create a new departure declaration with the right information.
-departure.ie056.review.message.paragraph1.plural.suffix = Review the errors and make/create a new departure declaration with the right information.
+departure.ie056.review.message.paragraph1.singular = There is a problem with this declaration. Review the error and make a new declaration with the right information.
+departure.ie056.review.message.paragraph1.plural = There is a problem with this declaration. Review the errors and make a new declaration with the right information.
 departure.ie056.review.message.paragraph2.prefix = Contact the
 departure.ie056.review.message.paragraph2.link = New Computerised Transit System helpdesk
 departure.ie056.review.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).

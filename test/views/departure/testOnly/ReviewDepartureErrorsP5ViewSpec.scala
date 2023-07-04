@@ -67,11 +67,7 @@ class ReviewDepartureErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours wit
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1-prefix",
-      s"There is a problem with departure declaration $lrn."
-    )
-    assertSpecificElementContainsText(
-      "paragraph-1-suffix",
-      "Review the error and make/create a new departure declaration with the right information."
+      s"There is a problem with this declaration. Review the error and make a new declaration with the right information."
     )
   }
 
