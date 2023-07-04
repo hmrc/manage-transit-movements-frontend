@@ -41,6 +41,8 @@ class ArrivalNotificationErrorP5ViewSpec extends CheckYourAnswersViewBehaviours 
 
   behave like pageWithHeading()
 
+  behave like pageWithCaption(s"MRN: $mrnString")
+
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
     assertElementContainsText(element, expectedText)

@@ -36,7 +36,7 @@ formHelper: FormWithCSRF
 
         @heading(
             heading = arrivalNotificationErrorP5ViewModel.heading,
-            caption = None
+            caption = Some(messages("arrival.messages.caption", arrivalNotificationErrorP5ViewModel.mrn))
         )
 
         <p id="paragraph-1" class="govuk-body">@arrivalNotificationErrorP5ViewModel.paragraph1</p>
