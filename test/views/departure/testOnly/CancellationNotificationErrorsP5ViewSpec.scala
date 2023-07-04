@@ -39,6 +39,8 @@ class CancellationNotificationErrorsP5ViewSpec extends ViewBehaviours {
 
   behave like pageWithHeading()
 
+  behave like pageWithCaption(s"LRN: AB123")
+
   behave like pageWithContent("p", "There are one or more errors with the cancellation of departure declaration AB123.")
 
   behave like pageWithContent("p", "Try cancelling the declaration again. Or for more information, contact Customs office CD123.")
