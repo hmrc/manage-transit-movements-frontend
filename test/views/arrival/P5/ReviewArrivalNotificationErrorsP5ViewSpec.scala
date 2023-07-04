@@ -52,6 +52,8 @@ class ReviewArrivalNotificationErrorsP5ViewSpec extends CheckYourAnswersViewBeha
 
   behave like pageWithoutSubmitButton()
 
+  behave like pageWithCaption(s"MRN: $mrn")
+
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
       sectionTitle =>
