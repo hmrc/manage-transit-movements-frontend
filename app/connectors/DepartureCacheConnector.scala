@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.LinkedLrn
 import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -38,10 +39,16 @@ class DepartureCacheConnector @Inject() (
     http.POST[Seq[String], Boolean](url, xPaths)
   }
 
-  def fetchSubmittedLinkedDeclaration(lrn: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
+  def fetchSubmittedLinkedDeclaration(lrn: String)(implicit hc: HeaderCarrier): Future[LinkedLrn] = {
     val url = s"$baseUrl/$lrn/fetch-submitted-linked-lrn"
 
-    http.GET[Option[String]](url)
+    http
+      .GET[LinkedLrn](url)
+      .recover {
+        case e =>
+          logger.error("Failed to read from fetchSubmittedLinkedDeclaration", e)
+          LinkedLrn(None, None)
+      }
   }
 
   def handleErrors(lrn: String, functionalErrors: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {

@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package models.departureP5
+package models
 
-import models.LinkedLrn
+import models.SubmissionState.NotSubmitted
+import play.api.libs.json.{Format, Json}
 
-case class DepartureMovementAndMessage(
-  departureMovement: DepartureMovement,
-  messagesForMovement: MessagesForDepartureMovement,
-  localReferenceNumber: String,
-  isDeclarationAmendable: Boolean,
-  xPaths: Seq[String],
-  reSubmittedLinkedLRN: LinkedLrn
-)
+case class LinkedLrn(lrn: Option[String], isSubmitted: Option[SubmissionState] = Some(NotSubmitted))
+
+object LinkedLrn {
+  implicit val format: Format[LinkedLrn] = Json.format[LinkedLrn]
+}
