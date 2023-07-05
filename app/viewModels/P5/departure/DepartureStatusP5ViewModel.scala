@@ -254,7 +254,7 @@ object DepartureStatusP5ViewModel {
 
       val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
       DepartureStatusP5ViewModel(
-        "movement.status.P5.rejectedByOfficeOfDeparture",
+        status,
         actions = Seq(
           ViewMovementAction(
             href,
