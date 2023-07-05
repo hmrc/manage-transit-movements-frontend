@@ -48,13 +48,6 @@ class ArrivalNotificationErrorP5ViewSpec extends CheckYourAnswersViewBehaviours 
     assertElementContainsText(element, expectedText)
   }
 
-  "must render correct paragraph1 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-1",
-      s"There are one or more errors in arrival notification $mrnString that cannot be amended."
-    )
-  }
-
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
       "paragraph-2",

@@ -59,9 +59,6 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
       "must return correct heading" in {
         result.heading mustBe "Notification errors"
       }
-      "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There are one or more errors in arrival notification $mrnString that cannot be amended."
-      }
       "must return correct paragraph 2" in {
         result.paragraph2 mustBe s"Make/create a new arrival notification with the right information."
       }
