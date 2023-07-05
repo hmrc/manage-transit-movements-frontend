@@ -446,7 +446,7 @@ cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail
 
 arrival.notification.errors.message.title   = Notification errors
 arrival.notification.errors.message.heading = Notification errors
-arrival.notification.errors.message.elevenpluserrors = There are one or more errors in this notification that cannot be amended. Make a new notification with the right information.
+arrival.notification.errors.message = There are one or more errors in this notification that cannot be amended. Make a new notification with the right information.
 arrival.notification.errors.message.paragraph2 = Make/create a new arrival notification with the right information.
 arrival.notification.errors.message.paragraph3.prefix = Contact the
 arrival.notification.errors.message.paragraph3.link = New Computerised Transit System helpdesk

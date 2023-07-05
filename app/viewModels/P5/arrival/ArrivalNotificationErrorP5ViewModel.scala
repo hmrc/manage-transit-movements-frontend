@@ -27,7 +27,7 @@ case class ArrivalNotificationErrorP5ViewModel(mrn: String, noErrors: Boolean) {
     if (noErrors) {
       messages("arrival.notification.errors.message.noerrors", mrn)
     } else {
-      messages("arrival.notification.errors.message.elevenpluserrors", mrn)
+      messages("arrival.notification.errors.message", mrn)
     }
 
   def paragraph2(implicit messages: Messages): String = messages("arrival.notification.errors.message.paragraph2")
