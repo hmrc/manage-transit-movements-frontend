@@ -32,7 +32,7 @@ import services.ArrivalP5MessageService
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
 import viewModels.sections.Section
-import views.html.arrival.P5.ReviewArrivalNotificationErrorsP5View
+import views.html.arrival.P5.ArrivalNotificationWithFunctionalErrorsP5View
 
 import scala.concurrent.Future
 
@@ -86,7 +86,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[ReviewArrivalNotificationErrorsP5View]
+      val view = injector.instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
 
       contentAsString(result) mustEqual
         view(rejectionMessageP5ViewModel, departureIdP5)(request, messages, frontendAppConfig).toString
