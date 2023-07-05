@@ -48,7 +48,14 @@ class DepartureP5MessageService @Inject() (
                     ie056 <- getMessage[IE056Data](movement.departureId, RejectedByOfficeOfDeparture)
                     xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
                     isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false))(cacheConnector.isDeclarationAmendable(lrn, _))
-                  } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
+                    reSubmittedLinkedLRN   <- cacheConnector.fetchSubmittedLinkedDeclaration(lrn)
+                  } yield DepartureMovementAndMessage(movement,
+                                                      messagesForMovement,
+                                                      lrn,
+                                                      isDeclarationAmendable,
+                                                      xPaths.getOrElse(Seq.empty),
+                                                      reSubmittedLinkedLRN
+                  )
                 case None =>
                   Future.failed(new Throwable("Movement did not contain an IE015 message"))
               }

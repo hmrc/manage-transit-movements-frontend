@@ -145,6 +145,7 @@ movement.status.P5.releasedForTransit                                   = Releas
 movement.status.P5.goodsNotReleased                                     = Goods not released
 movement.status.P5.guaranteeRejected                                    = Guarantee rejected
 movement.status.P5.rejectedByOfficeOfDeparture                          = Rejected by office of departure
+movement.status.P5.replacedByLRN                                        = Replaced by LRN {0}
 movement.status.P5.goodsUnderControl                                    = Goods under control
 movement.status.P5.incidentDuringTransit                                = Incident during transit
 movement.status.P5.declarationSent                                      = Declaration sent
