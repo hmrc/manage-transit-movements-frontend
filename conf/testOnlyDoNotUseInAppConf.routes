@@ -81,7 +81,7 @@ GET        /manage-transit-movements/test-only/:departureId/declaration-cancelle
 
 GET        /manage-transit-movements/test-only/:departureId/declaration-not-cancelled                                  controllers.testOnly.DepartureCancelledP5Controller.declarationNotCancelled(departureId: String)
 
-GET        /manage-transit-movements/test-only/:arrivalId/unloading-remarks-errors                                     controllers.testOnly.UnloadingRemarkErrorsP5Controller.onPageLoad(arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/unloading-remarks-errors                                     controllers.testOnly.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
 
 GET        /manage-transit-movements/test-only/:arrivalId/review-unloading-remarks-errors                               controllers.testOnly.ReviewUnloadingRemarkErrorsP5Controller.onPageLoad(arrivalId: String)
 

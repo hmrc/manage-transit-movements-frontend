@@ -22,18 +22,18 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel._
+import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel._
 import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UnloadingRemarkErrorsP5Controller @Inject() (
+class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
-  viewModelProvider: UnloadingRemarkErrorsP5ViewModelProvider,
+  viewModelProvider: UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider,
   view: UnloadingRemarkErrorsP5View,
   referenceDataConnector: ReferenceDataConnector
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
@@ -45,14 +45,13 @@ class UnloadingRemarkErrorsP5Controller @Inject() (
       val functionalErrors       = request.ie057MessageData.functionalErrors
       val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber
 
-      if (functionalErrors.isEmpty || (functionalErrors.size > config.maxErrorsForArrivalNotification)) {
+      if (functionalErrors.isEmpty) {
         referenceDataConnector.getCustomsOffice(customsOfficeReference).map {
           customsOffice =>
             Ok(
               view(
                 viewModelProvider.apply(
                   request.ie057MessageData.transitOperation.MRN,
-                  request.ie057MessageData.functionalErrors.isEmpty,
                   customsOfficeReference,
                   customsOffice
                 )

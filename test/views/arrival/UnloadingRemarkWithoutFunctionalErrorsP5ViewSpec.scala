@@ -17,14 +17,14 @@
 package views.arrival
 
 import play.twirl.api.HtmlFormat
-import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
+import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
 import views.behaviours.ViewBehaviours
 import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
 
-class UnloadingRemarkErrorsP5ViewSpec extends ViewBehaviours {
+class UnloadingRemarkWithoutFunctionalErrorsP5ViewSpec extends ViewBehaviours {
 
   private val unloadingNotificationErrorsP5ViewModel =
-    new UnloadingRemarkErrorsP5ViewModel("AB123", true, "CD123", None)
+    new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel("AB123", "CD123", None)
 
   override def view: HtmlFormat.Appendable =
     injector
