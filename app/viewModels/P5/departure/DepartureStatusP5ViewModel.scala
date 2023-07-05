@@ -27,7 +27,13 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
-      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _), messagesForDepartureMovements, _, isDeclarationAmendable, xPaths) =>
+      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _),
+                                       messagesForDepartureMovements,
+                                       _,
+                                       isDeclarationAmendable,
+                                       xPaths,
+                                       reSubmittedLinkedLRN
+          ) =>
         val allPfs: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
           Seq(
             departureNotification(departureId),
@@ -44,7 +50,7 @@ object DepartureStatusP5ViewModel {
             releasedForTransit(departureId),
             goodsNotReleased(),
             guaranteeRejected(departureId),
-            rejectedByOfficeOfDeparture(departureId, messagesForDepartureMovements, isDeclarationAmendable, xPaths),
+            rejectedByOfficeOfDeparture(departureId, messagesForDepartureMovements, isDeclarationAmendable, xPaths, reSubmittedLinkedLRN),
             goodsUnderControl(departureId),
             incidentDuringTransit(),
             declarationSent(departureId),
@@ -209,32 +215,41 @@ object DepartureStatusP5ViewModel {
       )
   }
 
+  // scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
     messagesForDepartureMovement: MessagesForDepartureMovement,
     isDeclarationAmendable: Boolean,
-    xPaths: Seq[String]
+    xPaths: Seq[String],
+    reSubmittedLinkedLRN: Option[String]
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
 
     case message if message.messageType == RejectedByOfficeOfDeparture =>
-      val (key, href) = messagesForDepartureMovement.messageBeforeLatest.map(_.messageType) match {
+      val (status, key, href) = messagesForDepartureMovement.messageBeforeLatest.map(_.messageType) match {
         case Some(DepartureNotification) =>
-          if (isDeclarationAmendable) {
-            ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
+          if (isDeclarationAmendable && reSubmittedLinkedLRN.isEmpty) {
+            ("movement.status.P5.rejectedByOfficeOfDeparture", "amendDeclaration",
+              controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
+          } else if (reSubmittedLinkedLRN.isDefined) {
+            (s"movement.status.P5.replacedByLRN ${reSubmittedLinkedLRN.get} ", "", "")
           } else if (xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration) {
-            ("viewErrors", controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
+            ("movement.status.P5.rejectedByOfficeOfDeparture", "viewErrors",
+              controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
-            ("viewErrors", controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
+            ("movement.status.P5.rejectedByOfficeOfDeparture","viewErrors",
+              controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
           }
 
         case Some(CancellationRequested) =>
           if (xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration) {
-            ("viewErrors", controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
+            ("movement.status.P5.rejectedByOfficeOfDeparture", "viewErrors",
+              controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
-            ("viewErrors", controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
+            ("movement.status.P5.rejectedByOfficeOfDeparture", "viewErrors",
+              controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
           }
         case _ =>
-          ("", "")
+          ("", "", "")
       }
 
       val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
@@ -248,6 +263,7 @@ object DepartureStatusP5ViewModel {
         )
       )
   }
+  // scalastyle:on cyclomatic.complexity
 
   private def goodsUnderControl(
     departureId: String

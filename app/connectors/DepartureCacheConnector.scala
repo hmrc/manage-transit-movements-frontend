@@ -38,6 +38,12 @@ class DepartureCacheConnector @Inject() (
     http.POST[Seq[String], Boolean](url, xPaths)
   }
 
+  def fetchSubmittedLinkedDeclaration(lrn: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    val url = s"$baseUrl/$lrn/fetch-submitted-linked-lrn"
+
+    http.GET[Option[String]](url)
+  }
+
   def handleErrors(lrn: String, functionalErrors: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
     val url = s"$baseUrl/x-paths/$lrn/handle-errors"
 
