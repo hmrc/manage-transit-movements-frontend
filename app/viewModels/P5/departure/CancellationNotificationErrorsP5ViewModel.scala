@@ -34,7 +34,7 @@ case class CancellationNotificationErrorsP5ViewModel(
     if (noErrors) {
       messages("cancellation.notification.errors.message.noerrors", lrn)
     } else {
-      messages("cancellation.notification.errors.message.elevenpluserrors", lrn)
+      messages("cancellation.notification.errors.message", lrn)
     }
 
   def customsOfficeContent(implicit messages: Messages): String =
