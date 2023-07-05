@@ -25,23 +25,20 @@
         formHelper: FormWithCSRF
 )
 
-@(unloadingRemarkErrorsP5ViewModel: UnloadingRemarkWithoutFunctionalErrorsP5ViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: UnloadingRemarkWithoutFunctionalErrorsP5ViewModel)(implicit request: Request[_], messages: Messages)
 
     @mainTemplate(
-        title = unloadingRemarkErrorsP5ViewModel.title,
+        title = viewModel.title,
         showBackLink = true
     ) {
 
         @heading(
-            heading = unloadingRemarkErrorsP5ViewModel.heading,
-            caption = None
+            heading = viewModel.heading
         )
 
-        <p id="paragraph-1" class="govuk-body">@unloadingRemarkErrorsP5ViewModel.paragraph1</p>
+        <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
-        <p class="govuk-body" id="what-happens-next">@unloadingRemarkErrorsP5ViewModel.customsOfficeContent</p>
+        <p class="govuk-body" id="what-happens-next">@viewModel.customsOfficeContent</p>
 
-        <p id="view-arrival-notification" class="govuk-body"><a id="arrival-link" class="govuk-link" href="@controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)">@unloadingRemarkErrorsP5ViewModel.hyperlink</a></p>
-
-
+        <p id="view-arrival-notification" class="govuk-body"><a id="arrival-link" class="govuk-link" href="@controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)">@viewModel.hyperlink</a></p>
     }

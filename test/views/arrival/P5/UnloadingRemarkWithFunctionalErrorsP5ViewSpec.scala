@@ -19,22 +19,22 @@ package views.arrival.P5
 import generators.Generators
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewModels.P5.arrival.ReviewUnloadingRemarkErrorsP5ViewModel
+import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.arrival.P5.ReviewUnloadingRemarkErrorsP5View
+import views.html.arrival.P5.UnloadingRemarkWithFunctionalErrorsP5View
 
-class ReviewUnloadingRemarkErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
   override val prefix: String = "arrival.ie057.review.unloading.message"
 
-  private val reviewRejectionMessageP5ViewModel =
-    new ReviewUnloadingRemarkErrorsP5ViewModel(sections, lrn.toString, false)
+  private val viewModel =
+    new UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, lrn.toString, false)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[ReviewUnloadingRemarkErrorsP5View]
-      .apply(reviewRejectionMessageP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
+      .instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
+      .apply(viewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)

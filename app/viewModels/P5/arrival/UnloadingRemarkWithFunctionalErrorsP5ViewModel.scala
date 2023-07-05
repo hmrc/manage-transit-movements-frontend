@@ -26,7 +26,7 @@ import viewModels.sections.Section
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class ReviewUnloadingRemarkErrorsP5ViewModel(sections: Seq[Section], mrn: String, multipleErrors: Boolean) {
+case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections: Seq[Section], mrn: String, multipleErrors: Boolean) {
 
   def title(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.title")
 
@@ -57,14 +57,14 @@ case class ReviewUnloadingRemarkErrorsP5ViewModel(sections: Seq[Section], mrn: S
 
 }
 
-object ReviewUnloadingRemarkErrorsP5ViewModel {
+object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
 
-  class ReviewUnloadingRemarkErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
       ie057MessageData: IE057MessageData,
       mrn: String
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewUnloadingRemarkErrorsP5ViewModel] = {
+    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[UnloadingRemarkWithFunctionalErrorsP5ViewModel] = {
       val helper = new RejectionMessageP5MessageHelper(ie057MessageData.functionalErrors, referenceDataService)
 
       val multipleErrors = ie057MessageData.functionalErrors.length > 1
@@ -72,7 +72,7 @@ object ReviewUnloadingRemarkErrorsP5ViewModel {
       Future
         .sequence(sections)
         .map(
-          sec => ReviewUnloadingRemarkErrorsP5ViewModel(sec, mrn, multipleErrors)
+          sec => UnloadingRemarkWithFunctionalErrorsP5ViewModel(sec, mrn, multipleErrors)
         )
 
     }

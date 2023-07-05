@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ArrivalP5MessageService
 import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
-import views.html.departure.TestOnly.UnloadingRemarkWithoutFunctionalErrorsP5View
+import views.html.arrival.P5.UnloadingRemarkWithoutFunctionalErrorsP5View
 
 import scala.concurrent.Future
 

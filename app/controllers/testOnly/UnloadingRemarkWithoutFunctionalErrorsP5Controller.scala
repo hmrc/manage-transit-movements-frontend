@@ -23,7 +23,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel._
-import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
+import views.html.arrival.P5.UnloadingRemarkWithoutFunctionalErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,9 +34,9 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
   cc: MessagesControllerComponents,
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
   viewModelProvider: UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider,
-  view: UnloadingRemarkErrorsP5View,
+  view: UnloadingRemarkWithoutFunctionalErrorsP5View,
   referenceDataConnector: ReferenceDataConnector
-)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

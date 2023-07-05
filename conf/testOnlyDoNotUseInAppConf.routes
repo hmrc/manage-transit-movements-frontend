@@ -83,7 +83,7 @@ GET        /manage-transit-movements/test-only/:departureId/declaration-not-canc
 
 GET        /manage-transit-movements/test-only/:arrivalId/unloading-remarks-errors                                     controllers.testOnly.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
 
-GET        /manage-transit-movements/test-only/:arrivalId/review-unloading-remarks-errors                               controllers.testOnly.ReviewUnloadingRemarkErrorsP5Controller.onPageLoad(arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/review-unloading-remarks-errors                               controllers.testOnly.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
 
 GET        /manage-transit-movements/test-only/:arrivalId/review-arrival-notification-errors                           controllers.testOnly.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
 
