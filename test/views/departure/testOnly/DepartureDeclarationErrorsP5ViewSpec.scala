@@ -57,10 +57,6 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
-      "paragraph-2",
-      "Make/create a new departure declaration with the right information."
-    )
-    assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )

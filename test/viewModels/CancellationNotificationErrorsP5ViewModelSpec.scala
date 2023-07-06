@@ -49,11 +49,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
 
     "paragraph1" - {
       "must return correct message when no error" in {
-        viewModel(noErrors = true).paragraph1 mustBe s"There are one or more errors with the cancellation of departure declaration $lrn."
-      }
-
-      "must return correct message when multiple errors" in {
-        viewModel(noErrors = false).paragraph1 mustBe s"There are one or more errors with the cancellation of this declaration."
+        viewModel(noErrors = true).paragraph1 mustBe s"There are one or more errors with the cancellation of this declaration."
       }
     }
 

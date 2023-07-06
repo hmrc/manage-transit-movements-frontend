@@ -62,9 +62,6 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
       "must return correct paragraph 1" in {
         result.paragraph1 mustBe s"There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
       }
-      "must return correct paragraph 2" in {
-        result.paragraph2 mustBe s"Make/create a new departure declaration with the right information."
-      }
       "must return correct paragraph 3 prefix, link and suffix" in {
         result.paragraph3Prefix mustBe "Contact the"
         result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
@@ -90,9 +87,6 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
       }
       "must return correct paragraph 1" in {
         result.paragraph1 mustBe s"There are a number of errors in departure declaration $lrnString."
-      }
-      "must return correct paragraph 2" in {
-        result.paragraph2 mustBe s"Make/create a new departure declaration with the right information."
       }
       "must return correct paragraph 3 prefix, link and suffix" in {
         result.paragraph3Prefix mustBe "Contact the"

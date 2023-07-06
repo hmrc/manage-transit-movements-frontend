@@ -59,9 +59,6 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
       "must return correct heading" in {
         result.heading mustBe "Notification errors"
       }
-      "must return correct paragraph 2" in {
-        result.paragraph2 mustBe s"Make/create a new arrival notification with the right information."
-      }
       "must return correct paragraph 3 prefix, link and suffix" in {
         result.paragraph3Prefix mustBe "Contact the"
         result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
@@ -87,9 +84,6 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
       }
       "must return correct paragraph 1" in {
         result.paragraph1 mustBe s"There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
-      }
-      "must return correct paragraph 2" in {
-        result.paragraph2 mustBe s"Make/create a new arrival notification with the right information."
       }
       "must return correct paragraph 3 prefix, link and suffix" in {
         result.paragraph3Prefix mustBe "Contact the"
