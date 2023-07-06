@@ -60,7 +60,7 @@
 
                     <td data-testrole="movements-list_row@rowIndex-status">
                         <span class="responsive-table__heading" aria-hidden="true">@rowHeadingStatus</span>
-                        @messages(row.status, row.statusArgs)
+                        @messages(row.status, row.args.getOrElse(""))
                     </td>
 
                     <td data-testrole="movements-list_row@rowIndex-actions">

@@ -26,7 +26,8 @@ final case class ViewArrival(
   updatedTime: LocalTime,
   movementReferenceNumber: String,
   status: String,
-  actions: Seq[ViewMovementAction]
+  actions: Seq[ViewMovementAction],
+  args: Option[String]
 ) extends ViewMovement {
 
   override val referenceNumber: String = movementReferenceNumber
@@ -45,7 +46,8 @@ object ViewArrival {
       updatedTime = systemTime.toLocalTime,
       movementReferenceNumber = arrival.movementReferenceNumber,
       status = arrivalStatus.status,
-      actions = arrivalStatus.actions
+      actions = arrivalStatus.actions,
+      args = None
     )
   }
 }

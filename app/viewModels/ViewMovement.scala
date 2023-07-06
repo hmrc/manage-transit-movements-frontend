@@ -25,7 +25,7 @@ trait ViewMovement {
   val referenceNumber: String
   val status: String
   val actions: Seq[ViewMovementAction]
-  val statusArgs: Option[String] = None
+  val args: Option[String]
 
   val updated: String = updatedTime
     .format(DateTimeFormatter.ofPattern("h:mma"))

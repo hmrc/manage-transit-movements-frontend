@@ -23,7 +23,7 @@ import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import viewModels.ViewMovementAction
 
-case class DepartureStatusP5ViewModel(status: String, actions: Seq[ViewMovementAction])
+case class DepartureStatusP5ViewModel(status: String, actions: Seq[ViewMovementAction], args: Option[String] = None)
 
 object DepartureStatusP5ViewModel {
 
@@ -237,7 +237,8 @@ object DepartureStatusP5ViewModel {
             href,
             keyFormatted
           )
-        )
+        ),
+        reSubmittedLinkedLRN.flatMap(_.lrn)
       )
   }
 

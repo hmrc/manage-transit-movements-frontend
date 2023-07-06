@@ -22,13 +22,12 @@ import viewModels.{ViewMovement, ViewMovementAction}
 
 import java.time._
 
-final case class ViewDepartureP5(
-  updatedDate: LocalDate,
-  updatedTime: LocalTime,
-  referenceNumber: String,
-  status: String,
-  actions: Seq[ViewMovementAction],
-  override val statusArgs: Option[String] = None
+final case class ViewDepartureP5(updatedDate: LocalDate,
+                                 updatedTime: LocalTime,
+                                 referenceNumber: String,
+                                 status: String,
+                                 actions: Seq[ViewMovementAction],
+                                 args: Option[String]
 ) extends ViewMovement
 
 object ViewDepartureP5 {
@@ -39,14 +38,13 @@ object ViewDepartureP5 {
 
     val systemTime = movementAndMessage.departureMovement.updated
 
-    val x: String = movementAndMessage.reSubmittedLinkedLRN.flatMap(_.lrn)
     ViewDepartureP5(
       updatedDate = systemTime.toLocalDate,
       updatedTime = systemTime.toLocalTime,
       referenceNumber = movementAndMessage.localReferenceNumber,
       status = departureStatus.status,
       actions = departureStatus.actions,
-      statusArgs = movementAndMessage.reSubmittedLinkedLRN.map(x => x.lrn.getOrElse("")).getOrElse("")
+      args = departureStatus.args
     )
   }
 }
