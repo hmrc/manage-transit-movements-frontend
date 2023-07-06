@@ -21,11 +21,11 @@ import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.departureP5.DepartureMessageType.{DepartureNotification, _}
 import models.departureP5._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import cats._
 
 class DepartureP5MessageService @Inject() (
   departureMovementP5Connector: DepartureMovementP5Connector,
