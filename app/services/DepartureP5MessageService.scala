@@ -25,6 +25,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import cats._
 
 class DepartureP5MessageService @Inject() (
   departureMovementP5Connector: DepartureMovementP5Connector,
@@ -48,7 +49,9 @@ class DepartureP5MessageService @Inject() (
                     ie056 <- getMessage[IE056Data](movement.departureId, RejectedByOfficeOfDeparture)
                     xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
                     isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false))(cacheConnector.isDeclarationAmendable(lrn, _))
-                    reSubmittedLinkedLRN   <- cacheConnector.fetchSubmittedLinkedDeclaration(lrn)
+                    reSubmittedLinkedLRN <- ie056.traverse(
+                      _ => cacheConnector.fetchSubmittedLinkedDeclaration(lrn)
+                    )
                   } yield DepartureMovementAndMessage(movement,
                                                       messagesForMovement,
                                                       lrn,

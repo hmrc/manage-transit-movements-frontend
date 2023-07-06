@@ -27,7 +27,8 @@ final case class ViewDepartureP5(
   updatedTime: LocalTime,
   referenceNumber: String,
   status: String,
-  actions: Seq[ViewMovementAction]
+  actions: Seq[ViewMovementAction],
+  override val statusArgs: Option[String] = None
 ) extends ViewMovement
 
 object ViewDepartureP5 {
@@ -38,12 +39,14 @@ object ViewDepartureP5 {
 
     val systemTime = movementAndMessage.departureMovement.updated
 
+    val x: String = movementAndMessage.reSubmittedLinkedLRN.flatMap(_.lrn)
     ViewDepartureP5(
       updatedDate = systemTime.toLocalDate,
       updatedTime = systemTime.toLocalTime,
       referenceNumber = movementAndMessage.localReferenceNumber,
       status = departureStatus.status,
-      actions = departureStatus.actions
+      actions = departureStatus.actions,
+      statusArgs = movementAndMessage.reSubmittedLinkedLRN.map(x => x.lrn.getOrElse("")).getOrElse("")
     )
   }
 }

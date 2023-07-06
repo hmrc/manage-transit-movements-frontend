@@ -24,5 +24,5 @@ case class DepartureMovementAndMessage(
   localReferenceNumber: String,
   isDeclarationAmendable: Boolean,
   xPaths: Seq[String],
-  reSubmittedLinkedLRN: LinkedLrn
+  reSubmittedLinkedLRN: Option[LinkedLrn]
 )
