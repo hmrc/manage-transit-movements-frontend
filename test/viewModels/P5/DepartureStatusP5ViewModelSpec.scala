@@ -19,6 +19,8 @@ package viewModels.P5
 import base.SpecBase
 import cats.data.NonEmptyList
 import generators.Generators
+import models.LinkedLrn
+import models.SubmissionState.{RejectedPendingChanges, Submitted}
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -304,6 +306,72 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
               )
             )
+          )
+
+          result mustBe expectedResult
+        }
+
+        "and declaration is amendable and there is a resubmittedLRN and isSubmitted status is Submitted" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = true,
+            Seq("body/path"),
+            Some(LinkedLrn(Some("linkedLRN"), Some(Submitted)))
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.replacedByLRN",
+            Seq(
+              ViewMovementAction(
+                "",
+                ""
+              )
+            ),
+            Some("linkedLRN")
+          )
+
+          result mustBe expectedResult
+        }
+
+        "and declaration is amendable and there is a resubmittedLRN and isSubmitted status is Not Submitted" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = true,
+            Seq("body/path"),
+            Some(LinkedLrn(Some("linkedLRN"), Some(RejectedPendingChanges)))
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
+              )
+            ),
+            Some("linkedLRN")
           )
 
           result mustBe expectedResult
