@@ -28,7 +28,7 @@ final case class ViewArrivalP5(
   movementReferenceNumber: String,
   status: String,
   actions: Seq[ViewMovementAction],
-  args: Option[String]
+  args: Option[String] = None
 ) extends ViewMovement {
 
   override val referenceNumber: String = movementReferenceNumber

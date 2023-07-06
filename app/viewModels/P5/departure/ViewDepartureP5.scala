@@ -27,7 +27,7 @@ final case class ViewDepartureP5(updatedDate: LocalDate,
                                  referenceNumber: String,
                                  status: String,
                                  actions: Seq[ViewMovementAction],
-                                 args: Option[String]
+                                 args: Option[String] = None
 ) extends ViewMovement
 
 object ViewDepartureP5 {

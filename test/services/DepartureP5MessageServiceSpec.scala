@@ -19,12 +19,15 @@ package services
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
+import models.LinkedLrn
+import models.SubmissionState.Submitted
 import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -179,6 +182,10 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             Future.successful(isDeclarationAmendable)
           )
 
+          when(mockCacheConnector.fetchSubmittedLinkedDeclaration(any())(any())).thenReturn(
+            Future.successful(LinkedLrn(Some("lrn"), Some(Submitted)))
+          )
+
           val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
 
           val expectedResult = Seq(
@@ -187,7 +194,8 @@ class DepartureP5MessageServiceSpec extends SpecBase {
               messagesForMovement,
               lrnLocal.toString,
               isDeclarationAmendable = isDeclarationAmendable,
-              xPaths = ie056.data.functionalErrors.map(_.errorPointer)
+              xPaths = ie056.data.functionalErrors.map(_.errorPointer),
+              reSubmittedLinkedLRN = Some(LinkedLrn(Some("lrn"), Some(Submitted)))
             )
           )
 
