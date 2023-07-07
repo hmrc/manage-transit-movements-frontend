@@ -25,7 +25,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
-import services.CustomsReferenceDataService
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.GoodsUnderControlP5MessageHelper
@@ -37,12 +37,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
-  val mockReferenceDataService: CustomsReferenceDataService = mock[CustomsReferenceDataService]
+  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(inject.bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
+      .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "GoodsUnderControlP5MessageHelper" - {
     "buildLRNRow" - {

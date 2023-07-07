@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.CustomsReferenceDataService
+import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel.CancellationNotificationErrorsP5ViewModelProvider
 import views.html.departure.TestOnly.CancellationNotificationErrorsP5View
@@ -35,7 +35,7 @@ class CancellationNotificationErrorsP5Controller @Inject() (
   rejectionMessageAction: DepartureRejectionMessageActionProvider,
   viewModelProvider: CancellationNotificationErrorsP5ViewModelProvider,
   view: CancellationNotificationErrorsP5View,
-  referenceDataService: CustomsReferenceDataService
+  referenceDataService: ReferenceDataService
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {

@@ -17,13 +17,13 @@
 package services
 
 import com.google.inject.Inject
-import connectors.CustomsReferenceDataConnector
+import connectors.ReferenceDataConnector
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomsReferenceDataServiceImpl @Inject() (connector: CustomsReferenceDataConnector) extends CustomsReferenceDataService {
+class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) extends ReferenceDataService {
 
   def getCustomsOfficeByCode(customsOfficeCode: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]] =
     connector.getCustomsOffice(customsOfficeCode)
@@ -43,7 +43,7 @@ class CustomsReferenceDataServiceImpl @Inject() (connector: CustomsReferenceData
   }
 }
 
-trait CustomsReferenceDataService {
+trait ReferenceDataService {
   def getCustomsOfficeByCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]]
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
   def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]

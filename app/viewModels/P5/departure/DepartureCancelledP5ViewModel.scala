@@ -19,7 +19,7 @@ package viewModels.P5.departure
 import models.departureP5.IE009MessageData
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
-import services.CustomsReferenceDataService
+import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.DepartureCancelledP5Helper
 import viewModels.sections.Section
@@ -75,7 +75,7 @@ case class DepartureCancelledP5ViewModel(
 
 object DepartureCancelledP5ViewModel {
 
-  class DepartureCancelledP5ViewModelProvider @Inject() (referenceDataService: CustomsReferenceDataService) {
+  class DepartureCancelledP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
       ie009MessageData: IE009MessageData,

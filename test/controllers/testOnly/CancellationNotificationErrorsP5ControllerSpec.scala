@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{CustomsReferenceDataService, DepartureP5MessageService}
+import services.{DepartureP5MessageService, ReferenceDataService}
 import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel
 import views.html.departure.TestOnly.CancellationNotificationErrorsP5View
 
@@ -39,7 +39,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
   private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
-  private val mockReferenceDataService                  = mock[CustomsReferenceDataService]
+  private val mockReferenceDataService                  = mock[ReferenceDataService]
 
   lazy val controllerRoute: String = controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5).url
 
@@ -64,7 +64,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
       .guiceApplicationBuilder()
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
-      .overrides(bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
+      .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "CancellationNotificationErrorsP5Controller" - {
 

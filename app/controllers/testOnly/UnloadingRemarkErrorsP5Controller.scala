@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.CustomsReferenceDataService
+import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel._
 import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
@@ -35,7 +35,7 @@ class UnloadingRemarkErrorsP5Controller @Inject() (
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
   viewModelProvider: UnloadingRemarkErrorsP5ViewModelProvider,
   view: UnloadingRemarkErrorsP5View,
-  referenceDataService: CustomsReferenceDataService
+  referenceDataService: ReferenceDataService
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {

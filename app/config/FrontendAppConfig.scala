@@ -34,7 +34,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
 
   private val host: String = configuration.get[String]("host")
 
-  lazy val referenceDataUrl: String        = configuration.get[Service]("microservice.services.reference-data").fullServiceUrl
   lazy val customsReferenceDataUrl: String = configuration.get[Service]("microservice.services.customs-reference-data").fullServiceUrl
 
   def feedbackUrl(implicit request: RequestHeader): String =

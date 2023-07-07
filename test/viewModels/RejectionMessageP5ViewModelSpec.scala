@@ -25,19 +25,19 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
-import services.CustomsReferenceDataService
+import services.ReferenceDataService
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
-  val mockReferenceDataService: CustomsReferenceDataService = mock[CustomsReferenceDataService]
+  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(api.inject.bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
+      .overrides(api.inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   override def beforeEach(): Unit =
     reset(mockReferenceDataService)

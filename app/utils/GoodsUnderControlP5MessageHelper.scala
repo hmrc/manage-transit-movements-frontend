@@ -19,7 +19,7 @@ package utils
 import cats.data.OptionT
 import models.departureP5.{IE060MessageData, RequestedDocument, TypeOfControls}
 import play.api.i18n.Messages
-import services.CustomsReferenceDataService
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
@@ -27,7 +27,7 @@ import viewModels.sections.Section
 import java.time.LocalDateTime
 import scala.concurrent.{ExecutionContext, Future}
 
-class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, referenceDataService: CustomsReferenceDataService)(implicit
+class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, referenceDataService: ReferenceDataService)(implicit
   messages: Messages,
   hc: HeaderCarrier,
   ec: ExecutionContext

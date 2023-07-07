@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{ArrivalP5MessageService, CustomsReferenceDataService}
+import services.{ArrivalP5MessageService, ReferenceDataService}
 import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
 import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
 
@@ -38,7 +38,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
 
   private val mockArrivalP5MessageService                = mock[ArrivalP5MessageService]
   private val mockRejectionMessageActionProvider         = mock[ArrivalRejectionMessageActionProvider]
-  private val mockReferenceDataService                   = mock[CustomsReferenceDataService]
+  private val mockReferenceDataService                   = mock[ReferenceDataService]
   lazy val unloadingNotificationErrorsController: String = controllers.testOnly.routes.UnloadingRemarkErrorsP5Controller.onPageLoad(arrivalIdP5).url
 
   private val mrnString = "MRNAB123"
@@ -57,7 +57,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
     super
       .guiceApplicationBuilder()
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
-      .overrides(bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
+      .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "UnloadingRemarkErrorsP5Controller" - {
 

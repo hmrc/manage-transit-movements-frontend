@@ -20,14 +20,14 @@ import models.departureP5._
 import models.referenceData.CustomsOffice
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}
 import play.api.mvc.Result
-import services.{CustomsReferenceDataService, DepartureP5MessageService}
+import services.{DepartureP5MessageService, ReferenceDataService}
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeGoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: CustomsReferenceDataService)
+class FakeGoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)
     extends GoodsUnderControlAction(departureId, departureP5MessageService, referenceDataService) {
 
   val message: IE060Data = IE060Data(

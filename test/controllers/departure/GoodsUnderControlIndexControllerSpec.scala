@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{CustomsReferenceDataService, DepartureP5MessageService}
+import services.{DepartureP5MessageService, ReferenceDataService}
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -36,14 +36,14 @@ import scala.concurrent.Future
 
 class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val mockReferenceDataService            = mock[CustomsReferenceDataService]
+  private val mockReferenceDataService            = mock[ReferenceDataService]
   private val mockDepartureP5MessageService       = mock[DepartureP5MessageService]
   private val mockGoodsUnderControlActionProvider = mock[GoodsUnderControlActionProvider]
 
   protected def goodsUnderControlAction(
     departureIdP5: String,
     mockDepartureP5MessageService: DepartureP5MessageService,
-    mockReferenceDataService: CustomsReferenceDataService
+    mockReferenceDataService: ReferenceDataService
   ): Unit =
     when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn
       new FakeGoodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
@@ -58,7 +58,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
+      .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
   private val customsOffice = CustomsOffice("GB00006", "UK", None)

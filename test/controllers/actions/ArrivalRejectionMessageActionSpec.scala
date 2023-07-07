@@ -29,15 +29,15 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{ArrivalP5MessageService, CustomsReferenceDataService}
+import services.{ArrivalP5MessageService, ReferenceDataService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ArrivalRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with AppWithDefaultMockFixtures {
 
-  val mockMessageService: ArrivalP5MessageService           = mock[ArrivalP5MessageService]
-  val mockReferenceDataService: CustomsReferenceDataService = mock[CustomsReferenceDataService]
+  val mockMessageService: ArrivalP5MessageService    = mock[ArrivalP5MessageService]
+  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   val functionalError1: FunctionalError = FunctionalError("1", "12", "Codelist violation", None)
   val functionalError2: FunctionalError = FunctionalError("2", "14", "Rule violation", None)

@@ -23,7 +23,7 @@ import models.departureP5.IE060Data
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import services.{CustomsReferenceDataService, DepartureP5MessageService}
+import services.{DepartureP5MessageService, ReferenceDataService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -31,16 +31,16 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GoodsUnderControlActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService, referenceDataService: CustomsReferenceDataService)(
-  implicit ec: ExecutionContext
+class GoodsUnderControlActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)(implicit
+  ec: ExecutionContext
 ) {
 
   def apply(departureId: String): ActionRefiner[IdentifierRequest, GoodsUnderControlRequest] =
     new GoodsUnderControlAction(departureId, departureP5MessageService, referenceDataService)
 }
 
-class GoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: CustomsReferenceDataService)(
-  implicit protected val executionContext: ExecutionContext
+class GoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)(implicit
+  protected val executionContext: ExecutionContext
 ) extends ActionRefiner[IdentifierRequest, GoodsUnderControlRequest] {
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, GoodsUnderControlRequest[A]]] = {

@@ -18,7 +18,7 @@ package connectors
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
-import connectors.CustomsReferenceDataConnectorSpec._
+import connectors.ReferenceDataConnectorSpec._
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -29,14 +29,14 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CustomsReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockSuite {
+class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockSuite {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .configure(conf = "microservice.services.customs-reference-data.port" -> server.port())
 
-  private lazy val connector: CustomsReferenceDataConnector = app.injector.instanceOf[CustomsReferenceDataConnector]
+  private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
 
   private def checkErrorResponse(url: String, result: Future[_]): Assertion = {
     val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
@@ -52,7 +52,7 @@ class CustomsReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMock
     }
   }
 
-  "Customs Reference Data" - {
+  "Reference Data" - {
 
     "GET" - {
 
@@ -146,7 +146,7 @@ class CustomsReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMock
   }
 }
 
-object CustomsReferenceDataConnectorSpec {
+object ReferenceDataConnectorSpec {
 
   private val code            = "GB00001"
   private val typeOfControl   = "44"

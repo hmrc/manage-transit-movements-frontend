@@ -19,14 +19,14 @@ package utils
 import cats.data.OptionT
 import models.departureP5.FunctionalError
 import play.api.i18n.Messages
-import services.CustomsReferenceDataService
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], referenceDataService: CustomsReferenceDataService)(implicit
+class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], referenceDataService: ReferenceDataService)(implicit
   messages: Messages,
   hc: HeaderCarrier,
   ec: ExecutionContext

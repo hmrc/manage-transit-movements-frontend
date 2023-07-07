@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomsReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClient) extends Logging {
+class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClient) extends Logging {
 
   private def version2Header = Seq(
     "Accept" -> "application/vnd.hmrc.2.0+json"
@@ -37,16 +37,16 @@ class CustomsReferenceDataConnector @Inject() (config: FrontendAppConfig, http: 
       response.status match {
         case OK =>
           (response.json \ "data").validate[Seq[A]].map(_.headOption).getOrElse {
-            throw new IllegalStateException("[CustomsReferenceDataConnector][responseHandlerGeneric] Reference data could not be parsed")
+            throw new IllegalStateException("[ReferenceDataConnector][responseHandlerGeneric] Reference data could not be parsed")
           }
         case NO_CONTENT =>
           None
         case NOT_FOUND =>
-          logger.warn("[CustomsReferenceDataConnector][responseHandlerGeneric] Reference data call returned NOT_FOUND")
-          throw new IllegalStateException("[CustomsReferenceDataConnector][responseHandlerGeneric] Reference data could not be found")
+          logger.warn("[ReferenceDataConnector][responseHandlerGeneric] Reference data call returned NOT_FOUND")
+          throw new IllegalStateException("[ReferenceDataConnector][responseHandlerGeneric] Reference data could not be found")
         case other =>
-          logger.warn(s"[CustomsReferenceDataConnector][responseHandlerGeneric] Invalid downstream status $other")
-          throw new IllegalStateException(s"[CustomsReferenceDataConnector][responseHandlerGeneric] Invalid downstream Status $other")
+          logger.warn(s"[ReferenceDataConnector][responseHandlerGeneric] Invalid downstream status $other")
+          throw new IllegalStateException(s"[ReferenceDataConnector][responseHandlerGeneric] Invalid downstream Status $other")
       }
     }
 

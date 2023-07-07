@@ -25,7 +25,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
-import services.CustomsReferenceDataService
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.DepartureCancelledP5Helper
@@ -38,12 +38,12 @@ import scala.concurrent.Future
 
 class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  val mockReferenceDataService: CustomsReferenceDataService = mock[CustomsReferenceDataService]
+  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(api.inject.bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
+      .overrides(api.inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "DepartureCancelledP5HelperSpec" - {
 

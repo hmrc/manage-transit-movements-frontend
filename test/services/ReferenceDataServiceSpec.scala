@@ -17,7 +17,7 @@
 package services
 
 import base.SpecBase
-import connectors.CustomsReferenceDataConnector
+import connectors.ReferenceDataConnector
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
@@ -29,9 +29,9 @@ import org.scalatestplus.mockito.MockitoSugar
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CustomsReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matchers with MockitoSugar with SpecBase {
+class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matchers with MockitoSugar with SpecBase {
 
-  private val mockConnector: CustomsReferenceDataConnector = mock[CustomsReferenceDataConnector]
+  private val mockConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
 
   private val customsOfficeId = "GB00001"
   private val customsOffice   = CustomsOffice(customsOfficeId, "NAME001", None)
@@ -49,14 +49,14 @@ class CustomsReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with
     reset(mockConnector)
   }
 
-  "CustomsReferenceDataService" - {
+  "ReferenceDataService" - {
 
     "getCustomsOfficeByCode" - {
       "should return some customs office" - {
         "when the customs office is found" in {
           when(mockConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
-          val service = new CustomsReferenceDataServiceImpl(mockConnector)
+          val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getCustomsOfficeByCode(customsOfficeId).futureValue.value mustBe customsOffice
 
@@ -68,7 +68,7 @@ class CustomsReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with
         "when the customs office can't be found" in {
           when(mockConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
-          val service = new CustomsReferenceDataServiceImpl(mockConnector)
+          val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getCustomsOfficeByCode(customsOfficeId).futureValue mustBe None
 
@@ -82,7 +82,7 @@ class CustomsReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with
         "when the control type is found" in {
           when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(Some(controlTypeForValidCode)))
 
-          val service = new CustomsReferenceDataServiceImpl(mockConnector)
+          val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getControlType(controlTypeCode).futureValue mustBe controlTypeForValidCode
 
@@ -94,7 +94,7 @@ class CustomsReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with
         "when the control type can't be found" in {
           when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(None))
 
-          val service = new CustomsReferenceDataServiceImpl(mockConnector)
+          val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getControlType(controlTypeCode).futureValue mustBe controlTypeForInvalidCode
 
@@ -104,7 +104,7 @@ class CustomsReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with
         "when the call fails" in {
           when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
 
-          val service = new CustomsReferenceDataServiceImpl(mockConnector)
+          val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getControlType(controlTypeCode).futureValue mustBe controlTypeForInvalidCode
 
@@ -118,7 +118,7 @@ class CustomsReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with
         "when the functional error is found" in {
           when(mockConnector.getFunctionalErrorDescription(any())(any(), any())).thenReturn(Future.successful(Some(functionalErrorForValidCode)))
 
-          val service = new CustomsReferenceDataServiceImpl(mockConnector)
+          val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getFunctionalErrorType(functionalErrorCode).futureValue mustBe functionalErrorForValidCode
 
@@ -130,7 +130,7 @@ class CustomsReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with
         "when the functional error can't be found" in {
           when(mockConnector.getFunctionalErrorDescription(any())(any(), any())).thenReturn(Future.successful(None))
 
-          val service = new CustomsReferenceDataServiceImpl(mockConnector)
+          val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getFunctionalErrorType(functionalErrorCode).futureValue mustBe functionalErrorForInvalidCode
 
@@ -140,7 +140,7 @@ class CustomsReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with
         "when the call fails" in {
           when(mockConnector.getFunctionalErrorDescription(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
 
-          val service = new CustomsReferenceDataServiceImpl(mockConnector)
+          val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getFunctionalErrorType(functionalErrorCode).futureValue mustBe functionalErrorForInvalidCode
 
