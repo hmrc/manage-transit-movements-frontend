@@ -30,8 +30,6 @@ class Module extends AbstractModule {
     bind(classOf[PaginationAppConfig]).asEagerSingleton()
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
     bind(classOf[DraftDepartureService]).to(classOf[MongoDraftDepartureService])
-    bind(classOf[ReferenceDataService]).to(classOf[ReferenceDataServiceImpl]).asEagerSingleton()
     bind(classOf[CustomsReferenceDataService]).to(classOf[CustomsReferenceDataServiceImpl]).asEagerSingleton()
-
   }
 }

@@ -29,16 +29,16 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{DepartureP5MessageService, ReferenceDataService}
+import services.{CustomsReferenceDataService, DepartureP5MessageService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach with AppWithDefaultMockFixtures {
 
-  val mockMessageService: DepartureP5MessageService  = mock[DepartureP5MessageService]
-  val mockCacheService: DepartureCacheConnector      = mock[DepartureCacheConnector]
-  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+  val mockMessageService: DepartureP5MessageService         = mock[DepartureP5MessageService]
+  val mockCacheService: DepartureCacheConnector             = mock[DepartureCacheConnector]
+  val mockReferenceDataService: CustomsReferenceDataService = mock[CustomsReferenceDataService]
 
   val functionalError1: FunctionalError = FunctionalError("1", "12", "Codelist violation", None)
   val functionalError2: FunctionalError = FunctionalError("2", "14", "Rule violation", None)
