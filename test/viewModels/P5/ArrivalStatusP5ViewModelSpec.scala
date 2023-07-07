@@ -172,6 +172,36 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           result mustBe expectedResult
         }
+
+        "and there is 1 functional error" in {
+
+          val messages = MessagesForArrivalMovement(
+            NonEmptyList(
+              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination),
+              List(
+                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks)
+              )
+            )
+          )
+
+          val movementAndMessage = movementAndMessages(RejectionFromOfficeOfDestination).copy(
+            messagesForMovement = messages,
+            functionalErrorCount = 1
+          )
+
+          val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+          val href = controllers.testOnly.routes.ReviewUnloadingRemarkErrorsP5Controller.onPageLoad("arrivalID")
+
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
+                                                        Seq(
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                        )
+          )
+
+          result mustBe expectedResult
+        }
+
       }
 
       "when given Message with head of rejectionFromOfficeOfDestinationArrival for arrival" - {
@@ -213,6 +243,41 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           result mustBe expectedResult
         }
+
+        "and there are 1 functional error" in {
+
+          val movementAndMessage =
+            movementAndMessages(RejectionFromOfficeOfDestination).copy(functionalErrorCount = 1)
+
+          val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+          val href = controllers.testOnly.routes.ReviewArrivalNotificationErrorsP5Controller.onPageLoad("arrivalID")
+
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
+                                                        Seq(
+                                                          ViewMovementAction(s"$href", "movement.status.P5.action.viewError")
+                                                        )
+          )
+
+          result mustBe expectedResult
+        }
+
+      }
+
+    }
+
+    "errorsActionText should return" - {
+
+      "viewErrors when there are more than one functional Error" in {
+        val result = ArrivalStatusP5ViewModel.errorsActionText(2)
+
+        result mustBe "viewErrors"
+      }
+
+      "viewError when there are more than one functional Error" in {
+        val result = ArrivalStatusP5ViewModel.errorsActionText(1)
+
+        result mustBe "viewError"
       }
 
     }

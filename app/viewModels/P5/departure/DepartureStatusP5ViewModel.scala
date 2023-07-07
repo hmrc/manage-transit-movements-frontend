@@ -308,7 +308,7 @@ object DepartureStatusP5ViewModel {
       DepartureStatusP5ViewModel("movement.status.P5.guaranteeWrittenOff", actions = Nil)
   }
 
-  private def errorsActionText(errors: Seq[String]): String = if (errors.length == 1) {
+  def errorsActionText(errors: Seq[String]): String = if (errors.length == 1) {
     "viewError"
   } else {
     "viewErrors"

@@ -23,6 +23,7 @@ import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.departure.DepartureStatusP5ViewModel
+import viewModels.P5.departure.DepartureStatusP5ViewModel.errorsActionText
 import viewModels.ViewMovementAction
 
 import java.time.LocalDateTime
@@ -309,7 +310,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           result mustBe expectedResult
         }
 
-        "and declaration is not amendable with errors in range 1 to 10" in {
+        "and declaration is not amendable with errors in range 2 to 10" in {
           val movementAndMessage = DepartureMovementAndMessage(
             departureMovement,
             MessagesForDepartureMovement(
@@ -333,6 +334,37 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ViewMovementAction(
                 controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+
+        "and declaration is not amendable with 1 error" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = false,
+            Seq("body/path")
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
               )
             )
           )
@@ -585,6 +617,54 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result mustBe expectedResult
     }
 
+    "with 1 FunctionalError" in {
+      val movementAndMessage = DepartureMovementAndMessage(
+        departureMovement,
+        MessagesForDepartureMovement(
+          NonEmptyList(
+            DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+            List(
+              DepartureMessage("messageId2", dateTimePast, CancellationRequested, "body/path")
+            )
+          )
+        ),
+        "AB123",
+        isDeclarationAmendable = false,
+        Seq("abc")
+      )
+
+      val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.rejectedByOfficeOfDeparture",
+        Seq(
+          ViewMovementAction(
+            controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureIdP5).url,
+            "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
+          )
+        )
+      )
+
+      result mustBe expectedResult
+    }
+
+    "errorsActionText should return" - {
+
+      "viewErrors when there are more than one functional Error" in {
+        val errors = Seq("abc", "bcd")
+        val result = errorsActionText(errors)
+
+        result mustBe "viewErrors"
+      }
+
+      "viewError when there are more than one functional Error" in {
+        val errors = Seq("abc")
+        val result = errorsActionText(errors)
+
+        result mustBe "viewError"
+      }
+
+    }
   }
 
 }

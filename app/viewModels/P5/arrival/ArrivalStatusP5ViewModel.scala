@@ -114,7 +114,7 @@ object ArrivalStatusP5ViewModel {
       )
   }
 
-  private def errorsActionText(errors: Int): String = if (errors == 1) {
+  def errorsActionText(errors: Int): String = if (errors == 1) {
     "viewError"
   } else {
     "viewErrors"
