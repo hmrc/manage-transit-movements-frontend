@@ -17,10 +17,10 @@
 package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.{DepartureCacheConnector, ReferenceDataConnector}
+import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
-import models.departureP5.{FunctionalError, _}
+import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.DepartureP5MessageService
+import services.{CustomsReferenceDataService, DepartureP5MessageService}
 import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel
 import views.html.departure.TestOnly.CancellationNotificationErrorsP5View
 
@@ -39,7 +39,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
   private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
-  private val mockReferenceDataConnector                = mock[ReferenceDataConnector]
+  private val mockReferenceDataService                  = mock[CustomsReferenceDataService]
 
   lazy val controllerRoute: String = controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5).url
 
@@ -56,7 +56,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
     reset(mockDepartureP5MessageService)
     reset(mockRejectionMessageActionProvider)
     reset(mockCacheService)
-    reset(mockReferenceDataConnector)
+    reset(mockReferenceDataService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -64,7 +64,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
       .guiceApplicationBuilder()
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
-      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+      .overrides(bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
 
   "CancellationNotificationErrorsP5Controller" - {
 
@@ -81,7 +81,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
         .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrnString)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
@@ -124,7 +124,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
         .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrnString)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
@@ -154,7 +154,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
         .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 

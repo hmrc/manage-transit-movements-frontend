@@ -18,7 +18,7 @@ package config
 
 import com.google.inject.AbstractModule
 import controllers.actions._
-import services.{DraftDepartureService, MongoDraftDepartureService, ReferenceDataService, ReferenceDataServiceImpl}
+import services._
 
 import java.time.Clock
 
@@ -31,6 +31,7 @@ class Module extends AbstractModule {
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
     bind(classOf[DraftDepartureService]).to(classOf[MongoDraftDepartureService])
     bind(classOf[ReferenceDataService]).to(classOf[ReferenceDataServiceImpl]).asEagerSingleton()
+    bind(classOf[CustomsReferenceDataService]).to(classOf[CustomsReferenceDataServiceImpl]).asEagerSingleton()
 
   }
 }

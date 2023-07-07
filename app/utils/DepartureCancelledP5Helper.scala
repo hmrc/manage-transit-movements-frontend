@@ -19,7 +19,7 @@ package utils
 import models.departureP5.IE009MessageData
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
-import services.ReferenceDataService
+import services.CustomsReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
@@ -27,7 +27,7 @@ import viewModels.sections.Section
 import java.time.LocalDateTime
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData, referenceDataService: ReferenceDataService)(implicit
+class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData, referenceDataService: CustomsReferenceDataService)(implicit
   messages: Messages,
   ec: ExecutionContext,
   hc: HeaderCarrier

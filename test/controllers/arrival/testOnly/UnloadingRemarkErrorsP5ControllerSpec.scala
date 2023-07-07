@@ -17,7 +17,6 @@
 package controllers.arrival.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.ReferenceDataConnector
 import controllers.actions.{ArrivalRejectionMessageActionProvider, FakeArrivalRejectionMessageAction}
 import generators.Generators
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
@@ -29,7 +28,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.ArrivalP5MessageService
+import services.{ArrivalP5MessageService, CustomsReferenceDataService}
 import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
 import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
 
@@ -39,7 +38,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
 
   private val mockArrivalP5MessageService                = mock[ArrivalP5MessageService]
   private val mockRejectionMessageActionProvider         = mock[ArrivalRejectionMessageActionProvider]
-  private val mockReferenceDataConnector                 = mock[ReferenceDataConnector]
+  private val mockReferenceDataService                   = mock[CustomsReferenceDataService]
   lazy val unloadingNotificationErrorsController: String = controllers.testOnly.routes.UnloadingRemarkErrorsP5Controller.onPageLoad(arrivalIdP5).url
 
   private val mrnString = "MRNAB123"
@@ -51,14 +50,14 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
     super.beforeEach()
     reset(mockArrivalP5MessageService)
     reset(mockRejectionMessageActionProvider)
-    reset(mockReferenceDataConnector)
+    reset(mockReferenceDataService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
-      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+      .overrides(bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
 
   "UnloadingRemarkErrorsP5Controller" - {
 
@@ -74,7 +73,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
@@ -117,7 +116,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
@@ -148,7 +147,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
+      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)

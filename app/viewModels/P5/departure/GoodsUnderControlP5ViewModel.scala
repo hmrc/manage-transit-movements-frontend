@@ -19,7 +19,7 @@ package viewModels.P5.departure
 import models.departureP5.IE060MessageData
 import play.api.i18n.Messages
 import play.api.mvc.Call
-import services.ReferenceDataService
+import services.CustomsReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GoodsUnderControlP5MessageHelper
 import viewModels.sections.Section
@@ -69,7 +69,7 @@ case class GoodsUnderControlP5ViewModel(sections: Seq[Section], requestedDocumen
 
 object GoodsUnderControlP5ViewModel {
 
-  class GoodsUnderControlP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class GoodsUnderControlP5ViewModelProvider @Inject() (referenceDataService: CustomsReferenceDataService) {
 
     def apply(
       ie060MessageData: IE060MessageData

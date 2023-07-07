@@ -18,7 +18,7 @@ package viewModels.P5.arrival
 
 import models.arrivalP5.IE057MessageData
 import play.api.i18n.Messages
-import services.ReferenceDataService
+import services.CustomsReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.RejectionMessageP5MessageHelper
 import viewModels.sections.Section
@@ -59,7 +59,7 @@ case class ReviewUnloadingRemarkErrorsP5ViewModel(sections: Seq[Section], mrn: S
 
 object ReviewUnloadingRemarkErrorsP5ViewModel {
 
-  class ReviewUnloadingRemarkErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class ReviewUnloadingRemarkErrorsP5ViewModelProvider @Inject() (referenceDataService: CustomsReferenceDataService) {
 
     def apply(
       ie057MessageData: IE057MessageData,

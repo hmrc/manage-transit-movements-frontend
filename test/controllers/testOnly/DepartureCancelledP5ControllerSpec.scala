@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{DepartureP5MessageService, ReferenceDataService}
+import services.{CustomsReferenceDataService, DepartureP5MessageService}
 import viewModels.P5.departure.DepartureCancelledP5ViewModel
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
 import views.html.departure.TestOnly.DepartureCancelledP5View
@@ -41,7 +41,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
   private val mockDepartureCancelledP5ViewModelProvider = mock[DepartureCancelledP5ViewModelProvider]
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockDepartureCancelledActionProvider      = mock[DepartureCancelledActionProvider]
-  private val mockReferenceDataService                  = mock[ReferenceDataService]
+  private val mockReferenceDataService                  = mock[CustomsReferenceDataService]
 
   protected def departureCancelledAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService): Unit =
     when(mockDepartureCancelledActionProvider.apply(any())) thenReturn new FakeDepartureCancelledAction(departureIdP5, mockDepartureP5MessageService)
@@ -61,7 +61,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       .guiceApplicationBuilder()
       .overrides(bind[DepartureCancelledP5ViewModelProvider].toInstance(mockDepartureCancelledP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
-      .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
+      .overrides(bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
 
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
 

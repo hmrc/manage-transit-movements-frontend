@@ -25,7 +25,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
-import services.ReferenceDataService
+import services.CustomsReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.RejectionMessageP5MessageHelper
@@ -35,14 +35,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
-  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+  val mockReferenceDataService: CustomsReferenceDataService = mock[CustomsReferenceDataService]
 
   val lrnString = "LRNAB123"
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
+      .overrides(inject.bind[CustomsReferenceDataService].toInstance(mockReferenceDataService))
 
   "RejectionMessageP5MessageHelper" - {
 

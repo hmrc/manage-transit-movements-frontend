@@ -21,7 +21,7 @@ import controllers.actions._
 import models.departureP5.IE009MessageData
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import services.ReferenceDataService
+import services.CustomsReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
 import views.html.departure.TestOnly.DepartureCancelledP5View
@@ -36,7 +36,7 @@ class DepartureCancelledP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: DepartureCancelledP5ViewModelProvider,
   view: DepartureCancelledP5View,
-  referenceDataService: ReferenceDataService
+  referenceDataService: CustomsReferenceDataService
 )(implicit val executionContext: ExecutionContext, frontendAppConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {

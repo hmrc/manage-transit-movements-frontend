@@ -29,7 +29,7 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{DepartureP5MessageService, ReferenceDataService}
+import services.{CustomsReferenceDataService, DepartureP5MessageService}
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -38,8 +38,8 @@ import scala.concurrent.Future
 
 class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with AppWithDefaultMockFixtures {
 
-  val mockMessageService: DepartureP5MessageService  = mock[DepartureP5MessageService]
-  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+  val mockMessageService: DepartureP5MessageService         = mock[DepartureP5MessageService]
+  val mockReferenceDataService: CustomsReferenceDataService = mock[CustomsReferenceDataService]
 
   val message: IE060Data = IE060Data(
     IE060MessageData(
