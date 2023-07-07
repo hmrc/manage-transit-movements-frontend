@@ -65,8 +65,8 @@ unauthorised.if.you.are.waiting.for.an.eori.number = You must have an account wi
 numberOfMovements.singular = Showing {0} result
 numberOfMovements.plural = Showing {0} results
 
-numberOfMovements.singular.withLRN = Showing {0} result matching {1}
-numberOfMovements.plural.withLRN = Showing {0} results matching {1}
+numberOfMovements.singular.withSearchParam = Showing {0} result matching {1}
+numberOfMovements.plural.withSearchParam = Showing {0} results matching {1}
 
 viewArrivalNotifications.title                      = Arrival notifications
 viewArrivalNotifications.heading                    = Arrival notifications

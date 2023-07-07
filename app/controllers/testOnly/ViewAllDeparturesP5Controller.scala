@@ -37,37 +37,56 @@ import scala.concurrent.{ExecutionContext, Future}
 class ViewAllDeparturesP5Controller @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  val config: FrontendAppConfig,
-  val paginationAppConfig: PaginationAppConfig,
   formProvider: DeparturesSearchFormProvider,
   departureP5MessageService: DepartureP5MessageService,
   departureMovementP5Connector: DepartureMovementP5Connector,
   view: ViewAllDeparturesP5View
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(page: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      buildView(form)(Ok(_))
+      val preparedForm = lrn match {
+        case Some(value) => form.fill(value)
+        case None        => form
+      }
+      buildView(preparedForm, page, lrn)(Ok(_))
   }
 
-  private def buildView(form: Form[String])(
+  def onSubmit(): Action[AnyContent] = (Action andThen identify).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => buildView(formWithErrors, None, None)(BadRequest(_)),
+          value => {
+            val lrn: Option[String] = Option(value).filter(_.trim.nonEmpty)
+            Future.successful(Redirect(controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, lrn)))
+          }
+        )
+  }
+
+  private def buildView(form: Form[String], page: Option[Int], searchParam: Option[String])(
     block: HtmlFormat.Appendable => Result
-  )(implicit request: IdentifierRequest[_]): Future[Result] =
-    departureMovementP5Connector.getAllMovements().flatMap {
+  )(implicit request: IdentifierRequest[_]): Future[Result] = {
+    val currentPage = page.getOrElse(1)
+    departureMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.departuresNumberOfMovements, searchParam).flatMap {
       case Some(movements) =>
         departureP5MessageService.getMessagesForAllMovements(movements).map {
           movementsAndMessages =>
             val viewDepartureP5: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
 
             val paginationViewModel = MovementsPaginationViewModel(
-              totalNumberOfMovements = movementsAndMessages.length,
-              currentPage = 1,
-              numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
-              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad().url
+              totalNumberOfMovements = movements.totalCount,
+              currentPage = currentPage,
+              numberOfMovementsPerPage = paginationConfig.departuresNumberOfMovements,
+              href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url,
+              additionalParams = Seq(
+                searchParam.map("lrn" -> _)
+              ).flatten
             )
 
             block(
@@ -79,5 +98,6 @@ class ViewAllDeparturesP5Controller @Inject() (
         }
       case None => Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
     }
+  }
 
 }

@@ -61,7 +61,7 @@ case class GoodsUnderControlP5ViewModel(sections: Seq[Section], requestedDocumen
 
   def type0LinkPrefix(implicit messages: Messages): String = messages("departure.ie060.message.paragraph4.prefix")
 
-  val type0ParagraphLink: Call                                 = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad()
+  val type0ParagraphLink: Call                                 = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None)
   def type0LinkText(implicit messages: Messages): String       = messages("departure.ie060.message.paragraph4.linkText")
   def type0LinkTextSuffix(implicit messages: Messages): String = messages("departure.ie060.message.paragraph4.suffix")
 

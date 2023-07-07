@@ -38,6 +38,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val mrn: String               = "ABCD1234567890123"
 
   val departureId: DepartureId = DepartureId(1)
+  val messageId: String        = "343ffafafaaf"
   val departureIdP5: String    = "643cffea2dca70b2"
   val arrivalIdP5: String      = "62f4ebbb765ba8c2"
 

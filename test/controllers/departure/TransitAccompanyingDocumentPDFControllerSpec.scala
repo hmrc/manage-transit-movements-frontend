@@ -20,7 +20,6 @@ import akka.util.ByteString
 import base.SpecBase
 import connectors.ManageDocumentsConnector
 import generators.Generators
-import models.DepartureId
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Gen

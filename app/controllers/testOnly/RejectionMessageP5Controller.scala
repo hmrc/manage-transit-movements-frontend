@@ -60,7 +60,7 @@ class RejectionMessageP5Controller @Inject() (
       if (request.isDeclarationAmendable && xPaths.nonEmpty) {
         cacheConnector.handleErrors(request.lrn, xPaths).map {
           case true =>
-            Redirect(config.departureFrontendTaskListUrl(request.lrn))
+            Redirect(config.departureNewLocalReferenceNumberUrl(request.lrn))
           case false =>
             Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }

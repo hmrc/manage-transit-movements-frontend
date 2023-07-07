@@ -14,37 +14,50 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.testOnly
 
+import connectors.ManageDocumentsConnector
 import controllers.actions.IdentifierAction
+import controllers.routes
 import play.api.i18n.I18nSupport
+import play.api.libs.ws.WSResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.WhatDoYouWantToDoService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.WhatDoYouWantToDoView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class WhatDoYouWantToDoController @Inject() (
+class UnloadingPermissionController @Inject() (
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
-  view: WhatDoYouWantToDoView,
-  whatDoYouWantToDoService: WhatDoYouWantToDoService
-)(implicit ec: ExecutionContext)
+  connector: ManageDocumentsConnector
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
+  def getUnloadingPermissionDocument(messageId: String, arrivalId: String): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
-      for {
-        arrivalsAvailability <- whatDoYouWantToDoService.fetchArrivalsAvailability()
-        viewAllArrivalUrl = whatDoYouWantToDoService.fetchArrivalsUrl()
-        departuresAvailability <- whatDoYouWantToDoService.fetchDeparturesAvailability()
-        viewAllDeparturesUrl = whatDoYouWantToDoService.fetchDeparturesUrl()
-        draftDeparturesAvailability <- whatDoYouWantToDoService.fetchDraftDepartureAvailability()
-      } yield Ok(
-        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalUrl, viewAllDeparturesUrl)
-      )
+      connector.getUnloadingPermission(messageId, arrivalId).map {
+        result =>
+          result.status match {
+            case OK =>
+              Ok(result.bodyAsBytes.toArray).withHeaders(headers(result): _*)
+            case _ =>
+              Redirect(routes.ErrorController.technicalDifficulties())
+          }
+      }
   }
+
+  private def headers(result: WSResponse): Seq[(String, String)] = {
+    def header(key: String): Seq[(String, String)] =
+      result.headers
+        .get(key)
+        .flatMap {
+          _.headOption.map((key, _))
+        }
+        .toSeq
+
+    header(CONTENT_DISPOSITION) ++ header(CONTENT_TYPE)
+  }
+
 }

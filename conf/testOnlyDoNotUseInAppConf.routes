@@ -45,10 +45,14 @@ GET         /manage-transit-movements/test-only/:departureId/departure/:messageI
 POST        /manage-transit-movements/test-only/cancellation/submit                                                     controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
 + nocsrf
-GET         /manage-transit-movements/test-only/view-arrival-notifications                                              controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad()
+GET         /manage-transit-movements/test-only/view-arrival-notifications                                              controllers.testOnly.ViewAllArrivalsP5Controller.onPageLoad(page: Option[Int], mrn: Option[String])
++ nocsrf
+POST        /manage-transit-movements/test-only/view-arrival-notifications                                              controllers.testOnly.ViewAllArrivalsP5Controller.onSubmit()
 
 + nocsrf
-GET         /manage-transit-movements/test-only/view-departure-declarations                                             controllers.testOnly.ViewAllDeparturesP5Controller.onPageLoad()
+GET         /manage-transit-movements/test-only/view-departure-declarations                                             controllers.testOnly.ViewAllDeparturesP5Controller.onPageLoad(page: Option[Int], lrn: Option[String])
++ nocsrf
+POST        /manage-transit-movements/test-only/view-departure-declarations                                             controllers.testOnly.ViewAllDeparturesP5Controller.onSubmit()
 
 GET         /manage-transit-movements/test-only/:departureId/goods-under-control-index                                 controllers.testOnly.GoodsUnderControlIndexController.onPageLoad(departureId: String)
 
@@ -71,11 +75,11 @@ GET        /manage-transit-movements/test-only/:departureId/review-cancellation-
 
 GET        /manage-transit-movements/test-only/:departureId/send-departure-declaration-errors                         controllers.testOnly.RejectionMessageP5Controller.onAmend(departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/is-declaration-cancelled                     controllers.testOnly.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String)
+GET        /manage-transit-movements/test-only/:departureId/is-declaration-cancelled                                   controllers.testOnly.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/declaration-cancelled                         controllers.testOnly.DepartureCancelledP5Controller.declarationCancelled(departureId: String)
+GET        /manage-transit-movements/test-only/:departureId/declaration-cancelled                                       controllers.testOnly.DepartureCancelledP5Controller.declarationCancelled(departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/declaration-not-cancelled                     controllers.testOnly.DepartureCancelledP5Controller.declarationNotCancelled(departureId: String)
+GET        /manage-transit-movements/test-only/:departureId/declaration-not-cancelled                                  controllers.testOnly.DepartureCancelledP5Controller.declarationNotCancelled(departureId: String)
 
 GET        /manage-transit-movements/test-only/:arrivalId/unloading-remarks-errors                                     controllers.testOnly.UnloadingRemarkErrorsP5Controller.onPageLoad(arrivalId: String)
 
@@ -84,6 +88,8 @@ GET        /manage-transit-movements/test-only/:arrivalId/review-unloading-remar
 GET        /manage-transit-movements/test-only/:arrivalId/review-arrival-notification-errors                           controllers.testOnly.ReviewArrivalNotificationErrorsP5Controller.onPageLoad(arrivalId: String)
 
 GET        /manage-transit-movements/test-only/:departureId/transit-accompanying-document/:messageId                    controllers.testOnly.TransitAccompanyingDocumentController.getTAD(messageId: String, departureId: String)
+
+GET        /manage-transit-movements/test-only/:arrivalId/unloading-permission-document/:messageId                      controllers.testOnly.UnloadingPermissionController.getUnloadingPermissionDocument(messageId: String, arrivalId: String)
 
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                                                        controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()
