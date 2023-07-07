@@ -41,7 +41,7 @@ class MessageSpec extends SpecBase {
               |          "href":"/customs/transits/movements/arrivals/63498209a2d89ad8"
               |       }
               |   },
-              |   "id":"634982098f02f00a",
+              |   "id":"343ffafafaaf",
               |   "arrivalId":"63498209a2d89ad8",
               |   "received":"2022-11-10T15:32:51.459Z",
               |   "type": "${messageType.toString}"
@@ -50,6 +50,7 @@ class MessageSpec extends SpecBase {
           )
 
           val expectedResult = ArrivalMessage(
+            messageId,
             LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
             messageType
           )

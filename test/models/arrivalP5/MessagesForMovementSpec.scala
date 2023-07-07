@@ -32,16 +32,19 @@ class MessagesForMovementSpec extends SpecBase {
       "must return previous message" in {
 
         val currentMessage = ArrivalMessage(
+          messageId,
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
           ArrivalMessageType.GoodsReleasedNotification
         )
 
         val previousMessage = ArrivalMessage(
+          messageId,
           LocalDateTime.parse("2022-11-12T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
           ArrivalMessageType.UnloadingRemarks
         )
 
         val lastMessage = ArrivalMessage(
+          messageId,
           LocalDateTime.parse("2022-11-11T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
           ArrivalMessageType.UnloadingPermission
         )
@@ -57,6 +60,7 @@ class MessagesForMovementSpec extends SpecBase {
       "must return None when no previous message" in {
 
         val currentMessage = ArrivalMessage(
+          messageId,
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
           ArrivalMessageType.GoodsReleasedNotification
         )
@@ -77,18 +81,22 @@ class MessagesForMovementSpec extends SpecBase {
             |{
             |   "messages":[
             |      {
+            |         "id": "343ffafafaaf",
             |         "received":"2022-11-10T11:32:51.459Z",
             |         "type":"IE043"
             |      },
             |      {
+            |         "id": "343ffafafaaf",
             |         "received":"2022-11-10T10:32:51.459Z",
             |         "type":"IE007"
             |      },
             |      {
+            |         "id": "343ffafafaaf",
             |         "received":"2022-11-10T12:32:52.459Z",
             |         "type":"IE025"
             |      },
             |      {
+            |         "id": "343ffafafaaf",
             |         "received":"2022-11-10T12:32:51.459Z",
             |         "type":"IE044"
             |      }
@@ -99,19 +107,23 @@ class MessagesForMovementSpec extends SpecBase {
       val expectedResult = MessagesForArrivalMovement(
         NonEmptyList(
           ArrivalMessage(
+            messageId,
             LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
             ArrivalMessageType.GoodsReleasedNotification
           ),
           List(
             ArrivalMessage(
+              messageId,
               LocalDateTime.parse("2022-11-10T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingRemarks
             ),
             ArrivalMessage(
+              messageId,
               LocalDateTime.parse("2022-11-10T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingPermission
             ),
             ArrivalMessage(
+              messageId,
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.ArrivalNotification
             )
@@ -131,18 +143,22 @@ class MessagesForMovementSpec extends SpecBase {
             |{
             |   "messages":[
             |      {
+            |         "id": "343ffafafaaf",
             |         "received":"2022-11-11T11:32:51.459Z",
             |         "type":"IE043"
             |      },
             |      {
+            |         "id": "343ffafafaaf",
             |         "received":"2022-11-10T10:32:51.459Z",
             |         "type":"IE007"
             |      },
             |      {
+            |         "id": "343ffafafaaf",
             |         "received":"2022-11-12T13:32:52.459Z",
             |         "type":"IE025"
             |      },
             |      {
+            |         "id": "343ffafafaaf",
             |         "received":"2022-11-12T12:32:51.459Z",
             |         "type":"IE044"
             |      }
@@ -153,19 +169,23 @@ class MessagesForMovementSpec extends SpecBase {
       val expectedResult = MessagesForArrivalMovement(
         NonEmptyList(
           ArrivalMessage(
+            messageId,
             LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
             ArrivalMessageType.GoodsReleasedNotification
           ),
           List(
             ArrivalMessage(
+              messageId,
               LocalDateTime.parse("2022-11-12T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingRemarks
             ),
             ArrivalMessage(
+              messageId,
               LocalDateTime.parse("2022-11-11T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingPermission
             ),
             ArrivalMessage(
+              messageId,
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.ArrivalNotification
             )

@@ -346,7 +346,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
             |                "href":"/customs/transits/movements/arrivals/1"
             |             }
             |         },
-            |         "id":"634982098f02f00a",
+            |         "id":"343ffafafaaf",
             |         "arrivalId":"1",
             |         "received":"2022-11-10T12:32:51.459Z",
             |         "type":"IE007"
@@ -360,7 +360,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
             |                "href":"/customs/transits/movements/arrivals/1"
             |             }
             |         },
-            |         "id":"634982098f02f00a",
+            |         "id":"343ffafafaaf",
             |         "arrivalId":"1",
             |         "received":"2022-11-11T15:32:51.459Z",
             |         "type":"IE043"
@@ -378,11 +378,13 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
         val expectedResult = MessagesForArrivalMovement(
           NonEmptyList(
             ArrivalMessage(
+              messageId,
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.UnloadingPermission
             ),
             List(
               ArrivalMessage(
+                messageId,
                 LocalDateTime.parse("2022-11-10T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
                 ArrivalMessageType.ArrivalNotification
               )

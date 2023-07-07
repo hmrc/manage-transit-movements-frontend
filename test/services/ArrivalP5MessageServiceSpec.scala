@@ -53,8 +53,8 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
           val movement1 = ArrivalMovement("arrivalId1", "movementReferenceNo1", dateTime, "/locationUrl1")
           val movement2 = ArrivalMovement("arrivalId2", "movementReferenceNo2", dateTime, "/locationUrl2")
 
-          val message1 = ArrivalMessage(dateTime.minusDays(1), ArrivalMessageType.ArrivalNotification)
-          val message2 = ArrivalMessage(dateTime, ArrivalMessageType.UnloadingPermission)
+          val message1 = ArrivalMessage(messageId, dateTime.minusDays(1), ArrivalMessageType.ArrivalNotification)
+          val message2 = ArrivalMessage(messageId, dateTime, ArrivalMessageType.UnloadingPermission)
 
           val messages1 = MessagesForArrivalMovement(NonEmptyList(message1, List(message2)))
           val messages2 = MessagesForArrivalMovement(NonEmptyList(message1, List(message2)))
@@ -82,9 +82,9 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
           val movement1 = ArrivalMovement("arrivalId1", "movementReferenceNo1", dateTime, "/locationUrl1")
           val movement2 = ArrivalMovement("arrivalId2", "movementReferenceNo2", dateTime, "/locationUrl2")
 
-          val message1 = ArrivalMessage(dateTime.minusDays(1), ArrivalMessageType.ArrivalNotification)
-          val message2 = ArrivalMessage(dateTime, ArrivalMessageType.UnloadingPermission)
-          val message3 = ArrivalMessage(dateTime, ArrivalMessageType.RejectionFromOfficeOfDestination)
+          val message1 = ArrivalMessage(messageId, dateTime.minusDays(1), ArrivalMessageType.ArrivalNotification)
+          val message2 = ArrivalMessage(messageId, dateTime, ArrivalMessageType.UnloadingPermission)
+          val message3 = ArrivalMessage(messageId, dateTime, ArrivalMessageType.RejectionFromOfficeOfDestination)
 
           val messages1 = MessagesForArrivalMovement(NonEmptyList(message1, List(message3)))
           val messages2 = MessagesForArrivalMovement(NonEmptyList(message1, List(message2, message3)))
@@ -145,8 +145,8 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
         val movement1 = ArrivalMovement("arrivalId1", "movementReferenceNo1", dateTime, "/locationUrl1")
         val movement2 = ArrivalMovement("arrivalId2", "movementReferenceNo2", dateTime, "/locationUrl2")
 
-        val message2 = ArrivalMessage(dateTime, ArrivalMessageType.UnloadingPermission)
-        val message3 = ArrivalMessage(dateTime, ArrivalMessageType.RejectionFromOfficeOfDestination)
+        val message2 = ArrivalMessage(messageId, dateTime, ArrivalMessageType.UnloadingPermission)
+        val message3 = ArrivalMessage(messageId, dateTime, ArrivalMessageType.RejectionFromOfficeOfDestination)
 
         val messages1 = MessagesForArrivalMovement(NonEmptyList(message2, List.empty))
         val messages2 = MessagesForArrivalMovement(NonEmptyList(message3, List.empty))
