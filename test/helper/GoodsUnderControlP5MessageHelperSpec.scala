@@ -157,7 +157,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
             )
           )
 
-          when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
             .thenReturn(Future.successful(Some(CustomsOffice("22323323", "Office", None))))
 
           val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
@@ -181,7 +181,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
             )
           )
 
-          when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
             .thenReturn(Future.successful(None))
 
           val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
@@ -321,7 +321,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
@@ -355,7 +355,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 

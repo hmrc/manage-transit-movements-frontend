@@ -52,13 +52,15 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
     }
   }
 
+  private val queryParams = Seq("foo" -> "bar")
+
   "Reference Data" - {
 
     "GET" - {
 
       "getCustomsOffice" - {
 
-        val url = s"$customsOfficeUri?data.id=$code"
+        val url = s"$baseUrl/filtered-lists/CustomsOffices?foo=bar"
 
         "should handle a 200 response for customs offices" in {
           server.stubFor(
@@ -66,9 +68,9 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(customsOfficesResponseJson))
           )
 
-          val expectedResult = CustomsOffice(code, "NAME001", Some("004412323232345"))
+          val expectedResult = Seq(CustomsOffice(code, "NAME001", Some("004412323232345")))
 
-          connector.getCustomsOffice(code).futureValue.value mustBe expectedResult
+          connector.getCustomsOffices(queryParams).futureValue mustBe expectedResult
         }
 
         "should handle a 204 response for customs offices" in {
@@ -77,17 +79,17 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(aResponse().withStatus(NO_CONTENT))
           )
 
-          connector.getCustomsOffice(code).futureValue mustBe None
+          connector.getCustomsOffices(queryParams).futureValue mustBe Nil
         }
 
         "should handle client and server errors for customs offices" in {
-          checkErrorResponse(url, connector.getCustomsOffice(code))
+          checkErrorResponse(url, connector.getCustomsOffices(queryParams))
         }
       }
 
       "getControlType" - {
 
-        val url = s"$controlTypeUri?data.code=$typeOfControl"
+        val url = s"$baseUrl/filtered-lists/ControlType?foo=bar"
 
         "should handle a 200 response for control types" in {
           server.stubFor(
@@ -95,9 +97,9 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(controlTypesResponseJson))
           )
 
-          val expectedResult = ControlType(typeOfControl, "Intrusive")
+          val expectedResult = Seq(ControlType(typeOfControl, "Intrusive"))
 
-          connector.getControlType(typeOfControl).futureValue.value mustBe expectedResult
+          connector.getControlTypes(queryParams).futureValue mustBe expectedResult
         }
 
         "should handle a 204 response for control types" in {
@@ -106,17 +108,17 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(aResponse().withStatus(NO_CONTENT))
           )
 
-          connector.getControlType(typeOfControl).futureValue mustBe None
+          connector.getControlTypes(queryParams).futureValue mustBe Nil
         }
 
         "should handle client and server errors for control types" in {
-          checkErrorResponse(url, connector.getControlType(typeOfControl))
+          checkErrorResponse(url, connector.getControlTypes(queryParams))
         }
       }
 
       "getFunctionalErrorDescription" - {
 
-        val url = s"$functionalErrorUri?data.code=$functionalError"
+        val url = s"$baseUrl/filtered-lists/FunctionalErrorCodesIeCA?foo=bar"
 
         "should handle a 200 response for functional errors" in {
           server.stubFor(
@@ -124,9 +126,9 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(functionalErrorsResponseJson))
           )
 
-          val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
+          val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
 
-          connector.getFunctionalErrorDescription(functionalError).futureValue.value mustBe expectedResult
+          connector.getFunctionalErrors(queryParams).futureValue mustBe expectedResult
         }
 
         "should handle a 204 response for functional errors" in {
@@ -135,11 +137,11 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(aResponse().withStatus(NO_CONTENT))
           )
 
-          connector.getFunctionalErrorDescription(functionalError).futureValue mustBe None
+          connector.getFunctionalErrors(queryParams).futureValue mustBe Nil
         }
 
         "should handle client and server errors for functional errors" in {
-          checkErrorResponse(url, connector.getFunctionalErrorDescription(functionalError))
+          checkErrorResponse(url, connector.getFunctionalErrors(queryParams))
         }
       }
     }
@@ -152,10 +154,7 @@ object ReferenceDataConnectorSpec {
   private val typeOfControl   = "44"
   private val functionalError = "14"
 
-  private val baseUrl            = "/customs-reference-data/test-only"
-  private val customsOfficeUri   = s"$baseUrl/filtered-lists/CustomsOffices"
-  private val controlTypeUri     = s"$baseUrl/filtered-lists/ControlType"
-  private val functionalErrorUri = s"$baseUrl/filtered-lists/FunctionalErrorCodesIeCA"
+  private val baseUrl = "/customs-reference-data/test-only"
 
   private val customsOfficesResponseJson: String =
     s"""

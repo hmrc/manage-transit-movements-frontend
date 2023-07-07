@@ -64,7 +64,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
             )
           )
 
-          when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+          when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
           val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
 
@@ -85,7 +85,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
             )
           )
 
-          when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+          when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
           val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
 
@@ -124,7 +124,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "MRN Invalid")
 
-        when(mockReferenceDataService.getFunctionalErrorType("12")).thenReturn(Future.successful(functionalErrorReferenceData))
+        when(mockReferenceDataService.getFunctionalError("12")).thenReturn(Future.successful(functionalErrorReferenceData))
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
@@ -162,8 +162,8 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
         val functionalErrorReferenceData1 = FunctionalErrorWithDesc("12", "MRN Invalid")
         val functionalErrorReferenceData2 = FunctionalErrorWithDesc("14", "Rule Violation")
 
-        when(mockReferenceDataService.getFunctionalErrorType("12")).thenReturn(Future.successful(functionalErrorReferenceData1))
-        when(mockReferenceDataService.getFunctionalErrorType("14")).thenReturn(Future.successful(functionalErrorReferenceData2))
+        when(mockReferenceDataService.getFunctionalError("12")).thenReturn(Future.successful(functionalErrorReferenceData1))
+        when(mockReferenceDataService.getFunctionalError("14")).thenReturn(Future.successful(functionalErrorReferenceData2))
 
         val message: IE056Data = IE056Data(
           IE056MessageData(

@@ -46,7 +46,7 @@ class UnloadingRemarkErrorsP5Controller @Inject() (
       val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber
 
       if (functionalErrors.isEmpty || (functionalErrors.size > config.maxErrorsForArrivalNotification)) {
-        referenceDataService.getCustomsOfficeByCode(customsOfficeReference).map {
+        referenceDataService.getCustomsOffice(customsOfficeReference).map {
           customsOffice =>
             Ok(
               view(

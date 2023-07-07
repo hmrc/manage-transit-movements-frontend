@@ -48,7 +48,7 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
 
     "when there is no error" - {
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ArrivalNotificationErrorP5ViewModelProvider()
       val result            = viewModelProvider.apply(mrnString, true)
@@ -77,7 +77,7 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
 
     "when there is more than 10 errors" - {
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ArrivalNotificationErrorP5ViewModelProvider()
       val result            = viewModelProvider.apply(mrnString, false)

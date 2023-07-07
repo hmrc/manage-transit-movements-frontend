@@ -28,19 +28,21 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClient) extends Logging {
 
+  private type QueryParams = Seq[(String, String)]
+
   private def version2Header = Seq(
     "Accept" -> "application/vnd.hmrc.2.0+json"
   )
 
-  implicit def responseHandlerGeneric[A](implicit reads: Reads[A]): HttpReads[Option[A]] =
+  implicit def responseHandlerGeneric[A](implicit reads: Reads[A]): HttpReads[Seq[A]] =
     (_: String, _: String, response: HttpResponse) => {
       response.status match {
         case OK =>
-          (response.json \ "data").validate[Seq[A]].map(_.headOption).getOrElse {
+          (response.json \ "data").validate[Seq[A]].getOrElse {
             throw new IllegalStateException("[ReferenceDataConnector][responseHandlerGeneric] Reference data could not be parsed")
           }
         case NO_CONTENT =>
-          None
+          Nil
         case NOT_FOUND =>
           logger.warn("[ReferenceDataConnector][responseHandlerGeneric] Reference data call returned NOT_FOUND")
           throw new IllegalStateException("[ReferenceDataConnector][responseHandlerGeneric] Reference data could not be found")
@@ -50,27 +52,18 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       }
     }
 
-  def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]] = {
+  def getCustomsOffices(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] = {
     val url = s"${config.customsReferenceDataUrl}/filtered-lists/CustomsOffices"
-    val queryParams: Seq[(String, String)] = Seq(
-      "data.id" -> code
-    )
-    http.GET[Option[CustomsOffice]](url = url, headers = version2Header, queryParams = queryParams)
+    http.GET[Seq[CustomsOffice]](url = url, headers = version2Header, queryParams = queryParams)
   }
 
-  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[ControlType]] = {
+  def getControlTypes(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[ControlType]] = {
     val url = s"${config.customsReferenceDataUrl}/filtered-lists/ControlType"
-    val queryParams: Seq[(String, String)] = Seq(
-      "data.code" -> code
-    )
-    http.GET[Option[ControlType]](url = url, headers = version2Header, queryParams = queryParams)
+    http.GET[Seq[ControlType]](url = url, headers = version2Header, queryParams = queryParams)
   }
 
-  def getFunctionalErrorDescription(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[FunctionalErrorWithDesc]] = {
+  def getFunctionalErrors(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] = {
     val url = s"${config.customsReferenceDataUrl}/filtered-lists/FunctionalErrorCodesIeCA"
-    val queryParams: Seq[(String, String)] = Seq(
-      "data.code" -> code
-    )
-    http.GET[Option[FunctionalErrorWithDesc]](url = url, headers = version2Header, queryParams = queryParams)
+    http.GET[Seq[FunctionalErrorWithDesc]](url = url, headers = version2Header, queryParams = queryParams)
   }
 }

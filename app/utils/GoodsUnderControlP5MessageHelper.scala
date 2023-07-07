@@ -57,7 +57,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     call = None
   )
 
-  def getCustomsOfficeForDisplay(referenceNumber: String): Future[String] = referenceDataService.getCustomsOfficeByCode(referenceNumber).map {
+  def getCustomsOfficeForDisplay(referenceNumber: String): Future[String] = referenceDataService.getCustomsOffice(referenceNumber).map {
     case Some(customsOffice) => customsOffice.nameAndCode
     case _                   => referenceNumber
   }

@@ -34,15 +34,21 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val mockConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
 
   private val customsOfficeId = "GB00001"
-  private val customsOffice   = CustomsOffice(customsOfficeId, "NAME001", None)
+  private val customsOffice1  = CustomsOffice(customsOfficeId, "CO1", None)
+  private val customsOffice2  = CustomsOffice("GB00002", "CO2", None)
+  private val customsOffices  = Seq(customsOffice1, customsOffice2)
 
-  private val controlTypeCode           = "44"
-  private val controlTypeForValidCode   = ControlType(controlTypeCode, "Intrusive")
-  private val controlTypeForInvalidCode = ControlType(controlTypeCode, "")
+  private val controlTypeCode    = "1"
+  private val controlType1       = ControlType(controlTypeCode, "CT1")
+  private val controlType2       = ControlType("2", "CT2")
+  private val defaultControlType = ControlType(controlTypeCode, "")
+  private val controlTypes       = Seq(controlType1, controlType2)
 
-  private val functionalErrorCode           = "14"
-  private val functionalErrorForValidCode   = FunctionalErrorWithDesc(functionalErrorCode, "Rule violation")
-  private val functionalErrorForInvalidCode = FunctionalErrorWithDesc(functionalErrorCode, "")
+  private val functionalErrorCode    = "1"
+  private val functionalError1       = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
+  private val functionalError2       = FunctionalErrorWithDesc("2", "FE2")
+  private val defaultFunctionalError = FunctionalErrorWithDesc(functionalErrorCode, "")
+  private val functionalErrors       = Seq(functionalError1, functionalError2)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -52,99 +58,108 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   "ReferenceDataService" - {
 
     "getCustomsOfficeByCode" - {
+
+      val expectedQueryParams = Seq("data.id" -> customsOfficeId)
+
       "should return some customs office" - {
         "when the customs office is found" in {
-          when(mockConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+          when(mockConnector.getCustomsOffices(any())(any(), any())).thenReturn(Future.successful(customsOffices))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getCustomsOfficeByCode(customsOfficeId).futureValue.value mustBe customsOffice
+          service.getCustomsOffice(customsOfficeId).futureValue.value mustBe customsOffice1
 
-          verify(mockConnector).getCustomsOffice(eqTo(customsOfficeId))(any(), any())
+          verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams))(any(), any())
         }
       }
 
       "should return None" - {
         "when the customs office can't be found" in {
-          when(mockConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+          when(mockConnector.getCustomsOffices(any())(any(), any())).thenReturn(Future.successful(Nil))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getCustomsOfficeByCode(customsOfficeId).futureValue mustBe None
+          service.getCustomsOffice(customsOfficeId).futureValue mustBe None
 
-          verify(mockConnector).getCustomsOffice(eqTo(customsOfficeId))(any(), any())
+          verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams))(any(), any())
         }
       }
     }
 
     "getControlType" - {
+
+      val expectedQueryParams = Seq("data.code" -> controlTypeCode)
+
       "should return a control type" - {
         "when the control type is found" in {
-          when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(Some(controlTypeForValidCode)))
+          when(mockConnector.getControlTypes(any())(any(), any())).thenReturn(Future.successful(controlTypes))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getControlType(controlTypeCode).futureValue mustBe controlTypeForValidCode
+          service.getControlType(controlTypeCode).futureValue mustBe controlType1
 
-          verify(mockConnector).getControlType(eqTo(controlTypeCode))(any(), any())
+          verify(mockConnector).getControlTypes(eqTo(expectedQueryParams))(any(), any())
         }
       }
 
       "should return default" - {
         "when the control type can't be found" in {
-          when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(None))
+          when(mockConnector.getControlTypes(any())(any(), any())).thenReturn(Future.successful(Nil))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getControlType(controlTypeCode).futureValue mustBe controlTypeForInvalidCode
+          service.getControlType(controlTypeCode).futureValue mustBe defaultControlType
 
-          verify(mockConnector).getControlType(eqTo(controlTypeCode))(any(), any())
+          verify(mockConnector).getControlTypes(eqTo(expectedQueryParams))(any(), any())
         }
 
         "when the call fails" in {
-          when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
+          when(mockConnector.getControlTypes(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getControlType(controlTypeCode).futureValue mustBe controlTypeForInvalidCode
+          service.getControlType(controlTypeCode).futureValue mustBe defaultControlType
 
-          verify(mockConnector).getControlType(eqTo(controlTypeCode))(any(), any())
+          verify(mockConnector).getControlTypes(eqTo(expectedQueryParams))(any(), any())
         }
       }
     }
 
     "getFunctionalError" - {
+
+      val expectedQueryParams = Seq("data.code" -> functionalErrorCode)
+
       "should return a functional error" - {
         "when the functional error is found" in {
-          when(mockConnector.getFunctionalErrorDescription(any())(any(), any())).thenReturn(Future.successful(Some(functionalErrorForValidCode)))
+          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.successful(functionalErrors))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getFunctionalErrorType(functionalErrorCode).futureValue mustBe functionalErrorForValidCode
+          service.getFunctionalError(functionalErrorCode).futureValue mustBe functionalError1
 
-          verify(mockConnector).getFunctionalErrorDescription(eqTo(functionalErrorCode))(any(), any())
+          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
         }
       }
 
       "should return default" - {
         "when the functional error can't be found" in {
-          when(mockConnector.getFunctionalErrorDescription(any())(any(), any())).thenReturn(Future.successful(None))
+          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.successful(Nil))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getFunctionalErrorType(functionalErrorCode).futureValue mustBe functionalErrorForInvalidCode
+          service.getFunctionalError(functionalErrorCode).futureValue mustBe defaultFunctionalError
 
-          verify(mockConnector).getFunctionalErrorDescription(eqTo(functionalErrorCode))(any(), any())
+          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
         }
 
         "when the call fails" in {
-          when(mockConnector.getFunctionalErrorDescription(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
+          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getFunctionalErrorType(functionalErrorCode).futureValue mustBe functionalErrorForInvalidCode
+          service.getFunctionalError(functionalErrorCode).futureValue mustBe defaultFunctionalError
 
-          verify(mockConnector).getFunctionalErrorDescription(eqTo(functionalErrorCode))(any(), any())
+          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
         }
       }
     }

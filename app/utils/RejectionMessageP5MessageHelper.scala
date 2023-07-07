@@ -34,7 +34,7 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
 
   private def getFunctionalErrorType(errorCode: String): Future[Option[String]] =
     (for {
-      y <- OptionT.liftF(referenceDataService.getFunctionalErrorType(errorCode)(ec, hc))
+      y <- OptionT.liftF(referenceDataService.getFunctionalError(errorCode)(ec, hc))
       x = y.toString
     } yield x).value
 

@@ -73,7 +73,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
@@ -116,7 +116,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
@@ -147,7 +147,7 @@ class UnloadingRemarkErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
