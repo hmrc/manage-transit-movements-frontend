@@ -246,20 +246,16 @@ object DepartureStatusP5ViewModel {
                                    isDeclarationAmendable: Boolean,
                                    xPaths: Seq[String],
                                    reSubmittedLinkedLRN: Option[LinkedLrn]
-  )(implicit frontendAppConfig: FrontendAppConfig) = {
+  )(implicit frontendAppConfig: FrontendAppConfig) =
     messagesForDepartureMovement.messageBeforeLatest.map(_.messageType) match {
       case Some(DepartureNotification) => departureNotification(departureId, isDeclarationAmendable, xPaths, reSubmittedLinkedLRN)
       case Some(CancellationRequested) => cancellationRequested(departureId, xPaths)
       case _                           => ("", "", "")
     }
-  }
 
-  private def departureNotification(departureId: String,
-                                    isDeclarationAmendable: Boolean,
-                                    xPaths: Seq[String],
-                                    reSubmittedLinkedLRN: Option[LinkedLrn])
-                                   (implicit frontendAppConfig: FrontendAppConfig)
-  : (String, String, String) =
+  private def departureNotification(departureId: String, isDeclarationAmendable: Boolean, xPaths: Seq[String], reSubmittedLinkedLRN: Option[LinkedLrn])(implicit
+    frontendAppConfig: FrontendAppConfig
+  ): (String, String, String) =
     reSubmittedLinkedLRN match {
       case Some(LinkedLrn(Some(_), Some(Submitted))) => ("movement.status.P5.replacedByLRN", "", "")
       case _                                         => declarationAmendable(departureId, isDeclarationAmendable, xPaths)
@@ -278,7 +274,7 @@ object DepartureStatusP5ViewModel {
       )
     }
 
-  private def declarationAmendable(departureId: String, isDeclarationAmendable: Boolean, xPaths: Seq[String])(implicit  frontendAppConfig: FrontendAppConfig) =
+  private def declarationAmendable(departureId: String, isDeclarationAmendable: Boolean, xPaths: Seq[String])(implicit frontendAppConfig: FrontendAppConfig) =
     if (isDeclarationAmendable) {
       ("movement.status.P5.rejectedByOfficeOfDeparture",
        "amendDeclaration",
