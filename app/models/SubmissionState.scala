@@ -24,17 +24,19 @@ sealed trait SubmissionState {
   val submitted: Boolean = SubmissionState.isSubmitted(this)
 }
 
+sealed trait AmendableState {}
+
 object SubmissionState {
 
   case object NotSubmitted extends SubmissionState {
     override def toString: String = "notSubmitted"
   }
 
-  case object Submitted extends SubmissionState {
+  case object Submitted extends SubmissionState with AmendableState {
     override def toString: String = "submitted"
   }
 
-  case object RejectedPendingChanges extends SubmissionState {
+  case object RejectedPendingChanges extends SubmissionState with AmendableState {
     override def toString: String = "rejectedPendingChanges"
   }
 
@@ -43,18 +45,16 @@ object SubmissionState {
   }
 
   def isAmendable(state: SubmissionState): Boolean = state match {
-    case NotSubmitted           => false
-    case RejectedAndResubmitted => false
-    case Submitted              => true
-    case RejectedPendingChanges => true
+    case _: AmendableState => true
+    case _                 => false
   }
 
-  def isSubmitted(state: SubmissionState): Boolean = state match {
-    case NotSubmitted           => false
-    case RejectedAndResubmitted => false
-    case Submitted              => true
-    case RejectedPendingChanges => false
-  }
+  def isSubmitted(state: SubmissionState): Boolean =
+    if (state == Submitted) {
+      true
+    } else {
+      false
+    }
 
   def apply(state: String): SubmissionState = state match {
     case "submitted"              => Submitted
