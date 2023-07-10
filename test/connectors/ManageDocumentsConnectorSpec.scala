@@ -77,5 +77,42 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
         result.futureValue.status mustBe genErrorResponse
       }
     }
+
+    "getUnloadingPermission" - {
+
+      val arrivalId = "ABC123"
+      val messageId = "DFG456"
+
+      "must return status Ok" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+            )
+        )
+
+        val result: Future[WSResponse] = connector.getUnloadingPermission(messageId, arrivalId)
+
+        result.futureValue.status mustBe 200
+      }
+
+      "must return other error status codes without exceptions" in {
+
+        val genErrorResponse = Gen.oneOf(300, 500).sample.value
+
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
+            .willReturn(
+              aResponse()
+                .withStatus(genErrorResponse)
+            )
+        )
+
+        val result: Future[WSResponse] = connector.getUnloadingPermission(messageId, arrivalId)
+
+        result.futureValue.status mustBe genErrorResponse
+      }
+    }
   }
 }

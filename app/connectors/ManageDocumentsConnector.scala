@@ -34,4 +34,12 @@ class ManageDocumentsConnector @Inject() (config: FrontendAppConfig, wsClient: W
     wsClient.url(serviceUrl).withHttpHeaders(headers: _*).get()
   }
 
+  def getUnloadingPermission(messageId: String, arrivalId: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
+
+    val serviceUrl: String = s"${config.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
+    val headers            = hc.headers(HMRCHeaderNames.explicitlyIncludedHeaders)
+
+    wsClient.url(serviceUrl).withHttpHeaders(headers: _*).get()
+  }
+
 }
