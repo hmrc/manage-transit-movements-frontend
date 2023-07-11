@@ -28,7 +28,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   override val prefix: String = "departure.declaration.errors.message"
   val lrnString               = "LRNAB123"
 
-  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString, true)
+  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
@@ -36,6 +36,8 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
       .apply(departureDeclarationErrorsP5ViewModel)(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
+
+  behave like pageWithCaption(s"LRN: $lrnString")
 
   behave like pageWithBackLink()
 
@@ -49,14 +51,14 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1",
-      s"There are one or more errors in departure declaration $lrnString that cannot be amended."
+      s"There are one or more errors in this declaration that cannot be amended."
     )
   }
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
       "paragraph-2",
-      "Make/create a new departure declaration with the right information."
+      "Make a new declaration with the right information."
     )
     assertSpecificElementContainsText(
       "helpdesk-link",
@@ -66,7 +68,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   }
 
   "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-declaration", "Create another departure declaration")
+    assertSpecificElementContainsText("create-another-declaration", "Make another departure declaration")
   }
 
   behave like pageWithLink(
@@ -77,7 +79,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
 
   behave like pageWithLink(
     "departure-link",
-    "Create another departure declaration",
+    "Make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
 

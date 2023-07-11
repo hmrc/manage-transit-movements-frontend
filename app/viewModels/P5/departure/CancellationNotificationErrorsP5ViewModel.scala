@@ -21,7 +21,6 @@ import play.api.i18n.Messages
 
 case class CancellationNotificationErrorsP5ViewModel(
   lrn: String,
-  noErrors: Boolean,
   customsOfficeReferenceId: String,
   customsOffice: Option[CustomsOffice]
 ) {
@@ -31,11 +30,7 @@ case class CancellationNotificationErrorsP5ViewModel(
   def heading(implicit messages: Messages): String = messages("cancellation.notification.errors.message.heading")
 
   def paragraph1(implicit messages: Messages): String =
-    if (noErrors) {
-      messages("cancellation.notification.errors.message.noerrors", lrn)
-    } else {
-      messages("cancellation.notification.errors.message.elevenpluserrors", lrn)
-    }
+    messages("cancellation.notification.errors.message.noerrors", lrn)
 
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {
@@ -62,11 +57,10 @@ object CancellationNotificationErrorsP5ViewModel {
 
     def apply(
       lrn: String,
-      noErrors: Boolean,
       customsOfficeReferenceId: String,
       customsOffice: Option[CustomsOffice]
     ): CancellationNotificationErrorsP5ViewModel =
-      CancellationNotificationErrorsP5ViewModel(lrn, noErrors, customsOfficeReferenceId, customsOffice)
+      CancellationNotificationErrorsP5ViewModel(lrn, customsOfficeReferenceId, customsOffice)
   }
 
 }

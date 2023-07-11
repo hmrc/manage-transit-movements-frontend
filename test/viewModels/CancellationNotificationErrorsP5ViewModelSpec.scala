@@ -32,8 +32,8 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
 
     val viewModelProvider = new CancellationNotificationErrorsP5ViewModelProvider()
 
-    def viewModel(noErrors: Boolean = false, customsOffice: Option[CustomsOffice] = None): CancellationNotificationErrorsP5ViewModel =
-      viewModelProvider.apply(lrn, noErrors, customsReferenceId, customsOffice)
+    def viewModel(customsOffice: Option[CustomsOffice] = None): CancellationNotificationErrorsP5ViewModel =
+      viewModelProvider.apply(lrn, customsReferenceId, customsOffice)
 
     "title" - {
       "must return correct message" in {
@@ -49,11 +49,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
 
     "paragraph1" - {
       "must return correct message when no error" in {
-        viewModel(noErrors = true).paragraph1 mustBe s"There are one or more errors with the cancellation of departure declaration $lrn."
-      }
-
-      "must return correct message when multiple errors" in {
-        viewModel(noErrors = false).paragraph1 mustBe s"There are a number of errors with the cancellation of departure declaration $lrn."
+        viewModel().paragraph1 mustBe s"There are one or more errors with the cancellation of this declaration."
       }
     }
 
