@@ -237,7 +237,7 @@ object DepartureStatusP5ViewModel {
             keyFormatted
           )
         ),
-        reSubmittedLinkedLRN.flatMap(_.lrn)
+        reSubmittedLinkedLRN.flatMap(_.resubmittedLrn)
       )
   }
 

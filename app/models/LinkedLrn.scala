@@ -19,7 +19,7 @@ package models
 import models.SubmissionState.NotSubmitted
 import play.api.libs.json.{Format, Json}
 
-case class LinkedLrn(lrn: Option[String], isSubmitted: Option[SubmissionState] = Some(NotSubmitted))
+case class LinkedLrn(resubmittedLrn: Option[String], isSubmitted: Option[SubmissionState] = Some(NotSubmitted))
 
 object LinkedLrn {
   implicit val format: Format[LinkedLrn] = Json.format[LinkedLrn]
