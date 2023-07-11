@@ -32,14 +32,14 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
   ec: ExecutionContext
 ) extends DeparturesP5MessageHelper {
 
-  private def getFunctionalErrorType(errorCode: String): Future[Option[String]] =
+  private def getAllFunctionalErrorDescription(errorCode: String): Future[Option[String]] =
     (for {
-      y <- OptionT.liftF(referenceDataService.getFunctionalError(errorCode)(ec, hc))
-      x = y.toString
-    } yield x).value
+      y <- OptionT.liftF(referenceDataService.getFunctionalErrors())
+      x = y.find(_.code == errorCode).map(_.toString)
+    } yield x).value.map(_.flatten)
 
   def buildErrorCodeRow(errorCode: String): Future[Option[SummaryListRow]] =
-    getFunctionalErrorType(errorCode).map(
+    getAllFunctionalErrorDescription(errorCode).map(
       code =>
         buildRowFromAnswer[String](
           answer = code,

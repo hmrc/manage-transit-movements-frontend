@@ -36,7 +36,7 @@ formHelper: FormWithCSRF
 
         @heading(
             heading = departureDeclarationErrorsP5ViewModel.heading,
-            caption = None
+            caption = Some(messages("departure.messages.caption", departureDeclarationErrorsP5ViewModel.lrn))
         )
 
         <p id="paragraph-1" class="govuk-body">@departureDeclarationErrorsP5ViewModel.paragraph1</p>

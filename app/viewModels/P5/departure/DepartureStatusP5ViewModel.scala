@@ -209,26 +209,27 @@ object DepartureStatusP5ViewModel {
       )
   }
 
+  // scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
     messagesForDepartureMovement: MessagesForDepartureMovement,
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String]
-  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
 
     case message if message.messageType == RejectedByOfficeOfDeparture =>
       val (key, href) = messagesForDepartureMovement.messageBeforeLatest.map(_.messageType) match {
         case Some(DepartureNotification) =>
           if (isDeclarationAmendable) {
             ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
-          } else if (xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration) {
+          } else if (xPaths.isEmpty) {
             ("viewErrors", controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
             ("viewErrors", controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
           }
 
         case Some(CancellationRequested) =>
-          if (xPaths.isEmpty || xPaths.size > frontendAppConfig.maxErrorsForAmendableDeclaration) {
+          if (xPaths.isEmpty) {
             ("viewErrors", controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
             ("viewErrors", controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
@@ -248,6 +249,7 @@ object DepartureStatusP5ViewModel {
         )
       )
   }
+  // scalastyle:on cyclomatic.complexity
 
   private def goodsUnderControl(
     departureId: String

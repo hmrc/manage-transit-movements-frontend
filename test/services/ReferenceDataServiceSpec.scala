@@ -50,6 +50,8 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val defaultFunctionalError = FunctionalErrorWithDesc(functionalErrorCode, "")
   private val functionalErrors       = Seq(functionalError1, functionalError2)
 
+  private val defaultFunctionalErrors = Nil
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockConnector)
@@ -158,6 +160,45 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
           val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getFunctionalError(functionalErrorCode).futureValue mustBe defaultFunctionalError
+
+          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
+        }
+      }
+    }
+
+    "getFunctionalErrors" - {
+
+      val expectedQueryParams = Seq.empty
+
+      "should return functional errors" - {
+        "when functional errors found" in {
+          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.successful(functionalErrors))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getFunctionalErrors().futureValue mustBe functionalErrors
+
+          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
+        }
+      }
+
+      "should return default" - {
+        "when no functional errors found" in {
+          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.successful(Nil))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getFunctionalErrors().futureValue mustBe defaultFunctionalErrors
+
+          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
+        }
+
+        "when the call fails" in {
+          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getFunctionalErrors().futureValue mustBe defaultFunctionalErrors
 
           verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
         }

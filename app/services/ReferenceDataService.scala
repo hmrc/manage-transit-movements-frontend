@@ -45,10 +45,16 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
       case _ => default
     }
   }
+
+  def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] =
+    connector.getFunctionalErrors(Nil).recover {
+      case _ => Seq.empty
+    }
 }
 
 trait ReferenceDataService {
   def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]]
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]
+  def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]]
 }

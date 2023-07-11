@@ -85,50 +85,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrnString, true, "AB123", None)
-
-      val request = FakeRequest(GET, controllerRoute)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      val view = injector.instanceOf[CancellationNotificationErrorsP5View]
-
-      contentAsString(result) mustEqual
-        view(cancellationNotificationErrorsP5ViewModel)(request, messages).toString
-    }
-
-    "must return OK and the correct view for a GET when more than 10 Errors" in {
-
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          CustomsOfficeOfDeparture("AB123"),
-          Seq(
-            FunctionalError("1", "12", "Codelist violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None)
-          )
-        )
-      )
-      when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrnString)))
-      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
-
-      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
-
-      val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrnString, false, "AB123", None)
+      val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrnString, "AB123", None)
 
       val request = FakeRequest(GET, controllerRoute)
 

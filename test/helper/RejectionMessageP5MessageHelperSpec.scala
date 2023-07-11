@@ -48,34 +48,36 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
     "buildErrorCodeRow" - {
 
-      val code            = "12"
-      val codeDescription = "Codelist violation"
+      val code1            = "12"
+      val codeDescription1 = "Codelist violation"
+      val code2            = "13"
+      val codeDescription2 = "Codelist violation2"
 
       "must return SummaryListRow" - {
 
         "when description present in reference data" in {
-          val functionalErrorReferenceData = FunctionalErrorWithDesc(code, codeDescription)
+          val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc(code1, codeDescription1), FunctionalErrorWithDesc(code2, codeDescription2))
 
           val message: IE056Data = IE056Data(
             IE056MessageData(
               TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
               CustomsOfficeOfDeparture("AB123"),
-              Seq(FunctionalError("14", code, "MRN incorrect", None))
+              Seq(FunctionalError("14", code1, "MRN incorrect", None))
             )
           )
 
-          when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+          when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
           val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
 
-          val result = helper.buildErrorCodeRow(code).futureValue
+          val result = helper.buildErrorCodeRow(code1).futureValue
 
           result mustBe
-            Some(SummaryListRow(key = Key("Error".toText), value = Value(s"$code - $codeDescription".toText)))
+            Some(SummaryListRow(key = Key("Error".toText), value = Value(s"$code1 - $codeDescription1".toText)))
         }
 
         "when description not present in reference data" in {
-          val functionalErrorReferenceData = FunctionalErrorWithDesc(code, "")
+          val functionalErrorReferenceData = FunctionalErrorWithDesc(code1, "")
 
           val message: IE056Data = IE056Data(
             IE056MessageData(
@@ -85,14 +87,14 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
             )
           )
 
-          when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+          when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(Seq(functionalErrorReferenceData)))
 
           val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
 
-          val result = helper.buildErrorCodeRow(code).futureValue
+          val result = helper.buildErrorCodeRow(code1).futureValue
 
           result mustBe
-            Some(SummaryListRow(key = Key("Error".toText), value = Value(code.toText)))
+            Some(SummaryListRow(key = Key("Error".toText), value = Value(code1.toText)))
         }
       }
     }
@@ -122,9 +124,9 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None))
 
-        val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "MRN Invalid")
+        val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "MRN Invalid"))
 
-        when(mockReferenceDataService.getFunctionalError("12")).thenReturn(Future.successful(functionalErrorReferenceData))
+        when(mockReferenceDataService.getFunctionalErrors()).thenReturn(Future.successful(functionalErrorReferenceData))
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
@@ -162,8 +164,9 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
         val functionalErrorReferenceData1 = FunctionalErrorWithDesc("12", "MRN Invalid")
         val functionalErrorReferenceData2 = FunctionalErrorWithDesc("14", "Rule Violation")
 
-        when(mockReferenceDataService.getFunctionalError("12")).thenReturn(Future.successful(functionalErrorReferenceData1))
-        when(mockReferenceDataService.getFunctionalError("14")).thenReturn(Future.successful(functionalErrorReferenceData2))
+        val functionalErrorReferenceData = Seq(functionalErrorReferenceData1, functionalErrorReferenceData2)
+
+        when(mockReferenceDataService.getFunctionalErrors()).thenReturn(Future.successful(functionalErrorReferenceData))
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
