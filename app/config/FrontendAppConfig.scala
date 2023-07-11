@@ -115,11 +115,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   val phase5DepartureEnabled: Boolean = phase5Switch.Departures.enabled
   val phase5ArrivalEnabled: Boolean   = phase5Switch.Arrivals.enabled
 
-  val maxErrorsForAmendableDeclaration: Int     = configuration.get[Int]("maxErrorsForAmendableDeclaration")
-  val maxErrorsForArrivalNotification: Int      = configuration.get[Int]("maxErrorsForArrivalNotification")
-  val maxErrorsForCancellationNotification: Int = configuration.get[Int]("maxErrorsForCancellationNotification")
+  val maxErrorsForArrivalNotification: Int = configuration.get[Int]("maxErrorsForArrivalNotification")
 
   def departureFrontendTaskListUrl(lrn: String)                     = s"$departureFrontendUrl/$lrn/task-list"
+  def departureNewLocalReferenceNumberUrl(lrn: String)              = s"$departureFrontendUrl/$lrn/new-local-reference-number"
   def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
 

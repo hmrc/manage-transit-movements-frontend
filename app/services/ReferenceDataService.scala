@@ -33,11 +33,14 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
 
   def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] =
     connector.getFunctionalErrorDescription(code)
+
+  def getAllFunctionalErrorDescription()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] =
+    connector.getAllFunctionalErrorDescription()
 }
 
 trait ReferenceDataService {
   def getCustomsOfficeByCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]]
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
   def getFunctionalErrorType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]
-
+  def getAllFunctionalErrorDescription()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]]
 }

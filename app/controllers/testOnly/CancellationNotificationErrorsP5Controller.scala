@@ -44,10 +44,10 @@ class CancellationNotificationErrorsP5Controller @Inject() (
       val functionalErrors       = request.ie056MessageData.functionalErrors
       val customsOfficeReference = request.ie056MessageData.customsOfficeOfDeparture.referenceNumber
 
-      if (functionalErrors.isEmpty || functionalErrors.size > config.maxErrorsForCancellationNotification) {
+      if (functionalErrors.isEmpty) {
         referenceDataConnector.getCustomsOffice(customsOfficeReference).map {
           customsOffice =>
-            Ok(view(viewModelProvider.apply(request.lrn, functionalErrors.isEmpty, customsOfficeReference, customsOffice)))
+            Ok(view(viewModelProvider.apply(request.lrn, customsOfficeReference, customsOffice)))
         }
       } else {
         Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))

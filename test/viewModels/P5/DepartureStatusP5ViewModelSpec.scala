@@ -370,37 +370,6 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
           result mustBe expectedResult
         }
-
-        "and declaration is not amendable and more than 10 FunctionalErrors" in {
-          val movementAndMessage = DepartureMovementAndMessage(
-            departureMovement,
-            MessagesForDepartureMovement(
-              NonEmptyList(
-                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
-                List(
-                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
-                )
-              )
-            ),
-            "AB123",
-            isDeclarationAmendable = false,
-            Seq("abc", "abc", "abc", "abc", "abc", "abc", "abc", "abc", "abc", "abc", "abc")
-          )
-
-          val result = DepartureStatusP5ViewModel(movementAndMessage)
-
-          val expectedResult = DepartureStatusP5ViewModel(
-            "movement.status.P5.rejectedByOfficeOfDeparture",
-            Seq(
-              ViewMovementAction(
-                controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5).url,
-                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
-              )
-            )
-          )
-
-          result mustBe expectedResult
-        }
       }
 
       "and head of tail is IE014" - {
@@ -467,36 +436,6 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           result mustBe expectedResult
         }
 
-        "with more than 10 FunctionalErrors" in {
-          val movementAndMessage = DepartureMovementAndMessage(
-            departureMovement,
-            MessagesForDepartureMovement(
-              NonEmptyList(
-                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
-                List(
-                  DepartureMessage("messageId2", dateTimePast, CancellationRequested, "body/path")
-                )
-              )
-            ),
-            "AB123",
-            isDeclarationAmendable = false,
-            Seq("abc", "abc", "abc", "abc", "abc", "abc", "abc", "abc", "abc", "abc", "abc")
-          )
-
-          val result = DepartureStatusP5ViewModel(movementAndMessage)
-
-          val expectedResult = DepartureStatusP5ViewModel(
-            "movement.status.P5.rejectedByOfficeOfDeparture",
-            Seq(
-              ViewMovementAction(
-                controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5).url,
-                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
-              )
-            )
-          )
-
-          result mustBe expectedResult
-        }
       }
 
     }
