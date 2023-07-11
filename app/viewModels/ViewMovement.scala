@@ -16,6 +16,8 @@
 
 package viewModels
 
+import play.api.i18n.Messages
+
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
@@ -30,4 +32,7 @@ trait ViewMovement {
   val updated: String = updatedTime
     .format(DateTimeFormatter.ofPattern("h:mma"))
     .toLowerCase
+
+  def statusWithArgs(implicit messages: Messages): String = messages(status, args.getOrElse(""))
+
 }
