@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package views.arrival.testOnly
+package views.arrival.P5
 
 import generators.Generators
 import play.twirl.api.HtmlFormat
-import viewModels.P5.arrival.ArrivalNotificationErrorP5ViewModel
+import viewModels.P5.arrival.ArrivalNotificationWithoutFunctionalErrorP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.arrival.TestOnly.ArrivalNotificationErrorP5View
+import views.html.arrival.P5.ArrivalNotificationWithoutFunctionalErrorsP5View
 
-class ArrivalNotificationErrorP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
   override val prefix: String = "arrival.notification.errors.message"
   val mrnString               = "MRNAB123"
 
-  private val arrivalNotificationErrorP5ViewModel: ArrivalNotificationErrorP5ViewModel = new ArrivalNotificationErrorP5ViewModel(mrnString, true)
+  private val arrivalNotificationErrorP5ViewModel: ArrivalNotificationWithoutFunctionalErrorP5ViewModel =
+    new ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrnString)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[ArrivalNotificationErrorP5View]
+      .instanceOf[ArrivalNotificationWithoutFunctionalErrorsP5View]
       .apply(arrivalNotificationErrorP5ViewModel)(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()

@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package viewModels
+package viewModels.P5
 
 import base.SpecBase
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
-import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel.UnloadingRemarkErrorsP5ViewModelProvider
+import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
+import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel.UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider
 
-class UnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  "UnloadingRemarkErrorsP5ViewModel" - {
+  "UnloadingRemarkWithoutFunctionalErrorsP5ViewModel" - {
 
     val mrn                = "AB123"
     val customsReferenceId = "CD123"
 
-    val viewModelProvider = new UnloadingRemarkErrorsP5ViewModelProvider()
+    val viewModelProvider = new UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider()
 
-    def viewModel(noErrors: Boolean = false, customsOffice: Option[CustomsOffice] = None): UnloadingRemarkErrorsP5ViewModel =
-      viewModelProvider.apply(mrn, noErrors, customsReferenceId, customsOffice)
+    def viewModel(customsOffice: Option[CustomsOffice] = None): UnloadingRemarkWithoutFunctionalErrorsP5ViewModel =
+      viewModelProvider.apply(mrn, customsReferenceId, customsOffice)
 
     "title" - {
       "must return correct message" in {
@@ -48,12 +48,8 @@ class UnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPrope
     }
 
     "paragraph1" - {
-      "must return correct message when no error" in {
-        viewModel(noErrors = true).paragraph1 mustBe s"There are one or more errors with the unloading remarks for arrival notification $mrn."
-      }
-
-      "must return correct message when multiple errors" in {
-        viewModel(noErrors = false).paragraph1 mustBe s"There are a number of errors with the unloading remarks for arrival notification $mrn."
+      "must return correct message" in {
+        viewModel().paragraph1 mustBe s"There are one or more errors with the unloading remarks for arrival notification $mrn."
       }
     }
 

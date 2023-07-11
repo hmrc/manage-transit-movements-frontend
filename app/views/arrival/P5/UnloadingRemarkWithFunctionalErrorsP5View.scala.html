@@ -16,7 +16,7 @@
 
 @import views.html.components.{Button, Heading, AnswerSections}
 @import config.FrontendAppConfig
-@import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
+@import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 
 @this(
         mainTemplate: MainTemplate,
@@ -26,23 +26,25 @@
         formHelper: FormWithCSRF
 )
 
-@(unloadingRemarkErrorsP5ViewModel: UnloadingRemarkErrorsP5ViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
-        title = unloadingRemarkErrorsP5ViewModel.title,
+        title = viewModel.title,
         showBackLink = true
     ) {
 
         @heading(
-            heading = unloadingRemarkErrorsP5ViewModel.heading,
-            caption = None
+            heading = viewModel.heading
         )
 
-        <p id="paragraph-1" class="govuk-body">@unloadingRemarkErrorsP5ViewModel.paragraph1</p>
+        <p id="paragraph-1-prefix" class="govuk-body">@viewModel.paragraph1Prefix</p>
+        <p id="paragraph-1-suffix" class="govuk-body">@viewModel.paragraph1Suffix</p>
 
-        <p class="govuk-body" id="what-happens-next">@unloadingRemarkErrorsP5ViewModel.customsOfficeContent</p>
+        @answerSections(viewModel.sections)
 
-        <p id="view-arrival-notification" class="govuk-body"><a id="arrival-link" class="govuk-link" href="@controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)">@unloadingRemarkErrorsP5ViewModel.hyperlink</a></p>
+        <p id="paragraph-2" class="govuk-body">@viewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@viewModel.paragraph2Link</a> @viewModel.paragraph2Suffix</p>
 
-
-    }
+        <p class="govuk-body">
+            <a id="arrival-link" class="govuk-link" href="@controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)">@viewModel.hyperlink</a>
+        </p>
+}

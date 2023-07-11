@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels
+package viewModels.P5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
@@ -27,12 +27,12 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
-import viewModels.P5.arrival.ReviewUnloadingRemarkErrorsP5ViewModel.ReviewUnloadingRemarkErrorsP5ViewModelProvider
+import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel.UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -45,7 +45,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
 
   val mrnString = "MRNAB123"
 
-  "ReviewUnloadingRemarkErrorsP5ViewModel" - {
+  "UnloadingRemarkWithFunctionalErrorsP5ViewModel" - {
 
     val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "Codelist violation"), FunctionalErrorWithDesc("14", "Rule violation"))
 
@@ -61,7 +61,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
 
       when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ReviewUnloadingRemarkErrorsP5ViewModelProvider(mockReferenceDataService)
+      val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
 
       "must return correct section length" in {
@@ -101,7 +101,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
 
       when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ReviewUnloadingRemarkErrorsP5ViewModelProvider(mockReferenceDataService)
+      val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
 
       "must return correct title" in {
@@ -136,7 +136,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
 
       when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ReviewUnloadingRemarkErrorsP5ViewModelProvider(mockReferenceDataService)
+      val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
 
       result.sections.length mustBe 1
