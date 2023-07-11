@@ -21,7 +21,6 @@ import models.LinkedLrn
 import models.SubmissionState.Submitted
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
-import play.api.i18n.Messages
 import viewModels.ViewMovementAction
 
 case class DepartureStatusP5ViewModel(status: String, actions: Seq[ViewMovementAction], args: Option[String] = None)
