@@ -90,6 +90,13 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
                 behave like elementWithHiddenText(status, messages(s"$prefix.table.status"))
               }
 
+              "must display correct status when args present" in {
+                val status = row.selectFirst("td[data-testrole*=-status]")
+
+                behave like elementWithVisibleText(status, viewMovement.status)
+                behave like elementWithHiddenText(status, messages(s"$prefix.table.status", s"$prefix.table.args"))
+              }
+
               "must display actions" - {
                 val actions = row.selectFirst("td[data-testrole*=-actions]")
 
