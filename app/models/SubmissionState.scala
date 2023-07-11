@@ -16,12 +16,14 @@
 
 package models
 
-import play.api.libs.json.{__, JsString, Reads, Writes}
+import models.arrival.ArrivalStatus
+import models.arrival.ArrivalStatus.{values, InvalidStatus}
+import play.api.libs.json.{__, JsError, JsString, JsSuccess, Reads, Writes}
 
 sealed trait SubmissionState {
   def toString: String
-  val amendable: Boolean = SubmissionState.isAmendable(this)
-  val submitted: Boolean = SubmissionState.isSubmitted(this)
+  def isSubmitted: Boolean
+  def isAmendable: Boolean
 }
 
 sealed trait AmendableState {}
@@ -30,41 +32,55 @@ object SubmissionState {
 
   case object NotSubmitted extends SubmissionState {
     override def toString: String = "notSubmitted"
+    def isSubmitted: Boolean      = false
+    def isAmendable: Boolean      = false
   }
 
   case object Submitted extends SubmissionState with AmendableState {
     override def toString: String = "submitted"
+    def isSubmitted: Boolean      = true
+
+    def isAmendable: Boolean = true
   }
 
   case object RejectedPendingChanges extends SubmissionState with AmendableState {
     override def toString: String = "rejectedPendingChanges"
+    def isSubmitted: Boolean      = false
+    def isAmendable: Boolean      = true
   }
 
   case object RejectedAndResubmitted extends SubmissionState {
     override def toString: String = "rejectedAndResubmitted"
+    def isSubmitted: Boolean      = false
+    def isAmendable: Boolean      = false
   }
 
-  def isAmendable(state: SubmissionState): Boolean = state match {
-    case _: AmendableState => true
-    case _                 => false
-  }
+  val values: Seq[SubmissionState] =
+    Seq(
+      NotSubmitted,
+      Submitted,
+      RejectedPendingChanges,
+      RejectedAndResubmitted
+    )
 
-  def isSubmitted(state: SubmissionState): Boolean =
-    if (state == Submitted) {
-      true
-    } else {
-      false
+  implicit val enumerable: Enumerable[SubmissionState] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
+
+  implicit def reads(implicit ev: Enumerable[SubmissionState]): Reads[SubmissionState] =
+    Reads {
+      case JsString(str) =>
+        ev.withName(str)
+          .map(JsSuccess(_))
+          .getOrElse(
+            JsSuccess(NotSubmitted)
+          )
+      case _ =>
+        JsError("error.invalid")
     }
-
-  def apply(state: String): SubmissionState = state match {
-    case "submitted"              => Submitted
-    case "rejectedPendingChanges" => RejectedPendingChanges
-    case "rejectedAndResubmitted" => RejectedAndResubmitted
-    case _                        => NotSubmitted
-  }
-
-  implicit def reads: Reads[SubmissionState] =
-    __.readWithDefault[String](NotSubmitted.toString).map(SubmissionState.apply)
 
   implicit def writes: Writes[SubmissionState] = Writes {
     state => JsString(state.toString)
