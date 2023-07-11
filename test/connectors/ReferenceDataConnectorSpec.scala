@@ -116,32 +116,64 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         }
       }
 
-      "getFunctionalErrorDescription" - {
+      "getFunctionalErrors" - {
 
-        val url = s"$baseUrl/filtered-lists/FunctionalErrorCodesIeCA?foo=bar"
+        "when filtering" - {
 
-        "should handle a 200 response for functional errors" in {
-          server.stubFor(
-            get(urlEqualTo(url))
-              .willReturn(okJson(functionalErrorsResponseJson))
-          )
+          val url = s"$baseUrl/filtered-lists/FunctionalErrorCodesIeCA?foo=bar"
 
-          val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
+          "should handle a 200 response for functional errors" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(okJson(functionalErrorsResponseJson))
+            )
 
-          connector.getFunctionalErrors(queryParams).futureValue mustBe expectedResult
+            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
+
+            connector.getFunctionalErrors(queryParams).futureValue mustBe expectedResult
+          }
+
+          "should handle a 204 response for functional errors" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(aResponse().withStatus(NO_CONTENT))
+            )
+
+            connector.getFunctionalErrors(queryParams).futureValue mustBe Nil
+          }
+
+          "should handle client and server errors for functional errors" in {
+            checkErrorResponse(url, connector.getFunctionalErrors(queryParams))
+          }
         }
 
-        "should handle a 204 response for functional errors" in {
-          server.stubFor(
-            get(urlEqualTo(url))
-              .willReturn(aResponse().withStatus(NO_CONTENT))
-          )
+        "when not filtering" - {
 
-          connector.getFunctionalErrors(queryParams).futureValue mustBe Nil
-        }
+          val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA"
 
-        "should handle client and server errors for functional errors" in {
-          checkErrorResponse(url, connector.getFunctionalErrors(queryParams))
+          "should handle a 200 response for functional errors" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(okJson(functionalErrorsResponseJson))
+            )
+
+            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
+
+            connector.getFunctionalErrors().futureValue mustBe expectedResult
+          }
+
+          "should handle a 204 response for functional errors" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(aResponse().withStatus(NO_CONTENT))
+            )
+
+            connector.getFunctionalErrors().futureValue mustBe Nil
+          }
+
+          "should handle client and server errors for functional errors" in {
+            checkErrorResponse(url, connector.getFunctionalErrors())
+          }
         }
       }
     }

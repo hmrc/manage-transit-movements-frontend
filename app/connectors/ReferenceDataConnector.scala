@@ -66,4 +66,9 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     val url = s"${config.customsReferenceDataUrl}/filtered-lists/FunctionalErrorCodesIeCA"
     http.GET[Seq[FunctionalErrorWithDesc]](url = url, headers = version2Header, queryParams = queryParams)
   }
+
+  def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] = {
+    val url = s"${config.customsReferenceDataUrl}/lists/FunctionalErrorCodesIeCA"
+    http.GET[Seq[FunctionalErrorWithDesc]](url = url, headers = version2Header)
+  }
 }

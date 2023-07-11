@@ -47,7 +47,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
   }
 
   def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] =
-    connector.getFunctionalErrors(Nil).recover {
+    connector.getFunctionalErrors().recover {
       case _ => Seq.empty
     }
 }

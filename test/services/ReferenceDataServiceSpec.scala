@@ -168,39 +168,37 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
     "getFunctionalErrors" - {
 
-      val expectedQueryParams = Seq.empty
-
       "should return functional errors" - {
         "when functional errors found" in {
-          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.successful(functionalErrors))
+          when(mockConnector.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrors))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getFunctionalErrors().futureValue mustBe functionalErrors
 
-          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
+          verify(mockConnector).getFunctionalErrors()(any(), any())
         }
       }
 
       "should return default" - {
         "when no functional errors found" in {
-          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.successful(Nil))
+          when(mockConnector.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(Nil))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getFunctionalErrors().futureValue mustBe defaultFunctionalErrors
 
-          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
+          verify(mockConnector).getFunctionalErrors()(any(), any())
         }
 
         "when the call fails" in {
-          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
+          when(mockConnector.getFunctionalErrors()(any(), any())).thenReturn(Future.failed(new Throwable()))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
           service.getFunctionalErrors().futureValue mustBe defaultFunctionalErrors
 
-          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
+          verify(mockConnector).getFunctionalErrors()(any(), any())
         }
       }
     }
