@@ -80,49 +80,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString, true)
-
-      val request = FakeRequest(GET, departureDeclarationErrorsController)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      val view = injector.instanceOf[DepartureDeclarationErrorsP5View]
-
-      contentAsString(result) mustEqual
-        view(departureDeclarationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
-    }
-
-    "must return OK and the correct view for a GET when more than 10 Errors" in {
-
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          CustomsOfficeOfDeparture("22323323"),
-          Seq(
-            FunctionalError("1", "12", "Codelist violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None)
-          )
-        )
-      )
-      when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrnString)))
-      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-
-      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
-
-      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString, false)
+      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString)
 
       val request = FakeRequest(GET, departureDeclarationErrorsController)
 

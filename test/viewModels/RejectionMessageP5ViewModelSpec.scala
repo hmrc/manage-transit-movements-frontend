@@ -46,7 +46,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
 
   "RejectionMessageP5ViewModel" - {
 
-    val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "Codelist violation")
+    val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "Codelist violation"), FunctionalErrorWithDesc("14", "Rule violation"))
 
     "when there is one error" - {
 
@@ -58,7 +58,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         )
       )
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, lrnString).futureValue
@@ -98,7 +98,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         )
       )
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, lrnString).futureValue
@@ -133,7 +133,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         )
       )
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, lrnString).futureValue

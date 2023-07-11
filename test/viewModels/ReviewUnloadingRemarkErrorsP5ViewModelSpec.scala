@@ -47,7 +47,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
 
   "ReviewUnloadingRemarkErrorsP5ViewModel" - {
 
-    val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "Codelist violation")
+    val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "Codelist violation"), FunctionalErrorWithDesc("14", "Rule violation"))
 
     "when there is one error" - {
 
@@ -59,7 +59,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
         )
       )
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewUnloadingRemarkErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
@@ -99,7 +99,7 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
         )
       )
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewUnloadingRemarkErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
@@ -134,12 +134,13 @@ class ReviewUnloadingRemarkErrorsP5ViewModelSpec extends SpecBase with AppWithDe
         )
       )
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewUnloadingRemarkErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
 
       result.sections.length mustBe 1
+      println(s"${result.sections.head.rows}")
       result.sections.head.rows.size mustBe 4
     }
 
