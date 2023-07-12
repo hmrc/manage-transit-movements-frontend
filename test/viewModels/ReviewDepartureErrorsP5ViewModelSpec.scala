@@ -75,7 +75,6 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       }
       "must return correct paragraph 1" in {
         result.paragraph1Prefix mustBe s"There is a problem with departure declaration $lrnString."
-        result.paragraph1Suffix mustBe "Review the error and make/create a new departure declaration with the right information."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -111,7 +110,6 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       }
       "must return correct paragraph 1" in {
         result.paragraph1Prefix mustBe s"There is a problem with departure declaration $lrnString."
-        result.paragraph1Suffix mustBe "Review the errors and make/create a new departure declaration with the right information."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
