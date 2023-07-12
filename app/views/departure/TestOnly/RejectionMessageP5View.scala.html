@@ -37,11 +37,10 @@ formHelper: FormWithCSRF
 
         @heading(
             heading = rejectionMessageP5ViewModel.heading,
-            caption = None
+            caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
         )
 
-        <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1Prefix</p>
-        <p id="paragraph-1-suffix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1Suffix</p>
+        <p id="paragraph-1" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
 
         @answerSections(rejectionMessageP5ViewModel.sections)
 
