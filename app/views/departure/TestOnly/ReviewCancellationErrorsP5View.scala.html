@@ -34,11 +34,11 @@ formHelper: FormWithCSRF
     ) {
 
         @heading(
-            heading = reviewCancellationErrorsP5ViewModel.heading
+            heading = reviewCancellationErrorsP5ViewModel.heading,
+            caption = Some(messages("departure.messages.caption", reviewCancellationErrorsP5ViewModel.lrn))
         )
 
-        <p id="paragraph-1-prefix" class="govuk-body">@reviewCancellationErrorsP5ViewModel.paragraph1Prefix</p>
-        <p id="paragraph-1-suffix" class="govuk-body">@reviewCancellationErrorsP5ViewModel.paragraph1Suffix</p>
+        <p id="paragraph-1" class="govuk-body">@reviewCancellationErrorsP5ViewModel.paragraph1</p>
 
         @answerSections(reviewCancellationErrorsP5ViewModel.sections)
 

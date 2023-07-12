@@ -412,9 +412,8 @@ departure.ie056.review.message.hyperlink = Create another departure declaration
 
 departure.ie056.review.cancellation.message.title = Review cancellation errors
 departure.ie056.review.cancellation.message.heading = Review cancellation errors
-departure.ie056.review.cancellation.message.paragraph1.prefix = The office of departure was not able to cancel departure declaration {0}.
-departure.ie056.review.cancellation.message.paragraph1.singular.suffix = Review the error - then if you still want to cancel the declaration, try cancelling it again.
-departure.ie056.review.cancellation.message.paragraph1.plural.suffix = Review the errors - then if you still want to cancel the declaration, try cancelling it again.
+departure.ie056.review.cancellation.message.paragraph1.singular = The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again.
+departure.ie056.review.cancellation.message.paragraph1.plural = The office of departure was not able to cancel this declaration. Review the errors - then if you still want to cancel the declaration, try cancelling it again.
 departure.ie056.review.cancellation.message.paragraph2.prefix = Contact the
 departure.ie056.review.cancellation.message.paragraph2.link = New Computerised Transit System helpdesk
 departure.ie056.review.cancellation.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).

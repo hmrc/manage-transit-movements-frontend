@@ -32,15 +32,13 @@ case class ReviewCancellationErrorsP5ViewModel(sections: Seq[Section], lrn: Stri
 
   def heading(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.heading")
 
-  def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.paragraph1.prefix", lrn)
-
-  def paragraph1Suffix(implicit messages: Messages): String = if (multipleErrors) {
+  def paragraph1(implicit messages: Messages): String = if (multipleErrors) {
     messages(
-      "departure.ie056.review.cancellation.message.paragraph1.plural.suffix"
+      "departure.ie056.review.cancellation.message.paragraph1.plural"
     )
   } else {
     messages(
-      "departure.ie056.review.cancellation.message.paragraph1.singular.suffix"
+      "departure.ie056.review.cancellation.message.paragraph1.singular"
     )
   }
 
