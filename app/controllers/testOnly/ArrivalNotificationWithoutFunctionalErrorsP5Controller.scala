@@ -21,33 +21,29 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.arrival.ReviewUnloadingRemarkErrorsP5ViewModel.ReviewUnloadingRemarkErrorsP5ViewModelProvider
-import views.html.arrival.P5.ReviewUnloadingRemarkErrorsP5View
+import viewModels.P5.arrival.ArrivalNotificationWithoutFunctionalErrorP5ViewModel.ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider
+import views.html.arrival.P5.ArrivalNotificationWithoutFunctionalErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ReviewUnloadingRemarkErrorsP5Controller @Inject() (
+class ArrivalNotificationWithoutFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  rejectionMessageAction: ArrivalRejectionMessageActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: ReviewUnloadingRemarkErrorsP5ViewModelProvider,
-  view: ReviewUnloadingRemarkErrorsP5View
+  rejectionMessageAction: ArrivalRejectionMessageActionProvider,
+  viewModelProvider: ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider,
+  view: ArrivalNotificationWithoutFunctionalErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
+  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)) {
     implicit request =>
-      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie057MessageData, request.ie057MessageData.transitOperation.MRN)
-      rejectionMessageP5ViewModel.map(
-        viewModel =>
-          if (request.ie057MessageData.functionalErrors.isEmpty || (request.ie057MessageData.functionalErrors.size > config.maxErrorsForArrivalNotification)) {
-            Redirect(controllers.routes.ErrorController.technicalDifficulties())
-          } else {
-            Ok(view(viewModel, arrivalId))
-          }
-      )
+      if (request.ie057MessageData.functionalErrors.isEmpty) {
+        Ok(view(viewModelProvider.apply(request.ie057MessageData.transitOperation.MRN)))
+      } else {
+        Redirect(controllers.routes.ErrorController.technicalDifficulties())
+      }
   }
 }

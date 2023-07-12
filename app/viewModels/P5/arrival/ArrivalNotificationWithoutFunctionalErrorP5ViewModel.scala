@@ -18,17 +18,12 @@ package viewModels.P5.arrival
 
 import play.api.i18n.Messages
 
-case class ArrivalNotificationErrorP5ViewModel(mrn: String, noErrors: Boolean) {
+case class ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrn: String) {
   def title(implicit messages: Messages): String = messages("arrival.notification.errors.message.title")
 
   def heading(implicit messages: Messages): String = messages("arrival.notification.errors.message.heading")
 
-  def paragraph1(implicit messages: Messages): String =
-    if (noErrors) {
-      messages("arrival.notification.errors.message.noerrors", mrn)
-    } else {
-      messages("arrival.notification.errors.message.elevenpluserrors", mrn)
-    }
+  def paragraph1(implicit messages: Messages): String = messages("arrival.notification.errors.message.noerrors", mrn)
 
   def paragraph2(implicit messages: Messages): String = messages("arrival.notification.errors.message.paragraph2")
 
@@ -40,10 +35,10 @@ case class ArrivalNotificationErrorP5ViewModel(mrn: String, noErrors: Boolean) {
 
 }
 
-object ArrivalNotificationErrorP5ViewModel {
+object ArrivalNotificationWithoutFunctionalErrorP5ViewModel {
 
-  class ArrivalNotificationErrorP5ViewModelProvider {
-    def apply(mrn: String, noErrors: Boolean): ArrivalNotificationErrorP5ViewModel = ArrivalNotificationErrorP5ViewModel(mrn, noErrors)
+  class ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider {
+    def apply(mrn: String): ArrivalNotificationWithoutFunctionalErrorP5ViewModel = ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrn)
   }
 
 }

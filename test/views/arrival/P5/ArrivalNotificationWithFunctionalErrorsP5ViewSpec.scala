@@ -19,22 +19,22 @@ package views.arrival.P5
 import generators.Generators
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewModels.P5.arrival.ReviewUnloadingRemarkErrorsP5ViewModel
+import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.arrival.P5.ReviewUnloadingRemarkErrorsP5View
+import views.html.arrival.P5.ArrivalNotificationWithFunctionalErrorsP5View
 
-class ReviewUnloadingRemarkErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
-  override val prefix: String = "arrival.ie057.review.unloading.message"
+  override val prefix: String = "arrival.ie057.review.notification.message"
 
-  private val reviewRejectionMessageP5ViewModel =
-    new ReviewUnloadingRemarkErrorsP5ViewModel(sections, lrn.toString, false)
+  private val arrivalNotificationWithFunctionalErrorsP5ViewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel =
+    new ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, lrn.toString, false)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[ReviewUnloadingRemarkErrorsP5View]
-      .apply(reviewRejectionMessageP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
+      .instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
+      .apply(arrivalNotificationWithFunctionalErrorsP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)
@@ -67,11 +67,11 @@ class ReviewUnloadingRemarkErrorsP5ViewSpec extends CheckYourAnswersViewBehaviou
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1-prefix",
-      s"There is a problem with the unloading remarks for arrival notification $mrn."
+      s"There is a problem with arrival notification $mrn."
     )
     assertSpecificElementContainsText(
       "paragraph-1-suffix",
-      "Review the error and try making the unloading remarks again."
+      "Review the error and make/create a new arrival notification with the right information."
     )
   }
 
@@ -95,8 +95,8 @@ class ReviewUnloadingRemarkErrorsP5ViewSpec extends CheckYourAnswersViewBehaviou
 
   behave like pageWithLink(
     "arrival-link",
-    "View arrival notifications",
-    controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
+    "Create another arrival notification",
+    frontendAppConfig.declareArrivalNotificationStartUrl
   )
 
 }

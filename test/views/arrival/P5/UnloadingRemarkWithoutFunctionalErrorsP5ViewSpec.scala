@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package views.arrival
+package views.arrival.P5
 
 import play.twirl.api.HtmlFormat
-import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel
+import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
 import views.behaviours.ViewBehaviours
-import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
+import views.html.arrival.P5.UnloadingRemarkWithoutFunctionalErrorsP5View
 
-class UnloadingRemarkErrorsP5ViewSpec extends ViewBehaviours {
+class UnloadingRemarkWithoutFunctionalErrorsP5ViewSpec extends ViewBehaviours {
 
   private val unloadingNotificationErrorsP5ViewModel =
-    new UnloadingRemarkErrorsP5ViewModel("AB123", true, "CD123", None)
+    new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel("AB123", "CD123", None)
 
   override def view: HtmlFormat.Appendable =
     injector
-      .instanceOf[UnloadingRemarkErrorsP5View]
+      .instanceOf[UnloadingRemarkWithoutFunctionalErrorsP5View]
       .apply(unloadingNotificationErrorsP5ViewModel)(fakeRequest, messages)
 
   override val prefix: String = "arrival.notification.unloading.errors.message"
