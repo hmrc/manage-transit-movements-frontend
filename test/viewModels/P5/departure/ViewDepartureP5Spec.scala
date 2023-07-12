@@ -16,13 +16,12 @@
 
 package viewModels.P5.departure
 
-import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers
-import play.api.i18n.{Messages, messages}
+import base.SpecBase
+import play.api.i18n.Messages
 
 import java.time.{LocalDate, LocalTime}
 
-class ViewDepartureP5Spec extends AnyFreeSpec with Matchers {
+class ViewDepartureP5Spec extends SpecBase {
   private val dateNow = LocalDate.now()
   private val timeNow = LocalTime.now()
 
@@ -30,9 +29,17 @@ class ViewDepartureP5Spec extends AnyFreeSpec with Matchers {
 
     "must return correct statusWithArgs when args is a Some" in {
 
-      val departure = ViewDepartureP5(dateNow, timeNow, "abc123", "status1", Seq.empty, Some("LRN23242"))
+      val departure = ViewDepartureP5(dateNow, timeNow, "abc123", "movement.status.P5.replacedByLRN", Seq.empty, Some("LRN23242"))
 
-      departure.statusWithArgs(implicit messages: Messages) mustBe "LRN23242"
+      departure.statusWithArgs(messages: Messages) mustBe "Replaced by LRN LRN23242"
+
+    }
+
+    "must return correct statusWithArgs when args is a None" in {
+
+      val departure = ViewDepartureP5(dateNow, timeNow, "abc123", "movement.status.P5.replacedByLRN", Seq.empty, None)
+
+      departure.statusWithArgs(messages: Messages) mustBe "Replaced by LRN "
 
     }
   }
