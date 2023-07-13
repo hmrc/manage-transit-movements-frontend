@@ -19,64 +19,56 @@ package connectors
 import config.FrontendAppConfig
 import logging.Logging
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.http.Status.{NOT_FOUND, NO_CONTENT, OK}
+import play.api.libs.json.Reads
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClient) extends Logging {
 
-  def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]] = {
-    val serviceUrl = s"${config.referenceDataUrl}/customs-office/$code"
-    http
-      .GET[CustomsOffice](serviceUrl)
-      .map(Some(_))
-      .recover {
-        case _ =>
-          logger.error(s"Get Customs Office request failed to return data")
-          None
+  private type QueryParams = Seq[(String, String)]
+
+  private def version2Header = Seq(
+    "Accept" -> "application/vnd.hmrc.2.0+json"
+  )
+
+  implicit def responseHandlerGeneric[A](implicit reads: Reads[A]): HttpReads[Seq[A]] =
+    (_: String, _: String, response: HttpResponse) => {
+      response.status match {
+        case OK =>
+          (response.json \ "data").validate[Seq[A]].getOrElse {
+            throw new IllegalStateException("[ReferenceDataConnector][responseHandlerGeneric] Reference data could not be parsed")
+          }
+        case NO_CONTENT =>
+          Nil
+        case NOT_FOUND =>
+          logger.warn("[ReferenceDataConnector][responseHandlerGeneric] Reference data call returned NOT_FOUND")
+          throw new IllegalStateException("[ReferenceDataConnector][responseHandlerGeneric] Reference data could not be found")
+        case other =>
+          logger.warn(s"[ReferenceDataConnector][responseHandlerGeneric] Invalid downstream status $other")
+          throw new IllegalStateException(s"[ReferenceDataConnector][responseHandlerGeneric] Invalid downstream Status $other")
       }
+    }
+
+  def getCustomsOffices(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] = {
+    val url = s"${config.customsReferenceDataUrl}/filtered-lists/CustomsOffices"
+    http.GET[Seq[CustomsOffice]](url = url, headers = version2Header, queryParams = queryParams)
   }
 
-  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
-    def onFailControlType(code: String): ControlType = ControlType(code, "")
-    val serviceUrl                                   = s"${config.referenceDataUrl}/control-type/$code"
-
-    http
-      .GET[Option[ControlType]](serviceUrl)
-      .map(_.getOrElse(onFailControlType(code)))
-      .recover {
-        case _ =>
-          logger.error(s"Get Control Types  request failed to return data")
-          onFailControlType(code)
-      }
+  def getControlTypes(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[ControlType]] = {
+    val url = s"${config.customsReferenceDataUrl}/filtered-lists/ControlType"
+    http.GET[Seq[ControlType]](url = url, headers = version2Header, queryParams = queryParams)
   }
 
-  def getFunctionalErrorDescription(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
-    def onFailFunctionalError(code: String): FunctionalErrorWithDesc = FunctionalErrorWithDesc(code, "")
-    val serviceUrl                                                   = s"${config.referenceDataUrl}/functional-error-type/$code"
-
-    http
-      .GET[FunctionalErrorWithDesc](serviceUrl)
-      .recover {
-        case _ =>
-          logger.error(s"Get Functional Error Type  request failed to return data")
-          onFailFunctionalError(code)
-      }
+  def getFunctionalErrors(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] = {
+    val url = s"${config.customsReferenceDataUrl}/filtered-lists/FunctionalErrorCodesIeCA"
+    http.GET[Seq[FunctionalErrorWithDesc]](url = url, headers = version2Header, queryParams = queryParams)
   }
 
-  def getAllFunctionalErrorDescription()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] = {
-    def onFailFunctionalError(): Seq[FunctionalErrorWithDesc] = Nil
-
-    val serviceUrl = s"${config.referenceDataUrl}/get-all-functional-error-codes"
-
-    http
-      .GET[Seq[FunctionalErrorWithDesc]](serviceUrl)
-      .recover {
-        case _ =>
-          logger.error(s"Get All Functional Error Code to Description request failed to return data")
-          onFailFunctionalError()
-      }
+  def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] = {
+    val url = s"${config.customsReferenceDataUrl}/lists/FunctionalErrorCodesIeCA"
+    http.GET[Seq[FunctionalErrorWithDesc]](url = url, headers = version2Header)
   }
 }

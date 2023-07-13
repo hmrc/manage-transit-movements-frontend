@@ -96,7 +96,7 @@ object ArrivalStatusP5ViewModel {
   private def rejectionFromOfficeOfDestinationArrival(
     arrivalId: String,
     functionalErrorCount: Int
-  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
+  ): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == RejectionFromOfficeOfDestination =>
       val href = functionalErrorCount match {
         case 0 =>

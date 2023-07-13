@@ -46,14 +46,13 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
   private val mockDepartureP5MessageService            = mock[DepartureP5MessageService]
   private val mockGoodsUnderControlActionProvider      = mock[GoodsUnderControlActionProvider]
 
-  protected def goodsUnderControlAction(departureIdP5: String,
-                                        mockDepartureP5MessageService: DepartureP5MessageService,
-                                        mockReferenceDataService: ReferenceDataService
+  protected def goodsUnderControlAction(
+    departureIdP5: String,
+    mockDepartureP5MessageService: DepartureP5MessageService,
+    mockReferenceDataService: ReferenceDataService
   ): Unit =
-    when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn new FakeGoodsUnderControlAction(departureIdP5,
-                                                                                                      mockDepartureP5MessageService,
-                                                                                                      mockReferenceDataService
-    )
+    when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn
+      new FakeGoodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
   private val sections = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -90,7 +89,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
         )
       )
       when(mockDepartureP5MessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
 
@@ -125,7 +124,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
         )
       )
       when(mockDepartureP5MessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
 

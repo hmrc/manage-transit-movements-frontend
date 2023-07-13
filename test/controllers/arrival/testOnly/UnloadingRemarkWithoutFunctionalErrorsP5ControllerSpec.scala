@@ -17,7 +17,6 @@
 package controllers.arrival.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.ReferenceDataConnector
 import controllers.actions.{ArrivalRejectionMessageActionProvider, FakeArrivalRejectionMessageAction}
 import generators.Generators
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
@@ -29,7 +28,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.ArrivalP5MessageService
+import services.{ArrivalP5MessageService, ReferenceDataService}
 import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
 import views.html.arrival.P5.UnloadingRemarkWithoutFunctionalErrorsP5View
 
@@ -39,7 +38,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
 
   private val mockArrivalP5MessageService        = mock[ArrivalP5MessageService]
   private val mockRejectionMessageActionProvider = mock[ArrivalRejectionMessageActionProvider]
-  private val mockReferenceDataConnector         = mock[ReferenceDataConnector]
+  private val mockReferenceDataService           = mock[ReferenceDataService]
 
   lazy val unloadingRemarkWithErrorsController: String =
     controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5).url
@@ -53,14 +52,14 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
     super.beforeEach()
     reset(mockArrivalP5MessageService)
     reset(mockRejectionMessageActionProvider)
-    reset(mockReferenceDataConnector)
+    reset(mockReferenceDataService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
-      .overrides(bind[ReferenceDataConnector].toInstance(mockReferenceDataConnector))
+      .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "UnloadingRemarkWithoutFunctionalErrorsP5Controller" - {
 
@@ -76,7 +75,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
@@ -107,7 +106,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
-      when(mockReferenceDataConnector.getCustomsOffice(any())(any(), any()))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)

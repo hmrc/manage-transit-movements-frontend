@@ -16,14 +16,14 @@
 
 package controllers.testOnly
 
-import config.FrontendAppConfig
-import connectors.ReferenceDataConnector
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel.CancellationNotificationErrorsP5ViewModelProvider
 import views.html.departure.TestOnly.CancellationNotificationErrorsP5View
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,8 +34,8 @@ class CancellationNotificationErrorsP5Controller @Inject() (
   rejectionMessageAction: DepartureRejectionMessageActionProvider,
   viewModelProvider: CancellationNotificationErrorsP5ViewModelProvider,
   view: CancellationNotificationErrorsP5View,
-  referenceDataConnector: ReferenceDataConnector
-)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
+  referenceDataService: ReferenceDataService
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -45,7 +45,7 @@ class CancellationNotificationErrorsP5Controller @Inject() (
       val customsOfficeReference = request.ie056MessageData.customsOfficeOfDeparture.referenceNumber
 
       if (functionalErrors.isEmpty) {
-        referenceDataConnector.getCustomsOffice(customsOfficeReference).map {
+        referenceDataService.getCustomsOffice(customsOfficeReference).map {
           customsOffice =>
             Ok(view(viewModelProvider.apply(request.lrn, customsOfficeReference, customsOffice)))
         }

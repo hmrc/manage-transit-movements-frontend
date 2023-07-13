@@ -66,7 +66,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
 
     val viewModelProvider = new DepartureCancelledP5ViewModelProvider(mockReferenceDataService)
 
-    when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
     def viewModel(customsOffice: Option[CustomsOffice] = None, isCancelled: Boolean = true): DepartureCancelledP5ViewModel =
       viewModelProvider.apply(ie009Data.data, lrn, customsReferenceId, customsOffice, isCancelled).futureValue

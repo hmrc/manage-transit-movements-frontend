@@ -60,7 +60,7 @@ class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData, referenceDa
     call = None
   )
 
-  private def getCustomsOffice(referenceNumber: String): Future[Option[CustomsOffice]] = referenceDataService.getCustomsOfficeByCode(referenceNumber)(ec, hc)
+  private def getCustomsOffice(referenceNumber: String): Future[Option[CustomsOffice]] = referenceDataService.getCustomsOffice(referenceNumber)(ec, hc)
 
   def buildOfficeOfDepartureRow: Future[Option[SummaryListRow]] = {
     val referenceNumber = ie009MessageData.customsOfficeOfDeparture.referenceNumber

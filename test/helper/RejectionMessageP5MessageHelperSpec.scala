@@ -66,7 +66,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
             )
           )
 
-          when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+          when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
           val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
 
@@ -87,7 +87,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
             )
           )
 
-          when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(Seq(functionalErrorReferenceData)))
+          when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(Seq(functionalErrorReferenceData)))
 
           val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
 
@@ -126,7 +126,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "MRN Invalid"))
 
-        when(mockReferenceDataService.getAllFunctionalErrorDescription()).thenReturn(Future.successful(functionalErrorReferenceData))
+        when(mockReferenceDataService.getFunctionalErrors()).thenReturn(Future.successful(functionalErrorReferenceData))
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
@@ -166,7 +166,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val functionalErrorReferenceData = Seq(functionalErrorReferenceData1, functionalErrorReferenceData2)
 
-        when(mockReferenceDataService.getAllFunctionalErrorDescription()).thenReturn(Future.successful(functionalErrorReferenceData))
+        when(mockReferenceDataService.getFunctionalErrors()).thenReturn(Future.successful(functionalErrorReferenceData))
 
         val message: IE056Data = IE056Data(
           IE056MessageData(

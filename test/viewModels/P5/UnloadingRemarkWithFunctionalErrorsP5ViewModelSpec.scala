@@ -59,7 +59,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         )
       )
 
-      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
@@ -99,7 +99,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         )
       )
 
-      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
@@ -134,7 +134,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         )
       )
 
-      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue

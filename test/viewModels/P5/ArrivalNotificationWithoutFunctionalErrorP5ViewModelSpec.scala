@@ -48,7 +48,7 @@ class ArrivalNotificationWithoutFunctionalErrorP5ViewModelSpec extends SpecBase 
 
     "when there is no error" - {
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider()
       val result            = viewModelProvider.apply(mrnString)

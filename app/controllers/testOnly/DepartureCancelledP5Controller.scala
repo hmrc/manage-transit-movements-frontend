@@ -47,7 +47,7 @@ class DepartureCancelledP5Controller @Inject() (
 
   def buildView(IE009MessageData: IE009MessageData, lrn: String, isCancelled: Boolean)(implicit request: Request[_]): Future[Result] = {
     val customsOfficeReferenceNumber = IE009MessageData.customsOfficeOfDeparture.referenceNumber
-    referenceDataService.getCustomsOfficeByCode(customsOfficeReferenceNumber).flatMap {
+    referenceDataService.getCustomsOffice(customsOfficeReferenceNumber).flatMap {
       customsOffice =>
         viewModelProvider.apply(IE009MessageData, lrn, customsOfficeReferenceNumber, customsOffice, isCancelled).map {
           viewModel => Ok(view(viewModel))

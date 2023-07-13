@@ -21,21 +21,38 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, 
 import connectors.ReferenceDataConnectorSpec._
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import org.scalacheck.Gen
+import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import play.api.http.Status.NO_CONTENT
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockSuite {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .configure(conf = "microservice.services.reference-data.port" -> server.port())
+      .configure(conf = "microservice.services.customs-reference-data.port" -> server.port())
 
   private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
-  val code                                           = "GB00001"
-  val typeOfControl                                  = "44"
+
+  private def checkErrorResponse(url: String, result: Future[_]): Assertion = {
+    val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
+    forAll(errorResponseCodes) {
+      errorResponse =>
+        server.stubFor(
+          get(urlEqualTo(url)).willReturn(aResponse().withStatus(errorResponse))
+        )
+
+        whenReady(result.failed) {
+          _ mustBe an[Exception]
+        }
+    }
+  }
+
+  private val queryParams = Seq("foo" -> "bar")
 
   "Reference Data" - {
 
@@ -43,103 +60,119 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
       "getCustomsOffice" - {
 
-        "should handle a 200 response for customs office with code end point with valid phone number" in {
+        val url = s"$baseUrl/filtered-lists/CustomsOffices?foo=bar"
+
+        "should handle a 200 response for customs offices" in {
           server.stubFor(
-            get(urlEqualTo(s"$customsOfficeUri/$code"))
-              .willReturn(okJson(customsOfficeResponseJsonWithPhone))
+            get(urlEqualTo(url))
+              .willReturn(okJson(customsOfficesResponseJson))
           )
 
-          val expectedResult = Some(CustomsOffice("ID1", "NAME001", Some("004412323232345")))
+          val expectedResult = Seq(CustomsOffice(code, "NAME001", Some("004412323232345")))
 
-          connector.getCustomsOffice(code).futureValue mustBe expectedResult
+          connector.getCustomsOffices(queryParams).futureValue mustBe expectedResult
         }
 
-        "should handle a 200 response for customs office with code end point with no phone number" in {
+        "should handle a 204 response for customs offices" in {
           server.stubFor(
-            get(urlEqualTo(s"$customsOfficeUri/$code"))
-              .willReturn(okJson(customsOfficeResponseJsonWithOutPhone))
+            get(urlEqualTo(url))
+              .willReturn(aResponse().withStatus(NO_CONTENT))
           )
 
-          val expectedResult = Some(CustomsOffice("ID1", "NAME001", None))
-
-          connector.getCustomsOffice("GB00001").futureValue mustBe expectedResult
+          connector.getCustomsOffices(queryParams).futureValue mustBe Nil
         }
-        "should handle client and server errors for customs office end point" in {
-          val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
 
-          forAll(errorResponseCodes) {
-            errorResponse =>
-              server.stubFor(
-                get(urlEqualTo(s"$customsOfficeUri/$code"))
-                  .willReturn(
-                    aResponse()
-                      .withStatus(errorResponse)
-                  )
-              )
-
-              connector.getCustomsOffice("GB00001").futureValue mustBe None
-          }
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getCustomsOffices(queryParams))
         }
       }
 
       "getControlType" - {
 
+        val url = s"$baseUrl/filtered-lists/ControlType?foo=bar"
+
         "should handle a 200 response for control types" in {
           server.stubFor(
-            get(urlEqualTo(s"$controlTypeUri"))
-              .willReturn(okJson(controlType))
+            get(urlEqualTo(url))
+              .willReturn(okJson(controlTypesResponseJson))
           )
 
-          val expectedResult = ControlType("44", "Intrusive")
+          val expectedResult = Seq(ControlType(typeOfControl, "Intrusive"))
 
-          connector.getControlType(typeOfControl).futureValue mustBe expectedResult
+          connector.getControlTypes(queryParams).futureValue mustBe expectedResult
         }
 
-        "should handle client and server errors for control type end point" in {
-          val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
+        "should handle a 204 response for control types" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(aResponse().withStatus(NO_CONTENT))
+          )
 
-          forAll(errorResponseCodes) {
-            errorResponse =>
-              server.stubFor(
-                get(urlEqualTo(s"$controlTypeUri"))
-                  .willReturn(
-                    aResponse()
-                      .withStatus(errorResponse)
-                  )
-              )
+          connector.getControlTypes(queryParams).futureValue mustBe Nil
+        }
 
-              connector.getControlType(typeOfControl).futureValue mustBe ControlType(typeOfControl, "")
-          }
+        "should handle client and server errors for control types" in {
+          checkErrorResponse(url, connector.getControlTypes(queryParams))
         }
       }
 
-      "getFunctionalErrorDescription" - {
+      "getFunctionalErrors" - {
 
-        "should handle a 200 response for functional errors" in {
-          server.stubFor(
-            get(urlEqualTo(s"$functionalErrorUri"))
-              .willReturn(okJson(functionalErrorJson))
-          )
+        "when filtering" - {
 
-          val expectedResult = FunctionalErrorWithDesc("14", "Rule violation")
+          val url = s"$baseUrl/filtered-lists/FunctionalErrorCodesIeCA?foo=bar"
 
-          connector.getFunctionalErrorDescription(functionalError).futureValue mustBe expectedResult
+          "should handle a 200 response for functional errors" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(okJson(functionalErrorsResponseJson))
+            )
+
+            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
+
+            connector.getFunctionalErrors(queryParams).futureValue mustBe expectedResult
+          }
+
+          "should handle a 204 response for functional errors" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(aResponse().withStatus(NO_CONTENT))
+            )
+
+            connector.getFunctionalErrors(queryParams).futureValue mustBe Nil
+          }
+
+          "should handle client and server errors for functional errors" in {
+            checkErrorResponse(url, connector.getFunctionalErrors(queryParams))
+          }
         }
 
-        "should handle client and server errors for control type end point" in {
-          val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
+        "when not filtering" - {
 
-          forAll(errorResponseCodes) {
-            errorResponse =>
-              server.stubFor(
-                get(urlEqualTo(s"$functionalErrorUri"))
-                  .willReturn(
-                    aResponse()
-                      .withStatus(errorResponse)
-                  )
-              )
+          val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA"
 
-              connector.getFunctionalErrorDescription(functionalError).futureValue mustBe FunctionalErrorWithDesc(functionalError, "")
+          "should handle a 200 response for functional errors" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(okJson(functionalErrorsResponseJson))
+            )
+
+            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
+
+            connector.getFunctionalErrors().futureValue mustBe expectedResult
+          }
+
+          "should handle a 204 response for functional errors" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(aResponse().withStatus(NO_CONTENT))
+            )
+
+            connector.getFunctionalErrors().futureValue mustBe Nil
+          }
+
+          "should handle client and server errors for functional errors" in {
+            checkErrorResponse(url, connector.getFunctionalErrors())
           }
         }
       }
@@ -149,43 +182,46 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
 object ReferenceDataConnectorSpec {
 
-  private val typeOfControl      = "44"
-  private val functionalError    = "14"
-  private val customsOfficeUri   = "/test-only/transit-movements-trader-reference-data/customs-office"
-  private val controlTypeUri     = s"/test-only/transit-movements-trader-reference-data/control-type/$typeOfControl"
-  private val functionalErrorUri = s"/test-only/transit-movements-trader-reference-data/functional-error-type/$functionalError"
+  private val code            = "GB00001"
+  private val typeOfControl   = "44"
+  private val functionalError = "14"
 
-  private val customsOfficeResponseJsonWithPhone: String =
-    """
-      | {
-      |   "id":"ID1",
-      |   "name":"NAME001",
-      |   "phoneNumber":"004412323232345"
-      | }
+  private val baseUrl = "/customs-reference-data/test-only"
+
+  private val customsOfficesResponseJson: String =
+    s"""
+      |{
+      |  "data": [
+      |    {
+      |      "id": "$code",
+      |      "name": "NAME001",
+      |      "phoneNumber": "004412323232345"
+      |    }
+      |  ]
+      |}
       |""".stripMargin
 
-  private val customsOfficeResponseJsonWithOutPhone: String =
-    """
-      | {
-      |   "id":"ID1",
-      |   "name":"NAME001",
-      |   "countryId":"GB"
-      | }
+  private val controlTypesResponseJson: String =
+    s"""
+      |{
+      |  "data": [
+      |    {
+      |      "code": "$typeOfControl",
+      |      "description": "Intrusive"
+      |    }
+      |  ]
+      |}
       |""".stripMargin
 
-  private val controlType: String =
-    """
-      | {
-      |   "code":"44",
-      |   "description":"Intrusive"
-      | }
-      |""".stripMargin
-
-  private val functionalErrorJson: String =
-    """
-      | {
-      |   "code":"14",
-      |   "description":"Rule violation"
-      | }
+  private val functionalErrorsResponseJson: String =
+    s"""
+      |{
+      |  "data": [
+      |    {
+      |      "code": "$functionalError",
+      |      "description": "Rule violation"
+      |    }
+      |  ]
+      |}
       |""".stripMargin
 }

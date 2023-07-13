@@ -16,11 +16,10 @@
 
 package controllers.testOnly
 
-import config.FrontendAppConfig
-import connectors.ReferenceDataConnector
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel._
 import views.html.arrival.P5.UnloadingRemarkWithoutFunctionalErrorsP5View
@@ -35,7 +34,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
   viewModelProvider: UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider,
   view: UnloadingRemarkWithoutFunctionalErrorsP5View,
-  referenceDataConnector: ReferenceDataConnector
+  referenceDataService: ReferenceDataService
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -46,7 +45,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
       val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber
 
       if (functionalErrors.isEmpty) {
-        referenceDataConnector.getCustomsOffice(customsOfficeReference).map {
+        referenceDataService.getCustomsOffice(customsOfficeReference).map {
           customsOffice =>
             Ok(
               view(

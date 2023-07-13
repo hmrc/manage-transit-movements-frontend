@@ -58,7 +58,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         )
       )
 
-      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, lrnString).futureValue
@@ -98,7 +98,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         )
       )
 
-      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, lrnString).futureValue
@@ -133,7 +133,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         )
       )
 
-      when(mockReferenceDataService.getAllFunctionalErrorDescription()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data, lrnString).futureValue

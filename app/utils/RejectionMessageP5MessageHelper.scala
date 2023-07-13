@@ -32,11 +32,9 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
   ec: ExecutionContext
 ) extends DeparturesP5MessageHelper {
 
-  private val allFunctionalErrors = referenceDataService.getAllFunctionalErrorDescription()(ec, hc)
-
   private def getAllFunctionalErrorDescription(errorCode: String): Future[Option[String]] =
     (for {
-      y <- OptionT.liftF(allFunctionalErrors)
+      y <- OptionT.liftF(referenceDataService.getFunctionalErrors())
       x = y.find(_.code == errorCode).map(_.toString)
     } yield x).value.map(_.flatten)
 
