@@ -25,8 +25,9 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import services.{DepartureP5MessageService, ReferenceDataService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,7 +49,7 @@ class GoodsUnderControlAction(departureId: String, departureP5MessageService: De
 
     (for {
       ie060 <- OptionT(departureP5MessageService.getMessage[IE060Data](departureId, GoodsUnderControl))
-      cust  <- OptionT.liftF(referenceDataService.getCustomsOfficeByCode(code = ie060.data.CustomsOfficeOfDeparture.referenceNumber))
+      cust  <- OptionT.liftF(referenceDataService.getCustomsOffice(code = ie060.data.CustomsOfficeOfDeparture.referenceNumber))
     } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, cust))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value

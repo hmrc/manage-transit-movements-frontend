@@ -31,9 +31,9 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.GoodsUnderControlP5MessageHelper
 import viewModels.sections.Section
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -157,7 +157,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
             )
           )
 
-          when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
             .thenReturn(Future.successful(Some(CustomsOffice("22323323", "Office", None))))
 
           val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
@@ -181,7 +181,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
             )
           )
 
-          when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
             .thenReturn(Future.successful(None))
 
           val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
@@ -321,7 +321,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
@@ -355,7 +355,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 

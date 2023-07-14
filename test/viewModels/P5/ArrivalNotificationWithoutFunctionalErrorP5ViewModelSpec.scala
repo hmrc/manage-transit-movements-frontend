@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels
+package viewModels.P5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
@@ -25,11 +25,11 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
-import viewModels.P5.arrival.ArrivalNotificationErrorP5ViewModel.ArrivalNotificationErrorP5ViewModelProvider
+import viewModels.P5.arrival.ArrivalNotificationWithoutFunctionalErrorP5ViewModel.ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider
 
 import scala.concurrent.Future
 
-class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class ArrivalNotificationWithoutFunctionalErrorP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -42,16 +42,16 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
 
   val mrnString = "MRNAB123"
 
-  "ArrivalNotificationErrorP5ViewModel" - {
+  "ArrivalNotificationWithoutFunctionalErrorP5ViewModel" - {
 
     val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "Codelist violation")
 
     "when there is no error" - {
 
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
-      val viewModelProvider = new ArrivalNotificationErrorP5ViewModelProvider()
-      val result            = viewModelProvider.apply(mrnString, true)
+      val viewModelProvider = new ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider()
+      val result            = viewModelProvider.apply(mrnString)
 
       "must return correct title" in {
         result.title mustBe "Notification errors"
@@ -61,35 +61,6 @@ class ArrivalNotificationErrorP5ViewModelSpec extends SpecBase with AppWithDefau
       }
       "must return correct paragraph 1" in {
         result.paragraph1 mustBe s"There are one or more errors in arrival notification $mrnString that cannot be amended."
-      }
-      "must return correct paragraph 2" in {
-        result.paragraph2 mustBe s"Make/create a new arrival notification with the right information."
-      }
-      "must return correct paragraph 3 prefix, link and suffix" in {
-        result.paragraph3Prefix mustBe "Contact the"
-        result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph3Suffix mustBe "for help understanding the errors (opens in a new tab)."
-      }
-      "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Create another arrival notification"
-      }
-    }
-
-    "when there is more than 10 errors" - {
-
-      when(mockReferenceDataService.getFunctionalErrorType(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
-
-      val viewModelProvider = new ArrivalNotificationErrorP5ViewModelProvider()
-      val result            = viewModelProvider.apply(mrnString, false)
-
-      "must return correct title" in {
-        result.title mustBe "Notification errors"
-      }
-      "must return correct heading" in {
-        result.heading mustBe "Notification errors"
-      }
-      "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There are a number of errors in arrival notification $mrnString."
       }
       "must return correct paragraph 2" in {
         result.paragraph2 mustBe s"Make/create a new arrival notification with the right information."

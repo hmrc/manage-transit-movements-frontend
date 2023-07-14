@@ -19,18 +19,13 @@ package viewModels.P5.arrival
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 
-case class UnloadingRemarkErrorsP5ViewModel(mrn: String, noErrors: Boolean, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]) {
+case class UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrn: String, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]) {
 
   def title(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.title")
 
   def heading(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.heading")
 
-  def paragraph1(implicit messages: Messages): String =
-    if (noErrors) {
-      messages("arrival.notification.unloading.errors.message.noerrors", mrn)
-    } else {
-      messages("arrival.notification.unloading.errors.message.elevenpluserrors", mrn)
-    }
+  def paragraph1(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.noerrors", mrn)
 
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {
@@ -50,12 +45,12 @@ case class UnloadingRemarkErrorsP5ViewModel(mrn: String, noErrors: Boolean, cust
 
 }
 
-object UnloadingRemarkErrorsP5ViewModel {
+object UnloadingRemarkWithoutFunctionalErrorsP5ViewModel {
 
-  class UnloadingRemarkErrorsP5ViewModelProvider {
+  class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider {
 
-    def apply(mrn: String, noErrors: Boolean, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]): UnloadingRemarkErrorsP5ViewModel =
-      UnloadingRemarkErrorsP5ViewModel(mrn, noErrors, customsOfficeReferenceId, customsOffice)
+    def apply(mrn: String, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]): UnloadingRemarkWithoutFunctionalErrorsP5ViewModel =
+      UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrn, customsOfficeReferenceId, customsOffice)
   }
 
 }

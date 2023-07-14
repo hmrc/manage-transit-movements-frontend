@@ -16,27 +16,26 @@
 
 package controllers.testOnly
 
-import config.FrontendAppConfig
-import connectors.ReferenceDataConnector
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.arrival.UnloadingRemarkErrorsP5ViewModel._
-import views.html.departure.TestOnly.UnloadingRemarkErrorsP5View
+import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel._
+import views.html.arrival.P5.UnloadingRemarkWithoutFunctionalErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UnloadingRemarkErrorsP5Controller @Inject() (
+class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   cc: MessagesControllerComponents,
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
-  viewModelProvider: UnloadingRemarkErrorsP5ViewModelProvider,
-  view: UnloadingRemarkErrorsP5View,
-  referenceDataConnector: ReferenceDataConnector
-)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
+  viewModelProvider: UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider,
+  view: UnloadingRemarkWithoutFunctionalErrorsP5View,
+  referenceDataService: ReferenceDataService
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -45,14 +44,13 @@ class UnloadingRemarkErrorsP5Controller @Inject() (
       val functionalErrors       = request.ie057MessageData.functionalErrors
       val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber
 
-      if (functionalErrors.isEmpty || (functionalErrors.size > config.maxErrorsForArrivalNotification)) {
-        referenceDataConnector.getCustomsOffice(customsOfficeReference).map {
+      if (functionalErrors.isEmpty) {
+        referenceDataService.getCustomsOffice(customsOfficeReference).map {
           customsOffice =>
             Ok(
               view(
                 viewModelProvider.apply(
                   request.ie057MessageData.transitOperation.MRN,
-                  request.ie057MessageData.functionalErrors.isEmpty,
                   customsOfficeReference,
                   customsOffice
                 )

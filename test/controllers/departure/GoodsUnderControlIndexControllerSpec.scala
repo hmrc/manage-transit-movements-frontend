@@ -40,14 +40,13 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
   private val mockDepartureP5MessageService       = mock[DepartureP5MessageService]
   private val mockGoodsUnderControlActionProvider = mock[GoodsUnderControlActionProvider]
 
-  protected def goodsUnderControlAction(departureIdP5: String,
-                                        mockDepartureP5MessageService: DepartureP5MessageService,
-                                        mockReferenceDataService: ReferenceDataService
+  protected def goodsUnderControlAction(
+    departureIdP5: String,
+    mockDepartureP5MessageService: DepartureP5MessageService,
+    mockReferenceDataService: ReferenceDataService
   ): Unit =
-    when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn new FakeGoodsUnderControlAction(departureIdP5,
-                                                                                                      mockDepartureP5MessageService,
-                                                                                                      mockReferenceDataService
-    )
+    when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn
+      new FakeGoodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -77,7 +76,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
         )
       )
       when(mockDepartureP5MessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
@@ -100,7 +99,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
         )
       )
       when(mockDepartureP5MessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
@@ -123,7 +122,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
         )
       )
       when(mockDepartureP5MessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 

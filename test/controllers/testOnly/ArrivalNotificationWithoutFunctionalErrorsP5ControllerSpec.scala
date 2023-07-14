@@ -29,16 +29,22 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ArrivalP5MessageService
-import viewModels.P5.arrival.ArrivalNotificationErrorP5ViewModel
-import views.html.arrival.TestOnly.ArrivalNotificationErrorP5View
+import viewModels.P5.arrival.ArrivalNotificationWithoutFunctionalErrorP5ViewModel
+import views.html.arrival.P5.ArrivalNotificationWithoutFunctionalErrorsP5View
 
 import scala.concurrent.Future
 
-class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
+    extends SpecBase
+    with AppWithDefaultMockFixtures
+    with ScalaCheckPropertyChecks
+    with Generators {
 
-  private val mockArrivalP5MessageService             = mock[ArrivalP5MessageService]
-  private val mockRejectionMessageActionProvider      = mock[ArrivalRejectionMessageActionProvider]
-  lazy val arrivalNotificationErrorController: String = controllers.testOnly.routes.ArrivalNotificationErrorP5Controller.onPageLoad(arrivalIdP5).url
+  private val mockArrivalP5MessageService        = mock[ArrivalP5MessageService]
+  private val mockRejectionMessageActionProvider = mock[ArrivalRejectionMessageActionProvider]
+
+  lazy val arrivalNotificationErrorController: String =
+    controllers.testOnly.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5).url
 
   private val mrnString = "MRNAB123"
 
@@ -57,7 +63,7 @@ class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefa
       .guiceApplicationBuilder()
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
 
-  "ArrivalDeclarationErrorsP5Controller" - {
+  "ArrivalNotificationWithoutFunctionalErrorsP5" - {
 
     "must return OK and the correct view for a GET when no Errors" in {
       val message: IE057Data = IE057Data(
@@ -72,7 +78,7 @@ class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefa
 
       rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
-      val arrivalNotificationErrorP5ViewModel = new ArrivalNotificationErrorP5ViewModel(mrnString, true)
+      val arrivalNotificationErrorP5ViewModel = new ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrnString)
 
       val request = FakeRequest(GET, arrivalNotificationErrorController)
 
@@ -80,53 +86,14 @@ class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefa
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[ArrivalNotificationErrorP5View]
+      val view = injector.instanceOf[ArrivalNotificationWithoutFunctionalErrorsP5View]
 
       contentAsString(result) mustEqual
         view(arrivalNotificationErrorP5ViewModel)(request, messages, frontendAppConfig).toString
     }
 
-    "must return OK and the correct view for a GET when more than 10 Errors" in {
+    "must redirect to technical difficulties page when functionalErrors are defined" in {
 
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNAB123"),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq(
-            FunctionalError("1", "12", "Codelist violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None),
-            FunctionalError("2", "14", "Rule violation", None)
-          )
-        )
-      )
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
-
-      rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
-
-      val departureDeclarationErrorsP5ViewModel = new ArrivalNotificationErrorP5ViewModel(mrnString, false)
-
-      val request = FakeRequest(GET, arrivalNotificationErrorController)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      val view = injector.instanceOf[ArrivalNotificationErrorP5View]
-
-      contentAsString(result) mustEqual
-        view(departureDeclarationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
-    }
-
-    "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
       val message: IE057Data = IE057Data(
         IE057MessageData(
           TransitOperationIE057("MRNCD3232"),
@@ -134,6 +101,7 @@ class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefa
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
+
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
 
@@ -145,7 +113,6 @@ class ArrivalNotificationErrorP5ControllerSpec extends SpecBase with AppWithDefa
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
-
     }
   }
 }

@@ -160,7 +160,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
         when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
-        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
         when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
@@ -201,7 +201,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
         when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
-        when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
         when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
