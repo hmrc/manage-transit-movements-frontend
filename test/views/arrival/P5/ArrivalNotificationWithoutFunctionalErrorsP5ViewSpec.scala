@@ -42,6 +42,8 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnsw
 
   behave like pageWithHeading()
 
+  behave like pageWithCaption(s"MRN: $mrnString")
+
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
     assertElementContainsText(element, expectedText)
@@ -50,15 +52,11 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnsw
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1",
-      s"There are one or more errors in arrival notification $mrnString that cannot be amended."
+      s"There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
     )
   }
 
   "must render correct paragraph2 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-2",
-      "Make/create a new arrival notification with the right information."
-    )
     assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"

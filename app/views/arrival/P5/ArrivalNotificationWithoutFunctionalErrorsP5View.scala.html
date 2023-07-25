@@ -34,12 +34,10 @@ formHelper: FormWithCSRF
 
         @heading(
             heading = arrivalNotificationErrorP5ViewModel.heading,
-            caption = None
+            caption = Some(messages("arrival.messages.caption", arrivalNotificationErrorP5ViewModel.mrn))
         )
 
         <p id="paragraph-1" class="govuk-body">@arrivalNotificationErrorP5ViewModel.paragraph1</p>
-
-        <p id="paragraph-2" class="govuk-body">@arrivalNotificationErrorP5ViewModel.paragraph2</p>
 
         <p id="paragraph-3" class="govuk-body">@arrivalNotificationErrorP5ViewModel.paragraph3Prefix <a id="helpdesk-link" class="govuk-link"  target="_blank" href=@config.nctsEnquiriesUrl>@arrivalNotificationErrorP5ViewModel.paragraph3Link</a> @arrivalNotificationErrorP5ViewModel.paragraph3Suffix</p>
 

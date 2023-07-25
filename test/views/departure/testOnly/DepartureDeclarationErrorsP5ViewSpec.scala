@@ -51,15 +51,11 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1",
-      s"There are one or more errors in this declaration that cannot be amended."
+      s"There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
     )
   }
 
   "must render correct paragraph2 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-2",
-      "Make a new declaration with the right information."
-    )
     assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"

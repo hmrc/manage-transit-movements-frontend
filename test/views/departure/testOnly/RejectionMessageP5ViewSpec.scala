@@ -51,6 +51,8 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
 
   behave like pageWithSubmitButton("Amend errors")
 
+  behave like pageWithCaption(s"LRN: $lrn")
+
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
       sectionTitle =>
@@ -64,14 +66,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
   }
 
   "must render correct paragraph1 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-1-prefix",
-      s"There is a problem with departure declaration $lrn."
-    )
-    assertSpecificElementContainsText(
-      "paragraph-1-suffix",
-      "Amend the error and resend the declaration."
-    )
+    assertSpecificElementContainsText("paragraph-1", s"There is a problem with this declaration. Amend the error and resend the declaration.")
   }
 
   "must render correct paragraph2 content" in {

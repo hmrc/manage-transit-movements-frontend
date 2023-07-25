@@ -25,7 +25,7 @@ case class UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrn: String, custom
 
   def heading(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.heading")
 
-  def paragraph1(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.noerrors", mrn)
+  def paragraph1(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.noerrors")
 
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {

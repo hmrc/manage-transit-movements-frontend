@@ -52,6 +52,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends CheckYourAnswersView
 
   behave like pageWithoutSubmitButton()
 
+  behave like pageWithCaption("MRN: ABCD1234567890123")
+
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
       sectionTitle =>
@@ -66,12 +68,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends CheckYourAnswersView
 
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
-      "paragraph-1-prefix",
-      s"There is a problem with the unloading remarks for arrival notification $mrn."
-    )
-    assertSpecificElementContainsText(
-      "paragraph-1-suffix",
-      "Review the error and try making the unloading remarks again."
+      "paragraph-1",
+      s"There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
     )
   }
 

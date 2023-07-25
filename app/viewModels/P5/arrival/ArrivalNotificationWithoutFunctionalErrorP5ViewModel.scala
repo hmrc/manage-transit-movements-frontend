@@ -23,7 +23,7 @@ case class ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrn: String) {
 
   def heading(implicit messages: Messages): String = messages("arrival.notification.errors.message.heading")
 
-  def paragraph1(implicit messages: Messages): String = messages("arrival.notification.errors.message.noerrors", mrn)
+  def paragraph1(implicit messages: Messages): String = messages("arrival.notification.errors.message.noerrors")
 
   def paragraph2(implicit messages: Messages): String = messages("arrival.notification.errors.message.paragraph2")
 
