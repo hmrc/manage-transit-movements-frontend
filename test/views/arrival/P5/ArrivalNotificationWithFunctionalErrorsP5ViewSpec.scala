@@ -46,6 +46,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends CheckYourAnswers
 
   behave like pageWithHeading()
 
+  behave like pageWithCaption("MRN: ABCD1234567890123")
+
   behave like pageWithSummaryLists()
 
   behave like pageWithoutFormAction()

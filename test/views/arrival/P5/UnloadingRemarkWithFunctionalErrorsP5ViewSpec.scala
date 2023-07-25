@@ -52,6 +52,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends CheckYourAnswersView
 
   behave like pageWithoutSubmitButton()
 
+  behave like pageWithCaption("MRN: ABCD1234567890123")
+
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
       sectionTitle =>
