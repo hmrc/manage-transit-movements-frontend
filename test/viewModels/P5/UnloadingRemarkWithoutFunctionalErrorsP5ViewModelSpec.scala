@@ -49,7 +49,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
 
     "paragraph1" - {
       "must return correct message" in {
-        viewModel().paragraph1 mustBe s"There are one or more errors with the unloading remarks for arrival notification $mrn."
+        viewModel().paragraph1 mustBe s"There are one or more errors with the unloading remarks for this notification."
       }
     }
 

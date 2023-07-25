@@ -75,8 +75,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         result.heading mustBe "Review unloading remarks errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"There is a problem with the unloading remarks for arrival notification $mrnString."
-        result.paragraph1Suffix mustBe "Review the error and try making the unloading remarks again."
+        result.paragraph1 mustBe s"There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -111,8 +110,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         result.heading mustBe "Review unloading remarks errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1Prefix mustBe s"There is a problem with the unloading remarks for arrival notification $mrnString."
-        result.paragraph1Suffix mustBe "Review the errors and try making the unloading remarks again."
+        result.paragraph1 mustBe s"There is a problem with the unloading remarks for this notification. Review the errors and try making the unloading remarks again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"

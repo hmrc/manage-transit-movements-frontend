@@ -34,11 +34,11 @@
     ) {
 
         @heading(
-            heading = viewModel.heading
+            heading = viewModel.heading,
+            caption = Some(messages("arrival.messages.caption", viewModel.mrn))
         )
 
-        <p id="paragraph-1-prefix" class="govuk-body">@viewModel.paragraph1Prefix</p>
-        <p id="paragraph-1-suffix" class="govuk-body">@viewModel.paragraph1Suffix</p>
+        <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
         @answerSections(viewModel.sections)
 

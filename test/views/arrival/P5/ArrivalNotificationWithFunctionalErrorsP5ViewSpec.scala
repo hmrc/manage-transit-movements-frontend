@@ -66,12 +66,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends CheckYourAnswers
 
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
-      "paragraph-1-prefix",
-      s"There is a problem with arrival notification $mrn."
-    )
-    assertSpecificElementContainsText(
-      "paragraph-1-suffix",
-      "Review the error and make/create a new arrival notification with the right information."
+      "paragraph-1",
+      s"There is a problem with this notification. Review the error and make a new notification with the right information."
     )
   }
 
