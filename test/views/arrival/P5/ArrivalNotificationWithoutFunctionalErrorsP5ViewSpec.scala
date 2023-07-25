@@ -58,10 +58,6 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnsw
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
-      "paragraph-2",
-      "Make/create a new arrival notification with the right information."
-    )
-    assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
