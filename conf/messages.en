@@ -155,6 +155,7 @@ movement.status.P5.prelodgedDeclarationSent	                            = Prelod
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
 movement.status.P5.action.viewErrors = View errors
+movement.status.P5.action.viewError = View error
 
 movement.status.P5.action.departureNotification.cancelDeclaration         = Cancel declaration
 movement.status.P5.action.movementNotArrivedResponseSent.viewErrors       = View errors
@@ -169,6 +170,7 @@ movement.status.P5.action.guaranteeRejected.viewErrors                    = View
 movement.status.P5.action.guaranteeRejected.cancelDeclaration             = Cancel declaration
 movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration    = Amend declaration
 movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors          = View errors
+movement.status.P5.action.rejectedByOfficeOfDeparture.viewError           = View error
 movement.status.P5.action.goodsUnderControl.viewErrors                    = View errors
 movement.status.P5.action.goodsUnderControl.viewDetails                   = View details
 movement.status.P5.action.goodsUnderControl.cancelDeclaration             = Cancel declaration

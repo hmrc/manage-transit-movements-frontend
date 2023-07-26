@@ -309,7 +309,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           result mustBe expectedResult
         }
 
-        "and declaration is not amendable with errors in range 1 to 10" in {
+        "and declaration is not amendable with errors in range 2 to 10" in {
           val movementAndMessage = DepartureMovementAndMessage(
             departureMovement,
             MessagesForDepartureMovement(
@@ -333,6 +333,37 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ViewMovementAction(
                 controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+
+        "and declaration is not amendable with one error" in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = false,
+            Seq("body/path")
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
               )
             )
           )
@@ -374,7 +405,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "and head of tail is IE014" - {
 
-        "with errors in range 1 to 10" in {
+        "with errors in range 2 to 10" in {
           val movementAndMessage = DepartureMovementAndMessage(
             departureMovement,
             MessagesForDepartureMovement(
@@ -398,6 +429,37 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ViewMovementAction(
                 controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureIdP5).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+
+        "with one error " in {
+          val movementAndMessage = DepartureMovementAndMessage(
+            departureMovement,
+            MessagesForDepartureMovement(
+              NonEmptyList(
+                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
+                List(
+                  DepartureMessage("messageId2", dateTimePast, CancellationRequested, "body/path")
+                )
+              )
+            ),
+            "AB123",
+            isDeclarationAmendable = false,
+            Seq("body/path")
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureIdP5).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
               )
             )
           )
@@ -522,6 +584,26 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.guaranteeWrittenOff", Nil)
 
       result mustBe expectedResult
+    }
+
+    "when errors are more than one " in {
+
+      val expectedResult = "viewErrors"
+
+      val result = DepartureStatusP5ViewModel.errorsActionText(Seq("body/path", "body/path", "body/path"))
+
+      result mustBe expectedResult
+
+    }
+
+    "when errors are just one " in {
+
+      val expectedResult = "viewError"
+
+      val result = DepartureStatusP5ViewModel.errorsActionText(Seq("body/path"))
+
+      result mustBe expectedResult
+
     }
 
   }

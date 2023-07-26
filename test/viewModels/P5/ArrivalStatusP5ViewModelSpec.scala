@@ -206,6 +206,25 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
         }
       }
 
+      "when errors are more than one " - {
+
+        val expectedResult = "viewErrors"
+
+        val result = ArrivalStatusP5ViewModel.errorsActionText(2)
+
+        result mustBe expectedResult
+
+      }
+
+      "when errors are just one " - {
+
+        val expectedResult = "viewError"
+
+        val result = ArrivalStatusP5ViewModel.errorsActionText(1)
+
+        result mustBe expectedResult
+
+      }
     }
   }
 }
