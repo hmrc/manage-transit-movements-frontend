@@ -223,16 +223,16 @@ object DepartureStatusP5ViewModel {
           if (isDeclarationAmendable) {
             ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
           } else if (xPaths.isEmpty) {
-            ("viewErrors", controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
+            (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
-            ("viewErrors", controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
+            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
           }
 
         case Some(CancellationRequested) =>
           if (xPaths.isEmpty) {
-            ("viewErrors", controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
+            (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
-            ("viewErrors", controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
+            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
           }
         case _ =>
           ("", "")
@@ -309,6 +309,12 @@ object DepartureStatusP5ViewModel {
   private def guaranteeWrittenOff: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GuaranteeWrittenOff =>
       DepartureStatusP5ViewModel("movement.status.P5.guaranteeWrittenOff", actions = Nil)
+  }
+
+  def errorsActionText(errors: Seq[String]): String = if (errors.length == 1) {
+    "viewError"
+  } else {
+    "viewErrors"
   }
 
 }
