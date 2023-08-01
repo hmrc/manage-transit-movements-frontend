@@ -27,7 +27,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
 
   private def intGen: Gen[Int] = Gen.choose(2, 10: Int)
 
-  "MovementsPaginationViewModel" - {
+  "ListPaginationViewModel" - {
     "apply" - {
 
       "next" - {

@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DraftDepartureService
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.pagination.DraftsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.html.departure.drafts.DashboardView
 
 import java.time.LocalDateTime
@@ -72,7 +72,7 @@ class DashboardControllerSpec extends SpecBase {
         val result  = route(app, request).value
 
         val view                = injector.instanceOf[DashboardView]
-        val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length, 1, 2, "test")
+        val paginationViewModel = ListPaginationViewModel(draftDeparture.userAnswers.length, 1, 2, "test")
         val viewModel =
           AllDraftDeparturesViewModel(draftDeparture, draftDeparture.userAnswers.length, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
 
@@ -105,11 +105,11 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length,
-                                                              1,
-                                                              4,
-                                                              routes.DashboardController.onSubmit(None).url,
-                                                              Seq(("sortParams", sortParam.convertParams))
+          val paginationViewModel = ListPaginationViewModel(draftDeparture.userAnswers.length,
+                                                            1,
+                                                            4,
+                                                            routes.DashboardController.onSubmit(None).url,
+                                                            Seq(("sortParams", sortParam.convertParams))
           )
           val viewModel =
             AllDraftDeparturesViewModel(draftDeparture,
@@ -147,11 +147,11 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length,
-                                                              1,
-                                                              4,
-                                                              routes.DashboardController.onSubmit(None).url,
-                                                              Seq(("sortParams", sortParam.convertParams))
+          val paginationViewModel = ListPaginationViewModel(draftDeparture.userAnswers.length,
+                                                            1,
+                                                            4,
+                                                            routes.DashboardController.onSubmit(None).url,
+                                                            Seq(("sortParams", sortParam.convertParams))
           )
           val viewModel =
             AllDraftDeparturesViewModel(draftDeparture,
@@ -189,11 +189,11 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length,
-                                                              1,
-                                                              4,
-                                                              routes.DashboardController.onSubmit(None).url,
-                                                              Seq(("sortParams", sortParam.convertParams))
+          val paginationViewModel = ListPaginationViewModel(draftDeparture.userAnswers.length,
+                                                            1,
+                                                            4,
+                                                            routes.DashboardController.onSubmit(None).url,
+                                                            Seq(("sortParams", sortParam.convertParams))
           )
           val viewModel =
             AllDraftDeparturesViewModel(draftDeparture,
@@ -231,11 +231,11 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = DraftsPaginationViewModel(draftDeparture.userAnswers.length,
-                                                              1,
-                                                              4,
-                                                              routes.DashboardController.onSubmit(None).url,
-                                                              Seq(("sortParams", sortParam.convertParams))
+          val paginationViewModel = ListPaginationViewModel(draftDeparture.userAnswers.length,
+                                                            1,
+                                                            4,
+                                                            routes.DashboardController.onSubmit(None).url,
+                                                            Seq(("sortParams", sortParam.convertParams))
           )
           val viewModel =
             AllDraftDeparturesViewModel(draftDeparture,
@@ -273,7 +273,7 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = DraftsPaginationViewModel(
+          val paginationViewModel = ListPaginationViewModel(
             draftDeparture.userAnswers.length,
             1,
             4,
@@ -317,7 +317,7 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = DraftsPaginationViewModel(
+          val paginationViewModel = ListPaginationViewModel(
             draftDeparture.userAnswers.length,
             1,
             4,
@@ -361,7 +361,7 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = DraftsPaginationViewModel(
+          val paginationViewModel = ListPaginationViewModel(
             draftDeparture.userAnswers.length,
             1,
             4,
@@ -405,7 +405,7 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = DraftsPaginationViewModel(
+          val paginationViewModel = ListPaginationViewModel(
             draftDeparture.userAnswers.length,
             1,
             4,
