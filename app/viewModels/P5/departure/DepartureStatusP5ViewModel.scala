@@ -225,7 +225,7 @@ object DepartureStatusP5ViewModel {
           } else if (xPaths.isEmpty) {
             (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
-            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
+            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId).url)
           }
 
         case Some(CancellationRequested) =>

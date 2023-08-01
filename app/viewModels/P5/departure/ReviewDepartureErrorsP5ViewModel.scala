@@ -67,7 +67,11 @@ object ReviewDepartureErrorsP5ViewModel {
       from: Int,
       to: Int
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewDepartureErrorsP5ViewModel] = {
-      val paged = ie056MessageData.functionalErrors.sortBy(x => x.errorCode).slice(from, to)
+      val paged = ie056MessageData.functionalErrors
+        .sortBy(
+          x => x.errorCode
+        )
+        .slice(from, to)
       val helper = new RejectionMessageP5MessageHelper(paged, referenceDataService)
 
       val multipleErrors = ie056MessageData.functionalErrors.length > 1

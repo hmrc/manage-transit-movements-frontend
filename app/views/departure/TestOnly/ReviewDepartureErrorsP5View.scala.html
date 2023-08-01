@@ -14,19 +14,21 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Button, Heading, AnswerSections}
+@import views.html.components.{Button, Heading, AnswerSections, Pagination}
 @import config.FrontendAppConfig
 @import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
+@import viewModels.pagination.MovementsPaginationViewModel
 
 @this(
 mainTemplate: MainTemplate,
 heading: Heading,
 answerSections: AnswerSections,
 button: Button,
+pagination: Pagination,
 formHelper: FormWithCSRF
 )
 
-@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: MovementsPaginationViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,
@@ -39,6 +41,8 @@ formHelper: FormWithCSRF
         )
 
         <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
+
+        @pagination(paginationViewModel, None)
 
         @answerSections(rejectionMessageP5ViewModel.sections)
 

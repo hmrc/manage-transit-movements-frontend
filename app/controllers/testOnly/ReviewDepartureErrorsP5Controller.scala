@@ -47,11 +47,11 @@ class ReviewDepartureErrorsP5Controller @Inject() (
         totalNumberOfMovements = request.ie056MessageData.functionalErrors.length,
         currentPage = currentPage,
         numberOfMovementsPerPage = paginationConfig.departuresNumberOfErrors,
-        href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, None).url,
+        href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId).url,
         additionalParams = Seq()
       )
 
-      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn, currentPage,  paginationConfig.departuresNumberOfErrors)
+      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn, currentPage, paginationConfig.departuresNumberOfErrors)
       rejectionMessageP5ViewModel.map(
         viewModel => Ok(view(viewModel, departureId, paginationViewModel))
       )
