@@ -80,9 +80,9 @@ class ViewAllDeparturesP5Controller @Inject() (
             val viewDepartureP5: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
 
             val paginationViewModel = ListPaginationViewModel(
-              totalNumberOfMovements = movements.totalCount,
+              totalNumberOfItems = movements.totalCount,
               currentPage = currentPage,
-              numberOfMovementsPerPage = paginationConfig.departuresNumberOfMovements,
+              numberOfItemsPerPage = paginationConfig.departuresNumberOfMovements,
               href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url,
               additionalParams = Seq(
                 searchParam.map("lrn" -> _)

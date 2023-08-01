@@ -74,9 +74,9 @@ class ViewAllArrivalsController @Inject() (
         val movements: Seq[ViewArrival] = filteredArrivals.arrivals.map(ViewArrival(_))
 
         val paginationViewModel = ListPaginationViewModel(
-          totalNumberOfMovements = filteredArrivals.totalArrivals,
+          totalNumberOfItems = filteredArrivals.totalArrivals,
           currentPage = currentPage,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = routes.ViewAllArrivalsController.onPageLoad(None).url
         )
 

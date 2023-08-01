@@ -47,16 +47,16 @@ trait PaginationViewModel {
 object PaginationViewModel {
 
   def apply[T <: PaginationViewModel](
-    totalNumberOfMovements: Int,
+    totalNumberOfItems: Int,
     currentPage: Int,
-    numberOfMovementsPerPage: Int,
+    numberOfItemsPerPage: Int,
     href: String,
     additionalParams: Seq[(String, String)]
   )(
     f: (MetaData, Option[PaginationLink], Option[PaginationLink], Seq[PaginationItem]) => T
   ): T = {
 
-    val results: MetaData = MetaData(totalNumberOfMovements, numberOfMovementsPerPage, currentPage)
+    val results: MetaData = MetaData(totalNumberOfItems, numberOfItemsPerPage, currentPage)
 
     def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"$href?page=$page") {
       case (href, (key, value)) =>

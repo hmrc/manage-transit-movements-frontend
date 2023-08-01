@@ -44,9 +44,9 @@ class ReviewDepartureErrorsP5Controller @Inject() (
       val currentPage = page.getOrElse(1)
 
       val paginationViewModel = ListPaginationViewModel(
-        totalNumberOfMovements = request.ie056MessageData.functionalErrors.length,
+        totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
         currentPage = currentPage,
-        numberOfMovementsPerPage = paginationConfig.departuresNumberOfErrors,
+        numberOfItemsPerPage = paginationConfig.departuresNumberOfErrors,
         href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId).url,
         additionalParams = Seq()
       )

@@ -108,9 +108,9 @@ class DashboardController @Inject() (
     ).flatten
 
     val pvm = ListPaginationViewModel(
-      totalNumberOfMovements = drafts.totalMatchingMovements,
+      totalNumberOfItems = drafts.totalMatchingMovements,
       currentPage = page,
-      numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
+      numberOfItemsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
       href = routes.DashboardController.onSubmit(None).url,
       additionalParams = additionalParams
     )

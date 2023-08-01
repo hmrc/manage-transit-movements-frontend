@@ -73,9 +73,9 @@ class ViewAllDeparturesController @Inject() (
         val movements: Seq[ViewDeparture] = filteredDepartures.departures.map(ViewDeparture(_))
 
         val paginationViewModel = ListPaginationViewModel(
-          totalNumberOfMovements = filteredDepartures.totalDepartures,
+          totalNumberOfItems = filteredDepartures.totalDepartures,
           currentPage = currentPage,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = routes.ViewAllDeparturesController.onPageLoad(None).url
         )
 

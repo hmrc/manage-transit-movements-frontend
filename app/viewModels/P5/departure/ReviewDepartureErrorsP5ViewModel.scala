@@ -72,10 +72,11 @@ object ReviewDepartureErrorsP5ViewModel {
           x => x.errorCode
         )
         .slice((start - 1) * numberOfErrors, ((start - 1) * numberOfErrors) + numberOfErrors)
-      val helper = new RejectionMessageP5MessageHelper(paged, referenceDataService)
 
+      val helper         = new RejectionMessageP5MessageHelper(paged, referenceDataService)
       val multipleErrors = ie056MessageData.functionalErrors.length > 1
       val sections       = Seq(helper.errorSection())
+
       Future
         .sequence(sections)
         .map(

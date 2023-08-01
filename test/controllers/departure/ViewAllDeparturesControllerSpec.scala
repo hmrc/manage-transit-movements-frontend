@@ -101,9 +101,9 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
         status(result) mustEqual OK
 
         val expectedPaginationViewModel = ListPaginationViewModel(
-          totalNumberOfMovements = mockDepartureResponse.totalDepartures,
+          totalNumberOfItems = mockDepartureResponse.totalDepartures,
           currentPage = currentPage,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = routes.ViewAllDeparturesController.onPageLoad(None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
@@ -126,9 +126,9 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
         status(result) mustEqual OK
 
         val expectedPaginationViewModel = ListPaginationViewModel(
-          totalNumberOfMovements = mockDepartureResponse.totalDepartures,
+          totalNumberOfItems = mockDepartureResponse.totalDepartures,
           currentPage = 1,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = routes.ViewAllDeparturesController.onPageLoad(None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)

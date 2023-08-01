@@ -29,16 +29,16 @@ case class ListPaginationViewModel(
 object ListPaginationViewModel {
 
   def apply(
-    totalNumberOfMovements: Int,
+    totalNumberOfItems: Int,
     currentPage: Int,
-    numberOfMovementsPerPage: Int,
+    numberOfItemsPerPage: Int,
     href: String,
     additionalParams: Seq[(String, String)] = Seq.empty
   ): ListPaginationViewModel =
     PaginationViewModel(
-      totalNumberOfMovements,
+      totalNumberOfItems,
       currentPage,
-      numberOfMovementsPerPage,
+      numberOfItemsPerPage,
       href,
       additionalParams
     ) {

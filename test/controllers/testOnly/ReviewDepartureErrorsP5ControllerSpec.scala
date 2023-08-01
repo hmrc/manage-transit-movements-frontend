@@ -88,9 +88,9 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
       val paginationViewModel = ListPaginationViewModel(
-        totalNumberOfMovements = message.data.functionalErrors.length,
+        totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
-        numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfErrors,
+        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrors,
         href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, lrn.toString).url,
         additionalParams = Seq()
       )
