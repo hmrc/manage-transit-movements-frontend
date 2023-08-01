@@ -21,7 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.departure.ViewAllDeparturesView
@@ -29,12 +29,12 @@ import views.html.departure.ViewAllDeparturesView
 class ViewAllDeparturesViewSpec
     extends MovementsTableViewBehaviours[ViewDeparture]
     with SearchViewBehaviours[ViewDeparture]
-    with PaginationViewBehaviours[MovementsPaginationViewModel]
+    with PaginationViewBehaviours[ListPaginationViewModel]
     with Generators
     with ScalaCheckPropertyChecks {
 
-  override val buildViewModel: (Int, Int, Int, String) => MovementsPaginationViewModel =
-    MovementsPaginationViewModel(_, _, _, _)
+  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
+    ListPaginationViewModel(_, _, _, _)
 
   override val prefix: String = "viewDepartures"
 
@@ -48,7 +48,7 @@ class ViewAllDeparturesViewSpec
 
   override val viewMovements: Seq[ViewDeparture] = dataRows.flatMap(_._2)
 
-  override def viewWithSpecificPagination(paginationViewModel: MovementsPaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
     applyView(form, ViewAllDepartureMovementsViewModel(Seq.empty[ViewDeparture], paginationViewModel))
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsViewModel)

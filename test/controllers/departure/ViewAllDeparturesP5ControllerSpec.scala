@@ -33,7 +33,7 @@ import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels.ViewMovementAction
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.html.departure.TestOnly.ViewAllDeparturesP5View
 
 import java.time.LocalDateTime
@@ -124,7 +124,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
+        val expectedPaginationViewModel = ListPaginationViewModel(
           totalNumberOfMovements = mockDepartureMovementResponse.movements.length,
           currentPage = 1,
           numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
@@ -162,7 +162,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
+        val expectedPaginationViewModel = ListPaginationViewModel(
           totalNumberOfMovements = mockDepartureMovementResponse.movements.length,
           currentPage = currentPage,
           numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,

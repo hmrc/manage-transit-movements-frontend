@@ -23,14 +23,14 @@ import models.{DeparturesSummary, Sort}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.pagination.DraftsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 
 case class AllDraftDeparturesViewModel(
   items: DeparturesSummary,
   pageSize: Int,
   lrn: Option[String],
   draftDepartureFrontendUrl: String,
-  paginationViewModel: DraftsPaginationViewModel,
+  paginationViewModel: ListPaginationViewModel,
   sortParams: Sort = SortByCreatedAtDesc
 ) {
 

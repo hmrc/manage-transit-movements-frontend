@@ -43,7 +43,7 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewArrivals        <- listWithMaxLength[ViewArrival]()
-        paginationViewModel <- arbitrary[MovementsPaginationViewModel]
+        paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllArrivalMovementsViewModel(viewArrivals, paginationViewModel)
     }
 
@@ -51,7 +51,7 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewArrivals        <- listWithMaxLength[ViewArrivalP5]()
-        paginationViewModel <- arbitrary[MovementsPaginationViewModel]
+        paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, paginationViewModel)
     }
 
@@ -59,7 +59,7 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewArrivals        <- listWithMaxLength[ViewDepartureP5]()
-        paginationViewModel <- arbitrary[MovementsPaginationViewModel]
+        paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllDepartureMovementsP5ViewModel(viewArrivals, paginationViewModel)
     }
 
@@ -67,18 +67,18 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewDepartures      <- listWithMaxLength[ViewDeparture]()
-        paginationViewModel <- arbitrary[MovementsPaginationViewModel]
+        paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllDepartureMovementsViewModel(viewDepartures, paginationViewModel)
     }
 
-  implicit lazy val arbitraryPaginationViewModel: Arbitrary[MovementsPaginationViewModel] =
+  implicit lazy val arbitraryPaginationViewModel: Arbitrary[ListPaginationViewModel] =
     Arbitrary {
       for {
         totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)
         numberOfMovementsPerPage <- Gen.choose(1, Int.MaxValue)
         currentPage              <- Gen.choose(1, Int.MaxValue)
         href                     <- nonEmptyString
-      } yield MovementsPaginationViewModel(totalNumberOfMovements, numberOfMovementsPerPage, currentPage, href)
+      } yield ListPaginationViewModel(totalNumberOfMovements, numberOfMovementsPerPage, currentPage, href)
     }
 
   implicit lazy val arbitraryMetaData: Arbitrary[MetaData] =

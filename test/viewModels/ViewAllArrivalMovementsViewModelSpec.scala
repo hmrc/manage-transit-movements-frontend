@@ -43,7 +43,7 @@ class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with
           }
         }
 
-    val paginationViewModel = MovementsPaginationViewModel(10, 1, 2, "testHref")
+    val paginationViewModel = ListPaginationViewModel(10, 1, 2, "testHref")
 
     forAll(movementsGen(localDateToday).suchThat(_.nonEmpty), movementsGen(localDateYesterday).suchThat(_.nonEmpty)) {
       (todayMovements: Seq[ViewArrival], yesterdayMovements: Seq[ViewArrival]) =>
@@ -71,7 +71,7 @@ class ViewAllArrivalMovementsViewModelSpec extends SpecBase with Generators with
         }
     }
 
-    val paginationViewModel = MovementsPaginationViewModel(10, 1, 2, "testHref")
+    val paginationViewModel = ListPaginationViewModel(10, 1, 2, "testHref")
 
     forAll(
       movementsGen(localTime).arbitrary,

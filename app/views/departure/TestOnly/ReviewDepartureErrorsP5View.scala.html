@@ -17,7 +17,7 @@
 @import views.html.components.{Button, Heading, AnswerSections, Pagination}
 @import config.FrontendAppConfig
 @import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
-@import viewModels.pagination.MovementsPaginationViewModel
+@import viewModels.pagination.ListPaginationViewModel
 
 @this(
 mainTemplate: MainTemplate,
@@ -28,7 +28,7 @@ pagination: Pagination,
 formHelper: FormWithCSRF
 )
 
-@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: MovementsPaginationViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,

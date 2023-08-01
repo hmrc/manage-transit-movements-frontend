@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
 import views.html.arrival.ViewAllArrivalsView
 
@@ -73,7 +73,7 @@ class ViewAllArrivalsController @Inject() (
       case Some(filteredArrivals) =>
         val movements: Seq[ViewArrival] = filteredArrivals.arrivals.map(ViewArrival(_))
 
-        val paginationViewModel = MovementsPaginationViewModel(
+        val paginationViewModel = ListPaginationViewModel(
           totalNumberOfMovements = filteredArrivals.totalArrivals,
           currentPage = currentPage,
           numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,

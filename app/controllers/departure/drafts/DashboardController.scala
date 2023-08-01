@@ -30,7 +30,7 @@ import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.pagination.DraftsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.html.departure.drafts.DashboardView
 
 import javax.inject.Inject
@@ -107,7 +107,7 @@ class DashboardController @Inject() (
       Some(("sortParams", sortParams.toString))
     ).flatten
 
-    val pvm = DraftsPaginationViewModel(
+    val pvm = ListPaginationViewModel(
       totalNumberOfMovements = drafts.totalMatchingMovements,
       currentPage = page,
       numberOfMovementsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,

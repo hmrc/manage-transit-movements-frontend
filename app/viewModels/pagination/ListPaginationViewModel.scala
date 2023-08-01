@@ -18,7 +18,7 @@ package viewModels.pagination
 
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 
-case class MovementsPaginationViewModel(
+case class ListPaginationViewModel(
   results: MetaData,
   previous: Option[PaginationLink],
   next: Option[PaginationLink],
@@ -26,7 +26,7 @@ case class MovementsPaginationViewModel(
   pageNumber: Int
 ) extends PaginationViewModel
 
-object MovementsPaginationViewModel {
+object ListPaginationViewModel {
 
   def apply(
     totalNumberOfMovements: Int,
@@ -34,7 +34,7 @@ object MovementsPaginationViewModel {
     numberOfMovementsPerPage: Int,
     href: String,
     additionalParams: Seq[(String, String)] = Seq.empty
-  ): MovementsPaginationViewModel =
+  ): ListPaginationViewModel =
     PaginationViewModel(
       totalNumberOfMovements,
       currentPage,
@@ -42,6 +42,6 @@ object MovementsPaginationViewModel {
       href,
       additionalParams
     ) {
-      new MovementsPaginationViewModel(_, _, _, _, currentPage)
+      new ListPaginationViewModel(_, _, _, _, currentPage)
     }
 }

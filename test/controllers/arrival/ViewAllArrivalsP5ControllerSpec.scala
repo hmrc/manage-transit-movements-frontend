@@ -32,7 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ArrivalP5MessageService
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.html.arrival.P5.ViewAllArrivalsP5View
 
 import java.time.LocalDateTime
@@ -121,7 +121,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
+        val expectedPaginationViewModel = ListPaginationViewModel(
           totalNumberOfMovements = mockArrivalMovementResponse.movements.length,
           currentPage = 1,
           numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
@@ -162,7 +162,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
+        val expectedPaginationViewModel = ListPaginationViewModel(
           totalNumberOfMovements = mockArrivalMovementResponse.movements.length,
           currentPage = currentPage,
           numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,

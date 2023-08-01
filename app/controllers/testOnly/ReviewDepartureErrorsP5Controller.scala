@@ -22,7 +22,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
 import javax.inject.Inject
@@ -43,7 +43,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
     implicit request =>
       val currentPage = page.getOrElse(1)
 
-      val paginationViewModel = MovementsPaginationViewModel(
+      val paginationViewModel = ListPaginationViewModel(
         totalNumberOfMovements = request.ie056MessageData.functionalErrors.length,
         currentPage = currentPage,
         numberOfMovementsPerPage = paginationConfig.departuresNumberOfErrors,

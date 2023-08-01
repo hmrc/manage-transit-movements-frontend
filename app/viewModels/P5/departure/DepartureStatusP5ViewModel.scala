@@ -236,7 +236,7 @@ object DepartureStatusP5ViewModel {
           }
         case _ =>
           ("", "")
-          // TODO - Need to handle case where we have multiple concurrent 56 messages one after the other.
+        // TODO - Need to handle case where we have multiple concurrent 56 messages one after the other.
       }
 
       val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"

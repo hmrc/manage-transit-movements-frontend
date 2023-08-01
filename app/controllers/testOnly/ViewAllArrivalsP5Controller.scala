@@ -28,7 +28,7 @@ import play.twirl.api.HtmlFormat
 import services.ArrivalP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.html.arrival.P5.ViewAllArrivalsP5View
 
 import javax.inject.Inject
@@ -79,7 +79,7 @@ class ViewAllArrivalsP5Controller @Inject() (
           movementsAndMessages =>
             val viewArrivalP5: Seq[ViewArrivalP5] = movementsAndMessages.map(ViewArrivalP5(_))
 
-            val paginationViewModel = MovementsPaginationViewModel(
+            val paginationViewModel = ListPaginationViewModel(
               totalNumberOfMovements = movements.totalCount,
               currentPage = currentPage,
               numberOfMovementsPerPage = paginationConfig.arrivalsNumberOfMovements,
