@@ -71,7 +71,7 @@ object ReviewDepartureErrorsP5ViewModel {
         .sortBy(
           x => x.errorCode
         )
-        .slice(from, to)
+        .slice((from - 1) * to, ((from - 1) * to) + to)
       val helper = new RejectionMessageP5MessageHelper(paged, referenceDataService)
 
       val multipleErrors = ie056MessageData.functionalErrors.length > 1
