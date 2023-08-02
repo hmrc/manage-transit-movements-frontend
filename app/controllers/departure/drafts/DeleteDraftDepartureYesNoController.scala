@@ -16,7 +16,7 @@
 
 package controllers.departure.drafts
 
-import controllers.actions.{IdentifierAction, LockActionProvider}
+import controllers.actions.{IdentifierAction, LockActionProvider, ValidateLrnActionProvider}
 import forms.YesNoFormProvider
 import play.api.http.Status.{OK => StatusOK}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +33,7 @@ class DeleteDraftDepartureYesNoController @Inject() (
   formProvider: YesNoFormProvider,
   identify: IdentifierAction,
   lockAction: LockActionProvider,
+  validateLrnAction: ValidateLrnActionProvider,
   val controllerComponents: MessagesControllerComponents,
   view: DeleteDraftDepartureYesNoView,
   draftDepartureService: DraftDepartureService
@@ -43,7 +44,7 @@ class DeleteDraftDepartureYesNoController @Inject() (
   private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
   def onPageLoad(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
-    (Action andThen identify andThen lockAction(lrn)) {
+    (Action andThen identify andThen lockAction(lrn) andThen validateLrnAction(lrn)) {
       implicit request =>
         Ok(view(form, lrn, pageNumber, numberOfRows, searchLrn))
     }

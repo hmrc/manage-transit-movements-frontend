@@ -85,7 +85,6 @@ case class AllDraftDeparturesViewModel(
 
   def deleteDraftUrl(draft: DraftDepartureRow): Call =
     routes.DeleteDraftDepartureYesNoController.onPageLoad(draft.lrn, paginationViewModel.pageNumber, items.userAnswers.length, lrn)
-
 }
 
 object AllDraftDeparturesViewModel {

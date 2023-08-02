@@ -75,4 +75,14 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
       }
   }
 
+  def checkLrn(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
+
+    val url = s"${config.draftDeparturesUrl}/user-answers/$lrn"
+    http
+      .GET[HttpResponse](url)
+      .map {
+        _.status == OK
+      }
+  }
+
 }

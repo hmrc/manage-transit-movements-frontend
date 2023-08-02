@@ -18,7 +18,7 @@ package controllers.departure.drafts
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DeparturesDraftsP5Connector
-import controllers.actions.{FakeLockAction, LockActionProvider}
+import controllers.actions.{FakeLockAction, FakeValidateLrnAction, LockActionProvider, ValidateLrnActionProvider}
 import forms.YesNoFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -41,10 +41,10 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
 
   val lrnString: String = lrn.toString()
 
-  private val draftDepartureService = mock[DraftDepartureService]
-  private val mockConnector         = mock[DeparturesDraftsP5Connector]
-
-  final val mockLockActionProvider: LockActionProvider = mock[LockActionProvider]
+  private val draftDepartureService                                  = mock[DraftDepartureService]
+  private val mockConnector                                          = mock[DeparturesDraftsP5Connector]
+  final val mockLockActionProvider: LockActionProvider               = mock[LockActionProvider]
+  final val mockValidateLrnActionProvider: ValidateLrnActionProvider = mock[ValidateLrnActionProvider]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -52,6 +52,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       .overrides(
         bind[DraftDepartureService].toInstance(draftDepartureService),
         bind[LockActionProvider].toInstance(mockLockActionProvider),
+        bind[ValidateLrnActionProvider].toInstance(mockValidateLrnActionProvider),
         bind[DeparturesDraftsP5Connector].toInstance(mockConnector)
       )
 
@@ -60,6 +61,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
   "DeleteDraftDepartureYesNo Controller" - {
 
     when(mockLockActionProvider.apply(any())).thenReturn(new FakeLockAction("AB123", mockConnector))
+    when(mockValidateLrnActionProvider.apply(any())).thenReturn(new FakeValidateLrnAction("AB123", mockConnector))
 
     "must return OK and the correct view for a GET" in {
 
