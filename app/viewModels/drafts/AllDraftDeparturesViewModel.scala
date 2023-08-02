@@ -19,7 +19,7 @@ package viewModels.drafts
 import controllers.departure.drafts.routes
 import models.Sort.Field.{CreatedAt, LRN}
 import models.Sort._
-import models.{DeparturesSummary, Sort}
+import models.{DeparturesSummary, LocalReferenceNumber, Sort}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
@@ -84,7 +84,7 @@ case class AllDraftDeparturesViewModel(
   def sortHiddenTextDaysToComplete(implicit messages: Messages): String = sortParams.hiddenText(CreatedAt)
 
   def deleteDraftUrl(draft: DraftDepartureRow): Call =
-    routes.DeleteDraftDepartureYesNoController.onPageLoad(draft.lrn, paginationViewModel.pageNumber, items.userAnswers.length, lrn)
+    routes.DeleteDraftDepartureYesNoController.onPageLoad(LocalReferenceNumber(draft.lrn), paginationViewModel.pageNumber, items.userAnswers.length, lrn)
 
 }
 
