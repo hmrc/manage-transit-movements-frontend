@@ -68,7 +68,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
     "must return OK and the correct view for a GET when no Errors" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
           CustomsOfficeOfDeparture("22323323"),
           Seq.empty
         )
@@ -97,7 +97,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
           CustomsOfficeOfDeparture("22323323"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )

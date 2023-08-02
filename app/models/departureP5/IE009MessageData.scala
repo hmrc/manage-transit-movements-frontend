@@ -20,7 +20,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
 
 case class IE009MessageData(
-  transitOperation: TransitOperationIE009,
+  transitOperation: TransitOperation,
   invalidation: Invalidation,
   customsOfficeOfDeparture: CustomsOfficeOfDeparture
 )
@@ -28,7 +28,7 @@ case class IE009MessageData(
 object IE009MessageData {
 
   implicit lazy val reads: Reads[IE009MessageData] = (
-    (__ \ "TransitOperation").read[TransitOperationIE009] and
+    (__ \ "TransitOperation").read[TransitOperation] and
       (__ \ "Invalidation").read[Invalidation] and
       (__ \ "CustomsOfficeOfDeparture").read[CustomsOfficeOfDeparture]
   )(IE009MessageData.apply _)

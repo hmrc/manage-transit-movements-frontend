@@ -49,6 +49,7 @@ class DepartureMovementsSpec extends SpecBase {
           |      },
           |      "id": "63651574c3447b12",
           |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+          |      "localReferenceNumber": "AB123",
           |      "created": "2022-11-04T13:36:52.332Z",
           |      "updated": "2022-11-04T13:36:52.332Z",
           |      "enrollmentEORINumber": "9999912345",
@@ -65,6 +66,7 @@ class DepartureMovementsSpec extends SpecBase {
           |      },
           |      "id": "6365135ba5e821ee",
           |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+          |      "localReferenceNumber": "CD123",
           |      "created": "2022-11-04T13:27:55.522Z",
           |      "updated": "2022-11-04T13:27:55.522Z",
           |      "enrollmentEORINumber": "9999912345",
@@ -80,12 +82,14 @@ class DepartureMovementsSpec extends SpecBase {
           DepartureMovement(
             "63651574c3447b12",
             Some("27WF9X1FQ9RCKN0TM3"),
+            "AB123",
             LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
             "movements/departures/63651574c3447b12/messages"
           ),
           DepartureMovement(
             "6365135ba5e821ee",
             Some("27WF9X1FQ9RCKN0TM3"),
+            "CD123",
             LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
             "movements/departures/6365135ba5e821ee/messages"
           )

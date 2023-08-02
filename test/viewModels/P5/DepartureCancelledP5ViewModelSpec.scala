@@ -49,8 +49,9 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
 
     val ie009Data: IE009Data = IE009Data(
       IE009MessageData(
-        TransitOperationIE009(
-          Some("mrn123")
+        TransitOperation(
+          Some("mrn123"),
+          None
         ),
         Invalidation(
           Some(LocalDateTime.now()),

@@ -52,7 +52,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+          TransitOperation(Some("MRNCD3232"), Some(lrnString)),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("14", "12", "MRN incorrect", None))
         )
@@ -91,7 +91,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
           CustomsOfficeOfDeparture("AB123"),
           functionalErrors
         )
@@ -125,7 +125,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )

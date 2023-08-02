@@ -37,6 +37,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
     val departureMovement = DepartureMovement(
       departureIdP5,
       Some("mrn"),
+      "lrn",
       LocalDateTime.now(),
       "location"
     )

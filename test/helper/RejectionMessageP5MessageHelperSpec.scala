@@ -60,7 +60,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
           val message: IE056Data = IE056Data(
             IE056MessageData(
-              TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+              TransitOperation(Some("MRNCD3232"), Some(lrnString)),
               CustomsOfficeOfDeparture("AB123"),
               Seq(FunctionalError("14", code1, "MRN incorrect", None))
             )
@@ -81,7 +81,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
           val message: IE056Data = IE056Data(
             IE056MessageData(
-              TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+              TransitOperation(Some("MRNCD3232"), Some(lrnString)),
               CustomsOfficeOfDeparture("AB123"),
               Seq(FunctionalError("14", "12", "MRN incorrect", None))
             )
@@ -104,7 +104,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+            TransitOperation(Some("MRNCD3232"), Some(lrnString)),
             CustomsOfficeOfDeparture("AB123"),
             Seq(FunctionalError("14", "12", "MRN incorrect", None))
           )
@@ -130,7 +130,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+            TransitOperation(Some("MRNCD3232"), Some(lrnString)),
             CustomsOfficeOfDeparture("AB123"),
             functionalErrors
           )
@@ -170,7 +170,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+            TransitOperation(Some("MRNCD3232"), Some(lrnString)),
             CustomsOfficeOfDeparture("AB123"),
             functionalErrors
           )

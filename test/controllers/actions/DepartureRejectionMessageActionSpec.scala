@@ -45,7 +45,7 @@ class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEa
 
   val message: IE056Data = IE056Data(
     IE056MessageData(
-      TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+      TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
       CustomsOfficeOfDeparture("AB123"),
       Seq(functionalError1, functionalError2)
     )

@@ -74,7 +74,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     "must return OK and the correct view for a GET" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
@@ -105,7 +105,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     "must redirect to session expired when declaration amendable is false" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
@@ -132,7 +132,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
             CustomsOfficeOfDeparture("12345"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
@@ -156,7 +156,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
             CustomsOfficeOfDeparture("12345"),
             Seq.empty
           )
@@ -180,7 +180,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
             CustomsOfficeOfDeparture("12345"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
@@ -205,7 +205,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
             CustomsOfficeOfDeparture("12345"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )

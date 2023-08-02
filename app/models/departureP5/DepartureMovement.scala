@@ -24,6 +24,7 @@ import java.time.LocalDateTime
 case class DepartureMovement(
   departureId: String,
   movementReferenceNumber: Option[String],
+  localReferenceNumber: String,
   updated: LocalDateTime,
   messagesLocation: String
 ) extends Movement
@@ -34,7 +35,8 @@ object DepartureMovement {
     import play.api.libs.functional.syntax._
     (
       (__ \ "id").read[String] and
-        (__ \ "movementReferenceNumber").readNullable[String] and // TODO check this is correct
+        (__ \ "movementReferenceNumber").readNullable[String] and
+        (__ \ "localReferenceNumber").read[String] and
         (__ \ "updated").read[LocalDateTime] and
         (__ \ "_links" \ "messages" \ "href")
           .read[String]

@@ -72,7 +72,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
     "must return OK and the correct view for a GET" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
           CustomsOfficeOfDeparture("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )

@@ -69,6 +69,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 },
                 "id": "63651574c3447b12",
                 "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+                "localReferenceNumber": "AB123",
                 "created": "2022-11-04T13:36:52.332Z",
                 "updated": "2022-11-04T13:36:52.332Z",
                 "enrollmentEORINumber": "9999912345",
@@ -85,6 +86,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 },
                 "id": "6365135ba5e821ee",
                 "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+                "localReferenceNumber": "CD123",
                 "created": "2022-11-04T13:27:55.522Z",
                 "updated": "2022-11-04T13:27:55.522Z",
                 "enrollmentEORINumber": "9999912345",
@@ -107,12 +109,14 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             DepartureMovement(
               "63651574c3447b12",
               Some("27WF9X1FQ9RCKN0TM3"),
+              "AB123",
               LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
               "movements/departures/63651574c3447b12/messages"
             ),
             DepartureMovement(
               "6365135ba5e821ee",
               Some("27WF9X1FQ9RCKN0TM3"),
+              "CD123",
               LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
               "movements/departures/6365135ba5e821ee/messages"
             )
@@ -167,7 +171,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
           |        }
           |      },
           |      "id": "63651574c3447b12",
-          |      "movementReferenceNumber": "LRN12345",
+          |      "localReferenceNumber": "LRN12345",
           |      "created": "2022-11-04T13:36:52.332Z",
           |      "updated": "2022-11-04T13:36:52.332Z",
           |      "enrollmentEORINumber": "9999912345",
@@ -189,7 +193,8 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             departureMovements = Seq(
               DepartureMovement(
                 "63651574c3447b12",
-                Some("LRN12345"),
+                None,
+                "LRN12345",
                 LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
                 "movements/departures/63651574c3447b12/messages"
               )
@@ -212,7 +217,8 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             departureMovements = Seq(
               DepartureMovement(
                 "63651574c3447b12",
-                Some("LRN12345"),
+                None,
+                "LRN12345",
                 LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
                 "movements/departures/63651574c3447b12/messages"
               )
@@ -248,6 +254,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               |      },
               |      "id": "63651574c3447b12",
               |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+              |      "localReferenceNumber": "AB123",
               |      "created": "2022-11-04T13:36:52.332Z",
               |      "updated": "2022-11-04T13:36:52.332Z",
               |      "enrollmentEORINumber": "9999912345",
@@ -518,7 +525,11 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         val expectedResult = IE060Data(
           IE060MessageData(
-            TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            TransitOperationIE060(Some("CD3232"),
+                                  Some("AB123"),
+                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                  "notification1"
+            ),
             CustomsOfficeOfDeparture("22323323"),
             Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
             Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
@@ -585,7 +596,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         val expectedResult: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("CD3232"), Some("AB123")),
+            TransitOperation(Some("CD3232"), Some("AB123")),
             CustomsOfficeOfDeparture("22323323"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )

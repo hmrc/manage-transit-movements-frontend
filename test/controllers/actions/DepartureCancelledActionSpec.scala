@@ -40,8 +40,9 @@ class DepartureCancelledActionSpec extends SpecBase with BeforeAndAfterEach with
 
   val message: IE009Data = IE009Data(
     IE009MessageData(
-      TransitOperationIE009(
-        Some("abd123")
+      TransitOperation(
+        Some("abd123"),
+        None
       ),
       Invalidation(
         Some(LocalDateTime.now()),

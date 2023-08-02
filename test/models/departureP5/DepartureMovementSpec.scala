@@ -40,6 +40,7 @@ class DepartureMovementSpec extends SpecBase {
           |      },
           |      "id": "63651574c3447b12",
           |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+          |      "localReferenceNumber": "AB123",
           |      "created": "2022-11-04T13:36:52.332Z",
           |      "updated": "2022-11-04T13:36:52.332Z",
           |      "enrollmentEORINumber": "9999912345",
@@ -49,6 +50,7 @@ class DepartureMovementSpec extends SpecBase {
       val expectedResult = DepartureMovement(
         "63651574c3447b12",
         Some("27WF9X1FQ9RCKN0TM3"),
+        "AB123",
         LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
         "movements/departures/63651574c3447b12/messages"
       )

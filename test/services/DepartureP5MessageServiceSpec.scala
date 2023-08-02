@@ -54,6 +54,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
           DepartureMovement(
             "AB123",
             Some("MRN"),
+            "LRN",
             dateTimeNow,
             "location"
           )
@@ -88,10 +89,6 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             Future.successful(messagesForMovement)
           )
 
-          when(mockMovementConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
-            Future.successful(lrnLocal)
-          )
-
           when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(
             Future.successful(DepartureMessages(Nil))
           )
@@ -102,7 +99,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             DepartureMovementAndMessage(
               departureMovements.departureMovements.head,
               messagesForMovement,
-              lrnLocal.toString,
+              "LRN",
               isDeclarationAmendable = false,
               xPaths = Seq.empty
             )
@@ -142,10 +139,6 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             Future.successful(messagesForMovement)
           )
 
-          when(mockMovementConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
-            Future.successful(lrnLocal)
-          )
-
           val messages = DepartureMessages(
             List(
               DepartureMessageMetaData(
@@ -158,7 +151,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
           val ie056 = IE056Data(
             IE056MessageData(
-              transitOperation = TransitOperationIE056(None, None),
+              transitOperation = TransitOperation(None, None),
               customsOfficeOfDeparture = CustomsOfficeOfDeparture("AB123"),
               functionalErrors = Seq(
                 FunctionalError("pointer1", "code1", "reason1", None),
@@ -185,7 +178,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             DepartureMovementAndMessage(
               departureMovements.departureMovements.head,
               messagesForMovement,
-              lrnLocal.toString,
+              "LRN",
               isDeclarationAmendable = isDeclarationAmendable,
               xPaths = ie056.data.functionalErrors.map(_.errorPointer)
             )
@@ -193,7 +186,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
           result mustBe expectedResult
 
-          verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrnLocal.toString), eqTo(Seq("pointer1", "pointer2")))(any())
+          verify(mockCacheConnector).isDeclarationAmendable(eqTo("LRN"), eqTo(Seq("pointer1", "pointer2")))(any())
         }
       }
 
@@ -244,7 +237,11 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
         val ie060Data = IE060Data(
           IE060MessageData(
-            TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            TransitOperationIE060(Some("CD3232"),
+                                  Some("AB123"),
+                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                  "notification1"
+            ),
             CustomsOfficeOfDeparture("22323323"),
             Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
             Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
@@ -276,7 +273,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
         val ie056Data: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("CD3232"), None),
+            TransitOperation(Some("CD3232"), None),
             CustomsOfficeOfDeparture("AB123"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )

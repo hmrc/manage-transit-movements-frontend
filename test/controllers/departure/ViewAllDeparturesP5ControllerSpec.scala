@@ -67,6 +67,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   val departureMovement: DepartureMovement = DepartureMovement(
     "63651574c3447b12",
     None,
+    "AB123",
     dateTime,
     "movements/departures/63651574c3447b12/messages"
   )

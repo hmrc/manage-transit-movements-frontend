@@ -54,7 +54,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
+          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
           None
@@ -92,7 +92,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
     "when there is requested documents and type 0" - {
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
+          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
           requestedDocument
@@ -124,7 +124,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
     "when there is requested documents and type 1" - {
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "1"),
+          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "1"),
           CustomsOfficeOfDeparture("22323323"),
           None,
           requestedDocument
@@ -158,7 +158,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
           CustomsOfficeOfDeparture("22323323"),
           None,
           None
@@ -180,7 +180,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            TransitOperationIE060(Some("MRN1"),
+                                  Some("LRN1"),
+                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                  "notification1"
+            ),
             CustomsOfficeOfDeparture("22323323"),
             None,
             None
@@ -203,7 +207,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            TransitOperationIE060(Some("MRN1"),
+                                  Some("LRN1"),
+                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                  "notification1"
+            ),
             CustomsOfficeOfDeparture("22323323"),
             typeOfControls,
             None
@@ -233,7 +241,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            TransitOperationIE060(Some("MRN1"),
+                                  Some("LRN1"),
+                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                  "notification1"
+            ),
             CustomsOfficeOfDeparture("22323323"),
             None,
             None
@@ -254,7 +266,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         val requestedDocument = Some(Seq(RequestedDocument("1", "44", None), RequestedDocument("2", "45", Some("Desc1"))))
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperation(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            TransitOperationIE060(Some("MRN1"),
+                                  Some("LRN1"),
+                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                  "notification1"
+            ),
             CustomsOfficeOfDeparture("22323323"),
             None,
             requestedDocument

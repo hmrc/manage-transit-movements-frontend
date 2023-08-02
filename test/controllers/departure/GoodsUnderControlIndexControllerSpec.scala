@@ -69,7 +69,11 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
       val notificationType = "0"
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), notificationType),
+          TransitOperationIE060(Some("CD3232"),
+                                Some("AB123"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                notificationType
+          ),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
           None
@@ -92,7 +96,11 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
       val notificationType = "0"
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), notificationType),
+          TransitOperationIE060(Some("CD3232"),
+                                Some("AB123"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                notificationType
+          ),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
@@ -115,7 +123,11 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
       val notificationType = "1"
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), notificationType),
+          TransitOperationIE060(Some("CD3232"),
+                                Some("AB123"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                notificationType
+          ),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))

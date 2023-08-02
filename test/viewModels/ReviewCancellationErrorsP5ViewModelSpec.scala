@@ -52,7 +52,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+          TransitOperation(Some("MRNCD3232"), Some(lrnString)),
           CustomsOfficeOfDeparture("1234"),
           Seq(FunctionalError("14", "12", "MRN incorrect", None))
         )
@@ -95,7 +95,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
           CustomsOfficeOfDeparture("1234"),
           functionalErrors
         )
@@ -137,7 +137,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
           CustomsOfficeOfDeparture("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
