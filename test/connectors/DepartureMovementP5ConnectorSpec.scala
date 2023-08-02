@@ -463,7 +463,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       }
     }
 
-    "getSpecificMessage" - {
+    "getSpecificMessageByPath" - {
 
       "must return an IE060 Message" in {
 
@@ -541,7 +541,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getSpecificMessage[IE060Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+        connector.getSpecificMessageByPath[IE060Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
 
       }
 
@@ -607,7 +607,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getSpecificMessage[IE056Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+        connector.getSpecificMessageByPath[IE056Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
 
       }
     }

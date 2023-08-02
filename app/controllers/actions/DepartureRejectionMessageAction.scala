@@ -51,7 +51,7 @@ class DepartureRejectionMessageAction(
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (for {
-      ie056 <- OptionT(departureP5MessageService.getMessage[IE056Data](departureId, RejectedByOfficeOfDeparture))
+      ie056 <- OptionT(departureP5MessageService.filterForMessage[IE056Data](departureId, RejectedByOfficeOfDeparture))
       lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId)) // TODO: Remove once LRN is exposed to use in metadata
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
       isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))

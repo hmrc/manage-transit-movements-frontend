@@ -63,7 +63,7 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
   "GoodsUnderControlAction" - {
     "must return 200 when an unloading permission is available" in {
 
-      when(mockMessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)
@@ -77,7 +77,7 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
 
     "must return 303 and redirect to technical difficulties when no unloading permission is available" in {
 
-      when(mockMessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+      when(mockMessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)

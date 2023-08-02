@@ -79,7 +79,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
           None
         )
       )
-      when(mockDepartureP5MessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
@@ -106,7 +106,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
         )
       )
-      when(mockDepartureP5MessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
@@ -133,7 +133,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
         )
       )
-      when(mockDepartureP5MessageService.getMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)

@@ -77,7 +77,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
         )
       )
 
-      when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any()))
+      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrnString)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
@@ -107,7 +107,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any()))
+      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))

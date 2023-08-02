@@ -19,10 +19,11 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import models.departureP5.DepartureMessageType.{DepartureNotification, _}
+import models.departureP5.DepartureMessageType.{DepartureNotification, RejectedByOfficeOfDeparture, _}
 import models.departureP5._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,24 +37,20 @@ class DepartureP5MessageService @Inject() (
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[DepartureMovementAndMessage]] =
     departureMovements.departureMovements.traverse {
       movement =>
-        departureMovementP5Connector
-          .getMessagesForMovement(movement.messagesLocation)
-          .flatMap {
-            messagesForMovement =>
-              for {
-                ie056 <- getMessage[IE056Data](movement.departureId, RejectedByOfficeOfDeparture)
-                xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
-                isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false)) { // TODO should this only be done when IE056 is head?
-                  cacheConnector.isDeclarationAmendable(movement.localReferenceNumber, _)
-                }
-              } yield DepartureMovementAndMessage(
-                movement,
-                messagesForMovement,
-                movement.localReferenceNumber,
-                isDeclarationAmendable,
-                xPaths.getOrElse(Seq.empty)
-              )
+        for {
+          messagesForMovement <- departureMovementP5Connector.getMessagesForMovement(movement.messagesLocation)
+          ie056               <- filterForMessage[IE056Data](movement.departureId, RejectedByOfficeOfDeparture) // TODO should this only be done when IE056 is head?
+          xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
+          isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false)) {
+            cacheConnector.isDeclarationAmendable(movement.localReferenceNumber, _)
           }
+        } yield DepartureMovementAndMessage(
+          movement,
+          messagesForMovement,
+          movement.localReferenceNumber,
+          isDeclarationAmendable,
+          xPaths.getOrElse(Seq.empty)
+        )
     }
 
   private def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String, typeOfMessage: T)(implicit
@@ -81,7 +78,7 @@ class DepartureP5MessageService @Inject() (
           .headOption
       )
 
-  def getMessage[MessageModel](
+  def filterForMessage[MessageModel](
     departureId: String,
     typeOfMessage: DepartureMessageType
   )(implicit
@@ -92,7 +89,7 @@ class DepartureP5MessageService @Inject() (
     (
       for {
         messageMetaData <- OptionT(getSpecificMessageMetaData(departureId, typeOfMessage))
-        message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessage[MessageModel](messageMetaData.path))
+        message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessageByPath[MessageModel](messageMetaData.path))
       } yield message
     ).value
 
