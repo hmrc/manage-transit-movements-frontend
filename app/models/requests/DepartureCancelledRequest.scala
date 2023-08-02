@@ -22,6 +22,5 @@ import play.api.mvc.{Request, WrappedRequest}
 case class DepartureCancelledRequest[A](
   request: Request[A],
   eoriNumber: String,
-  ie009MessageData: IE009MessageData,
-  lrn: String
+  ie009MessageData: IE009MessageData
 ) extends WrappedRequest[A](request)

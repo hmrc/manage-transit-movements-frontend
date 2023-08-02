@@ -38,11 +38,12 @@ class ReviewDepartureErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
-    implicit request =>
-      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
-      rejectionMessageP5ViewModel.map(
-        viewModel => Ok(view(viewModel, departureId))
-      )
-  }
+  def onPageLoad(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+      implicit request =>
+        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, localReferenceNumber)
+        rejectionMessageP5ViewModel.map(
+          viewModel => Ok(view(viewModel, departureId))
+        )
+    }
 }

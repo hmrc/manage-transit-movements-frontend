@@ -40,33 +40,35 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
-    implicit request =>
-      if (request.isDeclarationAmendable) {
-        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, request.lrn)
-        rejectionMessageP5ViewModel.map(
-          vmp => Ok(view(vmp, departureId))
-        )
-      } else {
-        Future.successful(
-          Redirect(controllers.routes.SessionExpiredController.onPageLoad())
-        )
-      }
-  }
-
-  def onAmend(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
-    implicit request =>
-      val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
-      if (request.isDeclarationAmendable && xPaths.nonEmpty) {
-        cacheConnector.handleErrors(request.lrn, xPaths).map {
-          case true =>
-            Redirect(config.departureNewLocalReferenceNumberUrl(request.lrn))
-          case false =>
-            Redirect(controllers.routes.ErrorController.technicalDifficulties())
+  def onPageLoad(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+      implicit request =>
+        if (request.isDeclarationAmendable) {
+          val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, localReferenceNumber)
+          rejectionMessageP5ViewModel.map(
+            vmp => Ok(view(vmp, departureId, localReferenceNumber))
+          )
+        } else {
+          Future.successful(
+            Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          )
         }
-      } else {
-        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
-      }
-  }
+    }
+
+  def onAmend(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+      implicit request =>
+        val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
+        if (request.isDeclarationAmendable && xPaths.nonEmpty) {
+          cacheConnector.handleErrors(localReferenceNumber, xPaths).map {
+            case true =>
+              Redirect(config.departureNewLocalReferenceNumberUrl(localReferenceNumber))
+            case false =>
+              Redirect(controllers.routes.ErrorController.technicalDifficulties())
+          }
+        } else {
+          Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+        }
+    }
 
 }

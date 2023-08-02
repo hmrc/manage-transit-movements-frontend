@@ -39,18 +39,19 @@ class CancellationNotificationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
-    implicit request =>
-      val functionalErrors       = request.ie056MessageData.functionalErrors
-      val customsOfficeReference = request.ie056MessageData.customsOfficeOfDeparture.referenceNumber
+  def onPageLoad(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+      implicit request =>
+        val functionalErrors       = request.ie056MessageData.functionalErrors
+        val customsOfficeReference = request.ie056MessageData.customsOfficeOfDeparture.referenceNumber
 
-      if (functionalErrors.isEmpty) {
-        referenceDataService.getCustomsOffice(customsOfficeReference).map {
-          customsOffice =>
-            Ok(view(viewModelProvider.apply(request.lrn, customsOfficeReference, customsOffice)))
+        if (functionalErrors.isEmpty) {
+          referenceDataService.getCustomsOffice(customsOfficeReference).map {
+            customsOffice =>
+              Ok(view(viewModelProvider.apply(localReferenceNumber, customsOfficeReference, customsOffice)))
+          }
+        } else {
+          Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
         }
-      } else {
-        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
-      }
-  }
+    }
 }

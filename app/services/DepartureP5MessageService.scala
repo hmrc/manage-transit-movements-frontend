@@ -32,6 +32,18 @@ class DepartureP5MessageService @Inject() (
   cacheConnector: DepartureCacheConnector
 ) {
 
+  def isErrorAmendable(
+    departureId: String,
+    lrn: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, Seq[String])] =
+    for {
+      message <- filterForMessage[IE056Data](departureId, RejectedByOfficeOfDeparture)
+      xPaths = message.map(_.data.functionalErrors.map(_.errorPointer))
+      isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false)) {
+        cacheConnector.isDeclarationAmendable(lrn, _)
+      }
+    } yield (isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
+
   def getMessagesForAllMovements(
     departureMovements: DepartureMovements
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[DepartureMovementAndMessage]] =
@@ -39,17 +51,13 @@ class DepartureP5MessageService @Inject() (
       movement =>
         for {
           messagesForMovement <- departureMovementP5Connector.getMessagesForMovement(movement.messagesLocation)
-          ie056               <- filterForMessage[IE056Data](movement.departureId, RejectedByOfficeOfDeparture) // TODO should this only be done when IE056 is head?
-          xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
-          isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false)) {
-            cacheConnector.isDeclarationAmendable(movement.localReferenceNumber, _)
-          }
+          isAmendable         <- isErrorAmendable(movement.departureId, movement.localReferenceNumber)
         } yield DepartureMovementAndMessage(
           movement,
           messagesForMovement,
           movement.localReferenceNumber,
-          isDeclarationAmendable,
-          xPaths.getOrElse(Seq.empty)
+          isAmendable._1,
+          isAmendable._2
         )
     }
 
@@ -58,11 +66,6 @@ class DepartureP5MessageService @Inject() (
     hc: HeaderCarrier
   ): Future[Option[DepartureMessageMetaData]] =
     getMessageMetaData(departureId, typeOfMessage)
-
-  private def getDepartureNotificationMetaData(
-    departureId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[DepartureMessageMetaData]] =
-    getMessageMetaData(departureId, DepartureNotification)
 
   private def getMessageMetaData(departureId: String, messageType: DepartureMessageType)(implicit
     ec: ExecutionContext,
@@ -91,13 +94,5 @@ class DepartureP5MessageService @Inject() (
         messageMetaData <- OptionT(getSpecificMessageMetaData(departureId, typeOfMessage))
         message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessageByPath[MessageModel](messageMetaData.path))
       } yield message
-    ).value
-
-  def getLRNFromDeclarationMessage(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] =
-    (
-      for {
-        declarationMessage <- OptionT(getDepartureNotificationMetaData(departureId))
-        lrn                <- OptionT.liftF(departureMovementP5Connector.getLRN(declarationMessage.path).map(_.referenceNumber))
-      } yield lrn
     ).value
 }

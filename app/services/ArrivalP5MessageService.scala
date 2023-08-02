@@ -31,20 +31,11 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
   def getMessagesForAllMovements(arrivalMovements: ArrivalMovements)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ArrivalMovementAndMessage]] =
     arrivalMovements.arrivalMovements.traverse {
       movement =>
-        arrivalMovementP5Connector
-          .getMessagesForMovement(movement.messagesLocation)
-          .flatMap {
-            messagesForMovement =>
-              messagesForMovement.messages.find(_.messageType == ArrivalNotification) match {
-                case Some(_) =>
-                  for {
-                    ie057 <- getMessage[IE057Data](movement.arrivalId, RejectionFromOfficeOfDestination)
-                    functionalErrorsCount = ie057.map(_.data.functionalErrors.length).getOrElse(0)
-                  } yield ArrivalMovementAndMessage(movement, messagesForMovement, functionalErrorsCount)
-                case None =>
-                  Future.failed(new Throwable("Movement did not contain an IE007 message"))
-              }
-          }
+        for {
+          messagesForMovement <- arrivalMovementP5Connector.getMessagesForMovement(movement.messagesLocation)
+          ie057               <- getMessage[IE057Data](movement.arrivalId, RejectionFromOfficeOfDestination)
+          functionalErrorsCount = ie057.map(_.data.functionalErrors.length).getOrElse(0)
+        } yield ArrivalMovementAndMessage(movement, messagesForMovement, functionalErrorsCount)
     }
 
   def getMessage[MessageModel](

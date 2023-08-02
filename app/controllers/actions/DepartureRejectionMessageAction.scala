@@ -35,12 +35,13 @@ class DepartureRejectionMessageActionProvider @Inject() (departureP5MessageServi
   ec: ExecutionContext
 ) {
 
-  def apply(departureId: String): ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] =
-    new DepartureRejectionMessageAction(departureId, departureP5MessageService, cacheConnector)
+  def apply(departureId: String, localReferenceNumber: String): ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] =
+    new DepartureRejectionMessageAction(departureId, localReferenceNumber, departureP5MessageService, cacheConnector)
 }
 
 class DepartureRejectionMessageAction(
   departureId: String,
+  localReferenceNumber: String,
   departureP5MessageService: DepartureP5MessageService,
   cacheConnector: DepartureCacheConnector
 )(implicit protected val executionContext: ExecutionContext)
@@ -52,10 +53,9 @@ class DepartureRejectionMessageAction(
 
     (for {
       ie056 <- OptionT(departureP5MessageService.filterForMessage[IE056Data](departureId, RejectedByOfficeOfDeparture))
-      lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId)) // TODO: Remove once LRN is exposed to use in metadata
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
-      isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
-    } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))
+      isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(localReferenceNumber, xPaths))
+    } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, localReferenceNumber))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
 
