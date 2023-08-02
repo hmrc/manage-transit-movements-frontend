@@ -35,7 +35,7 @@ class ReviewDepartureErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours wit
   val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
     totalNumberOfItems = sections.length,
     currentPage = 1,
-    numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrors,
+    numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
     href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, lrn.toString).url,
     additionalParams = Seq()
   )

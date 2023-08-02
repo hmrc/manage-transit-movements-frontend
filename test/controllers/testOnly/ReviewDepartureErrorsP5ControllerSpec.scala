@@ -90,7 +90,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       val paginationViewModel = ListPaginationViewModel(
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
-        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrors,
+        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
         href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, lrn.toString).url,
         additionalParams = Seq()
       )
