@@ -19,12 +19,14 @@ package services
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
+import models.LocalReferenceNumber
 import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -54,7 +56,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
           DepartureMovement(
             "AB123",
             Some("MRN"),
-            "LRN",
+            LocalReferenceNumber("LRN"),
             dateTimeNow,
             "location"
           )
@@ -99,7 +101,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             DepartureMovementAndMessage(
               departureMovements.departureMovements.head,
               messagesForMovement,
-              "LRN",
+              LocalReferenceNumber("LRN"),
               isDeclarationAmendable = false,
               xPaths = Seq.empty
             )
@@ -178,7 +180,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
             DepartureMovementAndMessage(
               departureMovements.departureMovements.head,
               messagesForMovement,
-              "LRN",
+              LocalReferenceNumber("LRN"),
               isDeclarationAmendable = isDeclarationAmendable,
               xPaths = ie056.data.functionalErrors.map(_.errorPointer)
             )
@@ -283,44 +285,6 @@ class DepartureP5MessageServiceSpec extends SpecBase {
         when(mockMovementConnector.getSpecificMessageByPath[IE056Data](any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
 
         departureP5MessageService.filterForMessage[IE056Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie056Data)
-      }
-    }
-
-    "getLRNFromDeclarationMessage" - {
-
-      "must return a LRN when given a Departure Id" in {
-
-        val messages = DepartureMessages(
-          List(
-            DepartureMessageMetaData(
-              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.DepartureNotification,
-              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
-            )
-          )
-        )
-
-        when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-        when(mockMovementConnector.getLRN(any())(any())).thenReturn(Future.successful(lrnLocal))
-
-        departureP5MessageService.getLRNFromDeclarationMessage(departureId = "6365135ba5e821ee").futureValue mustBe Some(lrnLocal.referenceNumber)
-      }
-
-      "must return None when IE015 message not found in meta data when given a Departure Id" in {
-
-        val messages = DepartureMessages(
-          List(
-            DepartureMessageMetaData(
-              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.GoodsUnderControl,
-              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
-            )
-          )
-        )
-
-        when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-
-        departureP5MessageService.getLRNFromDeclarationMessage(departureId = "6365135ba5e821ee").futureValue mustBe None
       }
     }
   }

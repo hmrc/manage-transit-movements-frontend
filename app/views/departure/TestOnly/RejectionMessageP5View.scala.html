@@ -28,7 +28,7 @@ answerSections: AnswerSections,
 button: Button,
 formHelper: FormWithCSRF
 )
-@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, localReferenceNumber: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, localReferenceNumber: LocalReferenceNumber)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,

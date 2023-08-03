@@ -44,13 +44,14 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                             mockDepartureP5MessageService,
-                                                                                                             mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                                    lrn,
+                                                                                                                    mockDepartureP5MessageService,
+                                                                                                                    mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5).url
-  lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5).url
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5, lrn).url
+  lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5, lrn).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -81,7 +82,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       )
       when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(RejectionMessageP5ViewModel(sections, lrn.toString, multipleErrors = true)))
@@ -99,7 +99,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, lrn)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to session expired when declaration amendable is false" in {
@@ -112,7 +112,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       )
       when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
@@ -138,7 +137,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           )
         )
         when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
@@ -162,7 +160,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           )
         )
         when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
@@ -186,7 +183,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           )
         )
         when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
@@ -197,7 +193,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual frontendAppConfig.departureNewLocalReferenceNumberUrl("LRNAB123")
+        redirectLocation(result).value mustEqual frontendAppConfig.departureNewLocalReferenceNumberUrl(lrn.value)
 
       }
 
@@ -211,7 +207,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           )
         )
         when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(false))
 

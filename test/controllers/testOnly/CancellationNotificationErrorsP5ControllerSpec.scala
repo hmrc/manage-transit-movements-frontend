@@ -41,14 +41,13 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
   private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
   private val mockReferenceDataService                  = mock[ReferenceDataService]
 
-  lazy val controllerRoute: String = controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5).url
-
-  private val lrnString = "LRNAB123"
+  lazy val controllerRoute: String = controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5, lrn).url
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                             mockDepartureP5MessageService,
-                                                                                                             mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                                    lrn,
+                                                                                                                    mockDepartureP5MessageService,
+                                                                                                                    mockCacheService
     )
 
   override def beforeEach(): Unit = {
@@ -79,13 +78,12 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
 
       when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrnString)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrnString, "AB123", None)
+      val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrn.value, "AB123", None)
 
       val request = FakeRequest(GET, controllerRoute)
 
@@ -109,7 +107,6 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
       )
       when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 

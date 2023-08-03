@@ -17,6 +17,7 @@
 package controllers.actions
 
 import connectors.DepartureCacheConnector
+import models.LocalReferenceNumber
 import models.departureP5._
 import models.requests.{DepartureRejectionMessageRequest, IdentifierRequest}
 import play.api.mvc.Result
@@ -27,9 +28,10 @@ import scala.concurrent.Future
 
 class FakeDepartureRejectionMessageAction(
   departureId: String,
+  localReferenceNumber: LocalReferenceNumber,
   departureP5MessageService: DepartureP5MessageService,
   departureCacheConnector: DepartureCacheConnector
-) extends DepartureRejectionMessageAction(departureId, departureP5MessageService, departureCacheConnector) {
+) extends DepartureRejectionMessageAction(departureId, localReferenceNumber, departureP5MessageService, departureCacheConnector) {
 
   val message: IE056Data = IE056Data(
     IE056MessageData(
@@ -40,6 +42,6 @@ class FakeDepartureRejectionMessageAction(
   )
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, DepartureRejectionMessageRequest[A]]] =
-    Future.successful(Right(DepartureRejectionMessageRequest(request, "AB123", message.data, isDeclarationAmendable = true, lrn = "LRNAB123")))
+    Future.successful(Right(DepartureRejectionMessageRequest(request, "AB123", message.data, isDeclarationAmendable = true, lrn = localReferenceNumber.value)))
 
 }

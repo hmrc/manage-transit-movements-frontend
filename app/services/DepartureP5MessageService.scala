@@ -51,7 +51,7 @@ class DepartureP5MessageService @Inject() (
       movement =>
         for {
           messagesForMovement <- departureMovementP5Connector.getMessagesForMovement(movement.messagesLocation)
-          isAmendable         <- isErrorAmendable(movement.departureId, movement.localReferenceNumber)
+          isAmendable         <- isErrorAmendable(movement.departureId, movement.localReferenceNumber.value)
         } yield DepartureMovementAndMessage(
           movement,
           messagesForMovement,

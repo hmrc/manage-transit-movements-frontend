@@ -18,6 +18,7 @@ package controllers.testOnly
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.LocalReferenceNumber
 import models.departureP5.IE009MessageData
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
@@ -41,27 +42,27 @@ class DepartureCancelledP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def declarationCancelled(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+  def declarationCancelled(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
       implicit request => buildView(request.ie009MessageData, localReferenceNumber, isCancelled = true)
     }
 
-  def buildView(IE009MessageData: IE009MessageData, lrn: String, isCancelled: Boolean)(implicit request: Request[_]): Future[Result] = {
+  def buildView(IE009MessageData: IE009MessageData, lrn: LocalReferenceNumber, isCancelled: Boolean)(implicit request: Request[_]): Future[Result] = {
     val customsOfficeReferenceNumber = IE009MessageData.customsOfficeOfDeparture.referenceNumber
     referenceDataService.getCustomsOffice(customsOfficeReferenceNumber).flatMap {
       customsOffice =>
-        viewModelProvider.apply(IE009MessageData, lrn, customsOfficeReferenceNumber, customsOffice, isCancelled).map {
+        viewModelProvider.apply(IE009MessageData, lrn.value, customsOfficeReferenceNumber, customsOffice, isCancelled).map {
           viewModel => Ok(view(viewModel))
         }
     }
   }
 
-  def declarationNotCancelled(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+  def declarationNotCancelled(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
       implicit request => buildView(request.ie009MessageData, localReferenceNumber, isCancelled = false)
     }
 
-  def isDeclarationCancelled(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+  def isDeclarationCancelled(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen identify andThen departureCancelledActionProvider(departureId)) {
       implicit request =>
         val isCancelled: String = request.ie009MessageData.invalidation.decision

@@ -17,6 +17,7 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
+import models.LocalReferenceNumber
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import viewModels.ViewMovementAction
@@ -130,7 +131,9 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def cancellationDecision(departureId: String, localReferenceNumber: String): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def cancellationDecision(departureId: String,
+                                   localReferenceNumber: LocalReferenceNumber
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == CancellationDecision =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.cancellationDecision",
@@ -220,7 +223,7 @@ object DepartureStatusP5ViewModel {
     messagesForDepartureMovement: MessagesForDepartureMovement,
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String],
-    localReferenceNumber: String
+    localReferenceNumber: LocalReferenceNumber
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
 
     case message if message.messageType == RejectedByOfficeOfDeparture =>

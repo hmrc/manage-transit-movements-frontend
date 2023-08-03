@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import controllers.actions._
+import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
@@ -39,7 +40,7 @@ class CancellationNotificationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
         val functionalErrors       = request.ie056MessageData.functionalErrors
@@ -48,7 +49,7 @@ class CancellationNotificationErrorsP5Controller @Inject() (
         if (functionalErrors.isEmpty) {
           referenceDataService.getCustomsOffice(customsOfficeReference).map {
             customsOffice =>
-              Ok(view(viewModelProvider.apply(localReferenceNumber, customsOfficeReference, customsOffice)))
+              Ok(view(viewModelProvider.apply(localReferenceNumber.value, customsOfficeReference, customsOffice)))
           }
         } else {
           Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))

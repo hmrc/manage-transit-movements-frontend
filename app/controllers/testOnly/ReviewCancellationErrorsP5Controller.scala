@@ -18,6 +18,7 @@ package controllers.testOnly
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -38,10 +39,10 @@ class ReviewCancellationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
-        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, localReferenceNumber)
+        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, localReferenceNumber.value)
         rejectionMessageP5ViewModel.map(
           viewModel => Ok(view(viewModel, departureId))
         )

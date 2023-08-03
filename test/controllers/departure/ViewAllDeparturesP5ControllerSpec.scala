@@ -21,6 +21,7 @@ import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
 import forms.DeparturesSearchFormProvider
 import generators.Generators
+import models.LocalReferenceNumber
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
@@ -67,7 +68,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   val departureMovement: DepartureMovement = DepartureMovement(
     "63651574c3447b12",
     None,
-    "AB123",
+    LocalReferenceNumber("AB123"),
     dateTime,
     "movements/departures/63651574c3447b12/messages"
   )
@@ -113,7 +114,14 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
           .thenReturn(
             Future.successful(
-              Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123", isDeclarationAmendable = true, Seq.empty))
+              Seq(
+                DepartureMovementAndMessage(departureMovement,
+                                            mockDepartureMessageResponse,
+                                            LocalReferenceNumber("AB123"),
+                                            isDeclarationAmendable = true,
+                                            Seq.empty
+                )
+              )
             )
           )
 
@@ -149,7 +157,14 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
           .thenReturn(
             Future.successful(
-              Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123", isDeclarationAmendable = true, Seq.empty))
+              Seq(
+                DepartureMovementAndMessage(departureMovement,
+                                            mockDepartureMessageResponse,
+                                            LocalReferenceNumber("AB123"),
+                                            isDeclarationAmendable = true,
+                                            Seq.empty
+                )
+              )
             )
           )
 

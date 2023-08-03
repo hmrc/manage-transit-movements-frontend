@@ -64,10 +64,9 @@ class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEa
     "must return 200 when an unloading permission is available" in {
 
       when(mockMessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockMessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
-      val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5, lrn)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
@@ -81,7 +80,7 @@ class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEa
       when(mockMessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
-      val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5)
+      val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5, lrn)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 

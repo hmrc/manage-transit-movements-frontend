@@ -241,7 +241,7 @@ trait ModelGenerators {
       for {
         departureId      <- arbitrary[String]
         mrn              <- arbitrary[String]
-        lrn              <- arbitrary[String]
+        lrn              <- arbitrary[LocalReferenceNumber]
         updated          <- arbitrary[LocalDateTime]
         messagesLocation <- arbitrary[String]
       } yield DepartureMovement(departureId, Some(mrn), lrn, updated, messagesLocation)

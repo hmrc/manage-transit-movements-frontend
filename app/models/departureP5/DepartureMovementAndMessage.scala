@@ -16,10 +16,12 @@
 
 package models.departureP5
 
+import models.LocalReferenceNumber
+
 case class DepartureMovementAndMessage(
   departureMovement: DepartureMovement,
   messagesForMovement: MessagesForDepartureMovement,
-  localReferenceNumber: String,
+  localReferenceNumber: LocalReferenceNumber,
   isDeclarationAmendable: Boolean,
   xPaths: Seq[String]
 )

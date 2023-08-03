@@ -39,14 +39,13 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
   private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
-  lazy val departureDeclarationErrorsController: String = controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5).url
-
-  private val lrnString = "LRNAB123"
+  lazy val departureDeclarationErrorsController: String = controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, lrn).url
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                             mockDepartureP5MessageService,
-                                                                                                             mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                                    lrn,
+                                                                                                                    mockDepartureP5MessageService,
+                                                                                                                    mockCacheService
     )
 
   override def beforeEach(): Unit = {
@@ -75,12 +74,11 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       )
       when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrnString)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString)
+      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrn.value)
 
       val request = FakeRequest(GET, departureDeclarationErrorsController)
 
@@ -104,7 +102,6 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       )
       when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)

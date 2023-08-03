@@ -19,6 +19,7 @@ package controllers.testOnly
 import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
 import controllers.actions._
+import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -40,11 +41,11 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
         if (request.isDeclarationAmendable) {
-          val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, localReferenceNumber)
+          val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, localReferenceNumber.value)
           rejectionMessageP5ViewModel.map(
             vmp => Ok(view(vmp, departureId, localReferenceNumber))
           )
@@ -55,14 +56,14 @@ class RejectionMessageP5Controller @Inject() (
         }
     }
 
-  def onAmend(departureId: String, localReferenceNumber: String): Action[AnyContent] =
+  def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
         val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
         if (request.isDeclarationAmendable && xPaths.nonEmpty) {
-          cacheConnector.handleErrors(localReferenceNumber, xPaths).map {
+          cacheConnector.handleErrors(localReferenceNumber.value, xPaths).map {
             case true =>
-              Redirect(config.departureNewLocalReferenceNumberUrl(localReferenceNumber))
+              Redirect(config.departureNewLocalReferenceNumberUrl(localReferenceNumber.value))
             case false =>
               Redirect(controllers.routes.ErrorController.technicalDifficulties())
           }

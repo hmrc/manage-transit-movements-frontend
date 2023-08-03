@@ -41,7 +41,7 @@ object ViewDepartureP5 {
     ViewDepartureP5(
       updatedDate = systemTime.toLocalDate,
       updatedTime = systemTime.toLocalTime,
-      referenceNumber = movementAndMessage.localReferenceNumber,
+      referenceNumber = movementAndMessage.localReferenceNumber.value,
       status = departureStatus.status,
       actions = departureStatus.actions
     )
