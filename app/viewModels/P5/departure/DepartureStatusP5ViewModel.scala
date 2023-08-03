@@ -53,10 +53,10 @@ object DepartureStatusP5ViewModel {
     }
 
   private def currentStatus(departureId: String,
-                     localReferenceNumber: LocalReferenceNumber,
-                     messagesForDepartureMovements: MessagesForDepartureMovement,
-                     isDeclarationAmendable: Boolean,
-                     xPaths: Seq[String]
+                            localReferenceNumber: LocalReferenceNumber,
+                            messagesForDepartureMovements: MessagesForDepartureMovement,
+                            isDeclarationAmendable: Boolean,
+                            xPaths: Seq[String]
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
       departureNotification(departureId),
