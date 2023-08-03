@@ -28,38 +28,64 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
-      case DepartureMovementAndMessage(DepartureMovement(departureId, _, localReferenceNumber, _, _),
-                                       messagesForDepartureMovements,
-                                       _,
-                                       isDeclarationAmendable,
-                                       xPaths
+      case DepartureMovementAndMessage(
+            DepartureMovement(
+              departureId,
+              _,
+              localReferenceNumber,
+              _,
+              _
+            ),
+            messagesForDepartureMovements,
+            _,
+            isDeclarationAmendable,
+            xPaths
           ) =>
-        val allPfs: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
-          Seq(
-            departureNotification(departureId),
-            cancellationRequested,
-            amendmentSubmitted,
-            prelodgedDeclarationSent,
-            movementNotArrivedResponseSent,
-            movementNotArrived,
-            declarationAmendmentAccepted(),
-            cancellationDecision(departureId, localReferenceNumber),
-            discrepancies,
-            invalidMRN(),
-            allocatedMRN(departureId),
-            releasedForTransit(departureId),
-            goodsNotReleased(),
-            guaranteeRejected(departureId),
-            rejectedByOfficeOfDeparture(departureId, messagesForDepartureMovements, isDeclarationAmendable, xPaths, localReferenceNumber),
-            goodsUnderControl(departureId),
-            incidentDuringTransit(),
-            declarationSent(departureId),
-            goodsBeingRecovered(),
-            guaranteeWrittenOff
-          ).reduce(_ orElse _)
-
-        allPfs.apply(messagesForDepartureMovements.messages.head)
+        allPfs(
+          departureId,
+          localReferenceNumber,
+          messagesForDepartureMovements,
+          isDeclarationAmendable,
+          xPaths
+        ).apply(
+          messagesForDepartureMovements.messages.head
+        )
     }
+
+  private def allPfs(departureId: String,
+                     localReferenceNumber: LocalReferenceNumber,
+                     messagesForDepartureMovements: MessagesForDepartureMovement,
+                     isDeclarationAmendable: Boolean,
+                     xPaths: Seq[String]
+  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
+    Seq(
+      departureNotification(departureId),
+      cancellationRequested,
+      amendmentSubmitted,
+      prelodgedDeclarationSent,
+      movementNotArrivedResponseSent,
+      movementNotArrived,
+      declarationAmendmentAccepted(),
+      cancellationDecision(departureId, localReferenceNumber),
+      discrepancies,
+      invalidMRN(),
+      allocatedMRN(departureId),
+      releasedForTransit(departureId),
+      goodsNotReleased(),
+      guaranteeRejected(departureId),
+      rejectedByOfficeOfDeparture(
+        departureId,
+        messagesForDepartureMovements,
+        isDeclarationAmendable,
+        xPaths,
+        localReferenceNumber
+      ),
+      goodsUnderControl(departureId),
+      incidentDuringTransit(),
+      declarationSent(departureId),
+      goodsBeingRecovered(),
+      guaranteeWrittenOff
+    ).reduce(_ orElse _)
 
   private def departureNotification(
     departureId: String
