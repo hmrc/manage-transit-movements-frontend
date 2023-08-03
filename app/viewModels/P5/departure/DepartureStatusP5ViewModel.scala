@@ -41,7 +41,7 @@ object DepartureStatusP5ViewModel {
             isDeclarationAmendable,
             xPaths
           ) =>
-        allPfs(
+        currentStatus(
           departureId,
           localReferenceNumber,
           messagesForDepartureMovements,
@@ -52,7 +52,7 @@ object DepartureStatusP5ViewModel {
         )
     }
 
-  private def allPfs(departureId: String,
+  private def currentStatus(departureId: String,
                      localReferenceNumber: LocalReferenceNumber,
                      messagesForDepartureMovements: MessagesForDepartureMovement,
                      isDeclarationAmendable: Boolean,
