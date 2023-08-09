@@ -59,7 +59,7 @@ object DepartureStatusP5ViewModel {
                             xPaths: Seq[String]
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
-      departureNotification(departureId),
+      departureNotification(departureId, localReferenceNumber),
       cancellationRequested,
       amendmentSubmitted,
       prelodgedDeclarationSent,
@@ -69,10 +69,10 @@ object DepartureStatusP5ViewModel {
       cancellationDecision(departureId, localReferenceNumber),
       discrepancies,
       invalidMRN(),
-      allocatedMRN(departureId),
+      allocatedMRN(departureId, localReferenceNumber),
       releasedForTransit(departureId),
       goodsNotReleased(),
-      guaranteeRejected(departureId),
+      guaranteeRejected(departureId, localReferenceNumber),
       rejectedByOfficeOfDeparture(
         departureId,
         messagesForDepartureMovements,
@@ -80,9 +80,9 @@ object DepartureStatusP5ViewModel {
         xPaths,
         localReferenceNumber
       ),
-      goodsUnderControl(departureId),
+      goodsUnderControl(departureId, localReferenceNumber),
       incidentDuringTransit(),
-      declarationSent(departureId),
+      declarationSent(departureId, localReferenceNumber),
       goodsBeingRecovered(),
       guaranteeWrittenOff
     ).reduce(_ orElse _)
