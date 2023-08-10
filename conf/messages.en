@@ -90,7 +90,7 @@ viewArrivalNotifications.table.action.hidden                  = for {0}
 viewArrivalNotificationsP5.title                            = Arrival notifications
 viewArrivalNotificationsP5.heading                          = Arrival notifications
 viewArrivalNotificationsP5.heading.hidden                   = Arrival notifications table
-viewArrivalNotificationsP5.makeArrivalNotification          = Create an arrival notification
+viewArrivalNotificationsP5.makeArrivalNotification          = Make an arrival notification
 viewArrivalNotificationsP5.goToManageTransitMovements       = Manage your transit movements
 viewArrivalNotificationsP5.table.updated                    = Updated
 viewArrivalNotificationsP5.table.mrn                        = Movement Reference Number (MRN)
@@ -109,7 +109,7 @@ viewArrivalNotificationsP5.search.title                     = Search by Movement
 viewDepartureDeclarationsP5.title                            = Departure declarations
 viewDepartureDeclarationsP5.heading                          = Departure declarations
 viewDepartureDeclarationsP5.heading.hidden                   = Departure declarations table
-viewDepartureDeclarationsP5.link.create                      = Create a departure declaration
+viewDepartureDeclarationsP5.link.create                      = Make a departure declaration
 viewDepartureDeclarationsP5.search.title                     = Search by Local Reference Number (LRN)
 viewDepartureDeclarationsP5.searchButton                     = Search
 viewDepartureDeclarationsP5.label.preSearch                  = Showing {0} results
@@ -274,7 +274,7 @@ unloadingRemarksNegativeAcknowledgement.title = There is a problem with these un
 unloadingRemarksNegativeAcknowledgement.heading = There is a problem with these unloading remarks
 unloadingRemarksNegativeAcknowledgement.paragraph = You must
 unloadingRemarksNegativeAcknowledgement.linktext = contact the New Computerised Transit System helpdesk (opens in a new tab)
-unloadingRemarksNegativeAcknowledgement.create.unloadingRemarks = create new unloading remarks
+unloadingRemarksNegativeAcknowledgement.create.unloadingRemarks = make new unloading remarks
 
 controlDecision.title = Your goods have been selected for control
 controlDecision.heading = Your goods have been selected for control
@@ -333,7 +333,7 @@ departure.drafts.dashboard.table.action.delete.hidden = Local Reference Number (
 
 departure.drafts.dashboard.table.sort.hidden = Sort {0} in {1} order
 
-departure.drafts.dashboard.table.panel.title = Create a new departure declaration
+departure.drafts.dashboard.table.panel.title = Make a new departure declaration
 departure.drafts.dashboard.table.panel.text = You have 30 days from starting a declaration to complete it.
 departure.drafts.dashboard.table.panel.button = Start now
 
@@ -399,7 +399,7 @@ departure.ie056.message.paragraph2.prefix = Contact the
 departure.ie056.message.paragraph2.link = New Computerised Transit System helpdesk
 departure.ie056.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
 departure.ie056.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
-departure.ie056.message.hyperlink = create another departure declaration
+departure.ie056.message.hyperlink = make another departure declaration
 
 departure.ie056.review.message.title = Review declaration errors
 departure.ie056.review.message.heading = Review declaration errors
@@ -411,7 +411,7 @@ departure.ie056.review.message.paragraph2.prefix = Contact the
 departure.ie056.review.message.paragraph2.link = New Computerised Transit System helpdesk
 departure.ie056.review.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
 departure.ie056.review.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
-departure.ie056.review.message.hyperlink = Create another departure declaration
+departure.ie056.review.message.hyperlink = Make another departure declaration
 
 departure.ie056.review.cancellation.message.title = Review cancellation errors
 departure.ie056.review.cancellation.message.heading = Review cancellation errors
@@ -433,7 +433,7 @@ departure.declaration.errors.message.paragraph2 = Make a new declaration with th
 departure.declaration.errors.message.paragraph3.prefix = Contact the
 departure.declaration.errors.message.paragraph3.link = New Computerised Transit System helpdesk
 departure.declaration.errors.message.paragraph3.suffix = for help understanding the errors (opens in a new tab).
-departure.declaration.errors.message.hyperlink = Create another departure declaration
+departure.declaration.errors.message.hyperlink = Make another departure declaration
 departure.declaration.errors.message.hyperlink.text = Make another departure declaration
 
 cancellation.notification.errors.message.title   = Cancellation errors
@@ -449,11 +449,11 @@ arrival.notification.errors.message.title   = Notification errors
 arrival.notification.errors.message.heading = Notification errors
 arrival.notification.errors.message.noerrors = There are one or more errors in this notification that cannot be amended. Make a new notification with the right information.
 arrival.notification.errors.message.elevenpluserrors = There are a number of errors in arrival notification {0}.
-arrival.notification.errors.message.paragraph2 = Make/create a new arrival notification with the right information.
+arrival.notification.errors.message.paragraph2 = Make a new arrival notification with the right information.
 arrival.notification.errors.message.paragraph3.prefix = Contact the
 arrival.notification.errors.message.paragraph3.link = New Computerised Transit System helpdesk
 arrival.notification.errors.message.paragraph3.suffix = for help understanding the errors (opens in a new tab).
-arrival.notification.errors.message.hyperlink = Create another arrival notification
+arrival.notification.errors.message.hyperlink = Make another arrival notification
 
 arrival.notification.unloading.errors.message.title   = Unloading remarks errors
 arrival.notification.unloading.errors.message.heading = Unloading remarks errors
@@ -483,7 +483,7 @@ arrival.ie057.review.notification.message.paragraph2.prefix = Contact the
 arrival.ie057.review.notification.message.paragraph2.link = New Computerised Transit System helpdesk
 arrival.ie057.review.notification.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
 arrival.ie057.review.notification.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
-arrival.ie057.review.notification.message.hyperlink = Create another arrival notification
+arrival.ie057.review.notification.message.hyperlink = Make another arrival notification
 
 departure.cancellation.message.title   = Declaration cancelled
 departure.cancellation.notCancelled.message.title = Declaration not cancelled

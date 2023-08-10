@@ -280,7 +280,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
     }
 
     "must render correct header" in {
-      panel.head.getElementsByClass("govuk-heading-m").text() mustBe "Create a new departure declaration"
+      panel.head.getElementsByClass("govuk-heading-m").text() mustBe "Make a new departure declaration"
     }
 
     "must render correct text" in {

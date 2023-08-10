@@ -83,7 +83,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Create another arrival notification"
+        result.hyperlink mustBe "Make another arrival notification"
       }
     }
 
@@ -118,7 +118,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Create another arrival notification"
+        result.hyperlink mustBe "Make another arrival notification"
       }
     }
 
