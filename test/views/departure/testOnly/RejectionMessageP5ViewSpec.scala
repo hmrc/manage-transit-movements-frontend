@@ -23,10 +23,10 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.departure.RejectionMessageP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
-import views.behaviours.{CheckYourAnswersViewBehaviours, PaginationViewBehaviours}
+import views.behaviours.{CheckYourAnswersViewBehaviours, PaginationViewBehaviours, SummaryListViewBehaviours}
 import views.html.departure.TestOnly.RejectionMessageP5View
 
-class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with Generators {
+class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {
 
   override val prefix: String = "departure.ie056.message"
 
@@ -60,6 +60,10 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
     applyView(rejectionMessageP5ViewModel, paginationViewModel)
 
+  override def summaryLists: Seq[SummaryList] = sections.map(
+    section => SummaryList(section.rows)
+  )
+
   behave like pageWithTitle()
 
   behave like pageWithBackLink()
@@ -73,6 +77,8 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   behave like pageWithCaption(s"LRN: $lrn")
 
   behave like pageWithPagination(controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId.toString).url)
+
+  behave like pageWithSummaryLists()
 
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {

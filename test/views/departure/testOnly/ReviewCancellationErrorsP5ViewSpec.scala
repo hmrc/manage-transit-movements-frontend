@@ -19,13 +19,14 @@ package views.departure.testOnly
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
-import views.behaviours.PaginationViewBehaviours
+import views.behaviours.{PaginationViewBehaviours, SummaryListViewBehaviours}
 import views.html.departure.TestOnly.ReviewCancellationErrorsP5View
 
-class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with Generators {
+class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {
 
   override val prefix: String = "departure.ie056.review.cancellation.message"
 
@@ -54,6 +55,10 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
     applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
+  override def summaryLists: Seq[SummaryList] = sections.map(
+    section => SummaryList(section.rows)
+  )
+
   behave like pageWithTitle()
 
   behave like pageWithBackLink()
@@ -67,6 +72,8 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
   behave like pageWithCaption(s"LRN: $lrn")
 
   behave like pageWithPagination(controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId.toString).url)
+
+  behave like pageWithSummaryLists()
 
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
@@ -110,5 +117,4 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
     "View departure declarations",
     controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
   )
-
 }
