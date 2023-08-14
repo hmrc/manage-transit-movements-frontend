@@ -62,7 +62,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, mrnString).futureValue
+      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
 
       "must return correct section length" in {
         result.sections.length mustBe 1
@@ -75,7 +75,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         result.heading mustBe "Review unloading remarks errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
+        result.paragraph1 mustBe
+          s"There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -101,7 +102,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, mrnString).futureValue
+      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
 
       "must return correct title" in {
         result.title mustBe "Review unloading remarks errors"
@@ -110,7 +111,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         result.heading mustBe "Review unloading remarks errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There is a problem with the unloading remarks for this notification. Review the errors and try making the unloading remarks again."
+        result.paragraph1 mustBe
+          s"There is a problem with the unloading remarks for this notification. Review the errors and try making the unloading remarks again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -135,10 +137,9 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, mrnString).futureValue
+      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
 
       result.sections.length mustBe 1
-      println(s"${result.sections.head.rows}")
       result.sections.head.rows.size mustBe 4
     }
 
