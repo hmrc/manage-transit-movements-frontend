@@ -31,6 +31,7 @@ import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.RejectionMessageP5ViewModel
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.html.departure.TestOnly.RejectionMessageP5View
 
@@ -49,7 +50,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
                                                                                                              mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5).url
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5).url
   lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
 
@@ -90,6 +91,14 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
       val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, lrn.toString, true)
 
+      val paginationViewModel = ListPaginationViewModel(
+        totalNumberOfItems = message.data.functionalErrors.length,
+        currentPage = 1,
+        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, lrn.toString).url,
+        additionalParams = Seq()
+      )
+
       val request = FakeRequest(GET, rejectionMessageController)
 
       val result = route(app, request).value
@@ -99,7 +108,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to session expired when declaration amendable is false" in {

@@ -217,11 +217,12 @@ object DepartureStatusP5ViewModel {
     xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
 
+    // TODO Look at CL560 for message type
     case message if message.messageType == RejectedByOfficeOfDeparture =>
       val (key, href) = messagesForDepartureMovement.messageBeforeLatest.map(_.messageType) match {
         case Some(DepartureNotification) =>
           if (isDeclarationAmendable) {
-            ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
+            ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId).url)
           } else if (xPaths.isEmpty) {
             (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
@@ -232,7 +233,7 @@ object DepartureStatusP5ViewModel {
           if (xPaths.isEmpty) {
             (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
           } else {
-            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
+            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId).url)
           }
         case _ =>
           ("", "")

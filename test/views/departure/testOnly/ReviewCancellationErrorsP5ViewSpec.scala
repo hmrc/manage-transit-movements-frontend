@@ -20,6 +20,7 @@ import generators.Generators
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
 import views.html.departure.TestOnly.ReviewCancellationErrorsP5View
@@ -31,10 +32,18 @@ class ReviewCancellationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours 
   private val reviewRejectionMessageP5ViewModel =
     new ReviewCancellationErrorsP5ViewModel(sections, lrn.toString, false)
 
+  val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
+    totalNumberOfItems = sections.length,
+    currentPage = 1,
+    numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+    href = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, lrn.toString).url,
+    additionalParams = Seq()
+  )
+
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewCancellationErrorsP5View]
-      .apply(reviewRejectionMessageP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
+      .apply(reviewRejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)

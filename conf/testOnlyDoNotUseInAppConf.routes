@@ -60,7 +60,7 @@ GET         /manage-transit-movements/test-only/:departureId/goods-under-control
 
 GET         /manage-transit-movements/test-only/:departureId/goods-under-control-document-requested                    controllers.testOnly.GoodsUnderControlP5Controller.requestedDocuments(departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/amend-departure-declaration-errors                       controllers.testOnly.RejectionMessageP5Controller.onPageLoad(departureId: String)
+GET        /manage-transit-movements/test-only/:departureId/amend-departure-declaration-errors                       controllers.testOnly.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String)
 
 GET        /manage-transit-movements/test-only/:departureId/departure-declaration-errors                              controllers.testOnly.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String)
 
@@ -71,7 +71,7 @@ GET        /manage-transit-movements/test-only/:arrivalId/notification-errors   
 
 GET        /manage-transit-movements/test-only/:departureId/review-departure-declaration-errors                        controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/review-cancellation-errors                                 controllers.testOnly.ReviewCancellationErrorsP5Controller.onPageLoad(departureId: String)
+GET        /manage-transit-movements/test-only/:departureId/review-cancellation-errors                                 controllers.testOnly.ReviewCancellationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String)
 
 GET        /manage-transit-movements/test-only/:departureId/send-departure-declaration-errors                         controllers.testOnly.RejectionMessageP5Controller.onAmend(departureId: String)
 

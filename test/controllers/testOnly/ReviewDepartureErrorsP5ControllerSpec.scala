@@ -82,7 +82,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
         .thenReturn(Future.successful(Some(message)))
       when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-      when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
+      when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(ReviewDepartureErrorsP5ViewModel(sections, lrn.toString, multipleErrors = true)))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)

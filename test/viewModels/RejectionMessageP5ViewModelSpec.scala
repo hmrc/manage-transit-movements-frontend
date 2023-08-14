@@ -50,18 +50,12 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
 
     "when there is one error" - {
 
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
-          CustomsOfficeOfDeparture("AB123"),
-          Seq(FunctionalError("14", "12", "MRN incorrect", None))
-        )
-      )
+      val errors: Seq[FunctionalError] = Seq(FunctionalError("14", "12", "MRN incorrect", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
       "must return correct section length" in {
         result.sections.length mustBe 1
@@ -89,18 +83,10 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
     "when there is multiple errors" - {
       val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          CustomsOfficeOfDeparture("AB123"),
-          functionalErrors
-        )
-      )
-
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, lrnString).futureValue
 
       "must return correct title" in {
         result.title mustBe "Amend declaration errors"
@@ -123,18 +109,12 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
 
     "must render rows" in {
 
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
-          CustomsOfficeOfDeparture("AB123"),
-          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-        )
-      )
+      val errors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
       result.sections.length mustBe 1
       result.sections.head.rows.size mustBe 4
