@@ -69,8 +69,7 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
   private def getMessageMetaData(arrivalId: String, messageType: ArrivalMessageType)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier
-  ): Future[Option[ArrivalMessageMetaData]] = {
-    println(s"******************* $arrivalId before getMessageMetaData connector call...")
+  ): Future[Option[ArrivalMessageMetaData]] =
     arrivalMovementP5Connector
       .getMessageMetaData(arrivalId)
       .map(
@@ -80,15 +79,12 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
           .reverse
           .headOption
       )
-  }
 
   private def getMessageMetaDataWithMessageId(arrivalId: String, messageId: String)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier
-  ): Future[Option[ArrivalMessageMetaData]] = {
-    println(s"******************* $arrivalId $messageId   before getMessageMetaDataWithMessageId connector call...")
+  ): Future[Option[ArrivalMessageMetaData]] =
     arrivalMovementP5Connector
       .getMessageMetaDataForMessageId(arrivalId, messageId)
-  }
 
 }

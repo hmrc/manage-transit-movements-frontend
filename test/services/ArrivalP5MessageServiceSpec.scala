@@ -176,6 +176,32 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
       }
     }
 
+    "getMessageWithMessageId" - {
+
+      "must return an IE057Data when given Arrival Id and MessageId" in {
+
+        val message =
+          ArrivalMessageMetaData(
+            LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+            ArrivalMessageType.ArrivalNotification,
+            "movements/arrivals/6365135ba5e821ee/message/634982098f02f00b"
+          )
+
+        val ie057Data: IE057Data = IE057Data(
+          IE057MessageData(
+            TransitOperationIE057("CD3232"),
+            CustomsOfficeOfDestinationActual("1234"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+
+        when(mockConnector.getMessageMetaDataForMessageId(any(), any())(any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
+
+        arrivalP5MessageService.getMessageWithMessageId[IE057Data](arrivalId = "6365135ba5e821ee", messageId).futureValue mustBe Some(ie057Data)
+      }
+    }
+
   }
 
 }
