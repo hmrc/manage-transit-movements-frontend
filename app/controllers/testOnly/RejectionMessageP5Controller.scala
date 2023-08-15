@@ -41,13 +41,13 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber, messageId: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber, messageId)).async {
       implicit request =>
         if (request.isDeclarationAmendable) {
           val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, localReferenceNumber.value)
           rejectionMessageP5ViewModel.map(
-            vmp => Ok(view(vmp, departureId, localReferenceNumber))
+            vmp => Ok(view(vmp, departureId, localReferenceNumber, messageId))
           )
         } else {
           Future.successful(
@@ -56,8 +56,8 @@ class RejectionMessageP5Controller @Inject() (
         }
     }
 
-  def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber, messageId: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber, messageId)).async {
       implicit request =>
         val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
         if (request.isDeclarationAmendable && xPaths.nonEmpty) {

@@ -463,6 +463,47 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       }
     }
 
+    "getMessageMetaDataForMessageId" - {
+
+      "must return Message" in {
+
+        val responseJson: JsValue = Json.parse("""
+                    {
+                        "_links": {
+                            "self": {
+                                "href": "/customs/transits/movements/departures/6365135ba5e821ee/message/634982098f02f00b"
+                            },
+                            "departure": {
+                                "href": "/customs/transits/movements/departures/6365135ba5e821ee"
+                            }
+                        },
+                        "id": "634982098f02f00a",
+                        "departureId": "6365135ba5e821ee",
+                        "received": "2022-11-11T15:32:51.459Z",
+                        "type": "IE015",
+                        "status": "Success"
+                    }
+            """)
+
+        val expectedResult =
+          Some(
+            DepartureMessageMetaData(
+              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              DepartureMessageType.DepartureNotification,
+              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
+            )
+          )
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/$messageId"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        connector.getMessageMetaDataForMessageId(departureIdP5, messageId).futureValue mustBe expectedResult
+
+      }
+    }
+
     "getSpecificMessageByPath" - {
 
       "must return an IE060 Message" in {

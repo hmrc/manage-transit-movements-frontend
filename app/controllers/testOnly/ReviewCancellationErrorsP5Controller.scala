@@ -39,8 +39,8 @@ class ReviewCancellationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber, messageId: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber, messageId)).async {
       implicit request =>
         val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie056MessageData, localReferenceNumber.value)
         rejectionMessageP5ViewModel.map(

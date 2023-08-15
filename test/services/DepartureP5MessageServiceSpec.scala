@@ -286,6 +286,31 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
         departureP5MessageService.filterForMessage[IE056Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie056Data)
       }
+
+      "must return an IE056Data when given Departure Id and Message Id" in {
+
+        val message =
+          Some(
+            DepartureMessageMetaData(
+              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              DepartureMessageType.DepartureNotification,
+              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
+            )
+          )
+
+        val ie056Data: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperation(Some("CD3232"), None),
+            CustomsOfficeOfDeparture("AB123"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+
+        when(mockMovementConnector.getMessageMetaDataForMessageId(any(), any())(any(), any())).thenReturn(Future.successful(message))
+        when(mockMovementConnector.getSpecificMessageByPath[IE056Data](any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
+
+        departureP5MessageService.getMessageWithMessageId[IE056Data](departureId = "6365135ba5e821ee", messageId).futureValue mustBe Some(ie056Data)
+      }
     }
   }
 }

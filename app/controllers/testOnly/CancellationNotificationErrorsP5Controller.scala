@@ -40,8 +40,8 @@ class CancellationNotificationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber, messageId: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber, messageId)).async {
       implicit request =>
         val functionalErrors       = request.ie056MessageData.functionalErrors
         val customsOfficeReference = request.ie056MessageData.customsOfficeOfDeparture.referenceNumber

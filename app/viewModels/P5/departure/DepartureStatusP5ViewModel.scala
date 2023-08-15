@@ -259,18 +259,34 @@ object DepartureStatusP5ViewModel {
       val (key, href) = messagesForDepartureMovement.messageBeforeLatest.map(_.messageType) match {
         case Some(DepartureNotification) =>
           if (isDeclarationAmendable) {
-            ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+            ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId, localReferenceNumber, message.messageId).url)
           } else if (xPaths.isEmpty) {
-            (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+            (errorsActionText(xPaths),
+             controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller
+               .onPageLoad(departureId, localReferenceNumber, message.messageId)
+               .url
+            )
           } else {
-            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+            (errorsActionText(xPaths),
+             controllers.testOnly.routes.ReviewDepartureErrorsP5Controller
+               .onPageLoad(departureId, localReferenceNumber, message.messageId)
+               .url
+            )
           }
 
         case Some(CancellationRequested) =>
           if (xPaths.isEmpty) {
-            (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+            (errorsActionText(xPaths),
+             controllers.testOnly.routes.CancellationNotificationErrorsP5Controller
+               .onPageLoad(departureId, localReferenceNumber, message.messageId)
+               .url
+            )
           } else {
-            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+            (errorsActionText(xPaths),
+             controllers.testOnly.routes.ReviewCancellationErrorsP5Controller
+               .onPageLoad(departureId, localReferenceNumber, message.messageId)
+               .url
+            )
           }
         case _ =>
           ("", "")

@@ -39,8 +39,8 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)) {
+  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber, messageId: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber, messageId)) {
       implicit request =>
         if (request.ie056MessageData.functionalErrors.isEmpty) {
           Ok(view(viewModelProvider.apply(request.lrn)))

@@ -33,7 +33,7 @@ class RejectionMessageP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[RejectionMessageP5View]
-      .apply(rejectionMessageP5ViewModel, departureIdP5, lrn)(fakeRequest, messages, frontendAppConfig)
+      .apply(rejectionMessageP5ViewModel, departureIdP5, lrn, messageId)(fakeRequest, messages, frontendAppConfig)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)

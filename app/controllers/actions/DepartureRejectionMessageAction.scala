@@ -37,13 +37,17 @@ class DepartureRejectionMessageActionProvider @Inject() (departureP5MessageServi
   ec: ExecutionContext
 ) {
 
-  def apply(departureId: String, localReferenceNumber: LocalReferenceNumber): ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] =
-    new DepartureRejectionMessageAction(departureId, localReferenceNumber, departureP5MessageService, cacheConnector)
+  def apply(departureId: String,
+            localReferenceNumber: LocalReferenceNumber,
+            messageId: String
+  ): ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] =
+    new DepartureRejectionMessageAction(departureId, localReferenceNumber, messageId, departureP5MessageService, cacheConnector)
 }
 
 class DepartureRejectionMessageAction(
   departureId: String,
   localReferenceNumber: LocalReferenceNumber,
+  messageId: String,
   departureP5MessageService: DepartureP5MessageService,
   cacheConnector: DepartureCacheConnector
 )(implicit protected val executionContext: ExecutionContext)
@@ -54,7 +58,7 @@ class DepartureRejectionMessageAction(
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (for {
-      ie056 <- OptionT(departureP5MessageService.filterForMessage[IE056Data](departureId, RejectedByOfficeOfDeparture))
+      ie056 <- OptionT(departureP5MessageService.getMessageWithMessageId[IE056Data](departureId, messageId))
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
       isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(localReferenceNumber.value, xPaths))
     } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, localReferenceNumber.value))

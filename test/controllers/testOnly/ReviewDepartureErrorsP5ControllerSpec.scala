@@ -44,13 +44,14 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
   private val mockCacheService: DepartureCacheConnector          = mock[DepartureCacheConnector]
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                                    lrn,
-                                                                                                                    mockDepartureP5MessageService,
-                                                                                                                    mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any(), any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                                           lrn,
+                                                                                                                           messageId,
+                                                                                                                           mockDepartureP5MessageService,
+                                                                                                                           mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5, lrn).url
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5, lrn, messageId).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -78,7 +79,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))

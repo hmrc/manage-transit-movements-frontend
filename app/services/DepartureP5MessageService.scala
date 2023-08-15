@@ -95,4 +95,22 @@ class DepartureP5MessageService @Inject() (
         message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessageByPath[MessageModel](messageMetaData.path))
       } yield message
     ).value
+
+  def getMessageWithMessageId[MessageModel](
+    departureId: String,
+    messageId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[Option[MessageModel]] =
+    (
+      for {
+        messageMetaData <- OptionT(getMessageMetaDataWithMessageId(departureId, messageId))
+        message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessageByPath[MessageModel](messageMetaData.path))
+      } yield message
+    ).value
+
+  private def getMessageMetaDataWithMessageId(arrivalId: String, messageId: String)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[Option[DepartureMessageMetaData]] =
+    departureMovementP5Connector
+      .getMessageMetaDataForMessageId(arrivalId, messageId)
 }

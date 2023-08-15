@@ -28,7 +28,7 @@ answerSections: AnswerSections,
 button: Button,
 formHelper: FormWithCSRF
 )
-@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, localReferenceNumber: LocalReferenceNumber)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, localReferenceNumber: LocalReferenceNumber, messageId: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,
@@ -49,7 +49,7 @@ formHelper: FormWithCSRF
     @button(
         attributes = Map("id" -> "submit"),
         messageKey = messages("site.amendErrors"),
-        href = Some(controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureId, localReferenceNumber).url)
+        href = Some(controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureId, localReferenceNumber, messageId).url)
     )
 
     <p id="create-another-declaration" class="govuk-body">Or <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>

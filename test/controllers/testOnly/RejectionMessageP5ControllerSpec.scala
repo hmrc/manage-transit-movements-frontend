@@ -44,14 +44,15 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                                    lrn,
-                                                                                                                    mockDepartureP5MessageService,
-                                                                                                                    mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any(), any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                                           lrn,
+                                                                                                                           messageId,
+                                                                                                                           mockDepartureP5MessageService,
+                                                                                                                           mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5, lrn).url
-  lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5, lrn).url
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5, lrn, messageId).url
+  lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5, lrn, messageId).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -80,7 +81,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
@@ -99,7 +100,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, lrn)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, lrn, messageId)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to session expired when declaration amendable is false" in {
@@ -110,7 +111,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
@@ -136,7 +137,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
@@ -159,7 +160,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq.empty
           )
         )
-        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
@@ -182,7 +183,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
@@ -206,7 +207,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(false))
 
