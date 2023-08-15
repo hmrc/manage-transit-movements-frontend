@@ -49,6 +49,17 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
       } yield message
     ).value
 
+  def getMessageWithMessageId[MessageModel](
+    arrivalId: String,
+    messageId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[Option[MessageModel]] =
+    (
+      for {
+        messageMetaData <- OptionT(getMessageMetaDataWithMessageId(arrivalId, messageId))
+        message         <- OptionT.liftF(arrivalMovementP5Connector.getSpecificMessage[MessageModel](messageMetaData.path))
+      } yield message
+    ).value
+
   private def getSpecificMessageMetaData[T <: ArrivalMessageType](arrivalId: String, typeOfMessage: T)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier
@@ -58,7 +69,8 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
   private def getMessageMetaData(arrivalId: String, messageType: ArrivalMessageType)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier
-  ): Future[Option[ArrivalMessageMetaData]] =
+  ): Future[Option[ArrivalMessageMetaData]] = {
+    println(s"******************* $arrivalId before getMessageMetaData connector call...")
     arrivalMovementP5Connector
       .getMessageMetaData(arrivalId)
       .map(
@@ -68,5 +80,15 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
           .reverse
           .headOption
       )
+  }
+
+  private def getMessageMetaDataWithMessageId(arrivalId: String, messageId: String)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[Option[ArrivalMessageMetaData]] = {
+    println(s"******************* $arrivalId $messageId   before getMessageMetaDataWithMessageId connector call...")
+    arrivalMovementP5Connector
+      .getMessageMetaDataForMessageId(arrivalId, messageId)
+  }
 
 }

@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalRejectionMessageActionProvider @Inject() (arrivalP5MessageService: ArrivalP5MessageService)(implicit ec: ExecutionContext) {
 
-  def apply(arrivalId: String): ActionRefiner[IdentifierRequest, ArrivalRejectionMessageRequest] =
-    new ArrivalRejectionMessageAction(arrivalId, arrivalP5MessageService)
+  def apply(arrivalId: String, messageId: String): ActionRefiner[IdentifierRequest, ArrivalRejectionMessageRequest] =
+    new ArrivalRejectionMessageAction(arrivalId, messageId, arrivalP5MessageService)
 }
 
-class ArrivalRejectionMessageAction(arrivalId: String, arrivalP5MessageService: ArrivalP5MessageService)(implicit
+class ArrivalRejectionMessageAction(arrivalId: String, messageId: String, arrivalP5MessageService: ArrivalP5MessageService)(implicit
   protected val executionContext: ExecutionContext
 ) extends ActionRefiner[IdentifierRequest, ArrivalRejectionMessageRequest] {
 
@@ -46,7 +46,7 @@ class ArrivalRejectionMessageAction(arrivalId: String, arrivalP5MessageService: 
 
     EitherT
       .fromOptionF(
-        arrivalP5MessageService.getMessage[IE057Data](arrivalId, RejectionFromOfficeOfDestination),
+        arrivalP5MessageService.getMessageWithMessageId[IE057Data](arrivalId, messageId),
         Redirect(routes.ErrorController.technicalDifficulties())
       )
       .map {

@@ -43,10 +43,13 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
   private val mockRejectionMessageActionProvider                              = mock[ArrivalRejectionMessageActionProvider]
 
   def rejectionMessageAction(departureIdP5: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
+    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn
+      new FakeArrivalRejectionMessageAction(departureIdP5, messageId, mockArrivalP5MessageService)
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(departureIdP5).url
-  val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller
+    .onPageLoad(departureIdP5, messageId)
+    .url
+  val sections: Seq[Section] = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()

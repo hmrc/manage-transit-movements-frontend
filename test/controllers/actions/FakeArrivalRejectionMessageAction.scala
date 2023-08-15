@@ -27,8 +27,9 @@ import scala.concurrent.Future
 
 class FakeArrivalRejectionMessageAction(
   arrivalId: String,
+  messageId: String,
   arrivalP5MessageService: ArrivalP5MessageService
-) extends ArrivalRejectionMessageAction(arrivalId, arrivalP5MessageService) {
+) extends ArrivalRejectionMessageAction(arrivalId, messageId, arrivalP5MessageService) {
 
   val message: IE057Data = IE057Data(
     IE057MessageData(

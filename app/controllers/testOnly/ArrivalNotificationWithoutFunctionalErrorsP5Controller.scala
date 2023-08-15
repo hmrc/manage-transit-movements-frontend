@@ -38,7 +38,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)) {
+  def onPageLoad(arrivalId: String, messageId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId, messageId)) {
     implicit request =>
       if (request.ie057MessageData.functionalErrors.isEmpty) {
         Ok(view(viewModelProvider.apply(request.ie057MessageData.transitOperation.MRN)))

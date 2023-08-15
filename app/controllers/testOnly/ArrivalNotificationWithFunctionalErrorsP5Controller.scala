@@ -38,16 +38,17 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
-    implicit request =>
-      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie057MessageData, request.ie057MessageData.transitOperation.MRN)
-      rejectionMessageP5ViewModel.map(
-        viewModel =>
-          if (request.ie057MessageData.functionalErrors.nonEmpty) {
-            Ok(view(viewModel, arrivalId))
-          } else {
-            Redirect(controllers.routes.ErrorController.technicalDifficulties())
-          }
-      )
-  }
+  def onPageLoad(arrivalId: String, messageId: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(arrivalId, messageId)).async {
+      implicit request =>
+        val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie057MessageData, request.ie057MessageData.transitOperation.MRN)
+        rejectionMessageP5ViewModel.map(
+          viewModel =>
+            if (request.ie057MessageData.functionalErrors.nonEmpty) {
+              Ok(view(viewModel, arrivalId))
+            } else {
+              Redirect(controllers.routes.ErrorController.technicalDifficulties())
+            }
+        )
+    }
 }

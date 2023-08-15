@@ -43,6 +43,7 @@ object ArrivalStatusP5ViewModel {
 
   private def arrivalNotification: PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == ArrivalNotification =>
+      message.messageId
       ArrivalStatusP5ViewModel("movement.status.P5.arrivalNotificationSubmitted", actions = Nil)
   }
 
@@ -83,9 +84,9 @@ object ArrivalStatusP5ViewModel {
     case message if message.messageType == RejectionFromOfficeOfDestination && previousMessages.exists(_.messageType == UnloadingRemarks) =>
       val href = functionalErrorCount match {
         case 0 =>
-          controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId)
+          controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId, message.messageId)
         case _ =>
-          controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(arrivalId)
+          controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(arrivalId, message.messageId)
       }
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
@@ -102,9 +103,9 @@ object ArrivalStatusP5ViewModel {
     case message if message.messageType == RejectionFromOfficeOfDestination =>
       val href = functionalErrorCount match {
         case 0 =>
-          controllers.testOnly.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId)
+          controllers.testOnly.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId, message.messageId)
         case _ =>
-          controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(arrivalId)
+          controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(arrivalId, message.messageId)
       }
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
