@@ -138,7 +138,6 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
       val result            = viewModelProvider.apply(message.data, mrnString).futureValue
 
       result.sections.length mustBe 1
-      println(s"${result.sections.head.rows}")
       result.sections.head.rows.size mustBe 4
     }
 
