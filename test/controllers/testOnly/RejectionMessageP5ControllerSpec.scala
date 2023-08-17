@@ -20,6 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
+import models.RejectionType
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -42,6 +43,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
+
+  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
     when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
@@ -74,7 +77,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     "must return OK and the correct view for a GET" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
@@ -105,7 +108,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     "must redirect to session expired when declaration amendable is false" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
@@ -132,7 +135,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
             CustomsOfficeOfDeparture("12345"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
@@ -156,7 +159,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
             CustomsOfficeOfDeparture("12345"),
             Seq.empty
           )
@@ -180,7 +183,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
             CustomsOfficeOfDeparture("12345"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
@@ -205,7 +208,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
             CustomsOfficeOfDeparture("12345"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )

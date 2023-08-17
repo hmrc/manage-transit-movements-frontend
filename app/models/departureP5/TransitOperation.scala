@@ -16,11 +16,13 @@
 
 package models.departureP5
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import models.RejectionType
+import play.api.libs.json.{__, Format, Json, OFormat, Reads}
 
 import java.time.LocalDateTime
 case class TransitOperation(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
-case class TransitOperationIE056(MRN: Option[String], LRN: Option[String])
+case class TransitOperationIE056(MRN: Option[String], LRN: Option[String], businessRejectionType: RejectionType)
 
 case class TransitOperationIE009(MRN: Option[String])
 
@@ -29,7 +31,12 @@ object TransitOperation {
 }
 
 object TransitOperationIE056 {
-  implicit val formats: OFormat[TransitOperationIE056] = Json.format[TransitOperationIE056]
+
+  implicit val reads: Reads[TransitOperationIE056] = (
+    (__ \ "MRN").readNullable[String] and
+      (__ \ "LRN").readNullable[String] and
+      (__ \ "businessRejectionType").read[RejectionType]
+  )(TransitOperationIE056.apply _)
 }
 
 object TransitOperationIE009 {

@@ -18,6 +18,7 @@ package helper
 
 import base.SpecBase
 import generators.Generators
+import models.RejectionType
 import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
@@ -37,7 +38,8 @@ import scala.concurrent.Future
 class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
-  val lrnString = "LRNAB123"
+  val lrnString                            = "LRNAB123"
+  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -60,7 +62,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
           val message: IE056Data = IE056Data(
             IE056MessageData(
-              TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+              TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
               CustomsOfficeOfDeparture("AB123"),
               Seq(FunctionalError("14", code1, "MRN incorrect", None))
             )
@@ -81,7 +83,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
           val message: IE056Data = IE056Data(
             IE056MessageData(
-              TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+              TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
               CustomsOfficeOfDeparture("AB123"),
               Seq(FunctionalError("14", "12", "MRN incorrect", None))
             )
@@ -104,7 +106,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
             CustomsOfficeOfDeparture("AB123"),
             Seq(FunctionalError("14", "12", "MRN incorrect", None))
           )
@@ -130,7 +132,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
             CustomsOfficeOfDeparture("AB123"),
             functionalErrors
           )
@@ -170,7 +172,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
             CustomsOfficeOfDeparture("AB123"),
             functionalErrors
           )

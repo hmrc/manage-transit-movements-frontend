@@ -16,10 +16,13 @@
 
 package models.departureP5
 
+import models.RejectionType
+
 case class DepartureMovementAndMessage(
   departureMovement: DepartureMovement,
   messagesForMovement: MessagesForDepartureMovement,
   localReferenceNumber: String,
+  rejectionType: Option[RejectionType],
   isDeclarationAmendable: Boolean,
   xPaths: Seq[String]
 )

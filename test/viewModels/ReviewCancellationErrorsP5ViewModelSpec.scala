@@ -18,6 +18,7 @@ package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
+import models.RejectionType
 import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
@@ -33,6 +34,8 @@ import scala.concurrent.Future
 
 class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+
+  private val rejectionType: RejectionType = RejectionType.InvalidationRejection
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -52,7 +55,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some(lrnString)),
+          TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
           CustomsOfficeOfDeparture("1234"),
           Seq(FunctionalError("14", "12", "MRN incorrect", None))
         )
@@ -95,7 +98,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("1234"),
           functionalErrors
         )
@@ -137,7 +140,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
 
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
