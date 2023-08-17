@@ -20,7 +20,6 @@ import cats.data.OptionT
 import connectors.DepartureCacheConnector
 import controllers.routes
 import models.LocalReferenceNumber
-import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import models.departureP5.IE056Data
 import models.requests.{DepartureRejectionMessageRequest, IdentifierRequest}
 import play.api.mvc.Results.Redirect

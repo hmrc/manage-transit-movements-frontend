@@ -53,12 +53,8 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
     arrivalId: String,
     messageId: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[Option[MessageModel]] =
-    (
-      for {
-        messageMetaData <- OptionT(getMessageMetaDataWithMessageId(arrivalId, messageId))
-        message         <- OptionT.liftF(arrivalMovementP5Connector.getSpecificMessage[MessageModel](messageMetaData.path))
-      } yield message
-    ).value
+    arrivalMovementP5Connector
+      .getMessageMetaDataForMessageId(arrivalId, messageId)
 
   private def getSpecificMessageMetaData[T <: ArrivalMessageType](arrivalId: String, typeOfMessage: T)(implicit
     ec: ExecutionContext,
@@ -79,12 +75,4 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
           .reverse
           .headOption
       )
-
-  private def getMessageMetaDataWithMessageId(arrivalId: String, messageId: String)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[ArrivalMessageMetaData]] =
-    arrivalMovementP5Connector
-      .getMessageMetaDataForMessageId(arrivalId, messageId)
-
 }

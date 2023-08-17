@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
 import models.Availability
-import models.arrivalP5.{ArrivalMessageMetaData, ArrivalMessages, ArrivalMovements, MessagesForArrivalMovement}
+import models.arrivalP5.{ArrivalMessages, ArrivalMovements, MessagesForArrivalMovement}
 import play.api.http.Status.{NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
@@ -85,13 +85,14 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
     http.GET[ArrivalMessages](url)(implicitly, headers, ec)
   }
 
-  def getMessageMetaDataForMessageId(arrivalId: String, messageId: String)(implicit
+  def getMessageMetaDataForMessageId[MessageModel](arrivalId: String, messageId: String)(implicit
     ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[ArrivalMessageMetaData]] = {
+    hc: HeaderCarrier,
+    httpReads: HttpReads[MessageModel]
+  ): Future[Option[MessageModel]] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId"
     http
-      .GET[ArrivalMessageMetaData](url)(implicitly, headers, ec)
+      .GET[MessageModel](url)(implicitly, headers, ec)
       .map {
         case response => Some(response)
         case _        => None

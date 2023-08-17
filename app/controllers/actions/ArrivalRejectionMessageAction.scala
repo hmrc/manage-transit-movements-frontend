@@ -18,7 +18,6 @@ package controllers.actions
 
 import cats.data.EitherT
 import controllers.routes
-import models.arrivalP5.ArrivalMessageType.RejectionFromOfficeOfDestination
 import models.arrivalP5.IE057Data
 import models.requests.{ArrivalRejectionMessageRequest, IdentifierRequest}
 import play.api.mvc.Results.Redirect

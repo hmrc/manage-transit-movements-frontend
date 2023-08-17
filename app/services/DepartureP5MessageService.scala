@@ -19,7 +19,7 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import models.departureP5.DepartureMessageType.{DepartureNotification, RejectedByOfficeOfDeparture, _}
+import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -100,17 +100,6 @@ class DepartureP5MessageService @Inject() (
     departureId: String,
     messageId: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[Option[MessageModel]] =
-    (
-      for {
-        messageMetaData <- OptionT(getMessageMetaDataWithMessageId(departureId, messageId))
-        message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessageByPath[MessageModel](messageMetaData.path))
-      } yield message
-    ).value
-
-  private def getMessageMetaDataWithMessageId(arrivalId: String, messageId: String)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[DepartureMessageMetaData]] =
     departureMovementP5Connector
-      .getMessageMetaDataForMessageId(arrivalId, messageId)
+      .getMessageMetaDataForMessageId(departureId, messageId)
 }

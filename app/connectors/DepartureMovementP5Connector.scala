@@ -92,20 +92,21 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     http.GET[MessageModel](url)(implicitly, headers, ec)
   }
 
-  def getMessageMetaDataForMessageId(departureId: String, messageId: String)(implicit
+  def getMessageMetaDataForMessageId[MessageModel](departureId: String, messageId: String)(implicit
     ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[DepartureMessageMetaData]] = {
+    hc: HeaderCarrier,
+    httpReads: HttpReads[MessageModel]
+  ): Future[Option[MessageModel]] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId"
     http
-      .GET[DepartureMessageMetaData](url)(implicitly, headers, ec)
+      .GET[MessageModel](url)(implicitly, headers, ec)
       .map {
         case response => Some(response)
         case _        => None
       }
       .recover {
         case e =>
-          logger.error(s"Failed to get arrival movements with error: $e")
+          logger.error(s"Failed to get departures movements with error: $e")
           None
       }
   }
