@@ -16,6 +16,7 @@
 
 package models.arrivalP5
 
+import config.PaginationAppConfig
 import models.departureP5.FunctionalError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
@@ -24,7 +25,16 @@ case class IE057MessageData(
   transitOperation: TransitOperationIE057,
   customsOfficeOfDestinationActual: CustomsOfficeOfDestinationActual,
   functionalErrors: Seq[FunctionalError]
-)
+) {
+
+  def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalError] = {
+    val start = (page - 1) * paginationAppConfig.arrivalsNumberOfErrorsPerPage
+    functionalErrors
+      .sortBy(_.errorCode)
+      .slice(start, start + paginationAppConfig.arrivalsNumberOfErrorsPerPage)
+  }
+
+}
 
 object IE057MessageData {
 

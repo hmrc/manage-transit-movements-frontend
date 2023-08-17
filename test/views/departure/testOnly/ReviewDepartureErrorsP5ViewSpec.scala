@@ -23,7 +23,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
-import views.behaviours.{CheckYourAnswersViewBehaviours, PaginationViewBehaviours, SummaryListViewBehaviours}
+import views.behaviours.{PaginationViewBehaviours, SummaryListViewBehaviours}
 import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
 class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {

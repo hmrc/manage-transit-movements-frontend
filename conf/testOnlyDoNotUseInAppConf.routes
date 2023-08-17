@@ -83,9 +83,9 @@ GET        /manage-transit-movements/test-only/:departureId/declaration-not-canc
 
 GET        /manage-transit-movements/test-only/:arrivalId/unloading-remarks-errors                                     controllers.testOnly.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
 
-GET        /manage-transit-movements/test-only/:arrivalId/review-unloading-remarks-errors                               controllers.testOnly.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/review-unloading-remarks-errors                               controllers.testOnly.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String)
 
-GET        /manage-transit-movements/test-only/:arrivalId/review-arrival-notification-errors                           controllers.testOnly.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/review-arrival-notification-errors                           controllers.testOnly.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String)
 
 GET        /manage-transit-movements/test-only/:departureId/transit-accompanying-document/:messageId                    controllers.testOnly.TransitAccompanyingDocumentController.getTAD(messageId: String, departureId: String)
 
