@@ -16,9 +16,9 @@
 
 package models.departureP5
 
-import play.api.libs.functional.syntax._
 import models.RejectionType
-import play.api.libs.json.{__, Format, Json, OFormat, Reads}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{__, Json, OFormat, Reads}
 
 import java.time.LocalDateTime
 case class TransitOperation(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
