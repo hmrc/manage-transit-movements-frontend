@@ -52,9 +52,9 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
   def getMessageWithMessageId[MessageModel](
     arrivalId: String,
     messageId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[Option[MessageModel]] =
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[MessageModel] =
     arrivalMovementP5Connector
-      .getMessageMetaDataForMessageId(arrivalId, messageId)
+      .getMessageForMessageId(arrivalId, messageId)
 
   private def getSpecificMessageMetaData[T <: ArrivalMessageType](arrivalId: String, typeOfMessage: T)(implicit
     ec: ExecutionContext,

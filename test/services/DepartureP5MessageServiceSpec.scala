@@ -306,10 +306,9 @@ class DepartureP5MessageServiceSpec extends SpecBase {
           )
         )
 
-        when(mockMovementConnector.getMessageMetaDataForMessageId(any(), any())(any(), any())).thenReturn(Future.successful(message))
-        when(mockMovementConnector.getSpecificMessageByPath[IE056Data](any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
+        when(mockMovementConnector.getMessageForMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
 
-        departureP5MessageService.getMessageWithMessageId[IE056Data](departureId = "6365135ba5e821ee", messageId).futureValue mustBe Some(ie056Data)
+        departureP5MessageService.getMessageWithMessageId[IE056Data](departureId = "6365135ba5e821ee", messageId).futureValue mustBe ie056Data
       }
     }
   }

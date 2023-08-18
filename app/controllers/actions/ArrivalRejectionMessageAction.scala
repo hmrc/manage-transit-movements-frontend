@@ -43,14 +43,15 @@ class ArrivalRejectionMessageAction(arrivalId: String, messageId: String, arriva
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    EitherT
-      .fromOptionF(
-        arrivalP5MessageService.getMessageWithMessageId[IE057Data](arrivalId, messageId),
-        Redirect(routes.ErrorController.technicalDifficulties())
-      )
+    arrivalP5MessageService
+      .getMessageWithMessageId[IE057Data](arrivalId, messageId)
       .map {
-        ie057Data => ArrivalRejectionMessageRequest(request, request.eoriNumber, ie057Data.data)
+        rejectionMessage =>
+          Right(ArrivalRejectionMessageRequest(request, request.eoriNumber, rejectionMessage.data))
       }
-      .value
+      .recover {
+        _ =>
+          Left(Redirect(routes.ErrorController.technicalDifficulties()))
+      }
   }
 }

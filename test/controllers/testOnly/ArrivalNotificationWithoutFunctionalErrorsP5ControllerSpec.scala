@@ -75,7 +75,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
         )
       )
       when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
 
       rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
@@ -104,7 +104,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
       )
 
       when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
 
       rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 

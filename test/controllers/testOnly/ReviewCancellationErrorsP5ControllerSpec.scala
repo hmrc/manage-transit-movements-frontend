@@ -80,7 +80,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
         )
       )
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(ReviewCancellationErrorsP5ViewModel(sections, lrn.toString, multipleErrors = true)))

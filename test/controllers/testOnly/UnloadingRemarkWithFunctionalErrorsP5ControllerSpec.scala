@@ -73,7 +73,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
         )
       )
       when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
       when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
 
@@ -102,7 +102,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
         )
       )
       when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
       when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
 

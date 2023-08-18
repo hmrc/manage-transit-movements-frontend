@@ -61,7 +61,7 @@ class ArrivalRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach
   "Arrival RejectionMessageAction" - {
     "must return 200 when rejection from office of destination is available" in {
 
-      when(mockMessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
 
       val rejectionMessageProvider = (new ArrivalRejectionMessageActionProvider(mockMessageService)(implicitly))(arrivalIdP5, messageId)
 
@@ -74,7 +74,7 @@ class ArrivalRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEach
 
     "must return 303 and redirect to technical difficulties when unavailable" in {
 
-      when(mockMessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+      when(mockMessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.failed(new Throwable()))
 
       val rejectionMessageProvider = (new ArrivalRejectionMessageActionProvider(mockMessageService)(implicitly))(arrivalIdP5, messageId)
 

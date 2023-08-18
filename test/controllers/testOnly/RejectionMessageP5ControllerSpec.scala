@@ -82,7 +82,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         )
       )
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(RejectionMessageP5ViewModel(sections, lrn.toString, multipleErrors = true)))
@@ -112,7 +112,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         )
       )
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
@@ -137,7 +137,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
@@ -160,7 +160,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq.empty
           )
         )
-        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
@@ -183,7 +183,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
@@ -207,7 +207,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(false))
 

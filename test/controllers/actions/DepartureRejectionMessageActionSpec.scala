@@ -63,7 +63,7 @@ class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEa
   "RejectionMessageAction" - {
     "must return 200 when an unloading permission is available" in {
 
-      when(mockMessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
       val rejectionMessageProvider =
@@ -78,7 +78,7 @@ class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEa
 
     "must return 303 and redirect to technical difficulties when unavailable" in {
 
-      when(mockMessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+      when(mockMessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.failed(new Throwable()))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
       val rejectionMessageProvider =

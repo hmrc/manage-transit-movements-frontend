@@ -195,10 +195,9 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
           )
         )
 
-        when(mockConnector.getMessageMetaDataForMessageId(any(), any())(any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
+        when(mockConnector.getMessageForMessageId[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
 
-        arrivalP5MessageService.getMessageWithMessageId[IE057Data](arrivalId = "6365135ba5e821ee", messageId).futureValue mustBe Some(ie057Data)
+        arrivalP5MessageService.getMessageWithMessageId[IE057Data](arrivalId = "6365135ba5e821ee", messageId).futureValue mustBe ie057Data
       }
     }
 

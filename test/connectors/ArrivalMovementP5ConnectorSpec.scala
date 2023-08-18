@@ -45,6 +45,52 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
 
   private val genError = Gen.chooseNum(400: Int, 599: Int).suchThat(_ != 404)
 
+  val IEO57 = Json.parse(
+    """
+      |{
+      |  "n1:CC057C": {
+      |    "TransitOperation": {
+      |      "MRN": "CD3232"
+      |    },
+      |    "CustomsOfficeOfDestinationActual": {
+      |      "referenceNumber": "1234"
+      |    },
+      |    "FunctionalError": [
+      |      {
+      |        "errorPointer": "1",
+      |        "errorCode": "12",
+      |        "errorReason": "Codelist violation"
+      |      },
+      |      {
+      |        "errorPointer": "2",
+      |        "errorCode": "14",
+      |        "errorReason": "Rule violation"
+      |      }
+      |    ]
+      |  }
+      |}
+      |""".stripMargin
+  )
+
+  val responseJson: JsValue = Json.parse(s"""
+    {
+      "_links": {
+        "self": {
+          "href": "/customs/transits/movements/arrivals/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
+        },
+        "departure": {
+          "href": "/customs/transits/movements/arrivals/62f4ebbbf581d4aa"
+        }
+      },
+      "id": "62f4ebbb765ba8c2",
+      "arrivalId": "62f4ebbbf581d4aa",
+      "received": "2022-08-11T11:44:59.83705",
+      "type": "IE057",
+      "status": "Success",
+      "body": ${IEO57.toString()}
+    }
+    """)
+
   "ArrivalMovementP5Connector" - {
 
     "getAllMovements" - {
@@ -470,44 +516,24 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
       }
     }
 
-    "getMessageMetaDataForMessageId" - {
+    "getMessageForMessageId" - {
 
       "must return a Message" in {
 
-        val responseJson: JsValue = Json.parse("""
-
-                    {
-                        "_links": {
-                            "self": {
-                                "href": "/customs/transits/movements/arrivals/6365135ba5e821ee/message/634982098f02f00b"
-                            },
-                            "departure": {
-                                "href": "/customs/transits/movements/arrivals/6365135ba5e821ee"
-                            }
-                        },
-                        "id": "634982098f02f00a",
-                        "departureId": "6365135ba5e821ee",
-                        "received": "2022-11-11T15:32:51.459Z",
-                        "type": "IE007",
-                        "status": "Success"
-                    }
-            """)
-
-        val expectedResult =
-          Some(
-            ArrivalMessageMetaData(
-              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              ArrivalMessageType.ArrivalNotification,
-              "movements/arrivals/6365135ba5e821ee/message/634982098f02f00b"
-            )
+        val expectedResult: IE057Data = IE057Data(
+          IE057MessageData(
+            TransitOperationIE057("CD3232"),
+            CustomsOfficeOfDestinationActual("1234"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
+        )
 
         server.stubFor(
           get(urlEqualTo(s"/movements/arrivals/$arrivalIdP5/messages/$messageId"))
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getMessageMetaDataForMessageId(arrivalIdP5, messageId).futureValue mustBe expectedResult
+        connector.getMessageForMessageId[IE057Data](arrivalIdP5, messageId).futureValue mustBe expectedResult
 
       }
     }
@@ -515,52 +541,6 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
     "getSpecificMessage" - {
 
       "must return an IE057 Message" in {
-
-        val IEO57 = Json.parse(
-          """
-            |{
-            |  "n1:CC057C": {
-            |    "TransitOperation": {
-            |      "MRN": "CD3232"
-            |    },
-            |    "CustomsOfficeOfDestinationActual": {
-            |      "referenceNumber": "1234"
-            |    },
-            |    "FunctionalError": [
-            |      {
-            |        "errorPointer": "1",
-            |        "errorCode": "12",
-            |        "errorReason": "Codelist violation"
-            |      },
-            |      {
-            |        "errorPointer": "2",
-            |        "errorCode": "14",
-            |        "errorReason": "Rule violation"
-            |      }
-            |    ]
-            |  }
-            |}
-            |""".stripMargin
-        )
-
-        val responseJson: JsValue = Json.parse(s"""
-          {
-            "_links": {
-              "self": {
-                "href": "/customs/transits/movements/arrivals/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
-              },
-              "departure": {
-                "href": "/customs/transits/movements/arrivals/62f4ebbbf581d4aa"
-              }
-            },
-            "id": "62f4ebbb765ba8c2",
-            "arrivalId": "62f4ebbbf581d4aa",
-            "received": "2022-08-11T11:44:59.83705",
-            "type": "IE057",
-            "status": "Success",
-            "body": ${IEO57.toString()}
-          }
-          """)
 
         val expectedResult: IE057Data = IE057Data(
           IE057MessageData(

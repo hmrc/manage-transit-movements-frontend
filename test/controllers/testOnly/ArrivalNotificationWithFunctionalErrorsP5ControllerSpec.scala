@@ -75,7 +75,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
         )
       )
       when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
       when(mockArrivalNotificationWithFuncationalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
 
@@ -104,7 +104,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
         )
       )
       when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
       when(mockArrivalNotificationWithFuncationalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
 

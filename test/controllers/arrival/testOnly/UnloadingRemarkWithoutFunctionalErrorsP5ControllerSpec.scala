@@ -74,7 +74,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
       )
 
       when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
 
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
@@ -105,7 +105,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
       )
 
       when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+        .thenReturn(Future.successful(message))
 
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))

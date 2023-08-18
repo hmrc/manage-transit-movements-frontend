@@ -16,7 +16,6 @@
 
 package controllers.actions
 
-import cats.data.OptionT
 import connectors.DepartureCacheConnector
 import controllers.routes
 import models.LocalReferenceNumber
@@ -26,8 +25,8 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import services.DepartureP5MessageService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,12 +56,16 @@ class DepartureRejectionMessageAction(
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (for {
-      ie056 <- OptionT(departureP5MessageService.getMessageWithMessageId[IE056Data](departureId, messageId))
+      ie056 <- departureP5MessageService.getMessageWithMessageId[IE056Data](departureId, messageId)
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
-      isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(localReferenceNumber.value, xPaths))
+      isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(localReferenceNumber.value, xPaths)
     } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, localReferenceNumber.value))
-      .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
-      .value
-
+      .map {
+        rejection => Right(rejection)
+      }
+      .recover {
+        _ =>
+          Left(Redirect(routes.ErrorController.technicalDifficulties()))
+      }
   }
 }

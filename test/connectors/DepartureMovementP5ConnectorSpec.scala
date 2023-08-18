@@ -44,6 +44,53 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
   private val genError = Gen.chooseNum(400: Int, 599: Int).suchThat(_ != 404)
 
+  val IEO56 = Json.parse(
+    """
+      |{
+      |  "n1:CC056C": {
+      |    "TransitOperation": {
+      |      "LRN": "AB123",
+      |      "MRN": "CD3232"
+      |    },
+      |    "CustomsOfficeOfDeparture": {
+      |     "referenceNumber": "22323323"
+      |     },
+      |    "FunctionalError": [
+      |      {
+      |        "errorPointer": "1",
+      |        "errorCode": "12",
+      |        "errorReason": "Codelist violation"
+      |      },
+      |      {
+      |        "errorPointer": "2",
+      |        "errorCode": "14",
+      |        "errorReason": "Rule violation"
+      |      }
+      |    ]
+      |  }
+      |}
+      |""".stripMargin
+  )
+
+  val responseJson: JsValue = Json.parse(s"""
+    {
+      "_links": {
+        "self": {
+          "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
+        },
+        "departure": {
+          "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
+        }
+      },
+      "id": "62f4ebbb765ba8c2",
+      "departureId": "62f4ebbbf581d4aa",
+      "received": "2022-08-11T11:44:59.83705",
+      "type": "IE060",
+      "status": "Success",
+      "body": ${IEO56.toString()}
+    }
+    """)
+
   "DepartureMovementP5Connector" - {
 
     "getAllMovements" - {
@@ -463,43 +510,24 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       }
     }
 
-    "getMessageMetaDataForMessageId" - {
+    "getMessageForMessageId" - {
 
       "must return Message" in {
 
-        val responseJson: JsValue = Json.parse("""
-                    {
-                        "_links": {
-                            "self": {
-                                "href": "/customs/transits/movements/departures/6365135ba5e821ee/message/634982098f02f00b"
-                            },
-                            "departure": {
-                                "href": "/customs/transits/movements/departures/6365135ba5e821ee"
-                            }
-                        },
-                        "id": "634982098f02f00a",
-                        "departureId": "6365135ba5e821ee",
-                        "received": "2022-11-11T15:32:51.459Z",
-                        "type": "IE015",
-                        "status": "Success"
-                    }
-            """)
-
-        val expectedResult =
-          Some(
-            DepartureMessageMetaData(
-              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.DepartureNotification,
-              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
-            )
+        val expectedResult: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperation(Some("CD3232"), Some("AB123")),
+            CustomsOfficeOfDeparture("22323323"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
+        )
 
         server.stubFor(
           get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/$messageId"))
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getMessageMetaDataForMessageId(departureIdP5, messageId).futureValue mustBe expectedResult
+        connector.getMessageForMessageId[IE056Data](departureIdP5, messageId).futureValue mustBe expectedResult
 
       }
     }
@@ -564,18 +592,19 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             }
             """)
 
-        val expectedResult = IE060Data(
-          IE060MessageData(
-            TransitOperationIE060(Some("CD3232"),
-                                  Some("AB123"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  "notification1"
-            ),
-            CustomsOfficeOfDeparture("22323323"),
-            Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
-            Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
+        val expectedResult =
+          IE060Data(
+            IE060MessageData(
+              TransitOperationIE060(Some("CD3232"),
+                                    Some("AB123"),
+                                    LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                    "notification1"
+              ),
+              CustomsOfficeOfDeparture("22323323"),
+              Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
+              Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
+            )
           )
-        )
 
         server.stubFor(
           get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2"))
@@ -587,53 +616,6 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       }
 
       "must return an IE056 Message" in {
-
-        val IEO56 = Json.parse(
-          """
-            |{
-            |  "n1:CC056C": {
-            |    "TransitOperation": {
-            |      "LRN": "AB123",
-            |      "MRN": "CD3232"
-            |    },
-            |    "CustomsOfficeOfDeparture": {
-            |     "referenceNumber": "22323323"
-            |     },
-            |    "FunctionalError": [
-            |      {
-            |        "errorPointer": "1",
-            |        "errorCode": "12",
-            |        "errorReason": "Codelist violation"
-            |      },
-            |      {
-            |        "errorPointer": "2",
-            |        "errorCode": "14",
-            |        "errorReason": "Rule violation"
-            |      }
-            |    ]
-            |  }
-            |}
-            |""".stripMargin
-        )
-
-        val responseJson: JsValue = Json.parse(s"""
-          {
-            "_links": {
-              "self": {
-                "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
-              },
-              "departure": {
-                "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
-              }
-            },
-            "id": "62f4ebbb765ba8c2",
-            "departureId": "62f4ebbbf581d4aa",
-            "received": "2022-08-11T11:44:59.83705",
-            "type": "IE060",
-            "status": "Success",
-            "body": ${IEO56.toString()}
-          }
-          """)
 
         val expectedResult: IE056Data = IE056Data(
           IE056MessageData(
