@@ -242,19 +242,14 @@ object DepartureStatusP5ViewModel {
         case Some(InvalidationRejection) =>
           (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
 
-        case _ =>
-          ("", "")
+        case _ => ("", "")
       }
 
       val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
+      val actions = Seq(ViewMovementAction(href, keyFormatted))
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
-        actions = Seq(
-          ViewMovementAction(
-            href,
-            keyFormatted
-          )
-        )
+        actions
       )
   }
   // scalastyle:on cyclomatic.complexity
