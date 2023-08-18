@@ -48,10 +48,7 @@ class DepartureP5MessageService @Inject() (
                     // TODO - the data will be manipulated in the backend to make the LRN more accessible in the frontend
                     lrn   <- departureMovementP5Connector.getLRN(ie015.bodyPath).map(_.referenceNumber)
                     ie056 <- getMessage[IE056Data](movement.departureId, RejectedByOfficeOfDeparture)
-                    rejectionType: Option[RejectionType] = ie056 match {
-                      case Some(ie056) => Some(ie056.data.transitOperation.businessRejectionType)
-                      case None        => None
-                    }
+                    rejectionType = ie056.map(_.data.transitOperation.businessRejectionType)
                     xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
                     isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false))(cacheConnector.isDeclarationAmendable(lrn, _))
                   } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, rejectionType, isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
