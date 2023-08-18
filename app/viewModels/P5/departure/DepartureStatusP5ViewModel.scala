@@ -246,7 +246,7 @@ object DepartureStatusP5ViewModel {
       }
 
       val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
-      val actions = Seq(ViewMovementAction(href, keyFormatted))
+      val actions      = Seq(ViewMovementAction(href, keyFormatted))
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions
