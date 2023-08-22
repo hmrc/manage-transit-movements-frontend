@@ -78,7 +78,7 @@ class ViewAllDeparturesP5ViewSpec
 
   behave like pageWithLink(
     id = "make-departure-declaration",
-    expectedText = "Create a departure declaration",
+    expectedText = "Make a departure declaration",
     expectedHref = frontendAppConfig.startDepartureDeclarationStartUrl
   )
 

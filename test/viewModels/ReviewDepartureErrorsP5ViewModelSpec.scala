@@ -85,7 +85,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Create another departure declaration"
+        result.hyperlink mustBe "Make another departure declaration"
       }
     }
 
@@ -120,7 +120,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Create another departure declaration"
+        result.hyperlink mustBe "Make another departure declaration"
       }
     }
 
