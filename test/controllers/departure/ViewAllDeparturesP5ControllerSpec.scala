@@ -112,7 +112,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
           .thenReturn(
             Future.successful(
-              Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123", isDeclarationAmendable = true, Seq.empty))
+              Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123", None, isDeclarationAmendable = true, Seq.empty))
             )
           )
 
@@ -148,7 +148,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
           .thenReturn(
             Future.successful(
-              Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123", isDeclarationAmendable = true, Seq.empty))
+              Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123", None, isDeclarationAmendable = true, Seq.empty))
             )
           )
 

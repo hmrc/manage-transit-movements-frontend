@@ -19,6 +19,8 @@ package controllers.actions
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.routes
+import models.RejectionType
+import models.RejectionType.DeclarationRejection
 import models.departureP5._
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
@@ -43,9 +45,11 @@ class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEa
   val functionalError1: FunctionalError = FunctionalError("1", "12", "Codelist violation", None)
   val functionalError2: FunctionalError = FunctionalError("2", "14", "Rule violation", None)
 
+  val rejectionType: RejectionType = DeclarationRejection
+
   val message: IE056Data = IE056Data(
     IE056MessageData(
-      TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+      TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
       CustomsOfficeOfDeparture("AB123"),
       Seq(functionalError1, functionalError2)
     )

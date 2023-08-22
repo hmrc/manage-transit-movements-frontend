@@ -17,6 +17,8 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
+import models.RejectionType
+import models.RejectionType.{DeclarationRejection, InvalidationRejection}
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import viewModels.ViewMovementAction
@@ -27,7 +29,14 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessages: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessages match {
-      case DepartureMovementAndMessage(DepartureMovement(departureId, _, _, _), messagesForDepartureMovements, _, isDeclarationAmendable, xPaths) =>
+      case DepartureMovementAndMessage(
+            DepartureMovement(departureId, _, _, _),
+            messagesForDepartureMovements,
+            _,
+            rejectionType,
+            isDeclarationAmendable,
+            xPaths
+          ) =>
         val allPfs: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
           Seq(
             departureNotification(departureId),
@@ -44,7 +53,7 @@ object DepartureStatusP5ViewModel {
             releasedForTransit(departureId),
             goodsNotReleased(),
             guaranteeRejected(departureId),
-            rejectedByOfficeOfDeparture(departureId, messagesForDepartureMovements, isDeclarationAmendable, xPaths),
+            rejectedByOfficeOfDeparture(departureId, rejectionType, isDeclarationAmendable, xPaths),
             goodsUnderControl(departureId),
             incidentDuringTransit(),
             declarationSent(departureId),
@@ -212,41 +221,35 @@ object DepartureStatusP5ViewModel {
   // scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
-    messagesForDepartureMovement: MessagesForDepartureMovement,
+    rejectionType: Option[RejectionType],
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
-
     case message if message.messageType == RejectedByOfficeOfDeparture =>
-      val (key, href) = messagesForDepartureMovement.messageBeforeLatest.map(_.messageType) match {
-        case Some(DepartureNotification) =>
-          if (isDeclarationAmendable) {
-            ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
-          } else if (xPaths.isEmpty) {
-            (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
-          } else {
-            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
-          }
+      val (key, href) = rejectionType match {
+        case Some(DeclarationRejection) if isDeclarationAmendable =>
+          ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
 
-        case Some(CancellationRequested) =>
-          if (xPaths.isEmpty) {
-            (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
-          } else {
-            (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
-          }
-        case _ =>
-          ("", "")
+        case Some(DeclarationRejection) if xPaths.isEmpty =>
+          (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
+
+        case Some(DeclarationRejection) =>
+          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
+
+        case Some(InvalidationRejection) if xPaths.isEmpty =>
+          (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
+
+        case Some(InvalidationRejection) =>
+          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
+
+        case _ => ("", "")
       }
 
       val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
+      val actions      = Seq(ViewMovementAction(href, keyFormatted))
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
-        actions = Seq(
-          ViewMovementAction(
-            href,
-            keyFormatted
-          )
-        )
+        actions
       )
   }
   // scalastyle:on cyclomatic.complexity
