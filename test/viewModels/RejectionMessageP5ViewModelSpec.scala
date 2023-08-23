@@ -76,7 +76,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "create another departure declaration"
+        result.hyperlink mustBe "make another departure declaration"
       }
     }
 
@@ -103,12 +103,11 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "create another departure declaration"
+        result.hyperlink mustBe "make another departure declaration"
       }
     }
 
     "must render rows" in {
-
       val errors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))

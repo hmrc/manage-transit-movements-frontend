@@ -123,7 +123,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
 
   behave like pageWithLink(
     "arrival-link",
-    "Create another arrival notification",
+    "Make another arrival notification",
     frontendAppConfig.declareArrivalNotificationStartUrl
   )
 

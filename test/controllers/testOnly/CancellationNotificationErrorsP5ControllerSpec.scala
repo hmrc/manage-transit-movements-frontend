@@ -20,6 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
+import models.RejectionType
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -43,7 +44,8 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
 
   lazy val controllerRoute: String = controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5).url
 
-  private val lrnString = "LRNAB123"
+  private val lrnString                    = "LRNAB123"
+  private val rejectionType: RejectionType = RejectionType.InvalidationRejection
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
     when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
@@ -71,7 +73,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
     "must return OK and the correct view for a GET when no Errors" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("AB123"),
           Seq.empty
         )
@@ -102,7 +104,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )

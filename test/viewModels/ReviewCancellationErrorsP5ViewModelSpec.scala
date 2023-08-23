@@ -120,7 +120,6 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
     }
 
     "must render rows" in {
-
       val errors: Seq[FunctionalError] = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))

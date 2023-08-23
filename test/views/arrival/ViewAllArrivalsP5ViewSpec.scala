@@ -78,7 +78,7 @@ class ViewAllArrivalsP5ViewSpec
 
   behave like pageWithLink(
     id = "make-arrival-notification",
-    expectedText = "Create an arrival notification",
+    expectedText = "Make an arrival notification",
     expectedHref = frontendAppConfig.declareArrivalNotificationStartUrl
   )
 

@@ -19,6 +19,7 @@ package viewModels.P5
 import base.SpecBase
 import cats.data.NonEmptyList
 import generators.Generators
+import models.RejectionType
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -48,6 +49,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           NonEmptyList(DepartureMessage("messageId", dateTimeNow, headMessage, "body/path"), List.empty)
         ),
         "AB123",
+        None,
         isDeclarationAmendable = true,
         Seq.empty
       )
@@ -278,6 +280,8 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "and head of tail is IE015" - {
 
+        val rejectionType: Option[RejectionType] = Some(RejectionType.DeclarationRejection)
+
         "and declaration is amendable" in {
           val movementAndMessage = DepartureMovementAndMessage(
             departureMovement,
@@ -290,6 +294,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             "AB123",
+            rejectionType,
             isDeclarationAmendable = true,
             Seq("body/path")
           )
@@ -321,6 +326,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             "AB123",
+            rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path", "abc")
           )
@@ -352,6 +358,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             "AB123",
+            rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path")
           )
@@ -383,6 +390,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             "AB123",
+            rejectionType,
             isDeclarationAmendable = false,
             Seq.empty
           )
@@ -405,6 +413,8 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "and head of tail is IE014" - {
 
+        val rejectionType: Option[RejectionType] = Some(RejectionType.InvalidationRejection)
+
         "with errors in range 2 to 10" in {
           val movementAndMessage = DepartureMovementAndMessage(
             departureMovement,
@@ -417,6 +427,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             "AB123",
+            rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path", "abc")
           )
@@ -448,6 +459,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             "AB123",
+            rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path")
           )
@@ -479,6 +491,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             "AB123",
+            rejectionType,
             isDeclarationAmendable = false,
             Seq.empty
           )

@@ -20,6 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
+import models.RejectionType
 import models.departureP5.{FunctionalError, _}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -41,7 +42,8 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
   private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
   lazy val departureDeclarationErrorsController: String = controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5).url
 
-  private val lrnString = "LRNAB123"
+  private val lrnString                    = "LRNAB123"
+  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
     when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
@@ -68,7 +70,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
     "must return OK and the correct view for a GET when no Errors" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("22323323"),
           Seq.empty
         )
@@ -97,7 +99,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("22323323"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )

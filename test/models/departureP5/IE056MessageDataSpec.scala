@@ -17,9 +17,12 @@
 package models.departureP5
 
 import base.SpecBase
+import models.RejectionType
 import play.api.inject.guice.GuiceApplicationBuilder
 
 class IE056MessageDataSpec extends SpecBase {
+
+  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
@@ -28,7 +31,7 @@ class IE056MessageDataSpec extends SpecBase {
   "IE056MessageData" - {
 
     val ie056: IE056MessageData = IE056MessageData(
-      TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123")),
+      TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
       CustomsOfficeOfDeparture("AB123"),
       Seq.empty
     )

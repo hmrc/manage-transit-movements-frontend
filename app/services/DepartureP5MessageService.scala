@@ -21,8 +21,9 @@ import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.departureP5.DepartureMessageType.{DepartureNotification, _}
 import models.departureP5._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,9 +47,10 @@ class DepartureP5MessageService @Inject() (
                     // TODO - the data will be manipulated in the backend to make the LRN more accessible in the frontend
                     lrn   <- departureMovementP5Connector.getLRN(ie015.bodyPath).map(_.referenceNumber)
                     ie056 <- getMessage[IE056Data](movement.departureId, RejectedByOfficeOfDeparture)
-                    xPaths = ie056.map(_.data.functionalErrors.map(_.errorPointer))
+                    rejectionType = ie056.map(_.data.transitOperation.businessRejectionType)
+                    xPaths        = ie056.map(_.data.functionalErrors.map(_.errorPointer))
                     isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false))(cacheConnector.isDeclarationAmendable(lrn, _))
-                  } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
+                  } yield DepartureMovementAndMessage(movement, messagesForMovement, lrn, rejectionType, isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
                 case None =>
                   Future.failed(new Throwable("Movement did not contain an IE015 message"))
               }

@@ -120,7 +120,7 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
 
   behave like pageWithLink(
     "departure-link",
-    "Create another departure declaration",
+    "Make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
 

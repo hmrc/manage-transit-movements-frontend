@@ -63,7 +63,7 @@ class ArrivalNotificationWithoutFunctionalErrorP5ViewModelSpec extends SpecBase 
         result.paragraph1 mustBe s"There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
       }
       "must return correct paragraph 2" in {
-        result.paragraph2 mustBe s"Make/create a new arrival notification with the right information."
+        result.paragraph2 mustBe s"Make a new arrival notification with the right information."
       }
       "must return correct paragraph 3 prefix, link and suffix" in {
         result.paragraph3Prefix mustBe "Contact the"
@@ -71,7 +71,7 @@ class ArrivalNotificationWithoutFunctionalErrorP5ViewModelSpec extends SpecBase 
         result.paragraph3Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Create another arrival notification"
+        result.hyperlink mustBe "Make another arrival notification"
       }
     }
   }

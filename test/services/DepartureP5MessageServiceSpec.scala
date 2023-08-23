@@ -19,18 +19,21 @@ package services
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
+import generators.Generators
+import models.RejectionType
 import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DepartureP5MessageServiceSpec extends SpecBase {
+class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
   val mockMovementConnector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
   val mockCacheConnector: DepartureCacheConnector         = mock[DepartureCacheConnector]
@@ -103,6 +106,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
               departureMovements.departureMovements.head,
               messagesForMovement,
               lrnLocal.toString,
+              None,
               isDeclarationAmendable = false,
               xPaths = Seq.empty
             )
@@ -117,6 +121,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
         "when there is a IE056" in {
 
           val isDeclarationAmendable = arbitrary[Boolean].sample.value
+          val rejectionType          = arbitrary[RejectionType].sample.value
 
           val messagesForMovement =
             MessagesForDepartureMovement(
@@ -158,7 +163,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
           val ie056 = IE056Data(
             IE056MessageData(
-              transitOperation = TransitOperationIE056(None, None),
+              transitOperation = TransitOperationIE056(None, None, rejectionType),
               customsOfficeOfDeparture = CustomsOfficeOfDeparture("AB123"),
               functionalErrors = Seq(
                 FunctionalError("pointer1", "code1", "reason1", None),
@@ -186,6 +191,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
               departureMovements.departureMovements.head,
               messagesForMovement,
               lrnLocal.toString,
+              Some(rejectionType),
               isDeclarationAmendable = isDeclarationAmendable,
               xPaths = ie056.data.functionalErrors.map(_.errorPointer)
             )
@@ -276,7 +282,7 @@ class DepartureP5MessageServiceSpec extends SpecBase {
 
         val ie056Data: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperationIE056(Some("CD3232"), None),
+            TransitOperationIE056(Some("CD3232"), None, RejectionType.DeclarationRejection),
             CustomsOfficeOfDeparture("AB123"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
