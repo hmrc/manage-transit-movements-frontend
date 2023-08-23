@@ -41,7 +41,7 @@ class UnloadingRemarksXmlNegativeAcknowledgementViewSpec extends NegativeAcknowl
   behave like pageWithPartialContent("p", "You must")
   behave like pageWithLink(
     id = "create-new-unloading-remarks",
-    expectedText = "create new unloading remarks",
+    expectedText = "make new unloading remarks",
     expectedHref = s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrivalId.index}"
   )
 

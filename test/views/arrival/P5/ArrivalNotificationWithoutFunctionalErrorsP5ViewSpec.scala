@@ -65,7 +65,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnsw
   }
 
   "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-arrival-notification", "Create another arrival notification")
+    assertSpecificElementContainsText("create-another-arrival-notification", "Make another arrival notification")
   }
 
   behave like pageWithLink(
@@ -76,7 +76,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnsw
 
   behave like pageWithLink(
     "arrival-link",
-    "Create another arrival notification",
+    "Make another arrival notification",
     frontendAppConfig.declareArrivalNotificationStartUrl
   )
 

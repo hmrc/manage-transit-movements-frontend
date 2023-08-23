@@ -17,6 +17,7 @@
 package controllers.actions
 
 import connectors.DepartureCacheConnector
+import models.RejectionType
 import models.LocalReferenceNumber
 import models.departureP5._
 import models.requests.{DepartureRejectionMessageRequest, IdentifierRequest}
@@ -35,7 +36,7 @@ class FakeDepartureRejectionMessageAction(
 
   val message: IE056Data = IE056Data(
     IE056MessageData(
-      TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
+      TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), RejectionType.DeclarationRejection),
       CustomsOfficeOfDeparture("AB123"),
       Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
     )

@@ -85,7 +85,7 @@ object ArrivalStatusP5ViewModel {
         case 0 =>
           controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId)
         case _ =>
-          controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(arrivalId)
+          controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId)
       }
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
@@ -104,7 +104,7 @@ object ArrivalStatusP5ViewModel {
         case 0 =>
           controllers.testOnly.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId)
         case _ =>
-          controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(arrivalId)
+          controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId)
       }
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",

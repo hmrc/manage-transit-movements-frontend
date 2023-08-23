@@ -20,6 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
+import models.RejectionType
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -31,6 +32,7 @@ import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
@@ -43,6 +45,8 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
   private val mockRejectionMessageActionProvider                 = mock[DepartureRejectionMessageActionProvider]
   private val mockCacheService: DepartureCacheConnector          = mock[DepartureCacheConnector]
 
+  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
+
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
     when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
                                                                                                                     lrn,
@@ -50,7 +54,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
                                                                                                                     mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5, lrn).url
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -73,7 +77,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
     "must return OK and the correct view for a GET" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("22323323"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
@@ -86,6 +90,14 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
+      val paginationViewModel = ListPaginationViewModel(
+        totalNumberOfItems = message.data.functionalErrors.length,
+        currentPage = 1,
+        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+        href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        additionalParams = Seq()
+      )
+
       val rejectionMessageP5ViewModel = new ReviewDepartureErrorsP5ViewModel(sections, lrn.toString, true)
 
       val request = FakeRequest(GET, rejectionMessageController)
@@ -97,7 +109,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       val view = injector.instanceOf[ReviewDepartureErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
     }
   }
 }

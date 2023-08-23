@@ -29,7 +29,7 @@ import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.pagination._
+import viewModels.pagination.{ListPaginationViewModel, MetaData}
 import viewModels.sections.Section
 
 import java.time.{LocalDate, LocalTime}
@@ -43,7 +43,7 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewArrivals        <- listWithMaxLength[ViewArrival]()
-        paginationViewModel <- arbitrary[MovementsPaginationViewModel]
+        paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllArrivalMovementsViewModel(viewArrivals, paginationViewModel)
     }
 
@@ -51,7 +51,7 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewArrivals        <- listWithMaxLength[ViewArrivalP5]()
-        paginationViewModel <- arbitrary[MovementsPaginationViewModel]
+        paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, paginationViewModel)
     }
 
@@ -59,7 +59,7 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewArrivals        <- listWithMaxLength[ViewDepartureP5]()
-        paginationViewModel <- arbitrary[MovementsPaginationViewModel]
+        paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllDepartureMovementsP5ViewModel(viewArrivals, paginationViewModel)
     }
 
@@ -67,18 +67,18 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewDepartures      <- listWithMaxLength[ViewDeparture]()
-        paginationViewModel <- arbitrary[MovementsPaginationViewModel]
+        paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllDepartureMovementsViewModel(viewDepartures, paginationViewModel)
     }
 
-  implicit lazy val arbitraryPaginationViewModel: Arbitrary[MovementsPaginationViewModel] =
+  implicit lazy val arbitraryPaginationViewModel: Arbitrary[ListPaginationViewModel] =
     Arbitrary {
       for {
         totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)
         numberOfMovementsPerPage <- Gen.choose(1, Int.MaxValue)
         currentPage              <- Gen.choose(1, Int.MaxValue)
         href                     <- nonEmptyString
-      } yield MovementsPaginationViewModel(totalNumberOfMovements, numberOfMovementsPerPage, currentPage, href)
+      } yield ListPaginationViewModel(totalNumberOfMovements, numberOfMovementsPerPage, currentPage, href)
     }
 
   implicit lazy val arbitraryMetaData: Arbitrary[MetaData] =
@@ -169,16 +169,6 @@ trait ViewModelGenerators {
       } yield ViewDepartureMovements(seqOfViewDepartureMovements)
     }
 
-  implicit lazy val arbitraryDraftsPaginationViewModel: Arbitrary[DraftsPaginationViewModel] =
-    Arbitrary {
-      for {
-        totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)
-        numberOfMovementsPerPage <- Gen.choose(1, Int.MaxValue)
-        currentPage              <- Gen.choose(1, Int.MaxValue)
-        href                     <- nonEmptyString
-      } yield DraftsPaginationViewModel(totalNumberOfMovements, currentPage, numberOfMovementsPerPage, href)
-    }
-
   implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
     Arbitrary {
       for {
@@ -186,7 +176,7 @@ trait ViewModelGenerators {
         pageSize        <- arbitrary[Int]
         lrn             <- Gen.option(nonEmptyString)
         url             <- nonEmptyString
-        pagination      <- arbitrary[DraftsPaginationViewModel]
+        pagination      <- arbitrary[ListPaginationViewModel]
       } yield AllDraftDeparturesViewModel(draftDepartures, pageSize, lrn, url, pagination)
     }
 

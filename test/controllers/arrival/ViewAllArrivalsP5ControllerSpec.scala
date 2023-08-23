@@ -32,7 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ArrivalP5MessageService
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.html.arrival.P5.ViewAllArrivalsP5View
 
 import java.time.LocalDateTime
@@ -121,10 +121,10 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
-          totalNumberOfMovements = mockArrivalMovementResponse.movements.length,
+        val expectedPaginationViewModel = ListPaginationViewModel(
+          totalNumberOfItems = mockArrivalMovementResponse.movements.length,
           currentPage = 1,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
@@ -162,10 +162,10 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
-          totalNumberOfMovements = mockArrivalMovementResponse.movements.length,
+        val expectedPaginationViewModel = ListPaginationViewModel(
+          totalNumberOfItems = mockArrivalMovementResponse.movements.length,
           currentPage = currentPage,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)

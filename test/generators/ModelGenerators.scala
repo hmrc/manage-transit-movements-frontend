@@ -17,6 +17,7 @@
 package generators
 
 import models.ErrorType.GenericError
+import models.RejectionType._
 import models._
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
@@ -61,6 +62,20 @@ trait ModelGenerators {
       hours   <- Gen.chooseNum(0, 23)
       minutes <- Gen.chooseNum(0, 59)
     } yield LocalTime.of(hours, minutes)
+  }
+
+  implicit val arbitraryRejectionType: Arbitrary[RejectionType] = Arbitrary {
+    val rejectionTypes = Seq(
+      AmendmentRejection,
+      InvalidationRejection,
+      DeclarationRejection,
+      ReleaseRequestRejection,
+      RejectionOfInformation,
+      PresentationNotificationRejection
+    )
+    for {
+      rejectionType <- Gen.oneOf(rejectionTypes)
+    } yield rejectionType
   }
 
   def dateTimesBetween(min: LocalDateTime, max: LocalDateTime): Gen[LocalDateTime] = {

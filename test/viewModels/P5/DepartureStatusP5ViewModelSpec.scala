@@ -19,6 +19,7 @@ package viewModels.P5
 import base.SpecBase
 import cats.data.NonEmptyList
 import generators.Generators
+import models.RejectionType
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -49,6 +50,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           NonEmptyList(DepartureMessage("messageId", dateTimeNow, headMessage, "body/path"), List.empty)
         ),
         lrn,
+        None,
         isDeclarationAmendable = true,
         Seq.empty
       )
@@ -281,6 +283,8 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "and head of tail is IE015" - {
 
+        val rejectionType: Option[RejectionType] = Some(RejectionType.DeclarationRejection)
+
         "and declaration is amendable" in {
           val movementAndMessage = DepartureMovementAndMessage(
             departureMovement,
@@ -293,6 +297,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             lrn,
+            rejectionType,
             isDeclarationAmendable = true,
             Seq("body/path")
           )
@@ -303,7 +308,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5, lrn).url,
+                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
               )
             )
@@ -324,6 +329,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             lrn,
+            rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path", "abc")
           )
@@ -334,7 +340,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5, lrn).url,
+                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
               )
             )
@@ -355,6 +361,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             lrn,
+            rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path")
           )
@@ -365,7 +372,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5, lrn).url,
+                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
               )
             )
@@ -386,6 +393,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             lrn,
+            rejectionType,
             isDeclarationAmendable = false,
             Seq.empty
           )
@@ -408,6 +416,8 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "and head of tail is IE014" - {
 
+        val rejectionType: Option[RejectionType] = Some(RejectionType.InvalidationRejection)
+
         "with errors in range 2 to 10" in {
           val movementAndMessage = DepartureMovementAndMessage(
             departureMovement,
@@ -420,6 +430,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             lrn,
+            rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path", "abc")
           )
@@ -430,7 +441,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureIdP5, lrn).url,
+                controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
               )
             )
@@ -451,6 +462,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             lrn,
+            rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path")
           )
@@ -461,7 +473,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureIdP5, lrn).url,
+                controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
               )
             )
@@ -482,6 +494,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             ),
             lrn,
+            rejectionType,
             isDeclarationAmendable = false,
             Seq.empty
           )

@@ -17,28 +17,53 @@
 package views.arrival.P5
 
 import generators.Generators
+import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
-import views.behaviours.CheckYourAnswersViewBehaviours
+import views.behaviours.{PaginationViewBehaviours, SummaryListViewBehaviours}
 import views.html.arrival.P5.UnloadingRemarkWithFunctionalErrorsP5View
 
-class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {
 
   override val prefix: String = "arrival.ie057.review.unloading.message"
 
-  private val viewModel =
-    new UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, lrn.toString, false)
+  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
-  override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
+  private val viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel =
+    new UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, mrn, false)
+
+  override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
+
+  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
+    ListPaginationViewModel(_, _, _, _)
+
+  val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
+    totalNumberOfItems = sections.length,
+    currentPage = 1,
+    numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+    href = controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url,
+    additionalParams = Seq()
+  )
+
+  private def applyView(
+    viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel,
+    paginationViewModel: ListPaginationViewModel
+  ): HtmlFormat.Appendable =
     injector
       .instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
-      .apply(viewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, arrivalIdP5, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
+
+  override def view: HtmlFormat.Appendable = applyView(viewModel, paginationViewModel)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)
   )
+
+  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
+    applyView(viewModel, paginationViewModel)
 
   behave like pageWithTitle()
 
@@ -46,13 +71,15 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends CheckYourAnswersView
 
   behave like pageWithHeading()
 
+  behave like pageWithPagination(controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url)
+
   behave like pageWithSummaryLists()
 
   behave like pageWithoutFormAction()
 
   behave like pageWithoutSubmitButton()
 
-  behave like pageWithCaption("MRN: ABCD1234567890123")
+  behave like pageWithCaption(s"MRN: $mrn")
 
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {

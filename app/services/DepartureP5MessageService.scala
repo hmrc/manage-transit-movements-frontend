@@ -19,10 +19,11 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import models.departureP5.DepartureMessageType.{DepartureNotification, RejectedByOfficeOfDeparture, _}
+import models.RejectionType
+import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import models.departureP5._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,14 +36,15 @@ class DepartureP5MessageService @Inject() (
   def isErrorAmendable(
     departureId: String,
     lrn: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, Seq[String])] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Option[RejectionType], Boolean, Seq[String])] =
     for {
       message <- filterForMessage[IE056Data](departureId, RejectedByOfficeOfDeparture)
-      xPaths = message.map(_.data.functionalErrors.map(_.errorPointer))
+      rejectionType = message.map(_.data.transitOperation.businessRejectionType)
+      xPaths        = message.map(_.data.functionalErrors.map(_.errorPointer))
       isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false)) {
         cacheConnector.isDeclarationAmendable(lrn, _)
       }
-    } yield (isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
+    } yield (rejectionType, isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
 
   def getMessagesForAllMovements(
     departureMovements: DepartureMovements
@@ -57,7 +59,8 @@ class DepartureP5MessageService @Inject() (
           messagesForMovement,
           movement.localReferenceNumber,
           isAmendable._1,
-          isAmendable._2
+          isAmendable._2,
+          isAmendable._3
         )
     }
 

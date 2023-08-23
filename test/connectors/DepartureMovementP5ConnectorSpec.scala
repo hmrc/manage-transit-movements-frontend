@@ -21,9 +21,9 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.{Availability, LocalReferenceNumber}
+import models.{Availability, LocalReferenceNumber, RejectionType}
 import models.departureP5._
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
@@ -547,13 +547,16 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
       "must return an IE056 Message" in {
 
+        val rejectionType: RejectionType = Arbitrary.arbitrary[RejectionType].sample.value
+
         val IEO56 = Json.parse(
-          """
+          s"""
             |{
             |  "n1:CC056C": {
             |    "TransitOperation": {
             |      "LRN": "AB123",
-            |      "MRN": "CD3232"
+            |      "MRN": "CD3232",
+            |      "businessRejectionType": "${rejectionType.code}"
             |    },
             |    "CustomsOfficeOfDeparture": {
             |     "referenceNumber": "22323323"
@@ -596,7 +599,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         val expectedResult: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperation(Some("CD3232"), Some("AB123")),
+            TransitOperationIE056(Some("CD3232"), Some("AB123"), rejectionType),
             CustomsOfficeOfDeparture("22323323"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )

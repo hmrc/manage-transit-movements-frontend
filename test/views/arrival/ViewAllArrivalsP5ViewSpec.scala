@@ -23,14 +23,14 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.arrival.P5.ViewAllArrivalsP5View
 
 class ViewAllArrivalsP5ViewSpec
     extends MovementsTableViewBehaviours[ViewArrivalP5]
     with SearchViewBehaviours[ViewArrivalP5]
-    with PaginationViewBehaviours[MovementsPaginationViewModel]
+    with PaginationViewBehaviours[ListPaginationViewModel]
     with Generators
     with ScalaCheckPropertyChecks {
 
@@ -46,19 +46,19 @@ class ViewAllArrivalsP5ViewSpec
 
   override val viewMovements: Seq[ViewArrivalP5] = dataRows.flatMap(_._2)
 
-  override def viewWithSpecificPagination(paginationViewModel: MovementsPaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
     viewWithSpecificPagination(form, Nil, paginationViewModel)
 
   private def viewWithSpecificPagination(
     form: Form[String],
     arrivals: Seq[ViewArrivalP5],
-    paginationViewModel: MovementsPaginationViewModel
+    paginationViewModel: ListPaginationViewModel
   ): HtmlFormat.Appendable =
     applyView(form, ViewAllArrivalMovementsP5ViewModel(arrivals, paginationViewModel))
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllArrivalMovementsP5ViewModel)
 
-  override val buildViewModel: (Int, Int, Int, String) => MovementsPaginationViewModel = MovementsPaginationViewModel(_, _, _, _)
+  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel = ListPaginationViewModel(_, _, _, _)
 
   private def applyView(
     form: Form[String],
@@ -78,7 +78,7 @@ class ViewAllArrivalsP5ViewSpec
 
   behave like pageWithLink(
     id = "make-arrival-notification",
-    expectedText = "Create an arrival notification",
+    expectedText = "Make an arrival notification",
     expectedHref = frontendAppConfig.declareArrivalNotificationStartUrl
   )
 

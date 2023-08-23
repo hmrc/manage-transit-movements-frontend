@@ -19,10 +19,11 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.ArrivalMovementP5Connector
-import models.arrivalP5.ArrivalMessageType.{ArrivalNotification, RejectionFromOfficeOfDestination}
-import models.arrivalP5.{ArrivalMessageMetaData, ArrivalMessageType, ArrivalMovementAndMessage, ArrivalMovements, IE057Data}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import models.arrivalP5.ArrivalMessageType.RejectionFromOfficeOfDestination
+import models.arrivalP5._
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

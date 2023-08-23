@@ -16,12 +16,13 @@
 
 package controllers.testOnly
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel.UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider
+import viewModels.pagination.ListPaginationViewModel
 import views.html.arrival.P5.UnloadingRemarkWithFunctionalErrorsP5View
 
 import javax.inject.Inject
@@ -34,17 +35,30 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider,
   view: UnloadingRemarkWithFunctionalErrorsP5View
-)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
+)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
+  def onPageLoad(page: Option[Int], arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
     implicit request =>
-      val rejectionMessageP5ViewModel = viewModelProvider.apply(request.ie057MessageData, request.ie057MessageData.transitOperation.MRN)
+      val currentPage = page.getOrElse(1)
+
+      val paginationViewModel = ListPaginationViewModel(
+        totalNumberOfItems = request.ie057MessageData.functionalErrors.length,
+        currentPage = currentPage,
+        numberOfItemsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
+        href = controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId).url
+      )
+
+      val rejectionMessageP5ViewModel = viewModelProvider.apply(
+        request.ie057MessageData.pagedFunctionalErrors(currentPage),
+        request.ie057MessageData.transitOperation.MRN
+      )
+
       rejectionMessageP5ViewModel.map(
         viewModel =>
           if (request.ie057MessageData.functionalErrors.nonEmpty) {
-            Ok(view(viewModel, arrivalId))
+            Ok(view(viewModel, arrivalId, paginationViewModel))
           } else {
             Redirect(controllers.routes.ErrorController.technicalDifficulties())
           }

@@ -20,6 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
+import models.RejectionType
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -31,6 +32,7 @@ import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.RejectionMessageP5ViewModel
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.html.departure.TestOnly.RejectionMessageP5View
 
@@ -43,6 +45,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
 
+  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
+
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
     when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
                                                                                                                     lrn,
@@ -50,7 +54,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
                                                                                                                     mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureIdP5, lrn).url
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url
   lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5, lrn).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
 
@@ -75,7 +79,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     "must return OK and the correct view for a GET" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
@@ -90,6 +94,14 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
       val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, lrn.toString, true)
 
+      val paginationViewModel = ListPaginationViewModel(
+        totalNumberOfItems = message.data.functionalErrors.length,
+        currentPage = 1,
+        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        additionalParams = Seq()
+      )
+
       val request = FakeRequest(GET, rejectionMessageController)
 
       val result = route(app, request).value
@@ -99,13 +111,13 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, lrn)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to session expired when declaration amendable is false" in {
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
@@ -131,7 +143,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
             CustomsOfficeOfDeparture("12345"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
@@ -154,7 +166,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
             CustomsOfficeOfDeparture("12345"),
             Seq.empty
           )
@@ -177,7 +189,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
             CustomsOfficeOfDeparture("12345"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
@@ -201,7 +213,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
-            TransitOperation(Some("MRNCD3232"), Some("LRNAB123")),
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
             CustomsOfficeOfDeparture("12345"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )

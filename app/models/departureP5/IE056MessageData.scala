@@ -16,19 +16,29 @@
 
 package models.departureP5
 
+import config.PaginationAppConfig
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
 
 case class IE056MessageData(
-  transitOperation: TransitOperation,
+  transitOperation: TransitOperationIE056,
   customsOfficeOfDeparture: CustomsOfficeOfDeparture,
   functionalErrors: Seq[FunctionalError]
-)
+) {
+
+  def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalError] = {
+    val start = (page - 1) * paginationAppConfig.departuresNumberOfErrorsPerPage
+    functionalErrors
+      .sortBy(_.errorCode)
+      .slice(start, start + paginationAppConfig.departuresNumberOfErrorsPerPage)
+  }
+
+}
 
 object IE056MessageData {
 
   implicit lazy val reads: Reads[IE056MessageData] = (
-    (__ \ "TransitOperation").read[TransitOperation] and
+    (__ \ "TransitOperation").read[TransitOperationIE056] and
       (__ \ "CustomsOfficeOfDeparture").read[CustomsOfficeOfDeparture] and
       (__ \ "FunctionalError").readWithDefault[Seq[FunctionalError]](Nil)
   )(IE056MessageData.apply _)

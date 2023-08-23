@@ -16,7 +16,6 @@
 
 package utils
 
-import cats.data.OptionT
 import models.departureP5.FunctionalError
 import play.api.i18n.Messages
 import services.ReferenceDataService
@@ -33,10 +32,7 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
 ) extends DeparturesP5MessageHelper {
 
   private def getAllFunctionalErrorDescription(errorCode: String): Future[Option[String]] =
-    (for {
-      y <- OptionT.liftF(referenceDataService.getFunctionalErrors())
-      x = y.find(_.code == errorCode).map(_.toString)
-    } yield x).value.map(_.flatten)
+    referenceDataService.getFunctionalErrors().map(_.find(_.code == errorCode).map(_.toString))
 
   def buildErrorCodeRow(errorCode: String): Future[Option[SummaryListRow]] =
     getAllFunctionalErrorDescription(errorCode).map(

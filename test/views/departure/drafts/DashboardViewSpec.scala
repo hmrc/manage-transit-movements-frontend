@@ -27,20 +27,20 @@ import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.pagination.DraftsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.behaviours.PaginationViewBehaviours
 import views.html.departure.drafts.DashboardView
 
 import java.time.LocalDateTime
 
-class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewModel] {
+class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] {
 
-  override val buildViewModel: (Int, Int, Int, String) => DraftsPaginationViewModel =
-    DraftsPaginationViewModel(_, _, _, _)
+  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
+    ListPaginationViewModel(_, _, _, _)
 
   val departuresSummary: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
 
-  val paginationViewModel: DraftsPaginationViewModel = DraftsPaginationViewModel(2, 1, 2, "test")
+  val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(2, 1, 2, "test")
 
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
     AllDraftDeparturesViewModel(departuresSummary, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
@@ -54,7 +54,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
 
   override val movementsPerPage: Int = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-  override def viewWithSpecificPagination(paginationViewModelP5: DraftsPaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModelP5: ListPaginationViewModel): HtmlFormat.Appendable =
     applyView(
       AllDraftDeparturesViewModel(
         arbitrary[DeparturesSummary].sample.value,
@@ -280,7 +280,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[DraftsPaginationViewMod
     }
 
     "must render correct header" in {
-      panel.head.getElementsByClass("govuk-heading-m").text() mustBe "Create a new departure declaration"
+      panel.head.getElementsByClass("govuk-heading-m").text() mustBe "Make a new departure declaration"
     }
 
     "must render correct text" in {
