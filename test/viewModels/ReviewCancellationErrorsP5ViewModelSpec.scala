@@ -18,7 +18,6 @@ package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
-import models.RejectionType
 import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
@@ -34,8 +33,6 @@ import scala.concurrent.Future
 
 class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
-
-  private val rejectionType: RejectionType = RejectionType.InvalidationRejection
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -53,18 +50,12 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
 
     "when there is one error" - {
 
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
-          CustomsOfficeOfDeparture("1234"),
-          Seq(FunctionalError("14", "12", "MRN incorrect", None))
-        )
-      )
+      val errors: Seq[FunctionalError] = Seq(FunctionalError("14", "12", "MRN incorrect", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewCancellationErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
       "must return correct section length" in {
         result.sections.length mustBe 1
@@ -96,18 +87,10 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
     "when there is multiple errors" - {
       val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
-          CustomsOfficeOfDeparture("1234"),
-          functionalErrors
-        )
-      )
-
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewCancellationErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, lrnString).futureValue
 
       "must return correct section length" in {
         result.sections.length mustBe 1
@@ -137,19 +120,12 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
     }
 
     "must render rows" in {
-
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
-          CustomsOfficeOfDeparture("1234"),
-          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-        )
-      )
+      val errors: Seq[FunctionalError] = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewCancellationErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
       result.sections.length mustBe 1
       result.sections.head.rows.size mustBe 4

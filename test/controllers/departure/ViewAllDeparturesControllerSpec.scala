@@ -30,7 +30,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.{ViewAllDepartureMovementsViewModel, ViewDeparture}
 import views.html.departure.ViewAllDeparturesView
 
@@ -100,10 +100,10 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
-          totalNumberOfMovements = mockDepartureResponse.totalDepartures,
+        val expectedPaginationViewModel = ListPaginationViewModel(
+          totalNumberOfItems = mockDepartureResponse.totalDepartures,
           currentPage = currentPage,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = routes.ViewAllDeparturesController.onPageLoad(None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
@@ -125,10 +125,10 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
-          totalNumberOfMovements = mockDepartureResponse.totalDepartures,
+        val expectedPaginationViewModel = ListPaginationViewModel(
+          totalNumberOfItems = mockDepartureResponse.totalDepartures,
           currentPage = 1,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = routes.ViewAllDeparturesController.onPageLoad(None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)

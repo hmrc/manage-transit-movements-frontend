@@ -31,6 +31,7 @@ import play.api.test.Helpers._
 import services.ArrivalP5MessageService
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel.UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.html.arrival.P5.UnloadingRemarkWithFunctionalErrorsP5View
 
@@ -45,7 +46,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
   def rejectionMessageAction(departureIdP5: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
     when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
-  lazy val controller: String = controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(departureIdP5).url
+  lazy val controller: String = controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, departureIdP5).url
   val sections: Seq[Section]  = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -78,6 +79,14 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
 
       rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
+      val paginationViewModel = ListPaginationViewModel(
+        totalNumberOfItems = message.data.functionalErrors.length,
+        currentPage = 1,
+        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+        href = controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url,
+        additionalParams = Seq()
+      )
+
       val rejectionMessageP5ViewModel = new UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, mrn, true)
 
       val request = FakeRequest(GET, controller)
@@ -89,7 +98,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
       val view = injector.instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to technical difficulties page when functionalErrors is 0" in {

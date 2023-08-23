@@ -16,18 +16,18 @@
 
 package viewModels
 
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 
 case class ViewAllArrivalMovementsViewModel(
   dataRows: Seq[(String, Seq[ViewArrival])],
-  paginationViewModel: MovementsPaginationViewModel
+  paginationViewModel: ListPaginationViewModel
 )
 
 object ViewAllArrivalMovementsViewModel {
 
   def apply(
     movements: Seq[ViewArrival],
-    paginationViewModel: MovementsPaginationViewModel
+    paginationViewModel: ListPaginationViewModel
   )(implicit d: DummyImplicit): ViewAllArrivalMovementsViewModel =
     new ViewAllArrivalMovementsViewModel(
       ViewArrivalMovements(movements).dataRows,

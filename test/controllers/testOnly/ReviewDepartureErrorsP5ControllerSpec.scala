@@ -32,6 +32,7 @@ import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
@@ -52,7 +53,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
                                                                                                              mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureIdP5).url
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -89,6 +90,14 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
+      val paginationViewModel = ListPaginationViewModel(
+        totalNumberOfItems = message.data.functionalErrors.length,
+        currentPage = 1,
+        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+        href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, lrn.toString).url,
+        additionalParams = Seq()
+      )
+
       val rejectionMessageP5ViewModel = new ReviewDepartureErrorsP5ViewModel(sections, lrn.toString, true)
 
       val request = FakeRequest(GET, rejectionMessageController)
@@ -100,7 +109,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       val view = injector.instanceOf[ReviewDepartureErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
     }
   }
 }

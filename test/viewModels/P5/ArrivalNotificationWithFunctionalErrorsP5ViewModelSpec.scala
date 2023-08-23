@@ -62,7 +62,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, mrnString).futureValue
+      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
 
       "must return correct section length" in {
         result.sections.length mustBe 1
@@ -101,7 +101,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, mrnString).futureValue
+      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
 
       "must return correct title" in {
         result.title mustBe "Review notification errors"
@@ -135,7 +135,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data, mrnString).futureValue
+      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
 
       result.sections.length mustBe 1
       result.sections.head.rows.size mustBe 4

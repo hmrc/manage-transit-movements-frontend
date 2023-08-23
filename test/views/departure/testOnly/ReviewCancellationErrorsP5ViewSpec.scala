@@ -17,24 +17,43 @@
 package views.departure.testOnly
 
 import generators.Generators
+import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
-import views.behaviours.CheckYourAnswersViewBehaviours
+import views.behaviours.{PaginationViewBehaviours, SummaryListViewBehaviours}
 import views.html.departure.TestOnly.ReviewCancellationErrorsP5View
 
-class ReviewCancellationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {
 
   override val prefix: String = "departure.ie056.review.cancellation.message"
 
-  private val reviewRejectionMessageP5ViewModel =
+  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
+    ListPaginationViewModel(_, _, _, _)
+
+  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
+
+  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
+
+  private val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(2, 1, 2, "test")
+
+  private val reviewRejectionMessageP5ViewModel: ReviewCancellationErrorsP5ViewModel =
     new ReviewCancellationErrorsP5ViewModel(sections, lrn.toString, false)
 
-  override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
+  private def applyView(
+    reviewRejectionViewModel: ReviewCancellationErrorsP5ViewModel,
+    paginationViewModel: ListPaginationViewModel
+  ): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewCancellationErrorsP5View]
-      .apply(reviewRejectionMessageP5ViewModel, departureIdP5)(fakeRequest, messages, frontendAppConfig)
+      .apply(reviewRejectionViewModel, departureId.toString, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
+
+  override def view: HtmlFormat.Appendable = applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
+
+  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
+    applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)
@@ -46,13 +65,15 @@ class ReviewCancellationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours 
 
   behave like pageWithHeading()
 
-  behave like pageWithSummaryLists()
-
   behave like pageWithoutFormAction()
 
   behave like pageWithoutSubmitButton()
 
   behave like pageWithCaption(s"LRN: $lrn")
+
+  behave like pageWithPagination(controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId.toString).url)
+
+  behave like pageWithSummaryLists()
 
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
@@ -96,5 +117,4 @@ class ReviewCancellationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours 
     "View departure declarations",
     controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
   )
-
 }

@@ -33,7 +33,7 @@ import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels.ViewMovementAction
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import views.html.departure.TestOnly.ViewAllDeparturesP5View
 
 import java.time.LocalDateTime
@@ -124,10 +124,10 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
-          totalNumberOfMovements = mockDepartureMovementResponse.movements.length,
+        val expectedPaginationViewModel = ListPaginationViewModel(
+          totalNumberOfItems = mockDepartureMovementResponse.movements.length,
           currentPage = 1,
-          numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.departuresNumberOfMovements,
           href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
@@ -162,10 +162,10 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
-          totalNumberOfMovements = mockDepartureMovementResponse.movements.length,
+        val expectedPaginationViewModel = ListPaginationViewModel(
+          totalNumberOfItems = mockDepartureMovementResponse.movements.length,
           currentPage = currentPage,
-          numberOfMovementsPerPage = paginationAppConfig.departuresNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.departuresNumberOfMovements,
           href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)

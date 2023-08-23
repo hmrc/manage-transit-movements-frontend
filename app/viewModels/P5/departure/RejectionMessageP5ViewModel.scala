@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.IE056MessageData
+import models.departureP5.FunctionalError
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,13 +61,14 @@ object RejectionMessageP5ViewModel {
   class RejectionMessageP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
-      ie056MessageData: IE056MessageData,
+      functionalErrors: Seq[FunctionalError],
       lrn: String
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[RejectionMessageP5ViewModel] = {
-      val helper = new RejectionMessageP5MessageHelper(ie056MessageData.functionalErrors, referenceDataService)
 
-      val multipleErrors = ie056MessageData.functionalErrors.length > 1
+      val helper         = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
+      val multipleErrors = functionalErrors.length > 1
       val sections       = Seq(helper.errorSection())
+
       Future
         .sequence(sections)
         .map(

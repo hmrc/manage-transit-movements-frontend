@@ -24,7 +24,7 @@ import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.pagination.DraftsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 
 class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
@@ -37,7 +37,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       forAll(userAnswerSummary) {
         userAnswerSummary =>
           val draftDeparture      = DeparturesSummary(0, 0, userAnswerSummary)
-          val paginationViewModel = DraftsPaginationViewModel(2, 1, 2, "test")
+          val paginationViewModel = ListPaginationViewModel(2, 1, 2, "test")
 
           val viewModel = AllDraftDeparturesViewModel(draftDeparture, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
 
@@ -55,7 +55,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
       val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-      val paginationViewModel                                 = DraftsPaginationViewModel(2, 1, 2, "test")
+      val paginationViewModel                                 = ListPaginationViewModel(2, 1, 2, "test")
 
       "must return true when departure size is greater than page size" in {
 
@@ -90,7 +90,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
       val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-      val paginationViewModel                                 = DraftsPaginationViewModel(2, 1, 2, "test")
+      val paginationViewModel                                 = ListPaginationViewModel(2, 1, 2, "test")
 
       "must return true when LRN is defined" in {
 
@@ -127,7 +127,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-        val paginationViewModel                                 = DraftsPaginationViewModel(2, 1, 2, "test")
+        val paginationViewModel                                 = ListPaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
@@ -143,7 +143,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "must return false when data rows is empty" in {
 
         val departuresSummary: DeparturesSummary = DeparturesSummary(0, 0, List.empty)
-        val paginationViewModel                  = DraftsPaginationViewModel(2, 1, 2, "test")
+        val paginationViewModel                  = ListPaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
@@ -163,7 +163,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-        val paginationViewModel                                 = DraftsPaginationViewModel(2, 1, 2, "test")
+        val paginationViewModel                                 = ListPaginationViewModel(2, 1, 2, "test")
 
         val viewModel =
           AllDraftDeparturesViewModel(
@@ -181,7 +181,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-        val paginationViewModel                                 = DraftsPaginationViewModel(2, 1, 2, "test")
+        val paginationViewModel                                 = ListPaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
@@ -197,7 +197,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "must return false when rows are empty" in {
 
         val departuresSummary: DeparturesSummary = DeparturesSummary(0, 0, List.empty)
-        val paginationViewModel                  = DraftsPaginationViewModel(2, 1, 2, "test")
+        val paginationViewModel                  = ListPaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
@@ -216,7 +216,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "mut return true when no search results found" in {
 
         val departuresSummary: DeparturesSummary = DeparturesSummary(1, 0, List.empty)
-        val paginationViewModel                  = DraftsPaginationViewModel(2, 1, 2, "test")
+        val paginationViewModel                  = ListPaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
@@ -233,7 +233,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(1, 1, userAnswerSummary)
-        val paginationViewModel                                 = DraftsPaginationViewModel(2, 1, 2, "test")
+        val paginationViewModel                                 = ListPaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
@@ -252,7 +252,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "must return true when no results found" in {
 
         val departuresSummary: DeparturesSummary = DeparturesSummary(0, 0, List.empty)
-        val paginationViewModel                  = DraftsPaginationViewModel(2, 1, 2, "test")
+        val paginationViewModel                  = ListPaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
@@ -269,7 +269,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(1, 1, userAnswerSummary)
-        val paginationViewModel                                 = DraftsPaginationViewModel(2, 1, 2, "test")
+        val paginationViewModel                                 = ListPaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
@@ -285,7 +285,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
     "sortParams" - {
       val departuresSummary   = arbitrary[DeparturesSummary].sample.value
-      val paginationViewModel = DraftsPaginationViewModel(2, 1, 2, "test")
+      val paginationViewModel = ListPaginationViewModel(2, 1, 2, "test")
 
       "when sortParams is SortByLRNAsc" in {
         val sortParams = SortByLRNAsc

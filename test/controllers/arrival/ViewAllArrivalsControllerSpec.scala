@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import viewModels.pagination.MovementsPaginationViewModel
+import viewModels.pagination.ListPaginationViewModel
 import viewModels.{ViewAllArrivalMovementsViewModel, ViewArrival}
 import views.html.arrival.ViewAllArrivalsView
 
@@ -100,10 +100,10 @@ class ViewAllArrivalsControllerSpec extends SpecBase with ScalaCheckPropertyChec
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
-          totalNumberOfMovements = mockArrivalResponse.totalArrivals,
+        val expectedPaginationViewModel = ListPaginationViewModel(
+          totalNumberOfItems = mockArrivalResponse.totalArrivals,
           currentPage = currentPage,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = routes.ViewAllArrivalsController.onPageLoad(None).url
         )
         val expectedViewModel = ViewAllArrivalMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
@@ -125,10 +125,10 @@ class ViewAllArrivalsControllerSpec extends SpecBase with ScalaCheckPropertyChec
 
         status(result) mustEqual OK
 
-        val expectedPaginationViewModel = MovementsPaginationViewModel(
-          totalNumberOfMovements = mockArrivalResponse.totalArrivals,
+        val expectedPaginationViewModel = ListPaginationViewModel(
+          totalNumberOfItems = mockArrivalResponse.totalArrivals,
           currentPage = 1,
-          numberOfMovementsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
+          numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = routes.ViewAllArrivalsController.onPageLoad(None).url
         )
         val expectedViewModel = ViewAllArrivalMovementsViewModel(Seq(mockViewMovement), expectedPaginationViewModel)

@@ -225,24 +225,25 @@ object DepartureStatusP5ViewModel {
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+    // TODO Look at CL560 for message type
     case message if message.messageType == RejectedByOfficeOfDeparture =>
       val (key, href) = rejectionType match {
         case Some(DeclarationRejection) if isDeclarationAmendable =>
-          ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(departureId).url)
+          ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId).url)
 
         case Some(DeclarationRejection) if xPaths.isEmpty =>
           (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId).url)
 
         case Some(DeclarationRejection) =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(departureId).url)
+          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId).url)
 
         case Some(InvalidationRejection) if xPaths.isEmpty =>
           (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId).url)
 
         case Some(InvalidationRejection) =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(departureId).url)
+          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId).url)
 
-        case _ => ("", "")
+        case _ => ("", "") // TODO - Need to handle case where we have multiple concurrent 56 messages one after the other.
       }
 
       val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
