@@ -55,7 +55,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
         bind[DeparturesDraftsP5Connector].toInstance(mockConnector)
       )
 
-  private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString, 1, 2, None).url
+  private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, 1, 2, None).url
 
   "DeleteDraftDepartureYesNo Controller" - {
 
@@ -76,7 +76,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
 
     "when yes submitted must redirect back to draft departure dashboard when on first page" in {
 
-      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString, 1, 2, None).url
+      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, 1, 2, None).url
 
       val statusOK = 200
 
@@ -95,7 +95,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
 
     "when yes submitted must redirect back to draft departure dashboard when on page is not 1 and rows is 1" in {
 
-      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString, 2, 1, None).url
+      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, 2, 1, None).url
 
       val statusOK = 200
 
@@ -114,7 +114,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
 
     "when yes submitted must redirect back to draft departure dashboard when on page is not 1 and rows is not 1" in {
 
-      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrnString, 2, 2, None).url
+      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, 2, 2, None).url
 
       val statusOK = 200
 

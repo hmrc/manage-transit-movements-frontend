@@ -18,6 +18,7 @@ package controllers.departure.drafts
 
 import controllers.actions.{IdentifierAction, LockActionProvider}
 import forms.YesNoFormProvider
+import models.LocalReferenceNumber
 import play.api.http.Status.{OK => StatusOK}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -42,10 +43,10 @@ class DeleteDraftDepartureYesNoController @Inject() (
 
   private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
-  def onPageLoad(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
-    (Action andThen identify andThen lockAction(lrn)) {
+  def onPageLoad(lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
+    (Action andThen identify andThen lockAction(lrn.value)) {
       implicit request =>
-        Ok(view(form, lrn, pageNumber, numberOfRows, searchLrn))
+        Ok(view(form, lrn.value, pageNumber, numberOfRows, searchLrn))
     }
 
   def onSubmit(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
