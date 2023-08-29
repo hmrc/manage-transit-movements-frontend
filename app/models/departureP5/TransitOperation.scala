@@ -23,16 +23,11 @@ import play.api.libs.json.{__, Json, OFormat, Reads}
 import java.time.LocalDateTime
 
 case class TransitOperation(MRN: Option[String], LRN: Option[String])
-case class TransitOperationIE009(MRN: Option[String])
 case class TransitOperationIE056(MRN: Option[String], LRN: Option[String], businessRejectionType: RejectionType)
 case class TransitOperationIE060(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
 
 object TransitOperation {
   implicit val formats: OFormat[TransitOperation] = Json.format[TransitOperation]
-}
-
-object TransitOperationIE009 {
-  implicit val formats: OFormat[TransitOperationIE009] = Json.format[TransitOperationIE009]
 }
 
 object TransitOperationIE056 {

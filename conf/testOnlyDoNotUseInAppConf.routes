@@ -60,20 +60,20 @@ GET         /manage-transit-movements/test-only/:departureId/goods-under-control
 
 GET         /manage-transit-movements/test-only/:departureId/goods-under-control-document-requested                    controllers.testOnly.GoodsUnderControlP5Controller.requestedDocuments(departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/amend-departure-declaration-errors/:lrn                    controllers.testOnly.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/:messageId/amend-departure-declaration-errors/:lrn                    controllers.testOnly.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:departureId/departure-declaration-errors/:lrn                              controllers.testOnly.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/:messageId/departure-declaration-errors/:lrn                              controllers.testOnly.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:departureId/cancellation-errors/:lrn                                        controllers.testOnly.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/:messageId/cancellation-errors/:lrn                                        controllers.testOnly.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:arrivalId/notification-errors                                        controllers.testOnly.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/:messageId/notification-errors                                        controllers.testOnly.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String, messageId: String)
 
 
-GET        /manage-transit-movements/test-only/:departureId/review-departure-declaration-errors/:lrn                    controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/:messageId/review-departure-declaration-errors/:lrn                    controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:departureId/review-cancellation-errors/:lrn                             controllers.testOnly.ReviewCancellationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/:messageId/review-cancellation-errors/:lrn                             controllers.testOnly.ReviewCancellationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:departureId/send-departure-declaration-errors/:lrn                      controllers.testOnly.RejectionMessageP5Controller.onAmend(departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/:messageId/send-departure-declaration-errors/:lrn                      controllers.testOnly.RejectionMessageP5Controller.onAmend(departureId: String, messageId: String, lrn: LocalReferenceNumber)
 
 GET        /manage-transit-movements/test-only/:departureId/is-declaration-cancelled/:lrn                                   controllers.testOnly.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String, lrn: LocalReferenceNumber)
 
@@ -81,11 +81,11 @@ GET        /manage-transit-movements/test-only/:departureId/declaration-cancelle
 
 GET        /manage-transit-movements/test-only/:departureId/declaration-not-cancelled/:lrn                                  controllers.testOnly.DepartureCancelledP5Controller.declarationNotCancelled(departureId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:arrivalId/unloading-remarks-errors                                     controllers.testOnly.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/:messageId/unloading-remarks-errors                                     controllers.testOnly.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String, messageId: String)
 
-GET        /manage-transit-movements/test-only/:arrivalId/review-unloading-remarks-errors                               controllers.testOnly.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/:messageId/review-unloading-remarks-errors                               controllers.testOnly.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String, messageId: String)
 
-GET        /manage-transit-movements/test-only/:arrivalId/review-arrival-notification-errors                           controllers.testOnly.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/:messageId/review-arrival-notification-errors                           controllers.testOnly.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String, messageId: String)
 
 GET        /manage-transit-movements/test-only/:departureId/transit-accompanying-document/:messageId                    controllers.testOnly.TransitAccompanyingDocumentController.getTAD(messageId: String, departureId: String)
 

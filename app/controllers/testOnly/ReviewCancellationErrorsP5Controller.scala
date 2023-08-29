@@ -40,8 +40,8 @@ class ReviewCancellationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onPageLoad(page: Option[Int], departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber, messageId)).async {
       implicit request =>
         val currentPage = page.getOrElse(1)
 
@@ -49,7 +49,7 @@ class ReviewCancellationErrorsP5Controller @Inject() (
           totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
           currentPage = currentPage,
           numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-          href = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
+          href = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId, localReferenceNumber).url
         )
 
         val rejectionMessageP5ViewModel =

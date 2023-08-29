@@ -39,26 +39,27 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
-    implicit request =>
-      val functionalErrors       = request.ie057MessageData.functionalErrors
-      val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber
+  def onPageLoad(arrivalId: String, messageId: String): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(arrivalId, messageId)).async {
+      implicit request =>
+        val functionalErrors       = request.ie057MessageData.functionalErrors
+        val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber
 
-      if (functionalErrors.isEmpty) {
-        referenceDataService.getCustomsOffice(customsOfficeReference).map {
-          customsOffice =>
-            Ok(
-              view(
-                viewModelProvider.apply(
-                  request.ie057MessageData.transitOperation.MRN,
-                  customsOfficeReference,
-                  customsOffice
+        if (functionalErrors.isEmpty) {
+          referenceDataService.getCustomsOffice(customsOfficeReference).map {
+            customsOffice =>
+              Ok(
+                view(
+                  viewModelProvider.apply(
+                    request.ie057MessageData.transitOperation.MRN,
+                    customsOfficeReference,
+                    customsOffice
+                  )
                 )
               )
-            )
+          }
+        } else {
+          Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
         }
-      } else {
-        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
-      }
-  }
+    }
 }

@@ -34,21 +34,28 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
       movement =>
         for {
           messagesForMovement <- arrivalMovementP5Connector.getMessagesForMovement(movement.messagesLocation)
-          ie057               <- getMessage[IE057Data](movement.arrivalId, RejectionFromOfficeOfDestination)
+          ie057               <- getMessageByPath[IE057Data](movement.arrivalId, RejectionFromOfficeOfDestination)
           functionalErrorsCount = ie057.map(_.data.functionalErrors.length).getOrElse(0)
         } yield ArrivalMovementAndMessage(movement, messagesForMovement, functionalErrorsCount)
     }
 
-  def getMessage[MessageModel](
+  private def getMessageByPath[MessageModel](
     arrivalId: String,
     typeOfMessage: ArrivalMessageType
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[Option[MessageModel]] =
     (
       for {
         messageMetaData <- OptionT(getSpecificMessageMetaData(arrivalId, typeOfMessage))
-        message         <- OptionT.liftF(arrivalMovementP5Connector.getSpecificMessage[MessageModel](messageMetaData.path))
+        message         <- OptionT.liftF(arrivalMovementP5Connector.getSpecificMessageByPath[MessageModel](messageMetaData.path))
       } yield message
     ).value
+
+  def getMessageWithMessageId[MessageModel](
+    arrivalId: String,
+    messageId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[MessageModel] =
+    arrivalMovementP5Connector
+      .getMessageForMessageId(arrivalId, messageId)
 
   private def getSpecificMessageMetaData[T <: ArrivalMessageType](arrivalId: String, typeOfMessage: T)(implicit
     ec: ExecutionContext,

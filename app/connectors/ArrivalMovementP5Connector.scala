@@ -85,10 +85,21 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
     http.GET[ArrivalMessages](url)(implicitly, headers, ec)
   }
 
-  def getSpecificMessage[MessageModel](
+  def getSpecificMessageByPath[MessageModel](
     path: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, HttpReads: HttpReads[MessageModel]): Future[MessageModel] = {
     val url = s"${config.commonTransitConventionTradersUrl}$path"
     http.GET[MessageModel](url)(implicitly, headers, ec)
+  }
+
+  def getMessageForMessageId[MessageModel](arrivalId: String, messageId: String)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier,
+    httpReads: HttpReads[MessageModel]
+  ): Future[MessageModel] = {
+    val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId"
+    http
+      .GET[MessageModel](url)(implicitly, headers, ec)
+
   }
 }

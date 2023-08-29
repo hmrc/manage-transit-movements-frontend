@@ -16,27 +16,26 @@
 
 package controllers.actions
 
-import cats.data.EitherT
 import controllers.routes
-import models.arrivalP5.ArrivalMessageType.RejectionFromOfficeOfDestination
 import models.arrivalP5.IE057Data
 import models.requests.{ArrivalRejectionMessageRequest, IdentifierRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import services.ArrivalP5MessageService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalRejectionMessageActionProvider @Inject() (arrivalP5MessageService: ArrivalP5MessageService)(implicit ec: ExecutionContext) {
 
-  def apply(arrivalId: String): ActionRefiner[IdentifierRequest, ArrivalRejectionMessageRequest] =
-    new ArrivalRejectionMessageAction(arrivalId, arrivalP5MessageService)
+  def apply(arrivalId: String, messageId: String): ActionRefiner[IdentifierRequest, ArrivalRejectionMessageRequest] =
+    new ArrivalRejectionMessageAction(arrivalId, messageId, arrivalP5MessageService)
 }
 
-class ArrivalRejectionMessageAction(arrivalId: String, arrivalP5MessageService: ArrivalP5MessageService)(implicit
+class ArrivalRejectionMessageAction(arrivalId: String, messageId: String, arrivalP5MessageService: ArrivalP5MessageService)(implicit
   protected val executionContext: ExecutionContext
 ) extends ActionRefiner[IdentifierRequest, ArrivalRejectionMessageRequest] {
 
@@ -44,14 +43,15 @@ class ArrivalRejectionMessageAction(arrivalId: String, arrivalP5MessageService: 
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    EitherT
-      .fromOptionF(
-        arrivalP5MessageService.getMessage[IE057Data](arrivalId, RejectionFromOfficeOfDestination),
-        Redirect(routes.ErrorController.technicalDifficulties())
-      )
+    arrivalP5MessageService
+      .getMessageWithMessageId[IE057Data](arrivalId, messageId)
       .map {
-        ie057Data => ArrivalRejectionMessageRequest(request, request.eoriNumber, ie057Data.data)
+        rejectionMessage =>
+          Right(ArrivalRejectionMessageRequest(request, request.eoriNumber, rejectionMessage.data))
       }
-      .value
+      .recover {
+        _ =>
+          Left(Redirect(routes.ErrorController.technicalDifficulties()))
+      }
   }
 }

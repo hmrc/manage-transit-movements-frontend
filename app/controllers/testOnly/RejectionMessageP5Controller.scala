@@ -42,8 +42,8 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onPageLoad(page: Option[Int], departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber, messageId)).async {
       implicit request =>
         if (request.isDeclarationAmendable) {
 
@@ -53,14 +53,14 @@ class RejectionMessageP5Controller @Inject() (
             totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
             currentPage = currentPage,
             numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-            href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
+            href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, localReferenceNumber).url
           )
 
           val rejectionMessageP5ViewModel =
             viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value)
 
           rejectionMessageP5ViewModel.map(
-            viewModel => Ok(view(viewModel, departureId, paginationViewModel, localReferenceNumber))
+            viewModel => Ok(view(viewModel, departureId, messageId, paginationViewModel, localReferenceNumber))
           )
         } else {
           Future.successful(
@@ -69,8 +69,8 @@ class RejectionMessageP5Controller @Inject() (
         }
     }
 
-  def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onAmend(departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber, messageId)).async {
       implicit request =>
         val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
         if (request.isDeclarationAmendable && xPaths.nonEmpty) {
