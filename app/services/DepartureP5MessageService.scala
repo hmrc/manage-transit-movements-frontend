@@ -21,7 +21,6 @@ import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.departureP5.DepartureMessageType.{DepartureNotification, _}
 import models.departureP5._
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
 import javax.inject.Inject
@@ -104,4 +103,11 @@ class DepartureP5MessageService @Inject() (
         lrn                <- OptionT.liftF(departureMovementP5Connector.getLRN(declarationMessage.path).map(_.referenceNumber))
       } yield lrn
     ).value
+
+  def getMessageWithMessageId[MessageModel](
+    departureId: String,
+    messageId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[MessageModel] =
+    departureMovementP5Connector
+      .getMessageForMessageId(departureId, messageId)
 }
