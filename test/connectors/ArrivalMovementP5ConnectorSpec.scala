@@ -45,6 +45,52 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
 
   private val genError = Gen.chooseNum(400: Int, 599: Int).suchThat(_ != 404)
 
+  val IEO57 = Json.parse(
+    """
+      |{
+      |  "n1:CC057C": {
+      |    "TransitOperation": {
+      |      "MRN": "CD3232"
+      |    },
+      |    "CustomsOfficeOfDestinationActual": {
+      |      "referenceNumber": "1234"
+      |    },
+      |    "FunctionalError": [
+      |      {
+      |        "errorPointer": "1",
+      |        "errorCode": "12",
+      |        "errorReason": "Codelist violation"
+      |      },
+      |      {
+      |        "errorPointer": "2",
+      |        "errorCode": "14",
+      |        "errorReason": "Rule violation"
+      |      }
+      |    ]
+      |  }
+      |}
+      |""".stripMargin
+  )
+
+  val responseJson: JsValue = Json.parse(s"""
+    {
+      "_links": {
+        "self": {
+          "href": "/customs/transits/movements/arrivals/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
+        },
+        "departure": {
+          "href": "/customs/transits/movements/arrivals/62f4ebbbf581d4aa"
+        }
+      },
+      "id": "62f4ebbb765ba8c2",
+      "arrivalId": "62f4ebbbf581d4aa",
+      "received": "2022-08-11T11:44:59.83705",
+      "type": "IE057",
+      "status": "Success",
+      "body": ${IEO57.toString()}
+    }
+    """)
+
   "ArrivalMovementP5Connector" - {
 
     "getAllMovements" - {
@@ -470,7 +516,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
       }
     }
 
-    "getSpecificMessage" - {
+    "getSpecificMessageByPath" - {
 
       "must return an IE057 Message" in {
 
@@ -533,10 +579,30 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getSpecificMessage[IE057Data](s"movements/arrivals/$arrivalIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+        connector.getSpecificMessageByPath[IE057Data](s"movements/arrivals/$arrivalIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+      }
+    }
+
+    "getMessageForMessageId" - {
+
+      "must return a Message" in {
+
+        val expectedResult: IE057Data = IE057Data(
+          IE057MessageData(
+            TransitOperationIE057("CD3232"),
+            CustomsOfficeOfDestinationActual("1234"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/arrivals/$arrivalIdP5/messages/$messageId"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        connector.getMessageForMessageId[IE057Data](arrivalIdP5, messageId).futureValue mustBe expectedResult
 
       }
     }
   }
-
 }

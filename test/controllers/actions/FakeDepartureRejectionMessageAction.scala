@@ -29,10 +29,11 @@ import scala.concurrent.Future
 
 class FakeDepartureRejectionMessageAction(
   departureId: String,
+  messageId: String,
   localReferenceNumber: LocalReferenceNumber,
   departureP5MessageService: DepartureP5MessageService,
   departureCacheConnector: DepartureCacheConnector
-) extends DepartureRejectionMessageAction(departureId, localReferenceNumber, departureP5MessageService, departureCacheConnector) {
+) extends DepartureRejectionMessageAction(departureId, localReferenceNumber, messageId, departureP5MessageService, departureCacheConnector) {
 
   val message: IE056Data = IE056Data(
     IE056MessageData(

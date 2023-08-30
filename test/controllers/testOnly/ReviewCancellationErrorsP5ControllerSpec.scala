@@ -48,13 +48,15 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
   private val rejectionType: RejectionType = RejectionType.InvalidationRejection
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                                    lrn,
-                                                                                                                    mockDepartureP5MessageService,
-                                                                                                                    mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any(), any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                                           messageId,
+                                                                                                                           lrn,
+                                                                                                                           mockDepartureP5MessageService,
+                                                                                                                           mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url
+  lazy val rejectionMessageController: String =
+    controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, lrn).url
 
   val sections: Seq[Section] = arbitrarySections.arbitrary.sample.value
 
@@ -83,8 +85,8 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(ReviewCancellationErrorsP5ViewModel(sections, lrn.toString, multipleErrors = true)))
@@ -97,7 +99,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        href = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, lrn).url,
         additionalParams = Seq()
       )
 

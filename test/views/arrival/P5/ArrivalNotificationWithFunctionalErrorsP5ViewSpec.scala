@@ -47,7 +47,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
     totalNumberOfItems = sections.length,
     currentPage = 1,
     numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url,
+    href = controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url,
     additionalParams = Seq()
   )
 
@@ -76,7 +76,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
 
   behave like pageWithCaption(s"MRN: $mrn")
 
-  behave like pageWithPagination(controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url)
+  behave like pageWithPagination(controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url)
 
   behave like pageWithSummaryLists()
 

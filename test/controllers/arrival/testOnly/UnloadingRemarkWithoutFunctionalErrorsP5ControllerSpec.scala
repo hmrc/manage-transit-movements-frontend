@@ -41,12 +41,15 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
   private val mockReferenceDataService           = mock[ReferenceDataService]
 
   lazy val unloadingRemarkWithErrorsController: String =
-    controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5).url
+    controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
 
   private val mrnString = "MRNAB123"
 
   def rejectionMessageAction(arrivalIdP5: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
+    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeArrivalRejectionMessageAction(arrivalIdP5,
+                                                                                                                  mockArrivalP5MessageService,
+                                                                                                                  messageId
+    )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -72,8 +75,8 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
         )
       )
 
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
 
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
@@ -103,8 +106,8 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
         )
       )
 
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
 
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))

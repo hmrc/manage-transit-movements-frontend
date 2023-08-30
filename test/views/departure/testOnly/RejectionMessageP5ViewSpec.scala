@@ -43,7 +43,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
     totalNumberOfItems = sections.length,
     currentPage = 1,
     numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+    href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, lrn).url,
     additionalParams = Seq()
   )
 
@@ -53,7 +53,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[RejectionMessageP5View]
-      .apply(viewModel, departureId.toString, paginationViewModel, lrn)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, departureId.toString, messageId, paginationViewModel, lrn)(fakeRequest, messages, frontendAppConfig)
 
   override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel)
 
@@ -76,7 +76,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   behave like pageWithCaption(s"LRN: $lrn")
 
-  behave like pageWithPagination(controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId.toString, lrn).url)
+  behave like pageWithPagination(controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId.toString, messageId, lrn).url)
 
   behave like pageWithSummaryLists()
 

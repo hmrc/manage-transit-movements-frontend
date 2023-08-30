@@ -21,6 +21,7 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
+import models.RejectionType.DeclarationRejection
 import models.{Availability, LocalReferenceNumber, RejectionType}
 import models.departureP5._
 import org.scalacheck.{Arbitrary, Gen}
@@ -43,6 +44,54 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       .configure(conf = "microservice.services.common-transit-convention-traders.port" -> server.port())
 
   private val genError = Gen.chooseNum(400: Int, 599: Int).suchThat(_ != 404)
+
+  val IEO56 = Json.parse(
+    """
+      |{
+      |  "n1:CC056C": {
+      |    "TransitOperation": {
+      |      "LRN": "AB123",
+      |      "MRN": "CD3232",
+      |      "businessRejectionType": "015"
+      |    },
+      |    "CustomsOfficeOfDeparture": {
+      |     "referenceNumber": "22323323"
+      |     },
+      |    "FunctionalError": [
+      |      {
+      |        "errorPointer": "1",
+      |        "errorCode": "12",
+      |        "errorReason": "Codelist violation"
+      |      },
+      |      {
+      |        "errorPointer": "2",
+      |        "errorCode": "14",
+      |        "errorReason": "Rule violation"
+      |      }
+      |    ]
+      |  }
+      |}
+      |""".stripMargin
+  )
+
+  val responseJson: JsValue = Json.parse(s"""
+    {
+      "_links": {
+        "self": {
+          "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
+        },
+        "departure": {
+          "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
+        }
+      },
+      "id": "62f4ebbb765ba8c2",
+      "departureId": "62f4ebbbf581d4aa",
+      "received": "2022-08-11T11:44:59.83705",
+      "type": "IE060",
+      "status": "Success",
+      "body": ${IEO56.toString()}
+    }
+    """)
 
   "DepartureMovementP5Connector" - {
 
@@ -611,6 +660,28 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         )
 
         connector.getSpecificMessageByPath[IE056Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+
+      }
+    }
+
+    "getMessageForMessageId" - {
+
+      "must return Message" in {
+
+        val expectedResult: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperationIE056(Some("CD3232"), Some("AB123"), DeclarationRejection),
+            CustomsOfficeOfDeparture("22323323"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/$messageId"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        connector.getMessageForMessageId[IE056Data](departureIdP5, messageId).futureValue mustBe expectedResult
 
       }
     }

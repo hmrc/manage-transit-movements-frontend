@@ -44,12 +44,15 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
   private val mockRejectionMessageActionProvider = mock[ArrivalRejectionMessageActionProvider]
 
   lazy val arrivalNotificationErrorController: String =
-    controllers.testOnly.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5).url
+    controllers.testOnly.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
 
   private val mrnString = "MRNAB123"
 
   def rejectionMessageAction(departureIdP5: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
+    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeArrivalRejectionMessageAction(departureIdP5,
+                                                                                                                  mockArrivalP5MessageService,
+                                                                                                                  messageId
+    )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -73,8 +76,8 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
           Seq.empty
         )
       )
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
 
       rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
@@ -102,8 +105,8 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
         )
       )
 
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
 
       rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 

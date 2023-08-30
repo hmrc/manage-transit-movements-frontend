@@ -40,14 +40,17 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
   private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
-  lazy val departureDeclarationErrorsController: String = controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, lrn).url
-  private val rejectionType: RejectionType              = RejectionType.DeclarationRejection
+
+  lazy val departureDeclarationErrorsController: String =
+    controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, messageId, lrn).url
+  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                                    lrn,
-                                                                                                                    mockDepartureP5MessageService,
-                                                                                                                    mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any(), any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                                           messageId,
+                                                                                                                           lrn,
+                                                                                                                           mockDepartureP5MessageService,
+                                                                                                                           mockCacheService
     )
 
   override def beforeEach(): Unit = {
@@ -74,8 +77,8 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
           Seq.empty
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
@@ -102,8 +105,8 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)

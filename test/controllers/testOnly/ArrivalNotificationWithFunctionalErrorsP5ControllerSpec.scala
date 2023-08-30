@@ -44,10 +44,13 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
   private val mockRejectionMessageActionProvider                             = mock[ArrivalRejectionMessageActionProvider]
 
   def rejectionMessageAction(arrivalId: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(arrivalId, mockArrivalP5MessageService)
+    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeArrivalRejectionMessageAction(arrivalId,
+                                                                                                                  mockArrivalP5MessageService,
+                                                                                                                  messageId
+    )
 
   lazy val rejectionMessageController: String =
-    controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url
+    controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url
   val sections: Seq[Section] = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -73,8 +76,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
       when(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
 
@@ -84,7 +87,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url,
+        href = controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url,
         additionalParams = Seq()
       )
 
@@ -110,8 +113,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
           Seq.empty
         )
       )
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
       when(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
 
