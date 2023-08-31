@@ -499,3 +499,7 @@ departure.cancellation.message.customsOfficeContact.teleNotAvailAndOfficeNameNot
 row.label.dateAndTimeOfDecision =  Date and time of decision
 row.label.initiatedByCustoms =  Initiated by Customs?
 row.label.justification =  Comments
+
+error.table.errorCode = Error code
+error.table.errorReason = Reason
+

@@ -20,28 +20,30 @@ import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import viewModels.ErrorViewModel
+import viewModels.ErrorViewModel.ErrorRow
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, SummaryListViewBehaviours}
 import views.html.arrival.P5.ArrivalNotificationWithFunctionalErrorsP5View
 
+import scala.concurrent.ExecutionContext
+
 class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
     extends PaginationViewBehaviours[ListPaginationViewModel]
     with SummaryListViewBehaviours
     with Generators {
-
-  override val prefix: String = "arrival.ie057.review.notification.message"
-
-  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
-
-  private val arrivalNotificationWithFunctionalErrorsP5ViewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel =
-    new ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, mrn, false)
-
+  override val prefix: String        = "arrival.ie057.review.notification.message"
   override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
 
   override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
     ListPaginationViewModel(_, _, _, _)
+
+  private val errorRows: Seq[ErrorRow]       = arbitrary[Seq[ErrorRow]].sample.value
+  private val errorViewModel: ErrorViewModel = ErrorViewModel(errorRows)
+  private val ec: ExecutionContext           = ExecutionContext.global
+  private val sections: Seq[Section]         = arbitrary[List[Section]].sample.value
 
   val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
     totalNumberOfItems = sections.length,
@@ -51,22 +53,26 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
     additionalParams = Seq()
   )
 
-  private def applyView(
-    viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel,
-    paginationViewModel: ListPaginationViewModel
-  ): HtmlFormat.Appendable =
-    injector
-      .instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
-      .apply(viewModel, arrivalIdP5, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
+  private val arrivalNotificationWithFunctionalErrorsP5ViewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel =
+    new ArrivalNotificationWithFunctionalErrorsP5ViewModel(mrn, false)
 
-  override def view: HtmlFormat.Appendable = applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel)
+  override def view: HtmlFormat.Appendable = applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel, errorViewModel)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)
   )
 
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
-    applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel)
+    applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel, errorViewModel)
+
+  private def applyView(
+    viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel,
+    paginationViewModel: ListPaginationViewModel,
+    errorViewModel: ErrorViewModel
+  ): HtmlFormat.Appendable =
+    injector
+      .instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
+      .apply(viewModel, arrivalIdP5, paginationViewModel, errorViewModel)(fakeRequest, messages, frontendAppConfig, ec)
 
   behave like pageWithTitle()
 

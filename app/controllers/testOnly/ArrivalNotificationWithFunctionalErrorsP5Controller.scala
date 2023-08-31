@@ -21,6 +21,7 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewModels.ErrorViewModel.ErrorViewModelProvider
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
 import views.html.arrival.P5.ArrivalNotificationWithFunctionalErrorsP5View
@@ -34,6 +35,7 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider,
+  errorViewModelProvider: ErrorViewModelProvider,
   view: ArrivalNotificationWithFunctionalErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
@@ -54,14 +56,14 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
         request.ie057MessageData.pagedFunctionalErrors(currentPage),
         request.ie057MessageData.transitOperation.MRN
       )
-
-      rejectionMessageP5ViewModel.map(
-        viewModel =>
+      val errorViewModel = errorViewModelProvider.apply(request.ie057MessageData.pagedFunctionalErrors(currentPage))
+      errorViewModel.map {
+        errorViewModel =>
           if (request.ie057MessageData.functionalErrors.nonEmpty) {
-            Ok(view(viewModel, arrivalId, paginationViewModel))
+            Ok(view(rejectionMessageP5ViewModel, arrivalId, paginationViewModel, errorViewModel))
           } else {
             Redirect(controllers.routes.ErrorController.technicalDifficulties())
           }
-      )
+      }
   }
 }

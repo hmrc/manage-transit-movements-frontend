@@ -25,6 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Content
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import viewModels.ErrorViewModel.ErrorRow
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels._
@@ -227,4 +228,23 @@ trait ViewModelGenerators {
         sectionTitles.distinct.size == sectionTitles.size
     }
   }
+
+  implicit lazy val arbitraryErrorRow: Arbitrary[ErrorRow] = Arbitrary {
+    for {
+      errorCode   <- nonEmptyString
+      errorReason <- nonEmptyString
+    } yield ErrorRow(errorCode, errorReason)
+  }
+
+  implicit lazy val arbitraryErrorRows: Arbitrary[List[ErrorRow]] = Arbitrary {
+    listWithMaxLength[ErrorRow]()
+  }
+
+  implicit val arbitraryErrorTableViewModel: Arbitrary[ErrorViewModel] =
+    Arbitrary {
+      for {
+        errorRows <- arbitrary[Seq[ErrorRow]]
+      } yield ErrorViewModel(errorRows)
+    }
+
 }

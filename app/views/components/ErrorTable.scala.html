@@ -1,0 +1,40 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewModels.ErrorViewModel
+
+@this()
+
+@(
+viewModel: ErrorViewModel
+)(implicit messages: Messages)
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+        <th id="error-code-heading" scope="col" class="govuk-table__header">@viewModel.errorCodeHeading</th>
+        <th id="error-reason-heading" scope="col" class="govuk-table__header">@viewModel.errorReasonHeading</th>
+    </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    @for((row, rowIndex) <- viewModel.errors.zip(LazyList from 1)) {
+    <tr data-testrole="error-list_row@rowIndex" class="govuk-table__row">
+        <td data-testrole="error-list_row@rowIndex-errorCode" class="govuk-table__cell">@row.errorCode</td>
+        <td data-testrole="error-list_row@rowIndex-errorReason" class="govuk-table__cell">@row.errorReason</td>
+    </tr>
+    }
+    </tbody>
+</table>

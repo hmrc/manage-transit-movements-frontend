@@ -20,34 +20,14 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
-import models.referenceData.FunctionalErrorWithDesc
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api
-import play.api.inject.guice.GuiceApplicationBuilder
-import services.ReferenceDataService
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
 class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
-  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
-
-  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
-    super
-      .guiceApplicationBuilder()
-      .overrides(api.inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
-
-  override def beforeEach(): Unit =
-    reset(mockReferenceDataService)
 
   val mrnString = "MRNAB123"
 
   "ArrivalNotificationWithFunctionalErrorsP5ViewModel" - {
-
-    val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "Codelist violation"), FunctionalErrorWithDesc("14", "Rule violation"))
 
     "when there is one error" - {
 
@@ -59,14 +39,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         )
       )
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
-
-      val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
-
-      "must return correct section length" in {
-        result.sections.length mustBe 1
-      }
+      val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider()
+      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString)
 
       "must return correct title" in {
         result.title mustBe "Review notification errors"
@@ -98,10 +72,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         )
       )
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
-
-      val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
+      val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider()
+      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString)
 
       "must return correct title" in {
         result.title mustBe "Review notification errors"
@@ -121,25 +93,5 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         result.hyperlink mustBe "Make another arrival notification"
       }
     }
-
-    "must render rows" in {
-
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232"),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-        )
-      )
-
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
-
-      val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
-
-      result.sections.length mustBe 1
-      result.sections.head.rows.size mustBe 4
-    }
-
   }
 }

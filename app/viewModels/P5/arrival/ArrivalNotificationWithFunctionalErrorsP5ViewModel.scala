@@ -18,15 +18,10 @@ package viewModels.P5.arrival
 
 import models.departureP5.FunctionalError
 import play.api.i18n.Messages
-import services.ReferenceDataService
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.RejectionMessageP5MessageHelper
-import viewModels.sections.Section
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
-case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections: Seq[Section], mrn: String, multipleErrors: Boolean) {
+case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(mrn: String, multipleErrors: Boolean) {
 
   def title(implicit messages: Messages): String = messages("arrival.ie057.review.notification.message.title")
 
@@ -57,21 +52,16 @@ case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections: Seq[Sect
 
 object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
 
-  class ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider @Inject() () {
 
     def apply(
       functionalErrors: Seq[FunctionalError],
       mrn: String
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ArrivalNotificationWithFunctionalErrorsP5ViewModel] = {
-      val helper = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
+    ): ArrivalNotificationWithFunctionalErrorsP5ViewModel = {
 
       val multipleErrors = functionalErrors.length > 1
-      val sections       = Seq(helper.errorSection())
-      Future
-        .sequence(sections)
-        .map(
-          sec => ArrivalNotificationWithFunctionalErrorsP5ViewModel(sec, mrn, multipleErrors)
-        )
+
+      ArrivalNotificationWithFunctionalErrorsP5ViewModel(mrn, multipleErrors)
 
     }
   }
