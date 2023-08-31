@@ -32,7 +32,7 @@ class ErrorTableSpec extends A11ySpecBase {
 
     "pass accessibility checks" when {
 
-      "draft departure table" in {
+      "arrival notification rejected error table" in {
         val dataRows = arbitrary[ErrorViewModel].sample.value
         val content = template.apply(title) {
           component.apply(dataRows).withHeading(title)
