@@ -520,3 +520,7 @@ guarantee.rejected.message.acceptanceDate = Declaration acceptance date:
 
 guarantee.rejected.message.heading = Amend guarantee errors
 guarantee.rejected.message.heading = Amend guarantee errors
+
+
+error.table.errorCode = Error code
+error.table.errorReason = Reason

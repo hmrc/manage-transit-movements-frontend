@@ -19,7 +19,9 @@ package utils
 import models.departureP5.FunctionalError
 import play.api.i18n.Messages
 import services.ReferenceDataService
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 
@@ -61,6 +63,20 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
         val errorReason: Seq[SummaryListRow] = extractOptionalRow(buildErrorReasonRow(errors.errorReason))
         errorCode ++ errorReason
     }
+
+  def buildTableRows(error: FunctionalError): Future[Seq[TableRow]] =
+    getAllFunctionalErrorDescription(error.errorCode).map {
+      case Some(code) =>
+        Seq(
+          TableRow(Text(code)),
+          TableRow(Text(error.errorReason))
+        )
+      case _ =>
+        Seq.empty
+    }
+
+  def tableRows(): Future[Seq[Seq[TableRow]]] =
+    Future.sequence(functionalErrors.map(buildTableRows))
 
   def errorSection(): Future[Section] = {
 

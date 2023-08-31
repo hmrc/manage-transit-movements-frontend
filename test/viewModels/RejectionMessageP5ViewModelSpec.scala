@@ -58,7 +58,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
       "must return correct section length" in {
-        result.sections.length mustBe 1
+        result.tableRows.length mustBe 1
       }
 
       "must return correct title" in {
@@ -115,8 +115,8 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
-      result.sections.length mustBe 1
-      result.sections.head.rows.size mustBe 4
+      result.tableRows.length mustBe 1
+      result.tableRows.head.rows.size mustBe 4
     }
 
   }
