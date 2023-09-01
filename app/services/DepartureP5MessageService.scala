@@ -22,7 +22,6 @@ import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.RejectionType
 import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import models.departureP5._
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
 import javax.inject.Inject
@@ -98,4 +97,11 @@ class DepartureP5MessageService @Inject() (
         message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessageByPath[MessageModel](messageMetaData.path))
       } yield message
     ).value
+
+  def getMessageWithMessageId[MessageModel](
+    departureId: String,
+    messageId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[MessageModel] =
+    departureMovementP5Connector
+      .getMessageForMessageId(departureId, messageId)
 }

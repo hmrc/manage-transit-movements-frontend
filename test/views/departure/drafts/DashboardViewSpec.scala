@@ -215,7 +215,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
 
               val redirectLink =
                 controllers.departure.drafts.routes.DeleteDraftDepartureYesNoController
-                  .onPageLoad(draft.lrn.toString(), 1, rows.toList.length, None)
+                  .onPageLoad(draft.lrn, 1, rows.toList.length, None)
                   .url
 
               deleteLink.attr("href") mustBe redirectLink

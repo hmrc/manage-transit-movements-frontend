@@ -54,9 +54,10 @@ object LocalReferenceNumber {
   implicit lazy val pathBindable: PathBindable[LocalReferenceNumber] = new PathBindable[LocalReferenceNumber] {
 
     override def bind(key: String, value: String): Either[String, LocalReferenceNumber] =
-      implicitly[PathBindable[String]].bind(key, value).map(LocalReferenceNumber(_))
+      LocalReferenceNumber.format(value).toRight("Invalid Local Reference Number")
 
     override def unbind(key: String, lrn: LocalReferenceNumber): String =
       lrn.value
+
   }
 }

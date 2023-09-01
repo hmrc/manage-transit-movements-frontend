@@ -91,4 +91,16 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     val url = s"${config.commonTransitConventionTradersUrl}$path"
     http.GET[MessageModel](url)(implicitly, headers, ec)
   }
+
+  def getMessageForMessageId[MessageModel](departureId: String, messageId: String)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier,
+    httpReads: HttpReads[MessageModel]
+  ): Future[MessageModel] = {
+    val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId"
+    http
+      .GET[MessageModel](url)(implicitly, headers, ec)
+
+  }
+
 }

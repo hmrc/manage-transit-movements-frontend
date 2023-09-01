@@ -22,6 +22,7 @@ import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generators.Generators
 import models.RejectionType
 import models.LocalReferenceNumber
+import models.RejectionType.DeclarationRejection
 import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
@@ -290,6 +291,24 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         when(mockMovementConnector.getSpecificMessageByPath[IE056Data](any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
 
         departureP5MessageService.filterForMessage[IE056Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie056Data)
+      }
+    }
+
+    "getMessageForMessageId" - {
+
+      "must return a message by ID" in {
+
+        val ie056Data: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperationIE056(Some("CD3232"), None, DeclarationRejection),
+            CustomsOfficeOfDeparture("1234"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+
+        when(mockMovementConnector.getMessageForMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
+
+        departureP5MessageService.getMessageWithMessageId[IE056Data](departureId = "6365135ba5e821ee", messageId = messageId).futureValue mustBe ie056Data
       }
     }
   }
