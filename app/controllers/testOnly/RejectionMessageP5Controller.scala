@@ -19,6 +19,7 @@ package controllers.testOnly
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureCacheConnector
 import controllers.actions._
+import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -41,45 +42,47 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
-    implicit request =>
-      if (request.isDeclarationAmendable) {
+  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+      implicit request =>
+        if (request.isDeclarationAmendable) {
 
-        val currentPage = page.getOrElse(1)
+          val currentPage = page.getOrElse(1)
 
-        val paginationViewModel = ListPaginationViewModel(
-          totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
-          currentPage = currentPage,
-          numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-          href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId).url
-        )
+          val paginationViewModel = ListPaginationViewModel(
+            totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
+            currentPage = currentPage,
+            numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
+            href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
+          )
 
-        val rejectionMessageP5ViewModel =
-          viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), request.lrn)
+          val rejectionMessageP5ViewModel =
+            viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value)
 
-        rejectionMessageP5ViewModel.map(
-          viewModel => Ok(view(viewModel, departureId, paginationViewModel))
-        )
-      } else {
-        Future.successful(
-          Redirect(controllers.routes.SessionExpiredController.onPageLoad())
-        )
-      }
-  }
-
-  def onAmend(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
-    implicit request =>
-      val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
-      if (request.isDeclarationAmendable && xPaths.nonEmpty) {
-        cacheConnector.handleErrors(request.lrn, xPaths).map {
-          case true =>
-            Redirect(config.departureNewLocalReferenceNumberUrl(request.lrn))
-          case false =>
-            Redirect(controllers.routes.ErrorController.technicalDifficulties())
+          rejectionMessageP5ViewModel.map(
+            viewModel => Ok(view(viewModel, departureId, paginationViewModel, localReferenceNumber))
+          )
+        } else {
+          Future.successful(
+            Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          )
         }
-      } else {
-        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
-      }
-  }
+    }
+
+  def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+      implicit request =>
+        val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
+        if (request.isDeclarationAmendable && xPaths.nonEmpty) {
+          cacheConnector.handleErrors(localReferenceNumber.value, xPaths).map {
+            case true =>
+              Redirect(config.departureNewLocalReferenceNumberUrl(localReferenceNumber.value))
+            case false =>
+              Redirect(controllers.routes.ErrorController.technicalDifficulties())
+          }
+        } else {
+          Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+        }
+    }
 
 }

@@ -19,6 +19,7 @@ package controllers.actions
 import cats.data.OptionT
 import connectors.DepartureCacheConnector
 import controllers.routes
+import models.LocalReferenceNumber
 import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
 import models.departureP5.IE056Data
 import models.requests.{DepartureRejectionMessageRequest, IdentifierRequest}
@@ -28,6 +29,7 @@ import services.DepartureP5MessageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,12 +37,13 @@ class DepartureRejectionMessageActionProvider @Inject() (departureP5MessageServi
   ec: ExecutionContext
 ) {
 
-  def apply(departureId: String): ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] =
-    new DepartureRejectionMessageAction(departureId, departureP5MessageService, cacheConnector)
+  def apply(departureId: String, localReferenceNumber: LocalReferenceNumber): ActionRefiner[IdentifierRequest, DepartureRejectionMessageRequest] =
+    new DepartureRejectionMessageAction(departureId, localReferenceNumber, departureP5MessageService, cacheConnector)
 }
 
 class DepartureRejectionMessageAction(
   departureId: String,
+  localReferenceNumber: LocalReferenceNumber,
   departureP5MessageService: DepartureP5MessageService,
   cacheConnector: DepartureCacheConnector
 )(implicit protected val executionContext: ExecutionContext)
@@ -51,11 +54,10 @@ class DepartureRejectionMessageAction(
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (for {
-      ie056 <- OptionT(departureP5MessageService.getMessage[IE056Data](departureId, RejectedByOfficeOfDeparture))
-      lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId)) // TODO: Remove once LRN is exposed to use in metadata
+      ie056 <- OptionT(departureP5MessageService.filterForMessage[IE056Data](departureId, RejectedByOfficeOfDeparture))
       xPaths = ie056.data.functionalErrors.map(_.errorPointer)
-      isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(lrn, xPaths))
-    } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn))
+      isDeclarationAmendable <- OptionT.liftF(cacheConnector.isDeclarationAmendable(localReferenceNumber.value, xPaths))
+    } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, localReferenceNumber.value))
       .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
       .value
 

@@ -21,6 +21,7 @@ import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
 import forms.DeparturesSearchFormProvider
 import generators.Generators
+import models.LocalReferenceNumber
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
@@ -67,6 +68,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   val departureMovement: DepartureMovement = DepartureMovement(
     "63651574c3447b12",
     None,
+    LocalReferenceNumber("AB123"),
     dateTime,
     "movements/departures/63651574c3447b12/messages"
   )
@@ -95,7 +97,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
     status = "movement.status.P5.departureNotificationSubmitted",
     actions = Seq(
       ViewMovementAction(
-        s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/63651574c3447b12",
+        s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/63651574c3447b12/index/AB123",
         "movement.status.P5.action.departureNotification.cancelDeclaration"
       )
     )
@@ -112,7 +114,15 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
           .thenReturn(
             Future.successful(
-              Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123", None, isDeclarationAmendable = true, Seq.empty))
+              Seq(
+                DepartureMovementAndMessage(departureMovement,
+                                            mockDepartureMessageResponse,
+                                            LocalReferenceNumber("AB123"),
+                                            None,
+                                            isDeclarationAmendable = true,
+                                            Seq.empty
+                )
+              )
             )
           )
 
@@ -148,7 +158,15 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
           .thenReturn(
             Future.successful(
-              Seq(DepartureMovementAndMessage(departureMovement, mockDepartureMessageResponse, "AB123", None, isDeclarationAmendable = true, Seq.empty))
+              Seq(
+                DepartureMovementAndMessage(departureMovement,
+                                            mockDepartureMessageResponse,
+                                            LocalReferenceNumber("AB123"),
+                                            None,
+                                            isDeclarationAmendable = true,
+                                            Seq.empty
+                )
+              )
             )
           )
 

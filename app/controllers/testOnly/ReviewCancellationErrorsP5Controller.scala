@@ -18,6 +18,7 @@ package controllers.testOnly
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
+import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,22 +40,23 @@ class ReviewCancellationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)).async {
-    implicit request =>
-      val currentPage = page.getOrElse(1)
+  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+      implicit request =>
+        val currentPage = page.getOrElse(1)
 
-      val paginationViewModel = ListPaginationViewModel(
-        totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
-        currentPage = currentPage,
-        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId).url
-      )
+        val paginationViewModel = ListPaginationViewModel(
+          totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
+          currentPage = currentPage,
+          numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+          href = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
+        )
 
-      val rejectionMessageP5ViewModel =
-        viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), request.lrn)
+        val rejectionMessageP5ViewModel =
+          viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value)
 
-      rejectionMessageP5ViewModel.map(
-        viewModel => Ok(view(viewModel, departureId, paginationViewModel))
-      )
-  }
+        rejectionMessageP5ViewModel.map(
+          viewModel => Ok(view(viewModel, departureId, paginationViewModel))
+        )
+    }
 }

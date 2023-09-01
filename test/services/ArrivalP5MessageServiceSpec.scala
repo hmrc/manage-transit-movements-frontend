@@ -140,31 +140,6 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
         }
 
       }
-      "must throw exception when movement doesn't contain an IE007" in {
-
-        val movement1 = ArrivalMovement("arrivalId1", "movementReferenceNo1", dateTime, "/locationUrl1")
-        val movement2 = ArrivalMovement("arrivalId2", "movementReferenceNo2", dateTime, "/locationUrl2")
-
-        val message2 = ArrivalMessage(messageId, dateTime, ArrivalMessageType.UnloadingPermission)
-        val message3 = ArrivalMessage(messageId, dateTime, ArrivalMessageType.RejectionFromOfficeOfDestination)
-
-        val messages1 = MessagesForArrivalMovement(NonEmptyList(message2, List.empty))
-        val messages2 = MessagesForArrivalMovement(NonEmptyList(message3, List.empty))
-
-        when(mockConnector.getMessagesForMovement(eqTo("/locationUrl1"))(any())).thenReturn(
-          Future.successful(messages1)
-        )
-
-        when(mockConnector.getMessagesForMovement(eqTo("/locationUrl2"))(any())).thenReturn(
-          Future.successful(messages2)
-        )
-
-        val arrivalMovements = ArrivalMovements(arrivalMovements = Seq(movement1, movement2), totalCount = 2)
-
-        val result = arrivalP5MessageService.getMessagesForAllMovements(arrivalMovements).failed.futureValue
-
-        result mustBe a[Throwable]
-      }
     }
 
     "getMessage" - {

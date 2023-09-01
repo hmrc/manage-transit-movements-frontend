@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import cats.data.OptionT
+import cats.data.EitherT
 import controllers.routes
 import models.departureP5.DepartureMessageType.CancellationDecision
 import models.departureP5.IE009Data
@@ -47,12 +47,14 @@ class DepartureCancelledAction(departureId: String, departureP5MessageService: D
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    (for {
-      ie009 <- OptionT(departureP5MessageService.getMessage[IE009Data](departureId, CancellationDecision))
-      lrn   <- OptionT(departureP5MessageService.getLRNFromDeclarationMessage(departureId)) // TODO: Remove once LRN is exposed to use in metadata
-    } yield DepartureCancelledRequest(request, request.eoriNumber, ie009.data, lrn))
-      .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
+    EitherT
+      .fromOptionF(
+        fopt = departureP5MessageService.filterForMessage[IE009Data](departureId, CancellationDecision),
+        ifNone = Redirect(routes.ErrorController.technicalDifficulties())
+      )
+      .map(
+        message => DepartureCancelledRequest(request, request.eoriNumber, message.data)
+      )
       .value
-
   }
 }
