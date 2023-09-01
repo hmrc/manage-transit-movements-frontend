@@ -56,9 +56,8 @@ class IE009DataSpec extends SpecBase {
 
       val expectedResult = IE009Data(
         IE009MessageData(
-          TransitOperation(
-            Some(mrn),
-            None
+          TransitOperationIE009(
+            Some(mrn)
           ),
           Invalidation(
             Some(decisionDateAndTime),

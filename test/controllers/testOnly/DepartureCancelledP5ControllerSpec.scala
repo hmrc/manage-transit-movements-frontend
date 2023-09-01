@@ -74,9 +74,8 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       "when decision is true" in {
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.now()),
@@ -106,9 +105,8 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       "when decision is false" in {
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.now()),
@@ -141,9 +139,8 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.now()),
@@ -182,9 +179,8 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.now()),

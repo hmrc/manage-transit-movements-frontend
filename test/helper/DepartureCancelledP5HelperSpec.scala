@@ -53,8 +53,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              None,
+            TransitOperationIE009(
               None
             ),
             Invalidation(
@@ -80,9 +79,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.now()),
@@ -111,9 +109,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abc123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               None,
@@ -138,9 +135,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
@@ -171,9 +167,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
           val message: IE009Data = IE009Data(
             IE009MessageData(
-              TransitOperation(
-                Some("abd123"),
-                None
+              TransitOperationIE009(
+                Some("abd123")
               ),
               Invalidation(
                 Some(LocalDateTime.now()),
@@ -199,9 +194,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
           val message: IE009Data = IE009Data(
             IE009MessageData(
-              TransitOperation(
-                Some("abd123"),
-                None
+              TransitOperationIE009(
+                Some("abd123")
               ),
               Invalidation(
                 Some(LocalDateTime.now()),
@@ -231,9 +225,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.now()),
@@ -262,9 +255,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
           val message: IE009Data = IE009Data(
             IE009MessageData(
-              TransitOperation(
-                Some("abd123"),
-                None
+              TransitOperationIE009(
+                Some("abd123")
               ),
               Invalidation(
                 Some(LocalDateTime.now()),
@@ -297,9 +289,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.now()),
@@ -324,9 +315,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.now()),
@@ -355,9 +345,8 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
         val message: IE009Data = IE009Data(
           IE009MessageData(
-            TransitOperation(
-              Some("abd123"),
-              None
+            TransitOperationIE009(
+              Some("abd123")
             ),
             Invalidation(
               Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),

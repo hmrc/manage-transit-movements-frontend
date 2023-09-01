@@ -30,9 +30,8 @@ class FakeDepartureCancelledAction(departureId: String, departureP5MessageServic
 
   val message: IE009Data = IE009Data(
     IE009MessageData(
-      TransitOperation(
-        Some("abd123"),
-        None
+      TransitOperationIE009(
+        Some("abd123")
       ),
       Invalidation(
         Some(LocalDateTime.now()),
