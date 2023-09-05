@@ -20,6 +20,7 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 import views.html.departure.TestOnly.GuaranteeRejectedP5View
 
 import javax.inject.Inject
@@ -38,7 +39,11 @@ class GuaranteeRejectedP5Controller @Inject() (
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen identify andThen guaranteeRejectedAction(departureId, messageId)) {
       implicit request =>
-        println(s"\n\n\n\n ${request.ie055MessageData} \n\n\n\n\n")
+
+        request.ie055MessageData
+
+        val viewModel = new GuaranteeRejectedP5ViewModel(request.ie055MessageData.guaranteeReferences)
+
         Ok(view())
     }
 }

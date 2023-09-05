@@ -499,3 +499,6 @@ departure.cancellation.message.customsOfficeContact.teleNotAvailAndOfficeNameNot
 row.label.dateAndTimeOfDecision =  Date and time of decision
 row.label.initiatedByCustoms =  Initiated by Customs?
 row.label.justification =  Comments
+
+guarantee.rejected.message.title = Amend guarantee errors
+guarantee.rejected.message.heading = Amend guarantee errors
