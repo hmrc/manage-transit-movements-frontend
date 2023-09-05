@@ -25,6 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Content
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels._
@@ -226,5 +227,25 @@ trait ViewModelGenerators {
         val sectionTitles = sections.map(_.sectionTitle)
         sectionTitles.distinct.size == sectionTitles.size
     }
+  }
+
+  implicit lazy val arbitraryTableRow: Arbitrary[TableRow] = Arbitrary {
+    for {
+      content <- nonEmptyString
+    } yield TableRow(Text(content))
+  }
+
+  implicit lazy val arbitraryTableRows: Arbitrary[List[TableRow]] = Arbitrary {
+    listWithMaxLength[TableRow]()
+  }
+
+  implicit lazy val arbitraryHeadCell: Arbitrary[HeadCell] = Arbitrary {
+    for {
+      content <- nonEmptyString
+    } yield HeadCell(Text(content))
+  }
+
+  implicit lazy val arbitraryHeadCells: Arbitrary[List[HeadCell]] = Arbitrary {
+    listWithMaxLength[HeadCell]()
   }
 }

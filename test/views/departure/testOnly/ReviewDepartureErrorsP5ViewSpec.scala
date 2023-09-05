@@ -48,6 +48,8 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
     additionalParams = Seq()
   )
 
+  //  override val errorRows: Seq[TableRow] = arbitrary[List[TableRow]].sample.value
+
   private def applyView(
     viewModel: ReviewDepartureErrorsP5ViewModel,
     paginationViewModel: ListPaginationViewModel
@@ -79,7 +81,7 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
 
   behave like pageWithPagination(controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId.toString, lrn).url)
 
-  behave like pageWithSummaryLists()
+  behave like summaryLists
 
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
@@ -123,5 +125,4 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
     "Make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
-
 }

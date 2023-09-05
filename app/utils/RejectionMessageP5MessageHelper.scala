@@ -71,6 +71,7 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
           TableRow(Text(code)),
           TableRow(Text(error.errorReason))
         )
+      // TODO show error code if the reference code look up fails
       case _ =>
         Seq.empty
     }

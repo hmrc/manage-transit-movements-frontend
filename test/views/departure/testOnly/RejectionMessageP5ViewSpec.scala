@@ -19,14 +19,19 @@ package views.departure.testOnly
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.departure.RejectionMessageP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
-import views.behaviours.{PaginationViewBehaviours, SummaryListViewBehaviours}
+import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departure.TestOnly.RejectionMessageP5View
 
-class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+
+class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
+
+  override val headCells: Seq[HeadCell] = Seq(HeadCell(Text("Error code")), HeadCell(Text("Reason")))
+  override val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
 
   override val prefix: String = "departure.ie056.message"
 
@@ -37,7 +42,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
-  private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, lrn.toString, false)
+  private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(tableRows), lrn.toString, false)
 
   val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
     totalNumberOfItems = sections.length,
@@ -60,10 +65,6 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
     applyView(rejectionMessageP5ViewModel, paginationViewModel)
 
-  override def summaryLists: Seq[SummaryList] = sections.map(
-    section => SummaryList(section.rows)
-  )
-
   behave like pageWithTitle()
 
   behave like pageWithBackLink()
@@ -78,14 +79,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   behave like pageWithPagination(controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId.toString, lrn).url)
 
-  behave like pageWithSummaryLists()
-
-  "must render section titles when rows are non-empty" - {
-    sections.foreach(_.sectionTitle.map {
-      sectionTitle =>
-        behave like pageWithContent("h2", sectionTitle)
-    })
-  }
+  behave like pageWithTable()
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)

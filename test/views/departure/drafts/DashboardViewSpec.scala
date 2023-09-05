@@ -17,7 +17,7 @@
 package views.departure.drafts
 
 import forms.DeparturesSearchFormProvider
-import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
+import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -30,8 +30,6 @@ import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
 import viewModels.pagination.ListPaginationViewModel
 import views.behaviours.PaginationViewBehaviours
 import views.html.departure.drafts.DashboardView
-
-import java.time.LocalDateTime
 
 class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] {
 
