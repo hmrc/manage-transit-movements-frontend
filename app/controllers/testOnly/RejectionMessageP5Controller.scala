@@ -20,8 +20,10 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureCacheConnector
 import controllers.actions._
 import models.LocalReferenceNumber
+import models.departureP5.DepartureMessageType.AllocatedMRN
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.DepartureP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
@@ -37,6 +39,7 @@ class RejectionMessageP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
   cacheConnector: DepartureCacheConnector,
+  departureP5MessageService: DepartureP5MessageService,
   view: RejectionMessageP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
@@ -74,11 +77,14 @@ class RejectionMessageP5Controller @Inject() (
       implicit request =>
         val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
         if (request.isDeclarationAmendable && xPaths.nonEmpty) {
-          cacheConnector.handleErrors(localReferenceNumber.value, xPaths).map {
+          cacheConnector.handleErrors(localReferenceNumber.value, xPaths).flatMap {
             case true =>
-              Redirect(config.departureNewLocalReferenceNumberUrl(localReferenceNumber.value))
+              departureP5MessageService.getSpecificMessageMetaData(departureId, AllocatedMRN).map {
+                case Some(_) => Redirect(config.departureNewLocalReferenceNumberUrl(localReferenceNumber.value))
+                case None    => Redirect(config.departureFrontendTaskListUrl(localReferenceNumber.value))
+              }
             case false =>
-              Redirect(controllers.routes.ErrorController.technicalDifficulties())
+              Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
           }
         } else {
           Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))

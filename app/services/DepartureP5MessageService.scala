@@ -63,7 +63,7 @@ class DepartureP5MessageService @Inject() (
         )
     }
 
-  private def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String, typeOfMessage: T)(implicit
+  def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String, typeOfMessage: T)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier
   ): Future[Option[DepartureMessageMetaData]] =
