@@ -256,9 +256,10 @@ trait ModelGenerators {
       for {
         departureId      <- arbitrary[String]
         mrn              <- arbitrary[String]
+        lrn              <- arbitrary[LocalReferenceNumber]
         updated          <- arbitrary[LocalDateTime]
         messagesLocation <- arbitrary[String]
-      } yield DepartureMovement(departureId, Some(mrn), updated, messagesLocation)
+      } yield DepartureMovement(departureId, Some(mrn), lrn, updated, messagesLocation)
     }
 
   implicit lazy val arbitraryDepartureMovements: Arbitrary[DepartureMovements] =

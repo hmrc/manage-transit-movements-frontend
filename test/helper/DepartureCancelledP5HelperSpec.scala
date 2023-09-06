@@ -110,7 +110,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
         val message: IE009Data = IE009Data(
           IE009MessageData(
             TransitOperationIE009(
-              Some("abc123")
+              Some("abd123")
             ),
             Invalidation(
               None,

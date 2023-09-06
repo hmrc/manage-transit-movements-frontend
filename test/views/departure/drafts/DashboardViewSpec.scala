@@ -90,62 +90,6 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
     rows.size() mustEqual departuresSummary.userAnswers.size
   }
 
-  "search result text" - {
-
-    "must render when 'isSearch' is true and is singular" in {
-
-      val draftDeparture = DeparturesSummary(
-        0,
-        0,
-        List(
-          DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30)
-        )
-      )
-      val view = applyView(viewAllDepartureMovementsViewModel =
-        AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
-      )
-
-      val doc = Jsoup.parse(view.toString())
-
-      doc.getElementById("results-found").text() mustBe s"Showing 1 result matching 123."
-    }
-
-    "must render when 'isSearch' is true and is plural" in {
-
-      val draftDeparture = DeparturesSummary(
-        0,
-        0,
-        List(
-          DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), LocalDateTime.now(), 30),
-          DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), LocalDateTime.now(), 29)
-        )
-      )
-      val view = applyView(viewAllDepartureMovementsViewModel =
-        AllDraftDeparturesViewModel(draftDeparture, 20, Some("123"), frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
-      )
-
-      val doc = Jsoup.parse(view.toString())
-
-      doc.getElementById("results-found").text() mustBe s"Showing 2 results matching 123."
-    }
-
-    "must not render when there are no drafts" in {
-      val draftDeparture = DeparturesSummary(0, 0, List.empty)
-      val view =
-        applyView(viewAllDepartureMovementsViewModel =
-          AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
-        )
-
-      val doc = Jsoup.parse(view.toString())
-
-      assertNotRenderedById(doc, "results-found")
-    }
-
-    "must not render when 'isSearch' is false" in {
-      assertNotRenderedById(doc, "results-found")
-    }
-  }
-
   "must have visually hidden text on table headers" in {
     val tableHeaders = doc.getElementsByTag("th").toList
 

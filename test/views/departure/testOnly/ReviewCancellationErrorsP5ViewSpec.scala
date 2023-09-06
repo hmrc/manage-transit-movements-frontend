@@ -71,7 +71,7 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
 
   behave like pageWithCaption(s"LRN: $lrn")
 
-  behave like pageWithPagination(controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId.toString).url)
+  behave like pageWithPagination(controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId.toString, lrn).url)
 
   behave like pageWithSummaryLists()
 

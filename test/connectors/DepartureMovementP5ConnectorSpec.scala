@@ -21,6 +21,7 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
+import models.{Availability, LocalReferenceNumber, RejectionType}
 import models.RejectionType.DeclarationRejection
 import models.{Availability, RejectionType}
 import models.departureP5._
@@ -118,6 +119,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 },
                 "id": "63651574c3447b12",
                 "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+                "localReferenceNumber": "AB123",
                 "created": "2022-11-04T13:36:52.332Z",
                 "updated": "2022-11-04T13:36:52.332Z",
                 "enrollmentEORINumber": "9999912345",
@@ -134,6 +136,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 },
                 "id": "6365135ba5e821ee",
                 "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+                "localReferenceNumber": "CD123",
                 "created": "2022-11-04T13:27:55.522Z",
                 "updated": "2022-11-04T13:27:55.522Z",
                 "enrollmentEORINumber": "9999912345",
@@ -156,12 +159,14 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             DepartureMovement(
               "63651574c3447b12",
               Some("27WF9X1FQ9RCKN0TM3"),
+              LocalReferenceNumber("AB123"),
               LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
               "movements/departures/63651574c3447b12/messages"
             ),
             DepartureMovement(
               "6365135ba5e821ee",
               Some("27WF9X1FQ9RCKN0TM3"),
+              LocalReferenceNumber("CD123"),
               LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
               "movements/departures/6365135ba5e821ee/messages"
             )
@@ -216,7 +221,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
           |        }
           |      },
           |      "id": "63651574c3447b12",
-          |      "movementReferenceNumber": "LRN12345",
+          |      "localReferenceNumber": "LRN12345",
           |      "created": "2022-11-04T13:36:52.332Z",
           |      "updated": "2022-11-04T13:36:52.332Z",
           |      "enrollmentEORINumber": "9999912345",
@@ -238,7 +243,8 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             departureMovements = Seq(
               DepartureMovement(
                 "63651574c3447b12",
-                Some("LRN12345"),
+                None,
+                LocalReferenceNumber("LRN12345"),
                 LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
                 "movements/departures/63651574c3447b12/messages"
               )
@@ -261,7 +267,8 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             departureMovements = Seq(
               DepartureMovement(
                 "63651574c3447b12",
-                Some("LRN12345"),
+                None,
+                LocalReferenceNumber("LRN12345"),
                 LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
                 "movements/departures/63651574c3447b12/messages"
               )
@@ -297,6 +304,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               |      },
               |      "id": "63651574c3447b12",
               |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+              |      "localReferenceNumber": "AB123",
               |      "created": "2022-11-04T13:36:52.332Z",
               |      "updated": "2022-11-04T13:36:52.332Z",
               |      "enrollmentEORINumber": "9999912345",
@@ -505,7 +513,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       }
     }
 
-    "getSpecificMessage" - {
+    "getSpecificMessageByPath" - {
 
       "must return an IE060 Message" in {
 
@@ -567,7 +575,11 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         val expectedResult = IE060Data(
           IE060MessageData(
-            TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            TransitOperationIE060(Some("CD3232"),
+                                  Some("AB123"),
+                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                  "notification1"
+            ),
             CustomsOfficeOfDeparture("22323323"),
             Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
             Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
@@ -579,7 +591,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getSpecificMessage[IE060Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+        connector.getSpecificMessageByPath[IE060Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
 
       }
 
@@ -648,52 +660,8 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getSpecificMessage[IE056Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
+        connector.getSpecificMessageByPath[IE056Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
 
-      }
-    }
-
-    "getLRN" - {
-
-      "must return LocalReferenceNumber" in {
-
-        val ie015Body = Json.obj(
-          "CC015" -> Json.obj(
-            "TransitOperation" -> Json.obj(
-              "LRN" -> "AB123"
-            )
-          )
-        )
-
-        val responseJson = Json.parse(
-          s"""
-             |{
-             |  "_links": {
-             |    "self": {
-             |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
-             |    },
-             |    "departure": {
-             |      "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
-             |    }
-             |  },
-             |  "id": "62f4ebbb765ba8c2",
-             |  "departureId": "62f4ebbbf581d4aa",
-             |  "received": "2022-08-11T11:44:59.83705",
-             |  "type": "IE015",
-             |  "status": "Success",
-             |  "body": ${ie015Body.toString}
-             |}
-             |""".stripMargin
-        )
-
-        server.stubFor(
-          get(urlEqualTo(s"/movements/departures/$departureId/messages/ab123"))
-            .willReturn(okJson(responseJson.toString()))
-        )
-
-        val result = connector.getLRN(s"movements/departures/$departureId/messages/ab123").futureValue
-
-        result mustBe LocalReferenceNumber("AB123")
       }
 
     }

@@ -66,7 +66,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
 
   val departureCancelledController: String =
-    controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5).url
+    controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, lrn).url
 
   "DepartureCancelledP5Controller" - {
 
@@ -89,8 +89,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           )
         )
 
-        when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
+        when(mockDepartureP5MessageService.filterForMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
 
         departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
 
@@ -99,7 +98,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5).url
+        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5, lrn).url
 
       }
 
@@ -121,8 +120,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           )
         )
 
-        when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
+        when(mockDepartureP5MessageService.filterForMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
 
         departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
 
@@ -131,7 +129,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5).url
+        redirectLocation(result).value mustEqual controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5, lrn).url
       }
     }
 
@@ -158,15 +156,14 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
         val departureCancelledP5ViewModel = new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None, isCancelled = true)
 
-        when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
+        when(mockDepartureP5MessageService.filterForMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
         when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
         departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5).url)
+        val request = FakeRequest(GET, controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5, lrn).url)
 
         val result = route(app, request).value
 
@@ -199,15 +196,14 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
         val departureCancelledP5ViewModel = new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None, isCancelled = false)
 
-        when(mockDepartureP5MessageService.getMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some(lrn.toString)))
+        when(mockDepartureP5MessageService.filterForMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
         when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
         departureCancelledAction(departureIdP5, mockDepartureP5MessageService)
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5).url)
+        val request = FakeRequest(GET, controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5, lrn).url)
 
         val result = route(app, request).value
 

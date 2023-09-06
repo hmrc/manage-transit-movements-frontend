@@ -21,6 +21,7 @@ import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generators.Generators
 import models.RejectionType
+import models.LocalReferenceNumber
 import models.RejectionType.DeclarationRejection
 import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5._
@@ -58,6 +59,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           DepartureMovement(
             "AB123",
             Some("MRN"),
+            LocalReferenceNumber("LRN"),
             dateTimeNow,
             "location"
           )
@@ -92,10 +94,6 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             Future.successful(messagesForMovement)
           )
 
-          when(mockMovementConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
-            Future.successful(lrnLocal)
-          )
-
           when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(
             Future.successful(DepartureMessages(Nil))
           )
@@ -106,7 +104,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             DepartureMovementAndMessage(
               departureMovements.departureMovements.head,
               messagesForMovement,
-              lrnLocal.toString,
+              LocalReferenceNumber("LRN"),
               None,
               isDeclarationAmendable = false,
               xPaths = Seq.empty
@@ -148,10 +146,6 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             Future.successful(messagesForMovement)
           )
 
-          when(mockMovementConnector.getLRN(messagesForMovement.messages.head.bodyPath)).thenReturn(
-            Future.successful(lrnLocal)
-          )
-
           val messages = DepartureMessages(
             List(
               DepartureMessageMetaData(
@@ -177,7 +171,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             Future.successful(messages)
           )
 
-          when(mockMovementConnector.getSpecificMessage[IE056Data](any())(any(), any(), any())).thenReturn(
+          when(mockMovementConnector.getSpecificMessageByPath[IE056Data](any())(any(), any(), any())).thenReturn(
             Future.successful(ie056)
           )
 
@@ -191,7 +185,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             DepartureMovementAndMessage(
               departureMovements.departureMovements.head,
               messagesForMovement,
-              lrnLocal.toString,
+              LocalReferenceNumber("LRN"),
               Some(rejectionType),
               isDeclarationAmendable = isDeclarationAmendable,
               xPaths = ie056.data.functionalErrors.map(_.errorPointer)
@@ -200,7 +194,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
           result mustBe expectedResult
 
-          verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrnLocal.toString), eqTo(Seq("pointer1", "pointer2")))(any())
+          verify(mockCacheConnector).isDeclarationAmendable(eqTo("LRN"), eqTo(Seq("pointer1", "pointer2")))(any())
         }
       }
 
@@ -251,7 +245,11 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
         val ie060Data = IE060Data(
           IE060MessageData(
-            TransitOperation(Some("CD3232"), Some("AB123"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+            TransitOperationIE060(Some("CD3232"),
+                                  Some("AB123"),
+                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                  "notification1"
+            ),
             CustomsOfficeOfDeparture("22323323"),
             Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
             Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
@@ -259,9 +257,9 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         )
 
         when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-        when(mockMovementConnector.getSpecificMessage[IE060Data](any())(any(), any(), any())).thenReturn(Future.successful(ie060Data))
+        when(mockMovementConnector.getSpecificMessageByPath[IE060Data](any())(any(), any(), any())).thenReturn(Future.successful(ie060Data))
 
-        departureP5MessageService.getMessage[IE060Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie060Data)
+        departureP5MessageService.filterForMessage[IE060Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie060Data)
       }
 
       "must return an IE056Data when given Departure Id" in {
@@ -290,47 +288,9 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         )
 
         when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-        when(mockMovementConnector.getSpecificMessage[IE056Data](any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
+        when(mockMovementConnector.getSpecificMessageByPath[IE056Data](any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
 
-        departureP5MessageService.getMessage[IE056Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie056Data)
-      }
-    }
-
-    "getLRNFromDeclarationMessage" - {
-
-      "must return a LRN when given a Departure Id" in {
-
-        val messages = DepartureMessages(
-          List(
-            DepartureMessageMetaData(
-              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.DepartureNotification,
-              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
-            )
-          )
-        )
-
-        when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-        when(mockMovementConnector.getLRN(any())(any())).thenReturn(Future.successful(lrnLocal))
-
-        departureP5MessageService.getLRNFromDeclarationMessage(departureId = "6365135ba5e821ee").futureValue mustBe Some(lrnLocal.referenceNumber)
-      }
-
-      "must return None when IE015 message not found in meta data when given a Departure Id" in {
-
-        val messages = DepartureMessages(
-          List(
-            DepartureMessageMetaData(
-              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.GoodsUnderControl,
-              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
-            )
-          )
-        )
-
-        when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-
-        departureP5MessageService.getLRNFromDeclarationMessage(departureId = "6365135ba5e821ee").futureValue mustBe None
+        departureP5MessageService.filterForMessage[IE056Data](departureId = "6365135ba5e821ee", GoodsUnderControl).futureValue mustBe Some(ie056Data)
       }
     }
 

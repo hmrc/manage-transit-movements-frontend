@@ -18,6 +18,7 @@ package controllers.testOnly
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -38,12 +39,13 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(departureId)) {
-    implicit request =>
-      if (request.ie056MessageData.functionalErrors.isEmpty) {
-        Ok(view(viewModelProvider.apply(request.lrn)))
-      } else {
-        Redirect(controllers.routes.ErrorController.technicalDifficulties())
-      }
-  }
+  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)) {
+      implicit request =>
+        if (request.ie056MessageData.functionalErrors.isEmpty) {
+          Ok(view(viewModelProvider.apply(request.lrn)))
+        } else {
+          Redirect(controllers.routes.ErrorController.technicalDifficulties())
+        }
+    }
 }

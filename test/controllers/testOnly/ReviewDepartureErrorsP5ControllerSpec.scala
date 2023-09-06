@@ -48,12 +48,13 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
   private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                             mockDepartureP5MessageService,
-                                                                                                             mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
+                                                                                                                    lrn,
+                                                                                                                    mockDepartureP5MessageService,
+                                                                                                                    mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5).url
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -81,9 +82,8 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.getMessage[IE056Data](any(), any())(any(), any(), any()))
+      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
-      when(mockDepartureP5MessageService.getLRNFromDeclarationMessage(any())(any(), any())).thenReturn(Future.successful(Some("LRNAB123")))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(ReviewDepartureErrorsP5ViewModel(sections, lrn.toString, multipleErrors = true)))
@@ -94,7 +94,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, lrn.toString).url,
+        href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
         additionalParams = Seq()
       )
 

@@ -19,7 +19,7 @@ package models.departureP5
 import play.api.libs.json.{Json, OFormat}
 
 case class IE060MessageData(
-  TransitOperation: TransitOperation,
+  TransitOperation: TransitOperationIE060,
   CustomsOfficeOfDeparture: CustomsOfficeOfDeparture,
   TypeOfControls: Option[Seq[TypeOfControls]],
   RequestedDocument: Option[Seq[RequestedDocument]]
