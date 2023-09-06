@@ -29,6 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ArrivalP5MessageService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel.UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
@@ -48,6 +49,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
 
   lazy val controller: String = controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, departureIdP5).url
   val sections: Seq[Section]  = arbitrarySections.arbitrary.sample.value
+  val tableRow: TableRow      = arbitraryTableRow.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -75,7 +77,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
+        .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
       rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
@@ -87,7 +89,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
         additionalParams = Seq()
       )
 
-      val rejectionMessageP5ViewModel = new UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, mrn, true)
+      val rejectionMessageP5ViewModel = new UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, true)
 
       val request = FakeRequest(GET, controller)
 
@@ -112,7 +114,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
+        .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
       rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 

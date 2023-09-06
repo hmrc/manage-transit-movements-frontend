@@ -19,14 +19,15 @@ package viewModels.P5.arrival
 import models.departureP5.FunctionalError
 import play.api.i18n.Messages
 import services.ReferenceDataService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.RejectionMessageP5MessageHelper
-import viewModels.sections.Section
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
-case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections: Seq[Section], mrn: String, multipleErrors: Boolean) {
+case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], mrn: String, multipleErrors: Boolean) {
 
   def title(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.title")
 
@@ -53,6 +54,11 @@ case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections: Seq[Section]
 
   def hyperlink(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.hyperlink")
 
+  def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
+    HeadCell(Text(messages("error.table.errorCode"))),
+    HeadCell(Text(messages("error.table.errorReason")))
+  )
+
 }
 
 object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
@@ -66,13 +72,7 @@ object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
       val helper = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
 
       val multipleErrors = functionalErrors.length > 1
-      val sections       = Seq(helper.errorSection())
-      Future
-        .sequence(sections)
-        .map(
-          sec => UnloadingRemarkWithFunctionalErrorsP5ViewModel(sec, mrn, multipleErrors)
-        )
-
+      helper.tableRows().map(UnloadingRemarkWithFunctionalErrorsP5ViewModel(_, mrn, multipleErrors))
     }
   }
 }

@@ -20,6 +20,7 @@ import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
@@ -28,12 +29,12 @@ import views.html.arrival.P5.UnloadingRemarkWithFunctionalErrorsP5View
 
 class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {
 
-  override val prefix: String = "arrival.ie057.review.unloading.message"
-
+  override val prefix: String        = "arrival.ie057.review.unloading.message"
+  val tableRow: TableRow             = arbitraryTableRow.arbitrary.sample.value
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
   private val viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel =
-    new UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, mrn, false)
+    new UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, false)
 
   override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
 
@@ -73,20 +74,13 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   behave like pageWithPagination(controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url)
 
-  behave like pageWithSummaryLists()
+  behave like summaryLists
 
   behave like pageWithoutFormAction()
 
   behave like pageWithoutSubmitButton()
 
   behave like pageWithCaption(s"MRN: $mrn")
-
-  "must render section titles when rows are non-empty" - {
-    sections.foreach(_.sectionTitle.map {
-      sectionTitle =>
-        behave like pageWithContent("h2", sectionTitle)
-    })
-  }
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
