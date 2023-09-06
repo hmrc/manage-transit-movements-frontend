@@ -20,6 +20,7 @@ import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
@@ -29,11 +30,12 @@ import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {
 
   override val prefix: String = "departure.ie056.review.message"
+  val tableRow: TableRow      = arbitraryTableRow.arbitrary.sample.value
 
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
   private val reviewRejectionMessageP5ViewModel =
-    new ReviewDepartureErrorsP5ViewModel(sections, lrn.toString, false)
+    new ReviewDepartureErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, false)
 
   override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
 
@@ -47,8 +49,6 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
     href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId.toString, lrn).url,
     additionalParams = Seq()
   )
-
-  //  override val errorRows: Seq[TableRow] = arbitrary[List[TableRow]].sample.value
 
   private def applyView(
     viewModel: ReviewDepartureErrorsP5ViewModel,
@@ -82,13 +82,6 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
   behave like pageWithPagination(controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId.toString, lrn).url)
 
   behave like summaryLists
-
-  "must render section titles when rows are non-empty" - {
-    sections.foreach(_.sectionTitle.map {
-      sectionTitle =>
-        behave like pageWithContent("h2", sectionTitle)
-    })
-  }
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
