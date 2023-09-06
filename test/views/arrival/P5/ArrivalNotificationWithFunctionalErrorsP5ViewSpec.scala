@@ -20,6 +20,7 @@ import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
@@ -31,17 +32,13 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
     with SummaryListViewBehaviours
     with Generators {
 
-  override val prefix: String = "arrival.ie057.review.notification.message"
-
-  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
-
-  private val arrivalNotificationWithFunctionalErrorsP5ViewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel =
-    new ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, mrn, false)
-
+  override val prefix: String        = "arrival.ie057.review.notification.message"
   override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
 
   override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
     ListPaginationViewModel(_, _, _, _)
+  val tableRow: TableRow             = arbitraryTableRow.arbitrary.sample.value
+  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
   val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
     totalNumberOfItems = sections.length,
@@ -51,6 +48,14 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
     additionalParams = Seq()
   )
 
+  private val arrivalNotificationWithFunctionalErrorsP5ViewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel =
+    new ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, false)
+
+  override def view: HtmlFormat.Appendable = applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel)
+
+  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
+    applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel)
+
   private def applyView(
     viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel,
     paginationViewModel: ListPaginationViewModel
@@ -58,15 +63,6 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
     injector
       .instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
       .apply(viewModel, arrivalIdP5, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
-
-  override def view: HtmlFormat.Appendable = applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel)
-
-  override def summaryLists: Seq[SummaryList] = sections.map(
-    section => SummaryList(section.rows)
-  )
-
-  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
-    applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel)
 
   behave like pageWithTitle()
 
@@ -78,23 +74,15 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
 
   behave like pageWithPagination(controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url)
 
-  behave like pageWithSummaryLists()
+  behave like summaryLists
 
   behave like pageWithoutFormAction()
 
   behave like pageWithoutSubmitButton()
 
-  "must render section titles when rows are non-empty" - {
-    sections.foreach(_.sectionTitle.map {
-      sectionTitle =>
-        behave like pageWithContent("h2", sectionTitle)
-    })
-  }
-
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
+  override def summaryLists: Seq[SummaryList] = sections.map(
+    section => SummaryList(section.rows)
+  )
 
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
@@ -127,4 +115,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
     frontendAppConfig.declareArrivalNotificationStartUrl
   )
 
+  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
+    val element = doc.getElementById(id)
+    assertElementContainsText(element, expectedText)
+  }
 }
