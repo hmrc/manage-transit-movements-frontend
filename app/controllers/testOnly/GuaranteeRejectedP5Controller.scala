@@ -39,11 +39,8 @@ class GuaranteeRejectedP5Controller @Inject() (
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen identify andThen guaranteeRejectedAction(departureId, messageId)) {
       implicit request =>
+        val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(request.ie055MessageData.guaranteeReferences)
 
-        request.ie055MessageData
-
-        val viewModel = new GuaranteeRejectedP5ViewModel(request.ie055MessageData.guaranteeReferences)
-
-        Ok(view())
+        Ok(view(viewModel))
     }
 }

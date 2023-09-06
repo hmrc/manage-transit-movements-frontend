@@ -14,9 +14,8 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Button, Heading, AnswerSections}
-@import viewModels.P5.departure.DepartureCancelledP5ViewModel
-@import config.FrontendAppConfig
+@import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
+@import views.html.components.Heading
 
 @this(
         mainTemplate: MainTemplate,
@@ -24,7 +23,7 @@
         formHelper: FormWithCSRF
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(viewModel: GuaranteeRejectedP5ViewModel)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("guarantee.rejected.message.title"),
@@ -35,6 +34,8 @@
         heading = messages("guarantee.rejected.message.heading")
     )
 
-    <p class="govuk-body" id="paragraph">Test paragraph</p>
+    <p class="govuk-body" id="paragraph">@viewModel.paragraph1</p>
+
+
 
 }

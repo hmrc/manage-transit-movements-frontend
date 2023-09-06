@@ -16,28 +16,27 @@
 
 package viewModels.P5.departure
 
+import models.LocalReferenceNumber
 import models.departureP5.GuaranteeReference
 import play.api.i18n.Messages
 
-case class GuaranteeRejectedP5ViewModel(guaranteeReferences: Seq[GuaranteeReference]) {
+case class GuaranteeRejectedP5ViewModel(guaranteeReferences: Seq[GuaranteeReference], lrn: LocalReferenceNumber) {
 
-  def paragraph1(implicit messages: Messages): String = {
+  private val multipleGuaranteesOneReference: Boolean = {
+    val multipleGuarantee = guaranteeReferences.length > 1
+    val oneReference      = guaranteeReferences.forall(_.InvalidGuaranteeReason.length == 1)
 
-    if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length == 1) {
-      messages("")
-    } else if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length > 1) {
-      messages("")
-    } else if ()
+    multipleGuarantee && oneReference
   }
 
-//Paragraph - 1 guarantee; 1 error code:
-//  There is a problem with the guarantee in this declaration. Amend the error and resend the declaration.
-//  Paragraph - 1 guarantee; 2+ error codes:
-//  There is a problem with the guarantee in this declaration. Amend the errors and resend the declaration.
-//  Paragraph - 2+ guarantees; 1 error code:
-//  There is a problem with the guarantees in this declaration. Amend the error and resend the declaration.
-//  Paragraph - 2+ guarantees; 2+ error codes:
-//  There is a problem with the guarantees in this declaration. Amend the errors and resend the declaration.
-//  Label:
-
+  def paragraph1(implicit messages: Messages): String =
+    if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length == 1) {
+      messages("guarantee.rejected.message.paragraph1.singular")
+    } else if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length > 1) {
+      messages("guarantee.rejected.message.paragraph1.singularGuaranteePluralReference")
+    } else if (multipleGuaranteesOneReference) {
+      messages("guarantee.rejected.message.paragraph1.pluralGuaranteeSingularReference")
+    } else {
+      messages("guarantee.rejected.message.paragraph1.pluralGuaranteePluralReference")
+    }
 }

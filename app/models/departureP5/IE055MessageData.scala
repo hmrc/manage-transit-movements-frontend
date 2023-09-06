@@ -22,11 +22,7 @@ import play.api.libs.json.{__, Reads}
 case class IE055MessageData(
   transitOperation: TransitOperationIE055,
   guaranteeReferences: Seq[GuaranteeReference]
-) {
-
-  def one
-
-}
+)
 
 object IE055MessageData {
 
