@@ -19,25 +19,24 @@ package views.arrival.P5
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
-import views.behaviours.{PaginationViewBehaviours, SummaryListViewBehaviours}
+import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.arrival.P5.ArrivalNotificationWithFunctionalErrorsP5View
 
-class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
-    extends PaginationViewBehaviours[ListPaginationViewModel]
-    with SummaryListViewBehaviours
-    with Generators {
+class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
+
+  override val headCells: Seq[HeadCell] = Seq(HeadCell(Text("Error code")), HeadCell(Text("Reason")))
+  val tableRows: Seq[TableRow]          = arbitrary[Seq[TableRow]].sample.value
 
   override val prefix: String        = "arrival.ie057.review.notification.message"
   override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
 
   override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
     ListPaginationViewModel(_, _, _, _)
-  val tableRow: TableRow             = arbitraryTableRow.arbitrary.sample.value
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
   val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
@@ -49,7 +48,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
   )
 
   private val arrivalNotificationWithFunctionalErrorsP5ViewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel =
-    new ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, false)
+    new ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(tableRows), mrn, false)
 
   override def view: HtmlFormat.Appendable = applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel)
 
@@ -74,15 +73,11 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
 
   behave like pageWithPagination(controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url)
 
-  behave like summaryLists
+  behave like pageWithTable()
 
   behave like pageWithoutFormAction()
 
   behave like pageWithoutSubmitButton()
-
-  override def summaryLists: Seq[SummaryList] = sections.map(
-    section => SummaryList(section.rows)
-  )
 
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(

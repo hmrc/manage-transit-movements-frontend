@@ -19,23 +19,23 @@ package views.departure.testOnly
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
-import views.behaviours.{PaginationViewBehaviours, SummaryListViewBehaviours}
+import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departure.TestOnly.ReviewDepartureErrorsP5View
 
-class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {
+class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
 
-  override val prefix: String = "departure.ie056.review.message"
-  val tableRow: TableRow      = arbitraryTableRow.arbitrary.sample.value
-
-  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
+  override val prefix: String           = "departure.ie056.review.message"
+  override val headCells: Seq[HeadCell] = Seq(HeadCell(Text("Error code")), HeadCell(Text("Reason")))
+  val tableRows: Seq[TableRow]          = arbitrary[Seq[TableRow]].sample.value
+  private val sections: Seq[Section]    = arbitrary[List[Section]].sample.value
 
   private val reviewRejectionMessageP5ViewModel =
-    new ReviewDepartureErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, false)
+    new ReviewDepartureErrorsP5ViewModel(Seq(tableRows), lrn.toString, false)
 
   override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
 
@@ -60,10 +60,6 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
 
   override def view: HtmlFormat.Appendable = applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
-  override def summaryLists: Seq[SummaryList] = sections.map(
-    section => SummaryList(section.rows)
-  )
-
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
     applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
@@ -81,7 +77,7 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
 
   behave like pageWithPagination(controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId.toString, lrn).url)
 
-  behave like summaryLists
+  behave like pageWithTable()
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
