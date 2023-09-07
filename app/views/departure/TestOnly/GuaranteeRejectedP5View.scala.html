@@ -53,10 +53,11 @@
         </p>
 
         @if(viewModel.isAmendable) {
-
-            <div>
-            @button(viewModel.buttonContent, href = Some(config.departureNewLocalReferenceNumberUrl(viewModel.lrn.value)))
-            </div>
+            @button(
+                attributes = Map("id" -> "submit"),
+                messageKey = messages("site.amendErrors"),
+                href = Some(controllers.testOnly.routes.GuaranteeRejectedP5Controller.onAmend(viewModel.lrn).url)
+            )
         }
 
         <div class="govuk-body">

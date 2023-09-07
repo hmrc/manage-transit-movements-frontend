@@ -44,6 +44,12 @@ class DepartureCacheConnector @Inject() (
     http.POST[Seq[String], Boolean](url, functionalErrors)
   }
 
+  def handleGuaranteeRejection(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val url = s"$baseUrl/x-paths/$lrn/handle-guarantee-errors"
+
+    http.GET[Boolean](url)
+  }
+
   def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val url = s"$baseUrl/does-cache-exists-for-lrn/$lrn"
 

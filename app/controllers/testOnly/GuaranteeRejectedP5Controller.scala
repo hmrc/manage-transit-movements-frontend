@@ -35,7 +35,8 @@ class GuaranteeRejectedP5Controller @Inject() (
   guaranteeRejectedAction: GuaranteeRejectedActionProvider,
   cc: MessagesControllerComponents,
   view: GuaranteeRejectedP5View,
-  departureCacheConnector: DepartureCacheConnector
+  departureCacheConnector: DepartureCacheConnector,
+  frontendAppConfig: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -48,6 +49,15 @@ class GuaranteeRejectedP5Controller @Inject() (
             val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(request.ie055MessageData.guaranteeReferences, lrn, isAmendable)
 
             Ok(view(viewModel))
+        }
+    }
+
+  def onAmend(lrn: LocalReferenceNumber): Action[AnyContent] =
+    (Action andThen identify).async {
+      implicit request =>
+        departureCacheConnector.handleGuaranteeRejection(lrn.value).map {
+          case true  => Redirect(frontendAppConfig.departureNewLocalReferenceNumberUrl(lrn.value))
+          case false => Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
     }
 }
