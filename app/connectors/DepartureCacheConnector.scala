@@ -43,4 +43,10 @@ class DepartureCacheConnector @Inject() (
 
     http.POST[Seq[String], Boolean](url, functionalErrors)
   }
+
+  def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val url = s"$baseUrl/does-cache-exists-for-lrn/$lrn"
+
+    http.GET[Boolean](url)
+  }
 }

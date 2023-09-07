@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import config.FrontendAppConfig
+import connectors.DepartureCacheConnector
 import controllers.actions._
 import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,16 +34,20 @@ class GuaranteeRejectedP5Controller @Inject() (
   identify: IdentifierAction,
   guaranteeRejectedAction: GuaranteeRejectedActionProvider,
   cc: MessagesControllerComponents,
-  view: GuaranteeRejectedP5View
+  view: GuaranteeRejectedP5View,
+  departureCacheConnector: DepartureCacheConnector
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen guaranteeRejectedAction(departureId, messageId)) {
+    (Action andThen identify andThen guaranteeRejectedAction(departureId, messageId)).async {
       implicit request =>
-        val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(request.ie055MessageData.guaranteeReferences, lrn)
+        departureCacheConnector.doesDeclarationExist(lrn.value).map {
+          isAmendable =>
+            val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(request.ie055MessageData.guaranteeReferences, lrn, isAmendable)
 
-        Ok(view(viewModel))
+            Ok(view(viewModel))
+        }
     }
 }

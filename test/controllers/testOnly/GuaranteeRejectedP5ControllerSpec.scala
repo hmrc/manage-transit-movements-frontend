@@ -18,14 +18,8 @@ package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import controllers.actions.{
-  DepartureRejectionMessageActionProvider,
-  FakeDepartureRejectionMessageAction,
-  FakeGuaranteeRejectedAction,
-  GuaranteeRejectedActionProvider
-}
+import controllers.actions.{FakeGuaranteeRejectedAction, GuaranteeRejectedActionProvider}
 import generators.Generators
-import models.RejectionType
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -35,11 +29,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
-import viewModels.P5.departure.{GuaranteeRejectedP5ViewModel, ReviewDepartureErrorsP5ViewModel}
-import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
-import viewModels.pagination.ListPaginationViewModel
-import viewModels.sections.Section
-import views.html.departure.TestOnly.{GuaranteeRejectedP5View, ReviewDepartureErrorsP5View}
+import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
+import views.html.departure.TestOnly.GuaranteeRejectedP5View
 
 import scala.concurrent.Future
 
@@ -47,15 +38,13 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
   private val mockGuaranteeRejectedActionProvider = mock[GuaranteeRejectedActionProvider]
   private val mockDepartureP5MessageService       = mock[DepartureP5MessageService]
-
-  protected def goodsUnderControlAction(): Unit =
-    when(mockGuaranteeRejectedActionProvider.apply(any(), any())) thenReturn
-      new FakeGuaranteeRejectedAction(departureIdP5, messageId, mockDepartureP5MessageService)
+  private val mockDepartureCacheConnector         = mock[DepartureCacheConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
     reset(mockGuaranteeRejectedActionProvider)
+    reset(mockDepartureCacheConnector)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -63,6 +52,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
       .guiceApplicationBuilder()
       .overrides(bind[GuaranteeRejectedActionProvider].toInstance(mockGuaranteeRejectedActionProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
+      .overrides(bind[DepartureCacheConnector].toInstance(mockDepartureCacheConnector))
 
   "GuaranteeRejected" - {
 
@@ -84,9 +74,14 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
       )
 
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE055Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful())
+        .thenReturn(Future.successful(message))
 
-      val viewModel = GuaranteeRejectedP5ViewModel(message.data.guaranteeReferences, lrn)
+      when(mockGuaranteeRejectedActionProvider.apply(any(), any())) thenReturn
+        new FakeGuaranteeRejectedAction(departureIdP5, messageId, mockDepartureP5MessageService)
+
+      when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
+
+      val viewModel = GuaranteeRejectedP5ViewModel(message.data.guaranteeReferences, lrn, isAmendable = true)
 
       val request = FakeRequest(GET, controller)
 

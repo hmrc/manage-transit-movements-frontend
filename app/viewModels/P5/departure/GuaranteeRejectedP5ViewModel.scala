@@ -23,7 +23,9 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import utils.GuaranteeRejectedP5Helper
 
-case class GuaranteeRejectedP5ViewModel(guaranteeReferences: Seq[GuaranteeReference], lrn: LocalReferenceNumber)(implicit messages: Messages) {
+case class GuaranteeRejectedP5ViewModel(guaranteeReferences: Seq[GuaranteeReference], lrn: LocalReferenceNumber, isAmendable: Boolean)(implicit
+  messages: Messages
+) {
 
   private val multipleGuaranteesOneReference: Boolean = {
     val multipleGuarantee = guaranteeReferences.length > 1
