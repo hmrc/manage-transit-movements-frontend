@@ -22,10 +22,10 @@ import models._
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departure._
-import models.departureP5.{DepartureMovement, DepartureMovements}
+import models.departureP5.{DepartureMovement, DepartureMovements, GuaranteeReference, InvalidGuaranteeReason}
 import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar, posNum}
+import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, nonEmptyListOf, nonEmptyMap, numChar, posNum}
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
 
@@ -343,6 +343,23 @@ trait ModelGenerators {
         messageType <- arbitrary[models.departureP5.DepartureMessageType]
         bodyPath    <- nonEmptyString
       } yield models.departureP5.DepartureMessage(messageId, received, messageType, bodyPath)
+    }
+
+  implicit lazy val arbitraryInvalidGuaranteeReason: Arbitrary[models.departureP5.InvalidGuaranteeReason] =
+    Arbitrary {
+      for {
+        code   <- nonEmptyString
+        reason <- Gen.option(nonEmptyString)
+      } yield InvalidGuaranteeReason(code, reason)
+    }
+
+  implicit lazy val arbitraryGuaranteeReference: Arbitrary[models.departureP5.GuaranteeReference] =
+    Arbitrary {
+      for {
+        grn           <- nonEmptyString
+        listLength    <- Gen.chooseNum(1, 9)
+        invalidReason <- Gen.listOfN(listLength, arbitrary[models.departureP5.InvalidGuaranteeReason])
+      } yield GuaranteeReference(grn, invalidReason)
     }
 
 }
