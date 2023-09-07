@@ -16,7 +16,9 @@
 
 package controllers.testOnly
 
+import config.FrontendAppConfig
 import controllers.actions._
+import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -36,10 +38,10 @@ class GuaranteeRejectedP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+  def onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen identify andThen guaranteeRejectedAction(departureId, messageId)) {
       implicit request =>
-        val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(request.ie055MessageData.guaranteeReferences)
+        val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(request.ie055MessageData.guaranteeReferences, lrn)
 
         Ok(view(viewModel))
     }

@@ -16,11 +16,14 @@
 
 package viewModels.P5.departure
 
+import config.FrontendAppConfig
 import models.LocalReferenceNumber
 import models.departureP5.GuaranteeReference
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+import utils.GuaranteeRejectedP5Helper
 
-case class GuaranteeRejectedP5ViewModel(guaranteeReferences: Seq[GuaranteeReference], lrn: LocalReferenceNumber) {
+case class GuaranteeRejectedP5ViewModel(guaranteeReferences: Seq[GuaranteeReference], lrn: LocalReferenceNumber)(implicit messages: Messages) {
 
   private val multipleGuaranteesOneReference: Boolean = {
     val multipleGuarantee = guaranteeReferences.length > 1
@@ -39,4 +42,18 @@ case class GuaranteeRejectedP5ViewModel(guaranteeReferences: Seq[GuaranteeRefere
     } else {
       messages("guarantee.rejected.message.paragraph1.pluralGuaranteePluralReference")
     }
+
+  def paragraph2(implicit messages: Messages): String = if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length == 1) {
+    messages("guarantee.rejected.message.contact.singular")
+  } else {
+    messages("guarantee.rejected.message.contact.plural")
+  }
+
+  def buttonContent(implicit messages: Messages): String =
+    messages("guarantee.rejected.message.amendErrors")
+
+  def link(implicit messages: Messages): String =
+    messages("guarantee.rejected.message.makeAnotherDeparture")
+
+  val toTables: Seq[(String, String, Table)] = new GuaranteeRejectedP5Helper(guaranteeReferences).toTables
 }

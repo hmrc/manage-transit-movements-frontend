@@ -241,7 +241,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.guaranteeRejected",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GuaranteeRejectedP5Controller.onPageLoad(departureId, message.messageId).url,
+            controllers.testOnly.routes.GuaranteeRejectedP5Controller.onPageLoad(departureId, message.messageId, lrn).url,
             "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
           ViewMovementAction(

@@ -10,3 +10,50 @@ $hmrc-assets-path: "/manage-transit-movements/assets/lib/hmrc-frontend/hmrc/asse
 @import "components/table";
 @import "components/_ticket-panel.scss";
 @import "components/sortable-table.scss";
+
+.summary-title {
+  @extend .govuk-heading-m;
+  color: $govuk-link-colour;
+}
+
+.summary-title-secondary {
+  @extend .summary-title;
+  float: right;
+}
+
+.govuk-link-view-summary {
+  @extend .govuk-body;
+  @extend .govuk-link;
+  text-align: right;
+  width: 10%;
+  float: right;
+  margin-bottom: 0;
+}
+
+.summary-text {
+  @extend .govuk-details__summary-text;
+  text-decoration: none;
+}
+
+.govuk-details__text {
+  @extend .govuk-details__text;
+  border-left: none;
+  padding-left: unset;
+  text-decoration: none;
+}
+
+.govuk-details__summary-text, .summary-text, .accordion-group.field-help>.summary {
+  text-decoration: none;
+}
+
+.govuk-details__summary {
+  @extend .govuk-details__summary;
+  border-bottom: 1px solid $govuk-link-colour;
+  width: 96%;
+}
+
+.block-summary__edit-link {
+  @extend .block-summary__edit-link;
+  width: 10%;
+  text-align: right;
+}

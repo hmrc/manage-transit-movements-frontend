@@ -16,11 +16,18 @@
 
 @import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 @import views.html.components.Heading
+@import views.html.components.Button
+@import views.html.components.TableDetails
+@import config.FrontendAppConfig
 
 @this(
         mainTemplate: MainTemplate,
         heading: Heading,
-        formHelper: FormWithCSRF
+        formHelper: FormWithCSRF,
+        tableDetails: TableDetails,
+        table: GovukTable,
+        config: FrontendAppConfig,
+        button: Button
 )
 
 @(viewModel: GuaranteeRejectedP5ViewModel)(implicit request: Request[_], messages: Messages)
@@ -31,11 +38,26 @@
 ) {
 
     @heading(
-        heading = messages("guarantee.rejected.message.heading")
+        heading = messages("guarantee.rejected.message.heading"),
+        caption = Some(messages("departure.messages.caption", viewModel.lrn.value))
+
     )
 
-    <p class="govuk-body" id="paragraph">@viewModel.paragraph1</p>
+    <p class="govuk-body" id="paragraph1">@viewModel.paragraph1</p>
 
+    @tableDetails(viewModel.toTables)
 
+    <p class="govuk-body" id="paragraph2">@messages("guarantee.rejected.message.contact.start")
+        <a class="govuk-link" rel="noreferrer noopener" href=@config.nctsEnquiriesUrl target="_blank" id="contact">@messages("guarantee.rejected.message.contact.link")</a>
+        @viewModel.paragraph2
+    </p>
+
+    <div>
+    @button(viewModel.buttonContent, href = Some(config.departureNewLocalReferenceNumberUrl(viewModel.lrn.value)))
+    </div>
+
+    <div class="govuk-body">
+        <a class="govuk-link" href=@config.declareDepartureStartWithLRNUrl id="makeNewDeparture">@messages("guarantee.rejected.message.makeAnotherDeparture")</a>
+    </div>
 
 }

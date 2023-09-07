@@ -269,11 +269,12 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.guaranteeRejected",
         Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, "messageId").url,
+            controllers.testOnly.routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, "messageId", lrn).url,
             "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
-                             "movement.status.P5.action.guaranteeRejected.cancelDeclaration"
+          ViewMovementAction(
+            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+            "movement.status.P5.action.guaranteeRejected.cancelDeclaration"
           )
         )
       )
