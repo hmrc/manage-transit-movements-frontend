@@ -16,7 +16,6 @@
 
 package viewModels.P5.departure
 
-import config.FrontendAppConfig
 import models.LocalReferenceNumber
 import models.departureP5.GuaranteeReference
 import play.api.i18n.Messages

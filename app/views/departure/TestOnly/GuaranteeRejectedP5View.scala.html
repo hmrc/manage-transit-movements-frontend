@@ -1,19 +1,18 @@
 @*
- * Copyright 2023 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
+* Copyright 2023 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 @import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 @import views.html.components.Heading
 @import views.html.components.Button
@@ -32,32 +31,36 @@
 
 @(viewModel: GuaranteeRejectedP5ViewModel)(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(
-    title = messages("guarantee.rejected.message.title"),
-    showBackLink = true
-) {
+    @mainTemplate(
+        title = messages("guarantee.rejected.message.title"),
+        showBackLink = true
+    ) {
 
-    @heading(
-        heading = messages("guarantee.rejected.message.heading"),
-        caption = Some(messages("departure.messages.caption", viewModel.lrn.value))
+        @heading(
+            heading = messages("guarantee.rejected.message.heading"),
+            caption = Some(messages("departure.messages.caption", viewModel.lrn.value))
 
-    )
+        )
 
-    <p class="govuk-body" id="paragraph1">@viewModel.paragraph1</p>
+        <p class="govuk-body" id="paragraph1">@viewModel.paragraph1</p>
 
-    @tableDetails(viewModel.toTables)
+        @tableDetails(viewModel.toTables)
 
-    <p class="govuk-body" id="paragraph2">@messages("guarantee.rejected.message.contact.start")
-        <a class="govuk-link" rel="noreferrer noopener" href=@config.nctsEnquiriesUrl target="_blank" id="contact">@messages("guarantee.rejected.message.contact.link")</a>
-        @viewModel.paragraph2
-    </p>
+        <p class="govuk-body" id="paragraph2">@messages("guarantee.rejected.message.contact.start")
+            <a class="govuk-link" rel="noreferrer noopener" href=@config.nctsEnquiriesUrl target="_blank" id="contact">@messages("guarantee.rejected.message.contact.link")</a>
+            @viewModel.paragraph2
+        </p>
 
-    <div>
-    @button(viewModel.buttonContent, href = Some(config.departureNewLocalReferenceNumberUrl(viewModel.lrn.value)))
-    </div>
+        @if(viewModel.isAmendable) {
 
-    <div class="govuk-body">
-        <a class="govuk-link" href=@config.declareDepartureStartWithLRNUrl id="makeNewDeparture">@messages("guarantee.rejected.message.makeAnotherDeparture")</a>
-    </div>
+            <div>
+            @button(viewModel.buttonContent, href = Some(config.departureNewLocalReferenceNumberUrl(viewModel.lrn.value)))
+            </div>
+        }
 
-}
+        <div class="govuk-body">
+            <a class="govuk-link" href=@config.declareDepartureStartWithLRNUrl id="makeNewDeparture">@messages("guarantee.rejected.message.makeAnotherDeparture")</a>
+        </div>
+
+
+    }
