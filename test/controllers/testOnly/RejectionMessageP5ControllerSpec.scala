@@ -21,8 +21,9 @@ import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
 import models.RejectionType
+import models.departureP5.DepartureMessageType.AllocatedMRN
 import models.departureP5._
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
@@ -36,6 +37,7 @@ import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.html.departure.TestOnly.RejectionMessageP5View
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -89,6 +91,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(RejectionMessageP5ViewModel(sections, lrn.toString, multipleErrors = true)))
+      when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
+        .thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
@@ -125,6 +129,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
+      when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
+        .thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
@@ -150,6 +156,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         )
         when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
+        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
+          .thenReturn(Future.successful(None))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
@@ -173,6 +181,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         )
         when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
+          .thenReturn(Future.successful(None))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
@@ -185,7 +195,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
       }
 
-      "must redirect to new local reference number on success of handleErrors" in {
+      "must redirect to declaration summary page on success of handleErrors" in {
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
@@ -197,6 +207,36 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
+        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
+          .thenReturn(Future.successful(None))
+
+        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+
+        val request = FakeRequest(GET, rejectionMessageOnAmend)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
+
+      }
+
+      "must redirect to new local reference number on success of handleErrors and IE028 is present" in {
+
+        val message: IE056Data = IE056Data(
+          IE056MessageData(
+            TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
+            CustomsOfficeOfDeparture("12345"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+          )
+        )
+        val departureMessageMetaData = Some(DepartureMessageMetaData(LocalDateTime.now(), AllocatedMRN, "foo"))
+
+        when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+        when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
+        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
+          .thenReturn(Future.successful(departureMessageMetaData))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
@@ -221,6 +261,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(false))
+        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
+          .thenReturn(Future.successful(None))
 
         rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
