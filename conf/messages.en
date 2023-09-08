@@ -515,6 +515,8 @@ guarantee.rejected.message.contact.singular = for help understanding the error (
 guarantee.rejected.message.contact.plural = for help understanding the errors (opens in a new tab).
 guarantee.rejected.message.amendErrors = Amend errors
 guarantee.rejected.message.makeAnotherDeparture = Make another departure
+guarantee.rejected.message.movementReferenceNumber = Movement reference number:
+guarantee.rejected.message.acceptanceDate = Declaration acceptance date:
 
 guarantee.rejected.message.heading = Amend guarantee errors
 guarantee.rejected.message.heading = Amend guarantee errors

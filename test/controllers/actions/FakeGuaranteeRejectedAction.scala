@@ -20,6 +20,7 @@ import models.departureP5._
 import models.requests.{GuaranteeRejectedRequest, IdentifierRequest}
 import services.DepartureP5MessageService
 
+import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -28,7 +29,7 @@ class FakeGuaranteeRejectedAction(departureId: String, messageId: String, depart
 
   val message: IE055MessageData =
     IE055MessageData(
-      TransitOperationIE055("MRNCD3232"),
+      TransitOperationIE055("MRNCD3232", LocalDateTime.now()),
       Seq(
         GuaranteeReference(
           "AB123",

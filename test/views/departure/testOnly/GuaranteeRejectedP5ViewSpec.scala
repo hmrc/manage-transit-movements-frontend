@@ -25,6 +25,7 @@ import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 import views.behaviours.ViewBehaviours
 import views.html.departure.TestOnly.GuaranteeRejectedP5View
 
+import java.time.LocalDateTime
 import scala.jdk.CollectionConverters._
 
 class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
@@ -36,7 +37,9 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
   val defaultViewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
     guaranteeReferences = guaranteeReferences,
     lrn = lrn,
-    isAmendable = true
+    isAmendable = true,
+    mrn = mrn,
+    acceptanceData = LocalDateTime.now()
   )
 
   override def view: HtmlFormat.Appendable = injector

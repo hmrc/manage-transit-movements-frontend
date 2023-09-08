@@ -20,9 +20,17 @@ import models.LocalReferenceNumber
 import models.departureP5.GuaranteeReference
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
-import utils.GuaranteeRejectedP5Helper
+import utils.{Format, GuaranteeRejectedP5Helper}
 
-case class GuaranteeRejectedP5ViewModel(guaranteeReferences: Seq[GuaranteeReference], lrn: LocalReferenceNumber, isAmendable: Boolean)(implicit
+import java.time.LocalDateTime
+
+case class GuaranteeRejectedP5ViewModel(
+  guaranteeReferences: Seq[GuaranteeReference],
+  lrn: LocalReferenceNumber,
+  isAmendable: Boolean,
+  mrn: String,
+  acceptanceData: LocalDateTime
+)(implicit
   messages: Messages
 ) {
 
@@ -32,6 +40,7 @@ case class GuaranteeRejectedP5ViewModel(guaranteeReferences: Seq[GuaranteeRefere
 
     multipleGuarantee && oneReference
   }
+  def formatDateTime: String = acceptanceData.format(Format.guaranteeRejectedDateTimeFormatter)
 
   def paragraph1(implicit messages: Messages): String =
     if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length == 1) {

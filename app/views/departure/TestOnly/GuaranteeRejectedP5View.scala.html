@@ -45,6 +45,10 @@
 
         <p class="govuk-body" id="paragraph1">@viewModel.paragraph1</p>
 
+        <p class="govuk-body"><span class="govuk-!-font-weight-bold">@messages("guarantee.rejected.message.movementReferenceNumber")</span> @{viewModel.mrn}</p>
+
+        <p class="govuk-body"><span class="govuk-!-font-weight-bold">@messages("guarantee.rejected.message.acceptanceDate")</span> @{viewModel.formatDateTime}</p>
+
         @tableDetails(viewModel.toTables)
 
         <p class="govuk-body" id="paragraph2">@messages("guarantee.rejected.message.contact.start")

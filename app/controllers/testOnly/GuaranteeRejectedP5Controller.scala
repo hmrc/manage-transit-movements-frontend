@@ -46,7 +46,13 @@ class GuaranteeRejectedP5Controller @Inject() (
       implicit request =>
         departureCacheConnector.doesDeclarationExist(lrn.value).map {
           isAmendable =>
-            val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(request.ie055MessageData.guaranteeReferences, lrn, isAmendable)
+            val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
+              request.ie055MessageData.guaranteeReferences,
+              lrn,
+              isAmendable,
+              request.ie055MessageData.transitOperation.MRN,
+              request.ie055MessageData.transitOperation.declarationAcceptanceDate
+            )
 
             Ok(view(viewModel))
         }

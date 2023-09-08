@@ -32,6 +32,7 @@ import services.DepartureP5MessageService
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 import views.html.departure.TestOnly.GuaranteeRejectedP5View
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -63,7 +64,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
       val message: IE055Data = IE055Data(
         IE055MessageData(
-          TransitOperationIE055("MRNCD3232"),
+          TransitOperationIE055("MRNCD3232", LocalDateTime.now()),
           Seq(
             GuaranteeReference(
               "AB123",
@@ -81,7 +82,13 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
       when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
 
-      val viewModel = GuaranteeRejectedP5ViewModel(message.data.guaranteeReferences, lrn, isAmendable = true)
+      val viewModel = GuaranteeRejectedP5ViewModel(
+        message.data.guaranteeReferences,
+        lrn,
+        isAmendable = true,
+        message.data.transitOperation.MRN,
+        message.data.transitOperation.declarationAcceptanceDate
+      )
 
       val request = FakeRequest(GET, controller)
 
