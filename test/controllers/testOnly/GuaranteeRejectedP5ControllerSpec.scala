@@ -94,5 +94,38 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
       contentAsString(result) mustEqual
         view(viewModel)(request, messages).toString
     }
+
+    "onAmend" - {
+
+      "must redirect to NewLocalReferenceNumber page on success" in {
+
+        val controller: String =
+          controllers.testOnly.routes.GuaranteeRejectedP5Controller.onAmend(lrn).url
+
+        when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(true)
+
+        val request = FakeRequest(GET, controller)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe frontendAppConfig.departureNewLocalReferenceNumberUrl(lrn.value)
+      }
+
+      "must redirect to technical difficulties page on failure" in {
+
+        val controller: String =
+          controllers.testOnly.routes.GuaranteeRejectedP5Controller.onAmend(lrn).url
+
+        when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(false)
+
+        val request = FakeRequest(GET, controller)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe controllers.routes.ErrorController.technicalDifficulties().url
+      }
+    }
   }
 }

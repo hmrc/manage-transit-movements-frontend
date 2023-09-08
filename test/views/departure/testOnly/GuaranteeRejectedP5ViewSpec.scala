@@ -200,4 +200,31 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
   }
 
+  "must render button when amendable" - {
+
+    val viewModel = defaultViewModel.copy(isAmendable = true)
+
+    val document = parseView(
+      injector
+        .instanceOf[GuaranteeRejectedP5View]
+        .apply(viewModel)(fakeRequest, messages)
+    )
+
+    behave like pageWithButton(document, "Amend errors") {
+      assertElementContainsHref(_, controllers.testOnly.routes.GuaranteeRejectedP5Controller.onAmend(lrn).url)
+    }
+  }
+
+  "must not render button when not amendable" in {
+
+    val viewModel = defaultViewModel.copy(isAmendable = false)
+
+    val document = parseView(
+      injector
+        .instanceOf[GuaranteeRejectedP5View]
+        .apply(viewModel)(fakeRequest, messages)
+    )
+
+    assertNotRenderedById(document, "submit")
+  }
 }
