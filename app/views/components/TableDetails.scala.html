@@ -20,6 +20,6 @@
 
 @(tables: Seq[(String, String, Table)])(implicit messages: Messages)
 
-@for(table <- tables) {
-    @tableDetail(table._1, table._2, table._3)
+@for(((title, grn, table), index) <- tables.zipWithIndex) {
+  @tableDetail(title, grn, table, index == 0)
 }

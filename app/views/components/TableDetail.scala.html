@@ -19,7 +19,7 @@
 
 @this(details: GovukDetails, govUkTable: GovukTable)
 
-@(title: String, GRN: String, table: Table)(implicit messages: Messages)
+@(title: String, GRN: String, table: Table, open: Boolean)(implicit messages: Messages)
 
 @header = {
     <span class="summary-text">
@@ -37,7 +37,8 @@
     Details(
         summary = HtmlContent(header),
         content = HtmlContent(content),
-        id = None
+        id = None,
+        open = open
     )
 )
 
