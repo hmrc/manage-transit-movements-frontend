@@ -54,7 +54,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
   behave like pageWithLink(
     "makeNewDeparture",
-    "Make another departure",
+    "Make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
 
