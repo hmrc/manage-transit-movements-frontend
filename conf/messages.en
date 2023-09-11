@@ -499,3 +499,24 @@ departure.cancellation.message.customsOfficeContact.teleNotAvailAndOfficeNameNot
 row.label.dateAndTimeOfDecision =  Date and time of decision
 row.label.initiatedByCustoms =  Initiated by Customs?
 row.label.justification =  Comments
+
+guarantee.rejected.message.title = Amend guarantee errors
+guarantee.rejected.message.heading = Amend guarantee errors
+guarantee.rejected.message.paragraph1.singular = There is a problem with the guarantee in this declaration. Amend the error and resend the declaration.
+guarantee.rejected.message.paragraph1.singularGuaranteePluralReference = There is a problem with the guarantee in this declaration. Amend the errors and resend the declaration.
+guarantee.rejected.message.paragraph1.pluralGuaranteeSingularReference = There is a problem with the guarantees in this declaration. Amend the error and resend the declaration.
+guarantee.rejected.message.paragraph1.pluralGuaranteePluralReference = There is a problem with the guarantees in this declaration. Amend the errors and resend the declaration.
+guarantee.rejected.message.guaranteeReference = Guarantee reference {0}
+guarantee.rejected.message.error = Error
+guarantee.rejected.message.furtherInformation = Further information
+guarantee.rejected.message.contact.start = Contact the
+guarantee.rejected.message.contact.link = New Computerised Transit System helpdesk
+guarantee.rejected.message.contact.singular = for help understanding the error (opens in a new tab).
+guarantee.rejected.message.contact.plural = for help understanding the errors (opens in a new tab).
+guarantee.rejected.message.amendErrors = Amend errors
+guarantee.rejected.message.makeAnotherDeparture = Make another departure declaration
+guarantee.rejected.message.movementReferenceNumber = Movement Reference Number (MRN):
+guarantee.rejected.message.acceptanceDate = Declaration acceptance date:
+
+guarantee.rejected.message.heading = Amend guarantee errors
+guarantee.rejected.message.heading = Amend guarantee errors

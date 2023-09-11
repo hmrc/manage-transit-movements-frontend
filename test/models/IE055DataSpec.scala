@@ -20,6 +20,9 @@ import base.SpecBase
 import models.departureP5._
 import play.api.libs.json._
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 class IE055DataSpec extends SpecBase {
 
   "IE055Data" - {
@@ -32,7 +35,8 @@ class IE055DataSpec extends SpecBase {
           | "body": {
           |     "n1:CC055C": {
           |         "TransitOperation": {
-          |             "MRN": "AB123"
+          |             "MRN": "AB123",
+          |             "declarationAcceptanceDate": "2022-11-04T13:36:52"
           |         },
           |         "GuaranteeReference": [
           |             {
@@ -71,7 +75,8 @@ class IE055DataSpec extends SpecBase {
       val expectedResult = IE055Data(
         IE055MessageData(
           TransitOperationIE055(
-            "AB123"
+            "AB123",
+            LocalDateTime.parse("2022-11-04T13:36:52", DateTimeFormatter.ISO_DATE_TIME)
           ),
           Seq(
             GuaranteeReference(

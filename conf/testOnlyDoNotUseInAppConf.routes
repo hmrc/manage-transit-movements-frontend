@@ -91,6 +91,10 @@ GET        /manage-transit-movements/test-only/:departureId/transit-accompanying
 
 GET        /manage-transit-movements/test-only/:arrivalId/unloading-permission-document/:messageId                      controllers.testOnly.UnloadingPermissionController.getUnloadingPermissionDocument(messageId: String, arrivalId: String)
 
+GET        /manage-transit-movements/test-only/:arrivalId/:messageId/amend-guarantee-errors/:lrn                        controllers.testOnly.GuaranteeRejectedP5Controller.onPageLoad(arrivalId: String, messageId: String, lrn: LocalReferenceNumber)
+
+GET        /manage-transit-movements/test-only/send-guarantee-errors/:lrn                                               controllers.testOnly.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber)
+
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                                                        controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()
 

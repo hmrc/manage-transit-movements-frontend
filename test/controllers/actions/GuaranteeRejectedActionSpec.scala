@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
 
+import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -39,7 +40,8 @@ class GuaranteeRejectedActionSpec extends SpecBase with BeforeAndAfterEach with 
   val message = IE055Data(
     IE055MessageData(
       TransitOperationIE055(
-        "AB123"
+        "AB123",
+        LocalDateTime.now()
       ),
       Seq(
         GuaranteeReference(
