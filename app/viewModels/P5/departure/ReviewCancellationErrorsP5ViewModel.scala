@@ -23,7 +23,6 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.RejectionMessageP5MessageHelper
-import viewModels.sections.Section
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
