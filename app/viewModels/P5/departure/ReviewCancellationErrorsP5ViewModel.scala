@@ -19,14 +19,15 @@ package viewModels.P5.departure
 import models.departureP5.FunctionalError
 import play.api.i18n.Messages
 import services.ReferenceDataService
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.RejectionMessageP5MessageHelper
-import viewModels.sections.Section
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class ReviewCancellationErrorsP5ViewModel(sections: Seq[Section], lrn: String, multipleErrors: Boolean) {
+case class ReviewCancellationErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean) {
 
   def title(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.title")
 
@@ -55,6 +56,11 @@ case class ReviewCancellationErrorsP5ViewModel(sections: Seq[Section], lrn: Stri
 
   val viewDeparturesLink: String = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
 
+  def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
+    HeadCell(Text(messages("error.table.errorCode"))),
+    HeadCell(Text(messages("error.table.errorReason")))
+  )
+
 }
 
 object ReviewCancellationErrorsP5ViewModel {
@@ -69,12 +75,7 @@ object ReviewCancellationErrorsP5ViewModel {
       val helper: RejectionMessageP5MessageHelper = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
 
       val multipleErrors = functionalErrors.length > 1
-      val sections       = Seq(helper.errorSection())
-      Future
-        .sequence(sections)
-        .map(
-          sec => ReviewCancellationErrorsP5ViewModel(sec, lrn, multipleErrors)
-        )
+      helper.tableRows().map(ReviewCancellationErrorsP5ViewModel(_, lrn, multipleErrors))
 
     }
   }

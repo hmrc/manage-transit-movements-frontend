@@ -19,7 +19,9 @@ package utils
 import models.departureP5.FunctionalError
 import play.api.i18n.Messages
 import services.ReferenceDataService
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 
@@ -31,35 +33,21 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
   ec: ExecutionContext
 ) extends DeparturesP5MessageHelper {
 
-  private def getAllFunctionalErrorDescription(errorCode: String): Future[Option[String]] =
-    referenceDataService.getFunctionalErrors().map(_.find(_.code == errorCode).map(_.toString))
+  def tableRows(): Future[Seq[Seq[TableRow]]] =
+    Future.sequence(functionalErrors.map(buildTableRows))
 
-  def buildErrorCodeRow(errorCode: String): Future[Option[SummaryListRow]] =
-    getAllFunctionalErrorDescription(errorCode).map(
-      code =>
-        buildRowFromAnswer[String](
-          answer = code,
-          formatAnswer = formatAsText,
-          prefix = messages("row.label.error"),
-          id = None,
-          call = None
+  def buildTableRows(error: FunctionalError): Future[Seq[TableRow]] =
+    getAllFunctionalErrorDescription(error.errorCode).map {
+      case Some(code) =>
+        Seq(
+          TableRow(Text(code)),
+          TableRow(Text(error.errorReason))
         )
-    )
-
-  def buildErrorReasonRow(reason: String): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(reason),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.reason"),
-    id = None,
-    call = None
-  )
-
-  def buildErrorRows(errors: FunctionalError): Future[Seq[SummaryListRow]] =
-    buildErrorCodeRow(errors.errorCode).map {
-      code =>
-        val errorCode: Seq[SummaryListRow]   = extractOptionalRow(code)
-        val errorReason: Seq[SummaryListRow] = extractOptionalRow(buildErrorReasonRow(errors.errorReason))
-        errorCode ++ errorReason
+      case _ =>
+        Seq(
+          TableRow(Text(error.errorCode)),
+          TableRow(Text(error.errorReason))
+        )
     }
 
   def errorSection(): Future[Section] = {
@@ -76,4 +64,35 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
       slr => Section(None, slr, None)
     )
   }
+
+  def buildErrorRows(errors: FunctionalError): Future[Seq[SummaryListRow]] =
+    buildErrorCodeRow(errors.errorCode).map {
+      code =>
+        val errorCode: Seq[SummaryListRow]   = extractOptionalRow(code)
+        val errorReason: Seq[SummaryListRow] = extractOptionalRow(buildErrorReasonRow(errors.errorReason))
+        errorCode ++ errorReason
+    }
+
+  def buildErrorCodeRow(errorCode: String): Future[Option[SummaryListRow]] =
+    getAllFunctionalErrorDescription(errorCode).map(
+      code =>
+        buildRowFromAnswer[String](
+          answer = code,
+          formatAnswer = formatAsText,
+          prefix = messages("row.label.error"),
+          id = None,
+          call = None
+        )
+    )
+
+  private def getAllFunctionalErrorDescription(errorCode: String): Future[Option[String]] =
+    referenceDataService.getFunctionalErrors().map(_.find(_.code == errorCode).map(_.toString))
+
+  def buildErrorReasonRow(reason: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(reason),
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.reason"),
+    id = None,
+    call = None
+  )
 }

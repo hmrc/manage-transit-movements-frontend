@@ -31,6 +31,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.departure.RejectionMessageP5ViewModel
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
@@ -59,6 +60,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url
   lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5, lrn).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
+  val tableRow: TableRow                      = arbitraryTableRow.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -90,13 +92,13 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         .thenReturn(Future.successful(Some(message)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(RejectionMessageP5ViewModel(sections, lrn.toString, multipleErrors = true)))
+        .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
       when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
         .thenReturn(Future.successful(None))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(sections, lrn.toString, true)
+      val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true)
 
       val paginationViewModel = ListPaginationViewModel(
         totalNumberOfItems = message.data.functionalErrors.length,

@@ -30,6 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel.ReviewCancellationErrorsP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
@@ -57,6 +58,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
   lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url
 
   val sections: Seq[Section] = arbitrarySections.arbitrary.sample.value
+  val tableRow: TableRow     = arbitraryTableRow.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -87,11 +89,11 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
         .thenReturn(Future.successful(Some(message)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(ReviewCancellationErrorsP5ViewModel(sections, lrn.toString, multipleErrors = true)))
+        .thenReturn(Future.successful(ReviewCancellationErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val rejectionMessageP5ViewModel = new ReviewCancellationErrorsP5ViewModel(sections, lrn.toString, true)
+      val rejectionMessageP5ViewModel = new ReviewCancellationErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true)
 
       val paginationViewModel = ListPaginationViewModel(
         totalNumberOfItems = message.data.functionalErrors.length,

@@ -23,7 +23,6 @@ import generators.Generators
 import helper.WireMockServerHandler
 import models.{Availability, LocalReferenceNumber, RejectionType}
 import models.RejectionType.DeclarationRejection
-import models.{Availability, RejectionType}
 import models.departureP5._
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

@@ -29,6 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ArrivalP5MessageService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
@@ -42,6 +43,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
   private val mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider = mock[ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider]
   private val mockArrivalP5MessageService                                    = mock[ArrivalP5MessageService]
   private val mockRejectionMessageActionProvider                             = mock[ArrivalRejectionMessageActionProvider]
+  val tableRow: TableRow                                                     = arbitraryTableRow.arbitrary.sample.value
 
   def rejectionMessageAction(arrivalId: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
     when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(arrivalId, mockArrivalP5MessageService)
@@ -76,7 +78,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
+        .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 
@@ -88,7 +90,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
         additionalParams = Seq()
       )
 
-      val rejectionMessageP5ViewModel = new ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, mrn, true)
+      val rejectionMessageP5ViewModel = new ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, true)
 
       val request = FakeRequest(GET, rejectionMessageController)
 
@@ -113,7 +115,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
       when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Some(message)))
       when(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(sections, mrn, multipleErrors = true)))
+        .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
       rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 

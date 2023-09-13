@@ -58,7 +58,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
       "must return correct section length" in {
-        result.sections.length mustBe 1
+        result.tableRows.length mustBe 1
       }
 
       "must return correct title" in {
@@ -116,8 +116,8 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
-      result.sections.length mustBe 1
-      result.sections.head.rows.size mustBe 4
+      result.tableRows.length mustBe 2
+      result.tableRows.size mustBe 2
     }
 
   }

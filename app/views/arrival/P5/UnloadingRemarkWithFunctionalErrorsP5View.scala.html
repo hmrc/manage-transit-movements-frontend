@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Button, Heading, AnswerSections, Pagination}
+@import views.html.components.{Button, Heading, AnswerSections, Pagination, Table}
 @import config.FrontendAppConfig
 @import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 @import viewModels.pagination.ListPaginationViewModel
@@ -22,7 +22,7 @@
 @this(
         mainTemplate: MainTemplate,
         heading: Heading,
-        answerSections: AnswerSections,
+        table: Table,
         button: Button,
         formHelper: FormWithCSRF,
         pagination: Pagination
@@ -44,7 +44,7 @@
 
     @pagination(paginationViewModel, None)
 
-    @answerSections(viewModel.sections)
+    @table(viewModel.tableRows, viewModel.tableHeadCells)
 
     <p id="paragraph-2" class="govuk-body">@viewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@viewModel.paragraph2Link</a>
         @viewModel.paragraph2Suffix</p>

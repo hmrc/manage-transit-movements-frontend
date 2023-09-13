@@ -25,7 +25,7 @@ import models.departure._
 import models.departureP5.{DepartureMovement, DepartureMovements, GuaranteeReference, InvalidGuaranteeReason}
 import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, nonEmptyListOf, nonEmptyMap, numChar, posNum}
+import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar, posNum}
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
 

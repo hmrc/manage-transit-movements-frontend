@@ -19,21 +19,23 @@ package views.arrival.P5
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
-import views.behaviours.{PaginationViewBehaviours, SummaryListViewBehaviours}
+import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.arrival.P5.UnloadingRemarkWithFunctionalErrorsP5View
 
-class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with SummaryListViewBehaviours with Generators {
+class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
 
-  override val prefix: String = "arrival.ie057.review.unloading.message"
-
-  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
+  override val prefix: String           = "arrival.ie057.review.unloading.message"
+  override val headCells: Seq[HeadCell] = Seq(HeadCell(Text("Error code")), HeadCell(Text("Reason")))
+  val tableRows: Seq[TableRow]          = arbitrary[Seq[TableRow]].sample.value
+  private val sections: Seq[Section]    = arbitrary[List[Section]].sample.value
 
   private val viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel =
-    new UnloadingRemarkWithFunctionalErrorsP5ViewModel(sections, mrn, false)
+    new UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(tableRows), mrn, false)
 
   override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
 
@@ -58,10 +60,6 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   override def view: HtmlFormat.Appendable = applyView(viewModel, paginationViewModel)
 
-  override def summaryLists: Seq[SummaryList] = sections.map(
-    section => SummaryList(section.rows)
-  )
-
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
     applyView(viewModel, paginationViewModel)
 
@@ -73,20 +71,13 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   behave like pageWithPagination(controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5).url)
 
-  behave like pageWithSummaryLists()
+  behave like pageWithTable()
 
   behave like pageWithoutFormAction()
 
   behave like pageWithoutSubmitButton()
 
   behave like pageWithCaption(s"MRN: $mrn")
-
-  "must render section titles when rows are non-empty" - {
-    sections.foreach(_.sectionTitle.map {
-      sectionTitle =>
-        behave like pageWithContent("h2", sectionTitle)
-    })
-  }
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
     val element = doc.getElementById(id)
@@ -123,5 +114,4 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
     "View arrival notifications",
     controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
   )
-
 }

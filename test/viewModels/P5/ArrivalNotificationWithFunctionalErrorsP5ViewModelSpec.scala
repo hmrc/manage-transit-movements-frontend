@@ -65,7 +65,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
       val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
 
       "must return correct section length" in {
-        result.sections.length mustBe 1
+        result.tableRows.length mustBe 1
       }
 
       "must return correct title" in {
@@ -137,8 +137,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
       val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
 
-      result.sections.length mustBe 1
-      result.sections.head.rows.size mustBe 4
+      result.tableRows.length mustBe 2
+      result.tableRows.head.size mustBe 2
     }
 
   }
