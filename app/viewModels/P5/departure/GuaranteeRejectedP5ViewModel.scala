@@ -22,14 +22,14 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import utils.{Format, GuaranteeRejectedP5Helper}
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 case class GuaranteeRejectedP5ViewModel(
   guaranteeReferences: Seq[GuaranteeReference],
   lrn: LocalReferenceNumber,
   isAmendable: Boolean,
   mrn: String,
-  acceptanceData: LocalDateTime
+  acceptanceDate: LocalDate
 )(implicit
   messages: Messages
 ) {
@@ -40,7 +40,7 @@ case class GuaranteeRejectedP5ViewModel(
 
     multipleGuarantee && oneReference
   }
-  def formatDateTime: String = acceptanceData.format(Format.guaranteeRejectedDateTimeFormatter)
+  def formatDateTime: String = acceptanceDate.format(Format.guaranteeRejectedDateTimeFormatter)
 
   def paragraph1(implicit messages: Messages): String =
     if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length == 1) {

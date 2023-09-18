@@ -32,7 +32,7 @@ import services.DepartureP5MessageService
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 import views.html.departure.TestOnly.GuaranteeRejectedP5View
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -64,7 +64,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
       val message: IE055Data = IE055Data(
         IE055MessageData(
-          TransitOperationIE055("MRNCD3232", LocalDateTime.now()),
+          TransitOperationIE055("MRNCD3232", LocalDate.now()),
           Seq(
             GuaranteeReference(
               "AB123",
