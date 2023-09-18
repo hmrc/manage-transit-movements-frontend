@@ -25,7 +25,7 @@ import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 import views.behaviours.ViewBehaviours
 import views.html.departure.TestOnly.GuaranteeRejectedP5View
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 import scala.jdk.CollectionConverters._
 
 class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
@@ -39,7 +39,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
     lrn = lrn,
     isAmendable = true,
     mrn = mrn,
-    acceptanceData = LocalDateTime.now()
+    acceptanceDate = LocalDate.now()
   )
 
   override def view: HtmlFormat.Appendable = injector

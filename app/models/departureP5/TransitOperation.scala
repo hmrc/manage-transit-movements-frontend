@@ -20,13 +20,13 @@ import models.RejectionType
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Json, OFormat, Reads}
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 
 case class TransitOperation(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
 case class TransitOperationIE056(MRN: Option[String], LRN: Option[String], businessRejectionType: RejectionType)
 case class TransitOperationIE009(MRN: Option[String])
 case class TransitOperationIE060(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
-case class TransitOperationIE055(MRN: String, declarationAcceptanceDate: LocalDateTime)
+case class TransitOperationIE055(MRN: String, declarationAcceptanceDate: LocalDate)
 
 object TransitOperation {
   implicit val formats: OFormat[TransitOperation] = Json.format[TransitOperation]
@@ -53,6 +53,6 @@ object TransitOperationIE055 {
 
   implicit val reads: Reads[TransitOperationIE055] = (
     (__ \ "MRN").read[String] and
-      (__ \ "declarationAcceptanceDate").read[LocalDateTime]
+      (__ \ "declarationAcceptanceDate").read[LocalDate]
   )(TransitOperationIE055.apply _)
 }

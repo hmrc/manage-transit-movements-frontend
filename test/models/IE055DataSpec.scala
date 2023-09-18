@@ -20,8 +20,7 @@ import base.SpecBase
 import models.departureP5._
 import play.api.libs.json._
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.LocalDate
 
 class IE055DataSpec extends SpecBase {
 
@@ -36,7 +35,7 @@ class IE055DataSpec extends SpecBase {
           |     "n1:CC055C": {
           |         "TransitOperation": {
           |             "MRN": "AB123",
-          |             "declarationAcceptanceDate": "2022-11-04T13:36:52"
+          |             "declarationAcceptanceDate": "2023-09-18"
           |         },
           |         "GuaranteeReference": [
           |             {
@@ -76,7 +75,7 @@ class IE055DataSpec extends SpecBase {
         IE055MessageData(
           TransitOperationIE055(
             "AB123",
-            LocalDateTime.parse("2022-11-04T13:36:52", DateTimeFormatter.ISO_DATE_TIME)
+            LocalDate.of(2023: Int, 9: Int, 18: Int)
           ),
           Seq(
             GuaranteeReference(

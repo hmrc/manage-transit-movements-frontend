@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -41,7 +41,7 @@ class GuaranteeRejectedActionSpec extends SpecBase with BeforeAndAfterEach with 
     IE055MessageData(
       TransitOperationIE055(
         "AB123",
-        LocalDateTime.now()
+        LocalDate.now()
       ),
       Seq(
         GuaranteeReference(
