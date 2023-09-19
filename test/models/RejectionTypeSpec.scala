@@ -18,6 +18,7 @@ package models
 
 import base.SpecBase
 import generators.Generators
+import models.RejectionType.Other
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsString, Json}
@@ -26,11 +27,15 @@ class RejectionTypeSpec extends SpecBase with Generators with ScalaCheckProperty
 
   "RejectionType" - {
 
-    "must deserialise" in {
+    "must deserialise when recognised type" in {
       forAll(arbitrary[RejectionType]) {
         rejectionType =>
           JsString(rejectionType.code).as[RejectionType] mustEqual rejectionType
       }
+    }
+
+    "must deserialise when other " in {
+      JsString("differentCode").as[RejectionType] mustEqual Other("differentCode")
     }
 
     "must serialise" in {

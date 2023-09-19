@@ -48,6 +48,8 @@ object RejectionType {
     override val code = "170"
   }
 
+  case class Other(code: String) extends RejectionType
+
   implicit val reads: Reads[RejectionType] = Reads {
     case JsString(AmendmentRejection.code)                => JsSuccess(AmendmentRejection)
     case JsString(InvalidationRejection.code)             => JsSuccess(InvalidationRejection)
@@ -55,7 +57,7 @@ object RejectionType {
     case JsString(ReleaseRequestRejection.code)           => JsSuccess(ReleaseRequestRejection)
     case JsString(RejectionOfInformation.code)            => JsSuccess(RejectionOfInformation)
     case JsString(PresentationNotificationRejection.code) => JsSuccess(PresentationNotificationRejection)
-    case x                                                => JsError(s"Could not read $x as RejectionType")
+    case JsString(code)                                   => JsSuccess(Other(code))
   }
 
   implicit val writes: Writes[RejectionType] = Writes {
