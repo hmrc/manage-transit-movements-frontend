@@ -225,10 +225,8 @@ object DepartureStatusP5ViewModel {
   private def goodsNotReleased(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsNotReleased =>
       DepartureStatusP5ViewModel(
-        "movement.status.P5.goodsNotReleased",
-        actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsNotReleased.viewDetails")
-        )
+        status = "movement.status.P5.goodsNotReleased",
+        actions = Nil
       )
   }
 
@@ -314,9 +312,7 @@ object DepartureStatusP5ViewModel {
     case message if message.messageType == IncidentDuringTransit =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.incidentDuringTransit",
-        actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.incidentDuringTransit.viewErrors")
-        )
+        actions = Nil
       )
   }
 
