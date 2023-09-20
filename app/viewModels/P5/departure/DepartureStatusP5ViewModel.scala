@@ -185,9 +185,7 @@ object DepartureStatusP5ViewModel {
     case message if message.messageType == InvalidMRN =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.invalidMRN",
-        actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.invalidMRN.amendErrors")
-        )
+        actions = Nil
       )
   }
 
@@ -225,10 +223,8 @@ object DepartureStatusP5ViewModel {
   private def goodsNotReleased(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsNotReleased =>
       DepartureStatusP5ViewModel(
-        "movement.status.P5.goodsNotReleased",
-        actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsNotReleased.viewDetails")
-        )
+        status = "movement.status.P5.goodsNotReleased",
+        actions = Nil
       )
   }
 
@@ -314,9 +310,7 @@ object DepartureStatusP5ViewModel {
     case message if message.messageType == IncidentDuringTransit =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.incidentDuringTransit",
-        actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.incidentDuringTransit.viewErrors")
-        )
+        actions = Nil
       )
   }
 
@@ -328,7 +322,7 @@ object DepartureStatusP5ViewModel {
       DepartureStatusP5ViewModel(
         "movement.status.P5.declarationSent",
         actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.declarationSent.amendDeclaration"),
+//          ViewMovementAction(s"", "movement.status.P5.action.declarationSent.amendDeclaration"),
           ViewMovementAction(
             s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
             "movement.status.P5.action.declarationSent.cancelDeclaration"
@@ -341,9 +335,7 @@ object DepartureStatusP5ViewModel {
     case message if message.messageType == GoodsBeingRecovered =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsBeingRecovered",
-        actions = Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsBeingRecovered.viewErrors")
-        )
+        actions = Nil
       )
   }
 
