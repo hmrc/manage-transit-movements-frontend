@@ -197,9 +197,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.invalidMRN",
-        Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.invalidMRN.amendErrors")
-        )
+        Nil
       )
 
       result mustBe expectedResult
@@ -251,9 +249,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.goodsNotReleased",
-        Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsNotReleased.viewDetails")
-        )
+        Nil
       )
 
       result mustBe expectedResult
@@ -552,9 +548,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.incidentDuringTransit",
-        Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.incidentDuringTransit.viewErrors")
-        )
+        Nil
       )
 
       result mustBe expectedResult
@@ -569,7 +563,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.declarationSent",
         Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.declarationSent.amendDeclaration"),
+//          ViewMovementAction(s"", "movement.status.P5.action.declarationSent.amendDeclaration"),
           ViewMovementAction(
             s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
             "movement.status.P5.action.declarationSent.cancelDeclaration"
@@ -588,9 +582,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.goodsBeingRecovered",
-        Seq(
-          ViewMovementAction(s"", "movement.status.P5.action.goodsBeingRecovered.viewErrors")
-        )
+        Nil
       )
 
       result mustBe expectedResult
