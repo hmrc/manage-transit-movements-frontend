@@ -18,9 +18,10 @@ package connectors
 
 import config.FrontendAppConfig
 import logging.Logging
+import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
 import models.departure.drafts.{Limit, Skip}
-import models.{Availability, DeparturesSummary, Sort}
-import play.api.http.Status.OK
+import models.{Availability, DeparturesSummary, LockCheck, Sort}
+import play.api.http.Status.{LOCKED, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -65,13 +66,17 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
   def getDraftDeparturesAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
     getDeparturesSummary(Seq("limit" -> "1")).map(_.map(_.userAnswers)).map(Availability(_))
 
-  def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-
+  def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[LockCheck] = {
     val url = s"${config.draftDeparturesUrl}/user-answers/$lrn/lock"
+
     http
       .GET[HttpResponse](url)
       .map {
-        _.status == OK
+        _.status match {
+          case OK     => Unlocked
+          case LOCKED => Locked
+          case _      => LockCheckFailure
+        }
       }
   }
 

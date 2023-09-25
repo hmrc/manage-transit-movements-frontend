@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package models
 
-import models.requests.IdentifierRequest
-import play.api.mvc.Result
-import services.DraftDepartureService
+sealed trait LockCheck
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+object LockCheck {
 
-class FakeLockAction(lrn: String, service: DraftDepartureService) extends LockAction(lrn, service) {
+  sealed trait LockCheckSuccess extends LockCheck
 
-  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
-    Future.successful(None)
+  case object LockCheckFailure extends LockCheck
+  case object Locked extends LockCheckSuccess
+  case object Unlocked extends LockCheckSuccess
 }
