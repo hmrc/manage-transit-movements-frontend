@@ -17,7 +17,7 @@
 package services
 
 import connectors.DeparturesDraftsP5Connector
-import models.{DeparturesSummary, Sort}
+import models.{DeparturesSummary, LockCheck, Sort}
 import models.departure.drafts.{Limit, Skip}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -46,5 +46,5 @@ class MongoDraftDepartureService @Inject() (connector: DeparturesDraftsP5Connect
   override def getPagedDepartureSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.getAllDeparturesSummary(limit, skip)
 
-  override def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = connector.checkLock(lrn)
+  override def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[LockCheck] = connector.checkLock(lrn)
 }

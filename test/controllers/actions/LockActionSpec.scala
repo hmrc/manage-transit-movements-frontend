@@ -17,7 +17,7 @@
 package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.DeparturesDraftsP5Connector
+import models.LockCheck
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -26,6 +26,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, Request, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.DraftDepartureService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,23 +43,23 @@ class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
     }
   }
 
-  val connector: DeparturesDraftsP5Connector = mock[DeparturesDraftsP5Connector]
+  val service: DraftDepartureService = mock[DraftDepartureService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[DeparturesDraftsP5Connector].toInstance(connector))
+      .overrides(bind[DraftDepartureService].toInstance(service))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(connector)
+    reset(service)
   }
 
   "Lock Action" - {
 
     "must return Ok when lock is open" in {
 
-      when(connector.checkLock(any())(any())).thenReturn(Future(true))
+      when(service.checkLock(any())(any())).thenReturn(Future(LockCheck.Unlocked))
 
       val actionProvider: LockActionProvider = app.injector.instanceOf[LockActionProvider]
 
@@ -70,7 +71,7 @@ class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
     "must redirect to lock page when lock is not open" in {
 
-      when(connector.checkLock(any())(any())).thenReturn(Future(false))
+      when(service.checkLock(any())(any())).thenReturn(Future(LockCheck.Locked))
 
       val actionProvider: LockActionProvider = app.injector.instanceOf[LockActionProvider]
 
@@ -79,6 +80,19 @@ class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe controllers.departure.drafts.routes.DraftLockedController.onPageLoad().url
+    }
+
+    "must redirect to technical difficulties when lock check fails" in {
+
+      when(service.checkLock(any())(any())).thenReturn(Future(LockCheck.LockCheckFailure))
+
+      val actionProvider: LockActionProvider = app.injector.instanceOf[LockActionProvider]
+
+      val controller = new Harness(actionProvider)
+      val result     = controller.onPageLoad()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 

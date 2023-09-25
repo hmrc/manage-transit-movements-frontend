@@ -16,8 +16,8 @@
 
 package services
 
-import models.{DeparturesSummary, Sort}
 import models.departure.drafts.{Limit, Skip}
+import models.{DeparturesSummary, LockCheck, Sort}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
@@ -32,5 +32,5 @@ trait DraftDepartureService {
   def getLRNs(partialLRN: String, skip: Skip, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
   def getPagedDepartureSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
 
-  def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean]
+  def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[LockCheck]
 }

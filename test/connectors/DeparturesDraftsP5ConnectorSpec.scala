@@ -22,9 +22,10 @@ import generators.Generators
 import helper.WireMockServerHandler
 import models.Sort.{SortByCreatedAtAsc, SortByCreatedAtDesc, SortByLRNAsc, SortByLRNDesc}
 import models.departure.drafts.{Limit, Skip}
-import models.{Availability, DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
+import models.{Availability, DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber, LockCheck}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.http.Status.LOCKED
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Helpers.OK
@@ -356,29 +357,31 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
 
       val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn/lock"
 
-      "must return true when status is Ok" in {
+      "must return Unlocked when status is Ok (200)" in {
         server.stubFor(get(urlEqualTo(url)) willReturn aResponse().withStatus(OK))
 
-        val result: Boolean = connector.checkLock(lrn.value).futureValue
+        val result: LockCheck = connector.checkLock(lrn.value).futureValue
 
-        result mustBe true
+        result mustBe LockCheck.Unlocked
       }
 
-      "return false for other responses" in {
+      "must return Locked when status is Locked (423)" in {
+        server.stubFor(get(urlEqualTo(url)) willReturn aResponse().withStatus(LOCKED))
 
-        val errorResponses: Gen[Int] = Gen
-          .chooseNum(400: Int, 599: Int)
+        val result: LockCheck = connector.checkLock(lrn.value).futureValue
 
-        forAll(errorResponses) {
-          error =>
-            server.stubFor(
-              get(urlEqualTo(url))
-                .willReturn(aResponse().withStatus(error))
-            )
+        result mustBe LockCheck.Locked
+      }
 
-            val result: Boolean = connector.checkLock(lrn.value).futureValue
+      "return LockCheckFailure for other 4xx/5xx responses" in {
 
-            result mustBe false
+        forAll(Gen.choose(400: Int, 599: Int).retryUntil(_ != LOCKED)) {
+          errorStatus =>
+            server.stubFor(get(urlEqualTo(url)) willReturn aResponse().withStatus(errorStatus))
+
+            val result: LockCheck = connector.checkLock(lrn.value).futureValue
+
+            result mustBe LockCheck.LockCheckFailure
         }
       }
     }
