@@ -62,7 +62,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         )
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers"))
+          get(urlEqualTo(s"/$startUrl/user-answers?state=notSubmitted"))
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
@@ -74,7 +74,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         val expectedResult = DeparturesSummary(0, 0, List.empty)
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers"))
+          get(urlEqualTo(s"/$startUrl/user-answers?state=notSubmitted"))
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
@@ -119,7 +119,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         val departuresUserAnswers: List[DepartureUserAnswerSummary] = expectedResult.userAnswers
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.asc"))
+          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.asc&state=notSubmitted"))
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
@@ -147,7 +147,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         val departuresUserAnswers: List[DepartureUserAnswerSummary] = expectedResult.userAnswers
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.dsc"))
+          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.dsc&state=notSubmitted"))
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
@@ -176,7 +176,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         val departuresUserAnswers: List[DepartureUserAnswerSummary] = expectedResult.userAnswers
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=createdAt.asc"))
+          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=createdAt.asc&state=notSubmitted"))
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
@@ -204,7 +204,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         val departuresUserAnswers: List[DepartureUserAnswerSummary] = expectedResult.userAnswers
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=createdAt.dsc"))
+          get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=createdAt.dsc&state=notSubmitted"))
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
@@ -222,7 +222,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         errorResponses.map {
           errorResponse =>
             server.stubFor(
-              get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.asc"))
+              get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.asc&state=notSubmitted"))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)
@@ -236,9 +236,9 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
     }
 
     "lrnFuzzySearch" - {
-
       val maxSearchResults = 100
       val partialLRN       = "123"
+      val url              = s"/$startUrl/user-answers?lrn=$partialLRN&limit=$maxSearchResults&state=notSubmitted"
 
       "must return DeparturesSummary when given successful response" in {
 
@@ -252,7 +252,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         )
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN&limit=$maxSearchResults"))
+          get(urlEqualTo(url))
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
@@ -263,7 +263,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         errorResponses.map {
           errorResponse =>
             server.stubFor(
-              get(urlEqualTo(s"/$startUrl/user-answers?lrn=$partialLRN&limit=$maxSearchResults"))
+              get(urlEqualTo(url))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)
@@ -279,9 +279,11 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
 
     "deleteDraftDeparture" - {
       val lrn = "1234"
+      val url = s"/$startUrl/user-answers/$lrn"
+
       "must return 200 on a successful deletion" in {
         server.stubFor(
-          delete(urlEqualTo(s"/$startUrl/user-answers/$lrn"))
+          delete(urlEqualTo(url))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -293,7 +295,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
 
       "must return 500 on a failed deletion" in {
         server.stubFor(
-          delete(urlEqualTo(s"/$startUrl/user-answers/$lrn"))
+          delete(urlEqualTo(url))
             .willReturn(
               aResponse()
                 .withStatus(500)
@@ -305,6 +307,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
     }
 
     "getDraftDeparturesAvailability" - {
+      val url = s"/$startUrl/user-answers?limit=1&state=notSubmitted"
 
       "must return NonEmpty when given successful response" in {
         val expectedResult = DeparturesSummary(
@@ -317,7 +320,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         )
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?limit=1"))
+          get(urlEqualTo(url))
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
@@ -329,7 +332,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         val expectedResult = DeparturesSummary(0, 0, List.empty)
 
         server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?limit=1"))
+          get(urlEqualTo(url))
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
@@ -341,7 +344,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         errorResponses.map {
           errorResponse =>
             server.stubFor(
-              get(urlEqualTo(s"/$startUrl/user-answers?limit=1"))
+              get(urlEqualTo(url))
                 .willReturn(
                   aResponse()
                     .withStatus(errorResponse)
@@ -354,7 +357,6 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
     }
 
     "checkLock" - {
-
       val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn/lock"
 
       "must return Unlocked when status is Ok (200)" in {
@@ -385,7 +387,5 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         }
       }
     }
-
   }
-
 }
