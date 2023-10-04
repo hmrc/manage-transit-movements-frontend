@@ -57,7 +57,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .guiceApplicationBuilder()
+      .p5GuiceApplicationBuilder()
       .overrides(
         bind[DepartureMovementP5Connector].toInstance(mockDepartureMovementConnector),
         bind[DepartureP5MessageService].toInstance(mockDepartureMovementService)
