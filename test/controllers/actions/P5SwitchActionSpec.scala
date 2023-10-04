@@ -27,7 +27,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures {
     def onPageLoad(): Action[AnyContent] = (
       stubControllerComponents().actionBuilder andThen
         FakeIdentifierAction.apply() andThen
-        actionProvider(_.Departures)
+        actionProvider()
     ) {
       _ => Results.Ok
     }
@@ -38,7 +38,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures {
     "must return Ok when P5 is enabled" in {
       val app = super
         .guiceApplicationBuilder()
-        .configure("microservice.services.features.phase5Enabled.departure" -> true)
+        .configure("microservice.services.features.phase5Enabled" -> true)
         .build()
 
       running(app) {
@@ -54,7 +54,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures {
     "must redirect to not found when P5 is disabled" in {
       val app = super
         .guiceApplicationBuilder()
-        .configure("microservice.services.features.phase5Enabled.departure" -> false)
+        .configure("microservice.services.features.phase5Enabled" -> false)
         .build()
 
       running(app) {

@@ -17,7 +17,7 @@
 package controllers.actions
 
 import com.google.inject.Inject
-import config.{Phase5, Phase5Switch}
+import config.FrontendAppConfig
 import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
@@ -26,16 +26,16 @@ import play.api.mvc.{ActionFilter, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class P5SwitchActionProvider @Inject() (phase5: Phase5)(implicit ec: ExecutionContext) {
+class P5SwitchActionProvider @Inject() (config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
-  def apply[T <: Phase5Switch](switch: Phase5 => T): ActionFilter[IdentifierRequest] =
-    new P5SwitchAction(switch(phase5))
+  def apply(): ActionFilter[IdentifierRequest] =
+    new P5SwitchAction(config)
 }
 
-class P5SwitchAction[T <: Phase5Switch](switch: T)(implicit val executionContext: ExecutionContext) extends ActionFilter[IdentifierRequest] with Logging {
+class P5SwitchAction(config: FrontendAppConfig)(implicit val executionContext: ExecutionContext) extends ActionFilter[IdentifierRequest] with Logging {
 
   override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
     Future.successful {
-      if (switch.enabled) None else Some(Redirect(routes.ErrorController.notFound()))
+      if (config.phase5Enabled) None else Some(Redirect(routes.ErrorController.notFound()))
     }
 }

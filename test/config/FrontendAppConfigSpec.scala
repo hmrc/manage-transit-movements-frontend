@@ -32,7 +32,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
       "must point to to phase 4 frontend urls" - {
         "when departure" in {
           val app: Application = new GuiceApplicationBuilder()
-            .configure("microservice.services.features.phase5Enabled.departure" -> false)
+            .configure("microservice.services.features.phase5Enabled" -> false)
             .build()
 
           val config = app.injector.instanceOf[FrontendAppConfig]
@@ -58,7 +58,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
         "when arrival" in {
           val app: Application = new GuiceApplicationBuilder()
-            .configure("microservice.services.features.phase5Enabled.arrival" -> false)
+            .configure("microservice.services.features.phase5Enabled" -> false)
             .build()
 
           val config = app.injector.instanceOf[FrontendAppConfig]
@@ -75,7 +75,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
         "when unloading" in {
           val app: Application = new GuiceApplicationBuilder()
-            .configure("microservice.services.features.phase5Enabled.unloading" -> false)
+            .configure("microservice.services.features.phase5Enabled" -> false)
             .build()
 
           val config = app.injector.instanceOf[FrontendAppConfig]
@@ -92,7 +92,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
         "when cancellation" in {
           val app: Application = new GuiceApplicationBuilder()
-            .configure("microservice.services.features.phase5Enabled.cancellation" -> false)
+            .configure("microservice.services.features.phase5Enabled" -> false)
             .build()
 
           val config = app.injector.instanceOf[FrontendAppConfig]
@@ -110,7 +110,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
       "must point to to phase 5 frontend urls" - {
         "when departure" in {
           val app: Application = new GuiceApplicationBuilder()
-            .configure("microservice.services.features.phase5Enabled.departure" -> true)
+            .configure("microservice.services.features.phase5Enabled" -> true)
             .build()
 
           val config = app.injector.instanceOf[FrontendAppConfig]
@@ -133,7 +133,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
         "when arrival" in {
           val app: Application = new GuiceApplicationBuilder()
-            .configure("microservice.services.features.phase5Enabled.arrival" -> true)
+            .configure("microservice.services.features.phase5Enabled" -> true)
             .build()
 
           val config = app.injector.instanceOf[FrontendAppConfig]
@@ -150,7 +150,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
         "when unloading" in {
           val app: Application = new GuiceApplicationBuilder()
-            .configure("microservice.services.features.phase5Enabled.unloading" -> true)
+            .configure("microservice.services.features.phase5Enabled" -> true)
             .build()
 
           val config = app.injector.instanceOf[FrontendAppConfig]
@@ -167,7 +167,7 @@ class FrontendAppConfigSpec extends SpecBase with ScalaCheckPropertyChecks with 
 
         "when cancellation" in {
           val app: Application = new GuiceApplicationBuilder()
-            .configure("microservice.services.features.phase5Enabled.cancellation" -> true)
+            .configure("microservice.services.features.phase5Enabled" -> true)
             .build()
 
           val config = app.injector.instanceOf[FrontendAppConfig]

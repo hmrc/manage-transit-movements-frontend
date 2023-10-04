@@ -23,12 +23,18 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: Phase5) {
+class FrontendAppConfig @Inject() (configuration: Configuration) {
 
-  lazy val contactHost: String     = configuration.get[String]("contact-frontend.host")
-  val contactFormServiceIdentifier = "CTCTraders"
+  val phase5Enabled: Boolean = configuration.get[Boolean](s"microservice.services.features.phase5Enabled")
 
-  val showPhaseBanner: Boolean        = configuration.get[Boolean]("banners.showPhase")
+  val unloadingFrontendUrl            = getFrontendUrl("Unloading")
+  val arrivalFrontendUrl: String      = getFrontendUrl("Arrival")
+  val departureFrontendUrl: String    = getFrontendUrl("Departure")
+  val cancellationFrontendUrl: String = getFrontendUrl("Cancellation")
+
+  private lazy val contactHost: String     = configuration.get[String]("contact-frontend.host")
+  private val contactFormServiceIdentifier = "CTCTraders"
+
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
   val showUserResearchBanner: Boolean = configuration.get[Boolean]("banners.showUserResearch")
 
@@ -41,34 +47,29 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
 
   val signOutUrl: String = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
 
-  private val declareUnloadingRemarksUrlBase = phase5Switch.Unloading.getFrontendUrl
-
-  def declareUnloadingRemarksUrl(arrivalId: ArrivalId)  = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}"
-  private val declareArrivalNotificationUrlBase: String = phase5Switch.Arrivals.getFrontendUrl
-  private val startDepartureDeclarationUrlBase: String  = phase5Switch.Departures.getFrontendUrl
+  def declareUnloadingRemarksUrl(arrivalId: ArrivalId) = s"$unloadingFrontendUrl/${arrivalId.index}"
 
   val declareArrivalNotificationStartUrl: String =
-    if (phase5Switch.Arrivals.enabled) {
-      declareArrivalNotificationUrlBase
+    if (phase5Enabled) {
+      arrivalFrontendUrl
     } else {
-      s"$declareArrivalNotificationUrlBase/movement-reference-number"
+      s"$arrivalFrontendUrl/movement-reference-number"
     }
 
   val startDepartureDeclarationStartUrl: String =
-    if (phase5Switch.Arrivals.enabled) {
-      startDepartureDeclarationUrlBase
+    if (phase5Enabled) {
+      departureFrontendUrl
     } else {
-      s"$startDepartureDeclarationUrlBase/local-reference-number"
+      s"$departureFrontendUrl/local-reference-number"
     }
 
-  def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$declareArrivalNotificationUrlBase/${arrivalId.index}/arrival-rejection"
-  def unloadingRemarksRejectedUrl(arrivalId: ArrivalId) = s"$declareUnloadingRemarksUrlBase/${arrivalId.index}/unloading-rejection"
+  def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$arrivalFrontendUrl/${arrivalId.index}/arrival-rejection"
+  def unloadingRemarksRejectedUrl(arrivalId: ArrivalId) = s"$unloadingFrontendUrl/${arrivalId.index}/unloading-rejection"
 
   private val guaranteeBalanceUrlBase    = configuration.get[String]("urls.guaranteeBalanceFrontend")
   def checkGuaranteeBalanceUrl           = s"$guaranteeBalanceUrlBase/start?referral=ncts"
   val isGuaranteeBalanceEnabled: Boolean = configuration.get[Boolean]("microservice.services.features.isGuaranteeBalanceEnabled")
 
-  lazy val authUrl: String                           = configuration.get[Service]("auth").fullServiceUrl
   lazy val loginUrl: String                          = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String                  = configuration.get[String]("urls.loginContinue")
   lazy val eccEnrolmentSplashPage: String            = configuration.get[String]("urls.eccEnrolmentSplashPage")
@@ -92,13 +93,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
   lazy val nctsHelpdeskUrl: String  = configuration.get[String]("urls.nctsHelpdesk")
-  lazy val loginHmrcService: String = configuration.get[String]("urls.loginHmrcService")
   lazy val timeoutSeconds: Int      = configuration.get[Int]("session.timeoutSeconds")
   lazy val countdownSeconds: Int    = configuration.get[Int]("session.countdownSeconds")
-
-  private val departureFrontendUrl: String    = phase5Switch.Departures.getFrontendUrl
-  lazy val draftDepartureFrontendUrl: String  = phase5Switch.Departures.getFrontendUrl
-  private val cancellationFrontendUrl: String = phase5Switch.Cancellations.getFrontendUrl
 
   val manageTransitMovementsUnloadingFrontend: String    = configuration.get[String]("urls.manageTransitMovementsUnloadingFrontend")
   val manageTransitMovementsCancellationFrontend: String = configuration.get[String]("urls.manageTransitMovementsCancellationFrontend")
@@ -106,16 +102,11 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   lazy val manageDocumentsUrl: String = configuration.get[Service]("microservice.services.manage-documents").fullServiceUrl
 
   val declareDepartureStartWithLRNUrl: String =
-    if (phase5Switch.Departures.enabled) {
+    if (phase5Enabled) {
       departureFrontendUrl
     } else {
       s"$departureFrontendUrl/local-reference-number"
     }
-
-  val phase5DepartureEnabled: Boolean = phase5Switch.Departures.enabled
-  val phase5ArrivalEnabled: Boolean   = phase5Switch.Arrivals.enabled
-
-  val maxErrorsForArrivalNotification: Int = configuration.get[Int]("maxErrorsForArrivalNotification")
 
   def departureFrontendTaskListUrl(lrn: String)                     = s"$departureFrontendUrl/$lrn/declaration-summary"
   def departureNewLocalReferenceNumberUrl(lrn: String)              = s"$departureFrontendUrl/$lrn/new-local-reference-number"
@@ -123,7 +114,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
 
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId): String =
-    if (phase5Switch.Cancellations.enabled) {
+    if (phase5Enabled) {
       s"$cancellationFrontendUrl/${departureId.index}/cancellation-decision-update"
     } else {
       s"$departureFrontendUrl/${departureId.index}/cancellation-decision-update"
@@ -132,9 +123,18 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   def departureTadPdfUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/tad-pdf"
 
   def departureFrontendConfirmCancellationUrl(departureId: DepartureId): String =
-    if (phase5Switch.Cancellations.enabled) {
+    if (phase5Enabled) {
       s"$cancellationFrontendUrl/${departureId.index}"
     } else {
       s"$cancellationFrontendUrl/${departureId.index}/confirm-cancellation"
     }
+
+  private def getFrontendUrl(name: String): String = {
+    val url = if (phase5Enabled) {
+      s"manageTransitMovements${name}Frontend"
+    } else {
+      s"declareTransitMovement${name}Frontend"
+    }
+    configuration.get[String](s"urls.$url")
+  }
 }

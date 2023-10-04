@@ -16,7 +16,6 @@
 
 package controllers.actions
 
-import config.{Phase5, Phase5Switch}
 import models.requests.IdentifierRequest
 import play.api.mvc.{ActionFunction, Request}
 
@@ -29,9 +28,6 @@ class Actions @Inject() (
 
   def identify(): IdentifierAction = identifierAction
 
-  private def checkP5Switch[T <: Phase5Switch](switch: Phase5 => T): ActionFunction[Request, IdentifierRequest] =
-    identify() andThen p5SwitchAction(switch)
-
-  def checkP5DeparturesSwitch: ActionFunction[Request, IdentifierRequest] = checkP5Switch(_.Departures)
-  def checkP5ArrivalsSwitch: ActionFunction[Request, IdentifierRequest]   = checkP5Switch(_.Arrivals)
+  def checkP5Switch(): ActionFunction[Request, IdentifierRequest] =
+    identify() andThen p5SwitchAction()
 }

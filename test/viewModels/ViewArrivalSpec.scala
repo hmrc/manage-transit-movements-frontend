@@ -33,8 +33,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     super
       .guiceApplicationBuilder()
       .configure(
-        "microservice.services.features.phase5Enabled.departure" -> false,
-        "microservice.services.features.phase5Enabled.arrival"   -> false
+        "microservice.services.features.phase5Enabled" -> false
       )
 
   "must display unloading permission" in {
