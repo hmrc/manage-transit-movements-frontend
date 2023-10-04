@@ -34,7 +34,7 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
     val url = s"${config.draftDeparturesUrl}/user-answers"
 
     http
-      .GET[DeparturesSummary](url, queryParams)
+      .GET[DeparturesSummary](url, queryParams :+ ("state" -> "notSubmitted"))
       .map(Some(_))
       .recover {
         case _ =>
