@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
-  val phase5Enabled: Boolean = configuration.get[Boolean](s"microservice.services.features.phase5Enabled")
+  val phase5Enabled: Boolean = configuration.get[Boolean](s"microservice.services.features.isPhase5Enabled")
 
   val unloadingFrontendUrl            = getFrontendUrl("Unloading")
   val arrivalFrontendUrl: String      = getFrontendUrl("Arrival")

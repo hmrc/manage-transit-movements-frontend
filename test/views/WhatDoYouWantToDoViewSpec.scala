@@ -33,7 +33,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     super
       .guiceApplicationBuilder()
       .configure(
-        "microservice.services.features.phase5Enabled" -> false
+        "microservice.services.features.isPhase5Enabled" -> false
       )
 
   private val sampleAvailability      = arbitrary[Availability].sample.value
@@ -152,7 +152,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     val app = super
       .guiceApplicationBuilder()
       .configure(
-        "microservice.services.features.phase5Enabled" -> true
+        "microservice.services.features.isPhase5Enabled" -> true
       )
       .build()
 
@@ -179,7 +179,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     val app = super
       .guiceApplicationBuilder()
       .configure(
-        "microservice.services.features.phase5Enabled" -> false
+        "microservice.services.features.isPhase5Enabled" -> false
       )
       .build()
 

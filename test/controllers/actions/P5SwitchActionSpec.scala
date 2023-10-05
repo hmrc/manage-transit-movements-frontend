@@ -38,7 +38,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures {
     "must return Ok when P5 is enabled" in {
       val app = super
         .guiceApplicationBuilder()
-        .configure("microservice.services.features.phase5Enabled" -> true)
+        .configure("microservice.services.features.isPhase5Enabled" -> true)
         .build()
 
       running(app) {
@@ -54,7 +54,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures {
     "must redirect to not found when P5 is disabled" in {
       val app = super
         .guiceApplicationBuilder()
-        .configure("microservice.services.features.phase5Enabled" -> false)
+        .configure("microservice.services.features.isPhase5Enabled" -> false)
         .build()
 
       running(app) {
