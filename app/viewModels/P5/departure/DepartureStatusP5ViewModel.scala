@@ -86,7 +86,7 @@ object DepartureStatusP5ViewModel {
       goodsUnderControl(departureId, localReferenceNumber),
       incidentDuringTransit(),
       declarationSent(departureId, localReferenceNumber),
-      goodsBeingRecovered(),
+      goodsBeingRecovered(departureId, localReferenceNumber),
       guaranteeWrittenOff
     ).reduce(_ orElse _)
 
@@ -230,7 +230,7 @@ object DepartureStatusP5ViewModel {
           ViewMovementAction(
             //todo update once CTCP-4039 is completed
             controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, localReferenceNumber).url,
-            "movement.status.P5.action.goodsNotReleased.viewErrors"
+            "movement.status.P5.action.goodsNotReleased.viewDetails"
           )
         )
       )
@@ -339,11 +339,19 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def goodsBeingRecovered(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def goodsBeingRecovered(departureId: String,
+                                  localReferenceNumber: LocalReferenceNumber
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsBeingRecovered =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsBeingRecovered",
-        actions = Nil
+        actions = Seq(
+          ViewMovementAction(
+            //todo update once CTCP-4085 is completed
+            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, localReferenceNumber).url,
+            "movement.status.P5.action.goodsNotReleased.viewErrors"
+          )
+        )
       )
   }
 
