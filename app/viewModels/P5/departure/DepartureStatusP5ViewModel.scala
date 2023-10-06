@@ -228,9 +228,8 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.goodsNotReleased",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.DepartureCancelledP5Controller
-              .isDeclarationCancelled(departureId, localReferenceNumber)
-              .url, //todo update once CTCP-4085 is completed
+            //todo update once CTCP-4085 is completed
+            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, localReferenceNumber).url,
             "movement.status.P5.action.goodsNotReleased.viewErrors"
           )
         )
