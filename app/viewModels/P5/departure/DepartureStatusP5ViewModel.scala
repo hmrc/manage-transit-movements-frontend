@@ -74,7 +74,7 @@ object DepartureStatusP5ViewModel {
       invalidMRN(),
       allocatedMRN(departureId, localReferenceNumber),
       releasedForTransit(departureId),
-      goodsNotReleased(),
+      goodsNotReleased(departureId, localReferenceNumber),
       guaranteeRejected(departureId, localReferenceNumber),
       rejectedByOfficeOfDeparture(
         departureId,
@@ -220,11 +220,20 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def goodsNotReleased(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def goodsNotReleased(departureId: String,
+                               localReferenceNumber: LocalReferenceNumber
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsNotReleased =>
       DepartureStatusP5ViewModel(
-        status = "movement.status.P5.goodsNotReleased",
-        actions = Nil
+        "movement.status.P5.goodsNotReleased",
+        actions = Seq(
+          ViewMovementAction(
+            controllers.testOnly.routes.DepartureCancelledP5Controller
+              .isDeclarationCancelled(departureId, localReferenceNumber)
+              .url, //todo update once CTCP-4085 is completed
+            "movement.status.P5.action.goodsNotReleased.viewErrors"
+          )
+        )
       )
   }
 

@@ -249,7 +249,12 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.goodsNotReleased",
-        Nil
+        Seq(
+          ViewMovementAction(
+            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, lrn).url,
+            "movement.status.P5.action.goodsNotReleased.viewErrors"
+          )
+        )
       )
 
       result mustBe expectedResult
