@@ -349,7 +349,7 @@ object DepartureStatusP5ViewModel {
           ViewMovementAction(
             //todo update once CTCP-4085 is completed
             controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, localReferenceNumber).url,
-            "movement.status.P5.action.goodsNotReleased.viewErrors"
+            "movement.status.P5.action.goodsBeingRecovered.viewErrors"
           )
         )
       )
