@@ -599,13 +599,13 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result mustBe expectedResult
     }
 
-    "when given Message with head of guaranteeWrittenOff" in {
+    "when given Message with head of movementEnded" in {
 
-      val movementAndMessage = movementAndMessages(GuaranteeWrittenOff)
+      val movementAndMessage = movementAndMessages(MovementEnded)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-      val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.guaranteeWrittenOff", Nil)
+      val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.movementEnded", Nil)
 
       result mustBe expectedResult
     }

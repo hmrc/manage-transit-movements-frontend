@@ -148,7 +148,7 @@ movement.status.P5.goodsUnderControl                                    = Goods 
 movement.status.P5.incidentDuringTransit                                = Incident during transit
 movement.status.P5.declarationSent                                      = Declaration sent
 movement.status.P5.goodsBeingRecovered                                  = Goods being recovered
-movement.status.P5.guaranteeWrittenOff                                  = Guarantee written off
+movement.status.P5.movementEnded                                        = Movement ended
 movement.status.P5.prelodgedDeclarationSent	                            = Prelodged declaration sent
 
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
@@ -239,7 +239,7 @@ departure.status.departureDeclarationRejected = Departure declaration rejected
 departure.status.departureDeclarationReceived = Departure declaration received
 departure.status.guaranteeValidationFail = Guarantee rejected
 departure.status.transitDeclarationSent = Transit declaration sent
-departure.status.writeOffNotification = Guarantee written off
+departure.status.writeOffNotification = Movement ended
 departure.status.declarationCancellationRequest = Departure cancellation sent
 departure.status.declarationCancellationDecision = Cancellation decision
 departure.status.noReleaseForTransit = Goods not released
