@@ -42,6 +42,6 @@ object RecoveryNotification {
   implicit val reads: Reads[RecoveryNotification] =
     ((__ \ "recoveryNotificationDate").read[LocalDate] and
       (__ \ "recoveryNotificationText").read[String] and
-      (__ \ "amountClaimed").read[String] and
+      (__ \ "amountClaimed").read[Double].map(_.toString) and
       (__ \ "currency").read[String])(RecoveryNotification.apply _)
 }

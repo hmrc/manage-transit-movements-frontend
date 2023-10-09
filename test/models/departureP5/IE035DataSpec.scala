@@ -31,7 +31,7 @@ class IE035DataSpec extends SpecBase {
       val declarationAcceptanceDate = LocalDate.now(clock)
       val recoveryNotificationDate  = LocalDate.now(clock)
       val recoveryNotificationText  = "text"
-      val amountClaimed             = "1000"
+      val amountClaimed: Double     = 1000.01
       val currency                  = "EUR"
 
       val json = Json.parse(s"""
@@ -45,7 +45,7 @@ class IE035DataSpec extends SpecBase {
                   "RecoveryNotification": {
                       "recoveryNotificationDate": "$recoveryNotificationDate",
                       "recoveryNotificationText": "$recoveryNotificationText",
-                      "amountClaimed": "$amountClaimed",
+                      "amountClaimed": $amountClaimed,
                       "currency": "$currency"
                   }
               }
@@ -62,7 +62,7 @@ class IE035DataSpec extends SpecBase {
           RecoveryNotification(
             recoveryNotificationDate,
             recoveryNotificationText,
-            amountClaimed,
+            amountClaimed.toString,
             currency
           )
         )
