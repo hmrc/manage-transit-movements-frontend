@@ -33,7 +33,7 @@ import viewModels.P5.departure.RecoveryNotificationViewModel.RecoveryNotificatio
 import viewModels.sections.Section
 import views.html.departure.TestOnly.RecoveryNotificationView
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
@@ -56,8 +56,8 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
 
   private val message: IE035Data = IE035Data(
     IE035MessageData(
-      TransitOperationIE035(mrn, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
-      RecoveryNotification(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "text", "1000", "EUR")
+      TransitOperationIE035(mrn, LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE)),
+      RecoveryNotification(LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE), "text", "1000", "EUR")
     )
   )
 

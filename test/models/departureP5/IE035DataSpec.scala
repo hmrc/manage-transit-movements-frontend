@@ -19,7 +19,7 @@ package models.departureP5
 import base.SpecBase
 import play.api.libs.json._
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 class IE035DataSpec extends SpecBase {
 
@@ -28,8 +28,8 @@ class IE035DataSpec extends SpecBase {
     "must deserialize" in {
 
       val mrn                       = "AB123"
-      val declarationAcceptanceDate = LocalDateTime.now(clock)
-      val recoveryNotificationDate  = LocalDateTime.now(clock)
+      val declarationAcceptanceDate = LocalDate.now(clock)
+      val recoveryNotificationDate  = LocalDate.now(clock)
       val recoveryNotificationText  = "text"
       val amountClaimed             = "1000"
       val currency                  = "EUR"

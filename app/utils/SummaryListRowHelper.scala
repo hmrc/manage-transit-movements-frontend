@@ -22,9 +22,9 @@ import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.Format.{controlDecisionDateTimeFormatter, decisionDateTimeFormatter}
+import utils.Format.{controlDecisionDateTimeFormatter, decisionDateTimeFormatter, recoveryNotificationFormatter}
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 
 class SummaryListRowHelper(implicit messages: Messages) {
 
@@ -46,6 +46,11 @@ class SummaryListRowHelper(implicit messages: Messages) {
       .format(controlDecisionDateTimeFormatter)
       .replace("PM", "pm")
       .replace("AM", "am")
+      .toText
+
+  def formatAsDate(answer: LocalDate): Content =
+    answer
+      .format(recoveryNotificationFormatter)
       .toText
 
   def formatAsDecisionDateTime(answer: LocalDateTime): Content =

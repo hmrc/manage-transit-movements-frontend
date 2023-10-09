@@ -18,13 +18,13 @@ package models.departureP5
 
 import base.SpecBase
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 class RecoveryNotificationSpec extends SpecBase {
 
   "RecoveryNotification" - {
 
-    val recoveryNotification = RecoveryNotification(LocalDateTime.now(clock), "text", "1000", "EUR")
+    val recoveryNotification = RecoveryNotification(LocalDate.now(clock), "text", "1000", "EUR")
 
     "currencySymbol" - {
 

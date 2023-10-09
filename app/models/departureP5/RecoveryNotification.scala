@@ -16,14 +16,15 @@
 
 package models.departureP5
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{__, Reads}
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.util.Currency
 import scala.util.{Success, Try}
 
 case class RecoveryNotification(
-  recoveryNotificationDate: LocalDateTime,
+  recoveryNotificationDate: LocalDate,
   recoveryNotificationText: String,
   amountClaimed: String,
   currency: String
@@ -38,5 +39,9 @@ case class RecoveryNotification(
 
 object RecoveryNotification {
 
-  implicit val formats: OFormat[RecoveryNotification] = Json.format[RecoveryNotification]
+  implicit val reads: Reads[RecoveryNotification] =
+    ((__ \ "recoveryNotificationDate").read[LocalDate] and
+      (__ \ "recoveryNotificationText").read[String] and
+      (__ \ "amountClaimed").read[String] and
+      (__ \ "currency").read[String])(RecoveryNotification.apply _)
 }

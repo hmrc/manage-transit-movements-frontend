@@ -22,7 +22,7 @@ import models.departureP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.departure.RecoveryNotificationViewModel.RecoveryNotificationViewModelProvider
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class RecoveryNotificationViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -31,8 +31,8 @@ class RecoveryNotificationViewModelSpec extends SpecBase with AppWithDefaultMock
 
     val message: IE035Data = IE035Data(
       IE035MessageData(
-        TransitOperationIE035(mrn, LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
-        RecoveryNotification(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "text", "1000", "EUR")
+        TransitOperationIE035(mrn, LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE)),
+        RecoveryNotification(LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE), "text", "1000", "EUR")
       )
     )
 

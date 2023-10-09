@@ -21,7 +21,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 class RecoveryNotificationHelper(ie035MessageData: IE035MessageData)(implicit
   messages: Messages
@@ -35,7 +35,7 @@ class RecoveryNotificationHelper(ie035MessageData: IE035MessageData)(implicit
     call = None
   )
 
-  def buildDeclarationAcceptanceDateRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDateTime](
+  def buildDeclarationAcceptanceDateRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDate](
     answer = Some(ie035MessageData.transitOperation.declarationAcceptanceDate),
     formatAnswer = formatAsDate,
     prefix = messages("row.label.declarationAcceptanceDate"),
@@ -43,7 +43,7 @@ class RecoveryNotificationHelper(ie035MessageData: IE035MessageData)(implicit
     call = None
   )
 
-  def buildRecoveryDateRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDateTime](
+  def buildRecoveryDateRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDate](
     answer = Some(ie035MessageData.recoveryNotification.recoveryNotificationDate),
     formatAnswer = formatAsDate,
     prefix = messages("row.label.recoveryNotificationDate"),

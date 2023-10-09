@@ -24,7 +24,7 @@ import java.time.{LocalDate, LocalDateTime}
 
 case class TransitOperation(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
 case class TransitOperationIE009(MRN: Option[String])
-case class TransitOperationIE035(MRN: String, declarationAcceptanceDate: LocalDateTime)
+case class TransitOperationIE035(MRN: String, declarationAcceptanceDate: LocalDate)
 case class TransitOperationIE055(MRN: String, declarationAcceptanceDate: LocalDate)
 case class TransitOperationIE056(MRN: Option[String], LRN: Option[String], businessRejectionType: RejectionType)
 case class TransitOperationIE060(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)

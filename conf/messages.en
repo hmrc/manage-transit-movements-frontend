@@ -177,7 +177,7 @@ movement.status.P5.action.goodsUnderControl.cancelDeclaration             = Canc
 movement.status.P5.action.incidentDuringTransit.viewErrors                = View errors
 movement.status.P5.action.declarationSent.amendDeclaration                = Amend declaration
 movement.status.P5.action.declarationSent.cancelDeclaration               = Cancel declaration
-movement.status.P5.action.goodsBeingRecovered.viewErrors                  = View details
+movement.status.P5.action.goodsBeingRecovered.viewDetails                 = View details
 
 
 movement.search.title = Search by movement reference number
