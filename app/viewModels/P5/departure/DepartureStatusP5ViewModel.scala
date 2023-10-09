@@ -347,9 +347,8 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.goodsBeingRecovered",
         actions = Seq(
           ViewMovementAction(
-            //todo update once CTCP-4085 is completed
-            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, localReferenceNumber).url,
-            "movement.status.P5.action.goodsBeingRecovered.viewErrors"
+            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureId, localReferenceNumber).url,
+            "movement.status.P5.action.goodsBeingRecovered.viewDetails"
           )
         )
       )
