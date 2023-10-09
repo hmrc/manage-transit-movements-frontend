@@ -19,13 +19,22 @@ package models.departureP5
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
+import java.util.Currency
+import scala.util.{Success, Try}
 
 case class RecoveryNotification(
   recoveryNotificationDate: LocalDateTime,
   recoveryNotificationText: String,
   amountClaimed: String,
   currency: String
-)
+) {
+
+  val formattedCurrency: String = Try(Currency.getInstance(currency).getSymbol) match {
+    case Success(currency) => s"$currency$amountClaimed"
+    case _                 => s"$amountClaimed $currency"
+  }
+
+}
 
 object RecoveryNotification {
 
