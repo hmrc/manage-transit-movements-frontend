@@ -27,6 +27,7 @@ case class TransitOperationIE056(MRN: Option[String], LRN: Option[String], busin
 case class TransitOperationIE009(MRN: Option[String])
 case class TransitOperationIE060(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
 case class TransitOperationIE055(MRN: String, declarationAcceptanceDate: LocalDate)
+case class TransitOperationIE051(MRN: String, declarationSubmissionDateAndTime: LocalDateTime, noReleaseMotivationCode: String, noReleaseMotivationText: String)
 
 object TransitOperation {
   implicit val formats: OFormat[TransitOperation] = Json.format[TransitOperation]
@@ -34,6 +35,14 @@ object TransitOperation {
 
 object TransitOperationIE009 {
   implicit val formats: OFormat[TransitOperationIE009] = Json.format[TransitOperationIE009]
+}
+
+object TransitOperationIE051 {
+
+  implicit val reads: Reads[TransitOperationIE051] = ((__ \ "MRN").read[String] and
+    (__ \ "declarationSubmissionDateAndTime").read[LocalDateTime] and
+    (__ \ "noReleaseMotivationCode").read[String] and
+    (__ \ "noReleaseMotivationText").read[String])(TransitOperationIE051.apply _)
 }
 
 object TransitOperationIE056 {
