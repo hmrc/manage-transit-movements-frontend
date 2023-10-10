@@ -35,7 +35,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ViewAllArrivalsP5Controller @Inject() (
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   arrivalP5MessageService: ArrivalP5MessageService,
   arrivalMovementP5Connector: ArrivalMovementP5Connector,
@@ -47,7 +47,7 @@ class ViewAllArrivalsP5Controller @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(page: Option[Int], mrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(page: Option[Int], mrn: Option[String]): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
     implicit request =>
       val preparedForm = mrn match {
         case Some(value) => form.fill(value)
@@ -56,7 +56,7 @@ class ViewAllArrivalsP5Controller @Inject() (
       buildView(preparedForm, page, mrn)(Ok(_))
   }
 
-  def onSubmit(): Action[AnyContent] = (Action andThen identify).async {
+  def onSubmit(): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
     implicit request =>
       form
         .bindFromRequest()

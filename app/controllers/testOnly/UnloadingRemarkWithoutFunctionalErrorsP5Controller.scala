@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
   viewModelProvider: UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider,
@@ -39,7 +39,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)).async {
+  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(arrivalId)).async {
     implicit request =>
       val functionalErrors       = request.ie057MessageData.functionalErrors
       val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber

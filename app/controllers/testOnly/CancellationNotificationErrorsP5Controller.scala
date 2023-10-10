@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CancellationNotificationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   rejectionMessageAction: DepartureRejectionMessageActionProvider,
   viewModelProvider: CancellationNotificationErrorsP5ViewModelProvider,
@@ -41,7 +41,7 @@ class CancellationNotificationErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
         val functionalErrors       = request.ie056MessageData.functionalErrors
         val customsOfficeReference = request.ie056MessageData.customsOfficeOfDeparture.referenceNumber

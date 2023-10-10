@@ -29,7 +29,7 @@ case class AllDraftDeparturesViewModel(
   items: DeparturesSummary,
   pageSize: Int,
   lrn: Option[String],
-  draftDepartureFrontendUrl: String,
+  departureFrontendUrl: String,
   paginationViewModel: ListPaginationViewModel,
   sortParams: Sort = SortByCreatedAtDesc
 ) {
@@ -45,7 +45,7 @@ case class AllDraftDeparturesViewModel(
 
   def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
 
-  def lrnRedirectLocation(lrn: String): String = s"$draftDepartureFrontendUrl/drafts/$lrn"
+  def lrnRedirectLocation(lrn: String): String = s"$departureFrontendUrl/drafts/$lrn"
 
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
