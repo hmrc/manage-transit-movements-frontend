@@ -185,7 +185,7 @@ movement.search.departure.title = Search by local reference number
 
 movement.status.p4.arrivalSubmitted = Arrival notification sent
 movement.status.p4.arrivalRejected = Arrival notification rejected
-movement.status.p4.arrivalSubmittedNegativeAcknowledgement = Arrival notification rejected
+movement.status.p4.ArrivalSubmittedNegativeAcknowledgement = Arrival notification rejected
 movement.status.p4.unloadingPermission = Unloading permission granted
 movement.status.p4.unloadingRemarksSubmitted = Unloading remarks sent
 movement.status.p4.unloadingRemarksRejected = Unloading remarks rejected
