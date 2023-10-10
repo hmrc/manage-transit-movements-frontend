@@ -30,34 +30,29 @@ import java.time.LocalDateTime
 
 class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  private val dateTimeNow  = LocalDateTime.now()
-  private val dateTimePast = dateTimeNow.minusHours(1)
+  private val dateTimeNow = LocalDateTime.now()
 
   "DepartureStatusP5ViewModel" - {
 
-    val departureMovement = DepartureMovement(
-      departureIdP5,
-      Some("mrn"),
-      lrn,
-      LocalDateTime.now(),
-      "location"
-    )
-
-    def movementAndMessages(headMessage: DepartureMessageType): DepartureMovementAndMessage =
-      DepartureMovementAndMessage(
-        departureMovement,
-        MessagesForDepartureMovement(
-          NonEmptyList(DepartureMessage("messageId", dateTimeNow, headMessage, "body/path"), List.empty)
-        ),
+    def otherMovementAndMessage(messageType: DepartureMessageType): OtherMovementAndMessage =
+      OtherMovementAndMessage(
+        departureIdP5,
         lrn,
-        None,
-        isDeclarationAmendable = true,
-        Seq.empty
+        LocalDateTime.now(),
+        LatestDepartureMessage(
+          DepartureMessage(
+            "messageId",
+            LocalDateTime.now(),
+            messageType,
+            "body/path"
+          ),
+          "ie015MessageId"
+        )
       )
 
     "when given Message with head is DepartureDeclaration" in {
 
-      val movementAndMessage = movementAndMessages(DepartureNotification)
+      val movementAndMessage = otherMovementAndMessage(DepartureNotification)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -76,7 +71,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of CancellationRequested" in {
 
-      val movementAndMessage = movementAndMessages(CancellationRequested)
+      val movementAndMessage = otherMovementAndMessage(CancellationRequested)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -87,7 +82,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of AmendmentSubmitted" in {
 
-      val movementAndMessage = movementAndMessages(AmendmentSubmitted)
+      val movementAndMessage = otherMovementAndMessage(AmendmentSubmitted)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -98,7 +93,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of prelodgedDeclarationSent" in {
 
-      val movementAndMessage = movementAndMessages(PrelodgedDeclarationSent)
+      val movementAndMessage = otherMovementAndMessage(PrelodgedDeclarationSent)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -109,7 +104,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of movementNotArrivedResponseSent" in {
 
-      val movementAndMessage = movementAndMessages(MovementNotArrivedResponseSent)
+      val movementAndMessage = otherMovementAndMessage(MovementNotArrivedResponseSent)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -128,7 +123,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of movementNotArrived" in {
 
-      val movementAndMessage = movementAndMessages(MovementNotArrived)
+      val movementAndMessage = otherMovementAndMessage(MovementNotArrived)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -140,28 +135,83 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result mustBe expectedResult
     }
 
-    "when given Message with head of declarationAmendmentAccepted" in {
+    "when given Message with head of declarationAmendmentAccepted" - {
 
-      val movementAndMessage = movementAndMessages(DeclarationAmendmentAccepted)
+      "when prelodged" in {
 
-      val result = DepartureStatusP5ViewModel(movementAndMessage)
+        val movementAndMessage = PrelodgedMovementAndMessage(
+          departureIdP5,
+          lrn,
+          LocalDateTime.now(),
+          LatestDepartureMessage(
+            DepartureMessage(
+              "messageId",
+              LocalDateTime.now(),
+              DeclarationAmendmentAccepted,
+              "body/path"
+            ),
+            "ie015MessageId"
+          ),
+          isPrelodged = true
+        )
 
-      val expectedResult = DepartureStatusP5ViewModel(
-        "movement.status.P5.declarationAmendmentAccepted",
-        Seq(
-          ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
-            "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
+        val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = DepartureStatusP5ViewModel(
+          "movement.status.P5.declarationAmendmentAccepted",
+          Seq(
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+              "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
+            ),
+            ViewMovementAction(
+              s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
+              "movement.status.P5.action.declarationAmendmentAccepted.completeDeclaration"
+            )
           )
         )
-      )
 
-      result mustBe expectedResult
+        result mustBe expectedResult
+      }
+
+      "when not prelodged" in {
+
+        val movementAndMessage = PrelodgedMovementAndMessage(
+          departureIdP5,
+          lrn,
+          LocalDateTime.now(),
+          LatestDepartureMessage(
+            DepartureMessage(
+              "messageId",
+              LocalDateTime.now(),
+              DeclarationAmendmentAccepted,
+              "body/path"
+            ),
+            "ie015MessageId"
+          ),
+          isPrelodged = false
+        )
+
+        val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = DepartureStatusP5ViewModel(
+          "movement.status.P5.declarationAmendmentAccepted",
+          Seq(
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+              "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
+            )
+          )
+        )
+
+        result mustBe expectedResult
+      }
+
     }
 
     "when given Message with head of cancellationDecision" in {
 
-      val movementAndMessage = movementAndMessages(CancellationDecision)
+      val movementAndMessage = otherMovementAndMessage(CancellationDecision)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -180,7 +230,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of discrepancies" in {
 
-      val movementAndMessage = movementAndMessages(Discrepancies)
+      val movementAndMessage = otherMovementAndMessage(Discrepancies)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -191,7 +241,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of invalidMRN" in {
 
-      val movementAndMessage = movementAndMessages(InvalidMRN)
+      val movementAndMessage = otherMovementAndMessage(InvalidMRN)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -203,28 +253,82 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result mustBe expectedResult
     }
 
-    "when given Message with head of allocatedMRN" in {
+    "when given Message with head of allocatedMRN" - {
 
-      val movementAndMessage = movementAndMessages(AllocatedMRN)
+      "when prelodged" in {
 
-      val result = DepartureStatusP5ViewModel(movementAndMessage)
+        val movementAndMessage = PrelodgedMovementAndMessage(
+          departureIdP5,
+          lrn,
+          LocalDateTime.now(),
+          LatestDepartureMessage(
+            DepartureMessage(
+              "messageId",
+              LocalDateTime.now(),
+              AllocatedMRN,
+              "body/path"
+            ),
+            "ie015MessageId"
+          ),
+          isPrelodged = true
+        )
 
-      val expectedResult = DepartureStatusP5ViewModel(
-        "movement.status.P5.allocatedMRN",
-        Seq(
-          ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
-            "movement.status.P5.action.allocatedMRN.cancelDeclaration"
+        val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = DepartureStatusP5ViewModel(
+          "movement.status.P5.allocatedMRN",
+          Seq(
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              "movement.status.P5.action.allocatedMRN.cancelDeclaration"
+            ),
+            ViewMovementAction(
+              s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
+              "movement.status.P5.action.allocatedMRN.completeDeclaration"
+            )
           )
         )
-      )
 
-      result mustBe expectedResult
+        result mustBe expectedResult
+      }
+
+      "when not prelodged" in {
+
+        val movementAndMessage = PrelodgedMovementAndMessage(
+          departureIdP5,
+          lrn,
+          LocalDateTime.now(),
+          LatestDepartureMessage(
+            DepartureMessage(
+              "messageId",
+              LocalDateTime.now(),
+              AllocatedMRN,
+              "body/path"
+            ),
+            "ie015MessageId"
+          ),
+          isPrelodged = false
+        )
+
+        val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = DepartureStatusP5ViewModel(
+          "movement.status.P5.allocatedMRN",
+          Seq(
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              "movement.status.P5.action.allocatedMRN.cancelDeclaration"
+            )
+          )
+        )
+
+        result mustBe expectedResult
+      }
     }
 
     "when given Message with head of releasedForTransit" in {
 
-      val movementAndMessage = movementAndMessages(ReleasedForTransit)
+      val movementAndMessage = otherMovementAndMessage(ReleasedForTransit)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -243,7 +347,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of goodsNotReleased" in {
 
-      val movementAndMessage = movementAndMessages(GoodsNotReleased)
+      val movementAndMessage = otherMovementAndMessage(GoodsNotReleased)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -257,7 +361,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of guaranteeRejected" in {
 
-      val movementAndMessage = movementAndMessages(GuaranteeRejected)
+      val movementAndMessage = otherMovementAndMessage(GuaranteeRejected)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -285,20 +389,22 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         val rejectionType: Option[RejectionType] = Some(RejectionType.DeclarationRejection)
 
         "and declaration is amendable" in {
-          val movementAndMessage = DepartureMovementAndMessage(
-            departureMovement,
-            MessagesForDepartureMovement(
-              NonEmptyList(
-                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
-                List(
-                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
-                )
-              )
-            ),
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
             lrn,
-            rejectionType,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
             isDeclarationAmendable = true,
-            Seq("body/path")
+            xPaths = Seq("body/path")
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -317,18 +423,20 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "and declaration is not amendable with errors in range 2 to 10" in {
-          val movementAndMessage = DepartureMovementAndMessage(
-            departureMovement,
-            MessagesForDepartureMovement(
-              NonEmptyList(
-                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
-                List(
-                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
-                )
-              )
-            ),
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
             lrn,
-            rejectionType,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path", "abc")
           )
@@ -349,18 +457,20 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "and declaration is not amendable with one error" in {
-          val movementAndMessage = DepartureMovementAndMessage(
-            departureMovement,
-            MessagesForDepartureMovement(
-              NonEmptyList(
-                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
-                List(
-                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
-                )
-              )
-            ),
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
             lrn,
-            rejectionType,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path")
           )
@@ -381,18 +491,20 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "and declaration is not amendable and no FunctionalErrors" in {
-          val movementAndMessage = DepartureMovementAndMessage(
-            departureMovement,
-            MessagesForDepartureMovement(
-              NonEmptyList(
-                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
-                List(
-                  DepartureMessage("messageId2", dateTimePast, DepartureNotification, "body/path")
-                )
-              )
-            ),
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
             lrn,
-            rejectionType,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
             isDeclarationAmendable = false,
             Seq.empty
           )
@@ -418,18 +530,20 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         val rejectionType: Option[RejectionType] = Some(RejectionType.InvalidationRejection)
 
         "with errors in range 2 to 10" in {
-          val movementAndMessage = DepartureMovementAndMessage(
-            departureMovement,
-            MessagesForDepartureMovement(
-              NonEmptyList(
-                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
-                List(
-                  DepartureMessage("messageId2", dateTimePast, CancellationRequested, "body/path")
-                )
-              )
-            ),
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
             lrn,
-            rejectionType,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path", "abc")
           )
@@ -450,18 +564,20 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "with one error " in {
-          val movementAndMessage = DepartureMovementAndMessage(
-            departureMovement,
-            MessagesForDepartureMovement(
-              NonEmptyList(
-                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
-                List(
-                  DepartureMessage("messageId2", dateTimePast, CancellationRequested, "body/path")
-                )
-              )
-            ),
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
             lrn,
-            rejectionType,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
             isDeclarationAmendable = false,
             Seq("body/path")
           )
@@ -482,18 +598,20 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "with no FunctionalErrors" in {
-          val movementAndMessage = DepartureMovementAndMessage(
-            departureMovement,
-            MessagesForDepartureMovement(
-              NonEmptyList(
-                DepartureMessage("messageId1", dateTimeNow, RejectedByOfficeOfDeparture, "body/path"),
-                List(
-                  DepartureMessage("messageId2", dateTimePast, CancellationRequested, "body/path")
-                )
-              )
-            ),
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
             lrn,
-            rejectionType,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
             isDeclarationAmendable = false,
             Seq.empty
           )
@@ -519,7 +637,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of goodsUnderControl" in {
 
-      val movementAndMessage = movementAndMessages(GoodsUnderControl)
+      val movementAndMessage = otherMovementAndMessage(GoodsUnderControl)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -542,7 +660,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of incidentDuringTransit" in {
 
-      val movementAndMessage = movementAndMessages(IncidentDuringTransit)
+      val movementAndMessage = otherMovementAndMessage(IncidentDuringTransit)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -556,7 +674,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of declarationSent" in {
 
-      val movementAndMessage = movementAndMessages(DeclarationSent)
+      val movementAndMessage = otherMovementAndMessage(DeclarationSent)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -576,7 +694,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of goodsBeingRecovered" in {
 
-      val movementAndMessage = movementAndMessages(GoodsBeingRecovered)
+      val movementAndMessage = otherMovementAndMessage(GoodsBeingRecovered)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
@@ -590,7 +708,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of guaranteeWrittenOff" in {
 
-      val movementAndMessage = movementAndMessages(GuaranteeWrittenOff)
+      val movementAndMessage = otherMovementAndMessage(GuaranteeWrittenOff)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 

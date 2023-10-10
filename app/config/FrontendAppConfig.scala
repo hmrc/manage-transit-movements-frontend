@@ -102,6 +102,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
 
   val manageTransitMovementsUnloadingFrontend: String    = configuration.get[String]("urls.manageTransitMovementsUnloadingFrontend")
   val manageTransitMovementsCancellationFrontend: String = configuration.get[String]("urls.manageTransitMovementsCancellationFrontend")
+  val presentationNotificationFrontend: String           = configuration.get[String]("urls.presentationNotificationFrontend")
 
   lazy val manageDocumentsUrl: String = configuration.get[Service]("microservice.services.manage-documents").fullServiceUrl
 
@@ -121,6 +122,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, phase5Switch: P
   def departureNewLocalReferenceNumberUrl(lrn: String)              = s"$departureFrontendUrl/$lrn/new-local-reference-number"
   def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
   def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
+  def presentationNotificationFrontendUrl(departureId: String)      = s"$presentationNotificationFrontend/$departureId"
 
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId): String =
     if (phase5Switch.Cancellations.enabled) {

@@ -21,9 +21,10 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.{Availability, LocalReferenceNumber, RejectionType}
 import models.RejectionType.DeclarationRejection
+import models.departureP5.Prelodged.{NonPrelodgedDeclaration, PrelodgedDeclaration}
 import models.departureP5._
+import models.{Availability, LocalReferenceNumber, RejectionType}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -683,6 +684,69 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         )
 
         connector.getMessageForMessageId[IE056Data](departureIdP5, messageId).futureValue mustBe expectedResult
+      }
+
+      "must return IE015" - {
+
+        "for prelodge" in {
+
+          val responseJson = Json.parse(
+            """
+              |{
+              | "body": {
+              |   "n1:CC015C": {
+              |     "TransitOperation": {
+              |       "additionalDeclarationType": "A"
+              |     }
+              |   }
+              |  }
+              |}
+              |""".stripMargin
+          )
+
+          val expectedResult = IE015Data(
+            IE015MessageData(
+              TransitOperationIE015(NonPrelodgedDeclaration)
+            )
+          )
+
+          server.stubFor(
+            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/$messageId"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getMessageForMessageId[IE015Data](departureIdP5, messageId).futureValue mustBe expectedResult
+        }
+
+        "for non-prelodge" in {
+
+          val responseJson = Json.parse(
+            """
+              |{
+              | "body": {
+              |   "n1:CC015C": {
+              |     "TransitOperation": {
+              |       "additionalDeclarationType": "D"
+              |     }
+              |   }
+              |  }
+              |}
+              |""".stripMargin
+          )
+
+          val expectedResult = IE015Data(
+            IE015MessageData(
+              TransitOperationIE015(PrelodgedDeclaration)
+            )
+          )
+
+          server.stubFor(
+            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/$messageId"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getMessageForMessageId[IE015Data](departureIdP5, messageId).futureValue mustBe expectedResult
+        }
       }
     }
   }
