@@ -688,7 +688,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
       "must return IE015" - {
 
-        "for prelodge" in {
+        "for non-prelodge" in {
 
           val responseJson = Json.parse(
             """
@@ -718,7 +718,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
           connector.getMessageForMessageId[IE015Data](departureIdP5, messageId).futureValue mustBe expectedResult
         }
 
-        "for non-prelodge" in {
+        "for prelodge" in {
 
           val responseJson = Json.parse(
             """
