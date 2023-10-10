@@ -24,7 +24,7 @@ import models.RejectionType
 import models.LocalReferenceNumber
 import models.RejectionType.DeclarationRejection
 import models.departure.DepartureStatus
-import models.departureP5.DepartureMessageType.{AllocatedMRN, DeclarationAmendmentAccepted, GoodsUnderControl, RejectedByOfficeOfDeparture}
+import models.departureP5.DepartureMessageType.{AllocatedMRN, DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
 import models.departureP5.Prelodged.PrelodgedDeclaration
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
@@ -404,7 +404,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
       "must return PrelodgedMovementAndMessage when AllocatedMRN or DeclarationAmendmentAccepted" in {
 
         val prelodged = Gen.oneOf(Prelodged.values).sample.value
-        val genStatus = Gen.oneOf(Seq(AllocatedMRN, DeclarationAmendmentAccepted)).sample.value
+        val genStatus = Gen.oneOf(Seq(DeclarationSent, DeclarationAmendmentAccepted, GoodsUnderControl)).sample.value
 
         val latestDepartureMessage = LatestDepartureMessage(
           DepartureMessage(
@@ -461,9 +461,10 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         DepartureMessageType.values
           .filterNot(
             value =>
-              value == AllocatedMRN ||
-                value == DeclarationAmendmentAccepted ||
-                value == RejectedByOfficeOfDeparture
+              value == DeclarationAmendmentAccepted ||
+                value == RejectedByOfficeOfDeparture ||
+                value == GoodsUnderControl ||
+                value == DeclarationSent
           )
           .map {
 

@@ -30,8 +30,6 @@ import java.time.LocalDateTime
 
 class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  private val dateTimeNow = LocalDateTime.now()
-
   "DepartureStatusP5ViewModel" - {
 
     def otherMovementAndMessage(messageType: DepartureMessageType): OtherMovementAndMessage =
@@ -253,77 +251,36 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result mustBe expectedResult
     }
 
-    "when given Message with head of allocatedMRN" - {
+    "when given Message with head of allocatedMRN" in {
 
-      "when prelodged" in {
-
-        val movementAndMessage = PrelodgedMovementAndMessage(
-          departureIdP5,
-          lrn,
-          LocalDateTime.now(),
-          LatestDepartureMessage(
-            DepartureMessage(
-              "messageId",
-              LocalDateTime.now(),
-              AllocatedMRN,
-              "body/path"
-            ),
-            "ie015MessageId"
+      val movementAndMessage = OtherMovementAndMessage(
+        departureIdP5,
+        lrn,
+        LocalDateTime.now(),
+        LatestDepartureMessage(
+          DepartureMessage(
+            "messageId",
+            LocalDateTime.now(),
+            AllocatedMRN,
+            "body/path"
           ),
-          isPrelodged = true
+          "ie015MessageId"
         )
+      )
 
-        val result = DepartureStatusP5ViewModel(movementAndMessage)
+      val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-        val expectedResult = DepartureStatusP5ViewModel(
-          "movement.status.P5.allocatedMRN",
-          Seq(
-            ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
-              "movement.status.P5.action.allocatedMRN.cancelDeclaration"
-            ),
-            ViewMovementAction(
-              s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
-              "movement.status.P5.action.allocatedMRN.completeDeclaration"
-            )
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.allocatedMRN",
+        Seq(
+          ViewMovementAction(
+            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+            "movement.status.P5.action.allocatedMRN.cancelDeclaration"
           )
         )
+      )
 
-        result mustBe expectedResult
-      }
-
-      "when not prelodged" in {
-
-        val movementAndMessage = PrelodgedMovementAndMessage(
-          departureIdP5,
-          lrn,
-          LocalDateTime.now(),
-          LatestDepartureMessage(
-            DepartureMessage(
-              "messageId",
-              LocalDateTime.now(),
-              AllocatedMRN,
-              "body/path"
-            ),
-            "ie015MessageId"
-          ),
-          isPrelodged = false
-        )
-
-        val result = DepartureStatusP5ViewModel(movementAndMessage)
-
-        val expectedResult = DepartureStatusP5ViewModel(
-          "movement.status.P5.allocatedMRN",
-          Seq(
-            ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
-              "movement.status.P5.action.allocatedMRN.cancelDeclaration"
-            )
-          )
-        )
-
-        result mustBe expectedResult
-      }
+      result mustBe expectedResult
     }
 
     "when given Message with head of releasedForTransit" in {
@@ -635,27 +592,85 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     }
 
-    "when given Message with head of goodsUnderControl" in {
+    "when given Message with head of goodsUnderControl" - {
 
-      val movementAndMessage = otherMovementAndMessage(GoodsUnderControl)
+      "when prelodged" in {
 
-      val result = DepartureStatusP5ViewModel(movementAndMessage)
-
-      val expectedResult = DepartureStatusP5ViewModel(
-        "movement.status.P5.goodsUnderControl",
-        Seq(
-          ViewMovementAction(
-            controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url,
-            "movement.status.P5.action.goodsUnderControl.viewDetails"
+        val movementAndMessage = PrelodgedMovementAndMessage(
+          departureIdP5,
+          lrn,
+          LocalDateTime.now(),
+          LatestDepartureMessage(
+            DepartureMessage(
+              "messageId",
+              LocalDateTime.now(),
+              GoodsUnderControl,
+              "body/path"
+            ),
+            "ie015MessageId"
           ),
-          ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
-            "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
+          isPrelodged = true
+        )
+
+        val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = DepartureStatusP5ViewModel(
+          "movement.status.P5.goodsUnderControl",
+          Seq(
+            ViewMovementAction(
+              controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url,
+              "movement.status.P5.action.goodsUnderControl.viewDetails"
+            ),
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
+            ),
+            ViewMovementAction(
+              s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
+              "movement.status.P5.action.goodsUnderControl.completeDeclaration"
+            )
           )
         )
-      )
 
-      result mustBe expectedResult
+        result mustBe expectedResult
+      }
+
+      "when not prelodged" in {
+
+        val movementAndMessage = PrelodgedMovementAndMessage(
+          departureIdP5,
+          lrn,
+          LocalDateTime.now(),
+          LatestDepartureMessage(
+            DepartureMessage(
+              "messageId",
+              LocalDateTime.now(),
+              GoodsUnderControl,
+              "body/path"
+            ),
+            "ie015MessageId"
+          ),
+          isPrelodged = false
+        )
+
+        val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = DepartureStatusP5ViewModel(
+          "movement.status.P5.goodsUnderControl",
+          Seq(
+            ViewMovementAction(
+              controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url,
+              "movement.status.P5.action.goodsUnderControl.viewDetails"
+            ),
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
+            )
+          )
+        )
+
+        result mustBe expectedResult
+      }
     }
 
     "when given Message with head of incidentDuringTransit" in {
@@ -672,24 +687,77 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result mustBe expectedResult
     }
 
-    "when given Message with head of declarationSent" in {
+    "when given Message with head of declarationSent" - {
 
-      val movementAndMessage = otherMovementAndMessage(DeclarationSent)
+      "when prelodged" in {
 
-      val result = DepartureStatusP5ViewModel(movementAndMessage)
+        val movementAndMessage = PrelodgedMovementAndMessage(
+          departureIdP5,
+          lrn,
+          LocalDateTime.now(),
+          LatestDepartureMessage(
+            DepartureMessage(
+              "messageId",
+              LocalDateTime.now(),
+              DeclarationSent,
+              "body/path"
+            ),
+            "ie015MessageId"
+          ),
+          isPrelodged = true
+        )
 
-      val expectedResult = DepartureStatusP5ViewModel(
-        "movement.status.P5.declarationSent",
-        Seq(
-//          ViewMovementAction(s"", "movement.status.P5.action.declarationSent.amendDeclaration"),
-          ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
-            "movement.status.P5.action.declarationSent.cancelDeclaration"
+        val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = DepartureStatusP5ViewModel(
+          "movement.status.P5.declarationSent",
+          Seq(
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              "movement.status.P5.action.declarationSent.cancelDeclaration"
+            ),
+            ViewMovementAction(
+              s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
+              "movement.status.P5.action.declarationSent.completeDeclaration"
+            )
           )
         )
-      )
 
-      result mustBe expectedResult
+        result mustBe expectedResult
+      }
+
+      "when not prelodged" in {
+
+        val movementAndMessage = PrelodgedMovementAndMessage(
+          departureIdP5,
+          lrn,
+          LocalDateTime.now(),
+          LatestDepartureMessage(
+            DepartureMessage(
+              "messageId",
+              LocalDateTime.now(),
+              DeclarationSent,
+              "body/path"
+            ),
+            "ie015MessageId"
+          ),
+          isPrelodged = false
+        )
+
+        val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = DepartureStatusP5ViewModel(
+          "movement.status.P5.declarationSent",
+          Seq(
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              "movement.status.P5.action.declarationSent.cancelDeclaration"
+            )
+          )
+        )
+
+        result mustBe expectedResult
+      }
     }
 
     "when given Message with head of goodsBeingRecovered" in {

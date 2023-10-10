@@ -165,7 +165,6 @@ movement.status.P5.action.declarationAmendmentAccepted.completeDeclaration  = Co
 movement.status.P5.action.cancellationDecision.viewCancellation             = View cancellation
 movement.status.P5.action.invalidMRN.amendErrors                            = Amend errors
 movement.status.P5.action.allocatedMRN.cancelDeclaration                    = Cancel declaration
-movement.status.P5.action.allocatedMRN.completeDeclaration                  = Complete declaration
 movement.status.P5.action.releasedForTransit.viewAndPrintAccompanyingPDF    = View and print accompanying document PDF
 movement.status.P5.action.goodsNotReleased.viewDetails                      = View details
 movement.status.P5.action.guaranteeRejected.viewErrors                      = View errors
@@ -176,9 +175,11 @@ movement.status.P5.action.rejectedByOfficeOfDeparture.viewError             = Vi
 movement.status.P5.action.goodsUnderControl.viewErrors                      = View errors
 movement.status.P5.action.goodsUnderControl.viewDetails                     = View details
 movement.status.P5.action.goodsUnderControl.cancelDeclaration               = Cancel declaration
+movement.status.P5.action.goodsUnderControl.completeDeclaration             = Complete declaration
 movement.status.P5.action.incidentDuringTransit.viewErrors                  = View errors
 movement.status.P5.action.declarationSent.amendDeclaration                  = Amend declaration
 movement.status.P5.action.declarationSent.cancelDeclaration                 = Cancel declaration
+movement.status.P5.action.declarationSent.completeDeclaration               = Complete declaration
 movement.status.P5.action.goodsBeingRecovered.viewErrors                    = View errors
 
 

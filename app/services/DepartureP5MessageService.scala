@@ -20,7 +20,7 @@ import cats.data.OptionT
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.RejectionType
-import models.departureP5.DepartureMessageType.{AllocatedMRN, DeclarationAmendmentAccepted, RejectedByOfficeOfDeparture}
+import models.departureP5.DepartureMessageType.{AllocatedMRN, DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
 import models.departureP5._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
@@ -84,7 +84,7 @@ class DepartureP5MessageService @Inject() (
                       xPaths
                     )
                 }
-              case DeclarationAmendmentAccepted | AllocatedMRN =>
+              case DeclarationAmendmentAccepted | GoodsUnderControl | DeclarationSent =>
                 departureMovementP5Connector.getMessageForMessageId[IE015Data](movement.departureId, message.ie015MessageId).map {
                   ie015 =>
                     PrelodgedMovementAndMessage(
