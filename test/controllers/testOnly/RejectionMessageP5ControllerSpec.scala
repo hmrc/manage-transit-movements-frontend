@@ -51,10 +51,11 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(departureIdP5,
-                                                                                                                    lrn,
-                                                                                                                    mockDepartureP5MessageService,
-                                                                                                                    mockCacheService
+    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(
+      departureIdP5,
+      lrn,
+      mockDepartureP5MessageService,
+      mockCacheService
     )
 
   lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url
@@ -73,7 +74,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .guiceApplicationBuilder()
+      .p5GuiceApplicationBuilder()
       .overrides(bind[RejectionMessageP5ViewModelProvider].toInstance(mockRejectionMessageP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
