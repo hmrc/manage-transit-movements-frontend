@@ -99,7 +99,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
       val view = injector.instanceOf[GuaranteeRejectedP5View]
 
       contentAsString(result) mustEqual
-        view(viewModel)(request, messages).toString
+        view(viewModel, departureIdP5)(request, messages).toString
     }
 
     "onAmend" - {
@@ -107,7 +107,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
       "must redirect to NewLocalReferenceNumber page on success" in {
 
         val controller: String =
-          controllers.testOnly.routes.GuaranteeRejectedP5Controller.onAmend(lrn).url
+          controllers.testOnly.routes.GuaranteeRejectedP5Controller.onAmend(lrn, departureIdP5).url
 
         when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(true)
 
@@ -116,13 +116,13 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe frontendAppConfig.departureNewLocalReferenceNumberUrl(lrn.value)
+        redirectLocation(result).value mustBe frontendAppConfig.departureAmendUrl(lrn.value, departureIdP5)
       }
 
       "must redirect to technical difficulties page on failure" in {
 
         val controller: String =
-          controllers.testOnly.routes.GuaranteeRejectedP5Controller.onAmend(lrn).url
+          controllers.testOnly.routes.GuaranteeRejectedP5Controller.onAmend(lrn, departureIdP5).url
 
         when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(false)
 
