@@ -40,12 +40,12 @@ class GoodsNotReleasedP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def goodsNotReleased(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen goodsNotReleasedActionProvider(departureId)) {
+  def goodsNotReleased(departureId: String, localReferenceNumber: LocalReferenceNumber, messageId: String): Action[AnyContent] =
+    (Action andThen identify andThen goodsNotReleasedActionProvider(departureId, messageId)) {
       implicit request =>
-        buildView(request.transitOperationIE051, localReferenceNumber, isCancelled = true)
+        buildView(request.transitOperationIE051, localReferenceNumber)
     }
 
-  private def buildView(iE051MessageData: IE051MessageData, lrn: LocalReferenceNumber, isCancelled: Boolean)(implicit request: Request[_]): Result =
+  private def buildView(iE051MessageData: IE051MessageData, lrn: LocalReferenceNumber)(implicit request: Request[_]): Result =
     Ok(view(viewModelProvider.apply(iE051MessageData, lrn.value)))
 }

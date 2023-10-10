@@ -228,7 +228,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.goodsNotReleased",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureId, localReferenceNumber).url,
+            controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureId, localReferenceNumber, message.messageId).url,
             "movement.status.P5.action.goodsNotReleased.viewDetails"
           )
         )

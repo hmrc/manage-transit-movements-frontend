@@ -17,7 +17,6 @@
 package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import controllers.routes
 import models.departureP5._
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
@@ -62,29 +61,15 @@ class GoodsNotReleasedActionSpec extends SpecBase with BeforeAndAfterEach with A
   "GoodsNotReleasedAction" - {
     "must return 200 when a 'Goods not released' is available" in {
 
-      when(mockMessageService.filterForMessage[IE051Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getMessageWithMessageId[IE051Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
 
-      val goodsNotReleasedActionProvider = (new GoodsNotReleasedActionProvider(mockMessageService)(implicitly))(departureIdP5)
+      val goodsNotReleasedActionProvider = (new GoodsNotReleasedActionProvider(mockMessageService)(implicitly))(departureIdP5, messageId)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
       val result: Future[Result] = goodsNotReleasedActionProvider.invokeBlock(testRequest, fakeOkResult)
 
       status(result) mustEqual OK
-    }
-
-    "must return 303 and redirect to technical difficulties when no 'Goods not released' available" in {
-
-      when(mockMessageService.filterForMessage[IE051Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
-
-      val goodsNotReleasedActionProvider = (new GoodsNotReleasedActionProvider(mockMessageService)(implicitly))(departureIdP5)
-
-      val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
-
-      val result: Future[Result] = goodsNotReleasedActionProvider.invokeBlock(testRequest, fakeOkResult)
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe routes.ErrorController.technicalDifficulties().url
     }
   }
 }

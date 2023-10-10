@@ -16,13 +16,9 @@
 
 package controllers.actions
 
-import cats.data.EitherT
-import controllers.routes
-import models.departureP5.DepartureMessageType.GoodsNotReleased
 import models.departureP5.IE051Data
 import models.requests.{GoodsNotReleasedRequest, IdentifierRequest}
-import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionRefiner, ActionTransformer}
 import services.DepartureP5MessageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -35,26 +31,21 @@ class GoodsNotReleasedActionProvider @Inject() (departureP5MessageService: Depar
   ec: ExecutionContext
 ) {
 
-  def apply(departureId: String): ActionRefiner[IdentifierRequest, GoodsNotReleasedRequest] =
-    new GoodsNotReleasedAction(departureId, departureP5MessageService)
+  def apply(departureId: String, messageId: String): ActionRefiner[IdentifierRequest, GoodsNotReleasedRequest] =
+    new GoodsNotReleasedAction(departureId, messageId, departureP5MessageService)
 }
 
-class GoodsNotReleasedAction(departureId: String, departureP5MessageService: DepartureP5MessageService)(implicit
+class GoodsNotReleasedAction(departureId: String, messageId: String, departureP5MessageService: DepartureP5MessageService)(implicit
   protected val executionContext: ExecutionContext
-) extends ActionRefiner[IdentifierRequest, GoodsNotReleasedRequest] {
+) extends ActionTransformer[IdentifierRequest, GoodsNotReleasedRequest] {
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, GoodsNotReleasedRequest[A]]] = {
+  override protected def transform[A](request: IdentifierRequest[A]): Future[GoodsNotReleasedRequest[A]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    EitherT
-      .fromOptionF(
-        fopt = departureP5MessageService.filterForMessage[IE051Data](departureId, GoodsNotReleased),
-        ifNone = Redirect(routes.ErrorController.technicalDifficulties())
-      )
-      .map(
-        message => GoodsNotReleasedRequest(request, request.eoriNumber, message.data)
-      )
-      .value
+    departureP5MessageService.getMessageWithMessageId[IE051Data](departureId, messageId).map {
+      ie051 =>
+        GoodsNotReleasedRequest(request, request.eoriNumber, ie051.data)
+    }
   }
 }

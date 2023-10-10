@@ -95,7 +95,7 @@ GET        /manage-transit-movements/test-only/:arrivalId/:messageId/amend-guara
 
 GET        /manage-transit-movements/test-only/send-guarantee-errors/:lrn                                               controllers.testOnly.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:departureId/goods-not-released/:lrn                                     controllers.testOnly.GoodsNotReleasedP5Controller.goodsNotReleased(departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/:messageId/goods-not-released/:lrn                                     controllers.testOnly.GoodsNotReleasedP5Controller.goodsNotReleased(departureId: String, lrn: LocalReferenceNumber, messageId: String)
 
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                                                        controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()

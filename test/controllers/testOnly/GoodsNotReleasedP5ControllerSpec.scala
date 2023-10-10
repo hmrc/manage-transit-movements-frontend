@@ -62,13 +62,13 @@ class GoodsNotReleasedP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   private val sections                    = arbitrary[Seq[Section]].sample.value
   private val goodsNotReleasedP5ViewModel = new GoodsNotReleasedP5ViewModel(sections, lrn.toString)
 
-  private val routes = controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureIdP5, lrn).url
+  private val routes = controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureIdP5, lrn, messageId).url
 
   "GoodsNotReleasedP5Controller Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockDepartureP5MessageService.filterForMessage[IE051Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE051Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockGoodsNotReleasedP5ViewModelProvider.apply(any(), any())(any(), any(), any())).thenReturn(goodsNotReleasedP5ViewModel)
 
       val request = FakeRequest(GET, routes)
@@ -82,18 +82,5 @@ class GoodsNotReleasedP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       contentAsString(result) mustEqual
         view(goodsNotReleasedP5ViewModel)(request, messages, frontendAppConfig).toString
     }
-
-    "must redirect to technical difficulties if no ie051 found" in {
-      when(mockDepartureP5MessageService.filterForMessage[IE051Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
-
-      val request = FakeRequest(GET, routes)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustBe controllers.routes.ErrorController.technicalDifficulties().url
-    }
-
   }
 }
