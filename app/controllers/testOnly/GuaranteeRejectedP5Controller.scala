@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext
 
 class GuaranteeRejectedP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   guaranteeRejectedAction: GuaranteeRejectedActionProvider,
   cc: MessagesControllerComponents,
   view: GuaranteeRejectedP5View,
@@ -42,7 +42,7 @@ class GuaranteeRejectedP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen guaranteeRejectedAction(departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen guaranteeRejectedAction(departureId, messageId)).async {
       implicit request =>
         departureCacheConnector.doesDeclarationExist(lrn.value).map {
           isAmendable =>
@@ -59,7 +59,7 @@ class GuaranteeRejectedP5Controller @Inject() (
     }
 
   def onAmend(lrn: LocalReferenceNumber, departureId: String): Action[AnyContent] =
-    (Action andThen identify).async {
+    (Action andThen actions.checkP5Switch()).async {
       implicit request =>
         departureCacheConnector.handleGuaranteeRejection(lrn.value).map {
           case true  => Redirect(frontendAppConfig.departureAmendUrl(lrn.value, departureId))

@@ -87,7 +87,7 @@ GET        /manage-transit-movements/test-only/:arrivalId/review-unloading-remar
 
 GET        /manage-transit-movements/test-only/:arrivalId/review-arrival-notification-errors                           controllers.testOnly.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/transit-accompanying-document/:messageId                    controllers.testOnly.TransitAccompanyingDocumentController.getTAD(messageId: String, departureId: String)
+GET        /manage-transit-movements/test-only/:departureId/transit-accompanying-document/:messageId                    controllers.testOnly.TransitAccompanyingDocumentController.getTAD(departureId: String, messageId: String)
 
 GET        /manage-transit-movements/test-only/:arrivalId/unloading-permission-document/:messageId                      controllers.testOnly.UnloadingPermissionController.getUnloadingPermissionDocument(messageId: String, arrivalId: String)
 

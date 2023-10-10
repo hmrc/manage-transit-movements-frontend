@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DepartureCancelledP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   departureCancelledActionProvider: DepartureCancelledActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: DepartureCancelledP5ViewModelProvider,
@@ -43,7 +43,7 @@ class DepartureCancelledP5Controller @Inject() (
     with I18nSupport {
 
   def declarationCancelled(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
+    (Action andThen actions.checkP5Switch() andThen departureCancelledActionProvider(departureId)).async {
       implicit request => buildView(request.ie009MessageData, localReferenceNumber, isCancelled = true)
     }
 
@@ -58,12 +58,12 @@ class DepartureCancelledP5Controller @Inject() (
   }
 
   def declarationNotCancelled(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen departureCancelledActionProvider(departureId)).async {
+    (Action andThen actions.checkP5Switch() andThen departureCancelledActionProvider(departureId)).async {
       implicit request => buildView(request.ie009MessageData, localReferenceNumber, isCancelled = false)
     }
 
   def isDeclarationCancelled(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen departureCancelledActionProvider(departureId)) {
+    (Action andThen actions.checkP5Switch() andThen departureCancelledActionProvider(departureId)) {
       implicit request =>
         val isCancelled: String = request.ie009MessageData.invalidation.decision
         if (isCancelled == "0") {

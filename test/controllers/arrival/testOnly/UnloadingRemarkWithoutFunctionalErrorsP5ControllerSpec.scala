@@ -57,7 +57,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .guiceApplicationBuilder()
+      .p5GuiceApplicationBuilder()
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
 

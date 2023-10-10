@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext
 
 class ReviewDepartureErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   rejectionMessageAction: DepartureRejectionMessageActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: ReviewDepartureErrorsP5ViewModelProvider,
@@ -41,7 +41,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
         val currentPage = page.getOrElse(1)
 

@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RejectionMessageP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   rejectionMessageAction: DepartureRejectionMessageActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
@@ -46,7 +46,7 @@ class RejectionMessageP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
         if (request.isDeclarationAmendable) {
 
@@ -73,7 +73,7 @@ class RejectionMessageP5Controller @Inject() (
     }
 
   def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
         val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
         if (request.isDeclarationAmendable && xPaths.nonEmpty) {
