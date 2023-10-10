@@ -43,7 +43,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         val updatedArrival: Arrival   = arrival.copy(status = UnloadingPermission)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
-        viewMovement.status mustBe "movement.status.unloadingPermission"
+        viewMovement.status mustBe "movement.status.p4.unloadingPermission"
         viewMovement.actions.head.href mustBe s"http://localhost:9488/manage-transit-movements-unloading-remarks/${arrival.arrivalId.index}"
     }
   }
@@ -54,7 +54,7 @@ class ViewArrivalSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         val updatedArrival: Arrival   = arrival.copy(status = ArrivalRejected)
         val viewMovement: ViewArrival = ViewArrival(updatedArrival)
 
-        viewMovement.status mustBe "movement.status.arrivalRejected"
+        viewMovement.status mustBe "movement.status.p4.arrivalRejected"
         viewMovement.actions.head.href mustBe s"http://localhost:9483/manage-transit-movements-arrivals/${arrival.arrivalId.index}/arrival-rejection"
     }
   }

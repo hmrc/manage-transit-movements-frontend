@@ -67,7 +67,7 @@ class ViewDeparturesSearchResultsControllerSpec extends SpecBase with ScalaCheck
     updatedDate = systemDefaultTime.toLocalDate,
     updatedTime = systemDefaultTime.toLocalTime,
     localReferenceNumber = LocalReferenceNumber(lrn.toString),
-    status = "departure.status.submitted",
+    status = "departure.status.p4.submitted",
     actions = Nil
   )
 

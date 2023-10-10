@@ -34,7 +34,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = DepartureRejected)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.departureDeclarationRejected"
+          departureStatus.status mustBe "departure.status.p4.departureDeclarationRejected"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendDeclarationFailUrl(updatedDeparture.departureId)
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
@@ -47,7 +47,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = WriteOffNotification)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.writeOffNotification"
+          departureStatus.status mustBe "departure.status.p4.writeOffNotification"
           departureStatus.actions.size mustBe 0
       }
     }
@@ -58,7 +58,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = ReleaseForTransit)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.releasedForTransit"
+          departureStatus.status mustBe "departure.status.p4.releasedForTransit"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe departureRoutes.AccompanyingDocumentPDFController.getPDF(departure.departureId).url
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewPDF"
@@ -71,7 +71,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = GuaranteeNotValid)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.guaranteeValidationFail"
+          departureStatus.status mustBe "departure.status.p4.guaranteeValidationFail"
           departureStatus.actions.size mustBe 2
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendRejectedUrl(updatedDeparture.departureId)
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
@@ -86,7 +86,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
             departure.copy(status = DeclarationCancellationRequest)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.declarationCancellationRequest"
+          departureStatus.status mustBe "departure.status.p4.declarationCancellationRequest"
           departureStatus.actions.size mustBe 0
       }
     }
@@ -97,7 +97,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = CancellationDecision)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.declarationCancellationDecision"
+          departureStatus.status mustBe "departure.status.p4.declarationCancellationDecision"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendCancellationDecisionUrl(updatedDeparture.departureId)
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewCancellation"
@@ -110,7 +110,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = NoReleaseForTransit)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.noReleaseForTransit"
+          departureStatus.status mustBe "departure.status.p4.noReleaseForTransit"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe departureRoutes.NoReleaseForTransitController.onPageLoad(updatedDeparture.departureId).url
           departureStatus.actions.head.key mustBe "departure.viewDetails"
@@ -123,7 +123,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = ControlDecisionNotification)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.controlDecision"
+          departureStatus.status mustBe "departure.status.p4.controlDecision"
           departureStatus.actions.size mustBe 2
           departureStatus.actions.head.href mustBe departureRoutes.ControlDecisionController
             .onPageLoad(updatedDeparture.departureId, updatedDeparture.localReferenceNumber)
@@ -139,7 +139,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = MrnAllocated)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.mrnAllocated"
+          departureStatus.status mustBe "departure.status.p4.mrnAllocated"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.href mustBe frontendAppConfig.departureFrontendConfirmCancellationUrl(updatedDeparture.departureId)
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.cancelDeclaration"
@@ -152,7 +152,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = PositiveAcknowledgement)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.positiveAcknowledgement"
+          departureStatus.status mustBe "departure.status.p4.positiveAcknowledgement"
           departureStatus.actions.size mustBe 0
       }
     }
@@ -163,7 +163,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           val updatedDeparture: Departure = departure.copy(status = DepartureSubmitted)
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.submitted"
+          departureStatus.status mustBe "departure.status.p4.submitted"
           departureStatus.actions.size mustBe 0
       }
     }
@@ -176,7 +176,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           )
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.XMLSubmissionNegativeAcknowledgement"
+          departureStatus.status mustBe "departure.status.p4.XMLSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
       }
@@ -190,7 +190,7 @@ class DepartureStatusViewModelSpec extends SpecBase with Generators with ScalaCh
           )
 
           val departureStatus: DepartureStatusViewModel = DepartureStatusViewModel(updatedDeparture)(frontendAppConfig)
-          departureStatus.status mustBe "departure.status.XMLCancellationSubmissionNegativeAcknowledgement"
+          departureStatus.status mustBe "departure.status.p4.XMLCancellationSubmissionNegativeAcknowledgement"
           departureStatus.actions.size mustBe 1
           departureStatus.actions.head.key mustBe "viewDepartures.table.action.viewErrors"
       }

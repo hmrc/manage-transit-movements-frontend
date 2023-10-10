@@ -33,7 +33,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
         forAll(arbitrary[Arrival]) {
           arrival =>
             val updatedArrival: Arrival = arrival.copy(status = ArrivalSubmitted)
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.arrivalSubmitted"
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.p4.arrivalSubmitted"
         }
       }
       "When status is ArrivalRejected show correct message" in {
@@ -41,7 +41,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
         forAll(arbitrary[Arrival]) {
           arrival =>
             val updatedArrival: Arrival = arrival.copy(status = ArrivalRejected)
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.arrivalRejected"
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.p4.arrivalRejected"
         }
       }
       "When status is UnloadingRemarksSubmitted show correct message" in {
@@ -49,7 +49,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
         forAll(arbitrary[Arrival]) {
           arrival =>
             val updatedArrival: Arrival = arrival.copy(status = UnloadingRemarksSubmitted)
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.unloadingRemarksSubmitted"
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.p4.unloadingRemarksSubmitted"
         }
       }
       "When status is UnloadingRemarksRejected show correct message" in {
@@ -58,7 +58,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
           arrival =>
             val updatedArrival: Arrival                = arrival.copy(status = UnloadingRemarksRejected)
             val movementStatus: ArrivalStatusViewModel = ArrivalStatusViewModel(updatedArrival)(frontendAppConfig)
-            movementStatus.status mustBe "movement.status.unloadingRemarksRejected"
+            movementStatus.status mustBe "movement.status.p4.unloadingRemarksRejected"
             movementStatus.actions.head.href mustBe frontendAppConfig.unloadingRemarksRejectedUrl(updatedArrival.arrivalId)
         }
       }
@@ -67,7 +67,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
         forAll(arbitrary[Arrival]) {
           arrival =>
             val updatedArrival: Arrival = arrival.copy(status = GoodsReleased)
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.goodsReleased"
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.p4.goodsReleased"
         }
       }
       "When status is ArrivalSubmittedNegativeAcknowledgement show correct message" in {
@@ -80,7 +80,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
               "viewArrivalNotifications.table.action.viewErrors"
             )
 
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.ArrivalSubmittedNegativeAcknowledgement"
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.p4.ArrivalSubmittedNegativeAcknowledgement"
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }
@@ -95,7 +95,7 @@ class ArrivalStatusViewModelSpec extends SpecBase with Generators with ScalaChec
               "viewArrivalNotifications.table.action.viewErrors"
             )
 
-            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement"
+            ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).status mustBe "movement.status.p4.UnloadingRemarksXMLSubmissionNegativeAcknowledgement"
             ArrivalStatusViewModel(updatedArrival)(frontendAppConfig).actions.headOption mustBe Some(expectedAction)
         }
       }

@@ -183,7 +183,7 @@ object DepartureStatusViewModel {
   ): PartialFunction[Departure, DepartureStatusViewModel] = {
     case departure if departure.status == status =>
       DepartureStatusViewModel(
-        status = s"departure.status.$statusKey",
+        status = s"departure.status.p4.$statusKey",
         actions = actions(departure)
       )
   }

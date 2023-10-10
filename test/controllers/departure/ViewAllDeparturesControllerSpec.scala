@@ -77,7 +77,7 @@ class ViewAllDeparturesControllerSpec extends SpecBase with ScalaCheckPropertyCh
     updatedDate = systemDefaultTime.toLocalDate,
     updatedTime = systemDefaultTime.toLocalTime,
     localReferenceNumber = lrn,
-    status = "departure.status.submitted",
+    status = "departure.status.p4.submitted",
     actions = Nil
   )
 

@@ -81,7 +81,7 @@ class ViewArrivalsSearchResultsControllerSpec extends SpecBase with ScalaCheckPr
     updatedDate = systemDefaultTime.toLocalDate,
     updatedTime = systemDefaultTime.toLocalTime,
     movementReferenceNumber = mrn,
-    status = "movement.status.arrivalSubmitted",
+    status = "movement.status.p4.arrivalSubmitted",
     actions = Nil
   )
 
