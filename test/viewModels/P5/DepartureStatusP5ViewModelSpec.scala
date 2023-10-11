@@ -17,7 +17,6 @@
 package viewModels.P5
 
 import base.SpecBase
-import cats.data.NonEmptyList
 import generators.Generators
 import models.RejectionType
 import models.departureP5.DepartureMessageType._
@@ -776,7 +775,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.goodsBeingRecovered",
         Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, lrn).url,
+            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, "messageId", lrn).url,
             "movement.status.P5.action.goodsBeingRecovered.viewDetails"
           )
         )

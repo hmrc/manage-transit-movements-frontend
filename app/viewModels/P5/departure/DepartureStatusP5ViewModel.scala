@@ -35,7 +35,7 @@ object DepartureStatusP5ViewModel {
       case RejectedMovementAndMessage(departureId, localReferenceNumber, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
         rejectedStatus(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber).apply(message.latestMessage)
       case OtherMovementAndMessage(departureId, localReferenceNumber, _, message) =>
-        currentStatus(departureId, localReferenceNumber).apply(message.latestMessage)
+        currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber).apply(message.latestMessage)
     }
 
   private def rejectedStatus(
@@ -58,7 +58,7 @@ object DepartureStatusP5ViewModel {
       declarationSent(departureId, localReferenceNumber, isPrelodge)
     ).reduce(_ orElse _)
 
-  private def currentStatus(departureId: String, localReferenceNumber: LocalReferenceNumber)(implicit
+  private def currentStatus(departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber)(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
@@ -76,8 +76,7 @@ object DepartureStatusP5ViewModel {
       goodsNotReleased(departureId, localReferenceNumber),
       guaranteeRejected(departureId, localReferenceNumber),
       incidentDuringTransit(),
-      goodsBeingRecovered(departureId, localReferenceNumber),
-      goodsBeingRecovered(departureId, localReferenceNumber),
+      goodsBeingRecovered(departureId, messageId, localReferenceNumber),
       movementEnded
     ).reduce(_ orElse _)
 
@@ -366,6 +365,7 @@ object DepartureStatusP5ViewModel {
   }
 
   private def goodsBeingRecovered(departureId: String,
+                                  messageId: String,
                                   localReferenceNumber: LocalReferenceNumber
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsBeingRecovered =>
@@ -373,7 +373,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.goodsBeingRecovered",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureId, localReferenceNumber).url,
+            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureId, messageId, localReferenceNumber).url,
             "movement.status.P5.action.goodsBeingRecovered.viewDetails"
           )
         )

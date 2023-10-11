@@ -64,13 +64,13 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
   private val sections                      = arbitrary[Seq[Section]].sample.value
   private val recoveryNotificationViewModel = new RecoveryNotificationViewModel(sections)
 
-  private val routes = controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, lrn).url
+  private val routes = controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, messageId, lrn).url
 
   "RecoveryNotificationController Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockDepartureP5MessageService.filterForMessage[IE035Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE035Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockRecoveryNotificationViewModelProvider.apply(any())(any())).thenReturn(recoveryNotificationViewModel)
 
       val request = FakeRequest(GET, routes)
@@ -83,18 +83,6 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
 
       contentAsString(result) mustEqual
         view(recoveryNotificationViewModel, lrn)(request, messages).toString
-    }
-
-    "must redirect to technical difficulties if no ie035 found" in {
-      when(mockDepartureP5MessageService.filterForMessage[IE035Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
-
-      val request = FakeRequest(GET, routes)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustBe controllers.routes.ErrorController.technicalDifficulties().url
     }
 
   }

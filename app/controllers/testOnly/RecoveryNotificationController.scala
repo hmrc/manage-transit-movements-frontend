@@ -41,12 +41,12 @@ class RecoveryNotificationController @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+  def onPageLoad(departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen identify).async {
       implicit request =>
-        departureP5MessageService.filterForMessage[IE035Data](departureId, GoodsBeingRecovered) map {
-          case Some(ie035Data) => Ok(view(viewModelProvider.apply(ie035Data.data), localReferenceNumber))
-          case _               => Redirect(controllers.routes.ErrorController.technicalDifficulties())
+        departureP5MessageService.getMessageWithMessageId[IE035Data](departureId, messageId) map {
+          ie055data => Ok(view(viewModelProvider.apply(ie055data.data), localReferenceNumber))
+
         }
     }
 }
