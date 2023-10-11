@@ -20,8 +20,9 @@ import cats.data.OptionT
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.RejectionType
-import models.departureP5.DepartureMessageType.RejectedByOfficeOfDeparture
+import models.departureP5.DepartureMessageType.{DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
 import models.departureP5._
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
 import javax.inject.Inject
@@ -61,6 +62,51 @@ class DepartureP5MessageService @Inject() (
           isAmendable._2,
           isAmendable._3
         )
+    }
+
+  def getLatestMessagesForMovement(
+    departureMovements: DepartureMovements
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[MovementAndMessage]] =
+    departureMovements.departureMovements.traverse {
+      movement =>
+        departureMovementP5Connector.getLatestMessageForMovement(movement.messagesLocation).flatMap {
+          message =>
+            message.latestMessage.messageType match {
+              case RejectedByOfficeOfDeparture =>
+                isErrorAmendable(movement.departureId, movement.localReferenceNumber.value).map {
+                  case (rejectionType, isDeclarationAmendable, xPaths) =>
+                    RejectedMovementAndMessage(
+                      movement.departureId,
+                      movement.localReferenceNumber,
+                      movement.updated,
+                      message,
+                      rejectionType,
+                      isDeclarationAmendable,
+                      xPaths
+                    )
+                }
+              case DeclarationAmendmentAccepted | GoodsUnderControl | DeclarationSent =>
+                departureMovementP5Connector.getMessageForMessageId[IE015Data](movement.departureId, message.ie015MessageId).map {
+                  ie015 =>
+                    PrelodgedMovementAndMessage(
+                      movement.departureId,
+                      movement.localReferenceNumber,
+                      movement.updated,
+                      message,
+                      ie015.isPrelodged
+                    )
+                }
+              case _ =>
+                Future.successful(
+                  OtherMovementAndMessage(
+                    movement.departureId,
+                    movement.localReferenceNumber,
+                    movement.updated,
+                    message
+                  )
+                )
+            }
+        }
     }
 
   def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String, typeOfMessage: T)(implicit

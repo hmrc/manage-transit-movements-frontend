@@ -24,20 +24,21 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 
 class GoodsUnderControlIndexController @Inject() (
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   goodsUnderControlAction: GoodsUnderControlActionProvider
 ) extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)) {
-    implicit request =>
-      val call = if (request.ie060MessageData.requestedDocuments) {
-        controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId)
-      } else {
-        controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId)
-      }
-      Redirect(call)
-  }
+  def onPageLoad(departureId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen goodsUnderControlAction(departureId)) {
+      implicit request =>
+        val call = if (request.ie060MessageData.requestedDocuments) {
+          controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId)
+        } else {
+          controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId)
+        }
+        Redirect(call)
+    }
 
 }

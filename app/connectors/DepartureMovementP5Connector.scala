@@ -80,6 +80,11 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     http.GET[MessagesForDepartureMovement](url)(HttpReads[MessagesForDepartureMovement], headers, ec)
   }
 
+  def getLatestMessageForMovement(location: String)(implicit hc: HeaderCarrier): Future[LatestDepartureMessage] = {
+    val url = s"${config.commonTransitConventionTradersUrl}$location"
+    http.GET[LatestDepartureMessage](url)(HttpReads[LatestDepartureMessage], headers, ec)
+  }
+
   def getMessageMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureMessages] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
     http.GET[DepartureMessages](url)(implicitly, headers, ec)
