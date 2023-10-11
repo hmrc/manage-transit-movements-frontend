@@ -164,6 +164,7 @@ movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration   = Amen
 movement.status.P5.action.cancellationDecision.viewCancellation           = View cancellation
 movement.status.P5.action.invalidMRN.amendErrors                          = Amend errors
 movement.status.P5.action.allocatedMRN.cancelDeclaration                  = Cancel declaration
+movement.status.P5.action.allocatedMRN.amendDeclaration                   = Amend declaration
 movement.status.P5.action.releasedForTransit.viewAndPrintAccompanyingPDF  = View and print accompanying document PDF
 movement.status.P5.action.goodsNotReleased.viewDetails                    = View details
 movement.status.P5.action.guaranteeRejected.viewErrors                    = View errors

@@ -68,7 +68,7 @@ object DepartureStatusP5ViewModel {
       prelodgedDeclarationSent,
       movementNotArrivedResponseSent,
       movementNotArrived,
-      declarationAmendmentAccepted(),
+      declarationAmendmentAccepted(departureId, localReferenceNumber),
       cancellationDecision(departureId, localReferenceNumber),
       discrepancies,
       invalidMRN(),
@@ -146,16 +146,18 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def declarationAmendmentAccepted()(implicit
+  private def declarationAmendmentAccepted(
+    departureId: String,
+    lrn: LocalReferenceNumber
+  )(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == DeclarationAmendmentAccepted =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.declarationAmendmentAccepted",
         actions = Seq(
-          ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
-            "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
+          ViewMovementAction(s"${frontendAppConfig.departureAmendUrl(lrn.value, departureId)}",
+                             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           )
         )
       )
@@ -197,6 +199,7 @@ object DepartureStatusP5ViewModel {
       DepartureStatusP5ViewModel(
         "movement.status.P5.allocatedMRN",
         actions = Seq(
+          ViewMovementAction(s"${frontendAppConfig.departureAmendUrl(lrn.value, departureId)}", "movement.status.P5.action.allocatedMRN.amendDeclaration"),
           ViewMovementAction(
             s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
             "movement.status.P5.action.allocatedMRN.cancelDeclaration"
