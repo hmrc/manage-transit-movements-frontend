@@ -53,7 +53,7 @@ object DepartureStatusP5ViewModel {
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
-      declarationAmendmentAccepted(departureId, isPrelodge),
+      declarationAmendmentAccepted(departureId, localReferenceNumber, isPrelodge),
       goodsUnderControl(departureId, localReferenceNumber, isPrelodge),
       declarationSent(departureId, localReferenceNumber, isPrelodge)
     ).reduce(_ orElse _)
@@ -80,7 +80,7 @@ object DepartureStatusP5ViewModel {
       movementEnded
     ).reduce(_ orElse _)
 
-  private def declarationAmendmentAccepted(departureId: String, prelodged: Boolean)(implicit
+  private def declarationAmendmentAccepted(departureId: String, lrn: LocalReferenceNumber, prelodged: Boolean)(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == DeclarationAmendmentAccepted =>
@@ -99,7 +99,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.declarationAmendmentAccepted",
         actions = Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+            s"${frontendAppConfig.departureAmendUrl(lrn.value, departureId)}",
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           )
         ) ++ prelodgeAction
@@ -114,6 +114,10 @@ object DepartureStatusP5ViewModel {
       DepartureStatusP5ViewModel(
         "movement.status.P5.allocatedMRN",
         actions = Seq(
+          ViewMovementAction(
+            s"${frontendAppConfig.departureAmendUrl(lrn.value, departureId)}",
+            "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
+          ),
           ViewMovementAction(
             s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
             "movement.status.P5.action.allocatedMRN.cancelDeclaration"
