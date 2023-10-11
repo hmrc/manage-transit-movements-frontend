@@ -77,7 +77,7 @@ object DepartureStatusP5ViewModel {
       guaranteeRejected(departureId, localReferenceNumber),
       incidentDuringTransit(),
       goodsBeingRecovered(),
-      guaranteeWrittenOff
+      movementEnded
     ).reduce(_ orElse _)
 
   private def declarationAmendmentAccepted(departureId: String, prelodged: Boolean)(implicit
@@ -364,9 +364,9 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def guaranteeWrittenOff: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
-    case message if message.messageType == GuaranteeWrittenOff =>
-      DepartureStatusP5ViewModel("movement.status.P5.guaranteeWrittenOff", actions = Nil)
+  private def movementEnded: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+    case message if message.messageType == MovementEnded =>
+      DepartureStatusP5ViewModel("movement.status.P5.movementEnded", actions = Nil)
   }
 
   def errorsActionText(errors: Seq[String]): String = if (errors.length == 1) {
