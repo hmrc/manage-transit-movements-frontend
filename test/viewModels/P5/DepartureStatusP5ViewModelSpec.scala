@@ -17,7 +17,6 @@
 package viewModels.P5
 
 import base.SpecBase
-import cats.data.NonEmptyList
 import generators.Generators
 import models.RejectionType
 import models.departureP5.DepartureMessageType._
@@ -310,7 +309,13 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.goodsNotReleased",
-        Nil
+        Seq(
+          ViewMovementAction(
+            //todo update once CTCP-4039 is completed
+            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, lrn).url,
+            "movement.status.P5.action.goodsNotReleased.viewDetails"
+          )
+        )
       )
 
       result mustBe expectedResult
@@ -768,7 +773,12 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.goodsBeingRecovered",
-        Nil
+        Seq(
+          ViewMovementAction(
+            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, "messageId", lrn).url,
+            "movement.status.P5.action.goodsBeingRecovered.viewDetails"
+          )
+        )
       )
 
       result mustBe expectedResult

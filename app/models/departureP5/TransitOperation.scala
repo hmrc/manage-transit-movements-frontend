@@ -23,11 +23,12 @@ import play.api.libs.json.{__, Json, OFormat, Reads}
 import java.time.{LocalDate, LocalDateTime}
 
 case class TransitOperation(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
-case class TransitOperationIE056(MRN: Option[String], LRN: Option[String], businessRejectionType: RejectionType)
 case class TransitOperationIE009(MRN: Option[String])
-case class TransitOperationIE060(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
+case class TransitOperationIE035(MRN: String, declarationAcceptanceDate: LocalDate)
 case class TransitOperationIE055(MRN: String, declarationAcceptanceDate: LocalDate)
 case class TransitOperationIE015(additionalDeclarationType: Prelodged)
+case class TransitOperationIE056(MRN: Option[String], LRN: Option[String], businessRejectionType: RejectionType)
+case class TransitOperationIE060(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
 
 object TransitOperation {
   implicit val formats: OFormat[TransitOperation] = Json.format[TransitOperation]
@@ -35,6 +36,18 @@ object TransitOperation {
 
 object TransitOperationIE009 {
   implicit val formats: OFormat[TransitOperationIE009] = Json.format[TransitOperationIE009]
+}
+
+object TransitOperationIE035 {
+  implicit val formats: OFormat[TransitOperationIE035] = Json.format[TransitOperationIE035]
+}
+
+object TransitOperationIE055 {
+
+  implicit val reads: Reads[TransitOperationIE055] = (
+    (__ \ "MRN").read[String] and
+      (__ \ "declarationAcceptanceDate").read[LocalDate]
+  )(TransitOperationIE055.apply _)
 }
 
 object TransitOperationIE056 {
@@ -48,14 +61,6 @@ object TransitOperationIE056 {
 
 object TransitOperationIE060 {
   implicit val formats: OFormat[TransitOperationIE060] = Json.format[TransitOperationIE060]
-}
-
-object TransitOperationIE055 {
-
-  implicit val reads: Reads[TransitOperationIE055] = (
-    (__ \ "MRN").read[String] and
-      (__ \ "declarationAcceptanceDate").read[LocalDate]
-  )(TransitOperationIE055.apply _)
 }
 
 object TransitOperationIE015 {
