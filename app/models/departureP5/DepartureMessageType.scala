@@ -42,7 +42,7 @@ object DepartureMessageType extends Enumerable.Implicits {
   case object IncidentDuringTransit extends WithName("IE182") with DepartureMessageType
   case object DeclarationSent extends WithName("IE928") with DepartureMessageType
   case object GoodsBeingRecovered extends WithName("IE035") with DepartureMessageType
-  case object GuaranteeWrittenOff extends WithName("IE045") with DepartureMessageType
+  case object MovementEnded extends WithName("IE045") with DepartureMessageType
 
   case class UnknownMessageType(status: String) extends WithName(status) with DepartureMessageType
 
@@ -66,7 +66,7 @@ object DepartureMessageType extends Enumerable.Implicits {
     IncidentDuringTransit,
     DeclarationSent,
     GoodsBeingRecovered,
-    GuaranteeWrittenOff
+    MovementEnded
   )
 
   implicit val enumerable: Enumerable[DepartureMessageType] =

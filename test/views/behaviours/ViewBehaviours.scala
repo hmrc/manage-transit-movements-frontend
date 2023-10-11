@@ -168,6 +168,9 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
     }
 
   def pageWithLink(id: String, expectedText: String, expectedHref: String): Unit =
+    pageWithLink(doc, id, expectedText, expectedHref)
+
+  def pageWithLink(doc: Document, id: String, expectedText: String, expectedHref: String): Unit =
     s"must render link with id $id" in {
       val link = getElementById(doc, id)
       assertElementContainsText(link, expectedText)
