@@ -20,34 +20,14 @@ import cats.data.OptionT
 import cats.implicits._
 import connectors.ArrivalMovementP5Connector
 import models.arrivalP5.ArrivalMessageType._
+import models.arrivalP5._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
-import models.arrivalP5.{
-  ArrivalMessageMetaData,
-  ArrivalMessageType,
-  ArrivalMovementAndMessage,
-  ArrivalMovements,
-  GoodsReleasedMovementAndMessage,
-  IE025Data,
-  IE057Data,
-  OtherMovementAndMessage,
-  RejectedMovementAndMessage
-}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMovementP5Connector) {
-
-  def getMessagesForAllMovements(arrivalMovements: ArrivalMovements)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ArrivalMovementAndMessage]] =
-    arrivalMovements.arrivalMovements.traverse {
-      movement =>
-        for {
-          messagesForMovement <- arrivalMovementP5Connector.getMessagesForMovement(movement.messagesLocation)
-          ie057               <- getMessage[IE057Data](movement.arrivalId, RejectionFromOfficeOfDestination)
-          functionalErrorsCount = ie057.map(_.data.functionalErrors.length).getOrElse(0)
-        } yield ArrivalMovementAndMessage(movement, messagesForMovement, functionalErrorsCount)
-    }
 
   def getLatestMessagesForMovement(
     arrivalMovements: ArrivalMovements

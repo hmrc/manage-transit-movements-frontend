@@ -17,6 +17,7 @@
 package viewModels.P5.arrival
 
 import config.FrontendAppConfig
+import models.ArrivalId
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
 import viewModels.ViewMovementAction
@@ -30,32 +31,15 @@ object ArrivalStatusP5ViewModel {
       case GoodsReleasedMovementAndMessage(_, message, indicator) => goodsReleasedStatus(indicator).apply(message.latestMessage)
       case RejectedMovementAndMessage(arrivalMovement, message, functionalErrorCount) =>
         rejectedStatus(arrivalMovement.arrivalId, functionalErrorCount).apply(message.latestMessage)
-      case OtherMovementAndMessage(arrivalMovement, message ) => ???
-      case _ =>
-        val allPfs: PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
-          Seq(
-            arrivalNotification,
-            unloadingRemarks,
-            unloadingPermission(movementAndMessage.arrivalMovement.arrivalId)
-          ).reduce(_ orElse _)
-
-        allPfs.apply(movementAndMessage.latestArrivalMessage.latestMessage)
+      case OtherMovementAndMessage(arrivalMovement, message) => otherStatus(arrivalMovement.arrivalId).apply(message.latestMessage)
     }
-  //  def apply(movementAndMessages: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ArrivalStatusP5ViewModel =
-  //    movementAndMessages match {
-  //      case ArrivalMovementAndMessage(ArrivalMovement(arrivalId, _, _, _), MessagesForArrivalMovement(messages), functionalErrorCount) =>
-  //        val allPfs: PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
-  //          Seq(
-  //            arrivalNotification,
-  //            unloadingRemarks,
-  //            unloadingPermission(arrivalId),
-  //            goodsReleased,
-  //            rejectionFromOfficeOfDestinationUnloading(arrivalId, messages.tail, functionalErrorCount),
-  //            rejectionFromOfficeOfDestinationArrival(arrivalId, functionalErrorCount)
-  //          ).reduce(_ orElse _)
-  //
-  //        allPfs.apply(messages.head)
-  //    }
+
+  def otherStatus(arrivalId: String)(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
+    Seq(
+      arrivalNotification,
+      unloadingRemarks,
+      unloadingPermission(arrivalId)
+    ).reduce(_ orElse _)
 
   private def goodsReleasedStatus(releasedIndicator: String): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
     Seq(
@@ -107,6 +91,26 @@ object ArrivalStatusP5ViewModel {
       }
 
       ArrivalStatusP5ViewModel(message, actions = Nil)
+  }
+
+  private def rejectionFromOfficeOfDestinationUnloading(
+    arrivalId: String,
+    previousMessages: Seq[ArrivalMessage],
+    functionalErrorCount: Int
+  ): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
+    case message if message.messageType == RejectionFromOfficeOfDestination && previousMessages.exists(_.messageType == UnloadingRemarks) =>
+      val href = functionalErrorCount match {
+        case 0 =>
+          controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId)
+        case _ =>
+          controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId)
+      }
+      ArrivalStatusP5ViewModel(
+        "movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
+        actions = Seq(
+          ViewMovementAction(s"$href", s"movement.status.P5.action.${errorsActionText(functionalErrorCount)}")
+        )
+      )
   }
 
   private def rejectionFromOfficeOfDestinationArrival(

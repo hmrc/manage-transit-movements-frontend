@@ -20,6 +20,7 @@ import cats.data.OptionT
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.RejectionType
+import models.arrivalP5.IE025Data
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -149,5 +150,5 @@ class DepartureP5MessageService @Inject() (
     messageId: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[MessageModel] =
     departureMovementP5Connector
-      .getMessageForMessageId(departureId, messageId)
+      .getMessageForMessageId[MessageModel](departureId, messageId)
 }
