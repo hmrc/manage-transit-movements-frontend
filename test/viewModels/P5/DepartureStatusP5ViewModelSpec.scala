@@ -311,8 +311,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.goodsNotReleased",
         Seq(
           ViewMovementAction(
-            //todo update once CTCP-4039 is completed
-            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, lrn).url,
+            controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureIdP5, lrn, "messageId").url,
             "movement.status.P5.action.goodsNotReleased.viewDetails"
           )
         )

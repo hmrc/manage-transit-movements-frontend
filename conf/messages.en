@@ -559,6 +559,16 @@ guarantee.rejected.message.acceptanceDate = Declaration acceptance date:
 guarantee.rejected.message.heading = Amend guarantee errors
 guarantee.rejected.message.heading = Amend guarantee errors
 
+departure.notReleased.titleAndHeading = Goods not released
+departure.notReleased.whatHappensNext = What happens next
+departure.notReleased.paragraph = Customs have reviewed this declaration and decided not to release the goods for transit. This means the movement has now ended.
+departure.notReleased.linkPrefix = Contact the
+departure.notReleased.linkSuffix = for further help (opens in a new tab).
+departure.notReleased.linkText = New Computerised Transit System helpdesk
+departure.notReleased.anotherDeparture.hyperlink = Make another departure declaration
+departure.notReleased.row.label.dateTimeDeclaration = Date and time declaration sent
+departure.notReleased.row.label.reason = Reason
+departure.notReleased.row.label.description = Description
 
 error.table.errorCode = Error code
 error.table.errorReason = Reason
