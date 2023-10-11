@@ -32,10 +32,18 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
       .build()
 
   // Override to provide custom binding
-  def guiceApplicationBuilder(): GuiceApplicationBuilder =
+  private def defaultApplicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[IdentifierAction].to[FakeIdentifierAction]
       )
+
+  def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    defaultApplicationBuilder()
+      .configure("microservice.services.features.isPhase5Enabled" -> false)
+
+  def p5GuiceApplicationBuilder(): GuiceApplicationBuilder =
+    defaultApplicationBuilder()
+      .configure("microservice.services.features.isPhase5Enabled" -> true)
 
 }

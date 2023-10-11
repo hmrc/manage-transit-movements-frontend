@@ -20,7 +20,9 @@ import generators.Generators
 import models.Availability
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Helpers.running
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.WhatDoYouWantToDoView
@@ -31,21 +33,21 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     super
       .guiceApplicationBuilder()
       .configure(
-        "microservice.services.features.phase5Enabled.departure" -> false,
-        "microservice.services.features.phase5Enabled.arrival"   -> false
+        "microservice.services.features.isPhase5Enabled" -> false
       )
 
   private val sampleAvailability      = arbitrary[Availability].sample.value
   private val sampleDraftAvailability = arbitrary[Availability].sample.value
 
-  private def applyView(
+  def applyView(
+    application: Application = app,
     arrivalsAvailability: Availability = sampleAvailability,
     departuresAvailability: Availability = sampleAvailability,
     draftDeparturesAvailability: Option[Availability] = Some(sampleDraftAvailability),
     viewAllArrivals: String = " ",
     viewAllDepartures: String = " "
   ): HtmlFormat.Appendable =
-    injector
+    application.injector
       .instanceOf[WhatDoYouWantToDoView]
       .apply(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivals, viewAllDepartures)(fakeRequest, messages)
 
@@ -60,28 +62,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   behave like pageWithHeading()
 
   behave like pageWithContent("h2", "Arrivals")
-  behave like pageWithLink(
-    "make-arrival-notification",
-    "Make an arrival notification",
-    "http://localhost:9483/manage-transit-movements-arrivals/movement-reference-number"
-  )
 
   behave like pageWithContent("h2", "Departures")
-
-  if (frontendAppConfig.phase5DepartureEnabled) {
-    behave like pageWithLink(
-      "make-departure-declaration",
-      "Make a departure declaration",
-      "http://localhost:10120/manage-transit-movements/departures"
-    )
-
-  } else {
-    behave like pageWithLink(
-      "make-departure-declaration",
-      "Make a departure declaration",
-      "http://localhost:9489/manage-transit-movements-departures/local-reference-number"
-    )
-  }
 
   behave like pageWithContent("h2", "Guarantees")
   behave like pageWithLink(
@@ -163,5 +145,60 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     val doc: Document = parseView(applyView(draftDeparturesAvailability = None))
 
     assertNotRenderedById(doc, "view-draft-departures")
+  }
+
+  "when phase 5 enabled" - {
+
+    val app = super
+      .guiceApplicationBuilder()
+      .configure(
+        "microservice.services.features.isPhase5Enabled" -> true
+      )
+      .build()
+
+    running(app) {
+      val doc = parseView(applyView(app))
+
+      behave like pageWithLink(
+        doc,
+        "make-arrival-notification",
+        "Make an arrival notification",
+        "http://localhost:10121/manage-transit-movements/arrivals"
+      )
+
+      behave like pageWithLink(
+        doc,
+        "make-departure-declaration",
+        "Make a departure declaration",
+        "http://localhost:10120/manage-transit-movements/departures"
+      )
+    }
+  }
+
+  "when phase 5 not enabled" - {
+    val app = super
+      .guiceApplicationBuilder()
+      .configure(
+        "microservice.services.features.isPhase5Enabled" -> false
+      )
+      .build()
+
+    running(app) {
+      val doc = parseView(applyView(app))
+
+      behave like pageWithLink(
+        doc,
+        "make-arrival-notification",
+        "Make an arrival notification",
+        "http://localhost:9483/manage-transit-movements-arrivals/movement-reference-number"
+      )
+
+      behave like pageWithLink(
+        doc,
+        "make-departure-declaration",
+        "Make a departure declaration",
+        "http://localhost:9489/manage-transit-movements-departures/local-reference-number"
+      )
+    }
   }
 }

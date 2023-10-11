@@ -53,6 +53,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
   ): Unit =
     when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn
       new FakeGoodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
+
   private val sections = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -66,7 +67,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .guiceApplicationBuilder()
+      .p5GuiceApplicationBuilder()
       .overrides(bind[GoodsUnderControlP5ViewModelProvider].toInstance(mockGoodsUnderControlP5ViewModelProvider))
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))

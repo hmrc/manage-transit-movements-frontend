@@ -17,7 +17,7 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.departureP5.DepartureMovementAndMessage
+import models.departureP5.{DepartureMovementAndMessage, MovementAndMessage}
 import viewModels.{ViewMovement, ViewMovementAction}
 
 import java.time._
@@ -32,11 +32,11 @@ final case class ViewDepartureP5(
 
 object ViewDepartureP5 {
 
-  def apply(movementAndMessage: DepartureMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ViewDepartureP5 = {
+  def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ViewDepartureP5 = {
 
     val departureStatus: DepartureStatusP5ViewModel = DepartureStatusP5ViewModel(movementAndMessage)
 
-    val systemTime = movementAndMessage.departureMovement.updated
+    val systemTime = movementAndMessage.updated
 
     ViewDepartureP5(
       updatedDate = systemTime.toLocalDate,

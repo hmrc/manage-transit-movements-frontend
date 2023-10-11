@@ -23,11 +23,14 @@ import generators.Generators
 import models.RejectionType
 import models.LocalReferenceNumber
 import models.RejectionType.DeclarationRejection
-import models.departureP5.DepartureMessageType.GoodsUnderControl
+import models.departure.DepartureStatus
+import models.departureP5.DepartureMessageType.{AllocatedMRN, DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
+import models.departureP5.Prelodged.PrelodgedDeclaration
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.time.LocalDateTime
@@ -309,6 +312,209 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         when(mockMovementConnector.getMessageForMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
 
         departureP5MessageService.getMessageWithMessageId[IE056Data](departureId = "6365135ba5e821ee", messageId = messageId).futureValue mustBe ie056Data
+      }
+    }
+
+    "getLatestMessagesForMovement" - {
+
+      val dateTimeNow = LocalDateTime.now()
+
+      "must return RejectedMovementAndMessage when RejectedByOfficeOfDeparture" in {
+
+        val isDeclarationAmendable = arbitrary[Boolean].sample.value
+        val rejectionType          = arbitrary[RejectionType].sample.value
+
+        val latestDepartureMessage = LatestDepartureMessage(
+          DepartureMessage(
+            "messageId1",
+            dateTimeNow,
+            RejectedByOfficeOfDeparture,
+            "body/path/2"
+          ),
+          "messageId2"
+        )
+
+        val departureMovements = DepartureMovements(
+          departureMovements = Seq(
+            DepartureMovement(
+              "AB123",
+              Some("MRN"),
+              LocalReferenceNumber("LRN"),
+              dateTimeNow,
+              "location"
+            )
+          ),
+          totalCount = 1
+        )
+
+        val ie056 = IE056Data(
+          IE056MessageData(
+            transitOperation = TransitOperationIE056(None, None, rejectionType),
+            customsOfficeOfDeparture = CustomsOfficeOfDeparture("AB123"),
+            functionalErrors = Seq(
+              FunctionalError("pointer1", "code1", "reason1", None),
+              FunctionalError("pointer2", "code2", "reason2", None)
+            )
+          )
+        )
+
+        val messages = DepartureMessages(
+          List(
+            DepartureMessageMetaData(
+              LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              DepartureMessageType.RejectedByOfficeOfDeparture,
+              s"movements/departures/$departureIdP5/message/634982098f02f00a"
+            )
+          )
+        )
+
+        when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+          Future.successful(latestDepartureMessage)
+        )
+
+        when(mockMovementConnector.getMessageMetaData(any())(any(), any())).thenReturn(
+          Future.successful(messages)
+        )
+
+        when(mockMovementConnector.getSpecificMessageByPath[IE056Data](any())(any(), any(), any())).thenReturn(
+          Future.successful(ie056)
+        )
+
+        when(mockCacheConnector.isDeclarationAmendable(any(), any())(any())).thenReturn(
+          Future.successful(isDeclarationAmendable)
+        )
+
+        val result = departureP5MessageService.getLatestMessagesForMovement(departureMovements).futureValue
+
+        val expectedResult: Seq[MovementAndMessage] = Seq(
+          RejectedMovementAndMessage(
+            "AB123",
+            LocalReferenceNumber("LRN"),
+            dateTimeNow,
+            latestDepartureMessage,
+            Some(rejectionType),
+            isDeclarationAmendable = isDeclarationAmendable,
+            xPaths = ie056.data.functionalErrors.map(_.errorPointer)
+          )
+        )
+
+        result mustBe expectedResult
+      }
+
+      "must return PrelodgedMovementAndMessage when AllocatedMRN or DeclarationAmendmentAccepted" in {
+
+        val prelodged = Gen.oneOf(Prelodged.values).sample.value
+        val genStatus = Gen.oneOf(Seq(DeclarationSent, DeclarationAmendmentAccepted, GoodsUnderControl)).sample.value
+
+        val latestDepartureMessage = LatestDepartureMessage(
+          DepartureMessage(
+            "messageId1",
+            dateTimeNow,
+            genStatus,
+            "body/path/2"
+          ),
+          "messageId2"
+        )
+
+        val departureMovements = DepartureMovements(
+          departureMovements = Seq(
+            DepartureMovement(
+              "AB123",
+              Some("MRN"),
+              LocalReferenceNumber("LRN"),
+              dateTimeNow,
+              "location"
+            )
+          ),
+          totalCount = 1
+        )
+
+        val ie015 = IE015Data(IE015MessageData(transitOperation = TransitOperationIE015(prelodged)))
+
+        when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+          Future.successful(latestDepartureMessage)
+        )
+
+        when(mockMovementConnector.getMessageForMessageId[IE015Data](any(), any())(any(), any(), any())).thenReturn(
+          Future.successful(ie015)
+        )
+
+        val result = departureP5MessageService.getLatestMessagesForMovement(departureMovements).futureValue
+
+        val expectedResult: Seq[MovementAndMessage] = Seq(
+          PrelodgedMovementAndMessage(
+            "AB123",
+            LocalReferenceNumber("LRN"),
+            dateTimeNow,
+            latestDepartureMessage,
+            ie015.isPrelodged
+          )
+        )
+
+        result mustBe expectedResult
+      }
+
+      "must return OtherMovementAndMessage for any other message" in {
+
+        val prelodged = Gen.oneOf(Prelodged.values).sample.value
+
+        DepartureMessageType.values
+          .filterNot(
+            value =>
+              value == DeclarationAmendmentAccepted ||
+                value == RejectedByOfficeOfDeparture ||
+                value == GoodsUnderControl ||
+                value == DeclarationSent
+          )
+          .map {
+
+            status =>
+              val latestDepartureMessage = LatestDepartureMessage(
+                DepartureMessage(
+                  "messageId1",
+                  dateTimeNow,
+                  status,
+                  "body/path/2"
+                ),
+                "messageId2"
+              )
+
+              val departureMovements = DepartureMovements(
+                departureMovements = Seq(
+                  DepartureMovement(
+                    "AB123",
+                    Some("MRN"),
+                    LocalReferenceNumber("LRN"),
+                    dateTimeNow,
+                    "location"
+                  )
+                ),
+                totalCount = 1
+              )
+
+              val ie015 = IE015Data(IE015MessageData(transitOperation = TransitOperationIE015(prelodged)))
+
+              when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+                Future.successful(latestDepartureMessage)
+              )
+
+              when(mockMovementConnector.getMessageForMessageId[IE015Data](any(), any())(any(), any(), any())).thenReturn(
+                Future.successful(ie015)
+              )
+
+              val result = departureP5MessageService.getLatestMessagesForMovement(departureMovements).futureValue
+
+              val expectedResult: Seq[MovementAndMessage] = Seq(
+                OtherMovementAndMessage(
+                  "AB123",
+                  LocalReferenceNumber("LRN"),
+                  dateTimeNow,
+                  latestDepartureMessage
+                )
+              )
+
+              result mustBe expectedResult
+          }
       }
     }
   }
