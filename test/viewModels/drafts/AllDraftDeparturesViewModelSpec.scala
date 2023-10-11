@@ -39,7 +39,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           val draftDeparture      = DeparturesSummary(0, 0, userAnswerSummary)
           val paginationViewModel = ListPaginationViewModel(2, 1, 2, "test")
 
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, 1, None, frontendAppConfig.departureFrontendUrl, paginationViewModel)
 
           viewModel.dataRows.length mustBe draftDeparture.userAnswers.length
 
@@ -64,7 +64,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
             departuresSummary,
             departuresSummary.userAnswers.length - 1,
             None,
-            frontendAppConfig.draftDepartureFrontendUrl,
+            frontendAppConfig.departureFrontendUrl,
             paginationViewModel
           )
 
@@ -78,7 +78,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
             departuresSummary,
             departuresSummary.userAnswers.length + 1,
             None,
-            frontendAppConfig.draftDepartureFrontendUrl,
+            frontendAppConfig.departureFrontendUrl,
             paginationViewModel
           )
 
@@ -99,7 +99,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
             departuresSummary,
             departuresSummary.userAnswers.length,
             Some("AB123"),
-            frontendAppConfig.draftDepartureFrontendUrl,
+            frontendAppConfig.departureFrontendUrl,
             paginationViewModel
           )
 
@@ -112,7 +112,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           departuresSummary,
           departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.draftDepartureFrontendUrl,
+          frontendAppConfig.departureFrontendUrl,
           paginationViewModel
         )
 
@@ -133,7 +133,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           departuresSummary,
           departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.draftDepartureFrontendUrl,
+          frontendAppConfig.departureFrontendUrl,
           paginationViewModel
         )
 
@@ -149,7 +149,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           departuresSummary,
           departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.draftDepartureFrontendUrl,
+          frontendAppConfig.departureFrontendUrl,
           paginationViewModel
         )
 
@@ -170,7 +170,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
             departuresSummary,
             departuresSummary.userAnswers.length,
             Some("AB123"),
-            frontendAppConfig.draftDepartureFrontendUrl,
+            frontendAppConfig.departureFrontendUrl,
             paginationViewModel
           )
 
@@ -187,7 +187,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           departuresSummary,
           departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.draftDepartureFrontendUrl,
+          frontendAppConfig.departureFrontendUrl,
           paginationViewModel
         )
 
@@ -203,7 +203,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           departuresSummary,
           departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.draftDepartureFrontendUrl,
+          frontendAppConfig.departureFrontendUrl,
           paginationViewModel
         )
 
@@ -222,7 +222,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           departuresSummary,
           departuresSummary.userAnswers.length,
           Some("AB123"),
-          frontendAppConfig.draftDepartureFrontendUrl,
+          frontendAppConfig.departureFrontendUrl,
           paginationViewModel
         )
 
@@ -239,7 +239,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           departuresSummary,
           departuresSummary.userAnswers.length,
           Some("AB123"),
-          frontendAppConfig.draftDepartureFrontendUrl,
+          frontendAppConfig.departureFrontendUrl,
           paginationViewModel
         )
 
@@ -258,7 +258,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           departuresSummary,
           departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.draftDepartureFrontendUrl,
+          frontendAppConfig.departureFrontendUrl,
           paginationViewModel
         )
 
@@ -275,7 +275,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           departuresSummary,
           departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.draftDepartureFrontendUrl,
+          frontendAppConfig.departureFrontendUrl,
           paginationViewModel
         )
 
@@ -289,7 +289,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByLRNAsc" in {
         val sortParams = SortByLRNAsc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams)
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.departureFrontendUrl, paginationViewModel, sortParams)
         viewModel.sortLrn mustBe "ascending"
         viewModel.sortCreatedAt mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
@@ -300,7 +300,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByLRNDesc" in {
         val sortParams = SortByLRNDesc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams)
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.departureFrontendUrl, paginationViewModel, sortParams)
         viewModel.sortLrn mustBe "descending"
         viewModel.sortCreatedAt mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
@@ -311,7 +311,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByCreatedAtAsc" in {
         val sortParams = SortByCreatedAtAsc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams)
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.departureFrontendUrl, paginationViewModel, sortParams)
         viewModel.sortCreatedAt mustBe "ascending"
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
@@ -322,7 +322,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByCreatedAtDesc" in {
         val sortParams = SortByCreatedAtDesc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel, sortParams)
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.departureFrontendUrl, paginationViewModel, sortParams)
         viewModel.sortCreatedAt mustBe "descending"
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
@@ -332,7 +332,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       }
 
       "when sortParams is None" in {
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.draftDepartureFrontendUrl, paginationViewModel)
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.departureFrontendUrl, paginationViewModel)
         viewModel.sortCreatedAt mustBe "descending"
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))

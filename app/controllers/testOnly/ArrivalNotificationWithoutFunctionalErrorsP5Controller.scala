@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext
 
 class ArrivalNotificationWithoutFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   rejectionMessageAction: ArrivalRejectionMessageActionProvider,
   viewModelProvider: ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider,
@@ -38,12 +38,13 @@ class ArrivalNotificationWithoutFunctionalErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen identify andThen rejectionMessageAction(arrivalId)) {
-    implicit request =>
-      if (request.ie057MessageData.functionalErrors.isEmpty) {
-        Ok(view(viewModelProvider.apply(request.ie057MessageData.transitOperation.MRN)))
-      } else {
-        Redirect(controllers.routes.ErrorController.technicalDifficulties())
-      }
-  }
+  def onPageLoad(arrivalId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(arrivalId)) {
+      implicit request =>
+        if (request.ie057MessageData.functionalErrors.isEmpty) {
+          Ok(view(viewModelProvider.apply(request.ie057MessageData.transitOperation.MRN)))
+        } else {
+          Redirect(controllers.routes.ErrorController.technicalDifficulties())
+        }
+    }
 }

@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext
 
 class GoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   goodsUnderControlAction: GoodsUnderControlActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: GoodsUnderControlP5ViewModelProvider,
@@ -38,16 +38,17 @@ class GoodsUnderControlP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def goodsUnderControlOnPageLoad(departureId: String): Action[AnyContent] = (Action andThen identify andThen goodsUnderControlAction(departureId)).async {
-    implicit request =>
-      val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
-      val customsOfficeContactViewModel =
-        CustomsOfficeContactViewModel(request.ie060MessageData.CustomsOfficeOfDeparture.referenceNumber, request.customsOffice)
-      goodsUnderControlP5ViewModel.map {
-        viewModel =>
-          Ok(view(viewModel, departureId, customsOfficeContactViewModel))
-      }
-  }
+  private def goodsUnderControlOnPageLoad(departureId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen goodsUnderControlAction(departureId)).async {
+      implicit request =>
+        val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
+        val customsOfficeContactViewModel =
+          CustomsOfficeContactViewModel(request.ie060MessageData.CustomsOfficeOfDeparture.referenceNumber, request.customsOffice)
+        goodsUnderControlP5ViewModel.map {
+          viewModel =>
+            Ok(view(viewModel, departureId, customsOfficeContactViewModel))
+        }
+    }
 
   def noRequestedDocuments(departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId)
 
