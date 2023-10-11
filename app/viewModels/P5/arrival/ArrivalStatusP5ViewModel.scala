@@ -30,7 +30,7 @@ object ArrivalStatusP5ViewModel {
       case GoodsReleasedMovementAndMessage(_, message, indicator) => goodsReleasedStatus(indicator).apply(message.latestMessage)
       case RejectedMovementAndMessage(arrivalMovement, message, functionalErrorCount) =>
         rejectedStatus(arrivalMovement.arrivalId, functionalErrorCount).apply(message.latestMessage)
-      case OtherMovementAndMessage(arrivalMovement, _) => ???
+      case OtherMovementAndMessage(arrivalMovement, message ) => ???
       case _ =>
         val allPfs: PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
           Seq(
