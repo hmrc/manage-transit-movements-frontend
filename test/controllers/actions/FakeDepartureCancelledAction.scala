@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import models.LocalReferenceNumber
 import models.departureP5._
 import models.requests.{DepartureCancelledRequest, IdentifierRequest}
 import play.api.mvc.Result
@@ -25,8 +26,8 @@ import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeDepartureCancelledAction(departureId: String, departureP5MessageService: DepartureP5MessageService)
-    extends DepartureCancelledAction(departureId, departureP5MessageService) {
+class FakeDepartureCancelledAction(departureId: String, messageId: String, departureP5MessageService: DepartureP5MessageService)
+    extends DepartureCancelledAction(departureId, messageId, departureP5MessageService) {
 
   val message: IE009Data = IE009Data(
     IE009MessageData(
@@ -45,7 +46,6 @@ class FakeDepartureCancelledAction(departureId: String, departureP5MessageServic
     )
   )
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, DepartureCancelledRequest[A]]] =
-    Future.successful(Right(DepartureCancelledRequest(request, "AB123", message.data)))
-
+  override protected def transform[A](request: IdentifierRequest[A]): Future[DepartureCancelledRequest[A]] =
+    Future.successful(DepartureCancelledRequest(request, "AB123", LocalReferenceNumber("CD123"), message.data))
 }

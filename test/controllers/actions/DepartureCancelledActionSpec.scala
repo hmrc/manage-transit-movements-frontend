@@ -66,29 +66,16 @@ class DepartureCancelledActionSpec extends SpecBase with BeforeAndAfterEach with
   "DepartureCancelledAction" - {
     "must return 200 when an departure cancellation is available" in {
 
-      when(mockMessageService.filterForMessage[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getLRN(any())(any(), any())).thenReturn(Future.successful(lrn))
+      when(mockMessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
 
-      val departureCancelledActionProvider = (new DepartureCancelledActionProvider(mockMessageService)(implicitly))(departureIdP5)
+      val departureCancelledActionProvider = (new DepartureCancelledActionProvider(mockMessageService)(implicitly))(departureIdP5, messageId)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
       val result: Future[Result] = departureCancelledActionProvider.invokeBlock(testRequest, fakeOkResult)
 
       status(result) mustEqual OK
-    }
-
-    "must return 303 and redirect to technical difficulties when no departure cancellations are available" in {
-
-      when(mockMessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
-
-      val departureCancelledActionProvider = (new DepartureCancelledActionProvider(mockMessageService)(implicitly))(departureIdP5)
-
-      val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
-
-      val result: Future[Result] = departureCancelledActionProvider.invokeBlock(testRequest, fakeOkResult)
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe routes.ErrorController.technicalDifficulties().url
     }
   }
 }

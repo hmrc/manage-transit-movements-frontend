@@ -34,8 +34,20 @@ object LocalReferenceNumber {
       case _                => None
     }
 
-  implicit def reads: Reads[LocalReferenceNumber] =
+  implicit def defaultReads: Reads[LocalReferenceNumber] =
     __.read[String].map(LocalReferenceNumber.format).flatMap {
+      case Some(lrn) =>
+        Reads(
+          _ => JsSuccess(lrn)
+        )
+      case None =>
+        Reads(
+          _ => JsError("Invalid Local Reference Number")
+        )
+    }
+
+  def apiReads: Reads[LocalReferenceNumber] =
+    (__ \ "localReferenceNumber").read[String].map(LocalReferenceNumber.format).flatMap {
       case Some(lrn) =>
         Reads(
           _ => JsSuccess(lrn)

@@ -19,10 +19,11 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import models.RejectionType
+import models.{LocalReferenceNumber, RejectionType}
 import models.departureP5.DepartureMessageType.{AllocatedMRN, DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
 import models.departureP5._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +33,7 @@ class DepartureP5MessageService @Inject() (
   cacheConnector: DepartureCacheConnector
 ) {
 
-  def isErrorAmendable(
+  private def isErrorAmendable(
     departureId: String,
     lrn: String
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Option[RejectionType], Boolean, Seq[String])] =
@@ -44,24 +45,6 @@ class DepartureP5MessageService @Inject() (
         cacheConnector.isDeclarationAmendable(lrn, _)
       }
     } yield (rejectionType, isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
-
-  def getMessagesForAllMovements(
-    departureMovements: DepartureMovements
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[DepartureMovementAndMessage]] =
-    departureMovements.departureMovements.traverse {
-      movement =>
-        for {
-          messagesForMovement <- departureMovementP5Connector.getMessagesForMovement(movement.messagesLocation)
-          isAmendable         <- isErrorAmendable(movement.departureId, movement.localReferenceNumber.value)
-        } yield DepartureMovementAndMessage(
-          movement,
-          messagesForMovement,
-          movement.localReferenceNumber,
-          isAmendable._1,
-          isAmendable._2,
-          isAmendable._3
-        )
-    }
 
   def getLatestMessagesForMovement(
     departureMovements: DepartureMovements
@@ -149,4 +132,7 @@ class DepartureP5MessageService @Inject() (
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[MessageModel] =
     departureMovementP5Connector
       .getMessageForMessageId(departureId, messageId)
+
+  def getLRN(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[LocalReferenceNumber] =
+    departureMovementP5Connector.getLRNForDeparture(departureId)
 }

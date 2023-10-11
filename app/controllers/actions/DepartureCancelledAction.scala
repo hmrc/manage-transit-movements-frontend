@@ -16,13 +16,9 @@
 
 package controllers.actions
 
-import cats.data.EitherT
-import controllers.routes
-import models.departureP5.DepartureMessageType.CancellationDecision
 import models.departureP5.IE009Data
 import models.requests.{DepartureCancelledRequest, IdentifierRequest}
-import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.ActionTransformer
 import services.DepartureP5MessageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -35,26 +31,20 @@ class DepartureCancelledActionProvider @Inject() (departureP5MessageService: Dep
   ec: ExecutionContext
 ) {
 
-  def apply(departureId: String): ActionRefiner[IdentifierRequest, DepartureCancelledRequest] =
-    new DepartureCancelledAction(departureId, departureP5MessageService)
+  def apply(departureId: String, messageId: String): ActionTransformer[IdentifierRequest, DepartureCancelledRequest] =
+    new DepartureCancelledAction(departureId, messageId, departureP5MessageService)
 }
 
-class DepartureCancelledAction(departureId: String, departureP5MessageService: DepartureP5MessageService)(implicit
+class DepartureCancelledAction(departureId: String, messageId: String, departureP5MessageService: DepartureP5MessageService)(implicit
   protected val executionContext: ExecutionContext
-) extends ActionRefiner[IdentifierRequest, DepartureCancelledRequest] {
+) extends ActionTransformer[IdentifierRequest, DepartureCancelledRequest] {
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, DepartureCancelledRequest[A]]] = {
-
+  override protected def transform[A](request: IdentifierRequest[A]): Future[DepartureCancelledRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    EitherT
-      .fromOptionF(
-        fopt = departureP5MessageService.filterForMessage[IE009Data](departureId, CancellationDecision),
-        ifNone = Redirect(routes.ErrorController.technicalDifficulties())
-      )
-      .map(
-        message => DepartureCancelledRequest(request, request.eoriNumber, message.data)
-      )
-      .value
+    for {
+      message <- departureP5MessageService.getMessageWithMessageId[IE009Data](departureId, messageId)
+      lrn     <- departureP5MessageService.getLRN(departureId)
+    } yield DepartureCancelledRequest(request, request.eoriNumber, lrn, message.data)
   }
 }

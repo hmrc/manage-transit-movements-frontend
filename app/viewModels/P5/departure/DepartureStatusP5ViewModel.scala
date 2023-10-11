@@ -35,7 +35,7 @@ object DepartureStatusP5ViewModel {
       case RejectedMovementAndMessage(departureId, localReferenceNumber, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
         rejectedStatus(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber).apply(message.latestMessage)
       case OtherMovementAndMessage(departureId, localReferenceNumber, _, message) =>
-        currentStatus(departureId, localReferenceNumber).apply(message.latestMessage)
+        currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber).apply(message.latestMessage)
     }
 
   private def rejectedStatus(
@@ -58,7 +58,7 @@ object DepartureStatusP5ViewModel {
       declarationSent(departureId, localReferenceNumber, isPrelodge)
     ).reduce(_ orElse _)
 
-  private def currentStatus(departureId: String, localReferenceNumber: LocalReferenceNumber)(implicit
+  private def currentStatus(departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber)(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
@@ -69,7 +69,7 @@ object DepartureStatusP5ViewModel {
       prelodgedDeclarationSent,
       movementNotArrivedResponseSent,
       movementNotArrived,
-      cancellationDecision(departureId, localReferenceNumber),
+      cancellationDecision(departureId, messageId),
       discrepancies,
       invalidMRN(),
       releasedForTransit(departureId),
@@ -178,15 +178,16 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def cancellationDecision(departureId: String,
-                                   localReferenceNumber: LocalReferenceNumber
+  private def cancellationDecision(
+    departureId: String,
+    messageId: String
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == CancellationDecision =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.cancellationDecision",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, localReferenceNumber).url,
+            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, messageId).url,
             "movement.status.P5.action.cancellationDecision.viewCancellation"
           )
         )

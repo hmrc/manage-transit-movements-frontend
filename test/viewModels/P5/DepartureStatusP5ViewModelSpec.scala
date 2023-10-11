@@ -39,7 +39,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         LocalDateTime.now(),
         LatestDepartureMessage(
           DepartureMessage(
-            "messageId",
+            messageId,
             LocalDateTime.now(),
             messageType,
             "body/path"
@@ -217,7 +217,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.cancellationDecision",
         Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, lrn).url,
+            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, messageId).url,
             "movement.status.P5.action.cancellationDecision.viewCancellation"
           )
         )
@@ -293,7 +293,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.releasedForTransit",
         Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.TransitAccompanyingDocumentController.getTAD(departureIdP5, "messageId").url,
+            controllers.testOnly.routes.TransitAccompanyingDocumentController.getTAD(departureIdP5, messageId).url,
             "movement.status.P5.action.releasedForTransit.viewAndPrintAccompanyingPDF"
           )
         )
@@ -326,7 +326,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.guaranteeRejected",
         Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, "messageId", lrn).url,
+            controllers.testOnly.routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId, lrn).url,
             "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
           ViewMovementAction(

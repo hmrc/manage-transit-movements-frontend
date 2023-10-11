@@ -19,9 +19,10 @@ package connectors
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
-import models.Availability
+import models.{Availability, LocalReferenceNumber}
 import models.departureP5._
 import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.libs.json.Reads
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
 
@@ -75,11 +76,6 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
       }
   }
 
-  def getMessagesForMovement(location: String)(implicit hc: HeaderCarrier): Future[MessagesForDepartureMovement] = {
-    val url = s"${config.commonTransitConventionTradersUrl}$location"
-    http.GET[MessagesForDepartureMovement](url)(HttpReads[MessagesForDepartureMovement], headers, ec)
-  }
-
   def getLatestMessageForMovement(location: String)(implicit hc: HeaderCarrier): Future[LatestDepartureMessage] = {
     val url = s"${config.commonTransitConventionTradersUrl}$location"
     http.GET[LatestDepartureMessage](url)(HttpReads[LatestDepartureMessage], headers, ec)
@@ -106,6 +102,17 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     http
       .GET[MessageModel](url)(implicitly, headers, ec)
 
+  }
+
+  def getLRNForDeparture(departureId: String)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[LocalReferenceNumber] = {
+    val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId"
+
+    implicit val apiReads: Reads[LocalReferenceNumber] = LocalReferenceNumber.apiReads
+
+    http.GET[LocalReferenceNumber](url)
   }
 
 }
