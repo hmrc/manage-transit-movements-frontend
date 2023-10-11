@@ -16,8 +16,24 @@
 
 package models.arrivalP5
 
-case class ArrivalMovementAndMessage(
+trait ArrivalMovementAndMessage {
+  val arrivalMovement: ArrivalMovement
+  val latestArrivalMessage: LatestArrivalMessage
+}
+
+case class RejectedMovementAndMessage(
   arrivalMovement: ArrivalMovement,
-  messagesForMovement: MessagesForArrivalMovement,
+  latestArrivalMessage: LatestArrivalMessage,
   functionalErrorCount: Int
-)
+) extends ArrivalMovementAndMessage
+
+case class OtherMovementAndMessage(
+  arrivalMovement: ArrivalMovement,
+  latestArrivalMessage: LatestArrivalMessage
+) extends ArrivalMovementAndMessage
+
+case class GoodsReleasedMovementAndMessage(
+  arrivalMovement: ArrivalMovement,
+  latestArrivalMessage: LatestArrivalMessage,
+  goodsReleasedStatus: String
+) extends ArrivalMovementAndMessage

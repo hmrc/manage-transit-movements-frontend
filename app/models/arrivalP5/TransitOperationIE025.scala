@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package models.departureP5
+package models.arrivalP5
 
-import play.api.libs.json.{__, Reads}
+import play.api.libs.json.{Json, OFormat}
 
-case class IE015MessageData(transitOperation: TransitOperationIE015)
+case class TransitOperationIE025(releaseIndicator: String)
 
-object IE015MessageData {
-
-  implicit lazy val reads: Reads[IE015MessageData] = (__ \ "TransitOperation").read[TransitOperationIE015].map(IE015MessageData(_))
+object TransitOperationIE025 {
+  implicit val formats: OFormat[TransitOperationIE025] = Json.format[TransitOperationIE025]
 }

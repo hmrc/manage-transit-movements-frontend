@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package models.departureP5
+package models.arrivalP5
 
 import play.api.libs.json.{__, Reads}
 
-case class IE015MessageData(transitOperation: TransitOperationIE015)
+case class IE025MessageData(
+  transitOperation: TransitOperationIE025
+)
 
-object IE015MessageData {
+object IE025MessageData {
 
-  implicit lazy val reads: Reads[IE015MessageData] = (__ \ "TransitOperation").read[TransitOperationIE015].map(IE015MessageData(_))
+  implicit lazy val reads: Reads[IE025MessageData] =
+    (__ \ "TransitOperation").read[TransitOperationIE025].map(IE025MessageData(_))
+
 }
