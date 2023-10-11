@@ -17,7 +17,7 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.departureP5.{DepartureMovementAndMessage, MovementAndMessage}
+import models.departureP5.MovementAndMessage
 import viewModels.{ViewMovement, ViewMovementAction}
 
 import java.time._

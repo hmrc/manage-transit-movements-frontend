@@ -17,7 +17,6 @@
 package viewModels.P5
 
 import base.SpecBase
-import cats.data.NonEmptyList
 import generators.Generators
 import models.RejectionType
 import models.departureP5.DepartureMessageType._
@@ -776,9 +775,8 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.goodsBeingRecovered",
         Seq(
           ViewMovementAction(
-            //todo update once CTCP-4085 is completed
-            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, lrn).url,
-            "movement.status.P5.action.goodsBeingRecovered.viewErrors"
+            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, "messageId", lrn).url,
+            "movement.status.P5.action.goodsBeingRecovered.viewDetails"
           )
         )
       )
@@ -786,13 +784,13 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result mustBe expectedResult
     }
 
-    "when given Message with head of guaranteeWrittenOff" in {
+    "when given Message with head of movementEnded" in {
 
-      val movementAndMessage = otherMovementAndMessage(GuaranteeWrittenOff)
+      val movementAndMessage = otherMovementAndMessage(MovementEnded)
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-      val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.guaranteeWrittenOff", Nil)
+      val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.movementEnded", Nil)
 
       result mustBe expectedResult
     }
