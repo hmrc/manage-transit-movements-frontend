@@ -26,6 +26,7 @@ case class TransitOperation(MRN: Option[String], LRN: Option[String], controlNot
 case class TransitOperationIE009(MRN: Option[String])
 case class TransitOperationIE035(MRN: String, declarationAcceptanceDate: LocalDate)
 case class TransitOperationIE055(MRN: String, declarationAcceptanceDate: LocalDate)
+case class TransitOperationIE015(additionalDeclarationType: Prelodged)
 case class TransitOperationIE056(MRN: Option[String], LRN: Option[String], businessRejectionType: RejectionType)
 case class TransitOperationIE060(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
 
@@ -60,4 +61,8 @@ object TransitOperationIE056 {
 
 object TransitOperationIE060 {
   implicit val formats: OFormat[TransitOperationIE060] = Json.format[TransitOperationIE060]
+}
+
+object TransitOperationIE015 {
+  implicit val formats: OFormat[TransitOperationIE015] = Json.format[TransitOperationIE015]
 }

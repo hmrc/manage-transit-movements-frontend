@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext
 
 class DepartureDeclarationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   rejectionMessageAction: DepartureRejectionMessageActionProvider,
   viewModelProvider: DepartureDeclarationErrorsP5ViewModelProvider,
@@ -40,7 +40,7 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify andThen rejectionMessageAction(departureId, localReferenceNumber)) {
+    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)) {
       implicit request =>
         if (request.ie056MessageData.functionalErrors.isEmpty) {
           Ok(view(viewModelProvider.apply(request.lrn)))

@@ -34,35 +34,35 @@ class WhatDoYouWantToDoService @Inject() (
 ) {
 
   def fetchArrivalsAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
-    if (appConfig.phase5ArrivalEnabled) {
+    if (appConfig.phase5Enabled) {
       arrivalMovementsP5Connector.getAvailability()
     } else {
       arrivalMovementConnector.getArrivalsAvailability()
     }
 
   def fetchArrivalsUrl(): String =
-    if (appConfig.phase5ArrivalEnabled) {
+    if (appConfig.phase5Enabled) {
       controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
     } else {
       controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
     }
 
   def fetchDeparturesAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
-    if (appConfig.phase5DepartureEnabled) {
+    if (appConfig.phase5Enabled) {
       departuresMovementP5Connector.getAvailability()
     } else {
       departuresMovementConnector.getDeparturesAvailability()
     }
 
   def fetchDeparturesUrl(): String =
-    if (appConfig.phase5DepartureEnabled) {
+    if (appConfig.phase5Enabled) {
       controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
     } else {
       controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
     }
 
   def fetchDraftDepartureAvailability()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Availability]] =
-    if (appConfig.phase5DepartureEnabled) {
+    if (appConfig.phase5Enabled) {
       departureDraftsP5Connector.getDraftDeparturesAvailability().map(Some(_))
     } else {
       Future.successful(None)

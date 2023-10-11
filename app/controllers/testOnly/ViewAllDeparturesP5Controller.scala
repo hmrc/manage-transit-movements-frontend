@@ -35,7 +35,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ViewAllDeparturesP5Controller @Inject() (
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   formProvider: DeparturesSearchFormProvider,
   departureP5MessageService: DepartureP5MessageService,
@@ -47,7 +47,7 @@ class ViewAllDeparturesP5Controller @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(page: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen identify).async {
+  def onPageLoad(page: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
     implicit request =>
       val preparedForm = lrn match {
         case Some(value) => form.fill(value)
@@ -56,7 +56,7 @@ class ViewAllDeparturesP5Controller @Inject() (
       buildView(preparedForm, page, lrn)(Ok(_))
   }
 
-  def onSubmit(): Action[AnyContent] = (Action andThen identify).async {
+  def onSubmit(): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -75,7 +75,7 @@ class ViewAllDeparturesP5Controller @Inject() (
     val currentPage = page.getOrElse(1)
     departureMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.departuresNumberOfMovements, searchParam).flatMap {
       case Some(movements) =>
-        departureP5MessageService.getMessagesForAllMovements(movements).map {
+        departureP5MessageService.getLatestMessagesForMovement(movements).map {
           movementsAndMessages =>
             val viewDepartureP5: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
 

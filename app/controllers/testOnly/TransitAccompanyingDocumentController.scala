@@ -17,7 +17,7 @@
 package controllers.testOnly
 
 import connectors.ManageDocumentsConnector
-import controllers.actions.IdentifierAction
+import controllers.actions.Actions
 import controllers.routes
 import play.api.i18n.I18nSupport
 import play.api.libs.ws.WSResponse
@@ -28,14 +28,14 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class TransitAccompanyingDocumentController @Inject() (
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   connector: ManageDocumentsConnector
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def getTAD(departureID: String, messageId: String): Action[AnyContent] = (Action andThen identify).async {
+  def getTAD(departureID: String, messageId: String): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
     implicit request =>
       connector.getTAD(departureID, messageId).map {
         result =>
