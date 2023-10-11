@@ -22,6 +22,7 @@ import connectors.DepartureMovementP5Connector
 import forms.DeparturesSearchFormProvider
 import generators.Generators
 import models.LocalReferenceNumber
+import models.departureP5.DepartureMessageType.DepartureNotification
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
@@ -57,7 +58,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .guiceApplicationBuilder()
+      .p5GuiceApplicationBuilder()
       .overrides(
         bind[DepartureMovementP5Connector].toInstance(mockDepartureMovementConnector),
         bind[DepartureP5MessageService].toInstance(mockDepartureMovementService)
@@ -93,11 +94,11 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   private val mockViewMovement = ViewDepartureP5(
     updatedDate = dateTime.toLocalDate,
     updatedTime = dateTime.toLocalTime,
-    referenceNumber = "AB123",
+    referenceNumber = lrn.value,
     status = "movement.status.P5.departureNotificationSubmitted",
     actions = Seq(
       ViewMovementAction(
-        s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/63651574c3447b12/index/AB123",
+        s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/${lrn.value}",
         "movement.status.P5.action.departureNotification.cancelDeclaration"
       )
     )
@@ -111,16 +112,23 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockDepartureMovementResponse)))
 
-        when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
+        when(mockDepartureMovementService.getLatestMessagesForMovement(any())(any(), any()))
           .thenReturn(
             Future.successful(
               Seq(
-                DepartureMovementAndMessage(departureMovement,
-                                            mockDepartureMessageResponse,
-                                            LocalReferenceNumber("AB123"),
-                                            None,
-                                            isDeclarationAmendable = true,
-                                            Seq.empty
+                OtherMovementAndMessage(
+                  departureIdP5,
+                  lrn,
+                  dateTime,
+                  LatestDepartureMessage(
+                    DepartureMessage(
+                      "messageId",
+                      dateTime,
+                      DepartureNotification,
+                      "body/path"
+                    ),
+                    "ie015MessageId"
+                  )
                 )
               )
             )
@@ -155,16 +163,23 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
         when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockDepartureMovementResponse)))
 
-        when(mockDepartureMovementService.getMessagesForAllMovements(any())(any(), any()))
+        when(mockDepartureMovementService.getLatestMessagesForMovement(any())(any(), any()))
           .thenReturn(
             Future.successful(
               Seq(
-                DepartureMovementAndMessage(departureMovement,
-                                            mockDepartureMessageResponse,
-                                            LocalReferenceNumber("AB123"),
-                                            None,
-                                            isDeclarationAmendable = true,
-                                            Seq.empty
+                OtherMovementAndMessage(
+                  departureIdP5,
+                  lrn,
+                  dateTime,
+                  LatestDepartureMessage(
+                    DepartureMessage(
+                      "messageId",
+                      dateTime,
+                      DepartureNotification,
+                      "body/path"
+                    ),
+                    "ie015MessageId"
+                  )
                 )
               )
             )

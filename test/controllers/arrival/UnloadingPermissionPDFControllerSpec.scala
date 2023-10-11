@@ -46,7 +46,7 @@ class UnloadingPermissionPDFControllerSpec extends SpecBase with Generators with
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .guiceApplicationBuilder()
+      .p5GuiceApplicationBuilder()
       .overrides(
         bind[ArrivalMovementConnector].toInstance(mockArrivalMovementConnector)
       )

@@ -62,12 +62,13 @@ GET         /manage-transit-movements/test-only/:departureId/goods-under-control
 
 GET        /manage-transit-movements/test-only/:departureId/amend-departure-declaration-errors/:lrn                    controllers.testOnly.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:departureId/departure-declaration-errors/:lrn                              controllers.testOnly.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/departure-declaration-errors/:lrn                           controllers.testOnly.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:departureId/cancellation-errors/:lrn                                        controllers.testOnly.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/cancellation-errors/:lrn                                    controllers.testOnly.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/:arrivalId/notification-errors                                        controllers.testOnly.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/notification-errors                                           controllers.testOnly.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String)
 
+GET        /manage-transit-movements/test-only/:departureId/:messageId/goods-being-recovered/:lrn                       controllers.testOnly.RecoveryNotificationController.onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber)
 
 GET        /manage-transit-movements/test-only/:departureId/review-departure-declaration-errors/:lrn                    controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
 
@@ -94,6 +95,8 @@ GET        /manage-transit-movements/test-only/:arrivalId/unloading-permission-d
 GET        /manage-transit-movements/test-only/:arrivalId/:messageId/amend-guarantee-errors/:lrn                        controllers.testOnly.GuaranteeRejectedP5Controller.onPageLoad(arrivalId: String, messageId: String, lrn: LocalReferenceNumber)
 
 GET        /manage-transit-movements/test-only/send-guarantee-errors/:lrn                                               controllers.testOnly.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber)
+
+GET        /manage-transit-movements/test-only/:departureId/:messageId/goods-not-released/:lrn                                     controllers.testOnly.GoodsNotReleasedP5Controller.goodsNotReleased(departureId: String, lrn: LocalReferenceNumber, messageId: String)
 
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                                                        controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()

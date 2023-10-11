@@ -19,6 +19,8 @@ package models.departureP5
 import models.RejectionType
 import models.LocalReferenceNumber
 
+import java.time.LocalDateTime
+
 case class DepartureMovementAndMessage(
   departureMovement: DepartureMovement,
   messagesForMovement: MessagesForDepartureMovement,
@@ -27,3 +29,35 @@ case class DepartureMovementAndMessage(
   isDeclarationAmendable: Boolean,
   xPaths: Seq[String]
 )
+
+trait MovementAndMessage {
+  val departureId: String
+  val localReferenceNumber: LocalReferenceNumber
+  val message: LatestDepartureMessage
+  val updated: LocalDateTime
+}
+
+case class RejectedMovementAndMessage(
+  departureId: String,
+  localReferenceNumber: LocalReferenceNumber,
+  updated: LocalDateTime,
+  message: LatestDepartureMessage,
+  rejectionType: Option[RejectionType],
+  isDeclarationAmendable: Boolean,
+  xPaths: Seq[String]
+) extends MovementAndMessage
+
+case class OtherMovementAndMessage(
+  departureId: String,
+  localReferenceNumber: LocalReferenceNumber,
+  updated: LocalDateTime,
+  message: LatestDepartureMessage
+) extends MovementAndMessage
+
+case class PrelodgedMovementAndMessage(
+  departureId: String,
+  localReferenceNumber: LocalReferenceNumber,
+  updated: LocalDateTime,
+  message: LatestDepartureMessage,
+  isPrelodged: Boolean
+) extends MovementAndMessage
