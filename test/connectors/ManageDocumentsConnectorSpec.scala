@@ -35,7 +35,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .configure(conf = "microservice.services.manage-documents.port" -> server.port())
+      .configure(conf = "microservice.services.transit-movements-trader-manage-documents.port" -> server.port())
 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
