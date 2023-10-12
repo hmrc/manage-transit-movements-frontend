@@ -42,7 +42,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .configure(conf = "microservice.services.drafts-repository.port" -> server.port())
+      .configure(conf = "microservice.services.manage-transit-movements-departure-cache.port" -> server.port())
 
   private val createdAt = LocalDateTime.now()
 
