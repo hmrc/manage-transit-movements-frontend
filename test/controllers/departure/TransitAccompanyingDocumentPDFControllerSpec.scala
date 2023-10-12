@@ -70,7 +70,7 @@ class TransitAccompanyingDocumentPDFControllerSpec extends SpecBase with Generat
         val departureId = "AB123"
         val messageId   = "CD456"
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.TransitAccompanyingDocumentController.getTAD(departureId, messageId).url)
+        val request = FakeRequest(GET, controllers.departureP5.routes.TransitAccompanyingDocumentController.getTAD(departureId, messageId).url)
           .withSession("authToken" -> "BearerToken")
 
         val result = route(app, request).value
@@ -91,7 +91,7 @@ class TransitAccompanyingDocumentPDFControllerSpec extends SpecBase with Generat
         val departureId = "AB123"
         val messageId   = "CD456"
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.TransitAccompanyingDocumentController.getTAD(departureId, messageId).url)
+        val request = FakeRequest(GET, controllers.departureP5.routes.TransitAccompanyingDocumentController.getTAD(departureId, messageId).url)
         val result  = route(app, request).value
 
         status(result) mustEqual SEE_OTHER

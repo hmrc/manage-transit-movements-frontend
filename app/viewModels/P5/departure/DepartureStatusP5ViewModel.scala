@@ -17,9 +17,8 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.RejectionType
+import models.{LocalReferenceNumber, RejectionType}
 import models.RejectionType.{DeclarationRejection, InvalidationRejection}
-import models.LocalReferenceNumber
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import viewModels.ViewMovementAction
@@ -186,7 +185,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.cancellationDecision",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, localReferenceNumber).url,
+            controllers.departureP5.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, localReferenceNumber).url,
             "movement.status.P5.action.cancellationDecision.viewCancellation"
           )
         )
@@ -214,7 +213,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.releasedForTransit",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.TransitAccompanyingDocumentController.getTAD(departureId, message.messageId).url,
+            controllers.departureP5.routes.TransitAccompanyingDocumentController.getTAD(departureId, message.messageId).url,
             "movement.status.P5.action.releasedForTransit.viewAndPrintAccompanyingPDF"
           )
         )
@@ -229,7 +228,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.goodsNotReleased",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureId, localReferenceNumber, message.messageId).url,
+            controllers.departureP5.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureId, localReferenceNumber, message.messageId).url,
             "movement.status.P5.action.goodsNotReleased.viewDetails"
           )
         )
@@ -245,7 +244,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.guaranteeRejected",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GuaranteeRejectedP5Controller.onPageLoad(departureId, message.messageId, lrn).url,
+            controllers.departureP5.routes.GuaranteeRejectedP5Controller.onPageLoad(departureId, message.messageId, lrn).url,
             "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
           ViewMovementAction(
@@ -268,19 +267,23 @@ object DepartureStatusP5ViewModel {
     case message if message.messageType == RejectedByOfficeOfDeparture =>
       val (key, href) = rejectionType match {
         case Some(DeclarationRejection) if isDeclarationAmendable =>
-          ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+          ("amendDeclaration", controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
 
         case Some(DeclarationRejection) if xPaths.isEmpty =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths), controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
 
         case Some(DeclarationRejection) =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths), controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
 
         case Some(InvalidationRejection) if xPaths.isEmpty =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths),
+           controllers.departureP5.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url
+          )
 
         case Some(InvalidationRejection) =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths),
+           controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
+          )
 
         case _ => ("", "")
       }
@@ -315,7 +318,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.goodsUnderControl",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureId).url,
+            controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureId).url,
             "movement.status.P5.action.goodsUnderControl.viewDetails"
           ),
           ViewMovementAction(
@@ -372,7 +375,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.goodsBeingRecovered",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureId, messageId, localReferenceNumber).url,
+            controllers.departureP5.routes.RecoveryNotificationController.onPageLoad(departureId, messageId, localReferenceNumber).url,
             "movement.status.P5.action.goodsBeingRecovered.viewDetails"
           )
         )

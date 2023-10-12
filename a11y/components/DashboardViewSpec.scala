@@ -20,7 +20,7 @@ import a11ySpecBase.A11ySpecBase
 import forms.DeparturesSearchFormProvider
 import org.scalacheck.Arbitrary.arbitrary
 import viewModels.drafts.AllDraftDeparturesViewModel
-import views.html.departure.drafts.DashboardView
+import views.html.departureP5.drafts.DashboardView
 
 class DashboardViewSpec extends A11ySpecBase {
 

@@ -16,7 +16,7 @@
 
 package viewModels.drafts
 
-import controllers.departure.drafts.routes
+import controllers.departureP5.drafts.routes
 import models.Sort.Field.{CreatedAt, LRN}
 import models.Sort._
 import models.{DeparturesSummary, LocalReferenceNumber, Sort}

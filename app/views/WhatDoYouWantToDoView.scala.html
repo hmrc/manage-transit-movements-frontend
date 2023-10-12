@@ -73,7 +73,7 @@
         <p class="govuk-body">
         @availability match {
             case Availability.NonEmpty => {
-                <a href="@controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None, None).url" class="govuk-link" id="view-draft-departures">@messages("whatDoYouWantToDo.link.departure.viewDraftDepartures")</a>
+                <a href="@controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url" class="govuk-link" id="view-draft-departures">@messages("whatDoYouWantToDo.link.departure.viewDraftDepartures")</a>
             }
             case Availability.Empty => {
                 @messages("whatDoYouWantToDo.departure.noDraftDepartures")

@@ -18,11 +18,8 @@ package viewModels.P5.departure
 
 import models.departureP5.IE051MessageData
 import play.api.i18n.Messages
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.GoodsNotReleasedP5Helper
 import viewModels.sections.Section
-
-import scala.concurrent.ExecutionContext
 
 case class GoodsNotReleasedP5ViewModel(
   sections: Seq[Section],
@@ -47,7 +44,7 @@ object GoodsNotReleasedP5ViewModel {
     def apply(
       iE051MessageData: IE051MessageData,
       lrn: String
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): GoodsNotReleasedP5ViewModel = {
+    )(implicit messages: Messages): GoodsNotReleasedP5ViewModel = {
       val helper = new GoodsNotReleasedP5Helper(iE051MessageData)
 
       new GoodsNotReleasedP5ViewModel(Seq(helper.buildDetailsSection), lrn)
