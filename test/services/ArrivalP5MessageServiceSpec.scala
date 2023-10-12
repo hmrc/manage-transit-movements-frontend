@@ -19,7 +19,8 @@ package services
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.ArrivalMovementP5Connector
-import models.arrivalP5.ArrivalMessageType.{ArrivalNotification, GoodsReleasedNotification, RejectionFromOfficeOfDestination, UnloadingRemarks}
+import models.ArrivalRejectionType.{ArrivalNotificationRejection, UnloadingRemarkRejection}
+import models.arrivalP5.ArrivalMessageType.{ArrivalNotification, RejectionFromOfficeOfDestination}
 import models.arrivalP5._
 import models.departureP5.FunctionalError
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
@@ -96,6 +97,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
             s"movements/arrivals/$arrivalIdP5/messages"
           )
           val result: Seq[ArrivalMovementAndMessage] = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
+
           val expectedResult =
             Seq(OtherMovementAndMessage(arrivalMovement, LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, ArrivalNotification), arrivalIdP5)))
 
@@ -146,7 +148,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
 
           val ie057: IE057Data = IE057Data(
             IE057MessageData(
-              TransitOperationIE057("CD3232"),
+              TransitOperationIE057("CD3232", ArrivalNotificationRejection),
               CustomsOfficeOfDestinationActual("1234"),
               Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
             )
@@ -176,7 +178,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
           List(
             ArrivalMessageMetaData(
               LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              ArrivalMessageType.ArrivalNotification,
+              ArrivalMessageType.RejectionFromOfficeOfDestination,
               "movements/arrivals/6365135ba5e821ee/message/634982098f02f00b"
             ),
             ArrivalMessageMetaData(
@@ -189,7 +191,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
 
         val ie057Data: IE057Data = IE057Data(
           IE057MessageData(
-            TransitOperationIE057("CD3232"),
+            TransitOperationIE057("CD3232", UnloadingRemarkRejection),
             CustomsOfficeOfDestinationActual("1234"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )

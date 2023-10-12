@@ -16,6 +16,8 @@
 
 package models.arrivalP5
 
+import models.ArrivalRejectionType
+
 trait ArrivalMovementAndMessage {
   val arrivalMovement: ArrivalMovement
   val latestArrivalMessage: LatestArrivalMessage
@@ -24,7 +26,8 @@ trait ArrivalMovementAndMessage {
 case class RejectedMovementAndMessage(
   arrivalMovement: ArrivalMovement,
   latestArrivalMessage: LatestArrivalMessage,
-  functionalErrorCount: Int
+  functionalErrorCount: Int,
+  rejectedType: ArrivalRejectionType
 ) extends ArrivalMovementAndMessage
 
 case class OtherMovementAndMessage(

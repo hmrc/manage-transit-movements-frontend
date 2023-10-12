@@ -49,8 +49,10 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
               case RejectionFromOfficeOfDestination =>
                 arrivalMovementP5Connector.getMessageForMessageId[IE057Data](movement.arrivalId, message.latestMessage.messageId).map {
                   ie057Data =>
-                    val functionalErrorCount = ie057Data.data.functionalErrors.length
-                    RejectedMovementAndMessage(movement, message, functionalErrorCount)
+                    val functionalErrorCount  = ie057Data.data.functionalErrors.length
+                    val businessRejectionType = ie057Data.data.transitOperation.businessRejectionType
+
+                    RejectedMovementAndMessage(movement, message, functionalErrorCount, businessRejectionType)
                 }
               case _ => Future.successful(OtherMovementAndMessage(movement, message))
             }

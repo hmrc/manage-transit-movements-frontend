@@ -17,7 +17,8 @@
 package viewModels.P5.arrival
 
 import config.FrontendAppConfig
-import models.ArrivalId
+import models.ArrivalRejectionType.{ArrivalNotificationRejection, UnloadingRemarkRejection}
+import models.{ArrivalId, ArrivalRejectionType}
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
 import viewModels.ViewMovementAction
@@ -29,8 +30,8 @@ object ArrivalStatusP5ViewModel {
   def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ArrivalStatusP5ViewModel =
     movementAndMessage match {
       case GoodsReleasedMovementAndMessage(_, message, indicator) => goodsReleasedStatus(indicator).apply(message.latestMessage)
-      case RejectedMovementAndMessage(arrivalMovement, message, functionalErrorCount) =>
-        rejectedStatus(arrivalMovement.arrivalId, functionalErrorCount).apply(message.latestMessage)
+      case RejectedMovementAndMessage(arrivalMovement, message, functionalErrorCount, businessRejectionType) =>
+        rejectedStatus(arrivalMovement.arrivalId, functionalErrorCount, businessRejectionType).apply(message.latestMessage)
       case OtherMovementAndMessage(arrivalMovement, message) => otherStatus(arrivalMovement.arrivalId).apply(message.latestMessage)
     }
 
@@ -48,10 +49,12 @@ object ArrivalStatusP5ViewModel {
 
   private def rejectedStatus(
     arrivalId: String,
-    functionalErrorCount: Int
+    functionalErrorCount: Int,
+    rejectionType: ArrivalRejectionType
   ): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
     Seq(
-      rejectionFromOfficeOfDestinationArrival(arrivalId, functionalErrorCount)
+      rejectionFromOfficeOfDestinationArrival(arrivalId, functionalErrorCount, rejectionType),
+      rejectionFromOfficeOfDestinationUnloading(arrivalId, functionalErrorCount, rejectionType)
     ).reduce(_ orElse _)
 
   private def arrivalNotification: PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
@@ -95,10 +98,10 @@ object ArrivalStatusP5ViewModel {
 
   private def rejectionFromOfficeOfDestinationUnloading(
     arrivalId: String,
-    previousMessages: Seq[ArrivalMessage],
-    functionalErrorCount: Int
+    functionalErrorCount: Int,
+    rejectionType: ArrivalRejectionType
   ): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
-    case message if message.messageType == RejectionFromOfficeOfDestination && previousMessages.exists(_.messageType == UnloadingRemarks) =>
+    case message if message.messageType == RejectionFromOfficeOfDestination && rejectionType == UnloadingRemarkRejection =>
       val href = functionalErrorCount match {
         case 0 =>
           controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId)
@@ -115,9 +118,10 @@ object ArrivalStatusP5ViewModel {
 
   private def rejectionFromOfficeOfDestinationArrival(
     arrivalId: String,
-    functionalErrorCount: Int
+    functionalErrorCount: Int,
+    rejectionType: ArrivalRejectionType
   ): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
-    case message if message.messageType == RejectionFromOfficeOfDestination =>
+    case message if message.messageType == RejectionFromOfficeOfDestination && rejectionType == ArrivalNotificationRejection =>
       val href = functionalErrorCount match {
         case 0 =>
           controllers.testOnly.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId)

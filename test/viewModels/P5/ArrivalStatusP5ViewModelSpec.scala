@@ -19,6 +19,7 @@ package viewModels.P5
 import base.SpecBase
 import cats.data.NonEmptyList
 import generators.Generators
+import models.ArrivalRejectionType.{ArrivalNotificationRejection, UnloadingRemarkRejection}
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -147,7 +148,8 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 "location"
               ),
               LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5),
-              functionalErrorCount = 0
+              functionalErrorCount = 0,
+              UnloadingRemarkRejection
             )
 
           val result = ArrivalStatusP5ViewModel(movementAndMessagesRejectedZero(ArrivalMessageType.RejectionFromOfficeOfDestination))
@@ -183,7 +185,8 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 "location"
               ),
               LatestArrivalMessage(messages.messages.head, arrivalIdP5),
-              functionalErrorCount = 3
+              functionalErrorCount = 3,
+              UnloadingRemarkRejection
             )
 
           val movementAndMessage = movementAndMessagesRejectedMultiple(RejectionFromOfficeOfDestination)
@@ -223,7 +226,8 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 "location"
               ),
               LatestArrivalMessage(messages.messages.head, arrivalIdP5),
-              functionalErrorCount = 3
+              functionalErrorCount = 3,
+              ArrivalNotificationRejection
             )
 
           val result = ArrivalStatusP5ViewModel(movementAndMessagesRejectedMultiple(ArrivalMessageType.RejectionFromOfficeOfDestination))
@@ -249,7 +253,8 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 "location"
               ),
               LatestArrivalMessage(ArrivalMessage(arrivalIdP5, dateTimeNow, headMessage), arrivalIdP5),
-              functionalErrorCount = 0
+              functionalErrorCount = 0,
+              ArrivalNotificationRejection
             )
           val movementAndMessage = movementAndMessagesRejectedZero(RejectionFromOfficeOfDestination)
 
