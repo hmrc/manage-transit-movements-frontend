@@ -19,12 +19,13 @@ package services
 import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.ArrivalMovementP5Connector
-import models.arrivalP5.ArrivalMessageType.RejectionFromOfficeOfDestination
+import models.arrivalP5.ArrivalMessageType.{ArrivalNotification, GoodsReleasedNotification, RejectionFromOfficeOfDestination, UnloadingRemarks}
 import models.arrivalP5._
 import models.departureP5.FunctionalError
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -42,40 +43,65 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
   val arrivalP5MessageService = new ArrivalP5MessageService(mockConnector)
 
   "ArrivalP5MessageService" - {
+    val dateTimeNow = LocalDateTime.now(clock)
 
     "getMessagesForAllMovements" - {
 
       val dateTime = LocalDateTime.now(clock)
 
+      val arrivalMovements = ArrivalMovements(
+        arrivalMovements = Seq(
+          ArrivalMovement(
+            arrivalIdP5,
+            "MRN",
+            dateTimeNow,
+            "location"
+          )
+        ),
+        totalCount = 1
+      )
+
       "must return a sequence of ArrivalMovementAndMessage when given ArrivalMovements" - {
         "when there isn't a IE057" in {
 
-          val movement1 = ArrivalMovement("arrivalId1", "movementReferenceNo1", dateTime, "/locationUrl1")
-          val movement2 = ArrivalMovement("arrivalId2", "movementReferenceNo2", dateTime, "/locationUrl2")
+          val messagesForMovement =
+            MessagesForArrivalMovement(
+              NonEmptyList(
+                ArrivalMessage(
+                  "messageId1",
+                  dateTimeNow,
+                  ArrivalMessageType.ArrivalNotification
+                ),
+                List(
+                  ArrivalMessage(
+                    "messageId2",
+                    dateTimeNow,
+                    ArrivalMessageType.ArrivalNotification
+                  )
+                )
+              )
+            )
 
-          val message1 = ArrivalMessage(messageId, dateTime.minusDays(1), ArrivalMessageType.ArrivalNotification)
-          val message2 = ArrivalMessage(messageId, dateTime, ArrivalMessageType.UnloadingPermission)
-
-          val messages1 = MessagesForArrivalMovement(NonEmptyList(message1, List(message2)))
-          val messages2 = MessagesForArrivalMovement(NonEmptyList(message1, List(message2)))
-
-          val movementAndMessages1 = ArrivalMovementAndMessage(movement1, messages1, 0)
-          val movementAndMessages2 = ArrivalMovementAndMessage(movement2, messages2, 0)
-
-          when(mockConnector.getMessagesForMovement(eqTo("/locationUrl1"))(any())).thenReturn(Future.successful(messages1))
-          when(mockConnector.getMessagesForMovement(eqTo("/locationUrl2"))(any())).thenReturn(Future.successful(messages2))
-
-          when(mockConnector.getMessageMetaData(eqTo(movement1.arrivalId))(any(), any())).thenReturn(Future.successful(ArrivalMessages(Nil)))
-          when(mockConnector.getMessageMetaData(eqTo(movement2.arrivalId))(any(), any())).thenReturn(Future.successful(ArrivalMessages(Nil)))
-
-          val arrivalMovements = ArrivalMovements(arrivalMovements = Seq(movement1, movement2), totalCount = 2)
-
-          val expectedResult = Seq(
-            movementAndMessages1,
-            movementAndMessages2
+          when(mockConnector.getMessagesForMovement(any())(any())).thenReturn(
+            Future.successful(messagesForMovement)
           )
 
-          arrivalP5MessageService.getMessagesForAllMovements(arrivalMovements).futureValue mustBe expectedResult
+          when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(
+            Future.successful(ArrivalMessages(Nil))
+          )
+          val arrivalMovement: ArrivalMovement = ArrivalMovement(
+            arrivalIdP5,
+            mrn,
+            dateTime,
+            s"movements/arrivals/$arrivalIdP5/messages"
+          )
+          val result: Seq[ArrivalMovementAndMessage] = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
+          val expectedResult =
+            Seq(OtherMovementAndMessage(arrivalMovement, LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, ArrivalNotification), arrivalIdP5)))
+
+          result mustBe expectedResult
+
+          verify(mockConnector).getMessageMetaData(eqTo("AB123"))(any(), any())
         }
         "when there is a IE057" in {
 
@@ -89,8 +115,8 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
           val messages1 = MessagesForArrivalMovement(NonEmptyList(message1, List(message3)))
           val messages2 = MessagesForArrivalMovement(NonEmptyList(message1, List(message2, message3)))
 
-          val movementAndMessages1 = ArrivalMovementAndMessage(movement1, messages1, 2)
-          val movementAndMessages2 = ArrivalMovementAndMessage(movement2, messages2, 2)
+          val movementAndMessages1 = OtherMovementAndMessage(movement1, LatestArrivalMessage(message1, arrivalIdP5))
+          val movementAndMessages2 = OtherMovementAndMessage(movement2, LatestArrivalMessage(message2, arrivalIdP5))
 
           when(mockConnector.getMessagesForMovement(eqTo("/locationUrl1"))(any())).thenReturn(Future.successful(messages1))
           when(mockConnector.getMessagesForMovement(eqTo("/locationUrl2"))(any())).thenReturn(Future.successful(messages2))
@@ -136,7 +162,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase {
             movementAndMessages2
           )
 
-          arrivalP5MessageService.getMessagesForAllMovements(arrivalMovements).futureValue mustBe expectedResult
+          arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue mustBe expectedResult
         }
 
       }
