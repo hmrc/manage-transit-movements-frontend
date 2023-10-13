@@ -55,7 +55,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
         val dateTimeNow   = LocalDateTime.now(clock)
         val rejectionType = arbitrary[ArrivalRejectionType].sample.value
 
-        val latestArrivalMessage = LatestArrivalMessage(
+        val latestArrivalMessage: LatestArrivalMessage = LatestArrivalMessage(
           ArrivalMessage(
             messageId = "messageId1",
             received = dateTimeNow,
@@ -102,6 +102,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
         when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
         when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
         when(mockConnector.getLatestMessageForMovement(any())(any())).thenReturn(Future.successful(latestArrivalMessage))
+
         val result: Seq[ArrivalMovementAndMessage] = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
 
         val expectedResult: Seq[RejectedMovementAndMessage] = Seq(
