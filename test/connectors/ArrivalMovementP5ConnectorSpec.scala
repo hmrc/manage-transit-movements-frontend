@@ -525,7 +525,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
 
         val expectedResult: IE057Data = IE057Data(
           IE057MessageData(
-            TransitOperationIE057("CD3232", ArrivalNotificationRejection),
+            TransitOperationIE057("CD3232", arrivalRejectionType),
             CustomsOfficeOfDestinationActual("1234"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
