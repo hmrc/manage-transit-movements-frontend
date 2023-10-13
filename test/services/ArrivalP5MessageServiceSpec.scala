@@ -47,75 +47,77 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
   val arrivalP5MessageService = new ArrivalP5MessageService(mockConnector)
 
   "ArrivalP5MessageService" - {
-    val dateTimeNow = LocalDateTime.now(clock)
+    val dateTimeNow   = LocalDateTime.now(clock)
     val rejectionType = arbitrary[ArrivalRejectionType].sample.value
 
-    "must return RejectedMovementAndMessage when RejectedByOfficeOfDestination" in {
+    "getLatestMessagesForMovement" - {
 
-      val latestArrivalMessage = LatestArrivalMessage(
-        ArrivalMessage(
-          "messageId1",
-          dateTimeNow,
-          RejectionFromOfficeOfDestination
-        ),
-        arrivalIdP5
-      )
+      "must return RejectedMovementAndMessage when RejectedByOfficeOfDestination" in {
 
-      val arrivalMovements: ArrivalMovements = ArrivalMovements(
-        arrivalMovements = Seq(
-          ArrivalMovement(
-            arrivalIdP5,
-            "MRN",
+        val latestArrivalMessage = LatestArrivalMessage(
+          ArrivalMessage(
+            "messageId1",
             dateTimeNow,
-            "location"
-          )
-        ),
-        totalCount = 1
-      )
-
-      val ie057 = IE057Data(
-        IE057MessageData(
-          transitOperation = TransitOperationIE057(mrn, rejectionType),
-          customsOfficeOfDestinationActual = CustomsOfficeOfDestinationActual("AB123"),
-          functionalErrors = Seq(
-            FunctionalError("pointer1", "code1", "reason1", None),
-            FunctionalError("pointer2", "code2", "reason2", None)
-          )
-        )
-      )
-
-      val messages = ArrivalMessages(
-        List(
-          ArrivalMessageMetaData(
-            LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-            ArrivalMessageType.RejectionFromOfficeOfDestination,
-            s"movements/arrivals/$arrivalIdP5/message/634982098f02f00a"
-          )
-        )
-      )
-      when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-      when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057))
-
-      val result = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
-
-      val expectedResult: Seq[RejectedMovementAndMessage] = Seq(
-        RejectedMovementAndMessage(
-          ArrivalMovement(
-            arrivalIdP5,
-            "MRN",
-            dateTimeNow,
-            "location"
+            RejectionFromOfficeOfDestination
           ),
-          latestArrivalMessage,
-          functionalErrorCount = 1,
-          rejectionType
+          arrivalIdP5
         )
-      )
 
-      result mustBe expectedResult
+        val arrivalMovements: ArrivalMovements = ArrivalMovements(
+          arrivalMovements = Seq(
+            ArrivalMovement(
+              arrivalIdP5,
+              "MRN",
+              dateTimeNow,
+              "location"
+            )
+          ),
+          totalCount = 1
+        )
 
+        val ie057 = IE057Data(
+          IE057MessageData(
+            transitOperation = TransitOperationIE057(mrn, rejectionType),
+            customsOfficeOfDestinationActual = CustomsOfficeOfDestinationActual("AB123"),
+            functionalErrors = Seq(
+              FunctionalError("pointer1", "code1", "reason1", None),
+              FunctionalError("pointer2", "code2", "reason2", None)
+            )
+          )
+        )
+
+        val messages = ArrivalMessages(
+          List(
+            ArrivalMessageMetaData(
+              LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              ArrivalMessageType.RejectionFromOfficeOfDestination,
+              s"movements/arrivals/$arrivalIdP5/message/634982098f02f00a"
+            )
+          )
+        )
+        when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
+        when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057))
+
+        val result = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
+
+        val expectedResult: Seq[RejectedMovementAndMessage] = Seq(
+          RejectedMovementAndMessage(
+            ArrivalMovement(
+              arrivalIdP5,
+              "MRN",
+              dateTimeNow,
+              "location"
+            ),
+            latestArrivalMessage,
+            functionalErrorCount = 1,
+            rejectionType
+          )
+        )
+
+        result mustBe expectedResult
+
+      }
     }
-
 
     "getMessage" - {
 
