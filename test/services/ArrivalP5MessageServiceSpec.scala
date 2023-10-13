@@ -78,7 +78,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
 
         val ie057Data: IE057Data = IE057Data(
           IE057MessageData(
-            TransitOperationIE057(mrn, UnloadingRemarkRejection),
+            TransitOperationIE057(mrn, rejectionType),
             CustomsOfficeOfDestinationActual("1234"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
@@ -99,8 +99,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-        when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
+        when(mockConnector.getMessageForMessageId[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
         when(mockConnector.getLatestMessageForMovement(any())(any())).thenReturn(Future.successful(latestArrivalMessage))
 
         val result: Seq[ArrivalMovementAndMessage] = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
@@ -109,12 +108,12 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
           RejectedMovementAndMessage(
             ArrivalMovement(
               arrivalId = arrivalIdP5,
-              movementReferenceNumber = "MRN",
+              movementReferenceNumber = mrn,
               updated = dateTimeNow,
               messagesLocation = "location"
             ),
             latestArrivalMessage = latestArrivalMessage,
-            functionalErrorCount = 1,
+            functionalErrorCount = 2,
             rejectedType = rejectionType
           )
         )
