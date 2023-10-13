@@ -47,18 +47,19 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
   val arrivalP5MessageService = new ArrivalP5MessageService(mockConnector)
 
   "ArrivalP5MessageService" - {
-    val dateTimeNow   = LocalDateTime.now(clock)
-    val rejectionType = arbitrary[ArrivalRejectionType].sample.value
 
     "getLatestMessagesForMovement" - {
 
       "must return RejectedMovementAndMessage when RejectedByOfficeOfDestination" in {
 
+        val dateTimeNow   = LocalDateTime.now(clock)
+        val rejectionType = arbitrary[ArrivalRejectionType].sample.value
+
         val latestArrivalMessage = LatestArrivalMessage(
           ArrivalMessage(
-            "messageId1",
-            dateTimeNow,
-            RejectionFromOfficeOfDestination
+            messageId = "messageId1",
+            received = dateTimeNow,
+            messageType = RejectionFromOfficeOfDestination
           ),
           arrivalIdP5
         )
@@ -66,51 +67,54 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
         val arrivalMovements: ArrivalMovements = ArrivalMovements(
           arrivalMovements = Seq(
             ArrivalMovement(
-              arrivalIdP5,
-              "MRN",
-              dateTimeNow,
-              "location"
+              arrivalId = arrivalIdP5,
+              movementReferenceNumber = mrn,
+              updated = dateTimeNow,
+              messagesLocation = "location"
             )
           ),
           totalCount = 1
         )
 
-        val ie057 = IE057Data(
+        val ie057Data: IE057Data = IE057Data(
           IE057MessageData(
-            transitOperation = TransitOperationIE057(mrn, rejectionType),
-            customsOfficeOfDestinationActual = CustomsOfficeOfDestinationActual("AB123"),
-            functionalErrors = Seq(
-              FunctionalError("pointer1", "code1", "reason1", None),
-              FunctionalError("pointer2", "code2", "reason2", None)
-            )
+            TransitOperationIE057(mrn, UnloadingRemarkRejection),
+            CustomsOfficeOfDestinationActual("1234"),
+            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
 
         val messages = ArrivalMessages(
           List(
             ArrivalMessageMetaData(
+              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
+              ArrivalMessageType.RejectionFromOfficeOfDestination,
+              s"movements/arrivals/$arrivalIdP5/message/$messageId"
+            ),
+            ArrivalMessageMetaData(
               LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
               ArrivalMessageType.RejectionFromOfficeOfDestination,
-              s"movements/arrivals/$arrivalIdP5/message/634982098f02f00a"
+              s"movements/arrivals/$arrivalIdP5/message/$messageId"
             )
           )
         )
-        when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-        when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057))
 
-        val result = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
+        when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
+        when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
+
+        val result: Seq[ArrivalMovementAndMessage] = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
 
         val expectedResult: Seq[RejectedMovementAndMessage] = Seq(
           RejectedMovementAndMessage(
             ArrivalMovement(
-              arrivalIdP5,
-              "MRN",
-              dateTimeNow,
-              "location"
+              arrivalId = arrivalIdP5,
+              movementReferenceNumber = "MRN",
+              updated = dateTimeNow,
+              messagesLocation = "location"
             ),
-            latestArrivalMessage,
+            latestArrivalMessage = latestArrivalMessage,
             functionalErrorCount = 1,
-            rejectionType
+            rejectedType = rejectionType
           )
         )
 
