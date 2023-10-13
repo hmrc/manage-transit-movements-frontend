@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
-import models.RejectionType
+import models.{LocalReferenceNumber, RejectionType}
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -48,15 +48,19 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
 
   private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
-  def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
+  def rejectionMessageAction(departureIdP5: String,
+                             messageId: String,
+                             mockDepartureP5MessageService: DepartureP5MessageService,
+                             mockCacheService: DepartureCacheConnector
+  ): Unit =
     when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(
       departureIdP5,
-      lrn,
+      messageId,
       mockDepartureP5MessageService,
       mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url
+  lazy val rejectionMessageController: String = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
   val tableRow: TableRow                      = arbitraryTableRow.arbitrary.sample.value
 
@@ -85,19 +89,21 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getLRN(any())(any(), any()))
+        .thenReturn(Future.successful(lrn))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(ReviewDepartureErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
 
-      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+      rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
 
       val paginationViewModel = ListPaginationViewModel(
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
         additionalParams = Seq()
       )
 

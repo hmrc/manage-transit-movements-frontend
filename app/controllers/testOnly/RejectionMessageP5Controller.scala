@@ -19,7 +19,6 @@ package controllers.testOnly
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureCacheConnector
 import controllers.actions._
-import models.LocalReferenceNumber
 import models.departureP5.DepartureMessageType.AllocatedMRN
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,8 +44,8 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, messageId)).async {
       implicit request =>
         if (request.isDeclarationAmendable) {
 
@@ -56,14 +55,14 @@ class RejectionMessageP5Controller @Inject() (
             totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
             currentPage = currentPage,
             numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-            href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
+            href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url
           )
 
           val rejectionMessageP5ViewModel =
-            viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value)
+            viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), request.lrn.value)
 
           rejectionMessageP5ViewModel.map(
-            viewModel => Ok(view(viewModel, departureId, paginationViewModel, localReferenceNumber))
+            viewModel => Ok(view(viewModel, departureId, messageId, paginationViewModel))
           )
         } else {
           Future.successful(
@@ -72,16 +71,16 @@ class RejectionMessageP5Controller @Inject() (
         }
     }
 
-  def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onAmend(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, messageId)).async {
       implicit request =>
         val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
         if (request.isDeclarationAmendable && xPaths.nonEmpty) {
-          cacheConnector.handleErrors(localReferenceNumber.value, xPaths).flatMap {
+          cacheConnector.handleErrors(request.lrn.value, xPaths).flatMap {
             case true =>
               departureP5MessageService.getSpecificMessageMetaData(departureId, AllocatedMRN).map {
-                case Some(_) => Redirect(config.departureNewLocalReferenceNumberUrl(localReferenceNumber.value))
-                case None    => Redirect(config.departureFrontendTaskListUrl(localReferenceNumber.value))
+                case Some(_) => Redirect(config.departureNewLocalReferenceNumberUrl(request.lrn.value))
+                case None    => Redirect(config.departureFrontendTaskListUrl(request.lrn.value))
               }
             case false =>
               Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))

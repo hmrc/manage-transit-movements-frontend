@@ -40,8 +40,8 @@ class CancellationNotificationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, messageId)).async {
       implicit request =>
         val functionalErrors       = request.ie056MessageData.functionalErrors
         val customsOfficeReference = request.ie056MessageData.customsOfficeOfDeparture.referenceNumber
@@ -49,7 +49,7 @@ class CancellationNotificationErrorsP5Controller @Inject() (
         if (functionalErrors.isEmpty) {
           referenceDataService.getCustomsOffice(customsOfficeReference).map {
             customsOffice =>
-              Ok(view(viewModelProvider.apply(localReferenceNumber.value, customsOfficeReference, customsOffice)))
+              Ok(view(viewModelProvider.apply(request.lrn.value, customsOfficeReference, customsOffice)))
           }
         } else {
           Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))

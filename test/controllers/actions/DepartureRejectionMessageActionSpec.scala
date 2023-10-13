@@ -67,31 +67,17 @@ class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEa
   "RejectionMessageAction" - {
     "must return 200 when an unloading permission is available" in {
 
-      when(mockMessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockMessageService.getLRN(any())(any(), any())).thenReturn(Future.successful(lrn))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
-      val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5, lrn)
+      val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5, messageId)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
       val result: Future[Result] = rejectionMessageProvider.invokeBlock(testRequest, fakeOkResult)
 
       status(result) mustEqual OK
-    }
-
-    "must return 303 and redirect to technical difficulties when unavailable" in {
-
-      when(mockMessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
-      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-
-      val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5, lrn)
-
-      val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
-
-      val result: Future[Result] = rejectionMessageProvider.invokeBlock(testRequest, fakeOkResult)
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe routes.ErrorController.technicalDifficulties().url
     }
   }
 }

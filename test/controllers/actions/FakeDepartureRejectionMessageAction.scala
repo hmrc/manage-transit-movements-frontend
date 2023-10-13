@@ -29,10 +29,10 @@ import scala.concurrent.Future
 
 class FakeDepartureRejectionMessageAction(
   departureId: String,
-  localReferenceNumber: LocalReferenceNumber,
+  messageId: String,
   departureP5MessageService: DepartureP5MessageService,
   departureCacheConnector: DepartureCacheConnector
-) extends DepartureRejectionMessageAction(departureId, localReferenceNumber, departureP5MessageService, departureCacheConnector) {
+) extends DepartureRejectionMessageAction(departureId, messageId, departureP5MessageService, departureCacheConnector) {
 
   val message: IE056Data = IE056Data(
     IE056MessageData(
@@ -42,7 +42,6 @@ class FakeDepartureRejectionMessageAction(
     )
   )
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, DepartureRejectionMessageRequest[A]]] =
-    Future.successful(Right(DepartureRejectionMessageRequest(request, "AB123", message.data, isDeclarationAmendable = true, lrn = localReferenceNumber.value)))
-
+  override protected def transform[A](request: IdentifierRequest[A]): Future[DepartureRejectionMessageRequest[A]] =
+    Future.successful(DepartureRejectionMessageRequest(request, "AB123", message.data, isDeclarationAmendable = true, LocalReferenceNumber("CD123")))
 }

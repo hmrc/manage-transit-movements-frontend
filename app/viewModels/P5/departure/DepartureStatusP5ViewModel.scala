@@ -17,9 +17,8 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.RejectionType
+import models.{LocalReferenceNumber, RejectionType}
 import models.RejectionType.{DeclarationRejection, InvalidationRejection}
-import models.LocalReferenceNumber
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import viewModels.ViewMovementAction
@@ -32,21 +31,22 @@ object DepartureStatusP5ViewModel {
     movementAndMessage match {
       case PrelodgedMovementAndMessage(departureId, localReferenceNumber, _, message, isPrelodged) =>
         preLodgeStatus(departureId, localReferenceNumber, isPrelodged).apply(message.latestMessage)
-      case RejectedMovementAndMessage(departureId, localReferenceNumber, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
-        rejectedStatus(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber).apply(message.latestMessage)
+      case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
+        rejectedStatus(departureId, message.latestMessage.messageId, rejectionType, isDeclarationAmendable, xPaths)
+          .apply(message.latestMessage)
       case OtherMovementAndMessage(departureId, localReferenceNumber, _, message) =>
         currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber).apply(message.latestMessage)
     }
 
   private def rejectedStatus(
     departureId: String,
+    messageId: String,
     rejectionType: Option[RejectionType],
     isDeclarationAmendable: Boolean,
-    xPaths: Seq[String],
-    localReferenceNumber: LocalReferenceNumber
+    xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
-      rejectedByOfficeOfDeparture(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber)
+      rejectedByOfficeOfDeparture(departureId, messageId, rejectionType, isDeclarationAmendable, xPaths)
     ).reduce(_ orElse _)
 
   private def preLodgeStatus(departureId: String, localReferenceNumber: LocalReferenceNumber, isPrelodge: Boolean)(implicit
@@ -253,28 +253,28 @@ object DepartureStatusP5ViewModel {
   // scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
+    messageId: String,
     rejectionType: Option[RejectionType],
     isDeclarationAmendable: Boolean,
-    xPaths: Seq[String],
-    localReferenceNumber: LocalReferenceNumber
+    xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
 
     case message if message.messageType == RejectedByOfficeOfDeparture =>
       val (key, href) = rejectionType match {
         case Some(DeclarationRejection) if isDeclarationAmendable =>
-          ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+          ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url)
 
         case Some(DeclarationRejection) if xPaths.isEmpty =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, messageId).url)
 
         case Some(DeclarationRejection) =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
         case Some(InvalidationRejection) if xPaths.isEmpty =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, messageId).url)
 
         case Some(InvalidationRejection) =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
         case _ => ("", "")
       }

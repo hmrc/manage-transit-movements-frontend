@@ -143,7 +143,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
-              "messageId",
+              messageId,
               LocalDateTime.now(),
               DeclarationAmendmentAccepted,
               "body/path"
@@ -180,7 +180,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
-              "messageId",
+              messageId,
               LocalDateTime.now(),
               DeclarationAmendmentAccepted,
               "body/path"
@@ -259,7 +259,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         LocalDateTime.now(),
         LatestDepartureMessage(
           DepartureMessage(
-            "messageId",
+            messageId,
             LocalDateTime.now(),
             AllocatedMRN,
             "body/path"
@@ -352,7 +352,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
-                "messageId",
+                messageId,
                 LocalDateTime.now(),
                 RejectedByOfficeOfDeparture,
                 "body/path"
@@ -370,7 +370,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
               )
             )
@@ -386,7 +386,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
-                "messageId",
+                messageId,
                 LocalDateTime.now(),
                 RejectedByOfficeOfDeparture,
                 "body/path"
@@ -404,7 +404,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
               )
             )
@@ -420,7 +420,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
-                "messageId",
+                messageId,
                 LocalDateTime.now(),
                 RejectedByOfficeOfDeparture,
                 "body/path"
@@ -438,7 +438,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
               )
             )
@@ -454,7 +454,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
-                "messageId",
+                messageId,
                 LocalDateTime.now(),
                 RejectedByOfficeOfDeparture,
                 "body/path"
@@ -472,7 +472,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, lrn).url,
+                controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, messageId).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
               )
             )
@@ -493,7 +493,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
-                "messageId",
+                messageId,
                 LocalDateTime.now(),
                 RejectedByOfficeOfDeparture,
                 "body/path"
@@ -511,7 +511,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+                controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
               )
             )
@@ -527,7 +527,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
-                "messageId",
+                messageId,
                 LocalDateTime.now(),
                 RejectedByOfficeOfDeparture,
                 "body/path"
@@ -545,7 +545,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+                controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
               )
             )
@@ -561,7 +561,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
-                "messageId",
+                messageId,
                 LocalDateTime.now(),
                 RejectedByOfficeOfDeparture,
                 "body/path"
@@ -579,7 +579,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5, lrn).url,
+                controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5, messageId).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
               )
             )
@@ -602,7 +602,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
-              "messageId",
+              messageId,
               LocalDateTime.now(),
               GoodsUnderControl,
               "body/path"
@@ -643,7 +643,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
-              "messageId",
+              messageId,
               LocalDateTime.now(),
               GoodsUnderControl,
               "body/path"
@@ -697,7 +697,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
-              "messageId",
+              messageId,
               LocalDateTime.now(),
               DeclarationSent,
               "body/path"
@@ -734,7 +734,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
-              "messageId",
+              messageId,
               LocalDateTime.now(),
               DeclarationSent,
               "body/path"
