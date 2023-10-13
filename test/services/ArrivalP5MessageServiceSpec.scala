@@ -101,7 +101,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
 
         when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
         when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
-
+        when(mockConnector.getLatestMessageForMovement(any())(any())).thenReturn(Future.successful(latestArrivalMessage))
         val result: Seq[ArrivalMovementAndMessage] = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
 
         val expectedResult: Seq[RejectedMovementAndMessage] = Seq(
