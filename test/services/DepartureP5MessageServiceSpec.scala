@@ -20,13 +20,10 @@ import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generators.Generators
-import models.RejectionType
-import models.LocalReferenceNumber
 import models.RejectionType.DeclarationRejection
-import models.departure.DepartureStatus
-import models.departureP5.DepartureMessageType.{AllocatedMRN, DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
-import models.departureP5.Prelodged.PrelodgedDeclaration
+import models.departureP5.DepartureMessageType._
 import models.departureP5._
+import models.{LocalReferenceNumber, RejectionType}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary

@@ -73,11 +73,11 @@ object DepartureStatusP5ViewModel {
       discrepancies,
       invalidMRN(),
       releasedForTransit(departureId),
-      goodsNotReleased(),
+      goodsNotReleased(departureId, localReferenceNumber),
       guaranteeRejected(departureId, localReferenceNumber),
       incidentDuringTransit(),
-      goodsBeingRecovered(),
-      guaranteeWrittenOff
+      goodsBeingRecovered(departureId, messageId, localReferenceNumber),
+      movementEnded
     ).reduce(_ orElse _)
 
   private def declarationAmendmentAccepted(departureId: String, prelodged: Boolean)(implicit
@@ -222,11 +222,18 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def goodsNotReleased(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def goodsNotReleased(departureId: String,
+                               localReferenceNumber: LocalReferenceNumber
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsNotReleased =>
       DepartureStatusP5ViewModel(
-        status = "movement.status.P5.goodsNotReleased",
-        actions = Nil
+        "movement.status.P5.goodsNotReleased",
+        actions = Seq(
+          ViewMovementAction(
+            controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureId, localReferenceNumber, message.messageId).url,
+            "movement.status.P5.action.goodsNotReleased.viewDetails"
+          )
+        )
       )
   }
 
@@ -357,17 +364,25 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def goodsBeingRecovered(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def goodsBeingRecovered(departureId: String,
+                                  messageId: String,
+                                  localReferenceNumber: LocalReferenceNumber
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsBeingRecovered =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsBeingRecovered",
-        actions = Nil
+        actions = Seq(
+          ViewMovementAction(
+            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureId, messageId, localReferenceNumber).url,
+            "movement.status.P5.action.goodsBeingRecovered.viewDetails"
+          )
+        )
       )
   }
 
-  private def guaranteeWrittenOff: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
-    case message if message.messageType == GuaranteeWrittenOff =>
-      DepartureStatusP5ViewModel("movement.status.P5.guaranteeWrittenOff", actions = Nil)
+  private def movementEnded: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+    case message if message.messageType == MovementEnded =>
+      DepartureStatusP5ViewModel("movement.status.P5.movementEnded", actions = Nil)
   }
 
   def errorsActionText(errors: Seq[String]): String = if (errors.length == 1) {
