@@ -89,8 +89,8 @@ object ArrivalStatusP5ViewModel {
   private def goodsReleased(releaseIndicator: String): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == GoodsReleasedNotification =>
       val message = releaseIndicator match {
-        case "4" => "movement.status.P5.goodsNotReleased"
-        case _   => "movement.status.P5.goodsReleasedReceived"
+        case "4" => "movement.status.P5.arrival.goodsNotReleased"
+        case _   => "movement.status.P5.goodsReleased"
       }
 
       ArrivalStatusP5ViewModel(message, actions = Nil)

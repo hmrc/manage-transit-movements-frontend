@@ -112,7 +112,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val result = ArrivalStatusP5ViewModel(movementAndMessage)
 
-          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.goodsReleasedReceived", Nil)
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.goodsReleased", Nil)
 
           result mustBe expectedResult
         }
@@ -123,7 +123,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val result = ArrivalStatusP5ViewModel(movementAndMessage)
 
-          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.goodsNotReleased", Nil)
+          val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.arrival.goodsNotReleased", Nil)
 
           result mustBe expectedResult
         }

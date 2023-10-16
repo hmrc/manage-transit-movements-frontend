@@ -216,6 +216,7 @@ movement.status.unloadingRemarksSubmitted = Unloading remarks sent
 movement.status.unloadingRemarksRejected = Unloading remarks rejected
 movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement = Unloading remarks rejected
 movement.status.goodsReleased = Goods Released
+movement.status.P5.arrival.goodsNotReleased= Goods not released - waiting for discrepancy resolution
 
 
 technicalDifficulties.title = Sorry, there is a problem with the service
