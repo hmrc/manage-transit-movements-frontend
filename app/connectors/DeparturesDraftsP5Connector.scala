@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
   def getDeparturesSummary(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
-    val url = s"${config.draftDeparturesUrl}/user-answers"
+    val url = s"${config.departureCacheUrl}/user-answers"
 
     http
       .GET[DeparturesSummary](url, queryParams :+ ("state" -> "notSubmitted"))
@@ -59,7 +59,7 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
     getDeparturesSummary(Seq("limit" -> limit.value.toString, "skip" -> skip.value.toString, "sortBy" -> sortParams.convertParams, "lrn" -> lrn))
 
   def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val url = s"${config.draftDeparturesUrl}/user-answers/$lrn"
+    val url = s"${config.departureCacheUrl}/user-answers/$lrn"
     http.DELETE[HttpResponse](url)
   }
 
@@ -67,7 +67,7 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
     getDeparturesSummary(Seq("limit" -> "1")).map(_.map(_.userAnswers)).map(Availability(_))
 
   def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[LockCheck] = {
-    val url = s"${config.draftDeparturesUrl}/user-answers/$lrn/lock"
+    val url = s"${config.departureCacheUrl}/user-answers/$lrn/lock"
 
     http
       .GET[HttpResponse](url)

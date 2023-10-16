@@ -76,7 +76,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val departureBaseUrl: String                  = configuration.get[Service]("microservice.services.departure").baseUrl
   lazy val departureUrl: String                      = configuration.get[Service]("microservice.services.departure").fullServiceUrl
   lazy val testSupportUrl: String                    = configuration.get[Service]("microservice.services.test-support").baseUrl
-  lazy val draftDeparturesUrl: String                = configuration.get[Service]("microservice.services.drafts-repository").fullServiceUrl
   lazy val destinationBaseUrl: String                = configuration.get[Service]("microservice.services.destination").baseUrl
   lazy val destinationUrl: String                    = configuration.get[Service]("microservice.services.destination").fullServiceUrl
   lazy val routerUrl: String                         = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
@@ -100,7 +99,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val manageTransitMovementsCancellationFrontend: String = configuration.get[String]("urls.manageTransitMovementsCancellationFrontend")
   val presentationNotificationFrontend: String           = configuration.get[String]("urls.presentationNotificationFrontend")
 
-  lazy val manageDocumentsUrl: String = configuration.get[Service]("microservice.services.manage-documents").fullServiceUrl
+  lazy val manageDocumentsUrl: String = configuration.get[Service]("microservice.services.transit-movements-trader-manage-documents").fullServiceUrl
 
   val declareDepartureStartWithLRNUrl: String =
     if (phase5Enabled) {
