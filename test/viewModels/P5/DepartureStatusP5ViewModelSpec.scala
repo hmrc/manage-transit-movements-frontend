@@ -311,7 +311,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.goodsNotReleased",
         Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureIdP5, lrn, "messageId").url,
+            controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureIdP5, lrn, messageId).url,
             "movement.status.P5.action.goodsNotReleased.viewDetails"
           )
         )
@@ -774,7 +774,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.goodsBeingRecovered",
         Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, "messageId", lrn).url,
+            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, messageId, lrn).url,
             "movement.status.P5.action.goodsBeingRecovered.viewDetails"
           )
         )
