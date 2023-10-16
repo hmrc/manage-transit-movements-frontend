@@ -622,7 +622,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.goodsUnderControl",
           Seq(
             ViewMovementAction(
-              controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url,
+              controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url,
               "movement.status.P5.action.goodsUnderControl.viewDetails"
             ),
             ViewMovementAction(
@@ -663,7 +663,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.goodsUnderControl",
           Seq(
             ViewMovementAction(
-              controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url,
+              controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url,
               "movement.status.P5.action.goodsUnderControl.viewDetails"
             ),
             ViewMovementAction(

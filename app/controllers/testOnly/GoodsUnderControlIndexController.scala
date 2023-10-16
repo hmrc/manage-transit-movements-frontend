@@ -30,13 +30,13 @@ class GoodsUnderControlIndexController @Inject() (
 ) extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen goodsUnderControlAction(departureId)) {
+  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen goodsUnderControlAction(departureId, messageId)) {
       implicit request =>
         val call = if (request.ie060MessageData.requestedDocuments) {
-          controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId)
+          controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId, messageId)
         } else {
-          controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId)
+          controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId, messageId)
         }
         Redirect(call)
     }

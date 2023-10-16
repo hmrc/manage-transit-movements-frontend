@@ -30,7 +30,7 @@ object DepartureStatusP5ViewModel {
   def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessage match {
       case PrelodgedMovementAndMessage(departureId, localReferenceNumber, _, message, isPrelodged) =>
-        preLodgeStatus(departureId, localReferenceNumber, isPrelodged).apply(message.latestMessage)
+        preLodgeStatus(departureId, message.latestMessage.messageId, localReferenceNumber, isPrelodged).apply(message.latestMessage)
       case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
         rejectedStatus(departureId, message.latestMessage.messageId, rejectionType, isDeclarationAmendable, xPaths)
           .apply(message.latestMessage)
@@ -49,12 +49,12 @@ object DepartureStatusP5ViewModel {
       rejectedByOfficeOfDeparture(departureId, messageId, rejectionType, isDeclarationAmendable, xPaths)
     ).reduce(_ orElse _)
 
-  private def preLodgeStatus(departureId: String, localReferenceNumber: LocalReferenceNumber, isPrelodge: Boolean)(implicit
+  private def preLodgeStatus(departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber, isPrelodge: Boolean)(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
       declarationAmendmentAccepted(departureId, isPrelodge),
-      goodsUnderControl(departureId, localReferenceNumber, isPrelodge),
+      goodsUnderControl(departureId, messageId, localReferenceNumber, isPrelodge),
       declarationSent(departureId, localReferenceNumber, isPrelodge)
     ).reduce(_ orElse _)
 
@@ -297,6 +297,7 @@ object DepartureStatusP5ViewModel {
 
   private def goodsUnderControl(
     departureId: String,
+    messageId: String,
     lrn: LocalReferenceNumber,
     prelodged: Boolean
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
@@ -316,7 +317,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.goodsUnderControl",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureId).url,
+            controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureId, messageId).url,
             "movement.status.P5.action.goodsUnderControl.viewDetails"
           ),
           ViewMovementAction(

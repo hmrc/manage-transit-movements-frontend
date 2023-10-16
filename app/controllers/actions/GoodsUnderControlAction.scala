@@ -16,13 +16,9 @@
 
 package controllers.actions
 
-import cats.data.OptionT
-import controllers.routes
-import models.departureP5.DepartureMessageType.GoodsUnderControl
 import models.departureP5.IE060Data
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}
-import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionRefiner, ActionTransformer}
 import services.{DepartureP5MessageService, ReferenceDataService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -35,24 +31,27 @@ class GoodsUnderControlActionProvider @Inject() (departureP5MessageService: Depa
   ec: ExecutionContext
 ) {
 
-  def apply(departureId: String): ActionRefiner[IdentifierRequest, GoodsUnderControlRequest] =
-    new GoodsUnderControlAction(departureId, departureP5MessageService, referenceDataService)
+  def apply(departureId: String, messageId: String): ActionRefiner[IdentifierRequest, GoodsUnderControlRequest] =
+    new GoodsUnderControlAction(departureId, messageId, departureP5MessageService, referenceDataService)
 }
 
-class GoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)(implicit
+class GoodsUnderControlAction(
+  departureId: String,
+  messageId: String,
+  departureP5MessageService: DepartureP5MessageService,
+  referenceDataService: ReferenceDataService
+)(implicit
   protected val executionContext: ExecutionContext
-) extends ActionRefiner[IdentifierRequest, GoodsUnderControlRequest] {
+) extends ActionTransformer[IdentifierRequest, GoodsUnderControlRequest] {
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, GoodsUnderControlRequest[A]]] = {
+  override protected def transform[A](request: IdentifierRequest[A]): Future[GoodsUnderControlRequest[A]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    (for {
-      ie060 <- OptionT(departureP5MessageService.filterForMessage[IE060Data](departureId, GoodsUnderControl))
-      cust  <- OptionT.liftF(referenceDataService.getCustomsOffice(code = ie060.data.CustomsOfficeOfDeparture.referenceNumber))
-    } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, cust))
-      .toRight(Redirect(routes.ErrorController.technicalDifficulties()))
-      .value
-
+    for {
+      ie060      <- departureP5MessageService.getMessageWithMessageId[IE060Data](departureId, messageId)
+      custOffice <- referenceDataService.getCustomsOffice(ie060.data.CustomsOfficeOfDeparture.referenceNumber)
+      lrn        <- departureP5MessageService.getLRN(departureId)
+    } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, lrn, custOffice)
   }
 }

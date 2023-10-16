@@ -16,6 +16,7 @@
 
 package models.requests
 
+import models.LocalReferenceNumber
 import models.departureP5.IE060MessageData
 import models.referenceData.CustomsOffice
 import play.api.mvc.{Request, WrappedRequest}
@@ -24,5 +25,6 @@ case class GoodsUnderControlRequest[A](
   request: Request[A],
   eoriNumber: String,
   ie060MessageData: IE060MessageData,
+  lrn: LocalReferenceNumber,
   customsOffice: Option[CustomsOffice]
 ) extends WrappedRequest[A](request)

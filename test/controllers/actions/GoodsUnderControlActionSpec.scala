@@ -63,31 +63,17 @@ class GoodsUnderControlActionSpec extends SpecBase with BeforeAndAfterEach with 
   "GoodsUnderControlAction" - {
     "must return 200 when an unloading permission is available" in {
 
-      when(mockMessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockMessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockMessageService.getLRN(any())(any(), any())).thenReturn(Future.successful(lrn))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
-      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)
+      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5, messageId)
 
       val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
 
       val result: Future[Result] = goodsUnderControlProvider.invokeBlock(testRequest, fakeOkResult)
 
       status(result) mustEqual OK
-    }
-
-    "must return 303 and redirect to technical difficulties when no unloading permission is available" in {
-
-      when(mockMessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-
-      val goodsUnderControlProvider = (new GoodsUnderControlActionProvider(mockMessageService, mockReferenceDataService)(implicitly))(departureIdP5)
-
-      val testRequest = IdentifierRequest(FakeRequest(GET, "/"), "eori")
-
-      val result: Future[Result] = goodsUnderControlProvider.invokeBlock(testRequest, fakeOkResult)
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe routes.ErrorController.technicalDifficulties().url
     }
   }
 }

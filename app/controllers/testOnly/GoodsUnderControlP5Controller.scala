@@ -38,8 +38,8 @@ class GoodsUnderControlP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  private def goodsUnderControlOnPageLoad(departureId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen goodsUnderControlAction(departureId)).async {
+  private def goodsUnderControlOnPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen goodsUnderControlAction(departureId, messageId)).async {
       implicit request =>
         val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
         val customsOfficeContactViewModel =
@@ -50,7 +50,7 @@ class GoodsUnderControlP5Controller @Inject() (
         }
     }
 
-  def noRequestedDocuments(departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId)
+  def noRequestedDocuments(departureId: String, messageId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId, messageId)
 
-  def requestedDocuments(departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId)
+  def requestedDocuments(departureId: String, messageId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId, messageId)
 }

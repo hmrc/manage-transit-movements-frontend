@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import models.LocalReferenceNumber
 import models.departureP5._
 import models.referenceData.CustomsOffice
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}
@@ -27,8 +28,12 @@ import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeGoodsUnderControlAction(departureId: String, departureP5MessageService: DepartureP5MessageService, referenceDataService: ReferenceDataService)
-    extends GoodsUnderControlAction(departureId, departureP5MessageService, referenceDataService) {
+class FakeGoodsUnderControlAction(
+  departureId: String,
+  messageId: String,
+  departureP5MessageService: DepartureP5MessageService,
+  referenceDataService: ReferenceDataService
+) extends GoodsUnderControlAction(departureId, messageId, departureP5MessageService, referenceDataService) {
 
   val message: IE060Data = IE060Data(
     IE060MessageData(
@@ -39,7 +44,9 @@ class FakeGoodsUnderControlAction(departureId: String, departureP5MessageService
     )
   )
 
-  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, GoodsUnderControlRequest[A]]] =
-    Future.successful(Right(GoodsUnderControlRequest(request, "AB123", message.data, Some(CustomsOffice("GB000060", "name", Some("999"))))))
+  override protected def transform[A](request: IdentifierRequest[A]): Future[GoodsUnderControlRequest[A]] =
+    Future.successful(
+      GoodsUnderControlRequest(request, "AB123", message.data, LocalReferenceNumber("CD123"), Some(CustomsOffice("GB000060", "name", Some("999"))))
+    )
 
 }

@@ -54,11 +54,11 @@ GET         /manage-transit-movements/test-only/view-departure-declarations     
 + nocsrf
 POST        /manage-transit-movements/test-only/view-departure-declarations                                             controllers.testOnly.ViewAllDeparturesP5Controller.onSubmit()
 
-GET         /manage-transit-movements/test-only/:departureId/goods-under-control-index                                  controllers.testOnly.GoodsUnderControlIndexController.onPageLoad(departureId: String)
+GET         /manage-transit-movements/test-only/:departureId/goods-under-control-index/:messageId                       controllers.testOnly.GoodsUnderControlIndexController.onPageLoad(departureId: String, messageId: String)
 
-GET         /manage-transit-movements/test-only/:departureId/goods-under-control                                        controllers.testOnly.GoodsUnderControlP5Controller.noRequestedDocuments(departureId: String)
+GET         /manage-transit-movements/test-only/:departureId/goods-under-control/:messageId                             controllers.testOnly.GoodsUnderControlP5Controller.noRequestedDocuments(departureId: String, messageId: String)
 
-GET         /manage-transit-movements/test-only/:departureId/goods-under-control-document-requested                     controllers.testOnly.GoodsUnderControlP5Controller.requestedDocuments(departureId: String)
+GET         /manage-transit-movements/test-only/:departureId/goods-under-control-document-requested/:messageId          controllers.testOnly.GoodsUnderControlP5Controller.requestedDocuments(departureId: String, messageId: String)
 
 GET        /manage-transit-movements/test-only/:departureId/amend-departure-declaration-errors/:messageId               controllers.testOnly.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 
