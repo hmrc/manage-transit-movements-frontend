@@ -35,16 +35,15 @@ class DepartureP5MessageService @Inject() (
 
   private def isErrorAmendable(
     departureId: String,
+    messageId: String,
     lrn: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Option[RejectionType], Boolean, Seq[String])] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(RejectionType, Boolean, Seq[String])] =
     for {
-      message <- filterForMessage[IE056Data](departureId, RejectedByOfficeOfDeparture)
-      rejectionType = message.map(_.data.transitOperation.businessRejectionType)
-      xPaths        = message.map(_.data.functionalErrors.map(_.errorPointer))
-      isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false)) {
-        cacheConnector.isDeclarationAmendable(lrn, _)
-      }
-    } yield (rejectionType, isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
+      message <- getMessageWithMessageId[IE056Data](departureId, messageId)
+      rejectionType = message.data.transitOperation.businessRejectionType
+      xPaths        = message.data.functionalErrors.map(_.errorPointer)
+      isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn, xPaths.filter(_.nonEmpty))
+    } yield (rejectionType, isDeclarationAmendable, xPaths)
 
   def getLatestMessagesForMovement(
     departureMovements: DepartureMovements
@@ -55,7 +54,7 @@ class DepartureP5MessageService @Inject() (
           message =>
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>
-                isErrorAmendable(movement.departureId, movement.localReferenceNumber.value).map {
+                isErrorAmendable(movement.departureId, message.latestMessage.messageId, movement.localReferenceNumber.value).map {
                   case (rejectionType, isDeclarationAmendable, xPaths) =>
                     RejectedMovementAndMessage(
                       movement.departureId,
@@ -91,41 +90,6 @@ class DepartureP5MessageService @Inject() (
         }
     }
 
-  def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String, typeOfMessage: T)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[DepartureMessageMetaData]] =
-    getMessageMetaData(departureId, typeOfMessage)
-
-  private def getMessageMetaData(departureId: String, messageType: DepartureMessageType)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[DepartureMessageMetaData]] =
-    departureMovementP5Connector
-      .getMessageMetaData(departureId)
-      .map(
-        _.messages
-          .filter(_.messageType == messageType)
-          .sortBy(_.received)
-          .reverse
-          .headOption
-      )
-
-  def filterForMessage[MessageModel](
-    departureId: String,
-    typeOfMessage: DepartureMessageType
-  )(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier,
-    httpReads: HttpReads[MessageModel]
-  ): Future[Option[MessageModel]] =
-    (
-      for {
-        messageMetaData <- OptionT(getSpecificMessageMetaData(departureId, typeOfMessage))
-        message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessageByPath[MessageModel](messageMetaData.path))
-      } yield message
-    ).value
-
   def getMessageWithMessageId[MessageModel](
     departureId: String,
     messageId: String
@@ -133,6 +97,6 @@ class DepartureP5MessageService @Inject() (
     departureMovementP5Connector
       .getMessageForMessageId(departureId, messageId)
 
-  def getLRN(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[LocalReferenceNumber] =
-    departureMovementP5Connector.getLRNForDeparture(departureId)
+  def getDepartureReferenceNumbers(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureReferenceNumbers] =
+    departureMovementP5Connector.getDepartureReferenceNumbers(departureId)
 }

@@ -16,8 +16,7 @@
 
 package models.requests
 
-import models.LocalReferenceNumber
-import models.departureP5.IE056MessageData
+import models.departureP5.{DepartureReferenceNumbers, IE056MessageData}
 import play.api.mvc.{Request, WrappedRequest}
 
 case class DepartureRejectionMessageRequest[A](
@@ -25,5 +24,5 @@ case class DepartureRejectionMessageRequest[A](
   eoriNumber: String,
   ie056MessageData: IE056MessageData,
   isDeclarationAmendable: Boolean,
-  lrn: LocalReferenceNumber
+  referenceNumbers: DepartureReferenceNumbers
 ) extends WrappedRequest[A](request)

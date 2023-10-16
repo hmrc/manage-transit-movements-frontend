@@ -18,7 +18,6 @@ package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import controllers.routes
 import models.RejectionType
 import models.RejectionType.DeclarationRejection
 import models.departureP5._
@@ -68,7 +67,8 @@ class DepartureRejectionMessageActionSpec extends SpecBase with BeforeAndAfterEa
     "must return 200 when an unloading permission is available" in {
 
       when(mockMessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockMessageService.getLRN(any())(any(), any())).thenReturn(Future.successful(lrn))
+      when(mockMessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
       val rejectionMessageProvider = (new DepartureRejectionMessageActionProvider(mockMessageService, mockCacheService)(implicitly))(departureIdP5, messageId)

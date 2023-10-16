@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
-import models.{LocalReferenceNumber, RejectionType}
+import models.RejectionType
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -86,8 +86,8 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
 
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getLRN(any())(any(), any()))
-        .thenReturn(Future.successful(lrn))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
@@ -117,8 +117,8 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
       )
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getLRN(any())(any(), any()))
-        .thenReturn(Future.successful(lrn))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 

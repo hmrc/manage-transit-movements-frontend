@@ -38,7 +38,6 @@ class RejectionMessageP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
   cacheConnector: DepartureCacheConnector,
-  departureP5MessageService: DepartureP5MessageService,
   view: RejectionMessageP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
@@ -47,6 +46,8 @@ class RejectionMessageP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, messageId)).async {
       implicit request =>
+        val lrn = request.referenceNumbers.localReferenceNumber
+
         if (request.isDeclarationAmendable) {
 
           val currentPage = page.getOrElse(1)
@@ -59,7 +60,7 @@ class RejectionMessageP5Controller @Inject() (
           )
 
           val rejectionMessageP5ViewModel =
-            viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), request.lrn.value)
+            viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), lrn.value)
 
           rejectionMessageP5ViewModel.map(
             viewModel => Ok(view(viewModel, departureId, messageId, paginationViewModel))
@@ -75,15 +76,17 @@ class RejectionMessageP5Controller @Inject() (
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, messageId)).async {
       implicit request =>
         val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
+        val lrn    = request.referenceNumbers.localReferenceNumber
         if (request.isDeclarationAmendable && xPaths.nonEmpty) {
-          cacheConnector.handleErrors(request.lrn.value, xPaths).flatMap {
+          cacheConnector.handleErrors(lrn.value, xPaths).map {
             case true =>
-              departureP5MessageService.getSpecificMessageMetaData(departureId, AllocatedMRN).map {
-                case Some(_) => Redirect(config.departureNewLocalReferenceNumberUrl(request.lrn.value))
-                case None    => Redirect(config.departureFrontendTaskListUrl(request.lrn.value))
+              if (request.referenceNumbers.movementReferenceNumber.isDefined) {
+                Redirect(config.departureNewLocalReferenceNumberUrl(lrn.value))
+              } else {
+                Redirect(config.departureFrontendTaskListUrl(lrn.value))
               }
             case false =>
-              Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+              Redirect(controllers.routes.ErrorController.technicalDifficulties())
           }
         } else {
           Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))

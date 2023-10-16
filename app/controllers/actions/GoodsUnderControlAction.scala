@@ -51,7 +51,7 @@ class GoodsUnderControlAction(
     for {
       ie060      <- departureP5MessageService.getMessageWithMessageId[IE060Data](departureId, messageId)
       custOffice <- referenceDataService.getCustomsOffice(ie060.data.CustomsOfficeOfDeparture.referenceNumber)
-      lrn        <- departureP5MessageService.getLRN(departureId)
-    } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, lrn, custOffice)
+      refNumbers <- departureP5MessageService.getDepartureReferenceNumbers(departureId)
+    } yield GoodsUnderControlRequest(request, request.eoriNumber, ie060.data, refNumbers, custOffice)
   }
 }

@@ -20,8 +20,8 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
-import models.{LocalReferenceNumber, RejectionType}
-import models.departureP5.{FunctionalError, _}
+import models.RejectionType
+import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -83,8 +83,8 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       )
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getLRN(any())(any(), any()))
-        .thenReturn(Future.successful(lrn))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
       rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
@@ -114,8 +114,8 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
 
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getLRN(any())(any(), any()))
-        .thenReturn(Future.successful(lrn))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
       rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)

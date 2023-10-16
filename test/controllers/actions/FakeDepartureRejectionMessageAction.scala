@@ -17,11 +17,9 @@
 package controllers.actions
 
 import connectors.DepartureCacheConnector
-import models.RejectionType
-import models.LocalReferenceNumber
+import models.{LocalReferenceNumber, RejectionType}
 import models.departureP5._
 import models.requests.{DepartureRejectionMessageRequest, IdentifierRequest}
-import play.api.mvc.Result
 import services.DepartureP5MessageService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,5 +41,13 @@ class FakeDepartureRejectionMessageAction(
   )
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[DepartureRejectionMessageRequest[A]] =
-    Future.successful(DepartureRejectionMessageRequest(request, "AB123", message.data, isDeclarationAmendable = true, LocalReferenceNumber("CD123")))
+    Future.successful(
+      DepartureRejectionMessageRequest(
+        request,
+        "AB123",
+        message.data,
+        isDeclarationAmendable = true,
+        referenceNumbers = DepartureReferenceNumbers(LocalReferenceNumber("CD123"), None)
+      )
+    )
 }

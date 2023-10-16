@@ -51,7 +51,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
           href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId).url
         )
         val rejectionMessageP5ViewModel =
-          viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), request.lrn.value)
+          viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), request.referenceNumbers.localReferenceNumber.value)
         rejectionMessageP5ViewModel.map(
           viewModel => Ok(view(viewModel, departureId, paginationViewModel))
         )

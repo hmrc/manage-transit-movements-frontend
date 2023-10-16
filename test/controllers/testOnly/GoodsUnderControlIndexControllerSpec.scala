@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.departure
+package controllers.testOnly
 
 import base.SpecBase
 import controllers.actions.{FakeGoodsUnderControlAction, GoodsUnderControlActionProvider}
@@ -81,7 +81,8 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
         )
       )
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getLRN(any())(any(), any())).thenReturn(Future.successful(lrn))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       goodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)
@@ -109,7 +110,8 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
         )
       )
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getLRN(any())(any(), any())).thenReturn(Future.successful(lrn))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       goodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)
@@ -137,7 +139,8 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
         )
       )
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getLRN(any())(any(), any())).thenReturn(Future.successful(lrn))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
       goodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)

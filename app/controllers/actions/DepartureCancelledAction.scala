@@ -43,8 +43,8 @@ class DepartureCancelledAction(departureId: String, messageId: String, departure
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     for {
-      message <- departureP5MessageService.getMessageWithMessageId[IE009Data](departureId, messageId)
-      lrn     <- departureP5MessageService.getLRN(departureId)
-    } yield DepartureCancelledRequest(request, request.eoriNumber, lrn, message.data)
+      message   <- departureP5MessageService.getMessageWithMessageId[IE009Data](departureId, messageId)
+      refNumber <- departureP5MessageService.getDepartureReferenceNumbers(departureId)
+    } yield DepartureCancelledRequest(request, request.eoriNumber, refNumber.localReferenceNumber, message.data)
   }
 }

@@ -17,7 +17,6 @@
 package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import controllers.routes
 import models.departureP5._
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
@@ -66,7 +65,8 @@ class DepartureCancelledActionSpec extends SpecBase with BeforeAndAfterEach with
   "DepartureCancelledAction" - {
     "must return 200 when an departure cancellation is available" in {
 
-      when(mockMessageService.getLRN(any())(any(), any())).thenReturn(Future.successful(lrn))
+      when(mockMessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockMessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
 
       val departureCancelledActionProvider = (new DepartureCancelledActionProvider(mockMessageService)(implicitly))(departureIdP5, messageId)

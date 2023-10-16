@@ -81,18 +81,6 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     http.GET[LatestDepartureMessage](url)(HttpReads[LatestDepartureMessage], headers, ec)
   }
 
-  def getMessageMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureMessages] = {
-    val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
-    http.GET[DepartureMessages](url)(implicitly, headers, ec)
-  }
-
-  def getSpecificMessageByPath[MessageModel](
-    path: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, HttpReads: HttpReads[MessageModel]): Future[MessageModel] = {
-    val url = s"${config.commonTransitConventionTradersUrl}$path"
-    http.GET[MessageModel](url)(implicitly, headers, ec)
-  }
-
   def getMessageForMessageId[MessageModel](departureId: String, messageId: String)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier,
@@ -104,15 +92,13 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
 
   }
 
-  def getLRNForDeparture(departureId: String)(implicit
+  def getDepartureReferenceNumbers(departureId: String)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier
-  ): Future[LocalReferenceNumber] = {
+  ): Future[DepartureReferenceNumbers] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId"
 
-    implicit val apiReads: Reads[LocalReferenceNumber] = LocalReferenceNumber.apiReads
-
-    http.GET[LocalReferenceNumber](url)
+    http.GET[DepartureReferenceNumbers](url)
   }
 
 }

@@ -50,8 +50,8 @@ class DepartureRejectionMessageAction(
 
     for {
       ie056                  <- departureP5MessageService.getMessageWithMessageId[IE056Data](departureId, messageId)
-      lrn                    <- departureP5MessageService.getLRN(departureId)
-      isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn.value, ie056.data.functionalErrors.map(_.errorPointer))
-    } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, lrn)
+      refNumbers             <- departureP5MessageService.getDepartureReferenceNumbers(departureId)
+      isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(refNumbers.localReferenceNumber.value, ie056.data.functionalErrors.map(_.errorPointer))
+    } yield DepartureRejectionMessageRequest(request, request.eoriNumber, ie056.data, isDeclarationAmendable, refNumbers)
   }
 }

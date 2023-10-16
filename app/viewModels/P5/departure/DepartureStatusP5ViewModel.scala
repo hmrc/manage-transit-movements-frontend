@@ -41,7 +41,7 @@ object DepartureStatusP5ViewModel {
   private def rejectedStatus(
     departureId: String,
     messageId: String,
-    rejectionType: Option[RejectionType],
+    rejectionType: RejectionType,
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
@@ -261,26 +261,26 @@ object DepartureStatusP5ViewModel {
   private def rejectedByOfficeOfDeparture(
     departureId: String,
     messageId: String,
-    rejectionType: Option[RejectionType],
+    rejectionType: RejectionType,
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
 
     case message if message.messageType == RejectedByOfficeOfDeparture =>
       val (key, href) = rejectionType match {
-        case Some(DeclarationRejection) if isDeclarationAmendable =>
+        case DeclarationRejection if isDeclarationAmendable =>
           ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url)
 
-        case Some(DeclarationRejection) if xPaths.isEmpty =>
+        case DeclarationRejection if xPaths.isEmpty =>
           (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, messageId).url)
 
-        case Some(DeclarationRejection) =>
+        case DeclarationRejection =>
           (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
-        case Some(InvalidationRejection) if xPaths.isEmpty =>
+        case InvalidationRejection if xPaths.isEmpty =>
           (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, messageId).url)
 
-        case Some(InvalidationRejection) =>
+        case InvalidationRejection =>
           (errorsActionText(xPaths), controllers.testOnly.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
         case _ => ("", "")

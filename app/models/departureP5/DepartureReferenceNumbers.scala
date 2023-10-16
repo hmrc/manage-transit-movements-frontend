@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.departureP5
 
-import models.departureP5.{DepartureReferenceNumbers, IE060MessageData}
-import models.referenceData.CustomsOffice
-import play.api.mvc.{Request, WrappedRequest}
+import models.LocalReferenceNumber
+import play.api.libs.json.{Json, OFormat, Reads}
 
-case class GoodsUnderControlRequest[A](
-  request: Request[A],
-  eoriNumber: String,
-  ie060MessageData: IE060MessageData,
-  referenceNumbers: DepartureReferenceNumbers,
-  customsOffice: Option[CustomsOffice]
-) extends WrappedRequest[A](request)
+case class DepartureReferenceNumbers(localReferenceNumber: LocalReferenceNumber, movementReferenceNumber: Option[String])
+
+object DepartureReferenceNumbers {
+
+  implicit val apiReads: Reads[LocalReferenceNumber] = LocalReferenceNumber.apiReads
+
+  implicit val formats: OFormat[DepartureReferenceNumbers] = Json.format[DepartureReferenceNumbers]
+}

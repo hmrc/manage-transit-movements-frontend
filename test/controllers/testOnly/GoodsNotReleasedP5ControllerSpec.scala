@@ -28,8 +28,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
-import viewModels.P5.departure.GoodsNotReleasedP5ViewModel.GoodsNotReleasedP5ViewModelProvider
 import viewModels.P5.departure.GoodsNotReleasedP5ViewModel
+import viewModels.P5.departure.GoodsNotReleasedP5ViewModel.GoodsNotReleasedP5ViewModelProvider
 import viewModels.sections.Section
 import views.html.departure.TestOnly.GoodsNotReleasedP5View
 

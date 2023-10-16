@@ -42,7 +42,7 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, messageId)) {
       implicit request =>
         if (request.ie056MessageData.functionalErrors.isEmpty) {
-          Ok(view(viewModelProvider.apply(request.lrn.value)))
+          Ok(view(viewModelProvider.apply(request.referenceNumbers.localReferenceNumber.value)))
         } else {
           Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }

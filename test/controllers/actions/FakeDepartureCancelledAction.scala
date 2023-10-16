@@ -19,7 +19,6 @@ package controllers.actions
 import models.LocalReferenceNumber
 import models.departureP5._
 import models.requests.{DepartureCancelledRequest, IdentifierRequest}
-import play.api.mvc.Result
 import services.DepartureP5MessageService
 
 import java.time.LocalDateTime

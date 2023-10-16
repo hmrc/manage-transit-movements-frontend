@@ -52,7 +52,7 @@ class ReviewCancellationErrorsP5Controller @Inject() (
         )
 
         val rejectionMessageP5ViewModel =
-          viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), request.lrn.value)
+          viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), request.referenceNumbers.localReferenceNumber.value)
 
         rejectionMessageP5ViewModel.map(
           viewModel => Ok(view(viewModel, departureId, paginationViewModel))

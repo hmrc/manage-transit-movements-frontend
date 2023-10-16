@@ -20,7 +20,6 @@ import models.LocalReferenceNumber
 import models.departureP5._
 import models.referenceData.CustomsOffice
 import models.requests.{GoodsUnderControlRequest, IdentifierRequest}
-import play.api.mvc.Result
 import services.{DepartureP5MessageService, ReferenceDataService}
 
 import java.time.LocalDateTime
@@ -46,7 +45,13 @@ class FakeGoodsUnderControlAction(
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[GoodsUnderControlRequest[A]] =
     Future.successful(
-      GoodsUnderControlRequest(request, "AB123", message.data, LocalReferenceNumber("CD123"), Some(CustomsOffice("GB000060", "name", Some("999"))))
+      GoodsUnderControlRequest(
+        request,
+        "AB123",
+        message.data,
+        DepartureReferenceNumbers(LocalReferenceNumber("CD123"), None),
+        Some(CustomsOffice("GB000060", "name", Some("999")))
+      )
     )
 
 }
