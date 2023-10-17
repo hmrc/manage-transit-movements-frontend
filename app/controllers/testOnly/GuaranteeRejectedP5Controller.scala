@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
 import controllers.actions._
 import models.LocalReferenceNumber
+import models.departureP5.{IE055Data, IE060Data}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -32,7 +33,7 @@ import scala.concurrent.ExecutionContext
 class GuaranteeRejectedP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
-  guaranteeRejectedAction: GuaranteeRejectedActionProvider,
+  messageRetrievalAction: MessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   view: GuaranteeRejectedP5View,
   departureCacheConnector: DepartureCacheConnector,
@@ -42,16 +43,16 @@ class GuaranteeRejectedP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen guaranteeRejectedAction(departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE055Data](departureId, messageId)).async {
       implicit request =>
         departureCacheConnector.doesDeclarationExist(lrn.value).map {
           isAmendable =>
             val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
-              request.ie055MessageData.guaranteeReferences,
+              request.messageData.data.guaranteeReferences,
               lrn,
               isAmendable,
-              request.ie055MessageData.transitOperation.MRN,
-              request.ie055MessageData.transitOperation.declarationAcceptanceDate
+              request.messageData.data.transitOperation.MRN,
+              request.messageData.data.transitOperation.declarationAcceptanceDate
             )
 
             Ok(view(viewModel))
