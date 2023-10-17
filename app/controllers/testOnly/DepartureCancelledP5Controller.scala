@@ -19,7 +19,7 @@ package controllers.testOnly
 import config.FrontendAppConfig
 import controllers.actions._
 import models.LocalReferenceNumber
-import models.departureP5.IE009MessageData
+import models.departureP5.{IE009Data, IE009MessageData}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.ReferenceDataService
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DepartureCancelledP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
-  departureCancelledActionProvider: DepartureCancelledActionProvider,
+  messageRetrievalAction: MessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: DepartureCancelledP5ViewModelProvider,
   view: DepartureCancelledP5View,
@@ -43,21 +43,21 @@ class DepartureCancelledP5Controller @Inject() (
     with I18nSupport {
 
   def declarationCancelled(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen departureCancelledActionProvider(departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)).async {
       implicit request =>
-        buildView(request.ie009MessageData, request.lrn, isCancelled = true)
+        buildView(request.messageData.data, request.referenceNumbers.localReferenceNumber, isCancelled = true)
     }
 
   def declarationNotCancelled(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen departureCancelledActionProvider(departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)).async {
       implicit request =>
-        buildView(request.ie009MessageData, request.lrn, isCancelled = false)
+        buildView(request.messageData.data, request.referenceNumbers.localReferenceNumber, isCancelled = false)
     }
 
   def isDeclarationCancelled(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen departureCancelledActionProvider(departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)) {
       implicit request =>
-        val isCancelled: String = request.ie009MessageData.invalidation.decision
+        val isCancelled: String = request.messageData.data.invalidation.decision
         if (isCancelled == "0") {
           Redirect(controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureId, messageId))
         } else {

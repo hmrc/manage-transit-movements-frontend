@@ -17,7 +17,6 @@
 package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import controllers.actions.{DepartureCancelledActionProvider, FakeDepartureCancelledAction}
 import generators.Generators
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
@@ -40,14 +39,8 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
   private val mockDepartureCancelledP5ViewModelProvider = mock[DepartureCancelledP5ViewModelProvider]
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
-  private val mockDepartureCancelledActionProvider      = mock[DepartureCancelledActionProvider]
   private val mockReferenceDataService                  = mock[ReferenceDataService]
 
-  protected def departureCancelledAction(departureIdP5: String, messageId: String, mockDepartureP5MessageService: DepartureP5MessageService): Unit =
-    when(mockDepartureCancelledActionProvider.apply(any(), any())) thenReturn new FakeDepartureCancelledAction(departureIdP5,
-                                                                                                               messageId,
-                                                                                                               mockDepartureP5MessageService
-    )
   private val sections = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
@@ -55,7 +48,6 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
     reset(mockDepartureP5MessageService)
     reset(mockReferenceDataService)
     reset(mockDepartureCancelledP5ViewModelProvider)
-    reset(mockDepartureCancelledActionProvider)
 
   }
 
@@ -95,8 +87,6 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
         when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
         when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
 
-        departureCancelledAction(departureIdP5, messageId, mockDepartureP5MessageService)
-
         val request = FakeRequest(GET, departureCancelledController)
 
         val result = route(app, request).value
@@ -128,8 +118,6 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
         when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
         when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-
-        departureCancelledAction(departureIdP5, messageId, mockDepartureP5MessageService)
 
         val request = FakeRequest(GET, departureCancelledController)
 
@@ -168,8 +156,6 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
         when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
         when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(departureCancelledP5ViewModel))
-
-        departureCancelledAction(departureIdP5, messageId, mockDepartureP5MessageService)
 
         val request = FakeRequest(GET, controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5, messageId).url)
 
@@ -210,8 +196,6 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
         when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
         when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(departureCancelledP5ViewModel))
-
-        departureCancelledAction(departureIdP5, messageId, mockDepartureP5MessageService)
 
         val request = FakeRequest(GET, controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5, messageId).url)
 
