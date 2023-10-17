@@ -17,7 +17,6 @@
 package controllers.testOnly
 
 import base.SpecBase
-import controllers.actions.{FakeGoodsUnderControlAction, GoodsUnderControlActionProvider}
 import generators.Generators
 import models.departureP5._
 import models.referenceData.CustomsOffice
@@ -36,24 +35,13 @@ import scala.concurrent.Future
 
 class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val mockReferenceDataService            = mock[ReferenceDataService]
-  private val mockDepartureP5MessageService       = mock[DepartureP5MessageService]
-  private val mockGoodsUnderControlActionProvider = mock[GoodsUnderControlActionProvider]
-
-  protected def goodsUnderControlAction(
-    departureIdP5: String,
-    messageId: String,
-    mockDepartureP5MessageService: DepartureP5MessageService,
-    mockReferenceDataService: ReferenceDataService
-  ): Unit =
-    when(mockGoodsUnderControlActionProvider.apply(any(), any())) thenReturn
-      new FakeGoodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)
+  private val mockReferenceDataService      = mock[ReferenceDataService]
+  private val mockDepartureP5MessageService = mock[DepartureP5MessageService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockReferenceDataService)
     reset(mockDepartureP5MessageService)
-    reset(mockGoodsUnderControlActionProvider)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -83,9 +71,6 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-
-      goodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)
 
       val request = FakeRequest(GET, controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
 
@@ -112,9 +97,6 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-
-      goodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)
 
       val request = FakeRequest(GET, controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
 
@@ -142,8 +124,6 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-
-      goodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)
 
       val request = FakeRequest(GET, controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
 

@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import controllers.actions._
+import models.departureP5.{IE051Data, IE060Data}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -26,14 +27,14 @@ import javax.inject.Inject
 class GoodsUnderControlIndexController @Inject() (
   actions: Actions,
   cc: MessagesControllerComponents,
-  goodsUnderControlAction: GoodsUnderControlActionProvider
+  messageRetrievalAction: MessageRetrievalActionProvider
 ) extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen goodsUnderControlAction(departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE060Data](departureId, messageId)) {
       implicit request =>
-        val call = if (request.ie060MessageData.requestedDocuments) {
+        val call = if (request.messageData.data.requestedDocuments) {
           controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId, messageId)
         } else {
           controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId, messageId)

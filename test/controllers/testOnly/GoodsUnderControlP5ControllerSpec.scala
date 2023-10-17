@@ -17,7 +17,6 @@
 package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import controllers.actions.{FakeGoodsUnderControlAction, GoodsUnderControlActionProvider}
 import generators.Generators
 import models.departureP5._
 import models.referenceData.CustomsOffice
@@ -44,16 +43,6 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
   private val mockGoodsUnderControlP5ViewModelProvider = mock[GoodsUnderControlP5ViewModelProvider]
   private val mockReferenceDataService                 = mock[ReferenceDataService]
   private val mockDepartureP5MessageService            = mock[DepartureP5MessageService]
-  private val mockGoodsUnderControlActionProvider      = mock[GoodsUnderControlActionProvider]
-
-  protected def goodsUnderControlAction(
-    departureIdP5: String,
-    messageId: String,
-    mockDepartureP5MessageService: DepartureP5MessageService,
-    mockReferenceDataService: ReferenceDataService
-  ): Unit =
-    when(mockGoodsUnderControlActionProvider.apply(any(), any())) thenReturn
-      new FakeGoodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)
 
   private val sections = arbitrarySections.arbitrary.sample.value
 
@@ -62,8 +51,6 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
     reset(mockReferenceDataService)
     reset(mockDepartureP5MessageService)
     reset(mockGoodsUnderControlP5ViewModelProvider)
-    reset(mockGoodsUnderControlActionProvider)
-
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -96,8 +83,6 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
-
-      goodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)
 
       val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
       val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
@@ -133,8 +118,6 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
-
-      goodsUnderControlAction(departureIdP5, messageId, mockDepartureP5MessageService, mockReferenceDataService)
 
       val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
       val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
