@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 class GoodsNotReleasedP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  messageRetrievalAction: MessageRetrievalActionProvider,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: GoodsNotReleasedP5ViewModelProvider,
   view: GoodsNotReleasedP5View

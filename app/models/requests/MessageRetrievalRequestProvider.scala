@@ -21,10 +21,16 @@ import play.api.mvc.{Request, WrappedRequest}
 
 class MessageRetrievalRequestProvider[B] {
 
-  case class MessageRetrievalRequest[A](
+  case class DepartureMessageRetrievalRequest[A](
     request: Request[A],
     eoriNumber: String,
     messageData: B,
     referenceNumbers: DepartureReferenceNumbers
+  ) extends WrappedRequest[A](request)
+
+  case class ArrivalMessageRetrievalRequest[A](
+    request: Request[A],
+    eoriNumber: String,
+    messageData: B
   ) extends WrappedRequest[A](request)
 }

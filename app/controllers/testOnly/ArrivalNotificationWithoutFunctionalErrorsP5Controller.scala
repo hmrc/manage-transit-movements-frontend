@@ -18,6 +18,7 @@ package controllers.testOnly
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.arrivalP5.IE057Data
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -31,18 +32,18 @@ class ArrivalNotificationWithoutFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
   cc: MessagesControllerComponents,
-  rejectionMessageAction: ArrivalRejectionMessageActionProvider,
+  messageRetrievalAction: ArrivalMessageRetrievalActionProvider,
   viewModelProvider: ArrivalNotificationWithoutFunctionalErrorP5ViewModelProvider,
   view: ArrivalNotificationWithoutFunctionalErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(arrivalId)) {
+  def onPageLoad(arrivalId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE057Data](arrivalId, messageId)) {
       implicit request =>
-        if (request.ie057MessageData.functionalErrors.isEmpty) {
-          Ok(view(viewModelProvider.apply(request.ie057MessageData.transitOperation.MRN)))
+        if (request.messageData.data.functionalErrors.isEmpty) {
+          Ok(view(viewModelProvider.apply(request.messageData.data.transitOperation.MRN)))
         } else {
           Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }

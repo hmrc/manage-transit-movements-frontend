@@ -76,7 +76,7 @@ object DepartureStatusP5ViewModel {
       goodsNotReleased(departureId),
       guaranteeRejected(departureId, localReferenceNumber),
       incidentDuringTransit(),
-      goodsBeingRecovered(departureId, messageId, localReferenceNumber),
+      goodsBeingRecovered(departureId, messageId),
       movementEnded
     ).reduce(_ orElse _)
 
@@ -363,16 +363,13 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def goodsBeingRecovered(departureId: String,
-                                  messageId: String,
-                                  localReferenceNumber: LocalReferenceNumber
-  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def goodsBeingRecovered(departureId: String, messageId: String): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsBeingRecovered =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsBeingRecovered",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureId, messageId, localReferenceNumber).url,
+            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureId, messageId).url,
             "movement.status.P5.action.goodsBeingRecovered.viewDetails"
           )
         )

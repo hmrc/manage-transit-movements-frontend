@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 class ReviewCancellationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
-  messageRetrievalAction: MessageRetrievalActionProvider,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: ReviewCancellationErrorsP5ViewModelProvider,
   view: ReviewCancellationErrorsP5View

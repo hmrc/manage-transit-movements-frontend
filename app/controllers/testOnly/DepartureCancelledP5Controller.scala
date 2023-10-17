@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DepartureCancelledP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
-  messageRetrievalAction: MessageRetrievalActionProvider,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: DepartureCancelledP5ViewModelProvider,
   view: DepartureCancelledP5View,

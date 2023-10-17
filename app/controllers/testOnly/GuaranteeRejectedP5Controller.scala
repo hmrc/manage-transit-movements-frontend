@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext
 class GuaranteeRejectedP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
-  messageRetrievalAction: MessageRetrievalActionProvider,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   view: GuaranteeRejectedP5View,
   departureCacheConnector: DepartureCacheConnector,

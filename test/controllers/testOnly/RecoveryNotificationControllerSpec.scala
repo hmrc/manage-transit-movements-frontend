@@ -64,13 +64,15 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
   private val sections                      = arbitrary[Seq[Section]].sample.value
   private val recoveryNotificationViewModel = new RecoveryNotificationViewModel(sections)
 
-  private val routes = controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, messageId, lrn).url
+  private val routes = controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, messageId).url
 
   "RecoveryNotificationController Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE035Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockRecoveryNotificationViewModelProvider.apply(any())(any())).thenReturn(recoveryNotificationViewModel)
 
       val request = FakeRequest(GET, routes)

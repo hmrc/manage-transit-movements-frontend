@@ -774,7 +774,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.goodsBeingRecovered",
         Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, messageId, lrn).url,
+            controllers.testOnly.routes.RecoveryNotificationController.onPageLoad(departureIdP5, messageId).url,
             "movement.status.P5.action.goodsBeingRecovered.viewDetails"
           )
         )

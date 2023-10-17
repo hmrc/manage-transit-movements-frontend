@@ -107,24 +107,9 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
       }
     }
 
-    "getMessage" - {
+    "getMessageWithMessageId" - {
 
-      "must return an IE057Data when given Arrival Id" in {
-
-        val messages = ArrivalMessages(
-          List(
-            ArrivalMessageMetaData(
-              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              ArrivalMessageType.RejectionFromOfficeOfDestination,
-              "movements/arrivals/6365135ba5e821ee/message/634982098f02f00b"
-            ),
-            ArrivalMessageMetaData(
-              LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              ArrivalMessageType.RejectionFromOfficeOfDestination,
-              "movements/arrivals/6365135ba5e821ee/message/634982098f02f00a"
-            )
-          )
-        )
+      "must return an IE057Data when given Arrival Id and Message id" in {
 
         val ie057Data: IE057Data = IE057Data(
           IE057MessageData(
@@ -134,10 +119,9 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        when(mockConnector.getMessageMetaData(any())(any(), any())).thenReturn(Future.successful(messages))
-        when(mockConnector.getSpecificMessage[IE057Data](any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
+        when(mockConnector.getMessageForMessageId[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
 
-        arrivalP5MessageService.getMessage[IE057Data](arrivalId = "6365135ba5e821ee", RejectionFromOfficeOfDestination).futureValue mustBe Some(ie057Data)
+        arrivalP5MessageService.getMessageWithMessageId[IE057Data](arrivalId = "6365135ba5e821ee", "634982098f02f00b").futureValue mustBe ie057Data
       }
     }
 

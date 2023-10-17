@@ -27,7 +27,7 @@ import javax.inject.Inject
 class GoodsUnderControlIndexController @Inject() (
   actions: Actions,
   cc: MessagesControllerComponents,
-  messageRetrievalAction: MessageRetrievalActionProvider
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider
 ) extends FrontendController(cc)
     with I18nSupport {
 

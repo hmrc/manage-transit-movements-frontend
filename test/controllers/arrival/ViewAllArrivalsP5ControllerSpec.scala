@@ -103,9 +103,6 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
         when(mockArrivalMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockArrivalMovementResponse)))
 
-        when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
-          .thenReturn(Future.successful(mockArrivalMessageResponse))
-
         when(mockArrivalMovementService.getLatestMessagesForMovement(any())(any(), any()))
           .thenReturn(
             Future.successful(
@@ -141,9 +138,6 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
         when(mockArrivalMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockArrivalMovementResponse)))
-
-        when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
-          .thenReturn(Future.successful(mockArrivalMessageResponse))
 
         when(mockArrivalMovementService.getLatestMessagesForMovement(any())(any(), any()))
           .thenReturn(

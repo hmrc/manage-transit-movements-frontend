@@ -32,7 +32,7 @@ class CancellationNotificationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
   cc: MessagesControllerComponents,
-  messageRetrievalAction: MessageRetrievalActionProvider,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   viewModelProvider: CancellationNotificationErrorsP5ViewModelProvider,
   view: CancellationNotificationErrorsP5View,
   referenceDataService: ReferenceDataService

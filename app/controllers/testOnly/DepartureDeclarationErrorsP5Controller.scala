@@ -32,7 +32,7 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
   cc: MessagesControllerComponents,
-  messageRetrievalAction: MessageRetrievalActionProvider,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   viewModelProvider: DepartureDeclarationErrorsP5ViewModelProvider,
   view: DepartureDeclarationErrorsP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
