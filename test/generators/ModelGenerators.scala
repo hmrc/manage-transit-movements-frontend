@@ -23,19 +23,10 @@ import models._
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departure._
-import models.departureP5.{
-  CustomsOfficeOfDeparture,
-  DepartureMovement,
-  DepartureMovements,
-  GuaranteeReference,
-  IE056Data,
-  IE056MessageData,
-  InvalidGuaranteeReason,
-  TransitOperationIE056
-}
+import models.departureP5.{DepartureMovement, DepartureMovements, GuaranteeReference, InvalidGuaranteeReason}
 import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.{alphaNumChar, alphaNumStr, alphaStr, choose, listOfN, numChar, numStr, posNum}
+import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar, posNum}
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
 
@@ -381,45 +372,5 @@ trait ModelGenerators {
         invalidReason <- Gen.listOfN(listLength, arbitrary[models.departureP5.InvalidGuaranteeReason])
       } yield GuaranteeReference(grn, invalidReason)
     }
-
-  implicit lazy val arbitraryTransitOperationIE056: Arbitrary[TransitOperationIE056] =
-    Arbitrary {
-      for {
-        mrn           <- Gen.option(alphaNumStr)
-        lrn           <- Gen.option(alphaNumStr)
-        rejectionType <- Gen.oneOf(RejectionType.values)
-      } yield TransitOperationIE056(mrn, lrn, rejectionType)
-    }
-
-  implicit lazy val arbitraryP5FunctionalError: Arbitrary[departureP5.FunctionalError] =
-    Arbitrary {
-      for {
-        errorPointer <- numStr
-        errorCode    <- numStr
-        errorReason  <- alphaNumStr
-        originalAttr <- Gen.option(alphaNumStr)
-      } yield departureP5.FunctionalError(errorPointer, errorCode, errorReason, originalAttr)
-    }
-
-  implicit lazy val arbitraryCustomsOfficeOfDeparture: Arbitrary[CustomsOfficeOfDeparture] =
-    Arbitrary {
-      Gen.alphaStr.map(CustomsOfficeOfDeparture(_))
-    }
-
-  implicit lazy val arbitraryIE056Data: Arbitrary[IE056Data] =
-    Arbitrary {
-      for {
-        transitOperation <- arbitrary[TransitOperationIE056]
-        customsOffice    <- arbitrary[CustomsOfficeOfDeparture]
-        functionalErrors <- Gen.nonEmptyListOf(arbitraryP5FunctionalError.arbitrary)
-      } yield IE056Data(
-        IE056MessageData(
-          transitOperation,
-          customsOffice,
-          functionalErrors
-        )
-      )
-    }
-
 }
 // scalastyle:on magic.number

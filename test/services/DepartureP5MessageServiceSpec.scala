@@ -17,21 +17,19 @@
 package services
 
 import base.SpecBase
-import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generators.Generators
 import models.RejectionType.DeclarationRejection
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import models.{LocalReferenceNumber, RejectionType}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
