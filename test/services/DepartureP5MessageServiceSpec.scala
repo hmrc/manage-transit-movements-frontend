@@ -98,7 +98,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             Future.successful(DepartureMessages(Nil))
           )
 
-          val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
+          val result: Seq[DepartureMovementAndMessage] = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
 
           val expectedResult = Seq(
             DepartureMovementAndMessage(

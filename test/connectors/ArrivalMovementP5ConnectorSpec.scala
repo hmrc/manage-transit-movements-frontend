@@ -21,10 +21,11 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.Availability
+import models.ArrivalRejectionType.ArrivalNotificationRejection
+import models.{ArrivalRejectionType, Availability, RejectionType}
 import models.arrivalP5._
 import models.departureP5.FunctionalError
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
@@ -473,13 +474,15 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
     "getSpecificMessage" - {
 
       "must return an IE057 Message" in {
+        val arrivalRejectionType: ArrivalRejectionType = Arbitrary.arbitrary[ArrivalRejectionType].sample.value
 
         val IEO57 = Json.parse(
-          """
+          s"""
             |{
             |  "n1:CC057C": {
             |    "TransitOperation": {
-            |      "MRN": "CD3232"
+            |      "MRN": "CD3232",
+            |       "businessRejectionType": "${arrivalRejectionType.code}"
             |    },
             |    "CustomsOfficeOfDestinationActual": {
             |      "referenceNumber": "1234"
@@ -522,7 +525,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
 
         val expectedResult: IE057Data = IE057Data(
           IE057MessageData(
-            TransitOperationIE057("CD3232"),
+            TransitOperationIE057("CD3232", arrivalRejectionType),
             CustomsOfficeOfDestinationActual("1234"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )

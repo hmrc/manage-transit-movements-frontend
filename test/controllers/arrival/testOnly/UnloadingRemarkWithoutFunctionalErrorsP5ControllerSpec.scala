@@ -19,6 +19,7 @@ package controllers.arrival.testOnly
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.actions.{ArrivalRejectionMessageActionProvider, FakeArrivalRejectionMessageAction}
 import generators.Generators
+import models.ArrivalRejectionType.ArrivalNotificationRejection
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
@@ -66,7 +67,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
     "must return OK and the correct view for a GET when no Errors" in {
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057(s"$mrnString"),
+          TransitOperationIE057(s"$mrnString", ArrivalNotificationRejection),
           CustomsOfficeOfDestinationActual("1234"),
           Seq.empty
         )
@@ -97,7 +98,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
     "must redirect to technical difficulties page when functionalErrors is greater than 0" in {
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057(s"$mrnString"),
+          TransitOperationIE057(s"$mrnString", ArrivalNotificationRejection),
           CustomsOfficeOfDestinationActual("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )

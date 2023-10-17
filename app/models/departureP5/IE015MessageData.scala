@@ -16,7 +16,6 @@
 
 package models.departureP5
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, Reads}
 
 case class IE015MessageData(transitOperation: TransitOperationIE015)
