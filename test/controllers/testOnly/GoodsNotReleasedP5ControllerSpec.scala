@@ -62,13 +62,15 @@ class GoodsNotReleasedP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   private val sections                    = arbitrary[Seq[Section]].sample.value
   private val goodsNotReleasedP5ViewModel = new GoodsNotReleasedP5ViewModel(sections, lrn.toString)
 
-  private val routes = controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureIdP5, lrn, messageId).url
+  private val routes = controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureIdP5, messageId).url
 
   "GoodsNotReleasedP5Controller Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE051Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockGoodsNotReleasedP5ViewModelProvider.apply(any(), any())(any(), any(), any())).thenReturn(goodsNotReleasedP5ViewModel)
 
       val request = FakeRequest(GET, routes)

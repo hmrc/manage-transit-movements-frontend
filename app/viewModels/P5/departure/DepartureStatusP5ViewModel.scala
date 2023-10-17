@@ -73,7 +73,7 @@ object DepartureStatusP5ViewModel {
       discrepancies,
       invalidMRN(),
       releasedForTransit(departureId),
-      goodsNotReleased(departureId, localReferenceNumber),
+      goodsNotReleased(departureId),
       guaranteeRejected(departureId, localReferenceNumber),
       incidentDuringTransit(),
       goodsBeingRecovered(departureId, messageId, localReferenceNumber),
@@ -222,15 +222,13 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def goodsNotReleased(departureId: String,
-                               localReferenceNumber: LocalReferenceNumber
-  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def goodsNotReleased(departureId: String): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsNotReleased =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsNotReleased",
         actions = Seq(
           ViewMovementAction(
-            controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureId, localReferenceNumber, message.messageId).url,
+            controllers.testOnly.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureId, message.messageId).url,
             "movement.status.P5.action.goodsNotReleased.viewDetails"
           )
         )

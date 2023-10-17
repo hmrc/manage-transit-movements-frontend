@@ -19,7 +19,7 @@ package controllers.testOnly
 import config.FrontendAppConfig
 import controllers.actions._
 import models.LocalReferenceNumber
-import models.departureP5.IE051MessageData
+import models.departureP5.{IE051Data, IE051MessageData, IE056Data}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 class GoodsNotReleasedP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  goodsNotReleasedActionProvider: GoodsNotReleasedActionProvider,
+  messageRetrievalAction: MessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: GoodsNotReleasedP5ViewModelProvider,
   view: GoodsNotReleasedP5View
@@ -40,12 +40,11 @@ class GoodsNotReleasedP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def goodsNotReleased(departureId: String, localReferenceNumber: LocalReferenceNumber, messageId: String): Action[AnyContent] =
-    (Action andThen identify andThen goodsNotReleasedActionProvider(departureId, messageId)) {
+  def goodsNotReleased(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen identify andThen messageRetrievalAction[IE051Data](departureId, messageId)) {
       implicit request =>
-        buildView(request.transitOperationIE051, localReferenceNumber)
+        Ok(
+          view(viewModelProvider.apply(request.messageData.data, request.referenceNumbers.localReferenceNumber.value))
+        )
     }
-
-  private def buildView(iE051MessageData: IE051MessageData, lrn: LocalReferenceNumber)(implicit request: Request[_]): Result =
-    Ok(view(viewModelProvider.apply(iE051MessageData, lrn.value)))
 }
