@@ -138,7 +138,6 @@ movement.status.P5.movementNotArrivedResponseSent                       = Moveme
 movement.status.P5.movementNotArrived                                   = Movement not arrived
 movement.status.P5.declarationAmendmentAccepted                         = Declaration amendment accepted
 movement.status.P5.cancellationDecision                                 = Declaration cancelled
-movement.status.P5.goodsNotReleased                                     = Goods not released - waiting for discrepancy resolution
 movement.status.P5.invalidMRN                                           = Invalid MRN
 movement.status.P5.allocatedMRN                                         = MRN allocated
 movement.status.P5.releasedForTransit                                   = Released for transit
@@ -150,6 +149,8 @@ movement.status.P5.declarationSent                                      = Declar
 movement.status.P5.goodsBeingRecovered                                  = Goods being recovered
 movement.status.P5.movementEnded                                        = Movement ended
 movement.status.P5.prelodgedDeclarationSent	                            = Prelodged declaration sent
+movement.status.P5.goodsNotReleased                                     = Goods not released
+movement.status.P5.goodsReleased                                        = Goods released
 
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
@@ -215,6 +216,7 @@ movement.status.unloadingRemarksSubmitted = Unloading remarks sent
 movement.status.unloadingRemarksRejected = Unloading remarks rejected
 movement.status.UnloadingRemarksXMLSubmissionNegativeAcknowledgement = Unloading remarks rejected
 movement.status.goodsReleased = Goods Released
+movement.status.P5.arrival.goodsNotReleased= Goods not released - waiting for discrepancy resolution
 
 
 technicalDifficulties.title = Sorry, there is a problem with the service

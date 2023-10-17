@@ -18,6 +18,7 @@ package viewModels.P5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
+import models.ArrivalRejectionType.ArrivalNotificationRejection
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
@@ -53,7 +54,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
 
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057("MRNCD3232"),
+          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
           CustomsOfficeOfDestinationActual("1234"),
           Seq(FunctionalError("14", "12", "MRN incorrect", None))
         )
@@ -93,7 +94,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
 
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057("MRNCD3232"),
+          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
           CustomsOfficeOfDestinationActual("1234"),
           functionalErrors
         )
@@ -128,7 +129,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
 
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057("MRNCD3232"),
+          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
           CustomsOfficeOfDestinationActual("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )

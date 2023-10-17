@@ -16,11 +16,10 @@
 
 package models.arrivalP5
 
-import models.ArrivalRejectionType
 import play.api.libs.json.{Json, OFormat}
 
-case class TransitOperationIE057(MRN: String, businessRejectionType: ArrivalRejectionType)
+case class TransitOperationIE025(releaseIndicator: String)
 
-object TransitOperationIE057 {
-  implicit val formats: OFormat[TransitOperationIE057] = Json.format[TransitOperationIE057]
+object TransitOperationIE025 {
+  implicit val formats: OFormat[TransitOperationIE025] = Json.format[TransitOperationIE025]
 }

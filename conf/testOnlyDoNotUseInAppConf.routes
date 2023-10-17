@@ -94,7 +94,7 @@ GET        /manage-transit-movements/test-only/:arrivalId/unloading-permission-d
 
 GET        /manage-transit-movements/test-only/:arrivalId/:messageId/amend-guarantee-errors/:lrn                        controllers.testOnly.GuaranteeRejectedP5Controller.onPageLoad(arrivalId: String, messageId: String, lrn: LocalReferenceNumber)
 
-GET        /manage-transit-movements/test-only/send-guarantee-errors/:lrn                                               controllers.testOnly.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/send-guarantee-errors/:lrn                                               controllers.testOnly.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber,departureId:String)
 
 GET        /manage-transit-movements/test-only/:departureId/goods-not-released/:messageId                               controllers.testOnly.GoodsNotReleasedP5Controller.goodsNotReleased(departureId: String, messageId: String)
 

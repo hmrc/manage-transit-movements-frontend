@@ -19,7 +19,7 @@ package services
 import cats.data.OptionT
 import cats.implicits._
 import connectors.ArrivalMovementP5Connector
-import models.arrivalP5.ArrivalMessageType.RejectionFromOfficeOfDestination
+import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
@@ -29,14 +29,35 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMovementP5Connector) {
 
-  def getMessagesForAllMovements(arrivalMovements: ArrivalMovements)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ArrivalMovementAndMessage]] =
+  def getLatestMessagesForMovement(
+    arrivalMovements: ArrivalMovements
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ArrivalMovementAndMessage]] =
     arrivalMovements.arrivalMovements.traverse {
       movement =>
-        for {
-          messagesForMovement <- arrivalMovementP5Connector.getMessagesForMovement(movement.messagesLocation)
-          ie057               <- getMessage[IE057Data](movement.arrivalId, RejectionFromOfficeOfDestination)
-          functionalErrorsCount = ie057.map(_.data.functionalErrors.length).getOrElse(0)
-        } yield ArrivalMovementAndMessage(movement, messagesForMovement, functionalErrorsCount)
+        arrivalMovementP5Connector.getLatestMessageForMovement(movement.messagesLocation).flatMap {
+          message =>
+            message.latestMessage.messageType match {
+              case GoodsReleasedNotification =>
+                arrivalMovementP5Connector.getMessageForMessageId[IE025Data](movement.arrivalId, message.latestMessage.messageId).map {
+                  ie025Data =>
+                    GoodsReleasedMovementAndMessage(
+                      movement,
+                      message,
+                      ie025Data.data.transitOperation.releaseIndicator
+                    )
+                }
+              case RejectionFromOfficeOfDestination =>
+                arrivalMovementP5Connector.getMessageForMessageId[IE057Data](movement.arrivalId, message.latestMessage.messageId).map {
+                  ie057Data =>
+                    val functionalErrorCount  = ie057Data.data.functionalErrors.length
+                    val businessRejectionType = ie057Data.data.transitOperation.businessRejectionType
+
+                    RejectedMovementAndMessage(movement, message, functionalErrorCount, businessRejectionType)
+                }
+              case _ => Future.successful(OtherMovementAndMessage(movement, message))
+            }
+
+        }
     }
 
   def getMessage[MessageModel](
