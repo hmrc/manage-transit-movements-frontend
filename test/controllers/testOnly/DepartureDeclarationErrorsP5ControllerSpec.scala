@@ -18,7 +18,6 @@ package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
 import models.RejectionType
 import models.departureP5._
@@ -39,30 +38,15 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
 
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
-  private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
 
   lazy val departureDeclarationErrorsController: String =
     controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, messageId).url
   private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
-  def rejectionMessageAction(departureIdP5: String,
-                             messageId: String,
-                             mockDepartureP5MessageService: DepartureP5MessageService,
-                             mockCacheService: DepartureCacheConnector
-  ): Unit =
-    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(
-      departureIdP5,
-      messageId,
-      mockDepartureP5MessageService,
-      mockCacheService
-    )
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
-    reset(mockRejectionMessageActionProvider)
     reset(mockCacheService)
-
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -86,8 +70,6 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-
-      rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
 
       val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrn.value)
 
@@ -117,8 +99,6 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
-
-      rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
 
       val request = FakeRequest(GET, departureDeclarationErrorsController)
 

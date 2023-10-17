@@ -50,6 +50,15 @@ object RejectionType {
 
   case class Other(code: String) extends RejectionType
 
+  val values = Seq(
+    AmendmentRejection,
+    InvalidationRejection,
+    DeclarationRejection,
+    ReleaseRequestRejection,
+    RejectionOfInformation,
+    PresentationNotificationRejection
+  )
+
   implicit val reads: Reads[RejectionType] = Reads {
     case JsString(AmendmentRejection.code)                => JsSuccess(AmendmentRejection)
     case JsString(InvalidationRejection.code)             => JsSuccess(InvalidationRejection)

@@ -18,7 +18,7 @@ object AppDependencies {
     "org.scalatest"              %% "scalatest"                % "3.2.15",
     "uk.gov.hmrc"                %% "bootstrap-test-play-28"   % bootstrapVersion,
     "com.typesafe.play"          %% "play-test"                % PlayVersion.current,
-    "org.mockito"                 % "mockito-core"             % "5.2.0",
+    "org.mockito"                 % "mockito-core"             % "5.6.0",
     "org.scalatestplus"          %% "mockito-4-6"              % "3.2.15.0",
     "org.scalacheck"             %% "scalacheck"               % "1.17.0",
     "org.scalatestplus"          %% "scalacheck-1-17"          % "3.2.15.0",

@@ -92,9 +92,8 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           )
         )
 
-        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-          .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
 
         departureCancelledAction(departureIdP5, messageId, mockDepartureP5MessageService)
 
@@ -127,9 +126,8 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           )
         )
 
-        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-          .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
 
         departureCancelledAction(departureIdP5, messageId, mockDepartureP5MessageService)
 
@@ -165,9 +163,8 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
         val departureCancelledP5ViewModel = new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None, isCancelled = true)
 
-        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-          .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
         when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
         when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(departureCancelledP5ViewModel))

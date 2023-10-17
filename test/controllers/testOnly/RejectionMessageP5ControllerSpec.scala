@@ -18,10 +18,8 @@ package controllers.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
 import models.RejectionType
-import models.departureP5.DepartureMessageType.AllocatedMRN
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -38,29 +36,15 @@ import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.html.departure.TestOnly.RejectionMessageP5View
 
-import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockRejectionMessageP5ViewModelProvider   = mock[RejectionMessageP5ViewModelProvider]
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
-  private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
 
   private val rejectionType: RejectionType = RejectionType.DeclarationRejection
-
-  def rejectionMessageAction(departureIdP5: String,
-                             messageId: String,
-                             mockDepartureP5MessageService: DepartureP5MessageService,
-                             mockCacheService: DepartureCacheConnector
-  ): Unit =
-    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(
-      departureIdP5,
-      messageId,
-      mockDepartureP5MessageService,
-      mockCacheService
-    )
 
   lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId).url
   lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5, messageId).url
@@ -71,9 +55,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     super.beforeEach()
     reset(mockDepartureP5MessageService)
     reset(mockRejectionMessageP5ViewModelProvider)
-    reset(mockRejectionMessageActionProvider)
     reset(mockCacheService)
-
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -100,8 +82,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
-
-      rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
 
       val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true)
 
@@ -139,8 +119,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
-      rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
-
       val request = FakeRequest(GET, rejectionMessageController)
 
       val result = route(app, request).value
@@ -165,8 +143,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
           .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
-
-        rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
+        when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
@@ -190,8 +167,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
           .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-
-        rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
+        when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
@@ -216,8 +192,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
-
-        rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
@@ -244,8 +218,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
           .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, Some("mrn"))))
 
-        rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
-
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
         val result = route(app, request).value
@@ -269,8 +241,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(false))
-
-        rejectionMessageAction(departureIdP5, messageId, mockDepartureP5MessageService, mockCacheService)
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
