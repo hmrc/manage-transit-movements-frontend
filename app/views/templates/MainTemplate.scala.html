@@ -84,7 +84,8 @@
     ),
     templateOverrides = TemplateOverrides(
         additionalHeadBlock = Some(headScripts),
-        additionalScriptsBlock = Some(javascripts())
+        additionalScriptsBlock = Some(javascripts()),
+        mainContentLayout = if (fullWidth) Some(fullWidthContent(_)) else Some(twoThirdsMainContent(_)),
     ),
     pageTitle = Some(breadCrumbTitle(title, mainContent)),
     serviceName = Some(messages("site.service_name")),
