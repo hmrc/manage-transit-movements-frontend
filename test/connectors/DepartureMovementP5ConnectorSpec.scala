@@ -444,6 +444,61 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         }
       }
     }
+
+    "getDepartureReferenceNumbers" - {
+
+      "must return departure reference numbers when MRN is defined" in {
+
+        val responseJson = Json.parse(
+          """
+            |{
+            |   "id": "6365135ba5e821ee",
+            |   "movementReferenceNumber": "ABC123",
+            |   "localReferenceNumber": "DEF456",
+            |   "created": "2022-11-10T15:32:51.459Z",
+            |   "updated": "2022-11-10T15:32:51.459Z",
+            |   "enrollmentEORINumber": "GB1234567890",
+            |   "movementEORINumber": "GB1234567890"
+            |}
+            |""".stripMargin
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        val expectedResult = DepartureReferenceNumbers(LocalReferenceNumber("DEF456"), Some("ABC123"))
+
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustBe expectedResult
+      }
+
+      "must return departure reference numbers when MRN is not defined" in {
+
+        val responseJson = Json.parse(
+          """
+            |{
+            |   "id": "6365135ba5e821ee",
+            |   "localReferenceNumber": "DEF456",
+            |   "created": "2022-11-10T15:32:51.459Z",
+            |   "updated": "2022-11-10T15:32:51.459Z",
+            |   "enrollmentEORINumber": "GB1234567890",
+            |   "movementEORINumber": "GB1234567890"
+            |}
+            |""".stripMargin
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        val expectedResult = DepartureReferenceNumbers(LocalReferenceNumber("DEF456"), None)
+
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustBe expectedResult
+      }
+    }
+
   }
 
 }

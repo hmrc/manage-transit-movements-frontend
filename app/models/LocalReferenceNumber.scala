@@ -34,7 +34,7 @@ object LocalReferenceNumber {
       case _                => None
     }
 
-  implicit def defaultReads: Reads[LocalReferenceNumber] =
+  implicit val defaultReads: Reads[LocalReferenceNumber] =
     __.read[String].map(LocalReferenceNumber.format).flatMap {
       case Some(lrn) =>
         Reads(
@@ -46,19 +46,7 @@ object LocalReferenceNumber {
         )
     }
 
-  def apiReads: Reads[LocalReferenceNumber] =
-    (__ \ "localReferenceNumber").read[String].map(LocalReferenceNumber.format).flatMap {
-      case Some(lrn) =>
-        Reads(
-          _ => JsSuccess(lrn)
-        )
-      case None =>
-        Reads(
-          _ => JsError("Invalid Local Reference Number")
-        )
-    }
-
-  implicit def writes: Writes[LocalReferenceNumber] = Writes {
+  implicit val writes: Writes[LocalReferenceNumber] = Writes {
     lrn =>
       JsString(lrn.value)
   }

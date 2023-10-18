@@ -68,7 +68,7 @@ GET        /manage-transit-movements/test-only/:departureId/cancellation-errors/
 
 GET        /manage-transit-movements/test-only/:arrivalId/notification-errors/:messageId                                controllers.testOnly.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String, messageId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/:messageId/goods-being-recovered                            controllers.testOnly.RecoveryNotificationController.onPageLoad(departureId: String, messageId: String)
+GET        /manage-transit-movements/test-only/:departureId/goods-being-recovered/:messageId                            controllers.testOnly.RecoveryNotificationController.onPageLoad(departureId: String, messageId: String)
 
 GET        /manage-transit-movements/test-only/:departureId/review-departure-declaration-errors/:messageId              controllers.testOnly.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 

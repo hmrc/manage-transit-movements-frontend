@@ -16,14 +16,20 @@
 
 package models.departureP5
 
-import models.LocalReferenceNumber
-import play.api.libs.json.{Json, OFormat, Reads}
+import models.{Departure, LocalReferenceNumber}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json._
 
 case class DepartureReferenceNumbers(localReferenceNumber: LocalReferenceNumber, movementReferenceNumber: Option[String])
 
 object DepartureReferenceNumbers {
 
-  implicit val apiReads: Reads[LocalReferenceNumber] = LocalReferenceNumber.apiReads
+  implicit val reads: Reads[DepartureReferenceNumbers] =
+    (
+      (__ \ "localReferenceNumber").read[LocalReferenceNumber] and
+        (__ \ "movementReferenceNumber").readNullable[String]
+    )(DepartureReferenceNumbers.apply _)
 
-  implicit val formats: OFormat[DepartureReferenceNumbers] = Json.format[DepartureReferenceNumbers]
+  implicit val writes: OWrites[TypeOfControls] = Json.writes[TypeOfControls]
+
 }

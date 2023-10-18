@@ -98,7 +98,7 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
   ): Future[DepartureReferenceNumbers] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId"
 
-    http.GET[DepartureReferenceNumbers](url)
+    http.GET[DepartureReferenceNumbers](url)(implicitly, headers, ec)
   }
 
 }
