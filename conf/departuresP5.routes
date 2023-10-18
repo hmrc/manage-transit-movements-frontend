@@ -35,4 +35,4 @@ GET        /:departureId/:messageId/goods-not-released/:lrn                   co
 
 GET        /:arrivalId/:messageId/amend-guarantee-errors/:lrn                 controllers.departureP5.GuaranteeRejectedP5Controller.onPageLoad(arrivalId: String, messageId: String, lrn: LocalReferenceNumber)
 
-GET        /send-guarantee-errors/:lrn                                        controllers.departureP5.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber)
+GET        /send-guarantee-errors/:lrn                                        controllers.departureP5.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber, departureId:String)

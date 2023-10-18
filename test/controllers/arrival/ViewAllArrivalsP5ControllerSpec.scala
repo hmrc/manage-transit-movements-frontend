@@ -106,10 +106,10 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
         when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
           .thenReturn(Future.successful(mockArrivalMessageResponse))
 
-        when(mockArrivalMovementService.getMessagesForAllMovements(any())(any(), any()))
+        when(mockArrivalMovementService.getLatestMessagesForMovement(any())(any(), any()))
           .thenReturn(
             Future.successful(
-              Seq(ArrivalMovementAndMessage(arrivalMovement, mockArrivalMessageResponse, 0))
+              Seq(OtherMovementAndMessage(arrivalMovement, LatestArrivalMessage(latestMessage = mockArrivalMessageResponse.messages.head, arrivalIdP5)))
             )
           )
 
@@ -145,10 +145,10 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
         when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
           .thenReturn(Future.successful(mockArrivalMessageResponse))
 
-        when(mockArrivalMovementService.getMessagesForAllMovements(any())(any(), any()))
+        when(mockArrivalMovementService.getLatestMessagesForMovement(any())(any(), any()))
           .thenReturn(
             Future.successful(
-              Seq(ArrivalMovementAndMessage(arrivalMovement, mockArrivalMessageResponse, 0))
+              Seq(OtherMovementAndMessage(arrivalMovement, LatestArrivalMessage(latestMessage = mockArrivalMessageResponse.messages.head, arrivalIdP5)))
             )
           )
 

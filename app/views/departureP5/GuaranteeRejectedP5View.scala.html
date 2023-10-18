@@ -30,7 +30,7 @@
         button: Button
 )
 
-@(viewModel: GuaranteeRejectedP5ViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: GuaranteeRejectedP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages)
 
     @mainTemplate(
         title = messages("guarantee.rejected.message.title"),
@@ -60,7 +60,7 @@
             @button(
                 attributes = Map("id" -> "submit"),
                 messageKey = messages("site.amendErrors"),
-                href = Some(controllers.departureP5.routes.GuaranteeRejectedP5Controller.onAmend(viewModel.lrn).url)
+                href = Some(controllers.departureP5.routes.GuaranteeRejectedP5Controller.onAmend(viewModel.lrn,departureId).url)
             )
         }
 
