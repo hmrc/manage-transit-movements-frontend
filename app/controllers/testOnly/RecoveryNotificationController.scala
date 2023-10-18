@@ -18,7 +18,6 @@ package controllers.testOnly
 
 import controllers.actions._
 import models.LocalReferenceNumber
-import models.departureP5.DepartureMessageType.GoodsBeingRecovered
 import models.departureP5.IE035Data
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
