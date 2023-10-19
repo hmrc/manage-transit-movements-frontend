@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 
 class RecoveryNotificationController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   viewModelProvider: RecoveryNotificationViewModelProvider,
   view: RecoveryNotificationView,
@@ -42,7 +42,7 @@ class RecoveryNotificationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen identify andThen messageRetrievalAction[IE035Data](departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE035Data](departureId, messageId)) {
       implicit request =>
         Ok(view(viewModelProvider.apply(request.messageData.data), request.referenceNumbers.localReferenceNumber))
     }

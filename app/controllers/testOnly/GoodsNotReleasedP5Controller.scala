@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext
 
 class GoodsNotReleasedP5Controller @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: GoodsNotReleasedP5ViewModelProvider,
@@ -41,7 +41,7 @@ class GoodsNotReleasedP5Controller @Inject() (
     with I18nSupport {
 
   def goodsNotReleased(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen identify andThen messageRetrievalAction[IE051Data](departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE051Data](departureId, messageId)) {
       implicit request =>
         Ok(
           view(viewModelProvider.apply(request.messageData.data, request.referenceNumbers.localReferenceNumber.value))

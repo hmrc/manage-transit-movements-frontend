@@ -34,7 +34,7 @@ object LocalReferenceNumber {
       case _                => None
     }
 
-  implicit val defaultReads: Reads[LocalReferenceNumber] =
+  implicit val reads: Reads[LocalReferenceNumber] =
     __.read[String].map(LocalReferenceNumber.format).flatMap {
       case Some(lrn) =>
         Reads(
