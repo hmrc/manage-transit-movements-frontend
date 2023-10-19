@@ -17,6 +17,7 @@
 package models.arrivalP5
 
 import base.SpecBase
+import models.ArrivalRejectionType.ArrivalNotificationRejection
 import models.departureP5.FunctionalError
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -29,7 +30,7 @@ class IE057MessageDataSpec extends SpecBase {
   "IE057MessageData" - {
 
     val ie057: IE057MessageData = IE057MessageData(
-      TransitOperationIE057("AB123"),
+      TransitOperationIE057("AB123", ArrivalNotificationRejection),
       CustomsOfficeOfDestinationActual("1234"),
       Seq.empty
     )

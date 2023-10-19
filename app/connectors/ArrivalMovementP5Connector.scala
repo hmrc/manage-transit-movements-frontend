@@ -20,7 +20,8 @@ import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
 import models.Availability
-import models.arrivalP5.{ArrivalMessages, ArrivalMovements, MessagesForArrivalMovement}
+import models.arrivalP5.{ArrivalMessages, ArrivalMovements, LatestArrivalMessage, MessagesForArrivalMovement}
+import models.departureP5.LatestDepartureMessage
 import play.api.http.Status.{NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
@@ -80,6 +81,11 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
     http.GET[MessagesForArrivalMovement](url)(HttpReads[MessagesForArrivalMovement], headers, ec)
   }
 
+  def getLatestMessageForMovement(location: String)(implicit hc: HeaderCarrier): Future[LatestArrivalMessage] = {
+    val url = s"${config.commonTransitConventionTradersUrl}$location"
+    http.GET[LatestArrivalMessage](url)(HttpReads[LatestArrivalMessage], headers, ec)
+  }
+
   def getMessageMetaData(arrivalId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ArrivalMessages] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
     http.GET[ArrivalMessages](url)(implicitly, headers, ec)
@@ -91,4 +97,15 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
     val url = s"${config.commonTransitConventionTradersUrl}$path"
     http.GET[MessageModel](url)(implicitly, headers, ec)
   }
+
+  def getMessageForMessageId[MessageModel](arrivalId: String, messageId: String)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier,
+    httpReads: HttpReads[MessageModel]
+  ): Future[MessageModel] = {
+    val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId"
+    http
+      .GET[MessageModel](url)(implicitly, headers, ec)
+  }
+
 }

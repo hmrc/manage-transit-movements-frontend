@@ -19,6 +19,7 @@ package controllers.testOnly
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import controllers.actions.{ArrivalRejectionMessageActionProvider, FakeArrivalRejectionMessageAction}
 import generators.Generators
+import models.ArrivalRejectionType.ArrivalNotificationRejection
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
@@ -68,7 +69,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
     "must return OK and the correct view for a GET when no Errors" in {
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057("MRNAB123"),
+          TransitOperationIE057("MRNAB123", ArrivalNotificationRejection),
           CustomsOfficeOfDestinationActual("1234"),
           Seq.empty
         )
@@ -96,7 +97,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
 
       val message: IE057Data = IE057Data(
         IE057MessageData(
-          TransitOperationIE057("MRNCD3232"),
+          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
           CustomsOfficeOfDestinationActual("1234"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )

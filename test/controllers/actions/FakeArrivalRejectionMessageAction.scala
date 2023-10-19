@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import models.ArrivalRejectionType.ArrivalNotificationRejection
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
 import models.departureP5._
 import models.requests.{ArrivalRejectionMessageRequest, IdentifierRequest}
@@ -32,7 +33,7 @@ class FakeArrivalRejectionMessageAction(
 
   val message: IE057Data = IE057Data(
     IE057MessageData(
-      TransitOperationIE057("MRNCD3232"),
+      TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
       CustomsOfficeOfDestinationActual("1234"),
       Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
     )

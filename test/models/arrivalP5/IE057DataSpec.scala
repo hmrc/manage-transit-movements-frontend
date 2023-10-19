@@ -17,21 +17,27 @@
 package models.arrivalP5
 
 import base.SpecBase
+import generators.Generators
+import models.ArrivalRejectionType
+import models.ArrivalRejectionType.ArrivalNotificationRejection
 import models.departureP5.FunctionalError
+import org.scalacheck.Arbitrary
 import play.api.libs.json._
 
-class IE057DataSpec extends SpecBase {
+class IE057DataSpec extends SpecBase with Generators {
 
   "IE057Data" - {
 
     "must deserialize" in {
+      val arrivalRejectionType: ArrivalRejectionType = Arbitrary.arbitrary[ArrivalRejectionType].sample.value
 
-      val json = Json.parse("""
+      val json = Json.parse(s"""
           |{
           | "body": {
           |   "n1:CC057C": {
           |     "TransitOperation": {
-          |       "MRN": "AB123"
+          |       "MRN": "AB123",
+          |       "businessRejectionType": "${arrivalRejectionType.code}"
           |     },
           |     "CustomsOfficeOfDestinationActual": {
           |       "referenceNumber": "1234"
@@ -57,7 +63,8 @@ class IE057DataSpec extends SpecBase {
       val expectedResult = IE057Data(
         IE057MessageData(
           TransitOperationIE057(
-            "AB123"
+            "AB123",
+            arrivalRejectionType
           ),
           CustomsOfficeOfDestinationActual(
             "1234"
