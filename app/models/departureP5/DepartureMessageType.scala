@@ -19,7 +19,7 @@ package models.departureP5
 import models.{Enumerable, WithName}
 import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
 
-sealed trait DepartureMessageType extends WithName
+sealed trait DepartureMessageType
 
 object DepartureMessageType extends Enumerable.Implicits {
 
