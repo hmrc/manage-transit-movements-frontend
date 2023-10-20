@@ -16,11 +16,10 @@
 
 package controllers.testOnly
 
+import connectors.ManageDocumentsConnector
 import controllers.actions.Actions
-import controllers.routes
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ManageDocumentsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -29,17 +28,15 @@ import scala.concurrent.ExecutionContext
 class UnloadingPermissionController @Inject() (
   actions: Actions,
   cc: MessagesControllerComponents,
-  service: ManageDocumentsService
+  connector: ManageDocumentsConnector
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
+    with DocumentController
     with I18nSupport {
 
   def getUnloadingPermissionDocument(arrivalId: String, messageId: String): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
     implicit request =>
-      service.getUnloadingPermission(arrivalId, messageId).map {
-        case Some(entity) => Ok.sendEntity(entity)
-        case None         => Redirect(routes.ErrorController.technicalDifficulties())
-      }
+      connector.getUnloadingPermission(arrivalId, messageId).map(stream)
   }
 
 }

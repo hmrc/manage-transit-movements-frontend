@@ -14,37 +14,34 @@
  * limitations under the License.
  */
 
-package services
+package controllers.testOnly
 
-import connectors.ManageDocumentsConnector
-import play.api.http.HeaderNames._
+import controllers.routes
+import play.api.http.HeaderNames.{CONTENT_LENGTH, CONTENT_TYPE}
 import play.api.http.HttpEntity
 import play.api.http.Status.OK
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import play.api.mvc.Result
+import play.api.mvc.Results.{Ok, Redirect}
+import uk.gov.hmrc.http.HttpResponse
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+trait DocumentController {
 
-class ManageDocumentsService @Inject() (connector: ManageDocumentsConnector)(implicit ec: ExecutionContext) {
-
-  def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[Option[HttpEntity.Streamed]] =
-    connector.getTAD(departureId, messageId).map(stream)
-
-  def getUnloadingPermission(arrivalId: String, messageId: String)(implicit hc: HeaderCarrier): Future[Option[HttpEntity.Streamed]] =
-    connector.getUnloadingPermission(arrivalId, messageId).map(stream)
-
-  private def stream(response: HttpResponse): Option[HttpEntity.Streamed] =
+  def stream(response: HttpResponse): Result =
     response.status match {
       case OK =>
         def header(key: String): Option[String] =
           response.headers.get(key).flatMap(_.headOption)
 
+        val headers = response.headers.toSeq.flatMap {
+          case (key, values) => values.map(key -> _)
+        }
+
         val contentLength = header(CONTENT_LENGTH).flatMap(_.toLongOption)
         val contentType   = header(CONTENT_TYPE)
 
-        Some(HttpEntity.Streamed(response.bodyAsSource, contentLength, contentType))
+        Ok.sendEntity(HttpEntity.Streamed(response.bodyAsSource, contentLength, contentType))
+          .withHeaders(headers: _*)
       case _ =>
-        None
+        Redirect(routes.ErrorController.technicalDifficulties())
     }
-
 }

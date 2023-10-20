@@ -21,18 +21,19 @@ import logging.Logging
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
+import java.net.URL
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ManageDocumentsConnector @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
   def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val url: String = s"${config.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
-    http.get(url"$url").stream
+    val url: URL = url"${config.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
+    http.get(url).stream
   }
 
   def getUnloadingPermission(arrivalId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val url: String = s"${config.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
-    http.get(url"$url").stream
+    val url: URL = url"${config.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
+    http.get(url).stream
   }
 }

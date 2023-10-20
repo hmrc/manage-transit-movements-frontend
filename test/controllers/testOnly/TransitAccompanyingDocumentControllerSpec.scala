@@ -16,39 +16,54 @@
 
 package controllers.testOnly
 
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
 import base.SpecBase
+import connectors.ManageDocumentsConnector
 import generators.Generators
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.http.HttpEntity
+import play.api.http.HeaderNames.{CONTENT_LENGTH, CONTENT_TYPE}
+import play.api.http.Status.OK
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.ManageDocumentsService
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
 class TransitAccompanyingDocumentControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  private val mockManageDocumentsService: ManageDocumentsService = mock[ManageDocumentsService]
+  private val mockManageDocumentsConnector: ManageDocumentsConnector = mock[ManageDocumentsConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockManageDocumentsService)
+    reset(mockManageDocumentsConnector)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .p5GuiceApplicationBuilder()
       .overrides(
-        bind[ManageDocumentsService].toInstance(mockManageDocumentsService)
+        bind[ManageDocumentsConnector].toInstance(mockManageDocumentsConnector)
       )
 
   private lazy val getTADRoute = routes.TransitAccompanyingDocumentController.getTAD(departureIdP5, messageId).url
+
+  private val contentLength      = 100
+  private val contentType        = "application/octet-stream"
+  private val contentDisposition = "TAD_123"
+
+  private val responseHeaders = Seq(
+    CONTENT_LENGTH      -> Seq(contentLength.toString),
+    CONTENT_TYPE        -> Seq(contentType),
+    CONTENT_DISPOSITION -> Seq(contentDisposition)
+  ).toMap
+
+  private val errorCode     = Gen.oneOf(400, 599).sample.value
+  private val okResponse    = HttpResponse(OK, "body", responseHeaders)
+  private val errorResponse = HttpResponse(errorCode, "")
 
   "TransitAccompanyingDocumentController" - {
 
@@ -56,25 +71,25 @@ class TransitAccompanyingDocumentControllerSpec extends SpecBase with Generators
 
       "must return OK and PDF" in {
 
-        val contentLength = 100
-        val contentType   = "application/octet-stream"
-        val entity        = HttpEntity.Streamed(Source.empty[ByteString], Some(contentLength), Some(contentType))
-
-        when(mockManageDocumentsService.getTAD(any(), any())(any()))
-          .thenReturn(Future.successful(Some(entity)))
+        when(mockManageDocumentsConnector.getTAD(any(), any())(any()))
+          .thenReturn(Future.successful(okResponse))
 
         val request = FakeRequest(GET, getTADRoute)
 
         val result = route(app, request).value
 
         status(result) mustEqual OK
+        headers(result).get(CONTENT_TYPE).value mustEqual contentType
+        headers(result).get(CONTENT_LENGTH).value mustEqual contentLength.toString
+        headers(result).get(CONTENT_DISPOSITION).value mustBe contentDisposition
 
-        verify(mockManageDocumentsService).getTAD(eqTo(departureIdP5), eqTo(messageId))(any())
+        verify(mockManageDocumentsConnector).getTAD(eqTo(departureIdP5), eqTo(messageId))(any())
       }
 
-      "must redirect to TechnicalDifficultiesController if service returns None" in {
+      "must redirect to TechnicalDifficultiesController if connector returns error" in {
 
-        when(mockManageDocumentsService.getTAD(any(), any())(any())) thenReturn Future.successful(None)
+        when(mockManageDocumentsConnector.getTAD(any(), any())(any()))
+          .thenReturn(Future.successful(errorResponse))
 
         val request = FakeRequest(GET, getTADRoute)
         val result  = route(app, request).value
@@ -82,7 +97,7 @@ class TransitAccompanyingDocumentControllerSpec extends SpecBase with Generators
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
 
-        verify(mockManageDocumentsService).getTAD(eqTo(departureIdP5), eqTo(messageId))(any())
+        verify(mockManageDocumentsConnector).getTAD(eqTo(departureIdP5), eqTo(messageId))(any())
       }
     }
   }
