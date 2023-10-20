@@ -17,8 +17,8 @@
 package viewModels.P5.arrival
 
 import config.FrontendAppConfig
+import models.ArrivalRejectionType
 import models.ArrivalRejectionType.{ArrivalNotificationRejection, UnloadingRemarkRejection}
-import models.{ArrivalId, ArrivalRejectionType}
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
 import viewModels.ViewMovementAction
