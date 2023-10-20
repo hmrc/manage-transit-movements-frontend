@@ -79,7 +79,7 @@ object ArrivalStatusP5ViewModel {
             "movement.status.P5.action.unloadingPermission.unloadingRemarks"
           ),
           ViewMovementAction(
-            controllers.testOnly.routes.UnloadingPermissionController.getUnloadingPermissionDocument(message.messageId, arrivalId).url,
+            controllers.testOnly.routes.UnloadingPermissionController.getUnloadingPermissionDocument(arrivalId, message.messageId).url,
             "movement.status.P5.action.unloadingPermission.pdf"
           )
         )

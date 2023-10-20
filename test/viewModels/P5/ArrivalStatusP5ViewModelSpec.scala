@@ -84,7 +84,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
             ),
             ViewMovementAction(
               controllers.testOnly.routes.UnloadingPermissionController
-                .getUnloadingPermissionDocument(messageId, movementAndMessage.arrivalMovement.arrivalId)
+                .getUnloadingPermissionDocument(movementAndMessage.arrivalMovement.arrivalId, messageId)
                 .url,
               "movement.status.P5.action.unloadingPermission.pdf"
             )

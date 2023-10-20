@@ -90,7 +90,7 @@ GET        /manage-transit-movements/test-only/:arrivalId/review-arrival-notific
 
 GET        /manage-transit-movements/test-only/:departureId/transit-accompanying-document/:messageId                    controllers.testOnly.TransitAccompanyingDocumentController.getTAD(departureId: String, messageId: String)
 
-GET        /manage-transit-movements/test-only/:arrivalId/unloading-permission-document/:messageId                      controllers.testOnly.UnloadingPermissionController.getUnloadingPermissionDocument(messageId: String, arrivalId: String)
+GET        /manage-transit-movements/test-only/:arrivalId/unloading-permission-document/:messageId                      controllers.testOnly.UnloadingPermissionController.getUnloadingPermissionDocument(arrivalId: String, messageId: String)
 
 GET        /manage-transit-movements/test-only/:arrivalId/:messageId/amend-guarantee-errors/:lrn                        controllers.testOnly.GuaranteeRejectedP5Controller.onPageLoad(arrivalId: String, messageId: String, lrn: LocalReferenceNumber)
 

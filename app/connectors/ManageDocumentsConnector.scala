@@ -18,28 +18,21 @@ package connectors
 
 import config.FrontendAppConfig
 import logging.Logging
-import play.api.libs.ws.{WSClient, WSResponse}
-import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames => HMRCHeaderNames}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class ManageDocumentsConnector @Inject() (config: FrontendAppConfig, wsClient: WSClient) extends Logging {
+class ManageDocumentsConnector @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
-  def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
-
-    val serviceUrl: String = s"${config.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
-    val headers            = hc.headers(HMRCHeaderNames.explicitlyIncludedHeaders)
-
-    wsClient.url(serviceUrl).withHttpHeaders(headers: _*).get()
+  def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val url: String = s"${config.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
+    http.get(url"$url").stream
   }
 
-  def getUnloadingPermission(messageId: String, arrivalId: String)(implicit hc: HeaderCarrier): Future[WSResponse] = {
-
-    val serviceUrl: String = s"${config.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
-    val headers            = hc.headers(HMRCHeaderNames.explicitlyIncludedHeaders)
-
-    wsClient.url(serviceUrl).withHttpHeaders(headers: _*).get()
+  def getUnloadingPermission(arrivalId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val url: String = s"${config.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
+    http.get(url"$url").stream
   }
-
 }
