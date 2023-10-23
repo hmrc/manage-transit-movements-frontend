@@ -45,7 +45,7 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def buildView(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber, isAmendmentJourney: Boolean): Action[AnyContent] =
+  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber, isAmendmentJourney: Boolean): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
         if (request.isDeclarationAmendable || isAmendmentJourney) { //TODO: Additional MRN caption for amendment once merged in
@@ -56,7 +56,7 @@ class RejectionMessageP5Controller @Inject() (
             totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
             currentPage = currentPage,
             numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-            href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
+            href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber, isAmendmentJourney).url
           )
 
           val rejectionMessageP5ViewModel =
@@ -71,12 +71,6 @@ class RejectionMessageP5Controller @Inject() (
           )
         }
     }
-
-  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    buildView(page, departureId, localReferenceNumber, isAmendmentJourney = false)
-
-  def amendmentRejectionOnPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    buildView(page, departureId, localReferenceNumber, isAmendmentJourney = true)
 
   def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {

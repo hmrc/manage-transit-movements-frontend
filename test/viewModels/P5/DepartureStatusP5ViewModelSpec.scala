@@ -372,7 +372,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.rejectedByOfficeOfDeparture",
           Seq(
             ViewMovementAction(
-              controllers.testOnly.routes.RejectionMessageP5Controller.amendmentRejectionOnPageLoad(None, departureIdP5, lrn).url,
+              controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = true).url,
               "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
             )
           )
@@ -410,7 +410,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.rejectedByOfficeOfDeparture",
             Seq(
               ViewMovementAction(
-                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = false).url,
                 "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
               )
             )

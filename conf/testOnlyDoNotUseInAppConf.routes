@@ -60,9 +60,7 @@ GET         /manage-transit-movements/test-only/:departureId/goods-under-control
 
 GET         /manage-transit-movements/test-only/:departureId/goods-under-control-document-requested                     controllers.testOnly.GoodsUnderControlP5Controller.requestedDocuments(departureId: String)
 
-GET        /manage-transit-movements/test-only/:departureId/amend-departure-declaration-errors/:lrn                     controllers.testOnly.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
-
-GET        /manage-transit-movements/test-only/:departureId/amend-departure-amendment-errors/:lrn                       controllers.testOnly.RejectionMessageP5Controller.amendmentRejectionOnPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
+GET        /manage-transit-movements/test-only/:departureId/amend-departure-declaration-errors/:lrn                     controllers.testOnly.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber, isAmendmentJourney: Boolean)
 
 GET        /manage-transit-movements/test-only/:departureId/departure-declaration-errors/:lrn                           controllers.testOnly.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, lrn: LocalReferenceNumber)
 

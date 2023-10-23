@@ -268,11 +268,13 @@ object DepartureStatusP5ViewModel {
     case message if message.messageType == RejectedByOfficeOfDeparture =>
       val (key, href) = rejectionType match {
         case Some(DeclarationRejection) if isDeclarationAmendable =>
-          ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+          ("amendDeclaration",
+           controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber, isAmendmentJourney = false).url
+          )
 
         case Some(AmendmentRejection) =>
           ("amendDeclaration",
-           controllers.testOnly.routes.RejectionMessageP5Controller.amendmentRejectionOnPageLoad(None, departureId, localReferenceNumber).url
+           controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber, isAmendmentJourney = true).url
           )
 
         case Some(DeclarationRejection) if xPaths.isEmpty =>

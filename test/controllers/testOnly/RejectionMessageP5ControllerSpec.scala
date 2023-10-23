@@ -58,10 +58,11 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       mockCacheService
     )
 
-  lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url
+  lazy val rejectionMessageController: String =
+    controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = false).url
 
   lazy val rejectionMessageControllerAmendment: String =
-    controllers.testOnly.routes.RejectionMessageP5Controller.amendmentRejectionOnPageLoad(None, departureIdP5, lrn).url
+    controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = true).url
   lazy val rejectionMessageOnAmend: String = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5, lrn).url
   val sections: Seq[Section]               = arbitrarySections.arbitrary.sample.value
   val tableRow: TableRow                   = arbitraryTableRow.arbitrary.sample.value
@@ -108,7 +109,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = false).url,
         additionalParams = Seq()
       )
 
@@ -148,7 +149,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = true).url,
         additionalParams = Seq()
       )
 
@@ -188,7 +189,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = true).url,
         additionalParams = Seq()
       )
 

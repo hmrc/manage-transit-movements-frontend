@@ -49,7 +49,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
     totalNumberOfItems = sections.length,
     currentPage = 1,
     numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+    href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = false).url,
     additionalParams = Seq()
   )
 
@@ -79,7 +79,9 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   behave like pageWithCaption(s"LRN: $lrn")
 
-  behave like pageWithPagination(controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId.toString, lrn).url)
+  behave like pageWithPagination(
+    controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId.toString, lrn, isAmendmentJourney = false).url
+  )
 
   behave like pageWithTable()
 
