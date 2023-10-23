@@ -76,26 +76,9 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
       }
   }
 
-  def getMessagesForMovement(location: String)(implicit hc: HeaderCarrier): Future[MessagesForArrivalMovement] = {
-    val url = s"${config.commonTransitConventionTradersUrl}$location"
-    http.GET[MessagesForArrivalMovement](url)(HttpReads[MessagesForArrivalMovement], headers, ec)
-  }
-
   def getLatestMessageForMovement(location: String)(implicit hc: HeaderCarrier): Future[LatestArrivalMessage] = {
     val url = s"${config.commonTransitConventionTradersUrl}$location"
     http.GET[LatestArrivalMessage](url)(HttpReads[LatestArrivalMessage], headers, ec)
-  }
-
-  def getMessageMetaData(arrivalId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ArrivalMessages] = {
-    val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
-    http.GET[ArrivalMessages](url)(implicitly, headers, ec)
-  }
-
-  def getSpecificMessage[MessageModel](
-    path: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, HttpReads: HttpReads[MessageModel]): Future[MessageModel] = {
-    val url = s"${config.commonTransitConventionTradersUrl}$path"
-    http.GET[MessageModel](url)(implicitly, headers, ec)
   }
 
   def getMessageForMessageId[MessageModel](arrivalId: String, messageId: String)(implicit

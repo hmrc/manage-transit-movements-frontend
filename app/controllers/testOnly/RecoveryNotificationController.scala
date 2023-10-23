@@ -18,7 +18,7 @@ package controllers.testOnly
 
 import controllers.actions._
 import models.LocalReferenceNumber
-import models.departureP5.IE035Data
+import models.departureP5.{IE035Data, IE055Data}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.DepartureP5MessageService
@@ -32,21 +32,18 @@ import scala.concurrent.ExecutionContext
 
 class RecoveryNotificationController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   cc: MessagesControllerComponents,
   viewModelProvider: RecoveryNotificationViewModelProvider,
-  departureP5MessageService: DepartureP5MessageService,
-  view: RecoveryNotificationView
+  view: RecoveryNotificationView,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen identify).async {
+  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE035Data](departureId, messageId)) {
       implicit request =>
-        departureP5MessageService.getMessageWithMessageId[IE035Data](departureId, messageId) map {
-          ie055data => Ok(view(viewModelProvider.apply(ie055data.data), localReferenceNumber))
-
-        }
+        Ok(view(viewModelProvider.apply(request.messageData.data), request.referenceNumbers.localReferenceNumber))
     }
 }

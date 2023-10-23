@@ -19,7 +19,7 @@ package controllers.testOnly
 import config.FrontendAppConfig
 import controllers.actions._
 import models.LocalReferenceNumber
-import models.departureP5.IE009MessageData
+import models.departureP5.{IE009Data, IE009MessageData}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.ReferenceDataService
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DepartureCancelledP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
-  departureCancelledActionProvider: DepartureCancelledActionProvider,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: DepartureCancelledP5ViewModelProvider,
   view: DepartureCancelledP5View,
@@ -42,13 +42,32 @@ class DepartureCancelledP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def declarationCancelled(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen departureCancelledActionProvider(departureId)).async {
-      implicit request => buildView(request.ie009MessageData, localReferenceNumber, isCancelled = true)
+  def declarationCancelled(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)).async {
+      implicit request =>
+        buildView(request.messageData.data, request.referenceNumbers.localReferenceNumber, isCancelled = true)
     }
 
-  def buildView(IE009MessageData: IE009MessageData, lrn: LocalReferenceNumber, isCancelled: Boolean)(implicit request: Request[_]): Future[Result] = {
+  def declarationNotCancelled(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)).async {
+      implicit request =>
+        buildView(request.messageData.data, request.referenceNumbers.localReferenceNumber, isCancelled = false)
+    }
+
+  def isDeclarationCancelled(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)) {
+      implicit request =>
+        val isCancelled: String = request.messageData.data.invalidation.decision
+        if (isCancelled == "0") {
+          Redirect(controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureId, messageId))
+        } else {
+          Redirect(controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureId, messageId))
+        }
+    }
+
+  private def buildView(IE009MessageData: IE009MessageData, lrn: LocalReferenceNumber, isCancelled: Boolean)(implicit request: Request[_]): Future[Result] = {
     val customsOfficeReferenceNumber = IE009MessageData.customsOfficeOfDeparture.referenceNumber
+
     referenceDataService.getCustomsOffice(customsOfficeReferenceNumber).flatMap {
       customsOffice =>
         viewModelProvider.apply(IE009MessageData, lrn.value, customsOfficeReferenceNumber, customsOffice, isCancelled).map {
@@ -56,20 +75,4 @@ class DepartureCancelledP5Controller @Inject() (
         }
     }
   }
-
-  def declarationNotCancelled(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen departureCancelledActionProvider(departureId)).async {
-      implicit request => buildView(request.ie009MessageData, localReferenceNumber, isCancelled = false)
-    }
-
-  def isDeclarationCancelled(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen departureCancelledActionProvider(departureId)) {
-      implicit request =>
-        val isCancelled: String = request.ie009MessageData.invalidation.decision
-        if (isCancelled == "0") {
-          Redirect(controllers.testOnly.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureId, localReferenceNumber))
-        } else {
-          Redirect(controllers.testOnly.routes.DepartureCancelledP5Controller.declarationCancelled(departureId, localReferenceNumber))
-        }
-    }
 }

@@ -17,6 +17,7 @@
 package controllers.testOnly
 
 import controllers.actions._
+import models.arrivalP5.IE057Data
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
@@ -31,7 +32,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
   cc: MessagesControllerComponents,
-  rejectionMessageAction: ArrivalRejectionMessageActionProvider,
+  messageRetrievalAction: ArrivalMessageRetrievalActionProvider,
   viewModelProvider: UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider,
   view: UnloadingRemarkWithoutFunctionalErrorsP5View,
   referenceDataService: ReferenceDataService
@@ -39,26 +40,27 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(arrivalId: String): Action[AnyContent] = (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(arrivalId)).async {
-    implicit request =>
-      val functionalErrors       = request.ie057MessageData.functionalErrors
-      val customsOfficeReference = request.ie057MessageData.customsOfficeOfDestinationActual.referenceNumber
+  def onPageLoad(arrivalId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE057Data](arrivalId, messageId)).async {
+      implicit request =>
+        val functionalErrors       = request.messageData.data.functionalErrors
+        val customsOfficeReference = request.messageData.data.customsOfficeOfDestinationActual.referenceNumber
 
-      if (functionalErrors.isEmpty) {
-        referenceDataService.getCustomsOffice(customsOfficeReference).map {
-          customsOffice =>
-            Ok(
-              view(
-                viewModelProvider.apply(
-                  request.ie057MessageData.transitOperation.MRN,
-                  customsOfficeReference,
-                  customsOffice
+        if (functionalErrors.isEmpty) {
+          referenceDataService.getCustomsOffice(customsOfficeReference).map {
+            customsOffice =>
+              Ok(
+                view(
+                  viewModelProvider.apply(
+                    request.messageData.data.transitOperation.MRN,
+                    customsOfficeReference,
+                    customsOffice
+                  )
                 )
               )
-            )
+          }
+        } else {
+          Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
         }
-      } else {
-        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
-      }
-  }
+    }
 }

@@ -19,11 +19,9 @@ package controllers.testOnly
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureCacheConnector
 import controllers.actions._
-import models.LocalReferenceNumber
-import models.departureP5.DepartureMessageType.AllocatedMRN
+import models.departureP5.IE056Data
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.DepartureP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
@@ -35,59 +33,61 @@ import scala.concurrent.{ExecutionContext, Future}
 class RejectionMessageP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
-  rejectionMessageAction: DepartureRejectionMessageActionProvider,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
   cacheConnector: DepartureCacheConnector,
-  departureP5MessageService: DepartureP5MessageService,
   view: RejectionMessageP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)).async {
       implicit request =>
-        if (request.isDeclarationAmendable) {
+        val lrn              = request.referenceNumbers.localReferenceNumber
+        val functionalErrors = request.messageData.data.functionalErrors
 
-          val currentPage = page.getOrElse(1)
+        cacheConnector.isDeclarationAmendable(lrn.value, functionalErrors.map(_.errorPointer)).flatMap {
+          case true =>
+            val currentPage = page.getOrElse(1)
 
-          val paginationViewModel = ListPaginationViewModel(
-            totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
-            currentPage = currentPage,
-            numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-            href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
-          )
+            val paginationViewModel = ListPaginationViewModel(
+              totalNumberOfItems = functionalErrors.length,
+              currentPage = currentPage,
+              numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
+              href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url
+            )
 
-          val rejectionMessageP5ViewModel =
-            viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value)
+            val rejectionMessageP5ViewModel =
+              viewModelProvider.apply(request.messageData.data.pagedFunctionalErrors(currentPage), lrn.value)
 
-          rejectionMessageP5ViewModel.map(
-            viewModel => Ok(view(viewModel, departureId, paginationViewModel, localReferenceNumber))
-          )
-        } else {
-          Future.successful(
-            Redirect(controllers.routes.SessionExpiredController.onPageLoad())
-          )
+            rejectionMessageP5ViewModel.map(
+              viewModel => Ok(view(viewModel, departureId, messageId, paginationViewModel))
+            )
+          case false =>
+            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
     }
 
-  def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
+  def onAmend(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)).async {
       implicit request =>
-        val xPaths = request.ie056MessageData.functionalErrors.map(_.errorPointer)
-        if (request.isDeclarationAmendable && xPaths.nonEmpty) {
-          cacheConnector.handleErrors(localReferenceNumber.value, xPaths).flatMap {
-            case true =>
-              departureP5MessageService.getSpecificMessageMetaData(departureId, AllocatedMRN).map {
-                case Some(_) => Redirect(config.departureNewLocalReferenceNumberUrl(localReferenceNumber.value))
-                case None    => Redirect(config.departureFrontendTaskListUrl(localReferenceNumber.value))
-              }
-            case false =>
-              Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
-          }
-        } else {
-          Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+        val lrn    = request.referenceNumbers.localReferenceNumber
+        val xPaths = request.messageData.data.functionalErrors.map(_.errorPointer)
+
+        for {
+          isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn.value, xPaths)
+          handleErrors           <- cacheConnector.handleErrors(lrn.value, xPaths)
+          xPathsNonEmpty = xPaths.nonEmpty
+        } yield (isDeclarationAmendable, handleErrors, xPathsNonEmpty) match {
+          case (true, true, true) =>
+            if (request.referenceNumbers.movementReferenceNumber.isDefined) {
+              Redirect(config.departureNewLocalReferenceNumberUrl(lrn.value))
+            } else {
+              Redirect(config.departureFrontendTaskListUrl(lrn.value))
+            }
+          case _ => Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
     }
 

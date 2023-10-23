@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package controllers.departure
+package controllers.testOnly
 
 import base.SpecBase
-import controllers.actions.{FakeGoodsUnderControlAction, GoodsUnderControlActionProvider}
 import generators.Generators
 import models.departureP5._
 import models.referenceData.CustomsOffice
@@ -36,23 +35,13 @@ import scala.concurrent.Future
 
 class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val mockReferenceDataService            = mock[ReferenceDataService]
-  private val mockDepartureP5MessageService       = mock[DepartureP5MessageService]
-  private val mockGoodsUnderControlActionProvider = mock[GoodsUnderControlActionProvider]
-
-  protected def goodsUnderControlAction(
-    departureIdP5: String,
-    mockDepartureP5MessageService: DepartureP5MessageService,
-    mockReferenceDataService: ReferenceDataService
-  ): Unit =
-    when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn
-      new FakeGoodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
+  private val mockReferenceDataService      = mock[ReferenceDataService]
+  private val mockDepartureP5MessageService = mock[DepartureP5MessageService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockReferenceDataService)
     reset(mockDepartureP5MessageService)
-    reset(mockGoodsUnderControlActionProvider)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -79,17 +68,16 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
           None
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
 
-      goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
-
-      val request = FakeRequest(GET, controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url)
+      val request = FakeRequest(GET, controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureIdP5).url
+      redirectLocation(result).value mustEqual controllers.testOnly.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureIdP5, messageId).url
     }
 
     s"when notification type 0 and requested documents present must redirect to correct controller" in {
@@ -106,17 +94,16 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
 
-      goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
-
-      val request = FakeRequest(GET, controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url)
+      val request = FakeRequest(GET, controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5).url
+      redirectLocation(result).value mustEqual controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5, messageId).url
     }
 
     s"when notification type 1 must redirect to correct controller" in {
@@ -133,17 +120,17 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
 
-      goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
-
-      val request = FakeRequest(GET, controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5).url)
+      val request = FakeRequest(GET, controllers.testOnly.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5).url
+      redirectLocation(result).value mustEqual controllers.testOnly.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5, messageId).url
     }
   }
 
