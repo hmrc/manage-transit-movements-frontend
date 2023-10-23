@@ -18,18 +18,17 @@ package connectors
 
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
-import logging.Logging
 import models.Availability
-import models.arrivalP5.{ArrivalMessages, ArrivalMovements, LatestArrivalMessage, MessagesForArrivalMovement}
-import models.departureP5.LatestDepartureMessage
+import models.arrivalP5.{ArrivalMovements, LatestArrivalMessage}
 import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.libs.json.Reads
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends HttpReadsTry with Logging {
+class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends MovementP5Connector {
 
   private def headers(implicit hc: HeaderCarrier): HeaderCarrier = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
 
@@ -84,11 +83,11 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
   def getMessageForMessageId[MessageModel](arrivalId: String, messageId: String)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier,
-    httpReads: HttpReads[MessageModel]
+    reads: Reads[MessageModel]
   ): Future[MessageModel] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId"
     http
-      .GET[MessageModel](url)(implicitly, headers, ec)
+      .GET[MessageModel](url)(messageModelHttpReads, headers, ec)
   }
 
 }

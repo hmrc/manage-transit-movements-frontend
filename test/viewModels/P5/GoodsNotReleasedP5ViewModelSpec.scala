@@ -25,7 +25,6 @@ import viewModels.P5.departure.GoodsNotReleasedP5ViewModel
 import viewModels.P5.departure.GoodsNotReleasedP5ViewModel.GoodsNotReleasedP5ViewModelProvider
 
 import java.time.LocalDateTime
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class GoodsNotReleasedP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

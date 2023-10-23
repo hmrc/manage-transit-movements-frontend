@@ -30,7 +30,7 @@ case class DepartureMovementAndMessage(
   xPaths: Seq[String]
 )
 
-trait MovementAndMessage {
+sealed trait MovementAndMessage {
   val departureId: String
   val localReferenceNumber: LocalReferenceNumber
   val message: LatestDepartureMessage

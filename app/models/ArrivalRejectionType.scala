@@ -38,6 +38,7 @@ object ArrivalRejectionType {
     case JsString(ArrivalNotificationRejection.code) => JsSuccess(ArrivalNotificationRejection)
     case JsString(UnloadingRemarkRejection.code)     => JsSuccess(UnloadingRemarkRejection)
     case JsString(code)                              => JsSuccess(Other(code))
+    case _                                           => JsError("Failed to read arrival rejection type")
   }
 
   implicit val writes: Writes[ArrivalRejectionType] = Writes {

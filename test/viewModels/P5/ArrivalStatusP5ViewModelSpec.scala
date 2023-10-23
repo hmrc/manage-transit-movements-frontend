@@ -83,7 +83,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
               "movement.status.P5.action.unloadingPermission.unloadingRemarks"
             ),
             ViewMovementAction(
-              controllers.testOnly.routes.UnloadingPermissionController
+              controllers.arrivalP5.routes.UnloadingPermissionController
                 .getUnloadingPermissionDocument(movementAndMessage.arrivalMovement.arrivalId, messageId)
                 .url,
               "movement.status.P5.action.unloadingPermission.pdf"
@@ -147,7 +147,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val result = ArrivalStatusP5ViewModel(movementAndMessagesRejectedZero(ArrivalMessageType.RejectionFromOfficeOfDestination))
 
-          val href = controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId)
+          val href = controllers.arrivalP5.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId)
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
                                                         Seq(
@@ -184,7 +184,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val result = ArrivalStatusP5ViewModel(movementAndMessagesRejectedMultiple)
 
-          val href = controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, "arrivalID", messageId)
+          val href = controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, "arrivalID", messageId)
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
                                                         Seq(
@@ -222,7 +222,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
             )
 
           val result = ArrivalStatusP5ViewModel(movementAndMessagesRejectedMultiple)
-          val href   = controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, "arrivalID", messageId)
+          val href   = controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, "arrivalID", messageId)
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
                                                         Seq(
@@ -250,7 +250,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val result = ArrivalStatusP5ViewModel(movementAndMessage)
 
-          val href = controllers.testOnly.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId)
+          val href = controllers.arrivalP5.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId)
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",
                                                         Seq(

@@ -25,7 +25,7 @@ import play.twirl.api.HtmlFormat
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.pagination.ListPaginationViewModel
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
-import views.html.arrival.P5.ViewAllArrivalsP5View
+import views.html.arrivalP5.ViewAllArrivalsP5View
 
 class ViewAllArrivalsP5ViewSpec
     extends MovementsTableViewBehaviours[ViewArrivalP5]

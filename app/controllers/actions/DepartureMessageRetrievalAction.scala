@@ -17,9 +17,10 @@
 package controllers.actions
 
 import models.requests.{IdentifierRequest, MessageRetrievalRequestProvider}
+import play.api.libs.json.Reads
 import play.api.mvc.ActionTransformer
 import services.DepartureP5MessageService
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -30,14 +31,14 @@ class DepartureMessageRetrievalActionProvider @Inject() (departureP5MessageServi
 ) {
 
   def apply[B](departureId: String, messageId: String)(implicit
-    reads: HttpReads[B]
+    reads: Reads[B]
   ): ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest] =
     new DepartureMessageRetrievalAction(departureId, messageId, departureP5MessageService)
 }
 
 class DepartureMessageRetrievalAction[B](departureId: String, messageId: String, departureP5MessageService: DepartureP5MessageService)(
   implicit protected val executionContext: ExecutionContext,
-  implicit protected val reads: HttpReads[B]
+  implicit protected val reads: Reads[B]
 ) extends ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest] {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest[A]] = {

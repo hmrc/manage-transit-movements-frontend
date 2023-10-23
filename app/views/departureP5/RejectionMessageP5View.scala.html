@@ -1,0 +1,57 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import viewModels.P5.departure.RejectionMessageP5ViewModel
+@import views.html.components.{Button, Heading, Pagination, Table}
+@import viewModels.pagination.PaginationViewModel
+
+@this(
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    table: Table,
+    button: Button,
+    formHelper: FormWithCSRF,
+    pagination: Pagination
+)
+@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+
+    @mainTemplate(
+        title = rejectionMessageP5ViewModel.title,
+        showBackLink = true
+    ) {
+
+        @heading(
+            heading = rejectionMessageP5ViewModel.heading,
+            caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
+        )
+
+        <p id="paragraph-1" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
+
+        @pagination(paginationViewModel, None)
+
+        @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
+
+        <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
+
+        @button(
+            attributes = Map("id" -> "submit"),
+            messageKey = messages("site.amendErrors"),
+            href = Some(controllers.departureP5.routes.RejectionMessageP5Controller.onAmend(departureId, messageId).url)
+        )
+
+        <p id="create-another-declaration" class="govuk-body">Or <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
+    }

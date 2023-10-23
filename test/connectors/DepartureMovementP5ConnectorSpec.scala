@@ -17,19 +17,17 @@
 package connectors
 
 import base.SpecBase
-import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
 import models.RejectionType.DeclarationRejection
 import models.departureP5.Prelodged.{NonPrelodgedDeclaration, PrelodgedDeclaration}
 import models.departureP5._
-import models.{Availability, LocalReferenceNumber, RejectionType}
-import org.scalacheck.{Arbitrary, Gen}
+import models.{Availability, LocalReferenceNumber}
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

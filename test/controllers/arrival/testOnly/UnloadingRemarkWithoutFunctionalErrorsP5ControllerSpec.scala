@@ -30,7 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{ArrivalP5MessageService, ReferenceDataService}
 import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
-import views.html.arrival.P5.UnloadingRemarkWithoutFunctionalErrorsP5View
+import views.html.arrivalP5.UnloadingRemarkWithoutFunctionalErrorsP5View
 
 import scala.concurrent.Future
 
@@ -40,7 +40,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
   private val mockReferenceDataService    = mock[ReferenceDataService]
 
   lazy val unloadingRemarkWithErrorsController: String =
-    controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
+    controllers.arrivalP5.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
 
   private val mrnString = "MRNAB123"
 

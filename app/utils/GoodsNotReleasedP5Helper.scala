@@ -19,17 +19,14 @@ package utils
 import models.departureP5.IE051MessageData
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 
 import java.time.LocalDateTime
-import scala.concurrent.ExecutionContext
 
-class GoodsNotReleasedP5Helper(iE051MessageData: IE051MessageData)(implicit
-  messages: Messages,
-  ec: ExecutionContext,
-  hc: HeaderCarrier
-) extends DeparturesP5MessageHelper {
+class GoodsNotReleasedP5Helper(
+  iE051MessageData: IE051MessageData
+)(implicit messages: Messages)
+    extends DeparturesP5MessageHelper {
 
   def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(iE051MessageData.transitOperation.MRN),

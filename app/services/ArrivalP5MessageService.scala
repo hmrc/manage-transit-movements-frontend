@@ -20,7 +20,8 @@ import cats.implicits._
 import connectors.ArrivalMovementP5Connector
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import play.api.libs.json.Reads
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -61,7 +62,7 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
   def getMessageWithMessageId[MessageModel](
     arrivalId: String,
     messageId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[MessageModel] =
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: Reads[MessageModel]): Future[MessageModel] =
     arrivalMovementP5Connector
       .getMessageForMessageId(arrivalId, messageId)
 

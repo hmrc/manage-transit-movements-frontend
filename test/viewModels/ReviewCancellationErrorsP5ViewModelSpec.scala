@@ -80,7 +80,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
       }
 
       "must return correct url" in {
-        result.viewDeparturesLink mustBe controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+        result.viewDeparturesLink mustBe controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
       }
     }
 
@@ -115,7 +115,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
       }
 
       "must return correct url" in {
-        result.viewDeparturesLink mustBe controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+        result.viewDeparturesLink mustBe controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
       }
     }
 

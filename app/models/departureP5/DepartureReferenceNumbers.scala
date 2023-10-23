@@ -16,7 +16,7 @@
 
 package models.departureP5
 
-import models.{Departure, LocalReferenceNumber}
+import models.LocalReferenceNumber
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 

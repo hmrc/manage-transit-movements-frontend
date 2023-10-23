@@ -19,7 +19,6 @@ package models.arrivalP5
 import base.SpecBase
 import generators.Generators
 import models.ArrivalRejectionType
-import models.ArrivalRejectionType.ArrivalNotificationRejection
 import models.departureP5.FunctionalError
 import org.scalacheck.Arbitrary
 import play.api.libs.json._
