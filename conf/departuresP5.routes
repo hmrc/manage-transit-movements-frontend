@@ -1,38 +1,38 @@
 # Departure P5 live routes
 
-GET        /view-departure-declarations                                       controllers.departureP5.ViewAllDeparturesP5Controller.onPageLoad(page: Option[Int], lrn: Option[String])
-POST       /view-departure-declarations                                       controllers.departureP5.ViewAllDeparturesP5Controller.onSubmit()
+GET         /view-departure-declarations                                             controllers.departureP5.ViewAllDeparturesP5Controller.onPageLoad(page: Option[Int], lrn: Option[String])
+POST        /view-departure-declarations                                             controllers.departureP5.ViewAllDeparturesP5Controller.onSubmit()
 
-GET        /:departureId/goods-under-control-index                            controllers.departureP5.GoodsUnderControlIndexController.onPageLoad(departureId: String)
+GET         /:departureId/goods-under-control-index/:messageId                       controllers.departureP5.GoodsUnderControlIndexController.onPageLoad(departureId: String, messageId: String)
 
-GET        /:departureId/goods-under-control                                  controllers.departureP5.GoodsUnderControlP5Controller.noRequestedDocuments(departureId: String)
+GET         /:departureId/goods-under-control/:messageId                             controllers.departureP5.GoodsUnderControlP5Controller.noRequestedDocuments(departureId: String, messageId: String)
 
-GET        /:departureId/goods-under-control-document-requested               controllers.departureP5.GoodsUnderControlP5Controller.requestedDocuments(departureId: String)
+GET         /:departureId/goods-under-control-document-requested/:messageId          controllers.departureP5.GoodsUnderControlP5Controller.requestedDocuments(departureId: String, messageId: String)
 
-GET        /:departureId/amend-departure-declaration-errors/:lrn              controllers.departureP5.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/amend-departure-declaration-errors/:messageId               controllers.departureP5.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 
-GET        /:departureId/departure-declaration-errors/:lrn                    controllers.departureP5.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/departure-declaration-errors/:messageId                     controllers.departureP5.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, messageId: String)
 
-GET        /:departureId/cancellation-errors/:lrn                             controllers.departureP5.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/cancellation-errors/:messageId                              controllers.departureP5.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String, messageId: String)
 
-GET        /:departureId/:messageId/goods-being-recovered/:lrn                controllers.departureP5.RecoveryNotificationController.onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/goods-being-recovered/:messageId                            controllers.departureP5.RecoveryNotificationController.onPageLoad(departureId: String, messageId: String)
 
-GET        /:departureId/review-departure-declaration-errors/:lrn             controllers.departureP5.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/review-departure-declaration-errors/:messageId              controllers.departureP5.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 
-GET        /:departureId/review-cancellation-errors/:lrn                      controllers.departureP5.ReviewCancellationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/review-cancellation-errors/:messageId                       controllers.departureP5.ReviewCancellationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 
-GET        /:departureId/send-departure-declaration-errors/:lrn               controllers.departureP5.RejectionMessageP5Controller.onAmend(departureId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/send-departure-declaration-errors/:messageId                controllers.departureP5.RejectionMessageP5Controller.onAmend(departureId: String, messageId: String)
 
-GET        /:departureId/is-declaration-cancelled/:lrn                        controllers.departureP5.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/is-declaration-cancelled/:messageId                         controllers.departureP5.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String, messageId: String)
 
-GET        /:departureId/declaration-cancelled/:lrn                           controllers.departureP5.DepartureCancelledP5Controller.declarationCancelled(departureId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/declaration-cancelled/:messageId                            controllers.departureP5.DepartureCancelledP5Controller.declarationCancelled(departureId: String, messageId: String)
 
-GET        /:departureId/declaration-not-cancelled/:lrn                       controllers.departureP5.DepartureCancelledP5Controller.declarationNotCancelled(departureId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/declaration-not-cancelled/:messageId                        controllers.departureP5.DepartureCancelledP5Controller.declarationNotCancelled(departureId: String, messageId: String)
 
-GET        /:departureId/transit-accompanying-document/:messageId             controllers.departureP5.TransitAccompanyingDocumentController.getTAD(departureId: String, messageId: String)
+GET        /:departureId/transit-accompanying-document/:messageId                    controllers.departureP5.TransitAccompanyingDocumentController.getTAD(departureId: String, messageId: String)
 
-GET        /:departureId/:messageId/goods-not-released/:lrn                   controllers.departureP5.GoodsNotReleasedP5Controller.goodsNotReleased(departureId: String, lrn: LocalReferenceNumber, messageId: String)
+GET        /:departureId/goods-not-released/:messageId                               controllers.departureP5.GoodsNotReleasedP5Controller.goodsNotReleased(departureId: String, messageId: String)
 
-GET        /:arrivalId/:messageId/amend-guarantee-errors/:lrn                 controllers.departureP5.GuaranteeRejectedP5Controller.onPageLoad(arrivalId: String, messageId: String, lrn: LocalReferenceNumber)
+GET        /:arrivalId/:messageId/amend-guarantee-errors/:lrn                        controllers.departureP5.GuaranteeRejectedP5Controller.onPageLoad(arrivalId: String, messageId: String, lrn: LocalReferenceNumber)
 
-GET        /send-guarantee-errors/:lrn                                        controllers.departureP5.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber, departureId:String)
+GET        /send-guarantee-errors/:lrn                                               controllers.departureP5.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber, departureId: String)

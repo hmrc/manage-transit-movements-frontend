@@ -42,7 +42,7 @@ case class RejectedMovementAndMessage(
   localReferenceNumber: LocalReferenceNumber,
   updated: LocalDateTime,
   message: LatestDepartureMessage,
-  rejectionType: Option[RejectionType],
+  rejectionType: RejectionType,
   isDeclarationAmendable: Boolean,
   xPaths: Seq[String]
 ) extends MovementAndMessage

@@ -17,8 +17,10 @@
 package controllers.departureP5
 
 import controllers.actions._
+import models.departureP5.IE060Data
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.CustomsOfficeContactViewModel
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
@@ -30,27 +32,33 @@ import scala.concurrent.ExecutionContext
 class GoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
-  goodsUnderControlAction: GoodsUnderControlActionProvider,
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: GoodsUnderControlP5ViewModelProvider,
-  view: GoodsUnderControlP5View
+  view: GoodsUnderControlP5View,
+  referenceDataService: ReferenceDataService
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  private def goodsUnderControlOnPageLoad(departureId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen goodsUnderControlAction(departureId)).async {
+  private def goodsUnderControlOnPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE060Data](departureId, messageId)).async {
       implicit request =>
-        val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.ie060MessageData)
-        val customsOfficeContactViewModel =
-          CustomsOfficeContactViewModel(request.ie060MessageData.CustomsOfficeOfDeparture.referenceNumber, request.customsOffice)
-        goodsUnderControlP5ViewModel.map {
-          viewModel =>
-            Ok(view(viewModel, departureId, customsOfficeContactViewModel))
+        val customsOfficeId = request.messageData.data.CustomsOfficeOfDeparture.referenceNumber
+
+        referenceDataService.getCustomsOffice(customsOfficeId).flatMap {
+          customsOffice =>
+            val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.messageData.data)
+            val customsOfficeContactViewModel =
+              CustomsOfficeContactViewModel(customsOfficeId, customsOffice)
+            goodsUnderControlP5ViewModel.map {
+              viewModel =>
+                Ok(view(viewModel, departureId, customsOfficeContactViewModel))
+            }
         }
     }
 
-  def noRequestedDocuments(departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId)
+  def noRequestedDocuments(departureId: String, messageId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId, messageId)
 
-  def requestedDocuments(departureId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId)
+  def requestedDocuments(departureId: String, messageId: String): Action[AnyContent] = goodsUnderControlOnPageLoad(departureId, messageId)
 }

@@ -17,6 +17,7 @@
 package controllers.departureP5
 
 import controllers.actions._
+import models.departureP5.IE060Data
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -26,17 +27,17 @@ import javax.inject.Inject
 class GoodsUnderControlIndexController @Inject() (
   actions: Actions,
   cc: MessagesControllerComponents,
-  goodsUnderControlAction: GoodsUnderControlActionProvider
+  messageRetrievalAction: DepartureMessageRetrievalActionProvider
 ) extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen goodsUnderControlAction(departureId)) {
+  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE060Data](departureId, messageId)) {
       implicit request =>
-        val call = if (request.ie060MessageData.requestedDocuments) {
-          controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId)
+        val call = if (request.messageData.data.requestedDocuments) {
+          controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId, messageId)
         } else {
-          controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId)
+          controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId, messageId)
         }
         Redirect(call)
     }

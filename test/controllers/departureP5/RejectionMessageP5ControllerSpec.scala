@@ -18,12 +18,10 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
 import models.RejectionType
-import models.departureP5.DepartureMessageType.AllocatedMRN
 import models.departureP5._
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
@@ -38,28 +36,18 @@ import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.html.departureP5.RejectionMessageP5View
 
-import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockRejectionMessageP5ViewModelProvider   = mock[RejectionMessageP5ViewModelProvider]
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
-  private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
 
   private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
-  def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(
-      departureIdP5,
-      lrn,
-      mockDepartureP5MessageService,
-      mockCacheService
-    )
-
-  lazy val rejectionMessageController: String = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url
-  lazy val rejectionMessageOnAmend: String    = controllers.departureP5.routes.RejectionMessageP5Controller.onAmend(departureIdP5, lrn).url
+  lazy val rejectionMessageController: String = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId).url
+  lazy val rejectionMessageOnAmend: String    = controllers.departureP5.routes.RejectionMessageP5Controller.onAmend(departureIdP5, messageId).url
   val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
   val tableRow: TableRow                      = arbitraryTableRow.arbitrary.sample.value
 
@@ -67,9 +55,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     super.beforeEach()
     reset(mockDepartureP5MessageService)
     reset(mockRejectionMessageP5ViewModelProvider)
-    reset(mockRejectionMessageActionProvider)
     reset(mockCacheService)
-
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -89,15 +75,13 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
       when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
-      when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
-        .thenReturn(Future.successful(None))
-
-      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
       val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true)
 
@@ -105,7 +89,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId).url,
         additionalParams = Seq()
       )
 
@@ -118,7 +102,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, messageId, paginationViewModel)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to session expired when declaration amendable is false" in {
@@ -129,13 +113,11 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
-      when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
-        .thenReturn(Future.successful(None))
-
-      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
       val request = FakeRequest(GET, rejectionMessageController)
 
@@ -157,12 +139,11 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+          .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
-        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
-          .thenReturn(Future.successful(None))
-
-        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+        when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
@@ -182,12 +163,11 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq.empty
           )
         )
-        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+          .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
-          .thenReturn(Future.successful(None))
-
-        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+        when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
@@ -207,13 +187,11 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+          .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
-        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
-          .thenReturn(Future.successful(None))
-
-        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
@@ -233,15 +211,12 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        val departureMessageMetaData = Some(DepartureMessageMetaData(LocalDateTime.now(), AllocatedMRN, "foo"))
 
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
-        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
-        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
-          .thenReturn(Future.successful(departureMessageMetaData))
-
-        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+          .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, Some("mrn"))))
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
@@ -261,13 +236,11 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
         )
-        when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+        when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+          .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(false))
-        when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
-          .thenReturn(Future.successful(None))
-
-        rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 

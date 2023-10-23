@@ -30,30 +30,31 @@ object DepartureStatusP5ViewModel {
   def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessage match {
       case PrelodgedMovementAndMessage(departureId, localReferenceNumber, _, message, isPrelodged) =>
-        preLodgeStatus(departureId, localReferenceNumber, isPrelodged).apply(message.latestMessage)
-      case RejectedMovementAndMessage(departureId, localReferenceNumber, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
-        rejectedStatus(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber).apply(message.latestMessage)
+        preLodgeStatus(departureId, message.latestMessage.messageId, localReferenceNumber, isPrelodged).apply(message.latestMessage)
+      case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
+        rejectedStatus(departureId, message.latestMessage.messageId, rejectionType, isDeclarationAmendable, xPaths)
+          .apply(message.latestMessage)
       case OtherMovementAndMessage(departureId, localReferenceNumber, _, message) =>
         currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber).apply(message.latestMessage)
     }
 
   private def rejectedStatus(
     departureId: String,
-    rejectionType: Option[RejectionType],
+    messageId: String,
+    rejectionType: RejectionType,
     isDeclarationAmendable: Boolean,
-    xPaths: Seq[String],
-    localReferenceNumber: LocalReferenceNumber
+    xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
-      rejectedByOfficeOfDeparture(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber)
+      rejectedByOfficeOfDeparture(departureId, messageId, rejectionType, isDeclarationAmendable, xPaths)
     ).reduce(_ orElse _)
 
-  private def preLodgeStatus(departureId: String, localReferenceNumber: LocalReferenceNumber, isPrelodge: Boolean)(implicit
+  private def preLodgeStatus(departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber, isPrelodge: Boolean)(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
       declarationAmendmentAccepted(departureId, isPrelodge),
-      goodsUnderControl(departureId, localReferenceNumber, isPrelodge),
+      goodsUnderControl(departureId, messageId, localReferenceNumber, isPrelodge),
       declarationSent(departureId, localReferenceNumber, isPrelodge)
     ).reduce(_ orElse _)
 
@@ -68,14 +69,14 @@ object DepartureStatusP5ViewModel {
       prelodgedDeclarationSent,
       movementNotArrivedResponseSent,
       movementNotArrived,
-      cancellationDecision(departureId, localReferenceNumber),
+      cancellationDecision(departureId, messageId),
       discrepancies,
       invalidMRN(),
       releasedForTransit(departureId),
-      goodsNotReleased(departureId, localReferenceNumber),
+      goodsNotReleased(departureId),
       guaranteeRejected(departureId, localReferenceNumber),
       incidentDuringTransit(),
-      goodsBeingRecovered(departureId, messageId, localReferenceNumber),
+      goodsBeingRecovered(departureId, messageId),
       movementEnded
     ).reduce(_ orElse _)
 
@@ -177,15 +178,16 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def cancellationDecision(departureId: String,
-                                   localReferenceNumber: LocalReferenceNumber
+  private def cancellationDecision(
+    departureId: String,
+    messageId: String
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == CancellationDecision =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.cancellationDecision",
         actions = Seq(
           ViewMovementAction(
-            controllers.departureP5.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, localReferenceNumber).url,
+            controllers.departureP5.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, messageId).url,
             "movement.status.P5.action.cancellationDecision.viewCancellation"
           )
         )
@@ -220,15 +222,13 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def goodsNotReleased(departureId: String,
-                               localReferenceNumber: LocalReferenceNumber
-  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def goodsNotReleased(departureId: String): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsNotReleased =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsNotReleased",
         actions = Seq(
           ViewMovementAction(
-            controllers.departureP5.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureId, localReferenceNumber, message.messageId).url,
+            controllers.departureP5.routes.GoodsNotReleasedP5Controller.goodsNotReleased(departureId, message.messageId).url,
             "movement.status.P5.action.goodsNotReleased.viewDetails"
           )
         )
@@ -258,32 +258,28 @@ object DepartureStatusP5ViewModel {
   // scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
-    rejectionType: Option[RejectionType],
+    messageId: String,
+    rejectionType: RejectionType,
     isDeclarationAmendable: Boolean,
-    xPaths: Seq[String],
-    localReferenceNumber: LocalReferenceNumber
+    xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
 
     case message if message.messageType == RejectedByOfficeOfDeparture =>
       val (key, href) = rejectionType match {
-        case Some(DeclarationRejection) if isDeclarationAmendable =>
-          ("amendDeclaration", controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+        case DeclarationRejection if isDeclarationAmendable =>
+          ("amendDeclaration", controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url)
 
-        case Some(DeclarationRejection) if xPaths.isEmpty =>
-          (errorsActionText(xPaths), controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+        case DeclarationRejection if xPaths.isEmpty =>
+          (errorsActionText(xPaths), controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, messageId).url)
 
-        case Some(DeclarationRejection) =>
-          (errorsActionText(xPaths), controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+        case DeclarationRejection =>
+          (errorsActionText(xPaths), controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
-        case Some(InvalidationRejection) if xPaths.isEmpty =>
-          (errorsActionText(xPaths),
-           controllers.departureP5.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url
-          )
+        case InvalidationRejection if xPaths.isEmpty =>
+          (errorsActionText(xPaths), controllers.departureP5.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, messageId).url)
 
-        case Some(InvalidationRejection) =>
-          (errorsActionText(xPaths),
-           controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
-          )
+        case InvalidationRejection =>
+          (errorsActionText(xPaths), controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
         case _ => ("", "")
       }
@@ -299,6 +295,7 @@ object DepartureStatusP5ViewModel {
 
   private def goodsUnderControl(
     departureId: String,
+    messageId: String,
     lrn: LocalReferenceNumber,
     prelodged: Boolean
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
@@ -318,7 +315,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.goodsUnderControl",
         actions = Seq(
           ViewMovementAction(
-            controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureId).url,
+            controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureId, messageId).url,
             "movement.status.P5.action.goodsUnderControl.viewDetails"
           ),
           ViewMovementAction(
@@ -366,16 +363,13 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def goodsBeingRecovered(departureId: String,
-                                  messageId: String,
-                                  localReferenceNumber: LocalReferenceNumber
-  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def goodsBeingRecovered(departureId: String, messageId: String): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsBeingRecovered =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsBeingRecovered",
         actions = Seq(
           ViewMovementAction(
-            controllers.departureP5.routes.RecoveryNotificationController.onPageLoad(departureId, messageId, localReferenceNumber).url,
+            controllers.departureP5.routes.RecoveryNotificationController.onPageLoad(departureId, messageId).url,
             "movement.status.P5.action.goodsBeingRecovered.viewDetails"
           )
         )

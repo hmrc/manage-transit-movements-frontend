@@ -18,7 +18,6 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import controllers.actions.{DepartureRejectionMessageActionProvider, FakeDepartureRejectionMessageAction}
 import generators.Generators
 import models.RejectionType
 import models.departureP5._
@@ -39,25 +38,15 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
 
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
-  private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
   private val mockReferenceDataService                  = mock[ReferenceDataService]
 
-  lazy val controllerRoute: String = controllers.departureP5.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5, lrn).url
+  lazy val controllerRoute: String = controllers.departureP5.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5, messageId).url
 
   private val rejectionType: RejectionType = RejectionType.InvalidationRejection
-
-  def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
-    when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(
-      departureIdP5,
-      lrn,
-      mockDepartureP5MessageService,
-      mockCacheService
-    )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
-    reset(mockRejectionMessageActionProvider)
     reset(mockCacheService)
     reset(mockReferenceDataService)
   }
@@ -72,20 +61,18 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
   "CancellationNotificationErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET when no Errors" in {
+
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
+          TransitOperationIE056(Some("MRNCD3232"), Some("AB123"), rejectionType),
           CustomsOfficeOfDeparture("AB123"),
           Seq.empty
         )
       )
 
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
-      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
-
-      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
       val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrn.value, "AB123", None)
 
@@ -102,19 +89,18 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
+
       val message: IE056Data = IE056Data(
         IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
+          TransitOperationIE056(Some("MRNCD3232"), Some("AB123"), rejectionType),
           CustomsOfficeOfDeparture("AB123"),
           Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
-      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
-      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
 
       val request = FakeRequest(GET, controllerRoute)
 

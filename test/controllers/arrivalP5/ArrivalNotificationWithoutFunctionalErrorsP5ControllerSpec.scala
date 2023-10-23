@@ -17,7 +17,6 @@
 package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import controllers.actions.{ArrivalRejectionMessageActionProvider, FakeArrivalRejectionMessageAction}
 import generators.Generators
 import models.ArrivalRejectionType.ArrivalNotificationRejection
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
@@ -41,22 +40,16 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
     with ScalaCheckPropertyChecks
     with Generators {
 
-  private val mockArrivalP5MessageService        = mock[ArrivalP5MessageService]
-  private val mockRejectionMessageActionProvider = mock[ArrivalRejectionMessageActionProvider]
+  private val mockArrivalP5MessageService = mock[ArrivalP5MessageService]
 
   lazy val arrivalNotificationErrorController: String =
-    controllers.arrivalP5.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5).url
+    controllers.arrivalP5.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
 
   private val mrnString = "MRNAB123"
-
-  def rejectionMessageAction(departureIdP5: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalP5MessageService)
-    reset(mockRejectionMessageActionProvider)
-
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -74,10 +67,8 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
           Seq.empty
         )
       )
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
-
-      rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
 
       val arrivalNotificationErrorP5ViewModel = new ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrnString)
 
@@ -103,10 +94,8 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
         )
       )
 
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
-
-      rejectionMessageAction(departureIdP5, mockArrivalP5MessageService)
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
 
       val request = FakeRequest(GET, arrivalNotificationErrorController)
 

@@ -18,7 +18,6 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import controllers.actions.{FakeGuaranteeRejectedAction, GuaranteeRejectedActionProvider}
 import generators.Generators
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
@@ -37,21 +36,18 @@ import scala.concurrent.Future
 
 class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockGuaranteeRejectedActionProvider = mock[GuaranteeRejectedActionProvider]
-  private val mockDepartureP5MessageService       = mock[DepartureP5MessageService]
-  private val mockDepartureCacheConnector         = mock[DepartureCacheConnector]
+  private val mockDepartureP5MessageService = mock[DepartureP5MessageService]
+  private val mockDepartureCacheConnector   = mock[DepartureCacheConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
-    reset(mockGuaranteeRejectedActionProvider)
     reset(mockDepartureCacheConnector)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .p5GuiceApplicationBuilder()
-      .overrides(bind[GuaranteeRejectedActionProvider].toInstance(mockGuaranteeRejectedActionProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockDepartureCacheConnector))
 
@@ -77,8 +73,8 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE055Data](any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(message))
 
-      when(mockGuaranteeRejectedActionProvider.apply(any(), any())) thenReturn
-        new FakeGuaranteeRejectedAction(departureIdP5, messageId, mockDepartureP5MessageService)
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
 
       when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
 

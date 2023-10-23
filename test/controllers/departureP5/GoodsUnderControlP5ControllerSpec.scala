@@ -17,7 +17,6 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import controllers.actions.{FakeGoodsUnderControlAction, GoodsUnderControlActionProvider}
 import generators.Generators
 import models.departureP5._
 import models.referenceData.CustomsOffice
@@ -44,15 +43,6 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
   private val mockGoodsUnderControlP5ViewModelProvider = mock[GoodsUnderControlP5ViewModelProvider]
   private val mockReferenceDataService                 = mock[ReferenceDataService]
   private val mockDepartureP5MessageService            = mock[DepartureP5MessageService]
-  private val mockGoodsUnderControlActionProvider      = mock[GoodsUnderControlActionProvider]
-
-  protected def goodsUnderControlAction(
-    departureIdP5: String,
-    mockDepartureP5MessageService: DepartureP5MessageService,
-    mockReferenceDataService: ReferenceDataService
-  ): Unit =
-    when(mockGoodsUnderControlActionProvider.apply(any())) thenReturn
-      new FakeGoodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
   private val sections = arbitrarySections.arbitrary.sample.value
 
@@ -61,8 +51,6 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
     reset(mockReferenceDataService)
     reset(mockDepartureP5MessageService)
     reset(mockGoodsUnderControlP5ViewModelProvider)
-    reset(mockGoodsUnderControlActionProvider)
-
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -79,7 +67,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
     "must return OK and the correct view for a GET when requestedDocuments" in {
       val goodsUnderControlRequestedDocumentsController: String =
-        controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5).url
+        controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5, messageId).url
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
@@ -89,12 +77,12 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
           Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
-
-      goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
       val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
       val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
@@ -114,7 +102,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
     "must return OK and the correct view for a GET when noRequestedDocuments" in {
 
       val goodsUnderControlNoRequestedDocumentsController: String =
-        controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureIdP5).url
+        controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureIdP5, messageId).url
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
@@ -124,12 +112,12 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
           None
         )
       )
-      when(mockDepartureP5MessageService.filterForMessage[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(message)))
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
-
-      goodsUnderControlAction(departureIdP5, mockDepartureP5MessageService, mockReferenceDataService)
 
       val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
       val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))

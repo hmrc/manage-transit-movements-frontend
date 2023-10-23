@@ -17,6 +17,7 @@
 package base
 
 import config.{FrontendAppConfig, PaginationAppConfig}
+import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import models.{DepartureId, LocalReferenceNumber}
 import org.scalatest._
@@ -43,6 +44,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val arrivalIdP5: String      = "62f4ebbb765ba8c2"
 
   val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"))
+
+  val departureReferenceNumbers = DepartureReferenceNumbers(lrn, None)
 
   def injector: Injector                               = app.injector
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")

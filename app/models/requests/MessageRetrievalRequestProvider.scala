@@ -16,11 +16,21 @@
 
 package models.requests
 
-import models.departureP5.IE009MessageData
+import models.departureP5.DepartureReferenceNumbers
 import play.api.mvc.{Request, WrappedRequest}
 
-case class DepartureCancelledRequest[A](
-  request: Request[A],
-  eoriNumber: String,
-  ie009MessageData: IE009MessageData
-) extends WrappedRequest[A](request)
+class MessageRetrievalRequestProvider[B] {
+
+  case class DepartureMessageRetrievalRequest[A](
+    request: Request[A],
+    eoriNumber: String,
+    messageData: B,
+    referenceNumbers: DepartureReferenceNumbers
+  ) extends WrappedRequest[A](request)
+
+  case class ArrivalMessageRetrievalRequest[A](
+    request: Request[A],
+    eoriNumber: String,
+    messageData: B
+  ) extends WrappedRequest[A](request)
+}
