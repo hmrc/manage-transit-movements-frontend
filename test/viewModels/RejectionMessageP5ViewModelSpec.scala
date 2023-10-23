@@ -55,7 +55,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = false).futureValue
 
       "must return correct section length" in {
         result.tableRows.length mustBe 1
@@ -80,13 +80,13 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       }
     }
 
-    "when there is multiple errors" - {
+    "when there is multiple errors or amendmentRejection" - {
       val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(functionalErrors, lrnString).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, lrnString, isAmendmentJourney = true).futureValue
 
       "must return correct title" in {
         result.title mustBe "Amend declaration errors"
@@ -113,7 +113,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = true).futureValue
 
       result.tableRows.length mustBe 2
       result.tableRows.head.size mustBe 2

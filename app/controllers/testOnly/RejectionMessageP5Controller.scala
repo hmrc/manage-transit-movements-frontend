@@ -48,7 +48,7 @@ class RejectionMessageP5Controller @Inject() (
   def buildView(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber, isAmendmentJourney: Boolean): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
-        if (request.isDeclarationAmendable || isAmendmentJourney) {
+        if (request.isDeclarationAmendable || isAmendmentJourney) { //TODO: Additional MRN caption for amendment once merged in
 
           val currentPage = page.getOrElse(1)
 
@@ -60,10 +60,10 @@ class RejectionMessageP5Controller @Inject() (
           )
 
           val rejectionMessageP5ViewModel =
-            viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value)
+            viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value, isAmendmentJourney)
 
           rejectionMessageP5ViewModel.map(
-            viewModel => Ok(view(viewModel, departureId, paginationViewModel, localReferenceNumber))
+            viewModel => Ok(view(viewModel, departureId, paginationViewModel, localReferenceNumber, request.isDeclarationAmendable))
           )
         } else {
           Future.successful(

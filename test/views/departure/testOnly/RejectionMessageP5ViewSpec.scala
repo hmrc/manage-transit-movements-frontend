@@ -42,7 +42,8 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
-  private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(tableRows), lrn.toString, false)
+  private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel =
+    new RejectionMessageP5ViewModel(Seq(tableRows), lrn.toString, false, isAmendmentJourney = false) //TODO when true
 
   val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
     totalNumberOfItems = sections.length,
@@ -54,16 +55,17 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   private def applyView(
     viewModel: RejectionMessageP5ViewModel,
-    paginationViewModel: ListPaginationViewModel
+    paginationViewModel: ListPaginationViewModel,
+    isDeclarationAmendable: Boolean
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[RejectionMessageP5View]
-      .apply(viewModel, departureId.toString, paginationViewModel, lrn)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, departureId.toString, paginationViewModel, lrn, isDeclarationAmendable)(fakeRequest, messages, frontendAppConfig)
 
-  override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel)
+  override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel, isDeclarationAmendable = true)
 
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
-    applyView(rejectionMessageP5ViewModel, paginationViewModel)
+    applyView(rejectionMessageP5ViewModel, paginationViewModel, isDeclarationAmendable = true)
 
   behave like pageWithTitle()
 

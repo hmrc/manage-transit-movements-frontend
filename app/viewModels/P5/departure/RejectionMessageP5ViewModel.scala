@@ -27,14 +27,14 @@ import utils.RejectionMessageP5MessageHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class RejectionMessageP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean) {
+case class RejectionMessageP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean, isAmendmentJourney: Boolean) {
   def title(implicit messages: Messages): String = messages("departure.ie056.message.title")
 
   def heading(implicit messages: Messages): String = messages("departure.ie056.message.heading")
 
   def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph1.prefix", lrn)
 
-  def paragraph1(implicit messages: Messages): String = if (multipleErrors) {
+  def paragraph1(implicit messages: Messages): String = if (multipleErrors || isAmendmentJourney) {
     messages(
       "departure.ie056.message.paragraph1.plural"
     )
@@ -47,7 +47,7 @@ case class RejectionMessageP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: Strin
   def paragraph2Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph2.prefix")
   def paragraph2Link(implicit messages: Messages): String   = messages("departure.ie056.message.paragraph2.link")
 
-  def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors) {
+  def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors || isAmendmentJourney) {
     messages("departure.ie056.message.paragraph2.plural.suffix")
   } else {
     messages("departure.ie056.message.paragraph2.singular.suffix")
@@ -67,13 +67,14 @@ object RejectionMessageP5ViewModel {
 
     def apply(
       functionalErrors: Seq[FunctionalError],
-      lrn: String
+      lrn: String,
+      isAmendmentJourney: Boolean
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[RejectionMessageP5ViewModel] = {
 
       val helper         = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
       val multipleErrors = functionalErrors.length > 1
 
-      helper.tableRows().map(RejectionMessageP5ViewModel(_, lrn, multipleErrors))
+      helper.tableRows().map(RejectionMessageP5ViewModel(_, lrn, multipleErrors, isAmendmentJourney))
     }
   }
 }
