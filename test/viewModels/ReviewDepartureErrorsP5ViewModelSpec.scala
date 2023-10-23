@@ -80,6 +80,31 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       }
     }
 
+    "when there is one error and amendmentJourney" - {
+
+      val errors = Seq(FunctionalError("14", "12", "MRN incorrect", None))
+
+      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+
+      val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = true).futureValue
+
+      result.paragraph1 mustBe s"There is a problem with this declaration. Review the error and contact the helpdesk to discuss further."
+
+    }
+
+    "when there is multiple errors and amendmentJourney" - {
+      val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+
+      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+
+      val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(functionalErrors, lrnString, isAmendmentJourney = true).futureValue
+
+      result.paragraph1 mustBe s"There is a problem with this declaration. Review the errors and contact the helpdesk to discuss further."
+
+    }
+
     "when there is multiple errors" - {
       val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
@@ -119,6 +144,5 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       result.tableRows.length mustBe 2
       result.tableRows.size mustBe 2
     }
-
   }
 }
