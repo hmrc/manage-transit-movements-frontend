@@ -17,8 +17,8 @@
 package viewModels.P5.arrival
 
 import config.FrontendAppConfig
+import models.ArrivalRejectionType
 import models.ArrivalRejectionType.{ArrivalNotificationRejection, UnloadingRemarkRejection}
-import models.{ArrivalId, ArrivalRejectionType}
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
 import viewModels.ViewMovementAction
@@ -79,7 +79,7 @@ object ArrivalStatusP5ViewModel {
             "movement.status.P5.action.unloadingPermission.unloadingRemarks"
           ),
           ViewMovementAction(
-            controllers.testOnly.routes.UnloadingPermissionController.getUnloadingPermissionDocument(message.messageId, arrivalId).url,
+            controllers.testOnly.routes.UnloadingPermissionController.getUnloadingPermissionDocument(arrivalId, message.messageId).url,
             "movement.status.P5.action.unloadingPermission.pdf"
           )
         )

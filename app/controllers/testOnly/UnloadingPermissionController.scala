@@ -18,9 +18,7 @@ package controllers.testOnly
 
 import connectors.ManageDocumentsConnector
 import controllers.actions.Actions
-import controllers.routes
 import play.api.i18n.I18nSupport
-import play.api.libs.ws.WSResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -33,31 +31,12 @@ class UnloadingPermissionController @Inject() (
   connector: ManageDocumentsConnector
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
+    with DocumentController
     with I18nSupport {
 
-  def getUnloadingPermissionDocument(messageId: String, arrivalId: String): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
+  def getUnloadingPermissionDocument(arrivalId: String, messageId: String): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
     implicit request =>
-      connector.getUnloadingPermission(messageId, arrivalId).map {
-        result =>
-          result.status match {
-            case OK =>
-              Ok(result.bodyAsBytes.toArray).withHeaders(headers(result): _*)
-            case _ =>
-              Redirect(routes.ErrorController.technicalDifficulties())
-          }
-      }
-  }
-
-  private def headers(result: WSResponse): Seq[(String, String)] = {
-    def header(key: String): Seq[(String, String)] =
-      result.headers
-        .get(key)
-        .flatMap {
-          _.headOption.map((key, _))
-        }
-        .toSeq
-
-    header(CONTENT_DISPOSITION) ++ header(CONTENT_TYPE)
+      connector.getUnloadingPermission(arrivalId, messageId).map(stream)
   }
 
 }
