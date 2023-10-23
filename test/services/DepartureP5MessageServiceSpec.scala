@@ -27,7 +27,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global

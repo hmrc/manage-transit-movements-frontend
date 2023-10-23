@@ -20,7 +20,6 @@ import controllers.actions._
 import models.departureP5.IE035Data
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RecoveryNotificationViewModel.RecoveryNotificationViewModelProvider
 import views.html.departureP5.RecoveryNotificationView

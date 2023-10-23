@@ -18,7 +18,7 @@ package models.arrivalP5
 
 import models.ArrivalRejectionType
 
-trait ArrivalMovementAndMessage {
+sealed trait ArrivalMovementAndMessage {
   val arrivalMovement: ArrivalMovement
   val latestArrivalMessage: LatestArrivalMessage
 }

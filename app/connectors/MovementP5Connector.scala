@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.components.TableDetail
+package connectors
 
-@this(tableDetail: TableDetail)
+import logging.Logging
+import play.api.libs.json.Reads
+import uk.gov.hmrc.http.{HttpReads, HttpReadsTry, HttpResponse}
 
-@(tables: Seq[(String, String, Table)])
+trait MovementP5Connector extends HttpReadsTry with Logging {
 
-@for(((title, grn, table), index) <- tables.zipWithIndex) {
-  @tableDetail(title, grn, table, index == 0)
+  def messageModelHttpReads[T](implicit reads: Reads[T]): HttpReads[T] =
+    (_: String, _: String, response: HttpResponse) =>
+      response.json
+        .validate[T]
+        .fold(
+          errors => throw new Exception(s"Failed to read message: ${errors.mkString}"),
+          identity
+        )
+
 }

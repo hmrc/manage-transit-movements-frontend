@@ -28,7 +28,6 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

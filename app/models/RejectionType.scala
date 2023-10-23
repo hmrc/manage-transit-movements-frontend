@@ -67,6 +67,7 @@ object RejectionType {
     case JsString(RejectionOfInformation.code)            => JsSuccess(RejectionOfInformation)
     case JsString(PresentationNotificationRejection.code) => JsSuccess(PresentationNotificationRejection)
     case JsString(code)                                   => JsSuccess(Other(code))
+    case _                                                => JsError("Failed to read rejection type")
   }
 
   implicit val writes: Writes[RejectionType] = Writes {

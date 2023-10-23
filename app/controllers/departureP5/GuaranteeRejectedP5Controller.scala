@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
 import controllers.actions._
 import models.LocalReferenceNumber
-import models.departureP5.{IE055Data, IE060Data}
+import models.departureP5.IE055Data
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
