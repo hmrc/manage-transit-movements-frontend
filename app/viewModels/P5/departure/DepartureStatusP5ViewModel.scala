@@ -18,7 +18,7 @@ package viewModels.P5.departure
 
 import config.FrontendAppConfig
 import models.RejectionType
-import models.RejectionType.{DeclarationRejection, InvalidationRejection}
+import models.RejectionType.{AmendmentRejection, DeclarationRejection, InvalidationRejection}
 import models.LocalReferenceNumber
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
@@ -269,6 +269,11 @@ object DepartureStatusP5ViewModel {
       val (key, href) = rejectionType match {
         case Some(DeclarationRejection) if isDeclarationAmendable =>
           ("amendDeclaration", controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+
+        case Some(AmendmentRejection) =>
+          ("amendDeclaration",
+           controllers.testOnly.routes.RejectionMessageP5Controller.amendmentRejectionOnPageLoad(None, departureId, localReferenceNumber).url
+          )
 
         case Some(DeclarationRejection) if xPaths.isEmpty =>
           (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)

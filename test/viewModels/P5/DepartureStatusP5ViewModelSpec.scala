@@ -19,6 +19,7 @@ package viewModels.P5
 import base.SpecBase
 import generators.Generators
 import models.RejectionType
+import models.RejectionType.AmendmentRejection
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -344,6 +345,41 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
     }
 
     "when given Message with head of rejectedByOfficeOfDeparture" - {
+
+      "when BusinessRejectionType is AmendmentRejection" in {
+
+        val movementAndMessage = RejectedMovementAndMessage(
+          departureIdP5,
+          lrn,
+          LocalDateTime.now(),
+          LatestDepartureMessage(
+            DepartureMessage(
+              "messageId",
+              LocalDateTime.now(),
+              RejectedByOfficeOfDeparture,
+              "body/path"
+            ),
+            "ie015MessageId"
+          ),
+          rejectionType = Some(AmendmentRejection),
+          isDeclarationAmendable = true,
+          xPaths = Seq("body/path")
+        )
+
+        val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = DepartureStatusP5ViewModel(
+          "movement.status.P5.rejectedByOfficeOfDeparture",
+          Seq(
+            ViewMovementAction(
+              controllers.testOnly.routes.RejectionMessageP5Controller.amendmentRejectionOnPageLoad(None, departureIdP5, lrn).url,
+              "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
+            )
+          )
+        )
+
+        result mustBe expectedResult
+      }
 
       "and head of tail is IE015" - {
 

@@ -45,10 +45,10 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+  def buildView(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber, isAmendmentJourney: Boolean): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
-        if (request.isDeclarationAmendable) {
+        if (request.isDeclarationAmendable || isAmendmentJourney) {
 
           val currentPage = page.getOrElse(1)
 
@@ -71,6 +71,12 @@ class RejectionMessageP5Controller @Inject() (
           )
         }
     }
+
+  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+    buildView(page, departureId, localReferenceNumber, isAmendmentJourney = false)
+
+  def amendmentRejectionOnPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+    buildView(page, departureId, localReferenceNumber, isAmendmentJourney = true)
 
   def onAmend(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {

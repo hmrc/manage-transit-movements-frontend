@@ -59,9 +59,12 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
     )
 
   lazy val rejectionMessageController: String = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url
-  lazy val rejectionMessageOnAmend: String    = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5, lrn).url
-  val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
-  val tableRow: TableRow                      = arbitraryTableRow.arbitrary.sample.value
+
+  lazy val rejectionMessageControllerAmendment: String =
+    controllers.testOnly.routes.RejectionMessageP5Controller.amendmentRejectionOnPageLoad(None, departureIdP5, lrn).url
+  lazy val rejectionMessageOnAmend: String = controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureIdP5, lrn).url
+  val sections: Seq[Section]               = arbitrarySections.arbitrary.sample.value
+  val tableRow: TableRow                   = arbitraryTableRow.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -110,6 +113,86 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       )
 
       val request = FakeRequest(GET, rejectionMessageController)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+
+      val view = injector.instanceOf[RejectionMessageP5View]
+
+      contentAsString(result) mustEqual
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn)(request, messages, frontendAppConfig).toString
+    }
+
+    "must return OK and the correct view for a GET when amendment journey and declaration is amendable" in {
+      val message: IE056Data = IE056Data(
+        IE056MessageData(
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
+          CustomsOfficeOfDeparture("AB123"),
+          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+        )
+      )
+      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(Some(message)))
+      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+      when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
+      when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
+        .thenReturn(Future.successful(None))
+
+      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+
+      val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true)
+
+      val paginationViewModel = ListPaginationViewModel(
+        totalNumberOfItems = message.data.functionalErrors.length,
+        currentPage = 1,
+        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        additionalParams = Seq()
+      )
+
+      val request = FakeRequest(GET, rejectionMessageControllerAmendment)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+
+      val view = injector.instanceOf[RejectionMessageP5View]
+
+      contentAsString(result) mustEqual
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn)(request, messages, frontendAppConfig).toString
+    }
+
+    "must return OK and the correct view for a GET when amendment journey and declaration is not amendable" in {
+      val message: IE056Data = IE056Data(
+        IE056MessageData(
+          TransitOperationIE056(Some("MRNCD3232"), Some("LRNAB123"), rejectionType),
+          CustomsOfficeOfDeparture("AB123"),
+          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+        )
+      )
+      when(mockDepartureP5MessageService.filterForMessage[IE056Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(Some(message)))
+      when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
+      when(mockRejectionMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
+      when(mockDepartureP5MessageService.getSpecificMessageMetaData(any(), eqTo(AllocatedMRN))(any(), any()))
+        .thenReturn(Future.successful(None))
+
+      rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
+
+      val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true)
+
+      val paginationViewModel = ListPaginationViewModel(
+        totalNumberOfItems = message.data.functionalErrors.length,
+        currentPage = 1,
+        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+        href = controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn).url,
+        additionalParams = Seq()
+      )
+
+      val request = FakeRequest(GET, rejectionMessageControllerAmendment)
 
       val result = route(app, request).value
 
