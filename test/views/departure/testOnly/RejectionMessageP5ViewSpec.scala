@@ -43,7 +43,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
   private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel =
-    new RejectionMessageP5ViewModel(Seq(tableRows), lrn.toString, false, isAmendmentJourney = false) //TODO when true
+    new RejectionMessageP5ViewModel(Seq(tableRows), lrn.toString, false, isAmendmentJourney = false)
 
   val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
     totalNumberOfItems = sections.length,
