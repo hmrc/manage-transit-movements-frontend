@@ -122,7 +122,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn, isDeclarationAmendable = true)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn)(request, messages, frontendAppConfig).toString
     }
 
     "must return OK and the correct view for a GET when amendment journey and declaration is amendable" in {
@@ -162,7 +162,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn, isDeclarationAmendable = true)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn)(request, messages, frontendAppConfig).toString
     }
 
     "must return OK and the correct view for a GET when amendment journey and declaration is not amendable" in {
@@ -202,10 +202,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn, isDeclarationAmendable = false)(request,
-                                                                                                                   messages,
-                                                                                                                   frontendAppConfig
-        ).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, lrn)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to session expired when declaration amendable is false" in {

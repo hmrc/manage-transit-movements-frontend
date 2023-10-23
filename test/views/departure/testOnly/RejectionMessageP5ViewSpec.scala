@@ -55,17 +55,16 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   private def applyView(
     viewModel: RejectionMessageP5ViewModel,
-    paginationViewModel: ListPaginationViewModel,
-    isDeclarationAmendable: Boolean
+    paginationViewModel: ListPaginationViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[RejectionMessageP5View]
-      .apply(viewModel, departureId.toString, paginationViewModel, lrn, isDeclarationAmendable)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, departureId.toString, paginationViewModel, lrn)(fakeRequest, messages, frontendAppConfig)
 
-  override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel, isDeclarationAmendable = true)
+  override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel)
 
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
-    applyView(rejectionMessageP5ViewModel, paginationViewModel, isDeclarationAmendable = true)
+    applyView(rejectionMessageP5ViewModel, paginationViewModel)
 
   behave like pageWithTitle()
 

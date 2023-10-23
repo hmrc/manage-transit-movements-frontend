@@ -18,13 +18,16 @@ package viewModels.P5.departure
 
 import play.api.i18n.Messages
 
-case class DepartureDeclarationErrorsP5ViewModel(lrn: String) {
+case class DepartureDeclarationErrorsP5ViewModel(lrn: String, isAmendmentJourney: Boolean) {
   def title(implicit messages: Messages): String = messages("departure.declaration.errors.message.title")
 
   def heading(implicit messages: Messages): String = messages("departure.declaration.errors.message.heading")
 
-  def paragraph1(implicit messages: Messages): String =
+  def paragraph1(implicit messages: Messages): String = if (isAmendmentJourney) {
+    messages("departure.declaration.errors.message.amendment")
+  } else {
     messages("departure.declaration.errors.message.noerrors")
+  }
 
   def paragraph3Prefix(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph3.prefix")
   def paragraph3Suffix(implicit messages: Messages): String = messages("departure.declaration.errors.message.paragraph3.suffix")
@@ -37,7 +40,7 @@ case class DepartureDeclarationErrorsP5ViewModel(lrn: String) {
 object DepartureDeclarationErrorsP5ViewModel {
 
   class DepartureDeclarationErrorsP5ViewModelProvider {
-    def apply(lrn: String): DepartureDeclarationErrorsP5ViewModel = DepartureDeclarationErrorsP5ViewModel(lrn)
+    def apply(lrn: String, isAmendmentJourney: Boolean): DepartureDeclarationErrorsP5ViewModel = DepartureDeclarationErrorsP5ViewModel(lrn, isAmendmentJourney)
   }
 
 }

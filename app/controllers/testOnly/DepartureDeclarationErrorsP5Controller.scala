@@ -39,11 +39,11 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+  def onPageLoad(departureId: String, localReferenceNumber: LocalReferenceNumber, isAmendmentJourney: Boolean): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)) {
       implicit request =>
         if (request.ie056MessageData.functionalErrors.isEmpty) {
-          Ok(view(viewModelProvider.apply(request.lrn)))
+          Ok(view(viewModelProvider.apply(request.lrn, isAmendmentJourney))) // TODO: Add MRN when amendment journey
         } else {
           Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }

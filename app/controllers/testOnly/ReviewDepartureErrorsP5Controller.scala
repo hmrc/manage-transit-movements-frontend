@@ -40,7 +40,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber): Action[AnyContent] =
+  def onPageLoad(page: Option[Int], departureId: String, localReferenceNumber: LocalReferenceNumber, isAmendmentJourney: Boolean): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)).async {
       implicit request =>
         val currentPage = page.getOrElse(1)
@@ -49,12 +49,12 @@ class ReviewDepartureErrorsP5Controller @Inject() (
           totalNumberOfItems = request.ie056MessageData.functionalErrors.length,
           currentPage = currentPage,
           numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-          href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url
+          href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber, isAmendmentJourney).url
         )
         val rejectionMessageP5ViewModel =
-          viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value)
+          viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value, isAmendmentJourney)
         rejectionMessageP5ViewModel.map(
-          viewModel => Ok(view(viewModel, departureId, paginationViewModel))
+          viewModel => Ok(view(viewModel, departureId, paginationViewModel)) // TODO: Add MRN when amendment journey
         )
     }
 }

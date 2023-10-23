@@ -36,7 +36,7 @@ class DepartureP5MessageService @Inject() (
   def isErrorAmendable(
     departureId: String,
     lrn: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Option[RejectionType], Boolean, Seq[String])] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Option[RejectionType], Boolean, Seq[String], Boolean)] =
     for {
       message <- filterForMessage[IE056Data](departureId, RejectedByOfficeOfDeparture)
       rejectionType = message.map(_.data.transitOperation.businessRejectionType)
@@ -44,7 +44,8 @@ class DepartureP5MessageService @Inject() (
       isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false)) {
         cacheConnector.isDeclarationAmendable(lrn, _)
       }
-    } yield (rejectionType, isDeclarationAmendable, xPaths.getOrElse(Seq.empty))
+      doesCacheExistForLrn <- cacheConnector.doesDeclarationExist(lrn)
+    } yield (rejectionType, isDeclarationAmendable, xPaths.getOrElse(Seq.empty), doesCacheExistForLrn)
 
   def getMessagesForAllMovements(
     departureMovements: DepartureMovements
@@ -74,7 +75,7 @@ class DepartureP5MessageService @Inject() (
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>
                 isErrorAmendable(movement.departureId, movement.localReferenceNumber.value).map {
-                  case (rejectionType, isDeclarationAmendable, xPaths) =>
+                  case (rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn) =>
                     RejectedMovementAndMessage(
                       movement.departureId,
                       movement.localReferenceNumber,
@@ -82,7 +83,8 @@ class DepartureP5MessageService @Inject() (
                       message,
                       rejectionType,
                       isDeclarationAmendable,
-                      xPaths
+                      xPaths,
+                      doesCacheExistForLrn
                     )
                 }
               case DeclarationAmendmentAccepted | GoodsUnderControl | DeclarationSent =>

@@ -63,7 +63,7 @@ class RejectionMessageP5Controller @Inject() (
             viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value, isAmendmentJourney)
 
           rejectionMessageP5ViewModel.map(
-            viewModel => Ok(view(viewModel, departureId, paginationViewModel, localReferenceNumber, request.isDeclarationAmendable))
+            viewModel => Ok(view(viewModel, departureId, paginationViewModel, localReferenceNumber))
           )
         } else {
           Future.successful(

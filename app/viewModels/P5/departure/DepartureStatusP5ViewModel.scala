@@ -32,8 +32,8 @@ object DepartureStatusP5ViewModel {
     movementAndMessage match {
       case PrelodgedMovementAndMessage(departureId, localReferenceNumber, _, message, isPrelodged) =>
         preLodgeStatus(departureId, localReferenceNumber, isPrelodged).apply(message.latestMessage)
-      case RejectedMovementAndMessage(departureId, localReferenceNumber, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
-        rejectedStatus(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber).apply(message.latestMessage)
+      case RejectedMovementAndMessage(departureId, localReferenceNumber, _, message, rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn) =>
+        rejectedStatus(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber, doesCacheExistForLrn).apply(message.latestMessage)
       case OtherMovementAndMessage(departureId, localReferenceNumber, _, message) =>
         currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber).apply(message.latestMessage)
     }
@@ -43,10 +43,11 @@ object DepartureStatusP5ViewModel {
     rejectionType: Option[RejectionType],
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String],
-    localReferenceNumber: LocalReferenceNumber
+    localReferenceNumber: LocalReferenceNumber,
+    doesCacheExistForLrn: Boolean
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
-      rejectedByOfficeOfDeparture(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber)
+      rejectedByOfficeOfDeparture(departureId, rejectionType, isDeclarationAmendable, xPaths, localReferenceNumber, doesCacheExistForLrn)
     ).reduce(_ orElse _)
 
   private def preLodgeStatus(departureId: String, localReferenceNumber: LocalReferenceNumber, isPrelodge: Boolean)(implicit
@@ -262,7 +263,8 @@ object DepartureStatusP5ViewModel {
     rejectionType: Option[RejectionType],
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String],
-    localReferenceNumber: LocalReferenceNumber
+    localReferenceNumber: LocalReferenceNumber,
+    doesCacheExistForLrn: Boolean
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
 
     case message if message.messageType == RejectedByOfficeOfDeparture =>
@@ -272,16 +274,30 @@ object DepartureStatusP5ViewModel {
            controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber, isAmendmentJourney = false).url
           )
 
-        case Some(AmendmentRejection) =>
+        case Some(AmendmentRejection) if doesCacheExistForLrn =>
           ("amendDeclaration",
            controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, localReferenceNumber, isAmendmentJourney = true).url
           )
 
+        case Some(AmendmentRejection) if xPaths.isEmpty =>
+          (errorsActionText(xPaths),
+           controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber, isAmendmentJourney = true).url
+          )
+
+        case Some(AmendmentRejection) =>
+          (errorsActionText(xPaths),
+           controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber, isAmendmentJourney = true).url
+          )
+
         case Some(DeclarationRejection) if xPaths.isEmpty =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths),
+           controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber, isAmendmentJourney = false).url
+          )
 
         case Some(DeclarationRejection) =>
-          (errorsActionText(xPaths), controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber).url)
+          (errorsActionText(xPaths),
+           controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, localReferenceNumber, isAmendmentJourney = false).url
+          )
 
         case Some(InvalidationRejection) if xPaths.isEmpty =>
           (errorsActionText(xPaths), controllers.testOnly.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, localReferenceNumber).url)
