@@ -35,7 +35,7 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
   private val sections: Seq[Section]    = arbitrary[List[Section]].sample.value
 
   private val reviewRejectionMessageP5ViewModel =
-    new ReviewDepartureErrorsP5ViewModel(Seq(tableRows), lrn.toString, false)
+    new ReviewDepartureErrorsP5ViewModel(Seq(tableRows), lrn.toString, false, isAmendmentJourney = false)
 
   override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
 
@@ -46,7 +46,7 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
     totalNumberOfItems = sections.length,
     currentPage = 1,
     numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId.toString, lrn).url,
+    href = controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId.toString, lrn, isAmendmentJourney = false).url,
     additionalParams = Seq()
   )
 
@@ -75,7 +75,9 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
 
   behave like pageWithCaption(s"LRN: $lrn")
 
-  behave like pageWithPagination(controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId.toString, lrn).url)
+  behave like pageWithPagination(
+    controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId.toString, lrn, isAmendmentJourney = false).url
+  )
 
   behave like pageWithTable()
 

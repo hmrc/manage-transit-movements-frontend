@@ -40,8 +40,10 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
   private val mockRejectionMessageActionProvider        = mock[DepartureRejectionMessageActionProvider]
-  lazy val departureDeclarationErrorsController: String = controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, lrn).url
-  private val rejectionType: RejectionType              = RejectionType.DeclarationRejection
+
+  lazy val departureDeclarationErrorsController: String =
+    controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, lrn, isAmendmentJourney = false).url
+  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   def rejectionMessageAction(departureIdP5: String, mockDepartureP5MessageService: DepartureP5MessageService, mockCacheService: DepartureCacheConnector): Unit =
     when(mockRejectionMessageActionProvider.apply(any(), any())) thenReturn new FakeDepartureRejectionMessageAction(
@@ -81,7 +83,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
 
       rejectionMessageAction(departureIdP5, mockDepartureP5MessageService, mockCacheService)
 
-      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrn.value)
+      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrn.value, isAmendmentJourney = false)
 
       val request = FakeRequest(GET, departureDeclarationErrorsController)
 

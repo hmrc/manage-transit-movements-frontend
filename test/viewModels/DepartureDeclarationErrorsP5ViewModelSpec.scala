@@ -51,7 +51,7 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
       when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new DepartureDeclarationErrorsP5ViewModelProvider()
-      val result            = viewModelProvider.apply(lrnString)
+      val result            = viewModelProvider.apply(lrnString, isAmendmentJourney = false)
 
       "must return correct title" in {
         result.title mustBe "Declaration errors"

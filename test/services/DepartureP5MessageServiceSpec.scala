@@ -98,6 +98,10 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             Future.successful(DepartureMessages(Nil))
           )
 
+          when(mockCacheConnector.doesDeclarationExist(any())(any())).thenReturn(
+            Future.successful(true)
+          )
+
           val result: Seq[DepartureMovementAndMessage] = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
 
           val expectedResult = Seq(
@@ -177,6 +181,10 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
           when(mockCacheConnector.isDeclarationAmendable(any(), any())(any())).thenReturn(
             Future.successful(isDeclarationAmendable)
+          )
+
+          when(mockCacheConnector.doesDeclarationExist(any())(any())).thenReturn(
+            Future.successful(true)
           )
 
           val result = departureP5MessageService.getMessagesForAllMovements(departureMovements).futureValue
@@ -381,6 +389,10 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           Future.successful(isDeclarationAmendable)
         )
 
+        when(mockCacheConnector.doesDeclarationExist(any())(any())).thenReturn(
+          Future.successful(true)
+        )
+
         val result = departureP5MessageService.getLatestMessagesForMovement(departureMovements).futureValue
 
         val expectedResult: Seq[MovementAndMessage] = Seq(
@@ -391,7 +403,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             latestDepartureMessage,
             Some(rejectionType),
             isDeclarationAmendable = isDeclarationAmendable,
-            xPaths = ie056.data.functionalErrors.map(_.errorPointer)
+            xPaths = ie056.data.functionalErrors.map(_.errorPointer),
+            doesCacheExistForLrn = true
           )
         )
 

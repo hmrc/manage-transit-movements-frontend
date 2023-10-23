@@ -28,7 +28,8 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   override val prefix: String = "departure.declaration.errors.message"
   val lrnString               = "LRNAB123"
 
-  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString)
+  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel =
+    new DepartureDeclarationErrorsP5ViewModel(lrnString, isAmendmentJourney = false)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector

@@ -55,7 +55,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = false).futureValue
 
       "must return correct section length" in {
         result.tableRows.length mustBe 1
@@ -86,7 +86,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(functionalErrors, lrnString).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, lrnString, isAmendmentJourney = false).futureValue
 
       "must return correct title" in {
         result.title mustBe "Review declaration errors"
@@ -114,7 +114,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = false).futureValue
 
       result.tableRows.length mustBe 2
       result.tableRows.size mustBe 2
