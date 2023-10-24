@@ -17,6 +17,7 @@
 package views.departure.testOnly
 
 import generators.Generators
+import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
@@ -25,7 +26,6 @@ import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departure.TestOnly.RejectionMessageP5View
-
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
@@ -120,5 +120,15 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
     "make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
+
+  "must not render table headings when no table rows" in {
+
+    val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel =
+      new RejectionMessageP5ViewModel(Nil, lrn.toString, false, isAmendmentJourney = true)
+
+    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel))
+    assertElementDoesNotExist(doc, "govuk-table__head")
+
+  }
 
 }

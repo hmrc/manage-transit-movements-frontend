@@ -20,12 +20,12 @@
 @import viewModels.pagination.PaginationViewModel
 
 @this(
-    mainTemplate: MainTemplate,
-    heading: Heading,
-    table: Table,
-    button: Button,
-    formHelper: FormWithCSRF,
-    pagination: Pagination
+        mainTemplate: MainTemplate,
+        heading: Heading,
+        table: Table,
+        button: Button,
+        formHelper: FormWithCSRF,
+        pagination: Pagination
 )
 @(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, paginationViewModel: PaginationViewModel, localReferenceNumber: LocalReferenceNumber)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
@@ -43,10 +43,13 @@
 
         @pagination(paginationViewModel, None)
 
-        @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
+        @if(rejectionMessageP5ViewModel.tableRows.nonEmpty) {
+            @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
+        }
 
 
-        <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
+        <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a>
+            @rejectionMessageP5ViewModel.paragraph2Suffix</p>
 
         @button(
             attributes = Map("id" -> "submit"),
@@ -54,5 +57,6 @@
             href = Some(controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureId, localReferenceNumber).url)
         )
 
-        <p id="create-another-declaration" class="govuk-body">Or <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
+        <p id="create-another-declaration" class="govuk-body">
+            Or <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
     }
