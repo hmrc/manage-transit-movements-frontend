@@ -17,7 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import models.{ArrivalId, DepartureId}
+import models.{ArrivalId, DepartureId, Enrolment}
 import play.api.Configuration
 
 @Singleton
@@ -63,6 +63,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val loginUrl: String                          = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String                  = configuration.get[String]("urls.loginContinue")
   lazy val eccEnrolmentSplashPage: String            = configuration.get[String]("urls.eccEnrolmentSplashPage")
+  lazy val enrolmentGuidancePage: String             = configuration.get[String]("urls.enrolnentGuidance")
   lazy val departureBaseUrl: String                  = configuration.get[Service]("microservice.services.departure").baseUrl
   lazy val departureUrl: String                      = configuration.get[Service]("microservice.services.departure").fullServiceUrl
   lazy val testSupportUrl: String                    = configuration.get[Service]("microservice.services.test-support").baseUrl
@@ -70,10 +71,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val destinationUrl: String                    = configuration.get[Service]("microservice.services.destination").fullServiceUrl
   lazy val routerUrl: String                         = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
   lazy val enrolmentProxyUrl: String                 = configuration.get[Service]("microservice.services.enrolment-store-proxy").fullServiceUrl
-  lazy val legacyEnrolmentKey: String                = configuration.get[String]("keys.legacy.enrolmentKey")
-  lazy val legacyEnrolmentIdentifierKey: String      = configuration.get[String]("keys.legacy.enrolmentIdentifierKey")
-  lazy val newEnrolmentKey: String                   = configuration.get[String]("keys.enrolmentKey")
-  lazy val newEnrolmentIdentifierKey: String         = configuration.get[String]("keys.enrolmentIdentifierKey")
+  val newEnrolment: Enrolment                        = configuration.get[Enrolment]("enrolments.new")
+  val legacyEnrolment: Enrolment                     = configuration.get[Enrolment]("enrolments.legacy")
   lazy val manageService: String                     = configuration.get[String]("appName")
   lazy val commonTransitConventionTradersUrl: String = configuration.get[Service]("microservice.services.common-transit-convention-traders").fullServiceUrl
   lazy val transitMovementsUrl: String               = configuration.get[Service]("microservice.services.transit-movements").fullServiceUrl
