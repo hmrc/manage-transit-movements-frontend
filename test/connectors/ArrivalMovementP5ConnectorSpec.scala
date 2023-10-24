@@ -21,10 +21,9 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.ArrivalRejectionType.ArrivalNotificationRejection
-import models.{ArrivalRejectionType, Availability, RejectionType}
 import models.arrivalP5._
 import models.departureP5.FunctionalError
+import models.{ArrivalRejectionType, Availability}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder

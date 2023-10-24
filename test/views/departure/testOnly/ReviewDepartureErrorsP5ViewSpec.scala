@@ -17,6 +17,7 @@
 package views.departure.testOnly
 
 import generators.Generators
+import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -52,11 +53,12 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
 
   private def applyView(
     viewModel: ReviewDepartureErrorsP5ViewModel,
-    paginationViewModel: ListPaginationViewModel
+    paginationViewModel: ListPaginationViewModel,
+    isAmendmentJourney: Boolean = false
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewDepartureErrorsP5View]
-      .apply(viewModel, departureId.toString, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, departureId.toString, paginationViewModel, isAmendmentJourney)(fakeRequest, messages, frontendAppConfig)
 
   override def view: HtmlFormat.Appendable = applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
@@ -116,4 +118,9 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
     "Make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
+
+  "must not render add another declaration link when isAmendmentJourney is true" in {
+    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true))
+    assertNotRenderedById(doc, "departure-link")
+  }
 }

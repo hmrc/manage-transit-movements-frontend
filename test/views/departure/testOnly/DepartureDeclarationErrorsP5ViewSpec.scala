@@ -17,6 +17,7 @@
 package views.departure.testOnly
 
 import generators.Generators
+import org.jsoup.nodes.Document
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
 import viewModels.sections.Section
@@ -34,7 +35,12 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[DepartureDeclarationErrorsP5View]
-      .apply(departureDeclarationErrorsP5ViewModel)(fakeRequest, messages, frontendAppConfig)
+      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney = false)(fakeRequest, messages, frontendAppConfig)
+
+  def viewWithSpecificAmendment(sections: Seq[Section], isAmendmentJourney: Boolean): HtmlFormat.Appendable =
+    injector
+      .instanceOf[DepartureDeclarationErrorsP5View]
+      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney)(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 
@@ -79,5 +85,11 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
     "Make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
+
+  "must not render add another declaration link when isAmendmentJourney is true" in {
+    val doc: Document = parseView(viewWithSpecificAmendment(sections, isAmendmentJourney = true))
+    assertNotRenderedById(doc, "create-another-declaration")
+
+  }
 
 }

@@ -17,6 +17,7 @@
 package views.departure.testOnly
 
 import generators.Generators
+import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
@@ -25,7 +26,6 @@ import viewModels.pagination.ListPaginationViewModel
 import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departure.TestOnly.RejectionMessageP5View
-
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
@@ -55,11 +55,12 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   private def applyView(
     viewModel: RejectionMessageP5ViewModel,
-    paginationViewModel: ListPaginationViewModel
+    paginationViewModel: ListPaginationViewModel,
+    isAmendmentJourney: Boolean = false
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[RejectionMessageP5View]
-      .apply(viewModel, departureId.toString, paginationViewModel, lrn)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, departureId.toString, paginationViewModel, lrn, isAmendmentJourney)(fakeRequest, messages, frontendAppConfig)
 
   override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel)
 
@@ -120,5 +121,10 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
     "make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
+
+  "must not render add another declaration link when isAmendmentJourney is true" in {
+    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true))
+    assertNotRenderedById(doc, "departure-link")
+  }
 
 }

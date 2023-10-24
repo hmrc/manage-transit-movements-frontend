@@ -54,7 +54,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
         val rejectionMessageP5ViewModel =
           viewModelProvider.apply(request.ie056MessageData.pagedFunctionalErrors(currentPage), localReferenceNumber.value, isAmendmentJourney)
         rejectionMessageP5ViewModel.map(
-          viewModel => Ok(view(viewModel, departureId, paginationViewModel)) // TODO: Add MRN when amendment journey
+          viewModel => Ok(view(viewModel, departureId, paginationViewModel, isAmendmentJourney)) // TODO: Add MRN when amendment journey
         )
     }
 }

@@ -43,7 +43,7 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
     (Action andThen actions.checkP5Switch() andThen rejectionMessageAction(departureId, localReferenceNumber)) {
       implicit request =>
         if (request.ie056MessageData.functionalErrors.isEmpty) {
-          Ok(view(viewModelProvider.apply(request.lrn, isAmendmentJourney))) // TODO: Add MRN when amendment journey
+          Ok(view(viewModelProvider.apply(request.lrn, isAmendmentJourney), isAmendmentJourney)) // TODO: Add MRN when amendment journey
         } else {
           Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }

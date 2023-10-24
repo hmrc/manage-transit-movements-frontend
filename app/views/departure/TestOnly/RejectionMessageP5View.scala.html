@@ -27,7 +27,7 @@
     formHelper: FormWithCSRF,
     pagination: Pagination
 )
-@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, paginationViewModel: PaginationViewModel, localReferenceNumber: LocalReferenceNumber)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, paginationViewModel: PaginationViewModel, localReferenceNumber: LocalReferenceNumber, isAmendmentJourney: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,
@@ -54,5 +54,7 @@
             href = Some(controllers.testOnly.routes.RejectionMessageP5Controller.onAmend(departureId, localReferenceNumber).url)
         )
 
-        <p id="create-another-declaration" class="govuk-body">Or <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
-    }
+        @if(!isAmendmentJourney){
+            <p id="create-another-declaration" class="govuk-body">Or <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
+            }
+}
