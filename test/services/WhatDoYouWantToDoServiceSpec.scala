@@ -134,7 +134,7 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
         when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
 
         whatDoYouWantToDoService.fetchArrivalsUrl() mustBe
-          controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
+          controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
       }
 
       "must get correct URL when phase 5 disabled" in {
@@ -150,7 +150,7 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
         when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
 
         whatDoYouWantToDoService.fetchDeparturesUrl() mustBe
-          controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+          controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
       }
 
       "must get correct URL when phase 5 disabled" in {

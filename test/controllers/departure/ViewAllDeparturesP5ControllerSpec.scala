@@ -36,7 +36,7 @@ import services.DepartureP5MessageService
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels.ViewMovementAction
 import viewModels.pagination.ListPaginationViewModel
-import views.html.departure.TestOnly.ViewAllDeparturesP5View
+import views.html.departureP5.ViewAllDeparturesP5View
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -134,7 +134,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
             )
           )
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
+        val request = FakeRequest(GET, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
 
         val result = route(app, request).value
 
@@ -146,7 +146,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
           totalNumberOfItems = mockDepartureMovementResponse.movements.length,
           currentPage = 1,
           numberOfItemsPerPage = paginationAppConfig.departuresNumberOfMovements,
-          href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+          href = controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
@@ -185,7 +185,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
             )
           )
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(Some(currentPage), Some(searchParam)).url)
+        val request = FakeRequest(GET, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(Some(currentPage), Some(searchParam)).url)
 
         val result = route(app, request).value
 
@@ -199,7 +199,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
           totalNumberOfItems = mockDepartureMovementResponse.movements.length,
           currentPage = currentPage,
           numberOfItemsPerPage = paginationAppConfig.departuresNumberOfMovements,
-          href = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+          href = controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllDepartureMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
@@ -219,7 +219,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
       when(mockDepartureMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
         .thenReturn(Future.successful(None))
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
+      val request = FakeRequest(GET, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
 
       val result = route(app, request).value
 

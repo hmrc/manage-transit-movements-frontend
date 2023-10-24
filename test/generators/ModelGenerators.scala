@@ -16,6 +16,7 @@
 
 package generators
 
+import models.ArrivalRejectionType.{ArrivalNotificationRejection, UnloadingRemarkRejection}
 import models.ErrorType.GenericError
 import models.RejectionType._
 import models._
@@ -72,6 +73,16 @@ trait ModelGenerators {
       ReleaseRequestRejection,
       RejectionOfInformation,
       PresentationNotificationRejection
+    )
+    for {
+      rejectionType <- Gen.oneOf(rejectionTypes)
+    } yield rejectionType
+  }
+
+  implicit val arbitraryArrivalRejectionType: Arbitrary[ArrivalRejectionType] = Arbitrary {
+    val rejectionTypes = Seq(
+      ArrivalNotificationRejection,
+      UnloadingRemarkRejection
     )
     for {
       rejectionType <- Gen.oneOf(rejectionTypes)
@@ -361,6 +372,5 @@ trait ModelGenerators {
         invalidReason <- Gen.listOfN(listLength, arbitrary[models.departureP5.InvalidGuaranteeReason])
       } yield GuaranteeReference(grn, invalidReason)
     }
-
 }
 // scalastyle:on magic.number

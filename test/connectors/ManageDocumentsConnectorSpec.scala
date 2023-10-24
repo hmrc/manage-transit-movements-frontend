@@ -23,14 +23,14 @@ import helper.WireMockServerHandler
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.ws.WSResponse
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
 class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
   private lazy val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-  private val startUrl                                 = "transit-movements-trader-manage-documents/test-only"
+  private val startUrl                                 = "transit-movements-trader-manage-documents"
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -55,7 +55,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
             )
         )
 
-        val result: Future[WSResponse] = connector.getTAD(departureId, messageId)
+        val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
         result.futureValue.status mustBe 200
       }
@@ -72,7 +72,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
             )
         )
 
-        val result: Future[WSResponse] = connector.getTAD(departureId, messageId)
+        val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
         result.futureValue.status mustBe genErrorResponse
       }
@@ -92,7 +92,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
             )
         )
 
-        val result: Future[WSResponse] = connector.getUnloadingPermission(messageId, arrivalId)
+        val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
         result.futureValue.status mustBe 200
       }
@@ -109,7 +109,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
             )
         )
 
-        val result: Future[WSResponse] = connector.getUnloadingPermission(messageId, arrivalId)
+        val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
         result.futureValue.status mustBe genErrorResponse
       }

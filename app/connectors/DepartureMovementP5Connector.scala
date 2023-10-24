@@ -18,17 +18,17 @@ package connectors
 
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
-import logging.Logging
 import models.Availability
 import models.departureP5._
 import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.libs.json.Reads
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpReadsTry, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends HttpReadsTry with Logging {
+class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends MovementP5Connector {
 
   private def headers(implicit hc: HeaderCarrier): HeaderCarrier = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
 
@@ -75,37 +75,29 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
       }
   }
 
-  def getMessagesForMovement(location: String)(implicit hc: HeaderCarrier): Future[MessagesForDepartureMovement] = {
-    val url = s"${config.commonTransitConventionTradersUrl}$location"
-    http.GET[MessagesForDepartureMovement](url)(HttpReads[MessagesForDepartureMovement], headers, ec)
-  }
-
   def getLatestMessageForMovement(location: String)(implicit hc: HeaderCarrier): Future[LatestDepartureMessage] = {
     val url = s"${config.commonTransitConventionTradersUrl}$location"
     http.GET[LatestDepartureMessage](url)(HttpReads[LatestDepartureMessage], headers, ec)
   }
 
-  def getMessageMetaData(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureMessages] = {
-    val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
-    http.GET[DepartureMessages](url)(implicitly, headers, ec)
-  }
-
-  def getSpecificMessageByPath[MessageModel](
-    path: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, HttpReads: HttpReads[MessageModel]): Future[MessageModel] = {
-    val url = s"${config.commonTransitConventionTradersUrl}$path"
-    http.GET[MessageModel](url)(implicitly, headers, ec)
-  }
-
   def getMessageForMessageId[MessageModel](departureId: String, messageId: String)(implicit
     ec: ExecutionContext,
     hc: HeaderCarrier,
-    httpReads: HttpReads[MessageModel]
+    reads: Reads[MessageModel]
   ): Future[MessageModel] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId"
     http
-      .GET[MessageModel](url)(implicitly, headers, ec)
+      .GET[MessageModel](url)(messageModelHttpReads, headers, ec)
 
+  }
+
+  def getDepartureReferenceNumbers(departureId: String)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[DepartureReferenceNumbers] = {
+    val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId"
+
+    http.GET[DepartureReferenceNumbers](url)(implicitly, headers, ec)
   }
 
 }
