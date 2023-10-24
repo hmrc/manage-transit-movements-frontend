@@ -346,40 +346,151 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of rejectedByOfficeOfDeparture" - {
 
-      "when BusinessRejectionType is AmendmentRejection" in {
+      "when BusinessRejectionType is AmendmentRejection" - {
 
-        val movementAndMessage = RejectedMovementAndMessage(
-          departureIdP5,
-          lrn,
-          LocalDateTime.now(),
-          LatestDepartureMessage(
-            DepartureMessage(
-              "messageId",
-              LocalDateTime.now(),
-              RejectedByOfficeOfDeparture,
-              "body/path"
+        "with one functional error and cache exists for LRN" in {
+
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
+            lrn,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
             ),
-            "ie015MessageId"
-          ),
-          rejectionType = Some(AmendmentRejection),
-          isDeclarationAmendable = true,
-          xPaths = Seq("body/path"),
-          doesCacheExistForLrn = true
-        )
+            rejectionType = Some(AmendmentRejection),
+            isDeclarationAmendable = true,
+            xPaths = Seq("body/path"),
+            doesCacheExistForLrn = true
+          )
 
-        val result = DepartureStatusP5ViewModel(movementAndMessage)
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-        val expectedResult = DepartureStatusP5ViewModel(
-          "movement.status.P5.rejectedByOfficeOfDeparture",
-          Seq(
-            ViewMovementAction(
-              controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = true).url,
-              "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = true).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
+              )
             )
           )
-        )
 
-        result mustBe expectedResult
+          result mustBe expectedResult
+        }
+
+        "and cache exists for LRN with no functional errors" in {
+
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
+            lrn,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = Some(AmendmentRejection),
+            isDeclarationAmendable = false,
+            xPaths = Nil,
+            doesCacheExistForLrn = true
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = true).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.amendDeclaration"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+
+        "and cache does not exists for LRN and no errors" in {
+
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
+            lrn,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = Some(AmendmentRejection),
+            isDeclarationAmendable = false,
+            xPaths = Nil,
+            doesCacheExistForLrn = false
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, lrn, isAmendmentJourney = true).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
+
+        "and cache does not exists for LRN with errors" in {
+
+          val movementAndMessage = RejectedMovementAndMessage(
+            departureIdP5,
+            lrn,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                "body/path"
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = Some(AmendmentRejection),
+            isDeclarationAmendable = false,
+            xPaths = Seq("body/path"),
+            doesCacheExistForLrn = false
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                controllers.testOnly.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, lrn, isAmendmentJourney = true).url,
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
+              )
+            )
+          )
+
+          result mustBe expectedResult
+        }
       }
 
       "and head of tail is IE015" - {

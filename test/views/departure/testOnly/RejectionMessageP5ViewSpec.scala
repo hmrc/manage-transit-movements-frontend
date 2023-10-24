@@ -122,6 +122,16 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
 
+  "must not render table headings when no table rows" in {
+
+    val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel =
+      new RejectionMessageP5ViewModel(Nil, lrn.toString, false, isAmendmentJourney = true)
+
+    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel))
+    assertElementDoesNotExist(doc, "govuk-table__head")
+
+  }
+
   "must not render add another declaration link when isAmendmentJourney is true" in {
     val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true))
     assertNotRenderedById(doc, "departure-link")
