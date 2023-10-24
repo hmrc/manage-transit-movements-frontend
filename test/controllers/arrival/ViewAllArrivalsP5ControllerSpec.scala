@@ -33,7 +33,7 @@ import play.api.test.Helpers._
 import services.ArrivalP5MessageService
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.pagination.ListPaginationViewModel
-import views.html.arrival.P5.ViewAllArrivalsP5View
+import views.html.arrivalP5.ViewAllArrivalsP5View
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -103,9 +103,6 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
         when(mockArrivalMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockArrivalMovementResponse)))
 
-        when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
-          .thenReturn(Future.successful(mockArrivalMessageResponse))
-
         when(mockArrivalMovementService.getLatestMessagesForMovement(any())(any(), any()))
           .thenReturn(
             Future.successful(
@@ -113,7 +110,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
             )
           )
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
+        val request = FakeRequest(GET, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
 
         val result = route(app, request).value
 
@@ -125,7 +122,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
           totalNumberOfItems = mockArrivalMovementResponse.movements.length,
           currentPage = 1,
           numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
-          href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
+          href = controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
@@ -142,9 +139,6 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
         when(mockArrivalMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
           .thenReturn(Future.successful(Some(mockArrivalMovementResponse)))
 
-        when(mockArrivalMovementConnector.getMessagesForMovement(any())(any()))
-          .thenReturn(Future.successful(mockArrivalMessageResponse))
-
         when(mockArrivalMovementService.getLatestMessagesForMovement(any())(any(), any()))
           .thenReturn(
             Future.successful(
@@ -152,7 +146,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
             )
           )
 
-        val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(Some(currentPage), Some(searchParam)).url)
+        val request = FakeRequest(GET, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(Some(currentPage), Some(searchParam)).url)
 
         val result = route(app, request).value
 
@@ -166,7 +160,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
           totalNumberOfItems = mockArrivalMovementResponse.movements.length,
           currentPage = currentPage,
           numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
-          href = controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
+          href = controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
         )
         val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
 
@@ -186,7 +180,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
       when(mockArrivalMovementConnector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
         .thenReturn(Future.successful(None))
 
-      val request = FakeRequest(GET, controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
+      val request = FakeRequest(GET, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
 
       val result = route(app, request).value
 

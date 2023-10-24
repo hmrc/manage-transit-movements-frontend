@@ -28,7 +28,6 @@ import utils.GoodsNotReleasedP5Helper
 import viewModels.sections.Section
 
 import java.time.LocalDateTime
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

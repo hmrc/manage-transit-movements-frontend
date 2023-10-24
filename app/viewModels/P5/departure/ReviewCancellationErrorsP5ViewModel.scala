@@ -54,7 +54,7 @@ case class ReviewCancellationErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lr
 
   def hyperlink(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.hyperlink")
 
-  val viewDeparturesLink: String = controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+  val viewDeparturesLink: String = controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
 
   def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
     HeadCell(Text(messages("error.table.errorCode"))),

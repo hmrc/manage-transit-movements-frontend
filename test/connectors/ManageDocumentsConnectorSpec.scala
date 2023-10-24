@@ -30,7 +30,7 @@ import scala.concurrent.Future
 class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
   private lazy val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-  private val startUrl                                 = "transit-movements-trader-manage-documents/test-only"
+  private val startUrl                                 = "transit-movements-trader-manage-documents"
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super

@@ -79,7 +79,7 @@ object ArrivalStatusP5ViewModel {
             "movement.status.P5.action.unloadingPermission.unloadingRemarks"
           ),
           ViewMovementAction(
-            controllers.testOnly.routes.UnloadingPermissionController.getUnloadingPermissionDocument(arrivalId, message.messageId).url,
+            controllers.arrivalP5.routes.UnloadingPermissionController.getUnloadingPermissionDocument(arrivalId, message.messageId).url,
             "movement.status.P5.action.unloadingPermission.pdf"
           )
         )
@@ -104,9 +104,9 @@ object ArrivalStatusP5ViewModel {
     case message if message.messageType == RejectionFromOfficeOfDestination && rejectionType == UnloadingRemarkRejection =>
       val href = functionalErrorCount match {
         case 0 =>
-          controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId)
+          controllers.arrivalP5.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId, message.messageId)
         case _ =>
-          controllers.testOnly.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId)
+          controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, message.messageId)
       }
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading",
@@ -124,9 +124,9 @@ object ArrivalStatusP5ViewModel {
     case message if message.messageType == RejectionFromOfficeOfDestination && rejectionType == ArrivalNotificationRejection =>
       val href = functionalErrorCount match {
         case 0 =>
-          controllers.testOnly.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId)
+          controllers.arrivalP5.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId, message.messageId)
         case _ =>
-          controllers.testOnly.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId)
+          controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, message.messageId)
       }
       ArrivalStatusP5ViewModel(
         "movement.status.P5.rejectionFromOfficeOfDestinationReceived.arrival",

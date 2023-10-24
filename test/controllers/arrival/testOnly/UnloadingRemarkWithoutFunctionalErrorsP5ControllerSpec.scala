@@ -17,7 +17,6 @@
 package controllers.arrival.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import controllers.actions.{ArrivalRejectionMessageActionProvider, FakeArrivalRejectionMessageAction}
 import generators.Generators
 import models.ArrivalRejectionType.ArrivalNotificationRejection
 import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
@@ -31,28 +30,23 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{ArrivalP5MessageService, ReferenceDataService}
 import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
-import views.html.arrival.P5.UnloadingRemarkWithoutFunctionalErrorsP5View
+import views.html.arrivalP5.UnloadingRemarkWithoutFunctionalErrorsP5View
 
 import scala.concurrent.Future
 
 class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockArrivalP5MessageService        = mock[ArrivalP5MessageService]
-  private val mockRejectionMessageActionProvider = mock[ArrivalRejectionMessageActionProvider]
-  private val mockReferenceDataService           = mock[ReferenceDataService]
+  private val mockArrivalP5MessageService = mock[ArrivalP5MessageService]
+  private val mockReferenceDataService    = mock[ReferenceDataService]
 
   lazy val unloadingRemarkWithErrorsController: String =
-    controllers.testOnly.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5).url
+    controllers.arrivalP5.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
 
   private val mrnString = "MRNAB123"
-
-  def rejectionMessageAction(arrivalIdP5: String, mockArrivalP5MessageService: ArrivalP5MessageService): Unit =
-    when(mockRejectionMessageActionProvider.apply(any())) thenReturn new FakeArrivalRejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalP5MessageService)
-    reset(mockRejectionMessageActionProvider)
     reset(mockReferenceDataService)
   }
 
@@ -73,13 +67,11 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
         )
       )
 
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
 
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
-
-      rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 
       val unloadingNotificationErrorsP5ViewModel = new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrnString, "1234", Some(fakeCustomsOffice))
 
@@ -104,13 +96,11 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
         )
       )
 
-      when(mockArrivalP5MessageService.getMessage[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Some(message)))
+      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(message))
 
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
         .thenReturn(Future.successful(Some(fakeCustomsOffice)))
-
-      rejectionMessageAction(arrivalIdP5, mockArrivalP5MessageService)
 
       val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
 

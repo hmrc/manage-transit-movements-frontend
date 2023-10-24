@@ -18,7 +18,7 @@
 
 @this(tableDetail: TableDetail)
 
-@(tables: Seq[(String, String, Table)])(implicit messages: Messages)
+@(tables: Seq[(String, String, Table)])
 
 @for(((title, grn, table), index) <- tables.zipWithIndex) {
   @tableDetail(title, grn, table, index == 0)

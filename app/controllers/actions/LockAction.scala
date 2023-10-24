@@ -43,7 +43,7 @@ class LockAction(lrn: String, service: DraftDepartureService)(implicit val execu
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     service.checkLock(lrn).map {
       case Unlocked         => None
-      case Locked           => Some(Redirect(controllers.departure.drafts.routes.DraftLockedController.onPageLoad()))
+      case Locked           => Some(Redirect(controllers.departureP5.drafts.routes.DraftLockedController.onPageLoad()))
       case LockCheckFailure => Some(Redirect(routes.ErrorController.technicalDifficulties()))
     }
   }

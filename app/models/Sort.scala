@@ -16,7 +16,7 @@
 
 package models
 
-import controllers.departure.drafts.routes
+import controllers.departureP5.drafts.routes
 import models.Sort.Field.{CreatedAt, LRN}
 import models.Sort.Order.{Ascending, Descending}
 import models.Sort.{buildParam, Field, Order}

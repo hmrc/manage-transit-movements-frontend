@@ -17,19 +17,17 @@
 package connectors
 
 import base.SpecBase
-import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
 import models.RejectionType.DeclarationRejection
 import models.departureP5.Prelodged.{NonPrelodgedDeclaration, PrelodgedDeclaration}
 import models.departureP5._
-import models.{Availability, LocalReferenceNumber, RejectionType}
-import org.scalacheck.{Arbitrary, Gen}
+import models.{Availability, LocalReferenceNumber}
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -361,311 +359,6 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       }
     }
 
-    "getMessagesForMovement" - {
-
-      val departureId = "63498209a2d89ad8"
-
-      val responseJson =
-        Json.parse(s"""
-            {
-               "_links":{
-                  "self":{
-                     "href":"/customs/transits/movements/departures/1/messages"
-                  },
-                  "departure":{
-                     "href":"/customs/transits/movements/departures/1"
-                  }
-               },
-               "messages":[
-                  {
-                     "_links":{
-                         "self":{
-                            "href":"/customs/transits/movements/departures/1/messages/2"
-                         },
-                         "departure":{
-                            "href":"/customs/transits/movements/departures/1"
-                         }
-                     },
-                     "id":"634982098f02f00a",
-                     "departureId":"$departureId",
-                     "received":"2022-11-10T12:32:51.459Z",
-                     "type":"IE015"
-                  },
-                  {
-                     "_links":{
-                         "self":{
-                            "href":"/customs/transits/movements/departures/1/messages/1"
-                         },
-                         "departure":{
-                            "href":"/customs/transits/movements/departures/1"
-                         }
-                     },
-                     "id":"634982098f02f00b",
-                     "departureId":"$departureId",
-                     "received":"2022-11-11T15:32:51.459Z",
-                     "type":"IE028"
-                  }
-               ]
-            }
-            """)
-
-      "must return MessagesForMovement" in {
-        server.stubFor(
-          get(urlEqualTo(s"/movements/departures/$departureId/messages"))
-            .willReturn(okJson(responseJson.toString()))
-        )
-
-        val expectedResult = MessagesForDepartureMovement(
-          NonEmptyList(
-            DepartureMessage(
-              "634982098f02f00b",
-              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.AllocatedMRN,
-              "movements/departures/1/messages/1"
-            ),
-            List(
-              DepartureMessage(
-                "634982098f02f00a",
-                LocalDateTime.parse("2022-11-10T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-                DepartureMessageType.DepartureNotification,
-                "movements/departures/1/messages/2"
-              )
-            )
-          )
-        )
-
-        connector.getMessagesForMovement(s"movements/departures/$departureId/messages").futureValue mustBe expectedResult
-      }
-
-    }
-
-    "getMessageMetaData" - {
-
-      "must return Messages" in {
-
-        val responseJson: JsValue = Json.parse("""
-            {
-                "_links": {
-                    "self": {
-                        "href": "/customs/transits/movements/departures/6365135ba5e821ee/messages"
-                    },
-                    "departure": {
-                        "href": "/customs/transits/movements/departures/6365135ba5e821ee"
-                    }
-                },
-                "messages": [
-                    {
-                        "_links": {
-                            "self": {
-                                "href": "/customs/transits/movements/departures/6365135ba5e821ee/message/634982098f02f00b"
-                            },
-                            "departure": {
-                                "href": "/customs/transits/movements/departures/6365135ba5e821ee"
-                            }
-                        },
-                        "id": "634982098f02f00a",
-                        "departureId": "6365135ba5e821ee",
-                        "received": "2022-11-11T15:32:51.459Z",
-                        "type": "IE015",
-                        "status": "Success"
-                    },
-                    {
-                        "_links": {
-                            "self": {
-                                "href": "/customs/transits/movements/departures/6365135ba5e821ee/message/634982098f02f00a"
-                            },
-                            "departure": {
-                                "href": "/customs/transits/movements/departures/6365135ba5e821ee"
-                            }
-                        },
-                        "id": "634982098f02f00a",
-                        "departureId": "6365135ba5e821ee",
-                        "received": "2022-11-10T15:32:51.459Z",
-                        "type": "IE028",
-                        "status": "Success"
-                    }
-                ]
-            }
-            """)
-
-        val expectedResult = DepartureMessages(
-          List(
-            DepartureMessageMetaData(
-              LocalDateTime.parse("2022-11-11T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.DepartureNotification,
-              "movements/departures/6365135ba5e821ee/message/634982098f02f00b"
-            ),
-            DepartureMessageMetaData(
-              LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.AllocatedMRN,
-              "movements/departures/6365135ba5e821ee/message/634982098f02f00a"
-            )
-          )
-        )
-
-        server.stubFor(
-          get(urlEqualTo(s"/movements/departures/$departureIdP5/messages"))
-            .willReturn(okJson(responseJson.toString()))
-        )
-
-        connector.getMessageMetaData(departureIdP5).futureValue mustBe expectedResult
-
-      }
-    }
-
-    "getSpecificMessageByPath" - {
-
-      "must return an IE060 Message" in {
-
-        val IE060 = Json.parse("""{
-                                  "n1:CC060C":
-                                  {
-                                  "TransitOperation":
-                                  { "LRN": "AB123",
-                                          "MRN": "CD3232",
-                                          "controlNotificationDateAndTime": "2014-06-09T16:15:04+01:00",
-                                         "notificationType": "notification1"
-                                     },
-                                      "CustomsOfficeOfDeparture": {
-                                          "referenceNumber": "22323323"
-                                      },
-                                      "TypeOfControls": [
-                                         {
-                                              "sequenceNumber": "1",
-                                              "type": "type1",
-                                              "text": "text1"
-                                          },
-                                          {
-                                              "sequenceNumber": "2",
-                                              "type": "type2"
-                                          }
-                                      ],
-                                      "RequestedDocument": [
-                                          {
-                                              "sequenceNumber": "3",
-                                              "documentType": "doc1",
-                                              "description": "desc1"
-                                          },
-                                          {
-                                              "sequenceNumber": "4",
-                                              "documentType": "doc2"
-                                          }
-                                     ]
-                                  }
-                                }""")
-
-        val responseJson: JsValue = Json.parse(s"""
-            {
-              "_links": {
-                "self": {
-                  "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
-                },
-                "departure": {
-                  "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
-                }
-              },
-              "id": "62f4ebbb765ba8c2",
-              "departureId": "62f4ebbbf581d4aa",
-              "received": "2022-08-11T11:44:59.83705",
-              "type": "IE060",
-              "status": "Success",
-              "body": ${IE060.toString()}
-            }
-            """)
-
-        val expectedResult = IE060Data(
-          IE060MessageData(
-            TransitOperationIE060(Some("CD3232"),
-                                  Some("AB123"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  "notification1"
-            ),
-            CustomsOfficeOfDeparture("22323323"),
-            Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
-            Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
-          )
-        )
-
-        server.stubFor(
-          get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2"))
-            .willReturn(okJson(responseJson.toString()))
-        )
-
-        connector.getSpecificMessageByPath[IE060Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
-
-      }
-
-      "must return an IE056 Message" in {
-
-        val rejectionType: RejectionType = Arbitrary.arbitrary[RejectionType].sample.value
-
-        val IEO56 = Json.parse(
-          s"""
-            |{
-            |  "n1:CC056C": {
-            |    "TransitOperation": {
-            |      "LRN": "AB123",
-            |      "MRN": "CD3232",
-            |      "businessRejectionType": "${rejectionType.code}"
-            |    },
-            |    "CustomsOfficeOfDeparture": {
-            |     "referenceNumber": "22323323"
-            |     },
-            |    "FunctionalError": [
-            |      {
-            |        "errorPointer": "1",
-            |        "errorCode": "12",
-            |        "errorReason": "Codelist violation"
-            |      },
-            |      {
-            |        "errorPointer": "2",
-            |        "errorCode": "14",
-            |        "errorReason": "Rule violation"
-            |      }
-            |    ]
-            |  }
-            |}
-            |""".stripMargin
-        )
-
-        val responseJson: JsValue = Json.parse(s"""
-          {
-            "_links": {
-              "self": {
-                "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa/messages/62f4ebbb765ba8c2"
-              },
-              "departure": {
-                "href": "/customs/transits/movements/departures/62f4ebbbf581d4aa"
-              }
-            },
-            "id": "62f4ebbb765ba8c2",
-            "departureId": "62f4ebbbf581d4aa",
-            "received": "2022-08-11T11:44:59.83705",
-            "type": "IE060",
-            "status": "Success",
-            "body": ${IEO56.toString()}
-          }
-          """)
-
-        val expectedResult: IE056Data = IE056Data(
-          IE056MessageData(
-            TransitOperationIE056(Some("CD3232"), Some("AB123"), rejectionType),
-            CustomsOfficeOfDeparture("22323323"),
-            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-          )
-        )
-
-        server.stubFor(
-          get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2"))
-            .willReturn(okJson(responseJson.toString()))
-        )
-
-        connector.getSpecificMessageByPath[IE056Data](s"movements/departures/$departureIdP5/messages/62f4ebbb765ba8c2").futureValue mustBe expectedResult
-
-      }
-
-    }
-
     "getMessageForMessageId" - {
 
       "must return Message" in {
@@ -749,6 +442,61 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         }
       }
     }
+
+    "getDepartureReferenceNumbers" - {
+
+      "must return departure reference numbers when MRN is defined" in {
+
+        val responseJson = Json.parse(
+          """
+            |{
+            |   "id": "6365135ba5e821ee",
+            |   "movementReferenceNumber": "ABC123",
+            |   "localReferenceNumber": "DEF456",
+            |   "created": "2022-11-10T15:32:51.459Z",
+            |   "updated": "2022-11-10T15:32:51.459Z",
+            |   "enrollmentEORINumber": "GB1234567890",
+            |   "movementEORINumber": "GB1234567890"
+            |}
+            |""".stripMargin
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        val expectedResult = DepartureReferenceNumbers(LocalReferenceNumber("DEF456"), Some("ABC123"))
+
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustBe expectedResult
+      }
+
+      "must return departure reference numbers when MRN is not defined" in {
+
+        val responseJson = Json.parse(
+          """
+            |{
+            |   "id": "6365135ba5e821ee",
+            |   "localReferenceNumber": "DEF456",
+            |   "created": "2022-11-10T15:32:51.459Z",
+            |   "updated": "2022-11-10T15:32:51.459Z",
+            |   "enrollmentEORINumber": "GB1234567890",
+            |   "movementEORINumber": "GB1234567890"
+            |}
+            |""".stripMargin
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        val expectedResult = DepartureReferenceNumbers(LocalReferenceNumber("DEF456"), None)
+
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustBe expectedResult
+      }
+    }
+
   }
 
 }

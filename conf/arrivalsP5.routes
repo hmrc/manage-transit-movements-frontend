@@ -1,0 +1,14 @@
+# Arrival P5 live routes
+
+GET        /view-arrival-notifications                                               controllers.arrivalP5.ViewAllArrivalsP5Controller.onPageLoad(page: Option[Int], mrn: Option[String])
+POST       /view-arrival-notifications                                               controllers.arrivalP5.ViewAllArrivalsP5Controller.onSubmit()
+
+GET        /:arrivalId/notification-errors/:messageId                                controllers.arrivalP5.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String, messageId: String)
+
+GET        /:arrivalId/unloading-remarks-errors/:messageId                           controllers.arrivalP5.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String, messageId: String)
+
+GET        /:arrivalId/review-unloading-remarks-errors/:messageId                    controllers.arrivalP5.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String, messageId: String)
+
+GET        /:arrivalId/review-arrival-notification-errors/:messageId                 controllers.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String, messageId: String)
+
+GET        /:arrivalId/unloading-permission-document/:messageId                      controllers.arrivalP5.UnloadingPermissionController.getUnloadingPermissionDocument(arrivalId: String, messageId: String)

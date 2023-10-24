@@ -42,7 +42,7 @@ class WhatDoYouWantToDoService @Inject() (
 
   def fetchArrivalsUrl(): String =
     if (appConfig.phase5Enabled) {
-      controllers.testOnly.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
+      controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
     } else {
       controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url
     }
@@ -56,7 +56,7 @@ class WhatDoYouWantToDoService @Inject() (
 
   def fetchDeparturesUrl(): String =
     if (appConfig.phase5Enabled) {
-      controllers.testOnly.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+      controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
     } else {
       controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url
     }

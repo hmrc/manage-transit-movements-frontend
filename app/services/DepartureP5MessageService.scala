@@ -16,14 +16,13 @@
 
 package services
 
-import cats.data.OptionT
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.RejectionType
-import models.departureP5.DepartureMessageType._
+import models.departureP5.DepartureMessageType.{DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
 import models.departureP5._
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import play.api.libs.json.Reads
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,37 +32,18 @@ class DepartureP5MessageService @Inject() (
   cacheConnector: DepartureCacheConnector
 ) {
 
-  def isErrorAmendable(
+  private def isErrorAmendable(
     departureId: String,
+    messageId: String,
     lrn: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Option[RejectionType], Boolean, Seq[String], Boolean)] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(RejectionType, Boolean, Seq[String], Boolean)] =
     for {
-      message <- filterForMessage[IE056Data](departureId, RejectedByOfficeOfDeparture)
-      rejectionType = message.map(_.data.transitOperation.businessRejectionType)
-      xPaths        = message.map(_.data.functionalErrors.map(_.errorPointer))
-      isDeclarationAmendable <- xPaths.filter(_.nonEmpty).fold(Future.successful(false)) {
-        cacheConnector.isDeclarationAmendable(lrn, _)
-      }
-      doesCacheExistForLrn <- cacheConnector.doesDeclarationExist(lrn)
-    } yield (rejectionType, isDeclarationAmendable, xPaths.getOrElse(Seq.empty), doesCacheExistForLrn)
-
-  def getMessagesForAllMovements(
-    departureMovements: DepartureMovements
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[DepartureMovementAndMessage]] =
-    departureMovements.departureMovements.traverse {
-      movement =>
-        for {
-          messagesForMovement <- departureMovementP5Connector.getMessagesForMovement(movement.messagesLocation)
-          isAmendable         <- isErrorAmendable(movement.departureId, movement.localReferenceNumber.value)
-        } yield DepartureMovementAndMessage(
-          movement,
-          messagesForMovement,
-          movement.localReferenceNumber,
-          isAmendable._1,
-          isAmendable._2,
-          isAmendable._3
-        )
-    }
+      message <- getMessageWithMessageId[IE056Data](departureId, messageId)
+      rejectionType = message.data.transitOperation.businessRejectionType
+      xPaths        = message.data.functionalErrors.map(_.errorPointer)
+      isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn, xPaths.filter(_.nonEmpty))
+      doesCacheExistForLrn   <- cacheConnector.doesDeclarationExist(lrn)
+    } yield (rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn)
 
   def getLatestMessagesForMovement(
     departureMovements: DepartureMovements
@@ -74,7 +54,7 @@ class DepartureP5MessageService @Inject() (
           message =>
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>
-                isErrorAmendable(movement.departureId, movement.localReferenceNumber.value).map {
+                isErrorAmendable(movement.departureId, message.latestMessage.messageId, movement.localReferenceNumber.value).map {
                   case (rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn) =>
                     RejectedMovementAndMessage(
                       movement.departureId,
@@ -111,45 +91,13 @@ class DepartureP5MessageService @Inject() (
         }
     }
 
-  def getSpecificMessageMetaData[T <: DepartureMessageType](departureId: String, typeOfMessage: T)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[DepartureMessageMetaData]] =
-    getMessageMetaData(departureId, typeOfMessage)
-
-  private def getMessageMetaData(departureId: String, messageType: DepartureMessageType)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[DepartureMessageMetaData]] =
-    departureMovementP5Connector
-      .getMessageMetaData(departureId)
-      .map(
-        _.messages
-          .filter(_.messageType == messageType)
-          .sortBy(_.received)
-          .reverse
-          .headOption
-      )
-
-  def filterForMessage[MessageModel](
-    departureId: String,
-    typeOfMessage: DepartureMessageType
-  )(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier,
-    httpReads: HttpReads[MessageModel]
-  ): Future[Option[MessageModel]] =
-    (
-      for {
-        messageMetaData <- OptionT(getSpecificMessageMetaData(departureId, typeOfMessage))
-        message         <- OptionT.liftF(departureMovementP5Connector.getSpecificMessageByPath[MessageModel](messageMetaData.path))
-      } yield message
-    ).value
-
   def getMessageWithMessageId[MessageModel](
     departureId: String,
     messageId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[MessageModel] =
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: Reads[MessageModel]): Future[MessageModel] =
     departureMovementP5Connector
-      .getMessageForMessageId[MessageModel](departureId, messageId)
+      .getMessageForMessageId(departureId, messageId)
+
+  def getDepartureReferenceNumbers(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureReferenceNumbers] =
+    departureMovementP5Connector.getDepartureReferenceNumbers(departureId)
 }

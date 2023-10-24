@@ -16,13 +16,12 @@
 
 package services
 
-import cats.data.OptionT
 import cats.implicits._
 import connectors.ArrivalMovementP5Connector
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import play.api.libs.json.Reads
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,35 +59,11 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
         }
     }
 
-  def getMessage[MessageModel](
+  def getMessageWithMessageId[MessageModel](
     arrivalId: String,
-    typeOfMessage: ArrivalMessageType
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, httpReads: HttpReads[MessageModel]): Future[Option[MessageModel]] =
-    (
-      for {
-        messageMetaData <- OptionT(getSpecificMessageMetaData(arrivalId, typeOfMessage))
-        message         <- OptionT.liftF(arrivalMovementP5Connector.getSpecificMessage[MessageModel](messageMetaData.path))
-      } yield message
-    ).value
-
-  private def getSpecificMessageMetaData[T <: ArrivalMessageType](arrivalId: String, typeOfMessage: T)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[ArrivalMessageMetaData]] =
-    getMessageMetaData(arrivalId, typeOfMessage)
-
-  private def getMessageMetaData(arrivalId: String, messageType: ArrivalMessageType)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[ArrivalMessageMetaData]] =
+    messageId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: Reads[MessageModel]): Future[MessageModel] =
     arrivalMovementP5Connector
-      .getMessageMetaData(arrivalId)
-      .map(
-        _.messages
-          .filter(_.messageType == messageType)
-          .sortBy(_.received)
-          .reverse
-          .headOption
-      )
+      .getMessageForMessageId(arrivalId, messageId)
 
 }

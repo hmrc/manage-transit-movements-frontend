@@ -17,7 +17,7 @@
 package viewModels.drafts
 
 import base.SpecBase
-import controllers.departure.drafts.routes
+import controllers.departureP5.drafts.routes
 import generators.Generators
 import models.Sort._
 import models.{DepartureUserAnswerSummary, DeparturesSummary}

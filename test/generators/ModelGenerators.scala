@@ -372,6 +372,5 @@ trait ModelGenerators {
         invalidReason <- Gen.listOfN(listLength, arbitrary[models.departureP5.InvalidGuaranteeReason])
       } yield GuaranteeReference(grn, invalidReason)
     }
-
 }
 // scalastyle:on magic.number
