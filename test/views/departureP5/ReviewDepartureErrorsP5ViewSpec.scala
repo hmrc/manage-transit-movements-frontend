@@ -54,11 +54,12 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
   private def applyView(
     viewModel: ReviewDepartureErrorsP5ViewModel,
     paginationViewModel: ListPaginationViewModel,
-    isAmendmentJourney: Boolean = false
+    isAmendmentJourney: Boolean = false,
+    mrn: Option[String] = None
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewDepartureErrorsP5View]
-      .apply(viewModel, departureId.toString, paginationViewModel, isAmendmentJourney)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, departureId.toString, paginationViewModel, isAmendmentJourney, mrn)(fakeRequest, messages, frontendAppConfig)
 
   override def view: HtmlFormat.Appendable = applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
@@ -122,5 +123,15 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
   "must not render add another declaration link when isAmendmentJourney is true" in {
     val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true))
     assertNotRenderedById(doc, "departure-link")
+  }
+
+  "must not render mrn when None" in {
+    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true, None))
+    assertNotRenderedById(doc, "mrn")
+  }
+
+  "must render mrn when provided" in {
+    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true, Some("mrn")))
+    assertRenderedById(doc, "mrn")
   }
 }

@@ -35,12 +35,12 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[DepartureDeclarationErrorsP5View]
-      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney = false)(fakeRequest, messages, frontendAppConfig)
+      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney = false, None)(fakeRequest, messages, frontendAppConfig)
 
-  def viewWithSpecificAmendment(sections: Seq[Section], isAmendmentJourney: Boolean): HtmlFormat.Appendable =
+  def viewWithSpecificAmendment(isAmendmentJourney: Boolean, mrn: Option[String] = None): HtmlFormat.Appendable =
     injector
       .instanceOf[DepartureDeclarationErrorsP5View]
-      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney)(fakeRequest, messages, frontendAppConfig)
+      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney, mrn)(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 
@@ -87,9 +87,18 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   )
 
   "must not render add another declaration link when isAmendmentJourney is true" in {
-    val doc: Document = parseView(viewWithSpecificAmendment(sections, isAmendmentJourney = true))
+    val doc: Document = parseView(viewWithSpecificAmendment(isAmendmentJourney = true))
     assertNotRenderedById(doc, "create-another-declaration")
+  }
 
+  "must not render mrn when None" in {
+    val doc: Document = parseView(viewWithSpecificAmendment(isAmendmentJourney = true, None))
+    assertNotRenderedById(doc, "mrn")
+  }
+
+  "must render mrn when provided" in {
+    val doc: Document = parseView(viewWithSpecificAmendment(isAmendmentJourney = true, Some("mrn")))
+    assertRenderedById(doc, "mrn")
   }
 
 }

@@ -56,16 +56,17 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   private def applyView(
     viewModel: RejectionMessageP5ViewModel,
     paginationViewModel: ListPaginationViewModel,
-    isAmendmentJourney: Boolean = false
+    isAmendmentJourney: Boolean = false,
+    mrn: Option[String]
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[RejectionMessageP5View]
-      .apply(viewModel, departureIdP5, messageId, paginationViewModel, isAmendmentJourney)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, departureIdP5, messageId, paginationViewModel, isAmendmentJourney, mrn)(fakeRequest, messages, frontendAppConfig)
 
-  override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel)
+  override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = false, None)
 
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
-    applyView(rejectionMessageP5ViewModel, paginationViewModel)
+    applyView(rejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = false, None)
 
   behave like pageWithTitle()
 
@@ -127,14 +128,24 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
     val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel =
       new RejectionMessageP5ViewModel(Nil, lrn.toString, false, isAmendmentJourney = true)
 
-    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel))
+    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = false, None))
     assertElementDoesNotExist(doc, "govuk-table__head")
 
   }
 
   "must not render add another declaration link when isAmendmentJourney is true" in {
-    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true))
+    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true, None))
     assertNotRenderedById(doc, "departure-link")
+  }
+
+  "must not render mrn when None" in {
+    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true, None))
+    assertNotRenderedById(doc, "mrn")
+  }
+
+  "must render mrn when provided" in {
+    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true, Some("mrn")))
+    assertRenderedById(doc, "mrn")
   }
 
 }

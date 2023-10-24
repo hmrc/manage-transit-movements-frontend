@@ -28,7 +28,7 @@ pagination: Pagination,
 formHelper: FormWithCSRF
 )
 
-@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: ListPaginationViewModel, isAmendmentJourney: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: ListPaginationViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,
@@ -41,6 +41,8 @@ formHelper: FormWithCSRF
         )
 
         <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
+
+        @mrn.map{mrn => <p id="mrn" class="govuk-label--s">@mrn</p> }
 
         @pagination(paginationViewModel, None)
 

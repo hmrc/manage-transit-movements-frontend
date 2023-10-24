@@ -27,7 +27,7 @@
     formHelper: FormWithCSRF,
     pagination: Pagination
 )
-@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel, isAmendmentJourney: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,
@@ -40,6 +40,8 @@
         )
 
         <p id="paragraph-1" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
+
+        @mrn.map{mrn => <p id="mrn" class="govuk-label--s">@mrn</p> }
 
         @pagination(paginationViewModel, None)
 

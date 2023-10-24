@@ -82,7 +82,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       val view = injector.instanceOf[DepartureDeclarationErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(departureDeclarationErrorsP5ViewModel, isAmendmentJourney = false)(request, messages, frontendAppConfig).toString
+        view(departureDeclarationErrorsP5ViewModel, isAmendmentJourney = false, None)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {

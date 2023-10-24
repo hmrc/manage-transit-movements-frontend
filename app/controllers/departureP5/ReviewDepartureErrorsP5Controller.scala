@@ -58,7 +58,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
                                   isAmendmentJourney
           )
         rejectionMessageP5ViewModel.map(
-          viewModel => Ok(view(viewModel, departureId, paginationViewModel, isAmendmentJourney))
+          viewModel => Ok(view(viewModel, departureId, paginationViewModel, isAmendmentJourney, request.referenceNumbers.movementReferenceNumber))
         )
     }
 }

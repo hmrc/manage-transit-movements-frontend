@@ -102,7 +102,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       val view = injector.instanceOf[ReviewDepartureErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, isAmendmentJourney = false)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, isAmendmentJourney = false, None)(request, messages, frontendAppConfig).toString
     }
   }
 }

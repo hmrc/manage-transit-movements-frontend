@@ -63,7 +63,8 @@ class RejectionMessageP5Controller @Inject() (
               viewModelProvider.apply(request.messageData.data.pagedFunctionalErrors(currentPage), lrn.value, isAmendableJourney)
 
             rejectionMessageP5ViewModel.map(
-              viewModel => Ok(view(viewModel, departureId, messageId, paginationViewModel, isAmendableJourney))
+              viewModel =>
+                Ok(view(viewModel, departureId, messageId, paginationViewModel, isAmendableJourney, request.referenceNumbers.movementReferenceNumber))
             )
           case false =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))

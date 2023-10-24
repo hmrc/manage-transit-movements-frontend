@@ -106,9 +106,9 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, messageId, paginationViewModel, isAmendmentJourney = false)(request,
-                                                                                                                     messages,
-                                                                                                                     frontendAppConfig
+        view(rejectionMessageP5ViewModel, departureIdP5, messageId, paginationViewModel, isAmendmentJourney = false, None)(request,
+                                                                                                                           messages,
+                                                                                                                           frontendAppConfig
         ).toString
     }
 
@@ -147,9 +147,9 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, messageId, paginationViewModel, isAmendmentJourney = true)(request,
-                                                                                                                    messages,
-                                                                                                                    frontendAppConfig
+        view(rejectionMessageP5ViewModel, departureIdP5, messageId, paginationViewModel, isAmendmentJourney = true, None)(request,
+                                                                                                                          messages,
+                                                                                                                          frontendAppConfig
         ).toString
     }
 
@@ -188,9 +188,9 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       val view = injector.instanceOf[RejectionMessageP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, messageId, paginationViewModel, isAmendmentJourney = true)(request,
-                                                                                                                    messages,
-                                                                                                                    frontendAppConfig
+        view(rejectionMessageP5ViewModel, departureIdP5, messageId, paginationViewModel, isAmendmentJourney = true, None)(request,
+                                                                                                                          messages,
+                                                                                                                          frontendAppConfig
         ).toString
     }
 
