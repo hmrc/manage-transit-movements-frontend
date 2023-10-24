@@ -53,7 +53,7 @@ object DepartureStatusP5ViewModel {
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
-      declarationAmendmentAccepted(departureId, isPrelodge),
+      declarationAmendmentAccepted(departureId, localReferenceNumber, isPrelodge),
       goodsUnderControl(departureId, messageId, localReferenceNumber, isPrelodge),
       declarationSent(departureId, localReferenceNumber, isPrelodge)
     ).reduce(_ orElse _)
