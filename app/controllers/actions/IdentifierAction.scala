@@ -21,10 +21,9 @@ import config.FrontendAppConfig
 import connectors.EnrolmentStoreConnector
 import controllers.routes
 import logging.Logging
+import models.Enrolment
 import models.Enrolment.LegacyEnrolment
-import models.EnrolmentStatus._
 import models.requests.IdentifierRequest
-import models.{Enrolment, EnrolmentStatus}
 import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
@@ -55,7 +54,7 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(EmptyPredicate)
       .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
-          def checkEnrolment[E <: Enrolment](e: E)(implicit hc: HeaderCarrier): Future[EnrolmentStatus] =
+          def checkEnrolment[E <: Enrolment](e: E)(implicit hc: HeaderCarrier): Future[Option[Either[Result, Result]]] =
             enrolments.enrolments
               .filter(_.isActivated)
               .find(_.key.equals(e.key)) match {
@@ -65,24 +64,24 @@ class AuthenticatedIdentifierAction @Inject() (
                     e match {
                       case _: LegacyEnrolment if config.phase5Enabled =>
                         logger.info(s"User with EORI $enrolmentIdentifier is on legacy enrolment")
-                        Future.successful(EnrolmentOutdated)
+                        Future.successful(Some(Right(Redirect(config.enrolmentGuidancePage))))
                       case _ =>
-                        Future.successful(Enrolled(enrolmentIdentifier.value))
+                        block(IdentifierRequest(request, enrolmentIdentifier.value)).map(Right(_)).map(Some(_))
                     }
                   case None =>
-                    Future.successful(EnrolmentIdentifierMissing)
+                    Future.successful(Some(Left(Redirect(routes.UnauthorisedController.onPageLoad()))))
                 }
               case None =>
                 maybeGroupId match {
                   case Some(groupId) =>
                     enrolmentStoreConnector.checkGroupEnrolments(groupId, e.key).map {
                       case true =>
-                        EnrolledInGroup
+                        Some(Left(Redirect(routes.UnauthorisedWithGroupAccessController.onPageLoad())))
                       case false =>
-                        NotEnrolled
+                        None
                     }
                   case None =>
-                    Future.successful(NotEnrolled)
+                    Future.successful(None)
                 }
             }
 
@@ -91,13 +90,6 @@ class AuthenticatedIdentifierAction @Inject() (
               Future.successful(results.headOption.getOrElse(Redirect(config.eccEnrolmentSplashPage)))
             case head :: tail =>
               checkEnrolment(head)
-                .flatMap {
-                  case Enrolled(enrolmentIdentifier) => block(IdentifierRequest(request, enrolmentIdentifier)).map(Right(_)).map(Some(_))
-                  case EnrolmentIdentifierMissing    => Future.successful(Some(Left(Redirect(routes.UnauthorisedController.onPageLoad()))))
-                  case EnrolledInGroup               => Future.successful(Some(Left(Redirect(routes.UnauthorisedWithGroupAccessController.onPageLoad()))))
-                  case NotEnrolled                   => Future.successful(None)
-                  case EnrolmentOutdated             => Future.successful(Some(Right(Redirect(config.enrolmentGuidancePage))))
-                }
                 .flatMap {
                   case Some(Right(onEnrolmentFound))   => Future.successful(onEnrolmentFound)
                   case Some(Left(onEnrolmentNotFound)) => rec(tail, results :+ onEnrolmentNotFound)
