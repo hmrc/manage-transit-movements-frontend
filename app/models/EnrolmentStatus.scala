@@ -27,4 +27,6 @@ object EnrolmentStatus {
   case object EnrolledInGroup extends EnrolmentStatus
 
   case object NotEnrolled extends EnrolmentStatus
+
+  case object EnrolmentOutdated extends EnrolmentStatus
 }

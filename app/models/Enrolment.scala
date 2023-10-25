@@ -19,16 +19,29 @@ package models
 import com.typesafe.config.Config
 import play.api.{ConfigLoader, Configuration}
 
-case class Enrolment(key: String, identifierKey: String)
+sealed trait Enrolment {
+  val key: String
+  val identifierKey: String
+}
 
 object Enrolment {
 
-  def apply(key: String, identifierKey: String): Enrolment = new Enrolment(key, identifierKey)
+  case class NewEnrolment(key: String, identifierKey: String) extends Enrolment
 
-  implicit val configLoader: ConfigLoader[Enrolment] = (config: Config, path: String) => {
+  object NewEnrolment {
+    implicit val configLoader: ConfigLoader[NewEnrolment] = loadConfig(NewEnrolment.apply)
+  }
+
+  case class LegacyEnrolment(key: String, identifierKey: String) extends Enrolment
+
+  object LegacyEnrolment {
+    implicit val configLoader: ConfigLoader[LegacyEnrolment] = loadConfig(LegacyEnrolment.apply)
+  }
+
+  private def loadConfig[T <: Enrolment](apply: (String, String) => T): ConfigLoader[T] = (config: Config, path: String) => {
     val enrolment     = Configuration(config).get[Configuration](path)
     val key           = enrolment.get[String]("key")
     val identifierKey = enrolment.get[String]("identifierKey")
-    Enrolment(key, identifierKey)
+    apply(key, identifierKey)
   }
 }

@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.EnrolmentStoreConnector
 import controllers.routes
 import logging.Logging
+import models.Enrolment.LegacyEnrolment
 import models.EnrolmentStatus._
 import models.requests.IdentifierRequest
 import models.{Enrolment, EnrolmentStatus}
@@ -39,9 +40,8 @@ trait IdentifierAction extends ActionFunction[Request, IdentifierRequest]
 
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
-  config: FrontendAppConfig,
   enrolmentStoreConnector: EnrolmentStoreConnector
-)(implicit val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig)
     extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
@@ -55,53 +55,57 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(EmptyPredicate)
       .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
-          def checkEnrolment(enrolment: Enrolment)(implicit hc: HeaderCarrier): Future[EnrolmentStatus] =
-            enrolment match {
-              case Enrolment(key, identifierKey) =>
-                enrolments.enrolments
-                  .filter(_.isActivated)
-                  .find(_.key.equals(key)) match {
-                  case Some(enrolment) =>
-                    enrolment.getIdentifier(identifierKey) match {
-                      case Some(enrolmentIdentifier) =>
+          def checkEnrolment[E <: Enrolment](e: E)(implicit hc: HeaderCarrier): Future[EnrolmentStatus] =
+            enrolments.enrolments
+              .filter(_.isActivated)
+              .find(_.key.equals(e.key)) match {
+              case Some(enrolment) =>
+                enrolment.getIdentifier(e.identifierKey) match {
+                  case Some(enrolmentIdentifier) =>
+                    e match {
+                      case _: LegacyEnrolment if config.phase5Enabled =>
+                        logger.info(s"User with EORI $enrolmentIdentifier is on legacy enrolment")
+                        Future.successful(EnrolmentOutdated)
+                      case _ =>
                         Future.successful(Enrolled(enrolmentIdentifier.value))
-                      case None =>
-                        Future.successful(EnrolmentIdentifierMissing)
                     }
                   case None =>
-                    maybeGroupId match {
-                      case Some(groupId) =>
-                        enrolmentStoreConnector.checkGroupEnrolments(groupId, key).map {
-                          case true =>
-                            EnrolledInGroup
-                          case false =>
-                            NotEnrolled
-                        }
-                      case None =>
-                        Future.successful(NotEnrolled)
+                    Future.successful(EnrolmentIdentifierMissing)
+                }
+              case None =>
+                maybeGroupId match {
+                  case Some(groupId) =>
+                    enrolmentStoreConnector.checkGroupEnrolments(groupId, e.key).map {
+                      case true =>
+                        EnrolledInGroup
+                      case false =>
+                        NotEnrolled
                     }
+                  case None =>
+                    Future.successful(NotEnrolled)
                 }
             }
 
-          for {
-            newEnrolment    <- checkEnrolment(config.newEnrolment)
-            legacyEnrolment <- checkEnrolment(config.legacyEnrolment)
-            result <- (newEnrolment, legacyEnrolment, config.phase5Enabled) match {
-              case (Enrolled(enrolmentIdentifier), _, _) =>
-                block(IdentifierRequest(request, enrolmentIdentifier))
-              case (_, Enrolled(enrolmentIdentifier), false) =>
-                block(IdentifierRequest(request, enrolmentIdentifier))
-              case (_, Enrolled(enrolmentIdentifier), true) =>
-                logger.info(s"User with EORI $enrolmentIdentifier is on legacy enrolment")
-                Future.successful(Redirect(config.enrolmentGuidancePage))
-              case (EnrolmentIdentifierMissing, _, _) | (_, EnrolmentIdentifierMissing, _) =>
-                Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
-              case (EnrolledInGroup, _, _) | (_, EnrolledInGroup, _) =>
-                Future.successful(Redirect(routes.UnauthorisedWithGroupAccessController.onPageLoad()))
-              case (NotEnrolled, _, _) | (_, NotEnrolled, _) =>
-                Future.successful(Redirect(config.eccEnrolmentSplashPage))
-            }
-          } yield result
+          def rec(enrolments: List[Enrolment], results: List[Result] = Nil): Future[Result] = enrolments match {
+            case Nil =>
+              Future.successful(results.headOption.getOrElse(Redirect(config.eccEnrolmentSplashPage)))
+            case head :: tail =>
+              checkEnrolment(head)
+                .flatMap {
+                  case Enrolled(enrolmentIdentifier) => block(IdentifierRequest(request, enrolmentIdentifier)).map(Right(_)).map(Some(_))
+                  case EnrolmentIdentifierMissing    => Future.successful(Some(Left(Redirect(routes.UnauthorisedController.onPageLoad()))))
+                  case EnrolledInGroup               => Future.successful(Some(Left(Redirect(routes.UnauthorisedWithGroupAccessController.onPageLoad()))))
+                  case NotEnrolled                   => Future.successful(None)
+                  case EnrolmentOutdated             => Future.successful(Some(Right(Redirect(config.enrolmentGuidancePage))))
+                }
+                .flatMap {
+                  case Some(Right(onEnrolmentFound))   => Future.successful(onEnrolmentFound)
+                  case Some(Left(onEnrolmentNotFound)) => rec(tail, results :+ onEnrolmentNotFound)
+                  case None                            => rec(tail, results)
+                }
+          }
+
+          rec(List(config.newEnrolment, config.legacyEnrolment))
       }
   } recover {
     case _: NoActiveSession =>
