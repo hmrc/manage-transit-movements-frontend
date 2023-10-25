@@ -33,7 +33,6 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
   override val prefix: String = "guarantee.rejected.message"
 
   private val guaranteeReferences: Seq[GuaranteeReference] = Gen.nonEmptyListOf(arbitrary[GuaranteeReference]).sample.value
-//  private val departureId: String                          = "departureId123"
 
   val defaultViewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
     guaranteeReferences = guaranteeReferences,
@@ -45,7 +44,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
   override def view: HtmlFormat.Appendable = injector
     .instanceOf[GuaranteeRejectedP5View]
-    .apply(defaultViewModel, "d")(fakeRequest, messages)
+    .apply(defaultViewModel, departureIdP5)(fakeRequest, messages)
 
   behave like pageWithTitle()
 
