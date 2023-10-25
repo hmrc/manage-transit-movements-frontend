@@ -47,7 +47,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
   private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   lazy val rejectionMessageController: String =
-    controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = false).url
+    controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, None).url
   val sections: Seq[Section] = arbitrarySections.arbitrary.sample.value
   val tableRow: TableRow     = arbitraryTableRow.arbitrary.sample.value
 
@@ -87,7 +87,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = false).url,
+        href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, None).url,
         additionalParams = Seq()
       )
 

@@ -284,7 +284,7 @@ object DepartureStatusP5ViewModel {
 
         case DeclarationRejection =>
           (errorsActionText(xPaths),
-           controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = false).url
+           controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = None).url
           )
 
         case AmendmentRejection if doesCacheExistForLrn =>
@@ -299,7 +299,7 @@ object DepartureStatusP5ViewModel {
 
         case AmendmentRejection =>
           (errorsActionText(xPaths),
-           controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = true).url
+           controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = Some(true)).url
           )
 
         case InvalidationRejection if xPaths.isEmpty =>
