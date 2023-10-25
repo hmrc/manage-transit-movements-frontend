@@ -447,6 +447,28 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         }
       }
 
+      "when given a group legacy enrolment, and a new enrolment without a key" - {
+        "must redirect to unauthorised page (because newer enrolment takes precedence)" in {
+          val newWithoutEori: Enrolments = Enrolments(
+            Set(
+              createEnrolment(NEW_ENROLMENT_KEY, None, "456", "Activated")
+            )
+          )
+
+          when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
+            .thenReturn(Future.successful(newWithoutEori ~ Some("testName")))
+
+          when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(LEGACY_ENROLMENT_KEY))(any())).thenReturn(Future.successful(true))
+
+          val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(fakeRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+        }
+      }
+
       "when given new enrolments with eori" - {
         "must return Ok" in {
           val newEnrolmentsWithEori: Enrolments = Enrolments(
