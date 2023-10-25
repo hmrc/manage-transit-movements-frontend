@@ -34,8 +34,10 @@ class EnrolmentStoreConnector @Inject() (config: FrontendAppConfig, http: HttpCl
     http.GET[HttpResponse](serviceUrl).map {
       response =>
         response.status match {
-          case OK         => response.json.as[QueryGroupsEnrolmentsResponseModel].enrolments.exists(_.service.contains(enrolmentKey))
-          case NO_CONTENT => false
+          case OK =>
+            response.json.as[QueryGroupsEnrolmentsResponseModel].enrolments.exists(_.service.contains(enrolmentKey))
+          case NO_CONTENT | NOT_FOUND =>
+            false
           case other =>
             logger.info(s"[EnrolmentStoreProxyConnector][checkSaGroup] Enrolment Store Proxy error with status $other")
             throw new Exception(s"Call to enrolment store failed: $other - ${response.body}")

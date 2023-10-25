@@ -526,6 +526,31 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           redirectLocation(result).value mustBe frontendAppConfig.enrolmentGuidancePage
         }
       }
+
+      "when given legacy enrolments with eori and deactivated new enrolment" - {
+        "must redirect to guidance page to migrate to new enrolment" in {
+          val enrolments: Enrolments = Enrolments(
+            Set(
+              createEnrolment("IR-CT", Some("UTR"), "456", "Activated"),
+              createEnrolment(NEW_ENROLMENT_KEY, Some(NEW_ENROLMENT_ID_KEY), "123", "NotYetActivated"),
+              createEnrolment(LEGACY_ENROLMENT_KEY, Some(LEGACY_ENROLMENT_ID_KEY), "999", "Activated"),
+              createEnrolment("IR-SA", Some("UTR"), "123", "Activated")
+            )
+          )
+
+          when(mockAuthConnector.authorise[Enrolments ~ Some[String]](any(), any())(any(), any()))
+            .thenReturn(Future.successful(enrolments ~ Some("testName")))
+
+          when(mockEnrolmentStoreConnector.checkGroupEnrolments(any(), eqTo(NEW_ENROLMENT_KEY))(any())).thenReturn(Future.successful(false))
+
+          val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(fakeRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe frontendAppConfig.enrolmentGuidancePage
+        }
+      }
     }
   }
 
