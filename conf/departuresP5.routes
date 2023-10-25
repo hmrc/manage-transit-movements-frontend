@@ -17,7 +17,7 @@ GET        /:departureId/cancellation-errors/:messageId                         
 
 GET        /:departureId/goods-being-recovered/:messageId                            controllers.departureP5.RecoveryNotificationController.onPageLoad(departureId: String, messageId: String)
 
-GET        /:departureId/review-departure-declaration-errors/:messageId              controllers.departureP5.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String, isAmendmentJourney: Boolean)
+GET        /:departureId/review-departure-declaration-errors/:messageId              controllers.departureP5.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String, isAmendmentJourney: Option[Boolean])
 
 GET        /:departureId/review-cancellation-errors/:messageId                       controllers.departureP5.ReviewCancellationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 
