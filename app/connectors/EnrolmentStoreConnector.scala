@@ -18,12 +18,12 @@ package connectors
 
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
-import javax.inject.Inject
 import logging.Logging
 import models.QueryGroupsEnrolmentsResponseModel
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EnrolmentStoreConnector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
@@ -38,12 +38,8 @@ class EnrolmentStoreConnector @Inject() (config: FrontendAppConfig, http: HttpCl
           case NO_CONTENT => false
           case other =>
             logger.info(s"[EnrolmentStoreProxyConnector][checkSaGroup] Enrolment Store Proxy error with status $other")
-            false
+            throw new Exception(s"Call to enrolment store failed: $other - ${response.body}")
         }
-    } recover {
-      case exception =>
-        logger.info("[EnrolmentStoreProxyConnector][checkSaGroup] Enrolment Store Proxy error", exception)
-        false
     }
   }
 }

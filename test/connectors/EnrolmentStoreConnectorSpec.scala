@@ -158,7 +158,7 @@ class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) mustBe false
+        an[Exception] mustBe thrownBy(result.futureValue)
       }
 
       "return false when the API call returns 200 and invalid JSON" in {
@@ -174,7 +174,7 @@ class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) mustBe false
+        an[Exception] mustBe thrownBy(result.futureValue)
       }
     }
   }
