@@ -358,7 +358,7 @@ departure.drafts.dashboard.table.noSearchResults = This LRN does not exist.
 departure.drafts.dashboard.table.delete.action.hidden = Actions
 departure.drafts.dashboard.table.action.delete.hidden = Local Reference Number (LRN) {0}
 
-departure.drafts.dashboard.table.sort.hidden = Sort {0} in {1} order
+departure.drafts.dashboard.table.sort.hidden = Column headers with links are sortable.
 
 departure.drafts.dashboard.table.panel.title = Make a new departure declaration
 departure.drafts.dashboard.table.panel.text = You have 30 days from starting a declaration to complete it.

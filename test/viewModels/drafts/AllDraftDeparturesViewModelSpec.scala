@@ -294,8 +294,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortCreatedAt mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in descending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in descending order"
+        viewModel.sortHiddenTextLRN mustBe "Column headers with links are sortable."
+        viewModel.sortHiddenTextDaysToComplete mustBe "Column headers with links are sortable."
       }
 
       "when sortParams is SortByLRNDesc" in {
@@ -305,8 +305,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortCreatedAt mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in descending order"
+        viewModel.sortHiddenTextLRN mustBe "Column headers with links are sortable."
+        viewModel.sortHiddenTextDaysToComplete mustBe "Column headers with links are sortable."
       }
 
       "when sortParams is SortByCreatedAtAsc" in {
