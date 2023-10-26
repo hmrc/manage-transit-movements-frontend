@@ -18,7 +18,7 @@ Run unit tests:
 
 ### Running manually or for journey tests
 
-    sm --start CTC_TRADERS_ARRIVAL_ACCEPTANCE -r
+    sm --start CTC_TRADERS_ALL_ACCEPTANCE -r
     sm --stop MANAGE_TRANSIT_MOVEMENTS_FRONTEND
     sbt run
 
