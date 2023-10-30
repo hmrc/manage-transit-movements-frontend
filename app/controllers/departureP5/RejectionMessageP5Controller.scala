@@ -71,7 +71,7 @@ class RejectionMessageP5Controller @Inject() (
         }
     }
 
-  def onAmend(departureId: String, messageId: String): Action[AnyContent] =
+  def onAmend(departureId: String, messageId: String, isAmendableJourney: Boolean): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)).async {
       implicit request =>
         val lrn    = request.referenceNumbers.localReferenceNumber
@@ -80,15 +80,18 @@ class RejectionMessageP5Controller @Inject() (
         for {
           isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn.value, xPaths)
           handleErrors           <- cacheConnector.handleErrors(lrn.value, xPaths)
-          xPathsNonEmpty = xPaths.nonEmpty
-        } yield (isDeclarationAmendable, handleErrors, xPathsNonEmpty) match {
-          case (true, true, true) =>
+          xPathsNonEmpty              = xPaths.nonEmpty
+          isAmendmentJourney: Boolean = isAmendableJourney
+          doesCacheExist <- cacheConnector.doesDeclarationExist(lrn.toString)
+        } yield (isDeclarationAmendable, handleErrors, xPathsNonEmpty, isAmendmentJourney, doesCacheExist) match {
+          case (true, true, true, false, true) =>
             if (request.referenceNumbers.movementReferenceNumber.isDefined) {
               Redirect(config.departureNewLocalReferenceNumberUrl(lrn.value))
             } else {
               Redirect(config.departureFrontendTaskListUrl(lrn.value))
             }
-          case _ => Redirect(controllers.routes.ErrorController.technicalDifficulties())
+          case (_, true, _, true, true) => Redirect(config.departureFrontendTaskListUrl(lrn.value))
+          case _                        => Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
     }
 

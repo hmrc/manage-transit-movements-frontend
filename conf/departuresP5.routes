@@ -21,7 +21,7 @@ GET        /:departureId/review-departure-declaration-errors/:messageId         
 
 GET        /:departureId/review-cancellation-errors/:messageId                       controllers.departureP5.ReviewCancellationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 
-GET        /:departureId/send-departure-declaration-errors/:messageId                controllers.departureP5.RejectionMessageP5Controller.onAmend(departureId: String, messageId: String)
+GET        /:departureId/send-departure-declaration-errors/:messageId                controllers.departureP5.RejectionMessageP5Controller.onAmend(departureId: String, messageId: String, isAmendmentJourney: Boolean)
 
 GET        /:departureId/is-declaration-cancelled/:messageId                         controllers.departureP5.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String, messageId: String)
 

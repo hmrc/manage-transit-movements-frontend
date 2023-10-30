@@ -56,7 +56,7 @@
         @button(
             attributes = Map("id" -> "submit"),
             messageKey = messages("site.amendErrors"),
-            href = Some(controllers.departureP5.routes.RejectionMessageP5Controller.onAmend(departureId, messageId).url)
+            href = Some(controllers.departureP5.routes.RejectionMessageP5Controller.onAmend(departureId, messageId, isAmendmentJourney).url)
         )
 
         @if(!isAmendmentJourney){
