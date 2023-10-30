@@ -42,13 +42,19 @@ class RejectionMessageP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String, messageId: String, isAmendableJourney: Boolean): Action[AnyContent] =
+  def onPageLoad(page: Option[Int], departureId: String, messageId: String, isAmendmentJourney: Option[Boolean]): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)).async {
       implicit request =>
         val lrn              = request.referenceNumbers.localReferenceNumber
         val functionalErrors = request.messageData.data.functionalErrors
 
-        cacheConnector.isDeclarationAmendable(lrn.value, functionalErrors.map(_.errorPointer)).flatMap {
+        val isDataValid: Future[Boolean] = if (isAmendmentJourney.getOrElse(false)) {
+          cacheConnector.doesDeclarationExist(lrn.value)
+        } else {
+          cacheConnector.isDeclarationAmendable(lrn.value, functionalErrors.map(_.errorPointer))
+        }
+
+        isDataValid.flatMap {
           case true =>
             val currentPage = page.getOrElse(1)
 
@@ -56,22 +62,31 @@ class RejectionMessageP5Controller @Inject() (
               totalNumberOfItems = functionalErrors.length,
               currentPage = currentPage,
               numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-              href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, isAmendableJourney).url
+              href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, None).url,
+              additionalParams = Seq(("isAmendmentJourney", isAmendmentJourney.map(_.toString).getOrElse("false")))
             )
 
             val rejectionMessageP5ViewModel =
-              viewModelProvider.apply(request.messageData.data.pagedFunctionalErrors(currentPage), lrn.value, isAmendableJourney)
+              viewModelProvider.apply(request.messageData.data.pagedFunctionalErrors(currentPage), lrn.value, isAmendmentJourney.getOrElse(false))
 
             rejectionMessageP5ViewModel.map(
               viewModel =>
-                Ok(view(viewModel, departureId, messageId, paginationViewModel, isAmendableJourney, request.referenceNumbers.movementReferenceNumber))
+                Ok(
+                  view(viewModel,
+                       departureId,
+                       messageId,
+                       paginationViewModel,
+                       isAmendmentJourney.getOrElse(false),
+                       request.referenceNumbers.movementReferenceNumber
+                  )
+                )
             )
-          case false =>
+          case _ =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
     }
 
-  def onAmend(departureId: String, messageId: String, isAmendableJourney: Boolean): Action[AnyContent] =
+  def onAmend(departureId: String, messageId: String, isAmendmentJourney: Boolean): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)).async {
       implicit request =>
         val lrn    = request.referenceNumbers.localReferenceNumber
@@ -81,9 +96,9 @@ class RejectionMessageP5Controller @Inject() (
           isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn.value, xPaths)
           handleErrors           <- cacheConnector.handleErrors(lrn.value, xPaths)
           xPathsNonEmpty              = xPaths.nonEmpty
-          isAmendmentJourney: Boolean = isAmendableJourney
+          isAmendableJourney: Boolean = isAmendmentJourney
           doesCacheExist <- cacheConnector.doesDeclarationExist(lrn.toString)
-        } yield (isDeclarationAmendable, handleErrors, xPathsNonEmpty, isAmendmentJourney, doesCacheExist) match {
+        } yield (isDeclarationAmendable, handleErrors, xPathsNonEmpty, isAmendableJourney, doesCacheExist) match {
           case (true, true, true, false, true) =>
             if (request.referenceNumbers.movementReferenceNumber.isDefined) {
               Redirect(config.departureNewLocalReferenceNumberUrl(lrn.value))

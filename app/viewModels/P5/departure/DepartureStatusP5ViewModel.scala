@@ -274,7 +274,7 @@ object DepartureStatusP5ViewModel {
       val (key, href) = rejectionType match {
         case DeclarationRejection if isDeclarationAmendable =>
           ("amendDeclaration",
-           controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = false).url
+           controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = None).url
           )
 
         case DeclarationRejection if xPaths.isEmpty =>
@@ -289,7 +289,7 @@ object DepartureStatusP5ViewModel {
 
         case AmendmentRejection if doesCacheExistForLrn =>
           ("amendDeclaration",
-           controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = true).url
+           controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = Some(true)).url
           )
 
         case AmendmentRejection if xPaths.isEmpty =>
