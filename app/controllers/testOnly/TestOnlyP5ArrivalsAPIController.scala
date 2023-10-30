@@ -18,6 +18,7 @@ package controllers.testOnly
 
 import connectors.testOnly.TestOnlyP5ArrivalsAPIConnector
 import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
+import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -35,26 +36,32 @@ class TestOnlyP5ArrivalsAPIController @Inject() (
     implicit request =>
       connector
         .arrivalOutbound(request.body, request.headers)
-        .map(
-          x => Accepted(x.body)
-        )
+        .map {
+          case response if is2xx(response.status) => Accepted(response.body)
+          case response =>
+            BadRequest(s"[outboundArrivalMessage] Failed to post outbound arrival message with error: ${response.status} - ${response.body}")
+        }
   }
 
   def outboundUnloadingMessage(arrivalId: String): Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector
         .unloadingOutbound(request.body, arrivalId, request.headers)
-        .map(
-          x => Accepted(x.body)
-        )
+        .map {
+          case response if is2xx(response.status) => Accepted(response.body)
+          case response =>
+            BadRequest(s"[outboundUnloadingMessage] Failed to post outbound unloading message with error: ${response.status} - ${response.body}")
+        }
   }
 
   def inboundArrivalMessage(arrivalId: String): Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector
         .arrivalInbound(request.body, arrivalId, request.headers)
-        .map(
-          x => Accepted(x.body)
-        )
+        .map {
+          case response if is2xx(response.status) => Accepted(response.body)
+          case response =>
+            BadRequest(s"[inboundArrivalMessage] Failed to post inbound arrival message with error: ${response.status} - ${response.body}")
+        }
   }
 }
