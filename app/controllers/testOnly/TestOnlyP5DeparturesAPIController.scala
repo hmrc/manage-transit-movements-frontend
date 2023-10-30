@@ -18,6 +18,7 @@ package controllers.testOnly
 
 import connectors.testOnly.TestOnlyP5DeparturesAPIConnector
 import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
+import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -35,27 +36,34 @@ class TestOnlyP5DeparturesAPIController @Inject() (
     implicit request =>
       connector
         .departureOutbound(request.body, request.headers)
-        .map(
-          x => Accepted(x.body)
-        )
+        .map {
+          case response if is2xx(response.status) => Accepted(response.body)
+          case response =>
+            BadRequest(s"[outboundDepartureMessage] Failed to post outbound departure message with error: ${response.status} - ${response.body}")
+        }
+
   }
 
   def inboundDepartureMessage(departureId: String): Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector
         .departureInbound(request.body, departureId, request.headers)
-        .map(
-          x => Accepted(x.body)
-        )
+        .map {
+          case response if is2xx(response.status) => Accepted(response.body)
+          case response =>
+            BadRequest(s"[inboundDepartureMessage] Failed to post inbound departure message with error: ${response.status} - ${response.body}")
+        }
   }
 
   def addMessageToDeparture(departureId: String): Action[NodeSeq] = action.async(parse.xml) {
     implicit request =>
       connector
         .departureAddMessage(request.body, departureId, request.headers)
-        .map(
-          x => Accepted(x.body)
-        )
+        .map {
+          case response if is2xx(response.status) => Accepted(response.body)
+          case response =>
+            BadRequest(s"[addMessageToDeparture] Failed to add message to departure with error: ${response.status} - ${response.body}")
+        }
   }
 
   def departureMessage(departureId: String, messageId: String): Action[AnyContent] = Action.async {
