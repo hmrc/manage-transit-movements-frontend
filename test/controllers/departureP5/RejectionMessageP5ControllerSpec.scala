@@ -340,7 +340,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
+        redirectLocation(result).value mustEqual frontendAppConfig.departureAmendUrl(lrn.value, departureIdP5)
 
       }
 

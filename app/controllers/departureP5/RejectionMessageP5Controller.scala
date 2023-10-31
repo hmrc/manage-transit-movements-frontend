@@ -109,7 +109,7 @@ class RejectionMessageP5Controller @Inject() (
         result.map {
           case (true, true) =>
             if (isAmendmentJourney) {
-              Redirect(config.departureFrontendTaskListUrl(lrn.value))
+              Redirect(config.departureAmendUrl(lrn.value, departureId))
             } else if (xPaths.nonEmpty) {
               if (request.referenceNumbers.movementReferenceNumber.isDefined) {
                 Redirect(config.departureNewLocalReferenceNumberUrl(lrn.value))
