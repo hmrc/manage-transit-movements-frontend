@@ -108,7 +108,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   }
 
   "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-declaration", "Or make another departure declaration")
+    assertSpecificElementContainsText("create-another-declaration", "Make another departure declaration")
   }
 
   behave like pageWithLink(
@@ -119,7 +119,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   behave like pageWithLink(
     "departure-link",
-    "make another departure declaration",
+    "Make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
 

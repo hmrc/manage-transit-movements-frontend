@@ -426,7 +426,7 @@ departure.ie056.message.paragraph2.prefix = Contact the
 departure.ie056.message.paragraph2.link = New Computerised Transit System helpdesk
 departure.ie056.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
 departure.ie056.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
-departure.ie056.message.hyperlink = make another departure declaration
+departure.ie056.message.hyperlink = Make another departure declaration
 
 departure.ie056.review.message.title = Review declaration errors
 departure.ie056.review.message.heading = Review declaration errors
