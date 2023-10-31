@@ -261,7 +261,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
-        when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(false))
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
@@ -272,7 +271,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
 
       }
 
-      "must redirect to technical difficulties when there are no errors" in {
+      "must redirect to technical difficulties when there are no errors when amendment" in {
 
         val message: IE056Data = IE056Data(
           IE056MessageData(
@@ -311,7 +310,6 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
-        when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, rejectionMessageOnAmend)
 
@@ -334,8 +332,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
         when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
           .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-        when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
-        when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
+        when(mockCacheService.handleAmendmentErrors(any(), any())(any())).thenReturn(Future.successful(true))
         when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, rejectionMessageOnAmendAmendment)

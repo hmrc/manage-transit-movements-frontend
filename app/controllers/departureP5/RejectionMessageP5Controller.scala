@@ -86,28 +86,42 @@ class RejectionMessageP5Controller @Inject() (
         }
     }
 
+  // scalastyle:off cyclomatic.complexity
+  // scalastyle:off method.length
   def onAmend(departureId: String, messageId: String, isAmendmentJourney: Boolean): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)).async {
       implicit request =>
         val lrn    = request.referenceNumbers.localReferenceNumber
         val xPaths = request.messageData.data.functionalErrors.map(_.errorPointer)
 
-        for {
-          isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn.value, xPaths)
-          handleErrors           <- cacheConnector.handleErrors(lrn.value, xPaths)
-          xPathsNonEmpty              = xPaths.nonEmpty
-          isAmendableJourney: Boolean = isAmendmentJourney
-          doesCacheExist <- cacheConnector.doesDeclarationExist(lrn.toString)
-        } yield (isDeclarationAmendable, handleErrors, xPathsNonEmpty, isAmendableJourney, doesCacheExist) match {
-          case (true, true, true, false, true) =>
-            if (request.referenceNumbers.movementReferenceNumber.isDefined) {
-              Redirect(config.departureNewLocalReferenceNumberUrl(lrn.value))
-            } else {
-              Redirect(config.departureFrontendTaskListUrl(lrn.value))
-            }
-          case (_, true, _, true, true) => Redirect(config.departureFrontendTaskListUrl(lrn.value))
-          case _                        => Redirect(controllers.routes.ErrorController.technicalDifficulties())
+        val result = if (isAmendmentJourney) {
+          for {
+            doesCacheExistForLrn  <- cacheConnector.doesDeclarationExist(lrn.value)
+            handleAmendmentErrors <- cacheConnector.handleAmendmentErrors(lrn.value, xPaths)
+          } yield (doesCacheExistForLrn, handleAmendmentErrors)
+        } else {
+          for {
+            isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn.value, xPaths)
+            handleErrors           <- cacheConnector.handleErrors(lrn.value, xPaths)
+          } yield (isDeclarationAmendable, handleErrors)
         }
-    }
 
+        result.map {
+          case (true, true) =>
+            if (isAmendmentJourney) {
+              Redirect(config.departureFrontendTaskListUrl(lrn.value))
+            } else if (xPaths.nonEmpty) {
+              if (request.referenceNumbers.movementReferenceNumber.isDefined) {
+                Redirect(config.departureNewLocalReferenceNumberUrl(lrn.value))
+              } else {
+                Redirect(config.departureFrontendTaskListUrl(lrn.value))
+              }
+            } else {
+              Redirect(controllers.routes.ErrorController.technicalDifficulties())
+            }
+          case _ => Redirect(controllers.routes.ErrorController.technicalDifficulties())
+        }
+      // scalastyle:on cyclomatic.complexity
+      // scalastyle:on method.length
+    }
 }
