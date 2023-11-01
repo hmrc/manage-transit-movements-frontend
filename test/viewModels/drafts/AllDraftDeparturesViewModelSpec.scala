@@ -316,8 +316,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in descending order"
+        viewModel.sortHiddenTextLRN mustBe "Column headers with links are sortable."
+        viewModel.sortHiddenTextDaysToComplete mustBe "Column headers with links are sortable."
       }
 
       "when sortParams is SortByCreatedAtDesc" in {
@@ -327,8 +327,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in ascending order"
+        viewModel.sortHiddenTextLRN mustBe "Column headers with links are sortable."
+        viewModel.sortHiddenTextDaysToComplete mustBe "Column headers with links are sortable."
       }
 
       "when sortParams is None" in {
@@ -337,8 +337,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         viewModel.sortLrn mustBe "none"
         viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in ascending order"
+        viewModel.sortHiddenTextLRN mustBe "Column headers with links are sortable."
+        viewModel.sortHiddenTextDaysToComplete mustBe "Column headers with links are sortable."
       }
     }
   }
