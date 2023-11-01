@@ -88,6 +88,21 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
     rows.size() mustEqual departuresSummary.userAnswers.size
   }
 
+  "must have visually hidden text on table headers" in {
+    val tableHeaders = doc.getElementsByTag("th").toList
+
+    tableHeaders.size mustBe 3
+
+    def check(th: Element, expectedVisuallyHiddenText: String): Assertion = {
+      val visuallyHiddenText = th.getElementsByClass("govuk-visually-hidden").text()
+      visuallyHiddenText mustBe expectedVisuallyHiddenText
+    }
+
+    check(tableHeaders.head, viewAllDepartureMovementsViewModel.sortHiddenTextLRN)
+    check(tableHeaders(1), viewAllDepartureMovementsViewModel.sortHiddenTextDaysToComplete)
+    check(tableHeaders(2), "Actions")
+  }
+
   "must generate correct data in each row" - {
     rows.toList.zipWithIndex.foreach {
       case (row, rowIndex) =>
