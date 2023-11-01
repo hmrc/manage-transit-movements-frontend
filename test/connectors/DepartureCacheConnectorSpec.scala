@@ -118,5 +118,34 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
       }
     }
 
+    "handleAmendmentErrors" - {
+
+      val url = s"/manage-transit-movements-departure-cache/x-paths/$lrn/handle-amendment-errors"
+
+      val xPaths = Seq("/TransitOperation", "/Authorisations")
+
+      "must return true when response body contains true" in {
+        server.stubFor(
+          post(urlEqualTo(url))
+            .willReturn(okJson(Json.stringify(JsBoolean(true))))
+        )
+
+        val result: Boolean = await(connector.handleAmendmentErrors(lrn.toString, xPaths))
+
+        result mustBe true
+      }
+
+      "must return false when response body contains false" in {
+        server.stubFor(
+          post(urlEqualTo(url))
+            .willReturn(okJson(Json.stringify(JsBoolean(false))))
+        )
+
+        val result: Boolean = await(connector.handleAmendmentErrors(lrn.toString, xPaths))
+
+        result mustBe false
+      }
+    }
+
   }
 }

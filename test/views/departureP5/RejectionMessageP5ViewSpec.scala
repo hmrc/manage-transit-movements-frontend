@@ -49,14 +49,14 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
     totalNumberOfItems = sections.length,
     currentPage = 1,
     numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = false).url,
+    href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = Some(false)).url,
     additionalParams = Seq()
   )
 
   private def applyView(
     viewModel: RejectionMessageP5ViewModel,
     paginationViewModel: ListPaginationViewModel,
-    isAmendmentJourney: Boolean = false,
+    isAmendmentJourney: Boolean,
     mrn: Option[String]
   ): HtmlFormat.Appendable =
     injector
@@ -81,7 +81,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   behave like pageWithCaption(s"LRN: $lrn")
 
   behave like pageWithPagination(
-    controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = false).url
+    controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = Some(false)).url
   )
 
   behave like pageWithTable()
@@ -108,7 +108,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   }
 
   "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-declaration", "Or make another departure declaration")
+    assertSpecificElementContainsText("create-another-declaration", "Make another departure declaration")
   }
 
   behave like pageWithLink(
@@ -119,7 +119,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   behave like pageWithLink(
     "departure-link",
-    "make another departure declaration",
+    "Make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
 
