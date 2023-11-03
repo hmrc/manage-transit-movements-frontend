@@ -46,12 +46,20 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
 
     val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "Codelist violation")
 
+    "when amendment journey" - {
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+
+      val viewModelProvider = new DepartureDeclarationErrorsP5ViewModelProvider()
+      val result            = viewModelProvider.apply(lrnString, isAmendmentJourney = true)
+      result.paragraph1 mustBe s"There are one or more errors in this declaration that cannot be amended. Contact the helpdesk to discuss further."
+    }
+
     "when there is no error" - {
 
       when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new DepartureDeclarationErrorsP5ViewModelProvider()
-      val result            = viewModelProvider.apply(lrnString)
+      val result            = viewModelProvider.apply(lrnString, isAmendmentJourney = false)
 
       "must return correct title" in {
         result.title mustBe "Declaration errors"

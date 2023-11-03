@@ -20,38 +20,48 @@
 @import viewModels.pagination.PaginationViewModel
 
 @this(
-    mainTemplate: MainTemplate,
-    heading: Heading,
-    table: Table,
-    button: Button,
-    formHelper: FormWithCSRF,
-    pagination: Pagination
+        mainTemplate: MainTemplate,
+        heading: Heading,
+        table: Table,
+        button: Button,
+        formHelper: FormWithCSRF,
+        pagination: Pagination
 )
-@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
-    @mainTemplate(
-        title = rejectionMessageP5ViewModel.title,
-        showBackLink = true
-    ) {
+@mainTemplate(
+    title = rejectionMessageP5ViewModel.title,
+    showBackLink = true
+) {
 
-        @heading(
-            heading = rejectionMessageP5ViewModel.heading,
-            caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
-        )
+    @heading(
+        heading = rejectionMessageP5ViewModel.heading,
+        caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
+    )
 
-        <p id="paragraph-1" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
+    <p id="paragraph-1" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
 
-        @pagination(paginationViewModel, None)
+    @mrn.map { mrn => <p id="mrn" class="govuk-label--s">MRN: @mrn</p> }
 
+    @pagination(paginationViewModel, None)
+
+    @if(rejectionMessageP5ViewModel.tableRows.nonEmpty) {
         @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
-
-        <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
-
-        @button(
-            attributes = Map("id" -> "submit"),
-            messageKey = messages("site.amendErrors"),
-            href = Some(controllers.departureP5.routes.RejectionMessageP5Controller.onAmend(departureId, messageId).url)
-        )
-
-        <p id="create-another-declaration" class="govuk-body">Or <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
     }
+
+
+    <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a>
+        @rejectionMessageP5ViewModel.paragraph2Suffix</p>
+
+    @button(
+        attributes = Map("id" -> "submit"),
+        messageKey = messages("site.amendErrors"),
+        href = Some(controllers.departureP5.routes.RejectionMessageP5Controller.onAmend(departureId, messageId, isAmendmentJourney).url)
+    )
+
+    @if(!isAmendmentJourney) {
+        <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
+    }else {
+        <br>
+    }
+}

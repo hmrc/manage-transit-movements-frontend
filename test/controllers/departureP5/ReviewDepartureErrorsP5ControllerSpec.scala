@@ -46,9 +46,10 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
 
   private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
-  lazy val rejectionMessageController: String = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
-  val sections: Seq[Section]                  = arbitrarySections.arbitrary.sample.value
-  val tableRow: TableRow                      = arbitraryTableRow.arbitrary.sample.value
+  lazy val rejectionMessageController: String =
+    controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, None).url
+  val sections: Seq[Section] = arbitrarySections.arbitrary.sample.value
+  val tableRow: TableRow     = arbitraryTableRow.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -79,18 +80,18 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-      when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(ReviewDepartureErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
+      when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(ReviewDepartureErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = false)))
 
       val paginationViewModel = ListPaginationViewModel(
         totalNumberOfItems = message.data.functionalErrors.length,
         currentPage = 1,
         numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
+        href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, None).url,
         additionalParams = Seq()
       )
 
-      val rejectionMessageP5ViewModel = new ReviewDepartureErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true)
+      val rejectionMessageP5ViewModel = new ReviewDepartureErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true, isAmendmentJourney = false)
 
       val request = FakeRequest(GET, rejectionMessageController)
 
@@ -101,7 +102,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       val view = injector.instanceOf[ReviewDepartureErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
+        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel, isAmendmentJourney = false, None)(request, messages, frontendAppConfig).toString
     }
   }
 }

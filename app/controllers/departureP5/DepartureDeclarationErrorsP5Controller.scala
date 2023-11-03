@@ -39,11 +39,17 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+  def onPageLoad(departureId: String, messageId: String, isAmendmentJourney: Boolean): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)) {
       implicit request =>
         if (request.messageData.data.functionalErrors.isEmpty) {
-          Ok(view(viewModelProvider.apply(request.referenceNumbers.localReferenceNumber.value)))
+          Ok(
+            view(
+              viewModelProvider.apply(request.referenceNumbers.localReferenceNumber.value, isAmendmentJourney),
+              isAmendmentJourney,
+              request.referenceNumbers.movementReferenceNumber
+            )
+          )
         } else {
           Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }

@@ -55,7 +55,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = false).futureValue
 
       "must return correct section length" in {
         result.tableRows.length mustBe 1
@@ -70,23 +70,24 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       "must return correct paragraph 1" in {
         result.paragraph1 mustBe s"There is a problem with this declaration. Amend the error and resend the declaration."
       }
+
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
         result.paragraph2Link mustBe "New Computerised Transit System helpdesk"
         result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "make another departure declaration"
+        result.hyperlink mustBe "Make another departure declaration"
       }
     }
 
-    "when there is multiple errors" - {
+    "when there is multiple errors or amendmentRejection" - {
       val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(functionalErrors, lrnString).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, lrnString, isAmendmentJourney = true).futureValue
 
       "must return correct title" in {
         result.title mustBe "Amend declaration errors"
@@ -94,8 +95,11 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       "must return correct heading" in {
         result.heading mustBe "Amend declaration errors"
       }
-      "must return correct paragraph 1" in {
+      "must return correct paragraph 1 prefix" in {
         result.paragraph1Prefix mustBe s"There is a problem with departure declaration $lrnString."
+      }
+      "must return correct paragraph 1" in {
+        result.paragraph1 mustBe s"There is a problem with this declaration. Amend the errors and resend the declaration."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -103,7 +107,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "make another departure declaration"
+        result.hyperlink mustBe "Make another departure declaration"
       }
     }
 
@@ -113,7 +117,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = true).futureValue
 
       result.tableRows.length mustBe 2
       result.tableRows.head.size mustBe 2

@@ -27,7 +27,7 @@ import utils.RejectionMessageP5MessageHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class ReviewDepartureErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean) {
+case class ReviewDepartureErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean, isAmendmentJourney: Boolean) {
 
   def title(implicit messages: Messages): String = messages("departure.ie056.review.message.title")
 
@@ -35,13 +35,29 @@ case class ReviewDepartureErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: 
 
   def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.review.message.paragraph1.prefix", lrn)
 
-  def paragraph1(implicit messages: Messages): String = if (multipleErrors) {
+  def paragraph1(implicit messages: Messages): String = if (isAmendmentJourney) {
+    paragraph1Amendment
+  } else {
+    paragraph1NoAmendment
+  }
+
+  def paragraph1NoAmendment(implicit messages: Messages): String = if (multipleErrors) {
     messages(
       "departure.ie056.review.message.paragraph1.plural"
     )
   } else {
     messages(
       "departure.ie056.review.message.paragraph1.singular"
+    )
+  }
+
+  def paragraph1Amendment(implicit messages: Messages): String = if (multipleErrors) {
+    messages(
+      "departure.ie056.review.message.paragraph1.amendment.plural"
+    )
+  } else {
+    messages(
+      "departure.ie056.review.message.paragraph1.amendment.singular"
     )
   }
 
@@ -69,12 +85,13 @@ object ReviewDepartureErrorsP5ViewModel {
 
     def apply(
       functionalErrors: Seq[FunctionalError],
-      lrn: String
+      lrn: String,
+      isAmendmentJourney: Boolean
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewDepartureErrorsP5ViewModel] = {
 
       val helper         = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
       val multipleErrors = functionalErrors.length > 1
-      helper.tableRows().map(ReviewDepartureErrorsP5ViewModel(_, lrn, multipleErrors))
+      helper.tableRows().map(ReviewDepartureErrorsP5ViewModel(_, lrn, multipleErrors, isAmendmentJourney))
     }
   }
 }

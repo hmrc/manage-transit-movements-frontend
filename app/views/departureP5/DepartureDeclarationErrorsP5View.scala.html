@@ -27,7 +27,7 @@ answerSections: AnswerSections,
 button: Button,
 formHelper: FormWithCSRF
 )
-@(departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = departureDeclarationErrorsP5ViewModel.title,
@@ -41,10 +41,12 @@ formHelper: FormWithCSRF
 
         <p id="paragraph-1" class="govuk-body">@departureDeclarationErrorsP5ViewModel.paragraph1</p>
 
+        @mrn.map{mrn => <p id="mrn" class="govuk-label--s">MRN: @mrn</p> }
+
         <p id="paragraph-3" class="govuk-body">@departureDeclarationErrorsP5ViewModel.paragraph3Prefix <a id="helpdesk-link" class="govuk-link"  target="_blank" href=@config.nctsEnquiriesUrl>@departureDeclarationErrorsP5ViewModel.paragraph3Link</a> @departureDeclarationErrorsP5ViewModel.paragraph3Suffix</p>
 
-
-    <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@departureDeclarationErrorsP5ViewModel.hyperlink</a></p>
-
+        @if(!isAmendmentJourney){
+          <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@departureDeclarationErrorsP5ViewModel.hyperlink</a></p>
+        }
 
     }

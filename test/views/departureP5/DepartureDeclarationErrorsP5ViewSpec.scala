@@ -17,6 +17,7 @@
 package views.departureP5
 
 import generators.Generators
+import org.jsoup.nodes.Document
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
 import viewModels.sections.Section
@@ -28,12 +29,18 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   override val prefix: String = "departure.declaration.errors.message"
   val lrnString               = "LRNAB123"
 
-  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrnString)
+  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel =
+    new DepartureDeclarationErrorsP5ViewModel(lrnString, isAmendmentJourney = false)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[DepartureDeclarationErrorsP5View]
-      .apply(departureDeclarationErrorsP5ViewModel)(fakeRequest, messages, frontendAppConfig)
+      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney = false, None)(fakeRequest, messages, frontendAppConfig)
+
+  def viewWithSpecificAmendment(isAmendmentJourney: Boolean, mrn: Option[String] = None): HtmlFormat.Appendable =
+    injector
+      .instanceOf[DepartureDeclarationErrorsP5View]
+      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney, mrn)(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 
@@ -78,5 +85,20 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
     "Make another departure declaration",
     frontendAppConfig.declareDepartureStartWithLRNUrl
   )
+
+  "must not render add another declaration link when isAmendmentJourney is true" in {
+    val doc: Document = parseView(viewWithSpecificAmendment(isAmendmentJourney = true))
+    assertNotRenderedById(doc, "create-another-declaration")
+  }
+
+  "must not render mrn when None" in {
+    val doc: Document = parseView(viewWithSpecificAmendment(isAmendmentJourney = true, None))
+    assertNotRenderedById(doc, "mrn")
+  }
+
+  "must render mrn when provided" in {
+    val doc: Document = parseView(viewWithSpecificAmendment(isAmendmentJourney = true, Some("mrn")))
+    assertRenderedById(doc, "mrn")
+  }
 
 }

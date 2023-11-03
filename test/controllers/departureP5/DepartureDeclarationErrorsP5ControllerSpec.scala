@@ -40,7 +40,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
 
   lazy val departureDeclarationErrorsController: String =
-    controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, messageId).url
+    controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, messageId, isAmendmentJourney = false).url
   private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   override def beforeEach(): Unit = {
@@ -71,7 +71,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
-      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrn.value)
+      val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrn.value, isAmendmentJourney = false)
 
       val request = FakeRequest(GET, departureDeclarationErrorsController)
 
@@ -82,7 +82,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       val view = injector.instanceOf[DepartureDeclarationErrorsP5View]
 
       contentAsString(result) mustEqual
-        view(departureDeclarationErrorsP5ViewModel)(request, messages, frontendAppConfig).toString
+        view(departureDeclarationErrorsP5ViewModel, isAmendmentJourney = false, None)(request, messages, frontendAppConfig).toString
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {

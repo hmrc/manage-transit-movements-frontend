@@ -28,7 +28,7 @@ pagination: Pagination,
 formHelper: FormWithCSRF
 )
 
-@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: ListPaginationViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = rejectionMessageP5ViewModel.title,
@@ -42,13 +42,17 @@ formHelper: FormWithCSRF
 
         <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
 
+        @mrn.map{mrn => <p id="mrn" class="govuk-label--s">MRN: @mrn</p> }
+
         @pagination(paginationViewModel, None)
 
         @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
 
         <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
 
+        @if(!isAmendmentJourney){
         <p class="govuk-body">
             <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a>
         </p>
+        }
 }
