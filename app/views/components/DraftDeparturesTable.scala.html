@@ -19,51 +19,51 @@
 @this()
 
 @(
-    viewModel: AllDraftDeparturesViewModel
+viewModel: AllDraftDeparturesViewModel
 )(implicit messages: Messages)
 
 <table class="responsive-table sortable-table">
     <caption class="govuk-visually-hidden">@viewModel.visuallyHiddenHeader</caption>
 
     <thead>
-        <tr>
-            <th scope="col" aria-sort="@viewModel.sortLrn">
-                <span class="govuk-visually-hidden">@viewModel.sortHiddenTextLRN</span>
-                <a href="@viewModel.sortLRNHref()" aria-label="@viewModel.referenceNumber">@viewModel.referenceNumber</a>
-            </th>
-            <th scope="col" aria-sort="@viewModel.sortCreatedAt">
-                <span class="govuk-visually-hidden">@viewModel.sortHiddenTextDaysToComplete</span>
-                <a href="@viewModel.sortCreatedAtHref()" aria-label="@viewModel.daysToComplete">@viewModel.daysToComplete</a>
-            </th>
-            <th scope="col"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
-        </tr>
+    <tr>
+        <th scope="col" aria-sort="@viewModel.sortLrn">
+            <span class="govuk-visually-hidden">@viewModel.sortHiddenTextLRN</span>
+            <a href="@viewModel.sortLRNHref()" aria-label="@viewModel.referenceNumber">@viewModel.referenceNumber</a>
+        </th>
+        <th scope="col" aria-sort="@viewModel.sortCreatedAt">
+            <span class="govuk-visually-hidden">@viewModel.sortHiddenTextDaysToComplete</span>
+            <a href="@viewModel.sortCreatedAtHref()" aria-label="@viewModel.daysToComplete">@viewModel.daysToComplete</a>
+        </th>
+        <th scope="col"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
+    </tr>
     </thead>
 
     <tbody>
-        @for((row, rowIndex) <- viewModel.dataRows.zip(LazyList from 1)) {
-            <tr data-testrole="draft-list_row@rowIndex">
-                <td data-testrole="draft-list_row@rowIndex-lrn">
-                    <span class="responsive-table__heading" aria-hidden="true">@viewModel.referenceNumber</span>
-                    <a href="@viewModel.lrnRedirectLocation(row.lrn)" class="govuk-link">
-                        <span class="govuk-visually-hidden">@viewModel.referenceNumber</span>
-                        @row.lrn
-                    </a>
-                </td>
+    @for((row, rowIndex) <- viewModel.dataRows.zip(LazyList from 1)) {
+    <tr data-testrole="draft-list_row@rowIndex">
+        <td data-testrole="draft-list_row@rowIndex-lrn">
+            <span class="responsive-table__heading" aria-hidden="true">@viewModel.referenceNumber</span>
+            <a href="@viewModel.lrnRedirectLocation(row.lrn)" class="govuk-link">
+                <span class="govuk-visually-hidden">@viewModel.referenceNumber</span>
+                @row.lrn
+            </a>
+        </td>
 
-                <td data-testrole="draft-list_row@rowIndex-daysToComplete">
+        <td data-testrole="draft-list_row@rowIndex-daysToComplete">
                     <span class="responsive-table__heading" aria-hidden="true">
                         @viewModel.daysToComplete</span>
-                    <div class="govuk-visually-hidden">@viewModel.daysToComplete</div>
-                    @row.daysRemaining
-                </td>
+            <div class="govuk-visually-hidden">@viewModel.daysToComplete</div>
+            @row.daysRemaining
+        </td>
 
-                <td data-testrole="draft-list_row@rowIndex-delete">
-                    <span class="responsive-table__heading" aria-hidden="true"></span>
-                    <a href="@viewModel.deleteDraftUrl(row)" class="govuk-link">@messages("departure.drafts.dashboard.table.action.delete")
-                        <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
-                    </a>
-                </td>
-            </tr>
-        }
+        <td data-testrole="draft-list_row@rowIndex-delete">
+            <span class="responsive-table__heading" aria-hidden="true"></span>
+            <a href="@viewModel.deleteDraftUrl(row)" class="govuk-link">@messages("departure.drafts.dashboard.table.action.delete")
+                <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
+            </a>
+        </td>
+    </tr>
+    }
     </tbody>
 </table>
