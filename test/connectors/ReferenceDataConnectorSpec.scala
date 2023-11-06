@@ -18,12 +18,12 @@ package connectors
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import play.api.http.Status.NO_CONTENT
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,15 +38,31 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
   private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
 
-  private def checkErrorResponse(url: String, result: Future[_]): Assertion = {
-    val errorResponseCodes: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
-    forAll(errorResponseCodes) {
+  private def checkNoReferenceDataFoundResponse(url: String, result: => Future[_]): Assertion = {
+    server.stubFor(
+      get(urlEqualTo(url))
+        .willReturn(okJson(emptyResponseJson))
+    )
+
+    whenReady[Throwable, Assertion](result.failed) {
+      _ mustBe a[NoReferenceDataFoundException]
+    }
+  }
+
+  private def checkErrorResponse(url: String, result: => Future[_]): Assertion = {
+    val errorResponses: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
+
+    forAll(errorResponses) {
       errorResponse =>
         server.stubFor(
-          get(urlEqualTo(url)).willReturn(aResponse().withStatus(errorResponse))
+          get(urlEqualTo(url))
+            .willReturn(
+              aResponse()
+                .withStatus(errorResponse)
+            )
         )
 
-        whenReady(result.failed) {
+        whenReady[Throwable, Assertion](result.failed) {
           _ mustBe an[Exception]
         }
     }
@@ -73,13 +89,8 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
           connector.getCustomsOffices(queryParams).futureValue mustBe expectedResult
         }
 
-        "should handle a 204 response for customs offices" in {
-          server.stubFor(
-            get(urlEqualTo(url))
-              .willReturn(aResponse().withStatus(NO_CONTENT))
-          )
-
-          connector.getCustomsOffices(queryParams).futureValue mustBe Nil
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getCustomsOffices(queryParams))
         }
 
         "should handle client and server errors for customs offices" in {
@@ -102,13 +113,8 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
           connector.getControlTypes(queryParams).futureValue mustBe expectedResult
         }
 
-        "should handle a 204 response for control types" in {
-          server.stubFor(
-            get(urlEqualTo(url))
-              .willReturn(aResponse().withStatus(NO_CONTENT))
-          )
-
-          connector.getControlTypes(queryParams).futureValue mustBe Nil
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getControlTypes(queryParams))
         }
 
         "should handle client and server errors for control types" in {
@@ -133,13 +139,8 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             connector.getFunctionalErrors(queryParams).futureValue mustBe expectedResult
           }
 
-          "should handle a 204 response for functional errors" in {
-            server.stubFor(
-              get(urlEqualTo(url))
-                .willReturn(aResponse().withStatus(NO_CONTENT))
-            )
-
-            connector.getFunctionalErrors(queryParams).futureValue mustBe Nil
+          "should throw a NoReferenceDataFoundException for an empty response" in {
+            checkNoReferenceDataFoundResponse(url, connector.getFunctionalErrors(queryParams))
           }
 
           "should handle client and server errors for functional errors" in {
@@ -162,13 +163,8 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             connector.getFunctionalErrors().futureValue mustBe expectedResult
           }
 
-          "should handle a 204 response for functional errors" in {
-            server.stubFor(
-              get(urlEqualTo(url))
-                .willReturn(aResponse().withStatus(NO_CONTENT))
-            )
-
-            connector.getFunctionalErrors().futureValue mustBe Nil
+          "should throw a NoReferenceDataFoundException for an empty response" in {
+            checkNoReferenceDataFoundResponse(url, connector.getFunctionalErrors())
           }
 
           "should handle client and server errors for functional errors" in {
@@ -190,38 +186,45 @@ object ReferenceDataConnectorSpec {
 
   private val customsOfficesResponseJson: String =
     s"""
-      |{
-      |  "data": [
-      |    {
-      |      "id": "$code",
-      |      "name": "NAME001",
-      |      "phoneNumber": "004412323232345"
-      |    }
-      |  ]
-      |}
-      |""".stripMargin
+       |{
+       |  "data": [
+       |    {
+       |      "id": "$code",
+       |      "name": "NAME001",
+       |      "phoneNumber": "004412323232345"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
 
   private val controlTypesResponseJson: String =
     s"""
-      |{
-      |  "data": [
-      |    {
-      |      "code": "$typeOfControl",
-      |      "description": "Intrusive"
-      |    }
-      |  ]
-      |}
-      |""".stripMargin
+       |{
+       |  "data": [
+       |    {
+       |      "code": "$typeOfControl",
+       |      "description": "Intrusive"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
 
   private val functionalErrorsResponseJson: String =
     s"""
+       |{
+       |  "data": [
+       |    {
+       |      "code": "$functionalError",
+       |      "description": "Rule violation"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
+
+  private val emptyResponseJson: String =
+    """
       |{
-      |  "data": [
-      |    {
-      |      "code": "$functionalError",
-      |      "description": "Rule violation"
-      |    }
-      |  ]
+      |  "data": []
       |}
       |""".stripMargin
 }
