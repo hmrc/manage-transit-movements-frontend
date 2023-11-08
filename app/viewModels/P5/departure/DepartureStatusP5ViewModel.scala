@@ -338,13 +338,23 @@ object DepartureStatusP5ViewModel {
         case false => Seq.empty
       }
 
-      DepartureStatusP5ViewModel(
-        "movement.status.P5.goodsUnderControl",
-        actions = Seq(
+      val goodsUnderControlAction = prelodged match {
+        case true =>
+          ViewMovementAction(
+            controllers.departureP5.routes.IntentionToControlIndexController.onPageLoad(departureId, messageId).url,
+            "movement.status.P5.action.goodsUnderControl.viewDetails"
+          )
+        case false =>
           ViewMovementAction(
             controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureId, messageId).url,
             "movement.status.P5.action.goodsUnderControl.viewDetails"
-          ),
+          )
+      }
+
+      DepartureStatusP5ViewModel(
+        "movement.status.P5.goodsUnderControl",
+        actions = Seq(
+          goodsUnderControlAction,
           ViewMovementAction(
             s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
             "movement.status.P5.action.goodsUnderControl.cancelDeclaration"

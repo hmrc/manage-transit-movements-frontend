@@ -122,7 +122,7 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
     pageWithMatchingTitleAndHeading(doc, prefix, args: _*)
 
   def pageWithMatchingTitleAndHeading(doc: Document, prefix: String, args: Any*): Unit =
-    "must render heading" in {
+    "must render title and heading" in {
       val messageKey = s"$prefix.titleAndHeading"
 
       val heading = getElementByTag(doc, "h1")

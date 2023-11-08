@@ -783,7 +783,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.goodsUnderControl",
           Seq(
             ViewMovementAction(
-              controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url,
+              controllers.departureP5.routes.IntentionToControlIndexController.onPageLoad(departureIdP5, messageId).url,
               "movement.status.P5.action.goodsUnderControl.viewDetails"
             ),
             ViewMovementAction(
