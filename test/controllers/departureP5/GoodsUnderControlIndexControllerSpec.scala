@@ -18,6 +18,7 @@ package controllers.departureP5
 
 import base.SpecBase
 import generators.Generators
+import models.departureP5.IE060MessageType.{GoodsUnderControl, GoodsUnderControlRequestedDocuments, IntentionToControl}
 import models.departureP5._
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
@@ -55,7 +56,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
   "GoodsUnderControlIndexController" - {
 
     s"when notification type 0 and requested documents not present must redirect to correct controller" in {
-      val notificationType = "0"
+      val notificationType = GoodsUnderControl
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),
@@ -81,7 +82,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
     }
 
     s"when notification type 1 and requested documents present must redirect to correct controller" in {
-      val notificationType = "1"
+      val notificationType = GoodsUnderControlRequestedDocuments
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),
@@ -107,7 +108,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
     }
 
     s"when notification type 1 must redirect to correct controller" in {
-      val notificationType = "1"
+      val notificationType = GoodsUnderControlRequestedDocuments
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),
@@ -134,7 +135,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
     }
 
     s"when notification type 2 and no control information requested - must redirect to noInformationRequested controller" in {
-      val notificationType = "2"
+      val notificationType = IntentionToControl
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),
@@ -162,7 +163,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
     }
 
     s"when notification type 2 and control information requested - must redirect to informationRequested controller" in {
-      val notificationType = "2"
+      val notificationType = IntentionToControl
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),

@@ -18,6 +18,7 @@ package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
+import models.departureP5.IE060MessageType.{GoodsUnderControl, GoodsUnderControlRequestedDocuments, IntentionToControl}
 import models.departureP5._
 import models.referenceData.ControlType
 import org.mockito.ArgumentMatchers.any
@@ -53,7 +54,11 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "2"),
+          TransitOperationIE060(Some("MRN1"),
+                                Some("LRN1"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                GoodsUnderControl
+          ),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
           None
@@ -88,7 +93,11 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
     "when there is information requested" - {
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "2"),
+          TransitOperationIE060(Some("MRN1"),
+                                Some("LRN1"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                IntentionToControl
+          ),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
           requestedDocument
@@ -120,7 +129,11 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification2"),
+          TransitOperationIE060(Some("MRN1"),
+                                Some("LRN1"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                IntentionToControl
+          ),
           CustomsOfficeOfDeparture("22323323"),
           None,
           None
@@ -145,7 +158,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
             TransitOperationIE060(Some("MRN1"),
                                   Some("LRN1"),
                                   LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  "notification1"
+                                  GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -170,7 +183,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
             TransitOperationIE060(Some("MRN1"),
                                   Some("LRN1"),
                                   LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  "notification1"
+                                  GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,

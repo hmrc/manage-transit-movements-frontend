@@ -37,11 +37,11 @@ class GoodsUnderControlIndexController @Inject() (
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE060Data](departureId, messageId)) {
       implicit request =>
         val call = request.messageData.data.TransitOperation.notificationType match {
-          case GoodsUnderControl.messageType =>
+          case GoodsUnderControl =>
             controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId, messageId)
-          case GoodsUnderControlRequestedDocuments.messageType =>
+          case GoodsUnderControlRequestedDocuments =>
             controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId, messageId)
-          case IntentionToControl.messageType =>
+          case IntentionToControl =>
             if (request.messageData.data.requestedDocuments) {
               controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureId, messageId)
             } else {
