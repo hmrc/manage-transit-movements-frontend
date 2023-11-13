@@ -9,8 +9,6 @@ GET         /:departureId/goods-under-control/:messageId                        
 
 GET         /:departureId/goods-under-control-document-requested/:messageId          controllers.departureP5.GoodsUnderControlP5Controller.requestedDocuments(departureId: String, messageId: String)
 
-GET         /:departureId/intention-to-control-index/:messageId                      controllers.departureP5.IntentionToControlIndexController.onPageLoad(departureId: String, messageId: String)
-
 GET         /:departureId/intention-to-control/:messageId                            controllers.departureP5.IntentionToControlP5Controller.noInformationRequested(departureId: String, messageId: String)
 
 GET         /:departureId/intention-to-control-information-requested/:messageId      controllers.departureP5.IntentionToControlP5Controller.informationRequested(departureId: String, messageId: String)

@@ -72,6 +72,25 @@ object TransitOperationIE060 {
   implicit val formats: OFormat[TransitOperationIE060] = Json.format[TransitOperationIE060]
 }
 
+sealed trait IE060MessageType {
+  val messageType: String
+}
+
+object IE060MessageType {
+
+  case object GoodsUnderControl extends IE060MessageType {
+    override val messageType = "0"
+  }
+
+  case object GoodsUnderControlRequestedDocuments extends IE060MessageType {
+    override val messageType = "1"
+  }
+
+  case object IntentionToControl extends IE060MessageType {
+    override val messageType = "2"
+  }
+}
+
 object TransitOperationIE015 {
   implicit val formats: OFormat[TransitOperationIE015] = Json.format[TransitOperationIE015]
 }

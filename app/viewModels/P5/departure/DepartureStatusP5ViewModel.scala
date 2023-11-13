@@ -338,18 +338,10 @@ object DepartureStatusP5ViewModel {
         case false => Seq.empty
       }
 
-      val goodsUnderControlAction = prelodged match {
-        case true =>
-          ViewMovementAction(
-            controllers.departureP5.routes.IntentionToControlIndexController.onPageLoad(departureId, messageId).url,
-            "movement.status.P5.action.goodsUnderControl.viewDetails"
-          )
-        case false =>
-          ViewMovementAction(
-            controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureId, messageId).url,
-            "movement.status.P5.action.goodsUnderControl.viewDetails"
-          )
-      }
+      val goodsUnderControlAction = ViewMovementAction(
+        controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureId, messageId).url,
+        "movement.status.P5.action.goodsUnderControl.viewDetails"
+      )
 
       DepartureStatusP5ViewModel(
         "movement.status.P5.goodsUnderControl",
