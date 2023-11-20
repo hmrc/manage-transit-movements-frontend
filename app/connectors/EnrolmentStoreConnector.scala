@@ -17,11 +17,10 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import logging.Logging
-import models.QueryGroupsEnrolmentsResponseModel
-import play.api.http.Status._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import models.GroupEnrolmentResponse
+import models.GroupEnrolmentResponse._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,19 +28,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class EnrolmentStoreConnector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
   def checkGroupEnrolments(groupId: String, enrolmentKey: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val serviceUrl: String = s"${config.enrolmentProxyUrl}/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"
-
-    http.GET[HttpResponse](serviceUrl).map {
-      response =>
-        response.status match {
-          case OK =>
-            response.json.as[QueryGroupsEnrolmentsResponseModel].enrolments.exists(_.service.contains(enrolmentKey))
-          case NO_CONTENT | NOT_FOUND =>
-            false
-          case other =>
-            logger.info(s"[EnrolmentStoreProxyConnector][checkSaGroup] Enrolment Store Proxy error with status $other")
-            throw new Exception(s"Call to enrolment store failed: $other - ${response.body}")
-        }
+    val url: String = s"${config.enrolmentProxyUrl}/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"
+    http.GET[GroupEnrolmentResponse](url).map {
+      case Enrolments(enrolments)                         => enrolments.map(_.service).contains(enrolmentKey)
+      case GroupEnrolmentResponse.NoEnrolments            => false
+      case BadRequest(code) if code == "INVALID_GROUP_ID" => false
+      case e =>
+        logger.info(s"[EnrolmentStoreProxyConnector][checkSaGroup] Enrolment Store Proxy error: $e")
+        throw new Exception(s"Call to enrolment store failed: $e")
     }
   }
 }
