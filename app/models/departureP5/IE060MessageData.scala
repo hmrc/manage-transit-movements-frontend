@@ -16,6 +16,7 @@
 
 package models.departureP5
 
+import models.departureP5.IE060MessageType.GoodsUnderControlRequestedDocuments
 import play.api.libs.json.{Json, OFormat}
 
 case class IE060MessageData(
@@ -24,9 +25,12 @@ case class IE060MessageData(
   TypeOfControls: Option[Seq[TypeOfControls]],
   RequestedDocument: Option[Seq[RequestedDocument]]
 ) {
-  val typeOfControlsToSeq: Seq[TypeOfControls]        = TypeOfControls.getOrElse(Seq.empty)
+  val typeOfControlsToSeq: Seq[TypeOfControls] = TypeOfControls.getOrElse(Seq.empty)
+
   val requestedDocumentsToSeq: Seq[RequestedDocument] = RequestedDocument.getOrElse(Seq.empty)
-  val requestedDocuments: Boolean                     = requestedDocumentsToSeq.nonEmpty || TransitOperation.notificationType == "1"
+
+  val requestedDocuments: Boolean =
+    requestedDocumentsToSeq.nonEmpty || TransitOperation.notificationType == GoodsUnderControlRequestedDocuments
 }
 
 object IE060MessageData {

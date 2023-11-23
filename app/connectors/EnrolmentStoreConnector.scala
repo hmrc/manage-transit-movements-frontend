@@ -30,9 +30,9 @@ class EnrolmentStoreConnector @Inject() (config: FrontendAppConfig, http: HttpCl
   def checkGroupEnrolments(groupId: String, enrolmentKey: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val url: String = s"${config.enrolmentProxyUrl}/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"
     http.GET[GroupEnrolmentResponse](url).map {
-      case Enrolments(enrolments)                         => enrolments.map(_.service).contains(enrolmentKey)
-      case GroupEnrolmentResponse.NoEnrolments            => false
-      case BadRequest(code) if code == "INVALID_GROUP_ID" => false
+      case Enrolments(enrolments)              => enrolments.map(_.service).contains(enrolmentKey)
+      case GroupEnrolmentResponse.NoEnrolments => false
+      case BadRequest("INVALID_GROUP_ID")      => false
       case e =>
         logger.info(s"[EnrolmentStoreProxyConnector][checkSaGroup] Enrolment Store Proxy error: $e")
         throw new Exception(s"Call to enrolment store failed: $e")
