@@ -42,7 +42,7 @@ class GoodsUnderControlIndexController @Inject() (
           case GoodsUnderControlRequestedDocuments =>
             controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId, messageId)
           case IntentionToControl =>
-            if (request.messageData.data.requestedDocuments) {
+            if (request.messageData.data.informationRequested) {
               controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureId, messageId)
             } else {
               controllers.departureP5.routes.IntentionToControlP5Controller.noInformationRequested(departureId, messageId)
