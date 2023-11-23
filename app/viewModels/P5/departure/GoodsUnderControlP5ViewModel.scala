@@ -78,7 +78,7 @@ object GoodsUnderControlP5ViewModel {
       val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData, referenceDataService)
 
       val notificationType: IE060MessageType = ie060MessageData.TransitOperation.notificationType
-      val requestedDocuments: Boolean        = ie060MessageData.requestedDocuments
+      val requestedDocuments: Boolean        = ie060MessageData.informationRequested
       val lrn                                = ie060MessageData.TransitOperation.LRN
 
       helper.buildGoodsUnderControlSection().flatMap {

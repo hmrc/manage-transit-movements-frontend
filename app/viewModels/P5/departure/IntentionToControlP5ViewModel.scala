@@ -67,7 +67,7 @@ object IntentionToControlP5ViewModel {
     )(implicit messages: Messages): IntentionToControlP5ViewModel = {
       val helper = new IntentionToControlP5MessageHelper(ie060MessageData)
 
-      val requestedDocuments: Boolean = ie060MessageData.requestedDocuments
+      val requestedDocuments: Boolean = ie060MessageData.informationRequested
       val lrn                         = ie060MessageData.TransitOperation.LRN
 
       val intentionToControlSection = helper.buildIntentionToControlSection()

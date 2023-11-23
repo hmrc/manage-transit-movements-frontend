@@ -29,7 +29,7 @@ case class IE060MessageData(
 
   val requestedDocumentsToSeq: Seq[RequestedDocument] = RequestedDocument.getOrElse(Seq.empty)
 
-  val requestedDocuments: Boolean =
+  val informationRequested: Boolean =
     requestedDocumentsToSeq.nonEmpty || TransitOperation.notificationType == GoodsUnderControlRequestedDocuments
 }
 

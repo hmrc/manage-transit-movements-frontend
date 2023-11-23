@@ -51,14 +51,15 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
     val controlType44     = ControlType("44", "")
     val requestedDocument = Some(Seq(RequestedDocument("1", "44", None)))
 
-    "when no requested documents" - {
+    "when no requested documents and type 0" - {
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"),
-                                Some("LRN1"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControl
+          TransitOperationIE060(
+            Some("MRN1"),
+            Some("LRN1"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            GoodsUnderControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
@@ -72,7 +73,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data).futureValue
 
-      "must return correct section length" in {
+      "must render correct number of sections" in {
         result.sections.length mustBe 2
       }
 
@@ -94,13 +95,53 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       }
     }
 
+    "when no requested documents and type 1" - {
+
+      val message: IE060Data = IE060Data(
+        IE060MessageData(
+          TransitOperationIE060(
+            Some("MRN1"),
+            Some("LRN1"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            GoodsUnderControlRequestedDocuments
+          ),
+          CustomsOfficeOfDeparture("22323323"),
+          typeOfControls,
+          None
+        )
+      )
+
+      when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+
+      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message.data).futureValue
+
+      "must render correct number of sections" in {
+        result.sections.length mustBe 1
+      }
+
+      "must return correct title" in {
+        result.title mustBe "Goods under control - document requested"
+      }
+      "must return correct heading" in {
+        result.heading mustBe "Goods under control - document requested"
+      }
+      "must return correct paragraphs" in {
+        result.paragraph1 mustBe "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
+        result.paragraph2 mustBe "While awaiting the documentation, the goods will remain under supervision at the office of destination."
+        result.paragraph3 mustBe "You must contact the office of destination directly to share the requested documentation."
+      }
+    }
+
     "when there is requested documents and type 0" - {
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"),
-                                Some("LRN1"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControl
+          TransitOperationIE060(
+            Some("MRN1"),
+            Some("LRN1"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            GoodsUnderControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
@@ -114,7 +155,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data).futureValue
 
-      "must not render type of control if present" in {
+      "must render correct number of sections" in {
         result.sections.length mustBe 3
       }
 
@@ -130,13 +171,15 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         result.paragraph3 mustBe "You must contact the office of destination directly to share the requested documentation."
       }
     }
+
     "when there is requested documents and type 1" - {
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"),
-                                Some("LRN1"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControlRequestedDocuments
+          TransitOperationIE060(
+            Some("MRN1"),
+            Some("LRN1"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            GoodsUnderControlRequestedDocuments
           ),
           CustomsOfficeOfDeparture("22323323"),
           None,
@@ -150,7 +193,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(message.data).futureValue
 
-      "must not render type of control if present" in {
+      "must render correct number of sections" in {
         result.sections.length mustBe 2
       }
 
@@ -171,10 +214,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"),
-                                Some("LRN1"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControlRequestedDocuments
+          TransitOperationIE060(
+            Some("MRN1"),
+            Some("LRN1"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            GoodsUnderControlRequestedDocuments
           ),
           CustomsOfficeOfDeparture("22323323"),
           None,
@@ -197,10 +241,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(Some("MRN1"),
-                                  Some("LRN1"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              Some("MRN1"),
+              Some("LRN1"),
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -224,10 +269,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(Some("MRN1"),
-                                  Some("LRN1"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControl
+            TransitOperationIE060(
+              Some("MRN1"),
+              Some("LRN1"),
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControl
             ),
             CustomsOfficeOfDeparture("22323323"),
             typeOfControls,
@@ -258,10 +304,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(Some("MRN1"),
-                                  Some("LRN1"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              Some("MRN1"),
+              Some("LRN1"),
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -278,15 +325,16 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       }
 
-      "must render document section with  2 rows if documents are present" in {
+      "must render document section with 2 rows if documents are present" in {
 
         val requestedDocument = Some(Seq(RequestedDocument("1", "44", None), RequestedDocument("2", "45", Some("Desc1"))))
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(Some("MRN1"),
-                                  Some("LRN1"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              Some("MRN1"),
+              Some("LRN1"),
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
