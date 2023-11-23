@@ -18,6 +18,7 @@ package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
+import models.departureP5.IE060MessageType.{GoodsUnderControl, GoodsUnderControlRequestedDocuments}
 import models.departureP5._
 import models.referenceData.ControlType
 import org.mockito.ArgumentMatchers.any
@@ -54,7 +55,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
+          TransitOperationIE060(Some("MRN1"),
+                                Some("LRN1"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                GoodsUnderControl
+          ),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
           None
@@ -92,7 +97,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
     "when there is requested documents and type 0" - {
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "0"),
+          TransitOperationIE060(Some("MRN1"),
+                                Some("LRN1"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                GoodsUnderControl
+          ),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
           requestedDocument
@@ -124,7 +133,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
     "when there is requested documents and type 1" - {
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "1"),
+          TransitOperationIE060(Some("MRN1"),
+                                Some("LRN1"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                GoodsUnderControlRequestedDocuments
+          ),
           CustomsOfficeOfDeparture("22323323"),
           None,
           requestedDocument
@@ -158,7 +171,11 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"), Some("LRN1"), LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME), "notification1"),
+          TransitOperationIE060(Some("MRN1"),
+                                Some("LRN1"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                GoodsUnderControlRequestedDocuments
+          ),
           CustomsOfficeOfDeparture("22323323"),
           None,
           None
@@ -183,7 +200,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
             TransitOperationIE060(Some("MRN1"),
                                   Some("LRN1"),
                                   LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  "notification1"
+                                  GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -200,7 +217,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       }
 
-      "must render control section with  2 rows if controls are present" in {
+      "must render control section with 2 rows if controls are present" in {
         val typeOfControls = Some(Seq(TypeOfControls("1", "44", None), TypeOfControls("2", "45", Some("Desc1"))))
         val controlType44  = ControlType("44", "Nature and characteristics of the goods")
         val controlType45  = ControlType("45", "")
@@ -210,7 +227,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
             TransitOperationIE060(Some("MRN1"),
                                   Some("LRN1"),
                                   LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  "notification1"
+                                  GoodsUnderControl
             ),
             CustomsOfficeOfDeparture("22323323"),
             typeOfControls,
@@ -244,7 +261,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
             TransitOperationIE060(Some("MRN1"),
                                   Some("LRN1"),
                                   LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  "notification1"
+                                  GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -269,7 +286,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
             TransitOperationIE060(Some("MRN1"),
                                   Some("LRN1"),
                                   LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  "notification1"
+                                  GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,

@@ -18,7 +18,7 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
-import models.departureP5.IE060MessageType.GoodsUnderControl
+import models.departureP5.IE060MessageType.IntentionToControl
 import models.departureP5._
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
@@ -31,19 +31,19 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{DepartureP5MessageService, ReferenceDataService}
-import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
-import viewModels.P5.departure.{CustomsOfficeContactViewModel, GoodsUnderControlP5ViewModel}
-import views.html.departureP5.GoodsUnderControlP5View
+import viewModels.P5.departure.IntentionToControlP5ViewModel.IntentionToControlP5ViewModelProvider
+import viewModels.P5.departure.{CustomsOfficeContactViewModel, IntentionToControlP5ViewModel}
+import views.html.departureP5.IntentionToControlP5View
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
-class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockGoodsUnderControlP5ViewModelProvider = mock[GoodsUnderControlP5ViewModelProvider]
-  private val mockReferenceDataService                 = mock[ReferenceDataService]
-  private val mockDepartureP5MessageService            = mock[DepartureP5MessageService]
+  private val mockIntentionToControlP5ViewModelProvider = mock[IntentionToControlP5ViewModelProvider]
+  private val mockReferenceDataService                  = mock[ReferenceDataService]
+  private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
 
   private val sections = arbitrarySections.arbitrary.sample.value
 
@@ -51,31 +51,31 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
     super.beforeEach()
     reset(mockReferenceDataService)
     reset(mockDepartureP5MessageService)
-    reset(mockGoodsUnderControlP5ViewModelProvider)
+    reset(mockIntentionToControlP5ViewModelProvider)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .p5GuiceApplicationBuilder()
-      .overrides(bind[GoodsUnderControlP5ViewModelProvider].toInstance(mockGoodsUnderControlP5ViewModelProvider))
+      .overrides(bind[IntentionToControlP5ViewModelProvider].toInstance(mockIntentionToControlP5ViewModelProvider))
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
   private val customsOffice          = arbitrary[CustomsOffice].sample.value
 
-  "UnloadingFindingsController Controller" - {
+  "IntentionToControlP5Controller Controller" - {
 
-    "must return OK and the correct view for a GET when requestedDocuments" in {
-      val goodsUnderControlRequestedDocumentsController: String =
-        controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5, messageId).url
+    "must return OK and the correct view for a GET when informationRequested" in {
+      val intentionToControlInformationRequestedController: String =
+        controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureIdP5, messageId).url
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),
                                 Some("AB123"),
                                 LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControl
+                                IntentionToControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
@@ -86,35 +86,35 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
-        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
+      when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
+        .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString)))
 
-      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
+      val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, true, Some(lrn.toString))
       val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
 
-      val request = FakeRequest(GET, goodsUnderControlRequestedDocumentsController)
+      val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[GoodsUnderControlP5View]
+      val view = injector.instanceOf[IntentionToControlP5View]
 
       contentAsString(result) mustEqual
-        view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+        view(intentionToControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
     }
 
-    "must return OK and the correct view for a GET when noRequestedDocuments" in {
+    "must return OK and the correct view for a GET when noInformationRequested" in {
 
-      val goodsUnderControlNoRequestedDocumentsController: String =
-        controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureIdP5, messageId).url
+      val intentionToControlInformationRequestedController: String =
+        controllers.departureP5.routes.IntentionToControlP5Controller.noInformationRequested(departureIdP5, messageId).url
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),
                                 Some("AB123"),
                                 LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControl
+                                IntentionToControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
@@ -125,22 +125,22 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
-      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
-        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
+      when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
+        .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString)))
 
-      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
+      val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString))
       val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
 
-      val request = FakeRequest(GET, goodsUnderControlNoRequestedDocumentsController)
+      val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[GoodsUnderControlP5View]
+      val view = injector.instanceOf[IntentionToControlP5View]
 
       contentAsString(result) mustEqual
-        view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+        view(intentionToControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
     }
   }
 }

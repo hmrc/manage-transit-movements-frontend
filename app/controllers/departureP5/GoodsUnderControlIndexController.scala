@@ -17,7 +17,9 @@
 package controllers.departureP5
 
 import controllers.actions._
+import controllers.routes
 import models.departureP5.IE060Data
+import models.departureP5.IE060MessageType.{GoodsUnderControl, GoodsUnderControlRequestedDocuments, IntentionToControl}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -34,10 +36,18 @@ class GoodsUnderControlIndexController @Inject() (
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE060Data](departureId, messageId)) {
       implicit request =>
-        val call = if (request.messageData.data.requestedDocuments) {
-          controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId, messageId)
-        } else {
-          controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId, messageId)
+        val call = request.messageData.data.TransitOperation.notificationType match {
+          case GoodsUnderControl =>
+            controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId, messageId)
+          case GoodsUnderControlRequestedDocuments =>
+            controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId, messageId)
+          case IntentionToControl =>
+            if (request.messageData.data.requestedDocuments) {
+              controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureId, messageId)
+            } else {
+              controllers.departureP5.routes.IntentionToControlP5Controller.noInformationRequested(departureId, messageId)
+            }
+          case _ => routes.ErrorController.technicalDifficulties()
         }
         Redirect(call)
     }

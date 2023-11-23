@@ -18,6 +18,7 @@ package controllers.departureP5
 
 import base.SpecBase
 import generators.Generators
+import models.departureP5.IE060MessageType.{GoodsUnderControl, GoodsUnderControlRequestedDocuments, IntentionToControl}
 import models.departureP5._
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
@@ -55,7 +56,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
   "GoodsUnderControlIndexController" - {
 
     s"when notification type 0 and requested documents not present must redirect to correct controller" in {
-      val notificationType = "0"
+      val notificationType = GoodsUnderControl
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),
@@ -80,8 +81,8 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
       redirectLocation(result).value mustEqual controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureIdP5, messageId).url
     }
 
-    s"when notification type 0 and requested documents present must redirect to correct controller" in {
-      val notificationType = "0"
+    s"when notification type 1 and requested documents present must redirect to correct controller" in {
+      val notificationType = GoodsUnderControlRequestedDocuments
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),
@@ -107,7 +108,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
     }
 
     s"when notification type 1 must redirect to correct controller" in {
-      val notificationType = "1"
+      val notificationType = GoodsUnderControlRequestedDocuments
       val message: IE060Data = IE060Data(
         IE060MessageData(
           TransitOperationIE060(Some("CD3232"),
@@ -131,6 +132,60 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5, messageId).url
+    }
+
+    s"when notification type 2 and no control information requested - must redirect to noInformationRequested controller" in {
+      val notificationType = IntentionToControl
+      val message: IE060Data = IE060Data(
+        IE060MessageData(
+          TransitOperationIE060(Some("CD3232"),
+                                Some("AB123"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                notificationType
+          ),
+          CustomsOfficeOfDeparture("22323323"),
+          Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
+          None
+        )
+      )
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+
+      val request = FakeRequest(GET, controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.departureP5.routes.IntentionToControlP5Controller
+        .noInformationRequested(departureIdP5, messageId)
+        .url
+    }
+
+    s"when notification type 2 and control information requested - must redirect to informationRequested controller" in {
+      val notificationType = IntentionToControl
+      val message: IE060Data = IE060Data(
+        IE060MessageData(
+          TransitOperationIE060(Some("CD3232"),
+                                Some("AB123"),
+                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                                notificationType
+          ),
+          CustomsOfficeOfDeparture("22323323"),
+          Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
+          Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
+        )
+      )
+      when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+
+      val request = FakeRequest(GET, controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureIdP5, messageId).url
     }
   }
 

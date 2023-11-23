@@ -28,7 +28,7 @@ case class TransitOperationIE035(MRN: String, declarationAcceptanceDate: LocalDa
 case class TransitOperationIE055(MRN: String, declarationAcceptanceDate: LocalDate)
 case class TransitOperationIE015(additionalDeclarationType: Prelodged)
 case class TransitOperationIE056(MRN: Option[String], LRN: Option[String], businessRejectionType: RejectionType)
-case class TransitOperationIE060(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: String)
+case class TransitOperationIE060(MRN: Option[String], LRN: Option[String], controlNotificationDateAndTime: LocalDateTime, notificationType: IE060MessageType)
 case class TransitOperationIE051(MRN: String, declarationSubmissionDateAndTime: LocalDateTime, noReleaseMotivationCode: String, noReleaseMotivationText: String)
 
 object TransitOperation {
