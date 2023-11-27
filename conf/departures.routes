@@ -8,7 +8,7 @@ POST        /view-departures                                        controllers.
 GET         /view-departures-search-results                         controllers.departure.ViewDeparturesSearchResultsController.onPageLoad(lrn: String)
 POST        /view-departures-search-results                         controllers.departure.ViewDeparturesSearchResultsController.onSubmit(lrn: String)
 
-GET         /departures/:departureId/accompanying-document-pdf      controllers.departure.AccompanyingDocumentPDFController.getPDF(departureId: DepartureId)
+GET         /:departureId/accompanying-document-pdf                 controllers.departure.AccompanyingDocumentPDFController.getPDF(departureId: DepartureId)
 
 GET         /:departureId/:lrn/control-decision                     controllers.departure.ControlDecisionController.onPageLoad(departureId: DepartureId, lrn: LocalReferenceNumber)
 
