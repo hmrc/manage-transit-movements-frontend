@@ -1,35 +1,30 @@
 $mobile: 769px;
 
-table {
-  paddin-left: -15px;
+.responsive-table {
   font-family: "GDS Transport", arial, sans-serif;
   border-collapse: collapse;
   border-spacing: 0;
-}
-
-caption {
-  font-size: 24px;
-  font-weight: 700;
-  text-align: left;
-}
-
-th {
-  border-bottom: 1px solid #bfc1c3;
-  font-size: 19px;
-  padding: 0.5em 1em 0.5em 0;
-  text-align: left;
-}
-
-td {
-  border-bottom: 1px solid #bfc1c3;
-  font-size: 19px;
-  padding: 0.5em 1em 0.5em 0;
-}
-
-// ------ thead
-.responsive-table {
   margin-bottom: 3em;
   width: 100%;
+
+  caption {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  th {
+    border-bottom: 1px solid #bfc1c3;
+    font-size: 19px;
+    padding: 0.5em 1em 0.5em 0;
+    text-align: left;
+  }
+
+  td {
+    border-bottom: 1px solid #bfc1c3;
+    font-size: 19px;
+    padding: 0.5em 1em 0.5em 0;
+  }
 
   thead {
     border: 0;
@@ -100,63 +95,62 @@ td {
       }
     }
   }
-}
-
-tbody tr {
-  display: block;
-  margin-bottom: 1.5em;
-  padding: 0 0.5em;
-}
-
-@media (min-width: 769px) {
-  tbody tr {
-    display: table-row;
-  }
-}
-
-//----------table cell
-tbody tr td {
-  display: flex;
-  justify-content: space-between;
-  min-width: 1px;
-  text-align: right;
-}
-
-@media (max-width: 768px) {
-  tbody tr td {
-    padding-right: 0;
-  }
-
-  tbody tr td:last-child {
-    border-bottom: 0
-  }
 
   tbody tr {
-    border-bottom: 3px solid grey;
+    display: block;
+    margin-bottom: 1.5em;
+    padding: 0 0.5em;
   }
-}
 
-@media (min-width: 769px) {
+  @media (min-width: 769px) {
+    tbody tr {
+      display: table-row;
+    }
+  }
+
+  //----------table cell
   tbody tr td {
-    display: table-cell;
-    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    min-width: 1px;
+    text-align: right;
   }
-}
 
-//-----responsive table
-.responsive-table__heading {
-  font-weight: 700;
-  padding-right: 1em;
-  text-align: left;
-  word-break: initial;
-}
+  @media (max-width: 768px) {
+    tbody tr td {
+      padding-right: 0;
+    }
 
-@media (min-width: 769px) {
+    tbody tr td:last-child {
+      border-bottom: 0
+    }
+
+    tbody tr {
+      border-bottom: 3px solid grey;
+    }
+  }
+
+  @media (min-width: 769px) {
+    tbody tr td {
+      display: table-cell;
+      text-align: left;
+    }
+  }
+
   .responsive-table__heading {
-    display: none;
+    font-weight: 700;
+    padding-right: 1em;
+    text-align: left;
+    word-break: initial;
   }
-}
 
-.responsive-table__list {
-  display: table-cell;
+  @media (min-width: 769px) {
+    .responsive-table__heading {
+      display: none;
+    }
+  }
+
+  .responsive-table__list {
+    display: table-cell;
+  }
 }
