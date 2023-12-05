@@ -1,3 +1,6 @@
+$govuk-assets-path: "/manage-transit-movements/assets/lib/govuk-frontend/govuk/assets/";
+$hmrc-assets-path: "/manage-transit-movements/assets/lib/hmrc-frontend/hmrc/assets/";
+
 $govuk-include-default-font-face: false;
 @import "lib/govuk-frontend/govuk/base";
 @import "lib/govuk-frontend/govuk/all";
