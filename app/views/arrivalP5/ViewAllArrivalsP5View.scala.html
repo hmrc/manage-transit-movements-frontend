@@ -18,7 +18,7 @@
 @import controllers.routes._
 @import controllers.arrival.routes._
 @import viewModels.P5.arrival.ViewAllArrivalMovementsP5ViewModel
-@import views.html.components.{Heading, MovementsTable, Pagination, Search}
+@import views.html.components.{Heading, MovementsTable, Pagination, Search, Status}
 
 @this(
     mainTemplate: MainTemplate,
@@ -26,6 +26,7 @@
     pagination: Pagination,
     movementsTable: MovementsTable,
     search: Search,
+    status: Status,
     config: FrontendAppConfig
 )
 
@@ -66,7 +67,7 @@
             rowHeadingAction = messages("viewArrivalNotificationsP5.table.action")
         )
     } else {
-        <p class="govuk-body" id="no-results-found">@messages("search.noResultsFound")</p>
+        @status(id = "no-results-found", classes = "govuk-body", html = messages("search.noResultsFound"))
     }
 
     <p class="govuk-body govuk-!-margin-top-3">

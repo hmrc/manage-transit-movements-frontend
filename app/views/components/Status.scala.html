@@ -14,16 +14,13 @@
  * limitations under the License.
  *@
 
-@import viewModels.pagination._
-@import views.html.components.Status
+@this()
 
-@this(govukPagination: GovukPagination, status: Status)
-
-@(viewModel: PaginationViewModel, searchParam: Option[String] = None)(implicit messages: Messages)
-
-@if(viewModel.results.totalPages == 1) {
-    @status(id = "results-count", classes = "govuk-body", html = viewModel.searchResult(searchParam))
-} else if(viewModel.results.totalPages > 1) {
-    @status(id = "paginated-results-count", classes = "pagination__results", html = viewModel.paginatedSearchResult(searchParam))
-    @govukPagination(viewModel.pagination)
-}
+@(
+    id: String,
+    classes: String,
+    html: String
+)
+<span role="status">
+    <span id="@id" class="@classes">@Html(html)</span>
+</span>
