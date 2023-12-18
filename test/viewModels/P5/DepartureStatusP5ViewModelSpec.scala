@@ -913,12 +913,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         val expectedResult = DepartureStatusP5ViewModel(
           "movement.status.P5.declarationSent",
-          Seq(
-            ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
-              "movement.status.P5.action.declarationSent.cancelDeclaration"
-            )
-          )
+          Nil
         )
 
         result mustBe expectedResult

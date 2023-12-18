@@ -30,12 +30,14 @@ object DepartureStatusP5ViewModel {
   def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessage match {
       case PrelodgedMovementAndMessage(departureId, localReferenceNumber, _, message, isPrelodged) =>
-        preLodgeStatus(departureId, message.latestMessage.messageId, localReferenceNumber, isPrelodged).apply(message.latestMessage)
+        preLodgeStatus(departureId, message.latestMessage.messageId, localReferenceNumber, isPrelodged)
+          .apply(message.latestMessage)
       case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn) =>
         rejectedStatus(departureId, message.latestMessage.messageId, rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn)
           .apply(message.latestMessage)
       case OtherMovementAndMessage(departureId, localReferenceNumber, _, message) =>
-        currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber).apply(message.latestMessage)
+        currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber)
+          .apply(message.latestMessage)
     }
 
   private def rejectedStatus(
@@ -369,26 +371,22 @@ object DepartureStatusP5ViewModel {
     prelodged: Boolean
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == DeclarationSent =>
-      val prelodgeAction = prelodged match {
-        case true =>
-          Seq(
-            ViewMovementAction(
-              s"${frontendAppConfig.presentationNotificationFrontendUrl(departureId)}",
-              "movement.status.P5.action.declarationSent.completeDeclaration"
-            )
-          )
-        case false => Seq.empty
-      }
-
       DepartureStatusP5ViewModel(
         "movement.status.P5.declarationSent",
-        actions = Seq(
-//          ViewMovementAction(s"", "movement.status.P5.action.declarationSent.amendDeclaration"),
-          ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
-            "movement.status.P5.action.declarationSent.cancelDeclaration"
-          )
-        ) ++ prelodgeAction
+        actions = prelodged match {
+          case true =>
+            Seq(
+              ViewMovementAction(
+                s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
+                "movement.status.P5.action.declarationSent.cancelDeclaration"
+              ),
+              ViewMovementAction(
+                s"${frontendAppConfig.presentationNotificationFrontendUrl(departureId)}",
+                "movement.status.P5.action.declarationSent.completeDeclaration"
+              )
+            )
+          case false => Seq.empty
+        }
       )
   }
 
