@@ -30,7 +30,7 @@ class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with G
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[DepartureCancelledP5View]
-      .apply(DepartureCancelledP5ViewModel(sections, "AB123", "CD123", None, isCancelled = true))(fakeRequest, messages, frontendAppConfig)
+      .apply(DepartureCancelledP5ViewModel(sections, departureIdP5, "AB123", "CD123", None, isCancelled = true))(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 
@@ -38,9 +38,19 @@ class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with G
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p", "The office of departure cancelled the declaration for LRN AB123 as requested.")
+  behave like pageWithLink(
+    id = "try-again",
+    expectedText = "Try cancelling declaration again",
+    expectedHref = s"http://localhost:10122/manage-transit-movements/cancellation/$departureIdP5/index/AB123"
+  )
 
-  behave like pageWithContent("p", "If you have any questions, contact Customs office CD123.")
+  behave like pageWithPartialContent("p", "Contact the ")
+  behave like pageWithLink(
+    id = "contact",
+    expectedText = "New Computerised Transit System helpdesk",
+    expectedHref = frontendAppConfig.nctsEnquiriesUrl
+  )
+  behave like pageWithPartialContent("p", " for help understanding the error (opens in a new tab).")
 
   behave like pageWithLink(
     id = "link",
@@ -53,18 +63,13 @@ class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with G
     val document = parseView(
       injector
         .instanceOf[DepartureCancelledP5View]
-        .apply(DepartureCancelledP5ViewModel(sections, "AB123", "CD123", None, isCancelled = false))(fakeRequest, messages, frontendAppConfig)
+        .apply(DepartureCancelledP5ViewModel(sections, departureIdP5, "AB123", "CD123", None, isCancelled = false))(fakeRequest, messages, frontendAppConfig)
     )
 
-    val prefixNotCancelled = "departure.cancellation.notCancelled.message"
+    val prefix = "departure.cancellation.notCancelled.message"
 
-    behave like pageWithTitle(document, prefix = prefixNotCancelled)
+    behave like pageWithTitle(document, prefix)
 
-    behave like pageWithHeading(document, prefix = prefixNotCancelled)
-
-    behave like pageWithContent(doc = document, "p", "The office of departure could not cancel the declaration for LRN AB123 as requested.")
-
-    behave like pageWithContent(doc = document, "p", "If you have any questions, contact Customs office CD123.")
-
+    behave like pageWithHeading(document, prefix)
   }
 }

@@ -45,13 +45,13 @@ class DepartureCancelledP5Controller @Inject() (
   def declarationCancelled(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)).async {
       implicit request =>
-        buildView(request.messageData.data, request.referenceNumbers.localReferenceNumber, isCancelled = true)
+        buildView(request.messageData.data, departureId, request.referenceNumbers.localReferenceNumber, isCancelled = true)
     }
 
   def declarationNotCancelled(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)).async {
       implicit request =>
-        buildView(request.messageData.data, request.referenceNumbers.localReferenceNumber, isCancelled = false)
+        buildView(request.messageData.data, departureId, request.referenceNumbers.localReferenceNumber, isCancelled = false)
     }
 
   def isDeclarationCancelled(departureId: String, messageId: String): Action[AnyContent] =
@@ -65,12 +65,17 @@ class DepartureCancelledP5Controller @Inject() (
         }
     }
 
-  private def buildView(IE009MessageData: IE009MessageData, lrn: LocalReferenceNumber, isCancelled: Boolean)(implicit request: Request[_]): Future[Result] = {
+  private def buildView(
+    IE009MessageData: IE009MessageData,
+    departureId: String,
+    lrn: LocalReferenceNumber,
+    isCancelled: Boolean
+  )(implicit request: Request[_]): Future[Result] = {
     val customsOfficeReferenceNumber = IE009MessageData.customsOfficeOfDeparture.referenceNumber
 
     referenceDataService.getCustomsOffice(customsOfficeReferenceNumber).flatMap {
       customsOffice =>
-        viewModelProvider.apply(IE009MessageData, lrn.value, customsOfficeReferenceNumber, customsOffice, isCancelled).map {
+        viewModelProvider.apply(IE009MessageData, departureId, lrn.value, customsOfficeReferenceNumber, customsOffice, isCancelled).map {
           viewModel => Ok(view(viewModel))
         }
     }

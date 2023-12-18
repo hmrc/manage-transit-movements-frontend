@@ -151,12 +151,13 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           )
         )
 
-        val departureCancelledP5ViewModel = new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None, isCancelled = true)
+        val departureCancelledP5ViewModel =
+          new DepartureCancelledP5ViewModel(sections, departureIdP5, lrn.toString, customsReferenceNumber, None, isCancelled = true)
 
         when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
         when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
         when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
-        when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
+        when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
         val request = FakeRequest(GET, controllers.departureP5.routes.DepartureCancelledP5Controller.declarationCancelled(departureIdP5, messageId).url)
@@ -190,13 +191,14 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           )
         )
 
-        val departureCancelledP5ViewModel = new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None, isCancelled = false)
+        val departureCancelledP5ViewModel =
+          new DepartureCancelledP5ViewModel(sections, departureIdP5, lrn.toString, customsReferenceNumber, None, isCancelled = false)
 
         when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
           .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
         when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
         when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
-        when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any(), any(), any()))
+        when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
         val request = FakeRequest(GET, controllers.departureP5.routes.DepartureCancelledP5Controller.declarationNotCancelled(departureIdP5, messageId).url)

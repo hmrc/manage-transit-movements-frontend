@@ -16,6 +16,7 @@
 
 package viewModels.P5.departure
 
+import config.FrontendAppConfig
 import models.departureP5.IE009MessageData
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
@@ -29,6 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class DepartureCancelledP5ViewModel(
   sections: Seq[Section],
+  departureId: String,
   lrn: String,
   customsOfficeReferenceId: String,
   customsOffice: Option[CustomsOffice],
@@ -57,20 +59,8 @@ case class DepartureCancelledP5ViewModel(
 
   def caption(implicit messages: Messages): String = messages("departure.messages.caption", lrn)
 
-  def customsOfficeContent(implicit messages: Messages): String =
-    customsOffice match {
-      case Some(CustomsOffice(id, _, _)) => customsOfficeNameAndNumber(messages, id)
-      case _ =>
-        messages("departure.cancellation.message.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceId)
-    }
-
-  private def customsOfficeNameAndNumber(messages: Messages, id: String): String =
-    (customsOffice.get.nameOption, customsOffice.get.phoneOption) match {
-      case (Some(name), Some(phone)) => messages("departure.cancellation.message.customsOfficeContact.telephoneAvailable", name, phone)
-      case (None, Some(phone))       => messages("departure.cancellation.message.customsOfficeContact.teleAvailAndOfficeNameNotAvail", id, phone)
-      case (Some(name), None)        => messages("departure.cancellation.message.customsOfficeContact.telephoneNotAvailable", name)
-      case _                         => messages("departure.cancellation.message.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", id)
-    }
+  def tryAgainUrl(implicit config: FrontendAppConfig): String =
+    s"${config.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn"
 }
 
 object DepartureCancelledP5ViewModel {
@@ -79,6 +69,7 @@ object DepartureCancelledP5ViewModel {
 
     def apply(
       ie009MessageData: IE009MessageData,
+      departureId: String,
       lrn: String,
       customsOfficeReferenceId: String,
       customsOffice: Option[CustomsOffice],
@@ -88,7 +79,7 @@ object DepartureCancelledP5ViewModel {
 
       helper.buildInvalidationSection.map {
         section =>
-          new DepartureCancelledP5ViewModel(Seq(section), lrn, customsOfficeReferenceId, customsOffice, isCancelled)
+          new DepartureCancelledP5ViewModel(Seq(section), departureId, lrn, customsOfficeReferenceId, customsOffice, isCancelled)
       }
     }
   }

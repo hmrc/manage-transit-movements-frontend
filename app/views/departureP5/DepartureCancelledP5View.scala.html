@@ -19,31 +19,42 @@
 @import config.FrontendAppConfig
 
 @this(
-mainTemplate: MainTemplate,
-heading: Heading,
-answerSections: AnswerSections,
-button: Button,
-formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    answerSections: AnswerSections,
+    button: Button,
+    formHelper: FormWithCSRF
 )
 
-@(departureCancelledP5ViewModel: DepartureCancelledP5ViewModel)(implicit request: Request[_], messages: Messages, frontendAppConfig: FrontendAppConfig)
+@(viewModel: DepartureCancelledP5ViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
-        title = departureCancelledP5ViewModel.title,
+        title = viewModel.title,
         showBackLink = true
     ) {
 
     @heading(
-        heading = departureCancelledP5ViewModel.heading,
-        caption = Some(departureCancelledP5ViewModel.caption)
+        heading = viewModel.heading,
+        caption = Some(viewModel.caption)
     )
 
-    <p class="govuk-body" id="paragraph">@departureCancelledP5ViewModel.paragraph</p>
+    <p class="govuk-body" id="paragraph">@viewModel.paragraph</p>
 
-    @answerSections(departureCancelledP5ViewModel.sections)
+    @answerSections(viewModel.sections)
 
-    <p class="govuk-body" id="customs-office">@departureCancelledP5ViewModel.customsOfficeContent</p>
+    <p class="govuk-body">
+        <a id="try-again" class="govuk-link" href="@viewModel.tryAgainUrl">@messages("departure.cancellation.message.tryAgain")</a>
+    </p>
 
-    <p><a id="link" class="govuk-body govuk-link" href="@frontendAppConfig.declareDepartureStartWithLRNUrl">@departureCancelledP5ViewModel.hyperlink</a></p>
+    <p class="govuk-body">@messages("departure.cancellation.message.contact.start")
+        <a class="govuk-link" rel="noreferrer noopener" href=@config.nctsEnquiriesUrl target="_blank" id="contact">
+            @messages("departure.cancellation.message.contact.link")
+        </a>
+        @messages("departure.cancellation.message.contact.end")
+    </p>
+
+    <p class="govuk-body">
+        <a id="link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@messages("departure.cancellation.message.hyperlink")</a>
+    </p>
 
 }
