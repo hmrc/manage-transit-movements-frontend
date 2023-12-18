@@ -16,53 +16,51 @@
 
 package viewModels.P5.departure
 
+import config.FrontendAppConfig
 import models.departureP5.IE009MessageData
-import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.DepartureCancelledP5Helper
-import viewModels.P5.ViewModelWithCustomsOffice
 import viewModels.sections.Section
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class DepartureCancelledP5ViewModel(
+case class DepartureNotCancelledP5ViewModel(
   sections: Seq[Section],
-  lrn: String,
-  customsOfficeReferenceId: String,
-  customsOffice: Option[CustomsOffice]
-) extends ViewModelWithCustomsOffice {
+  departureId: String,
+  lrn: String
+) {
 
-  override val prefix: String = "departure.cancelled.customsOfficeContact"
+  def title(implicit messages: Messages): String = messages("departure.notCancelled.title")
 
-  def title(implicit messages: Messages): String = messages("departure.cancelled.title")
+  def heading(implicit messages: Messages): String = messages("departure.notCancelled.heading")
 
-  def heading(implicit messages: Messages): String = messages("departure.cancelled.heading")
+  def paragraph(implicit messages: Messages): String = messages("departure.notCancelled.paragraph", lrn)
 
-  def paragraph(implicit messages: Messages): String = messages("departure.cancelled.paragraph", lrn)
-
-  def hyperlink(implicit messages: Messages): String = messages("departure.cancelled.hyperlink")
+  def hyperlink(implicit messages: Messages): String = messages("departure.notCancelled.hyperlink")
 
   def caption(implicit messages: Messages): String = messages("departure.messages.caption", lrn)
+
+  def tryAgainUrl(implicit config: FrontendAppConfig): String =
+    s"${config.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn"
 }
 
-object DepartureCancelledP5ViewModel {
+object DepartureNotCancelledP5ViewModel {
 
-  class DepartureCancelledP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class DepartureNotCancelledP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
       ie009MessageData: IE009MessageData,
-      lrn: String,
-      customsOfficeReferenceId: String,
-      customsOffice: Option[CustomsOffice]
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureCancelledP5ViewModel] = {
+      departureId: String,
+      lrn: String
+    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureNotCancelledP5ViewModel] = {
       val helper = new DepartureCancelledP5Helper(ie009MessageData, referenceDataService)
 
       helper.buildInvalidationSection.map {
         section =>
-          new DepartureCancelledP5ViewModel(Seq(section), lrn, customsOfficeReferenceId, customsOffice)
+          new DepartureNotCancelledP5ViewModel(Seq(section), departureId, lrn)
       }
     }
   }

@@ -217,7 +217,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.cancellationDecision",
         Seq(
           ViewMovementAction(
-            controllers.departureP5.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, messageId).url,
+            controllers.departureP5.routes.IsDepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, messageId).url,
             "movement.status.P5.action.cancellationDecision.viewCancellation"
           )
         )

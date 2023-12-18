@@ -23,6 +23,7 @@ trait ViewModelWithCustomsOffice {
 
   val prefix: String
 
+  // TODO - could we refactor this to Either[String, CustomsOffice] ?
   val customsOfficeReferenceId: String
   val customsOffice: Option[CustomsOffice]
 
