@@ -27,13 +27,16 @@ trait ViewModelWithCustomsOffice {
 
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {
-      case Right(CustomsOffice(id, "", Some("")))           => messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
-      case Right(CustomsOffice(id, "", None))               => messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
-      case Right(CustomsOffice(id, "", Some(phoneNumber)))  => messages(s"$prefix.teleAvailAndOfficeNameNotAvail", id, phoneNumber)
-      case Right(CustomsOffice(_, name, Some("")))          => messages(s"$prefix.telephoneNotAvailable", name)
-      case Right(CustomsOffice(_, name, None))              => messages(s"$prefix.telephoneNotAvailable", name)
-      case Right(CustomsOffice(_, name, Some(phoneNumber))) => messages(s"$prefix.telephoneAvailable", name, phoneNumber)
-      case Left(id)                                         => messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
+      case Right(CustomsOffice(_, name, Some(phoneNumber))) if name.nonEmpty && phoneNumber.nonEmpty =>
+        messages(s"$prefix.telephoneAvailable", name, phoneNumber)
+      case Right(CustomsOffice(id, _, Some(phoneNumber))) if phoneNumber.nonEmpty =>
+        messages(s"$prefix.teleAvailAndOfficeNameNotAvail", id, phoneNumber)
+      case Right(CustomsOffice(_, name, _)) if name.nonEmpty =>
+        messages(s"$prefix.telephoneNotAvailable", name)
+      case Right(CustomsOffice(id, _, _)) =>
+        messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
+      case Left(id) =>
+        messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
     }
 
 }

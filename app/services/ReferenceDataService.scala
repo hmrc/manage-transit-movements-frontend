@@ -18,6 +18,7 @@ package services
 
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -27,10 +28,16 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
 
   def getCustomsOffice(customsOfficeId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]] = {
     val queryParams: Seq[(String, String)] = Seq("data.id" -> customsOfficeId)
-    connector.getCustomsOffices(queryParams).map(_.headOption).map {
-      case Some(customsOffice) => Right(customsOffice)
-      case None                => Left(customsOfficeId)
-    }
+    connector
+      .getCustomsOffices(queryParams)
+      .map(_.headOption)
+      .map {
+        case Some(customsOffice) => Right(customsOffice)
+        case None                => Left(customsOfficeId)
+      }
+      .recover {
+        case _: NoReferenceDataFoundException => Left(customsOfficeId)
+      }
   }
 
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {

@@ -18,6 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.ReferenceDataConnector
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
@@ -63,7 +64,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
       val expectedQueryParams = Seq("data.id" -> customsOfficeId)
 
-      "should return some customs office" - {
+      "should return customs office" - {
         "when the customs office is found" in {
           when(mockConnector.getCustomsOffices(any())(any(), any())).thenReturn(Future.successful(customsOffices))
 
@@ -75,9 +76,19 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
         }
       }
 
-      "should return None" - {
+      "should return Left" - {
         "when the customs office can't be found" in {
           when(mockConnector.getCustomsOffices(any())(any(), any())).thenReturn(Future.successful(Nil))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getCustomsOffice(customsOfficeId).futureValue mustBe Left(customsOfficeId)
+
+          verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams))(any(), any())
+        }
+
+        "when the connector call returns no data" in {
+          when(mockConnector.getCustomsOffices(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
