@@ -69,7 +69,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getCustomsOffice(customsOfficeId).futureValue.value mustBe customsOffice1
+          service.getCustomsOffice(customsOfficeId).futureValue mustBe Right(customsOffice1)
 
           verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams))(any(), any())
         }
@@ -81,7 +81,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getCustomsOffice(customsOfficeId).futureValue mustBe None
+          service.getCustomsOffice(customsOfficeId).futureValue mustBe Left(customsOfficeId)
 
           verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams))(any(), any())
         }

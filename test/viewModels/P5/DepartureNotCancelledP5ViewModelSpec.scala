@@ -65,7 +65,7 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
 
     val viewModelProvider = new DepartureNotCancelledP5ViewModelProvider(mockReferenceDataService)
 
-    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceId)))
 
     val viewModel: DepartureNotCancelledP5ViewModel = viewModelProvider.apply(ie009Data.data, departureIdP5, lrn).futureValue
 

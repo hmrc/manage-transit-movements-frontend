@@ -50,10 +50,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
       "must return None" in {
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(None,
-                                  None,
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              None,
+              None,
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -72,10 +73,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(None,
-                                  Some("LRN001"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              None,
+              Some("LRN001"),
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -96,10 +98,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
       "must return None" in {
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(None,
-                                  None,
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              None,
+              None,
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -118,10 +121,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(Some("MRN001"),
-                                  None,
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              Some("MRN001"),
+              None,
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -144,10 +148,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(None,
-                                  None,
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              None,
+              None,
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -171,10 +176,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
           val message: IE060Data = IE060Data(
             IE060MessageData(
-              TransitOperationIE060(None,
-                                    None,
-                                    LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                    GoodsUnderControlRequestedDocuments
+              TransitOperationIE060(
+                None,
+                None,
+                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                GoodsUnderControlRequestedDocuments
               ),
               CustomsOfficeOfDeparture("22323323"),
               None,
@@ -183,7 +189,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
 
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-            .thenReturn(Future.successful(Some(CustomsOffice("22323323", "Office", None))))
+            .thenReturn(Future.successful(Right(CustomsOffice("22323323", "Office", None))))
 
           val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
@@ -199,10 +205,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
           val message: IE060Data = IE060Data(
             IE060MessageData(
-              TransitOperationIE060(None,
-                                    None,
-                                    LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                    GoodsUnderControlRequestedDocuments
+              TransitOperationIE060(
+                None,
+                None,
+                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+                GoodsUnderControlRequestedDocuments
               ),
               CustomsOfficeOfDeparture("22323323"),
               None,
@@ -211,7 +218,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
 
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-            .thenReturn(Future.successful(None))
+            .thenReturn(Future.successful(Left("22323323")))
 
           val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
@@ -229,10 +236,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(None,
-                                  None,
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              None,
+              None,
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -259,10 +267,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(None,
-                                  None,
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              None,
+              None,
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             typeOfControls,
@@ -299,10 +308,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(None,
-                                  None,
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              None,
+              None,
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             typeOfControls,
@@ -335,10 +345,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(None,
-                                  None,
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              None,
+              None,
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -359,10 +370,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val requestedDocument = Some(Seq(RequestedDocument("1", "44", None), RequestedDocument("2", "45", Some("Desc1"))))
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(None,
-                                  None,
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              None,
+              None,
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -370,7 +382,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
@@ -397,10 +409,11 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(Some("MRN1"),
-                                  Some("LRN1"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              Some("MRN1"),
+              Some("LRN1"),
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -408,7 +421,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 

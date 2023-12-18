@@ -22,8 +22,7 @@ import viewModels.P5.ViewModelWithCustomsOffice
 
 case class UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(
   mrn: String,
-  customsOfficeReferenceId: String,
-  customsOffice: Option[CustomsOffice]
+  customsOffice: Either[String, CustomsOffice]
 ) extends ViewModelWithCustomsOffice {
 
   override val prefix: String = "arrival.notification.unloading.customsOfficeContact"
@@ -42,8 +41,8 @@ object UnloadingRemarkWithoutFunctionalErrorsP5ViewModel {
 
   class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider {
 
-    def apply(mrn: String, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]): UnloadingRemarkWithoutFunctionalErrorsP5ViewModel =
-      UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrn, customsOfficeReferenceId, customsOffice)
+    def apply(mrn: String, customsOffice: Either[String, CustomsOffice]): UnloadingRemarkWithoutFunctionalErrorsP5ViewModel =
+      UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrn, customsOffice)
   }
 
 }

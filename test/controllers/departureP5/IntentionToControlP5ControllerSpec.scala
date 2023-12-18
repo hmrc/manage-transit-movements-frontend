@@ -24,7 +24,6 @@ import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -61,8 +60,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
-  private val customsReferenceNumber = Gen.alphaNumStr.sample.value
-  private val customsOffice          = arbitrary[CustomsOffice].sample.value
+  private val customsOffice = arbitrary[CustomsOffice].sample.value
 
   "IntentionToControlP5Controller Controller" - {
 
@@ -72,10 +70,11 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("CD3232"),
-                                Some("AB123"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                IntentionToControl
+          TransitOperationIE060(
+            Some("CD3232"),
+            Some("AB123"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            IntentionToControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
@@ -85,12 +84,12 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
       when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
         .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString)))
 
       val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, true, Some(lrn.toString))
-      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
+      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
 
       val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 
@@ -111,10 +110,11 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("CD3232"),
-                                Some("AB123"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                IntentionToControl
+          TransitOperationIE060(
+            Some("CD3232"),
+            Some("AB123"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            IntentionToControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
@@ -124,12 +124,12 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Some(customsOffice)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
       when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
         .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString)))
 
       val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString))
-      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
+      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
 
       val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 

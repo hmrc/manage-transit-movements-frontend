@@ -82,12 +82,12 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       )
 
       val departureCancelledP5ViewModel =
-        new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None)
+        new DepartureCancelledP5ViewModel(sections, lrn.toString, Left(customsReferenceNumber))
 
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
-      when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceNumber)))
+      when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
       val request = FakeRequest(GET, routes.DepartureCancelledP5Controller.onPageLoad(departureIdP5, messageId).url)

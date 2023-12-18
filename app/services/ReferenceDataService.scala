@@ -25,9 +25,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) extends ReferenceDataService {
 
-  def getCustomsOffice(customsOfficeId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]] = {
+  def getCustomsOffice(customsOfficeId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]] = {
     val queryParams: Seq[(String, String)] = Seq("data.id" -> customsOfficeId)
-    connector.getCustomsOffices(queryParams).map(_.headOption)
+    connector.getCustomsOffices(queryParams).map(_.headOption).map {
+      case Some(customsOffice) => Right(customsOffice)
+      case None                => Left(customsOfficeId)
+    }
   }
 
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
@@ -53,7 +56,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
 }
 
 trait ReferenceDataService {
-  def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CustomsOffice]]
+  def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]]
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]
   def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]]

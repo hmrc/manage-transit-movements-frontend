@@ -22,8 +22,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.IntentionToControlP5ViewModel.IntentionToControlP5ViewModelProvider
 import viewModels.P5.departure.CustomsOfficeContactViewModel
+import viewModels.P5.departure.IntentionToControlP5ViewModel.IntentionToControlP5ViewModelProvider
 import views.html.departureP5.IntentionToControlP5View
 
 import javax.inject.Inject
@@ -49,8 +49,7 @@ class IntentionToControlP5Controller @Inject() (
         referenceDataService.getCustomsOffice(customsOfficeId).map {
           customsOffice =>
             val intentionToControlP5ViewModel = viewModelProvider.apply(request.messageData.data)
-            val customsOfficeContactViewModel =
-              CustomsOfficeContactViewModel(customsOfficeId, customsOffice)
+            val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
             Ok(view(intentionToControlP5ViewModel, departureId, customsOfficeContactViewModel))
         }

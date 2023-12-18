@@ -23,19 +23,17 @@ trait ViewModelWithCustomsOffice {
 
   val prefix: String
 
-  // TODO - could we refactor this to Either[String, CustomsOffice] ?
-  val customsOfficeReferenceId: String
-  val customsOffice: Option[CustomsOffice]
+  val customsOffice: Either[String, CustomsOffice]
 
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {
-      case Some(CustomsOffice(id, "", Some("")))           => messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
-      case Some(CustomsOffice(id, "", None))               => messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
-      case Some(CustomsOffice(id, "", Some(phoneNumber)))  => messages(s"$prefix.teleAvailAndOfficeNameNotAvail", id, phoneNumber)
-      case Some(CustomsOffice(_, name, Some("")))          => messages(s"$prefix.telephoneNotAvailable", name)
-      case Some(CustomsOffice(_, name, None))              => messages(s"$prefix.telephoneNotAvailable", name)
-      case Some(CustomsOffice(_, name, Some(phoneNumber))) => messages(s"$prefix.telephoneAvailable", name, phoneNumber)
-      case _                                               => messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceId)
+      case Right(CustomsOffice(id, "", Some("")))           => messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
+      case Right(CustomsOffice(id, "", None))               => messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
+      case Right(CustomsOffice(id, "", Some(phoneNumber)))  => messages(s"$prefix.teleAvailAndOfficeNameNotAvail", id, phoneNumber)
+      case Right(CustomsOffice(_, name, Some("")))          => messages(s"$prefix.telephoneNotAvailable", name)
+      case Right(CustomsOffice(_, name, None))              => messages(s"$prefix.telephoneNotAvailable", name)
+      case Right(CustomsOffice(_, name, Some(phoneNumber))) => messages(s"$prefix.telephoneAvailable", name, phoneNumber)
+      case Left(id)                                         => messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
     }
 
 }
