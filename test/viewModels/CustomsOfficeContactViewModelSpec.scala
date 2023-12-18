@@ -33,7 +33,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
         val customsOffice     = CustomsOffice("ID001", "Dover", Some("00443243543"))
         val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover on 00443243543."
       }
@@ -42,7 +42,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
         val customsOffice     = CustomsOffice("ID001", "", Some("00443243543"))
         val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001 on 00443243543."
       }
@@ -51,7 +51,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
         val customsOffice     = CustomsOffice("ID001", "Dover", Some(""))
         val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover."
       }
@@ -60,7 +60,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
         val customsOffice     = CustomsOffice("ID001", "Dover", None)
         val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover."
       }
@@ -69,7 +69,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
         val customsOffice     = CustomsOffice("ID001", "", Some(""))
         val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001."
       }
@@ -78,7 +78,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
         val customsOffice     = CustomsOffice("ID001", "", None)
         val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001."
       }
@@ -86,7 +86,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
 
         val viewModelProvider = CustomsOfficeContactViewModel("GB000060", None)
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs office GB000060."
       }

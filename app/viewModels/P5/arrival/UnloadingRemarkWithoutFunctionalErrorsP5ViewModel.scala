@@ -18,8 +18,15 @@ package viewModels.P5.arrival
 
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
+import viewModels.P5.ViewModelWithCustomsOffice
 
-case class UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrn: String, customsOfficeReferenceId: String, customsOffice: Option[CustomsOffice]) {
+case class UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(
+  mrn: String,
+  customsOfficeReferenceId: String,
+  customsOffice: Option[CustomsOffice]
+) extends ViewModelWithCustomsOffice {
+
+  override val prefix: String = "arrival.notification.unloading.customsOfficeContact"
 
   def title(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.title")
 
@@ -27,20 +34,6 @@ case class UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrn: String, custom
 
   def paragraph1(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.noerrors")
 
-  def customsOfficeContent(implicit messages: Messages): String =
-    customsOffice match {
-      case Some(CustomsOffice(id, _, _)) => customsOfficeNameAndNumber(messages, id)
-      case _ =>
-        messages("arrival.notification.unloading.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceId)
-    }
-
-  private def customsOfficeNameAndNumber(messages: Messages, id: String): String =
-    (customsOffice.get.nameOption, customsOffice.get.phoneOption) match {
-      case (Some(name), Some(phone)) => messages("arrival.notification.unloading.customsOfficeContact.telephoneAvailable", name, phone)
-      case (None, Some(phone))       => messages("arrival.notification.unloading.customsOfficeContact.teleAvailAndOfficeNameNotAvail", id, phone)
-      case (Some(name), None)        => messages("arrival.notification.unloading.customsOfficeContact.telephoneNotAvailable", name)
-      case _                         => messages("arrival.notification.unloading.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", id)
-    }
   def hyperlink(implicit messages: Messages): String = messages("arrival.notification.unloading.errors.message.hyperlink")
 
 }
