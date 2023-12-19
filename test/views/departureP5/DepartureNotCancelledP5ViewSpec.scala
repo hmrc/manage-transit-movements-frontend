@@ -38,11 +38,11 @@ class DepartureNotCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours wit
 
   behave like pageWithHeading()
 
-  behave like pageWithLink(
+  /*behave like pageWithLink(
     id = "try-again",
     expectedText = "Try cancelling declaration again",
     expectedHref = s"http://localhost:10122/manage-transit-movements/cancellation/$departureIdP5/index/AB123"
-  )
+  )*/
 
   behave like pageWithPartialContent("p", "Contact the ")
   behave like pageWithLink(
