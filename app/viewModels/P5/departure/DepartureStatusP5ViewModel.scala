@@ -65,7 +65,7 @@ object DepartureStatusP5ViewModel {
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
-      departureNotification(departureId, localReferenceNumber),
+      departureNotification,
       allocatedMRN(departureId, localReferenceNumber),
       cancellationRequested,
       amendmentSubmitted,
@@ -129,19 +129,11 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def departureNotification(
-    departureId: String,
-    lrn: LocalReferenceNumber
-  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def departureNotification: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == DepartureNotification =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.departureNotificationSubmitted",
-        actions = Seq(
-          ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
-            "movement.status.P5.action.departureNotification.cancelDeclaration"
-          )
-        )
+        actions = Nil
       )
   }
 

@@ -34,7 +34,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
-import viewModels.ViewMovementAction
 import viewModels.pagination.ListPaginationViewModel
 import views.html.departureP5.ViewAllDeparturesP5View
 
@@ -96,12 +95,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
     updatedTime = dateTime.toLocalTime,
     referenceNumber = lrn.value,
     status = "movement.status.P5.departureNotificationSubmitted",
-    actions = Seq(
-      ViewMovementAction(
-        s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/${lrn.value}",
-        "movement.status.P5.action.departureNotification.cancelDeclaration"
-      )
-    )
+    actions = Nil
   )
 
   "ViewAllDepartures Controller" - {

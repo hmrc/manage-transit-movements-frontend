@@ -56,12 +56,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.departureNotificationSubmitted",
-        Seq(
-          ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
-            "movement.status.P5.action.departureNotification.cancelDeclaration"
-          )
-        )
+        Nil
       )
 
       result mustBe expectedResult
@@ -73,7 +68,10 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-      val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.cancellationSubmitted", Nil)
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.cancellationSubmitted",
+        Nil
+      )
 
       result mustBe expectedResult
     }
@@ -84,7 +82,10 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-      val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.amendmentSubmitted", Nil)
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.amendmentSubmitted",
+        Nil
+      )
 
       result mustBe expectedResult
     }
@@ -95,7 +96,10 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-      val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.prelodgedDeclarationSent", Nil)
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.prelodgedDeclarationSent",
+        Nil
+      )
 
       result mustBe expectedResult
     }
@@ -127,7 +131,12 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.movementNotArrived",
-        Seq(ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}", "movement.status.P5.action.movementNotArrived.respond"))
+        Seq(
+          ViewMovementAction(
+            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+            "movement.status.P5.action.movementNotArrived.respond"
+          )
+        )
       )
 
       result mustBe expectedResult
@@ -232,7 +241,10 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-      val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.discrepancies", Nil)
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.discrepancies",
+        Nil
+      )
 
       result mustBe expectedResult
     }
@@ -945,7 +957,10 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
-      val expectedResult = DepartureStatusP5ViewModel("movement.status.P5.movementEnded", Nil)
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.movementEnded",
+        Nil
+      )
 
       result mustBe expectedResult
     }
