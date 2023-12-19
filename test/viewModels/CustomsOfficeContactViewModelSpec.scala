@@ -31,62 +31,62 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
       "When Customs office name and telephone exists" in {
 
         val customsOffice     = CustomsOffice("ID001", "Dover", Some("00443243543"))
-        val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(Right(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover on 00443243543."
       }
       "When Customs Office name not available and telephone exists" in {
 
         val customsOffice     = CustomsOffice("ID001", "", Some("00443243543"))
-        val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(Right(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001 on 00443243543."
       }
       "When Customs Office name available and telephone does not exist" in {
 
         val customsOffice     = CustomsOffice("ID001", "Dover", Some(""))
-        val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(Right(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover."
       }
       "When Customs Office name available and telephone is None" in {
 
         val customsOffice     = CustomsOffice("ID001", "Dover", None)
-        val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(Right(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover."
       }
       "When Customs Office name not available and telephone does not exist" in {
 
         val customsOffice     = CustomsOffice("ID001", "", Some(""))
-        val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(Right(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001."
       }
       "When Customs Office name not available and telephone is None" in {
 
         val customsOffice     = CustomsOffice("ID001", "", None)
-        val viewModelProvider = CustomsOfficeContactViewModel("GB000060", Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(Right(customsOffice))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001."
       }
       "When Customs Office not fetched from reference data service" in {
 
-        val viewModelProvider = CustomsOfficeContactViewModel("GB000060", None)
+        val viewModelProvider = CustomsOfficeContactViewModel(Left("GB000060"))
 
-        val result: String = viewModelProvider.fetchWhatHappensNext
+        val result: String = viewModelProvider.customsOfficeContent
 
         result mustBe "You must share the requested documentation with the office of destination. Contact Customs office GB000060."
       }

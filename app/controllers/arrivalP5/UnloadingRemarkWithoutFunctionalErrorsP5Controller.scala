@@ -53,7 +53,6 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
                 view(
                   viewModelProvider.apply(
                     request.messageData.data.transitOperation.MRN,
-                    customsOfficeReference,
                     customsOffice
                   )
                 )

@@ -54,10 +54,11 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"),
-                                Some("LRN1"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControl
+          TransitOperationIE060(
+            Some("MRN1"),
+            Some("LRN1"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            GoodsUnderControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
@@ -66,7 +67,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
       val viewModelProvider = new IntentionToControlP5ViewModelProvider
       val result            = viewModelProvider.apply(message.data)
@@ -93,10 +94,11 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
     "when there is information requested" - {
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"),
-                                Some("LRN1"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                IntentionToControl
+          TransitOperationIE060(
+            Some("MRN1"),
+            Some("LRN1"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            IntentionToControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           typeOfControls,
@@ -105,7 +107,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
       val viewModelProvider = new IntentionToControlP5ViewModelProvider
       val result            = viewModelProvider.apply(message.data)
@@ -129,10 +131,11 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("MRN1"),
-                                Some("LRN1"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                IntentionToControl
+          TransitOperationIE060(
+            Some("MRN1"),
+            Some("LRN1"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            IntentionToControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           None,
@@ -140,7 +143,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
         )
       )
 
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
       val viewModelProvider = new IntentionToControlP5ViewModelProvider
       val result            = viewModelProvider.apply(message.data)
@@ -155,10 +158,11 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(Some("MRN1"),
-                                  Some("LRN1"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              Some("MRN1"),
+              Some("LRN1"),
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,
@@ -166,7 +170,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
           )
         )
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
         val viewModelProvider = new IntentionToControlP5ViewModelProvider
         val result            = viewModelProvider.apply(message.data)
@@ -180,10 +184,11 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
         val requestedDocument = Some(Seq(RequestedDocument("1", "44", None), RequestedDocument("2", "45", Some("Desc1"))))
         val message: IE060Data = IE060Data(
           IE060MessageData(
-            TransitOperationIE060(Some("MRN1"),
-                                  Some("LRN1"),
-                                  LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                  GoodsUnderControlRequestedDocuments
+            TransitOperationIE060(
+              Some("MRN1"),
+              Some("LRN1"),
+              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+              GoodsUnderControlRequestedDocuments
             ),
             CustomsOfficeOfDeparture("22323323"),
             None,

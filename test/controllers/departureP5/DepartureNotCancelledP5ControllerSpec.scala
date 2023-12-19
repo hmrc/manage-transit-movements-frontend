@@ -27,36 +27,33 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{DepartureP5MessageService, ReferenceDataService}
-import viewModels.P5.departure.DepartureCancelledP5ViewModel
-import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
-import views.html.departureP5.DepartureCancelledP5View
+import services.DepartureP5MessageService
+import viewModels.P5.departure.DepartureNotCancelledP5ViewModel
+import viewModels.P5.departure.DepartureNotCancelledP5ViewModel.DepartureNotCancelledP5ViewModelProvider
+import views.html.departureP5.DepartureNotCancelledP5View
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class DepartureNotCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockDepartureCancelledP5ViewModelProvider = mock[DepartureCancelledP5ViewModelProvider]
-  private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
-  private val mockReferenceDataService                  = mock[ReferenceDataService]
+  private val mockDepartureNotCancelledP5ViewModelProvider = mock[DepartureNotCancelledP5ViewModelProvider]
+  private val mockDepartureP5MessageService                = mock[DepartureP5MessageService]
 
   private val sections = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
-    reset(mockReferenceDataService)
-    reset(mockDepartureCancelledP5ViewModelProvider)
+    reset(mockDepartureNotCancelledP5ViewModelProvider)
 
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .p5GuiceApplicationBuilder()
-      .overrides(bind[DepartureCancelledP5ViewModelProvider].toInstance(mockDepartureCancelledP5ViewModelProvider))
+      .overrides(bind[DepartureNotCancelledP5ViewModelProvider].toInstance(mockDepartureNotCancelledP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
-      .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
 
@@ -71,7 +68,7 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           ),
           Invalidation(
             Some(LocalDateTime.now()),
-            "1",
+            "0",
             "1",
             Some("some justification")
           ),
@@ -81,26 +78,26 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
         )
       )
 
-      val departureCancelledP5ViewModel =
-        new DepartureCancelledP5ViewModel(sections, lrn.toString, Left(customsReferenceNumber))
+      val departureNotCancelledP5ViewModel =
+        new DepartureNotCancelledP5ViewModel(sections, departureIdP5, lrn.toString)
 
+      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceNumber)))
-      when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(departureCancelledP5ViewModel))
+      when(mockDepartureNotCancelledP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(departureNotCancelledP5ViewModel))
 
-      val request = FakeRequest(GET, routes.DepartureCancelledP5Controller.onPageLoad(departureIdP5, messageId).url)
+      val request = FakeRequest(GET, controllers.departureP5.routes.DepartureNotCancelledP5Controller.onPageLoad(departureIdP5, messageId).url)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      val view = injector.instanceOf[DepartureCancelledP5View]
+      val view = injector.instanceOf[DepartureNotCancelledP5View]
 
       contentAsString(result) mustEqual
-        view(departureCancelledP5ViewModel)(request, messages, frontendAppConfig).toString
-
+        view(departureNotCancelledP5ViewModel)(request, messages, frontendAppConfig).toString
     }
+
   }
 }

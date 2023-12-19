@@ -27,11 +27,11 @@ GET        /:departureId/review-cancellation-errors/:messageId                  
 
 GET        /:departureId/send-departure-declaration-errors/:messageId                controllers.departureP5.RejectionMessageP5Controller.onAmend(departureId: String, messageId: String, isAmendmentJourney: Boolean)
 
-GET        /:departureId/is-declaration-cancelled/:messageId                         controllers.departureP5.DepartureCancelledP5Controller.isDeclarationCancelled(departureId: String, messageId: String)
+GET        /:departureId/is-declaration-cancelled/:messageId                         controllers.departureP5.IsDepartureCancelledP5Controller.isDeclarationCancelled(departureId: String, messageId: String)
 
-GET        /:departureId/declaration-cancelled/:messageId                            controllers.departureP5.DepartureCancelledP5Controller.declarationCancelled(departureId: String, messageId: String)
+GET        /:departureId/declaration-cancelled/:messageId                            controllers.departureP5.DepartureCancelledP5Controller.onPageLoad(departureId: String, messageId: String)
 
-GET        /:departureId/declaration-not-cancelled/:messageId                        controllers.departureP5.DepartureCancelledP5Controller.declarationNotCancelled(departureId: String, messageId: String)
+GET        /:departureId/declaration-not-cancelled/:messageId                        controllers.departureP5.DepartureNotCancelledP5Controller.onPageLoad(departureId: String, messageId: String)
 
 GET        /:departureId/transit-accompanying-document/:messageId                    controllers.departureP5.TransitAccompanyingDocumentController.getTAD(departureId: String, messageId: String)
 

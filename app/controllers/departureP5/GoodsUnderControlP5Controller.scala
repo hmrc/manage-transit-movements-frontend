@@ -48,9 +48,8 @@ class GoodsUnderControlP5Controller @Inject() (
 
         referenceDataService.getCustomsOffice(customsOfficeId).flatMap {
           customsOffice =>
-            val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.messageData.data)
-            val customsOfficeContactViewModel =
-              CustomsOfficeContactViewModel(customsOfficeId, customsOffice)
+            val goodsUnderControlP5ViewModel  = viewModelProvider.apply(request.messageData.data)
+            val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
             goodsUnderControlP5ViewModel.map {
               viewModel =>
                 Ok(view(viewModel, departureId, customsOfficeContactViewModel))

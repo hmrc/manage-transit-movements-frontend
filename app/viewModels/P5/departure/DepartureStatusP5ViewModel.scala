@@ -194,7 +194,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.cancellationDecision",
         actions = Seq(
           ViewMovementAction(
-            controllers.departureP5.routes.DepartureCancelledP5Controller.isDeclarationCancelled(departureId, messageId).url,
+            controllers.departureP5.routes.IsDepartureCancelledP5Controller.isDeclarationCancelled(departureId, messageId).url,
             "movement.status.P5.action.cancellationDecision.viewCancellation"
           )
         )

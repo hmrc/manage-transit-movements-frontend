@@ -71,9 +71,9 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
         .thenReturn(Future.successful(message))
 
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-        .thenReturn(Future.successful(Some(fakeCustomsOffice)))
+        .thenReturn(Future.successful(Right(fakeCustomsOffice)))
 
-      val unloadingNotificationErrorsP5ViewModel = new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrnString, "1234", Some(fakeCustomsOffice))
+      val unloadingNotificationErrorsP5ViewModel = new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrnString, Right(fakeCustomsOffice))
 
       val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
 
@@ -100,7 +100,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
         .thenReturn(Future.successful(message))
 
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-        .thenReturn(Future.successful(Some(fakeCustomsOffice)))
+        .thenReturn(Future.successful(Right(fakeCustomsOffice)))
 
       val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
 

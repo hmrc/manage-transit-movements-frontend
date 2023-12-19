@@ -25,35 +25,6 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
 
   "CustomsOffice" - {
 
-    "nameOption" - {
-      "must return Some(name)" - {
-        "when name is empty" in {
-          CustomsOffice("GB00006", "BOSTON", None).nameOption mustBe Some("BOSTON")
-        }
-      }
-      "must return None" - {
-        "when name is empty" in {
-          CustomsOffice("GB00006", "", None).nameOption mustBe None
-        }
-      }
-    }
-
-    "phoneOption" - {
-      "must return Some(phoneNumber)" - {
-        "when phoneNumber is present" in {
-          CustomsOffice("GB00006", "BOSTON", Some("01234567890")).phoneOption mustBe Some("01234567890")
-        }
-      }
-      "must return None" - {
-        "when phoneNumber is None" in {
-          CustomsOffice("GB00006", "BOSTON", None).phoneOption mustBe None
-        }
-        "when phoneNumber is empty" in {
-          CustomsOffice("GB00006", "BOSTON", Some("")).phoneOption mustBe None
-        }
-      }
-    }
-
     "nameAndCode must return correct string" in {
       CustomsOffice("GB00006", "BOSTON", None).nameAndCode mustBe "BOSTON (GB00006)"
     }

@@ -66,57 +66,37 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
 
     val viewModelProvider = new DepartureCancelledP5ViewModelProvider(mockReferenceDataService)
 
-    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(None))
+    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceId)))
 
-    def viewModel(customsOffice: Option[CustomsOffice] = None, isCancelled: Boolean = true): DepartureCancelledP5ViewModel =
-      viewModelProvider.apply(ie009Data.data, lrn, customsReferenceId, customsOffice, isCancelled).futureValue
+    def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): DepartureCancelledP5ViewModel =
+      viewModelProvider.apply(ie009Data.data, lrn, customsOffice).futureValue
 
     "must return correct section" in {
       viewModel().sections.head.sectionTitle mustBe None
       viewModel().sections.head.rows.size mustBe 5
     }
 
-    "when isCancelled is true" - {
-      "title" - {
-        "must return correct message" in {
-          viewModel().title mustBe "Declaration cancelled"
-        }
-      }
-
-      "heading" - {
-        "must return correct message" in {
-          viewModel().title mustBe "Declaration cancelled"
-        }
-      }
-
-      "paragraph" in {
-        viewModel().paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
+    "title" - {
+      "must return correct message" in {
+        viewModel().title mustBe "Declaration cancelled"
       }
     }
 
-    "when isCancelled is false" - {
-      "title" - {
-        "must return correct message" in {
-          viewModel(isCancelled = false).title mustBe "Declaration not cancelled"
-        }
+    "heading" - {
+      "must return correct message" in {
+        viewModel().title mustBe "Declaration cancelled"
       }
+    }
 
-      "heading" - {
-        "must return correct message" in {
-          viewModel(isCancelled = false).title mustBe "Declaration not cancelled"
-        }
-      }
-
-      "paragraph" in {
-        viewModel(isCancelled = false).paragraph mustBe s"The office of departure could not cancel the declaration for LRN $lrn as requested."
-      }
+    "paragraph" in {
+      viewModel().paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
     }
 
     "customsOfficeContent" - {
 
       "when no customs office found" - {
         "must return correct message" in {
-          viewModel(customsOffice = None).customsOfficeContent mustBe s"If you have any questions, contact Customs office $customsReferenceId."
+          viewModel().customsOfficeContent mustBe s"If you have any questions, contact Customs office $customsReferenceId."
         }
       }
 
@@ -124,7 +104,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
         "must return correct message" in {
           val customsOfficeName = "custName"
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
           result mustBe s"If you have any questions, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
@@ -133,7 +113,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
       "when customs office found with name and no telephone number" - {
         "must return correct message" in {
           val customsOfficeName = "custName"
-          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
           result mustBe s"If you have any questions, contact Customs at $customsOfficeName."
         }
@@ -143,7 +123,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
         "must return correct message" in {
           val customsOfficeName = ""
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
           result mustBe s"If you have any questions, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
@@ -152,7 +132,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
       "when customs office found with no telephone number and empty name" - {
         "must return correct message" in {
           val customsOfficeName = ""
-          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
           result mustBe s"If you have any questions, contact Customs office $customsReferenceId."
         }
