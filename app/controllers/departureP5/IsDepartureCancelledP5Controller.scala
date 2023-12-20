@@ -37,11 +37,11 @@ class IsDepartureCancelledP5Controller @Inject() (
   def isDeclarationCancelled(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)) {
       implicit request =>
-        val isCancelled: String = request.messageData.data.invalidation.decision
-        if (isCancelled == "0") {
-          Redirect(controllers.departureP5.routes.DepartureNotCancelledP5Controller.onPageLoad(departureId, messageId))
-        } else {
+        val isCancelled: Boolean = request.messageData.data.invalidation.decision
+        if (isCancelled) {
           Redirect(controllers.departureP5.routes.DepartureCancelledP5Controller.onPageLoad(departureId, messageId))
+        } else {
+          Redirect(controllers.departureP5.routes.DepartureNotCancelledP5Controller.onPageLoad(departureId, messageId))
         }
     }
 }

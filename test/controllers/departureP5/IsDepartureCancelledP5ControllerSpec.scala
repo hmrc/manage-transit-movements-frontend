@@ -60,10 +60,10 @@ class IsDepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultM
               Some("abd123")
             ),
             Invalidation(
-              Some(LocalDateTime.now()),
-              "0",
-              "1",
-              Some("some justification")
+              decisionDateAndTime = Some(LocalDateTime.now()),
+              decision = false,
+              initiatedByCustoms = true,
+              justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
               s"$customsReferenceNumber"
@@ -91,10 +91,10 @@ class IsDepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultM
               Some("abd123")
             ),
             Invalidation(
-              Some(LocalDateTime.now()),
-              "1",
-              "1",
-              Some("some justification")
+              decisionDateAndTime = Some(LocalDateTime.now()),
+              decision = true,
+              initiatedByCustoms = true,
+              justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
               s"$customsReferenceNumber"

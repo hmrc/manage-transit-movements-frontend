@@ -49,10 +49,7 @@ class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData, referenceDa
   )
 
   def buildInitiatedByCustomsRow: Option[SummaryListRow] = buildRowFromAnswer[Boolean](
-    answer = Some(ie009MessageData.invalidation.initiatedByCustoms match {
-      case "1" => true
-      case _   => false
-    }),
+    answer = Some(ie009MessageData.invalidation.initiatedByCustoms),
     formatAnswer = formatAsYesOrNo,
     prefix = messages("row.label.initiatedByCustoms"),
     id = None,

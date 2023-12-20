@@ -53,8 +53,8 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
         ),
         Invalidation(
           Some(LocalDateTime.now()),
-          "0",
-          "1",
+          decision = false,
+          initiatedByCustoms = true,
           Some("some justification")
         ),
         CustomsOfficeOfDeparture(

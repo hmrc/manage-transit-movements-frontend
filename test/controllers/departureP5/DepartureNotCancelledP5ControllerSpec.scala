@@ -67,10 +67,10 @@ class DepartureNotCancelledP5ControllerSpec extends SpecBase with AppWithDefault
             Some("abd123")
           ),
           Invalidation(
-            Some(LocalDateTime.now()),
-            "0",
-            "1",
-            Some("some justification")
+            decisionDateAndTime = Some(LocalDateTime.now()),
+            decision = false,
+            initiatedByCustoms = true,
+            justification = Some("some justification")
           ),
           CustomsOfficeOfDeparture(
             s"$customsReferenceNumber"

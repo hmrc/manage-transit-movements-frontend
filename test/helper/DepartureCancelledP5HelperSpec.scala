@@ -57,10 +57,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               None
             ),
             Invalidation(
-              Some(LocalDateTime.now()),
-              "0",
-              "1",
-              Some("some justification")
+              decisionDateAndTime = Some(LocalDateTime.now()),
+              decision = false,
+              initiatedByCustoms = true,
+              justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
               "1234"
@@ -83,10 +83,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               Some("abd123")
             ),
             Invalidation(
-              Some(LocalDateTime.now()),
-              "0",
-              "1",
-              Some("some justification")
+              decisionDateAndTime = Some(LocalDateTime.now()),
+              decision = false,
+              initiatedByCustoms = true,
+              justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
               "1234"
@@ -113,10 +113,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               Some("abd123")
             ),
             Invalidation(
-              None,
-              "0",
-              "1",
-              Some("some justification")
+              decisionDateAndTime = None,
+              decision = false,
+              initiatedByCustoms = true,
+              justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
               "1234"
@@ -139,10 +139,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               Some("abd123")
             ),
             Invalidation(
-              Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
-              "0",
-              "1",
-              Some("some justification")
+              decisionDateAndTime = Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
+              decision = false,
+              initiatedByCustoms = true,
+              justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
               "1234"
@@ -171,10 +171,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
                 Some("abd123")
               ),
               Invalidation(
-                Some(LocalDateTime.now()),
-                "0",
-                "1",
-                Some("some justification")
+                decisionDateAndTime = Some(LocalDateTime.now()),
+                decision = false,
+                initiatedByCustoms = true,
+                justification = Some("some justification")
               ),
               CustomsOfficeOfDeparture(
                 "1234"
@@ -198,10 +198,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
                 Some("abd123")
               ),
               Invalidation(
-                Some(LocalDateTime.now()),
-                "0",
-                "0",
-                Some("some justification")
+                decisionDateAndTime = Some(LocalDateTime.now()),
+                decision = false,
+                initiatedByCustoms = false,
+                justification = Some("some justification")
               ),
               CustomsOfficeOfDeparture(
                 "1234"
@@ -229,10 +229,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               Some("abd123")
             ),
             Invalidation(
-              Some(LocalDateTime.now()),
-              "0",
-              "1",
-              Some("some justification")
+              decisionDateAndTime = Some(LocalDateTime.now()),
+              decision = false,
+              initiatedByCustoms = true,
+              justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
               "GB00060"
@@ -259,10 +259,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
                 Some("abd123")
               ),
               Invalidation(
-                Some(LocalDateTime.now()),
-                "0",
-                "1",
-                Some("some justification")
+                decisionDateAndTime = Some(LocalDateTime.now()),
+                decision = false,
+                initiatedByCustoms = true,
+                justification = Some("some justification")
               ),
               CustomsOfficeOfDeparture(
                 "GB00060"
@@ -293,10 +293,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               Some("abd123")
             ),
             Invalidation(
-              Some(LocalDateTime.now()),
-              "0",
-              "1",
-              None
+              decisionDateAndTime = Some(LocalDateTime.now()),
+              decision = false,
+              initiatedByCustoms = true,
+              justification = None
             ),
             CustomsOfficeOfDeparture(
               "1234"
@@ -319,10 +319,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               Some("abd123")
             ),
             Invalidation(
-              Some(LocalDateTime.now()),
-              "0",
-              "1",
-              Some("some justification")
+              decisionDateAndTime = Some(LocalDateTime.now()),
+              decision = false,
+              initiatedByCustoms = true,
+              justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
               "1234"
@@ -349,10 +349,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               Some("abd123")
             ),
             Invalidation(
-              Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
-              "0",
-              "1",
-              Some("some justification")
+              decisionDateAndTime = Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
+              decision = false,
+              initiatedByCustoms = true,
+              justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
               "1234"
