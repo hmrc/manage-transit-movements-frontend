@@ -16,12 +16,20 @@
 
 package models.departureP5
 
-import play.api.libs.json.{Json, OFormat}
+import models.booleanReads
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 import java.time.LocalDateTime
 
-case class Invalidation(decisionDateAndTime: Option[LocalDateTime], decision: String, initiatedByCustoms: String, justification: Option[String])
+case class Invalidation(decisionDateAndTime: Option[LocalDateTime], decision: Boolean, initiatedByCustoms: Boolean, justification: Option[String])
 
 object Invalidation {
-  implicit val formats: OFormat[Invalidation] = Json.format[Invalidation]
+
+  implicit val reads: Reads[Invalidation] = (
+    (__ \ "decisionDateAndTime").readNullable[LocalDateTime] and
+      (__ \ "decision").read[Boolean](booleanReads) and
+      (__ \ "initiatedByCustoms").read[Boolean](booleanReads) and
+      (__ \ "justification").readNullable[String]
+  )(Invalidation.apply _)
 }

@@ -22,6 +22,12 @@ import scala.annotation.nowarn
 
 package object models {
 
+  lazy val booleanReads: Reads[Boolean] = Reads {
+    case JsString("0") => JsSuccess(false)
+    case JsString("1") => JsSuccess(true)
+    case x             => JsError(s"$x could not be read as a Boolean")
+  }
+
   implicit class RichJsObject(jsObject: JsObject) {
 
     def setObject(path: JsPath, value: JsValue): JsResult[JsObject] =

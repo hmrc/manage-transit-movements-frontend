@@ -18,19 +18,19 @@ package views.departureP5
 
 import generators.Generators
 import play.twirl.api.HtmlFormat
-import viewModels.P5.departure.DepartureCancelledP5ViewModel
+import viewModels.P5.departure.DepartureNotCancelledP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
-import views.html.departureP5.DepartureCancelledP5View
+import views.html.departureP5.DepartureNotCancelledP5View
 
-class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class DepartureNotCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
-  override val prefix: String = "departure.cancelled"
+  override val prefix: String = "departure.notCancelled"
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
-      .instanceOf[DepartureCancelledP5View]
-      .apply(DepartureCancelledP5ViewModel(sections, "AB123", Left("CD123")))(fakeRequest, messages, frontendAppConfig)
+      .instanceOf[DepartureNotCancelledP5View]
+      .apply(DepartureNotCancelledP5ViewModel(sections, departureIdP5, "AB123"))(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 
@@ -38,7 +38,19 @@ class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with G
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p", "If you have any questions, contact Customs office CD123.")
+  /*behave like pageWithLink(
+    id = "try-again",
+    expectedText = "Try cancelling declaration again",
+    expectedHref = s"http://localhost:10122/manage-transit-movements/cancellation/$departureIdP5/index/AB123"
+  )*/
+
+  behave like pageWithPartialContent("p", "Contact the ")
+  behave like pageWithLink(
+    id = "contact",
+    expectedText = "New Computerised Transit System helpdesk",
+    expectedHref = frontendAppConfig.nctsEnquiriesUrl
+  )
+  behave like pageWithPartialContent("p", " for help understanding the error (opens in a new tab).")
 
   behave like pageWithLink(
     id = "link",

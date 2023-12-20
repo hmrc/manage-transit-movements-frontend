@@ -17,7 +17,6 @@
 package utils
 
 import models.departureP5.IE009MessageData
-import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -50,25 +49,20 @@ class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData, referenceDa
   )
 
   def buildInitiatedByCustomsRow: Option[SummaryListRow] = buildRowFromAnswer[Boolean](
-    answer = Some(ie009MessageData.invalidation.initiatedByCustoms match {
-      case "1" => true
-      case _   => false
-    }),
+    answer = Some(ie009MessageData.invalidation.initiatedByCustoms),
     formatAnswer = formatAsYesOrNo,
     prefix = messages("row.label.initiatedByCustoms"),
     id = None,
     call = None
   )
 
-  private def getCustomsOffice(referenceNumber: String): Future[Option[CustomsOffice]] = referenceDataService.getCustomsOffice(referenceNumber)(ec, hc)
-
   def buildOfficeOfDepartureRow: Future[Option[SummaryListRow]] = {
     val referenceNumber = ie009MessageData.customsOfficeOfDeparture.referenceNumber
-    getCustomsOffice(referenceNumber).map {
+    referenceDataService.getCustomsOffice(referenceNumber).map {
       customsOffice =>
         val answerToDisplay = customsOffice match {
-          case Some(customsOffice) => customsOffice.nameAndCode
-          case _                   => referenceNumber
+          case Right(customsOffice) => customsOffice.nameAndCode
+          case Left(id)             => id
         }
         buildRowFromAnswer[String](
           answer = Some(answerToDisplay),

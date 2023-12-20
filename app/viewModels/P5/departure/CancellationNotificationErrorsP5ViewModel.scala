@@ -18,12 +18,14 @@ package viewModels.P5.departure
 
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
+import viewModels.P5.ViewModelWithCustomsOffice
 
 case class CancellationNotificationErrorsP5ViewModel(
   lrn: String,
-  customsOfficeReferenceId: String,
-  customsOffice: Option[CustomsOffice]
-) {
+  customsOffice: Either[String, CustomsOffice]
+) extends ViewModelWithCustomsOffice {
+
+  override val prefix: String = "cancellation.notification.customsOfficeContact"
 
   def title(implicit messages: Messages): String = messages("cancellation.notification.errors.message.title")
 
@@ -31,21 +33,6 @@ case class CancellationNotificationErrorsP5ViewModel(
 
   def paragraph1(implicit messages: Messages): String =
     messages("cancellation.notification.errors.message")
-
-  def customsOfficeContent(implicit messages: Messages): String =
-    customsOffice match {
-      case Some(CustomsOffice(id, _, _)) => customsOfficeNameAndNumber(messages, id)
-      case _ =>
-        messages("cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceId)
-    }
-
-  private def customsOfficeNameAndNumber(messages: Messages, id: String): String =
-    (customsOffice.get.nameOption, customsOffice.get.phoneOption) match {
-      case (Some(name), Some(phone)) => messages("cancellation.notification.customsOfficeContact.telephoneAvailable", name, phone)
-      case (None, Some(phone))       => messages("cancellation.notification.customsOfficeContact.teleAvailAndOfficeNameNotAvail", id, phone)
-      case (Some(name), None)        => messages("cancellation.notification.customsOfficeContact.telephoneNotAvailable", name)
-      case _                         => messages("cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", id)
-    }
 
   def hyperlink(implicit messages: Messages): String = messages("cancellation.notification.errors.message.viewDepartureDeclarations")
 
@@ -57,10 +44,9 @@ object CancellationNotificationErrorsP5ViewModel {
 
     def apply(
       lrn: String,
-      customsOfficeReferenceId: String,
-      customsOffice: Option[CustomsOffice]
+      customsOffice: Either[String, CustomsOffice]
     ): CancellationNotificationErrorsP5ViewModel =
-      CancellationNotificationErrorsP5ViewModel(lrn, customsOfficeReferenceId, customsOffice)
+      CancellationNotificationErrorsP5ViewModel(lrn, customsOffice)
   }
 
 }

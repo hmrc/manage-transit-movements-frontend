@@ -19,7 +19,6 @@ package views.departureP5
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewModels.P5.departure.{CustomsOfficeContactViewModel, GoodsUnderControlP5ViewModel}
@@ -29,13 +28,12 @@ import views.html.departureP5.GoodsUnderControlP5View
 
 class GoodsUnderControlP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
 
-  private val customsOffice: CustomsOffice   = arbitrary[CustomsOffice].sample.value
-  private val customsReferenceNumber: String = Gen.alphaNumStr.sample.value
+  private val customsOffice: CustomsOffice = arbitrary[CustomsOffice].sample.value
 
   override val prefix: String = "departure.ie060.message"
 
   private val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel   = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
-  private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(customsReferenceNumber, Some(customsOffice))
+  private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector

@@ -22,22 +22,20 @@ import models.LocalReferenceNumber
 import models.departureP5.{IE009Data, IE009MessageData}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
-import views.html.departureP5.DepartureCancelledP5View
+import viewModels.P5.departure.DepartureNotCancelledP5ViewModel.DepartureNotCancelledP5ViewModelProvider
+import views.html.departureP5.DepartureNotCancelledP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureCancelledP5Controller @Inject() (
+class DepartureNotCancelledP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: DepartureCancelledP5ViewModelProvider,
-  view: DepartureCancelledP5View,
-  referenceDataService: ReferenceDataService
+  viewModelProvider: DepartureNotCancelledP5ViewModelProvider,
+  view: DepartureNotCancelledP5View
 )(implicit val executionContext: ExecutionContext, frontendAppConfig: FrontendAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
@@ -45,20 +43,15 @@ class DepartureCancelledP5Controller @Inject() (
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)).async {
       implicit request =>
-        buildView(request.messageData.data, request.referenceNumbers.localReferenceNumber)
+        buildView(request.messageData.data, departureId, request.referenceNumbers.localReferenceNumber)
     }
 
   private def buildView(
     IE009MessageData: IE009MessageData,
+    departureId: String,
     lrn: LocalReferenceNumber
-  )(implicit request: Request[_]): Future[Result] = {
-    val customsOfficeReferenceNumber = IE009MessageData.customsOfficeOfDeparture.referenceNumber
-
-    referenceDataService.getCustomsOffice(customsOfficeReferenceNumber).flatMap {
-      customsOffice =>
-        viewModelProvider.apply(IE009MessageData, lrn.value, customsOffice).map {
-          viewModel => Ok(view(viewModel))
-        }
+  )(implicit request: Request[_]): Future[Result] =
+    viewModelProvider.apply(IE009MessageData, departureId, lrn.value).map {
+      viewModel => Ok(view(viewModel))
     }
-  }
 }

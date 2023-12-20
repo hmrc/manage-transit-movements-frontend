@@ -32,8 +32,8 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
 
     val viewModelProvider = new CancellationNotificationErrorsP5ViewModelProvider()
 
-    def viewModel(customsOffice: Option[CustomsOffice] = None): CancellationNotificationErrorsP5ViewModel =
-      viewModelProvider.apply(lrn, customsReferenceId, customsOffice)
+    def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): CancellationNotificationErrorsP5ViewModel =
+      viewModelProvider.apply(lrn, customsOffice)
 
     "title" - {
       "must return correct message" in {
@@ -57,9 +57,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
 
       "when no customs office found" - {
         "must return correct message" in {
-          viewModel(customsOffice =
-            None
-          ).customsOfficeContent mustBe s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
+          viewModel().customsOfficeContent mustBe s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
         }
       }
 
@@ -67,7 +65,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
         "must return correct message" in {
           val customsOfficeName = "custName"
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
           result mustBe s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
@@ -76,7 +74,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
       "when customs office found with name and no telephone number" - {
         "must return correct message" in {
           val customsOfficeName = "custName"
-          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
           result mustBe s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName."
         }
@@ -86,7 +84,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
         "must return correct message" in {
           val customsOfficeName = ""
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
           result mustBe s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
@@ -95,7 +93,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
       "when customs office found with no telephone number and empty name" - {
         "must return correct message" in {
           val customsOfficeName = ""
-          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
           result mustBe s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
         }

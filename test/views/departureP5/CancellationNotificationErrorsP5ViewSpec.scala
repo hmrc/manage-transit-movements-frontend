@@ -24,7 +24,7 @@ import views.html.departureP5.CancellationNotificationErrorsP5View
 class CancellationNotificationErrorsP5ViewSpec extends ViewBehaviours {
 
   private val cancellationNotificationErrorsP5ViewViewModel =
-    new CancellationNotificationErrorsP5ViewModel("AB123", "CD123", None)
+    new CancellationNotificationErrorsP5ViewModel("AB123", Left("CD123"))
 
   override def view: HtmlFormat.Appendable =
     injector

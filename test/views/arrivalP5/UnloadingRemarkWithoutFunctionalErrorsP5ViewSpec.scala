@@ -24,7 +24,7 @@ import views.html.arrivalP5.UnloadingRemarkWithoutFunctionalErrorsP5View
 class UnloadingRemarkWithoutFunctionalErrorsP5ViewSpec extends ViewBehaviours {
 
   private val unloadingNotificationErrorsP5ViewModel =
-    new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel("AB123", "CD123", None)
+    new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel("AB123", Left("CD123"))
 
   override def view: HtmlFormat.Appendable =
     injector

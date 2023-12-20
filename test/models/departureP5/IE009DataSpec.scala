@@ -29,8 +29,6 @@ class IE009DataSpec extends SpecBase {
       val mrn                 = "AB123"
       val referenceNumber     = "GB00060"
       val decisionDateAndTime = LocalDateTime.now(clock)
-      val decision            = "0"
-      val initiatedByCustoms  = "1"
       val justification       = "justificationString"
 
       val json = Json.parse(s"""
@@ -45,8 +43,8 @@ class IE009DataSpec extends SpecBase {
                   },
                   "Invalidation": {
                       "decisionDateAndTime": "$decisionDateAndTime",
-                      "decision": "$decision",
-                      "initiatedByCustoms": "$initiatedByCustoms",
+                      "decision": "0",
+                      "initiatedByCustoms": "1",
                       "justification": "$justification"
                   }
               }
@@ -60,10 +58,10 @@ class IE009DataSpec extends SpecBase {
             Some(mrn)
           ),
           Invalidation(
-            Some(decisionDateAndTime),
-            decision,
-            initiatedByCustoms,
-            Some(justification)
+            decisionDateAndTime = Some(decisionDateAndTime),
+            decision = false,
+            initiatedByCustoms = true,
+            justification = Some(justification)
           ),
           CustomsOfficeOfDeparture(
             referenceNumber

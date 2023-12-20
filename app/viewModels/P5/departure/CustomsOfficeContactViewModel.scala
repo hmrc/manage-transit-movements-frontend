@@ -17,23 +17,11 @@
 package viewModels.P5.departure
 
 import models.referenceData.CustomsOffice
-import play.api.i18n.Messages
+import viewModels.P5.ViewModelWithCustomsOffice
 
-case class CustomsOfficeContactViewModel(customsOfficeReferenceID: String, customsOffice: Option[CustomsOffice]) {
+case class CustomsOfficeContactViewModel(
+  customsOffice: Either[String, CustomsOffice]
+) extends ViewModelWithCustomsOffice {
 
-  def fetchWhatHappensNext(implicit messages: Messages): String =
-    customsOffice match {
-      case Some(CustomsOffice(id, _, _)) =>
-        matchNameAndNumber(messages, id)
-      case _ =>
-        messages("customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", customsOfficeReferenceID)
-    }
-
-  private def matchNameAndNumber(messages: Messages, id: String): String =
-    (customsOffice.get.nameOption, customsOffice.get.phoneOption) match {
-      case (Some(name), Some(phone)) => messages("customsOfficeContact.telephoneAvailable", name, phone)
-      case (None, Some(phone))       => messages("customsOfficeContact.teleAvailAndOfficeNameNotAvail", id, phone)
-      case (Some(name), None)        => messages("customsOfficeContact.telephoneNotAvailable", name)
-      case _                         => messages("customsOfficeContact.teleNotAvailAndOfficeNameNotAvail", id)
-    }
+  override val prefix: String = "customsOfficeContact"
 }

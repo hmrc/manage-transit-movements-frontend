@@ -15,18 +15,18 @@
  *@
 
 @import views.html.components.{Button, Heading, AnswerSections}
-@import viewModels.P5.departure.DepartureCancelledP5ViewModel
+@import viewModels.P5.departure.DepartureNotCancelledP5ViewModel
 @import config.FrontendAppConfig
 
 @this(
-mainTemplate: MainTemplate,
-heading: Heading,
-answerSections: AnswerSections,
-button: Button,
-formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    answerSections: AnswerSections,
+    button: Button,
+    formHelper: FormWithCSRF
 )
 
-@(viewModel: DepartureCancelledP5ViewModel)(implicit request: Request[_], messages: Messages, frontendAppConfig: FrontendAppConfig)
+@(viewModel: DepartureNotCancelledP5ViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = viewModel.title,
@@ -42,8 +42,19 @@ formHelper: FormWithCSRF
 
     @answerSections(viewModel.sections)
 
-    <p class="govuk-body" id="customs-office">@viewModel.customsOfficeContent</p>
+    <!--<p class="govuk-body">
+        <a id="try-again" class="govuk-link" href="@viewModel.tryAgainUrl">@messages("departure.notCancelled.tryAgain")</a>
+    </p>-->
 
-    <p><a id="link" class="govuk-body govuk-link" href="@frontendAppConfig.declareDepartureStartWithLRNUrl">@viewModel.hyperlink</a></p>
+    <p class="govuk-body">@messages("departure.notCancelled.contact.start")
+        <a class="govuk-link" rel="noreferrer noopener" href=@config.nctsEnquiriesUrl target="_blank" id="contact">
+            @messages("departure.notCancelled.contact.link")
+        </a>
+        @messages("departure.notCancelled.contact.end")
+    </p>
+
+    <p class="govuk-body">
+        <a id="link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@messages("departure.notCancelled.hyperlink")</a>
+    </p>
 
 }
