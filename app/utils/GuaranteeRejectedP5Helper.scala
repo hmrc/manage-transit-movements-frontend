@@ -16,19 +16,19 @@
 
 package utils
 
-import models.departureP5.GuaranteeReference
+import generated.GuaranteeReferenceType08
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 
-class GuaranteeRejectedP5Helper(guaranteeReferences: Seq[GuaranteeReference])(implicit messages: Messages) extends DeparturesP5MessageHelper {
+class GuaranteeRejectedP5Helper(guaranteeReferences: Seq[GuaranteeReferenceType08])(implicit messages: Messages) extends DeparturesP5MessageHelper {
 
   def toTables: Seq[(String, String, Table)] =
     guaranteeReferences.zipWithIndex.map {
-      reference =>
-        val title = messages("guarantee.rejected.message.guaranteeReference", reference._2 + 1)
+      case (guaranteeReference, index) =>
+        val title = messages("guarantee.rejected.message.guaranteeReference", index + 1)
 
-        val rows: Seq[Seq[TableRow]] = reference._1.InvalidGuaranteeReason.map {
+        val rows: Seq[Seq[TableRow]] = guaranteeReference.InvalidGuaranteeReason.map {
           x =>
             Seq(
               TableRow(x.code.toText),
@@ -46,6 +46,6 @@ class GuaranteeRejectedP5Helper(guaranteeReferences: Seq[GuaranteeReference])(im
           )
         )
 
-        (title, reference._1.GRN, table)
+        (title, guaranteeReference.GRN, table)
     }
 }

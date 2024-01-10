@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package models.arrivalP5
+package config
 
-import models.ArrivalRejectionType
-import play.api.libs.json.{Json, OFormat}
+object Constants {
 
-case class TransitOperationIE057(MRN: String, businessRejectionType: ArrivalRejectionType)
+  object NotificationType {
+    val DecisionToControl          = "0"
+    val AdditionalDocumentsRequest = "1"
+    val IntentionToControl         = "2"
+  }
 
-object TransitOperationIE057 {
-  implicit val formats: OFormat[TransitOperationIE057] = Json.format[TransitOperationIE057]
+  object BusinessRejectionType {
+    val AmendmentRejection    = "013"
+    val InvalidationRejection = "014"
+    val DeclarationRejection  = "015"
+  }
+
 }

@@ -16,35 +16,36 @@
 
 package utils
 
-import models.departureP5.IE035MessageData
+import generated.CC035CType
+import models.RichRecoveryNotificationType
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
 
-import java.time.LocalDate
+import javax.xml.datatype.XMLGregorianCalendar
 
-class RecoveryNotificationHelper(ie035MessageData: IE035MessageData)(implicit
+class RecoveryNotificationHelper(ie035: CC035CType)(implicit
   messages: Messages
 ) extends DeparturesP5MessageHelper {
 
   def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(ie035MessageData.transitOperation.MRN),
+    answer = Some(ie035.TransitOperation.MRN),
     formatAnswer = formatAsText,
     prefix = messages("row.label.movementReferenceNumber"),
     id = None,
     call = None
   )
 
-  def buildDeclarationAcceptanceDateRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDate](
-    answer = Some(ie035MessageData.transitOperation.declarationAcceptanceDate),
+  def buildDeclarationAcceptanceDateRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
+    answer = Some(ie035.TransitOperation.declarationAcceptanceDate),
     formatAnswer = formatAsDate,
     prefix = messages("row.label.declarationAcceptanceDate"),
     id = None,
     call = None
   )
 
-  def buildRecoveryDateRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDate](
-    answer = Some(ie035MessageData.recoveryNotification.recoveryNotificationDate),
+  def buildRecoveryDateRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
+    answer = ie035.RecoveryNotification.recoveryNotificationDate,
     formatAnswer = formatAsDate,
     prefix = messages("row.label.recoveryNotificationDate"),
     id = None,
@@ -52,7 +53,7 @@ class RecoveryNotificationHelper(ie035MessageData: IE035MessageData)(implicit
   )
 
   def buildFurtherInformationRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(ie035MessageData.recoveryNotification.recoveryNotificationText),
+    answer = ie035.RecoveryNotification.recoveryNotificationText,
     formatAnswer = formatAsText,
     prefix = messages("row.label.recoveryNotificationText"),
     id = None,
@@ -60,7 +61,7 @@ class RecoveryNotificationHelper(ie035MessageData: IE035MessageData)(implicit
   )
 
   def buildAmountRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(ie035MessageData.recoveryNotification.formattedCurrency),
+    answer = Some(ie035.RecoveryNotification.formattedCurrency),
     formatAnswer = formatAsText,
     prefix = messages("row.label.amountClaimed"),
     id = None,

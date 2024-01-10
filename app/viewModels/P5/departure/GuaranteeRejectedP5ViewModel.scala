@@ -16,20 +16,21 @@
 
 package viewModels.P5.departure
 
+import generated.GuaranteeReferenceType08
 import models.LocalReferenceNumber
-import models.departureP5.GuaranteeReference
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
-import utils.{Format, GuaranteeRejectedP5Helper}
+import utils.GuaranteeRejectedP5Helper
 
-import java.time.LocalDate
+import java.text.SimpleDateFormat
+import javax.xml.datatype.XMLGregorianCalendar
 
 case class GuaranteeRejectedP5ViewModel(
-  guaranteeReferences: Seq[GuaranteeReference],
+  guaranteeReferences: Seq[GuaranteeReferenceType08],
   lrn: LocalReferenceNumber,
   isAmendable: Boolean,
   mrn: String,
-  acceptanceDate: LocalDate
+  acceptanceDate: XMLGregorianCalendar
 )(implicit
   messages: Messages
 ) {
@@ -40,7 +41,13 @@ case class GuaranteeRejectedP5ViewModel(
 
     multipleGuarantee && oneReference
   }
-  def formatDateTime: String = acceptanceDate.format(Format.guaranteeRejectedDateTimeFormatter)
+
+  // TODO - refactor
+  def formatDateTime: String = {
+    val date      = acceptanceDate.toGregorianCalendar.getTime
+    val formatter = new SimpleDateFormat("dd/MM/yyyy")
+    formatter.format(date)
+  }
 
   def paragraph1(implicit messages: Messages): String =
     if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length == 1) {

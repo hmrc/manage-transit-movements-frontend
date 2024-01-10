@@ -18,7 +18,7 @@ package controllers.arrivalP5
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.arrivalP5.IE057Data
+import generated.CC057CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -40,10 +40,10 @@ class ArrivalNotificationWithoutFunctionalErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(arrivalId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE057Data](arrivalId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)) {
       implicit request =>
-        if (request.messageData.data.functionalErrors.isEmpty) {
-          Ok(view(viewModelProvider.apply(request.messageData.data.transitOperation.MRN)))
+        if (request.messageData.FunctionalError.isEmpty) {
+          Ok(view(viewModelProvider.apply(request.messageData.TransitOperation.MRN)))
         } else {
           Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }

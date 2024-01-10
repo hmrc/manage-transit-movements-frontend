@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.IE051MessageData
+import generated.CC051CType
 import play.api.i18n.Messages
 import utils.GoodsNotReleasedP5Helper
 import viewModels.sections.Section
@@ -42,10 +42,10 @@ object GoodsNotReleasedP5ViewModel {
   class GoodsNotReleasedP5ViewModelProvider() {
 
     def apply(
-      iE051MessageData: IE051MessageData,
+      ie051: CC051CType,
       lrn: String
     )(implicit messages: Messages): GoodsNotReleasedP5ViewModel = {
-      val helper = new GoodsNotReleasedP5Helper(iE051MessageData)
+      val helper = new GoodsNotReleasedP5Helper(ie051)
 
       new GoodsNotReleasedP5ViewModel(Seq(helper.buildDetailsSection), lrn)
     }

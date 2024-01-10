@@ -17,7 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import models.Availability
 import models.arrivalP5.{ArrivalMovements, LatestArrivalMessage}
 import play.api.http.Status.{NOT_FOUND, OK}
@@ -27,6 +26,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.{Node, XML}
 
 class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends MovementP5Connector {
 
@@ -57,6 +57,8 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
   }
 
   private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] = {
+    import connectors.CustomHttpReads.rawHttpResponseHttpReads
+
     val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals"
     http
       .GET[HttpResponse](url, queryParams)(rawHttpResponseHttpReads, headers, ec)
@@ -88,6 +90,15 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
     val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId"
     http
       .GET[MessageModel](url)(messageModelHttpReads, headers, ec)
+  }
+
+  def getMessage(
+    arrivalId: String,
+    messageId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Node] = {
+    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+xml"))
+    val url     = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId/body"
+    http.GET[HttpResponse](url)(implicitly, headers, ec).map(_.body).map(XML.loadString)
   }
 
 }

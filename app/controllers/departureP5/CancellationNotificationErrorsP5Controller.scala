@@ -17,7 +17,7 @@
 package controllers.departureP5
 
 import controllers.actions._
-import models.departureP5.IE056Data
+import generated.CC056CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
@@ -41,10 +41,10 @@ class CancellationNotificationErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val functionalErrors       = request.messageData.data.functionalErrors
-        val customsOfficeReference = request.messageData.data.customsOfficeOfDeparture.referenceNumber
+        val functionalErrors       = request.messageData.FunctionalError
+        val customsOfficeReference = request.messageData.CustomsOfficeOfDeparture.referenceNumber
 
         if (functionalErrors.isEmpty) {
           referenceDataService.getCustomsOffice(customsOfficeReference).map {

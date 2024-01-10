@@ -16,7 +16,7 @@
 
 package utils
 
-import models.departureP5.FunctionalError
+import generated.FunctionalErrorType04
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -27,7 +27,7 @@ import viewModels.sections.Section
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], referenceDataService: ReferenceDataService)(implicit
+class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalErrorType04], referenceDataService: ReferenceDataService)(implicit
   messages: Messages,
   hc: HeaderCarrier,
   ec: ExecutionContext
@@ -36,8 +36,8 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
   def tableRows(): Future[Seq[Seq[TableRow]]] =
     Future.sequence(functionalErrors.map(buildTableRows))
 
-  def buildTableRows(error: FunctionalError): Future[Seq[TableRow]] =
-    getAllFunctionalErrorDescription(error.errorCode).map {
+  def buildTableRows(error: FunctionalErrorType04): Future[Seq[TableRow]] =
+    getAllFunctionalErrorDescription(error.errorCode.toString).map {
       case Some(code) =>
         Seq(
           TableRow(Text(code)),
@@ -45,7 +45,7 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
         )
       case _ =>
         Seq(
-          TableRow(Text(error.errorCode)),
+          TableRow(Text(error.errorCode.toString)),
           TableRow(Text(error.errorReason))
         )
     }
@@ -65,8 +65,8 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalError], re
     )
   }
 
-  def buildErrorRows(errors: FunctionalError): Future[Seq[SummaryListRow]] =
-    buildErrorCodeRow(errors.errorCode).map {
+  def buildErrorRows(errors: FunctionalErrorType04): Future[Seq[SummaryListRow]] =
+    buildErrorCodeRow(errors.errorCode.toString).map {
       code =>
         val errorCode: Seq[SummaryListRow]   = extractOptionalRow(code)
         val errorReason: Seq[SummaryListRow] = extractOptionalRow(buildErrorReasonRow(errors.errorReason))

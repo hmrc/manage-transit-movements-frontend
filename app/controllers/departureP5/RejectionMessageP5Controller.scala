@@ -19,7 +19,8 @@ package controllers.departureP5
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureCacheConnector
 import controllers.actions._
-import models.departureP5.IE056Data
+import generated.CC056CType
+import models.RichCC056CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -43,10 +44,10 @@ class RejectionMessageP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(page: Option[Int], departureId: String, messageId: String, isAmendmentJourney: Option[Boolean]): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
         val lrn              = request.referenceNumbers.localReferenceNumber
-        val functionalErrors = request.messageData.data.functionalErrors
+        val functionalErrors = request.messageData.FunctionalError
 
         val isDataValid: Future[Boolean] = if (isAmendmentJourney.getOrElse(false)) {
           cacheConnector.doesDeclarationExist(lrn.value)
@@ -67,7 +68,7 @@ class RejectionMessageP5Controller @Inject() (
             )
 
             val rejectionMessageP5ViewModel =
-              viewModelProvider.apply(request.messageData.data.pagedFunctionalErrors(currentPage), lrn.value, isAmendmentJourney.getOrElse(false))
+              viewModelProvider.apply(request.messageData.pagedFunctionalErrors(currentPage), lrn.value, isAmendmentJourney.getOrElse(false))
 
             rejectionMessageP5ViewModel.map(
               viewModel =>
@@ -89,10 +90,10 @@ class RejectionMessageP5Controller @Inject() (
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
   def onAmend(departureId: String, messageId: String, isAmendmentJourney: Boolean): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
         val lrn    = request.referenceNumbers.localReferenceNumber
-        val xPaths = request.messageData.data.functionalErrors.map(_.errorPointer)
+        val xPaths = request.messageData.FunctionalError.map(_.errorPointer)
 
         val result = if (isAmendmentJourney) {
           for {

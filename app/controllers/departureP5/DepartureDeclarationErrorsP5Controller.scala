@@ -18,7 +18,7 @@ package controllers.departureP5
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.departureP5.IE056Data
+import generated.CC056CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -40,9 +40,9 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String, isAmendmentJourney: Boolean): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE056Data](departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)) {
       implicit request =>
-        if (request.messageData.data.functionalErrors.isEmpty) {
+        if (request.messageData.FunctionalError.isEmpty) {
           Ok(
             view(
               viewModelProvider.apply(request.referenceNumbers.localReferenceNumber.value, isAmendmentJourney),

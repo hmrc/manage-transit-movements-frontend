@@ -24,7 +24,9 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.Format.{controlDecisionDateTimeFormatter, decisionDateTimeFormatter, recoveryNotificationFormatter}
 
+import java.text.SimpleDateFormat
 import java.time.{LocalDate, LocalDateTime}
+import javax.xml.datatype.XMLGregorianCalendar
 
 class SummaryListRowHelper(implicit messages: Messages) {
 
@@ -53,12 +55,30 @@ class SummaryListRowHelper(implicit messages: Messages) {
       .format(recoveryNotificationFormatter)
       .toText
 
+  def formatAsDate(answer: XMLGregorianCalendar): Content = {
+    val date      = answer.toGregorianCalendar.getTime
+    val formatter = new SimpleDateFormat("[dd MMMM yyyy]")
+    formatter
+      .format(date)
+      .toText
+  }
+
   def formatAsDecisionDateTime(answer: LocalDateTime): Content =
     answer
       .format(decisionDateTimeFormatter)
       .replace("PM", "pm")
       .replace("AM", "am")
       .toText
+
+  def formatAsDecisionDateTime(answer: XMLGregorianCalendar): Content = {
+    val date      = answer.toGregorianCalendar.getTime
+    val formatter = new SimpleDateFormat("[dd MMMM yyyy] ['at' h:mma]")
+    formatter
+      .format(date)
+      .replace("PM", "pm")
+      .replace("AM", "am")
+      .toText
+  }
 
   protected def formatEnumAsText[T](messageKeyPrefix: String)(answer: T): Content =
     formatEnumAsString(messageKeyPrefix)(answer).toText

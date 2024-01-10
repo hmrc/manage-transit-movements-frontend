@@ -16,16 +16,16 @@
 
 package viewModels.P5.arrival
 
-import models.departureP5.FunctionalError
+import generated.FunctionalErrorType04
 import play.api.i18n.Messages
 import services.ReferenceDataService
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.RejectionMessageP5MessageHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], mrn: String, multipleErrors: Boolean) {
 
@@ -66,7 +66,7 @@ object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
   class UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
-      functionalErrors: Seq[FunctionalError],
+      functionalErrors: Seq[FunctionalErrorType04],
       mrn: String
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[UnloadingRemarkWithFunctionalErrorsP5ViewModel] = {
       val helper = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)

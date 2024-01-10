@@ -19,8 +19,8 @@ package controllers.departureP5
 import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
 import controllers.actions._
+import generated.CC055CType
 import models.LocalReferenceNumber
-import models.departureP5.IE055Data
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -43,16 +43,16 @@ class GuaranteeRejectedP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE055Data](departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
         departureCacheConnector.doesDeclarationExist(lrn.value).map {
           isAmendable =>
             val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
-              request.messageData.data.guaranteeReferences,
+              request.messageData.GuaranteeReference,
               lrn,
               isAmendable,
-              request.messageData.data.transitOperation.MRN,
-              request.messageData.data.transitOperation.declarationAcceptanceDate
+              request.messageData.TransitOperation.MRN,
+              request.messageData.TransitOperation.declarationAcceptanceDate
             )
 
             Ok(view(viewModel, departureId))

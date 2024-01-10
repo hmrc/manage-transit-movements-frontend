@@ -17,16 +17,16 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import models.Availability
 import models.departureP5._
-import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.http.Status._
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.{Node, XML}
 
 class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends MovementP5Connector {
 
@@ -57,6 +57,8 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
   }
 
   private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] = {
+    import connectors.CustomHttpReads.rawHttpResponseHttpReads
+
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures"
     http
       .GET[HttpResponse](url, queryParams)(rawHttpResponseHttpReads, headers, ec)
@@ -86,9 +88,16 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     reads: Reads[MessageModel]
   ): Future[MessageModel] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId"
-    http
-      .GET[MessageModel](url)(messageModelHttpReads, headers, ec)
+    http.GET[MessageModel](url)(messageModelHttpReads, headers, ec)
+  }
 
+  def getMessage(
+    departureId: String,
+    messageId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Node] = {
+    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+xml"))
+    val url     = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId/body"
+    http.GET[HttpResponse](url)(implicitly, headers, ec).map(_.body).map(XML.loadString)
   }
 
   def getDepartureReferenceNumbers(departureId: String)(implicit
@@ -96,7 +105,6 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     hc: HeaderCarrier
   ): Future[DepartureReferenceNumbers] = {
     val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId"
-
     http.GET[DepartureReferenceNumbers](url)(implicitly, headers, ec)
   }
 

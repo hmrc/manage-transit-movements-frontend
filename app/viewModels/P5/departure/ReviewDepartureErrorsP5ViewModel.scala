@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.FunctionalError
+import generated.FunctionalErrorType04
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -84,7 +84,7 @@ object ReviewDepartureErrorsP5ViewModel {
   class ReviewDepartureErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
-      functionalErrors: Seq[FunctionalError],
+      functionalErrors: Seq[FunctionalErrorType04],
       lrn: String,
       isAmendmentJourney: Boolean
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewDepartureErrorsP5ViewModel] = {

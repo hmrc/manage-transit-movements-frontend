@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.IE009MessageData
+import generated.CC009CType
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import services.ReferenceDataService
@@ -52,11 +52,11 @@ object DepartureCancelledP5ViewModel {
   class DepartureCancelledP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
-      ie009MessageData: IE009MessageData,
+      ie009: CC009CType,
       lrn: String,
       customsOffice: Either[String, CustomsOffice]
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureCancelledP5ViewModel] = {
-      val helper = new DepartureCancelledP5Helper(ie009MessageData, referenceDataService)
+      val helper = new DepartureCancelledP5Helper(ie009, referenceDataService)
 
       helper.buildInvalidationSection.map {
         section =>

@@ -15,10 +15,15 @@
  */
 
 import cats.data.NonEmptyList
+import config.Constants.NotificationType.IntentionToControl
+import config.PaginationAppConfig
+import generated._
 import play.api.libs.json._
 
 import java.time.{Clock, LocalDateTime, ZoneId}
+import java.util.Currency
 import scala.annotation.nowarn
+import scala.util.{Success, Try}
 
 package object models {
 
@@ -183,4 +188,43 @@ package object models {
       ) {
         case head :: tail => NonEmptyList(head, tail)
       }
+
+  implicit class RichCC060Type(value: CC060CType) {
+
+    def informationRequested: Boolean =
+      value.RequestedDocument.nonEmpty ||
+        value.TransitOperation.notificationType == IntentionToControl
+  }
+
+  // TODO - refactor to use Format
+  implicit class RichRecoveryNotificationType(value: RecoveryNotificationType) {
+
+    def formattedCurrency: String = value match {
+      case RecoveryNotificationType(_, _, amountClaimed, currency) =>
+        Try(Currency.getInstance(currency).getSymbol) match {
+          case Success(currency) => s"$currency$amountClaimed"
+          case _                 => s"$amountClaimed $currency"
+        }
+    }
+  }
+
+  implicit class RichCC056CType(value: CC056CType) {
+
+    def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] = {
+      val start = (page - 1) * paginationAppConfig.departuresNumberOfErrorsPerPage
+      value.FunctionalError
+        .sortBy(_.errorCode.toString)
+        .slice(start, start + paginationAppConfig.departuresNumberOfErrorsPerPage)
+    }
+  }
+
+  implicit class RichCC057CType(value: CC057CType) {
+
+    def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] = {
+      val start = (page - 1) * paginationAppConfig.arrivalsNumberOfErrorsPerPage
+      value.FunctionalError
+        .sortBy(_.errorCode.toString)
+        .slice(start, start + paginationAppConfig.arrivalsNumberOfErrorsPerPage)
+    }
+  }
 }

@@ -17,10 +17,11 @@
 package controllers.departureP5
 
 import controllers.actions._
-import models.departureP5.IE009Data
+import generated.CC009CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.RichFlag
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -35,9 +36,9 @@ class IsDepartureCancelledP5Controller @Inject() (
     with I18nSupport {
 
   def isDeclarationCancelled(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC009CType](departureId, messageId)) {
       implicit request =>
-        val isCancelled: Boolean = request.messageData.data.invalidation.decision
+        val isCancelled: Boolean = request.messageData.Invalidation.decision.exists(_.toBoolean)
         if (isCancelled) {
           Redirect(controllers.departureP5.routes.DepartureCancelledP5Controller.onPageLoad(departureId, messageId))
         } else {

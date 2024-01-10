@@ -18,7 +18,7 @@ package controllers.departureP5
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.departureP5.IE051Data
+import generated.CC051CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -40,10 +40,10 @@ class GoodsNotReleasedP5Controller @Inject() (
     with I18nSupport {
 
   def goodsNotReleased(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE051Data](departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC051CType](departureId, messageId)) {
       implicit request =>
         Ok(
-          view(viewModelProvider.apply(request.messageData.data, request.referenceNumbers.localReferenceNumber.value))
+          view(viewModelProvider.apply(request.messageData, request.referenceNumbers.localReferenceNumber.value))
         )
     }
 }

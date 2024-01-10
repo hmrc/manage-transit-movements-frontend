@@ -17,8 +17,8 @@
 package controllers.actions
 
 import models.requests.{IdentifierRequest, MessageRetrievalRequestProvider}
-import play.api.libs.json.Reads
 import play.api.mvc.ActionTransformer
+import scalaxb.XMLFormat
 import services.DepartureP5MessageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -31,14 +31,14 @@ class DepartureMessageRetrievalActionProvider @Inject() (departureP5MessageServi
 ) {
 
   def apply[B](departureId: String, messageId: String)(implicit
-    reads: Reads[B]
+    format: XMLFormat[B]
   ): ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest] =
     new DepartureMessageRetrievalAction(departureId, messageId, departureP5MessageService)
 }
 
 class DepartureMessageRetrievalAction[B](departureId: String, messageId: String, departureP5MessageService: DepartureP5MessageService)(
   implicit protected val executionContext: ExecutionContext,
-  implicit protected val reads: Reads[B]
+  implicit protected val format: XMLFormat[B]
 ) extends ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest] {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest[A]] = {
@@ -46,7 +46,7 @@ class DepartureMessageRetrievalAction[B](departureId: String, messageId: String,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     for {
-      data       <- departureP5MessageService.getMessageWithMessageId[B](departureId, messageId)
+      data       <- departureP5MessageService.getMessage[B](departureId, messageId)
       refNumbers <- departureP5MessageService.getDepartureReferenceNumbers(departureId)
     } yield new MessageRetrievalRequestProvider[B].DepartureMessageRetrievalRequest(
       request,

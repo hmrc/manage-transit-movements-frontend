@@ -18,7 +18,8 @@ package controllers.arrivalP5
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
-import models.arrivalP5.IE057Data
+import generated.CC057CType
+import models.RichCC057CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -41,25 +42,25 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(page: Option[Int], arrivalId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE057Data](arrivalId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)).async {
       implicit request =>
         val currentPage = page.getOrElse(1)
 
         val paginationViewModel = ListPaginationViewModel(
-          totalNumberOfItems = request.messageData.data.functionalErrors.length,
+          totalNumberOfItems = request.messageData.FunctionalError.length,
           currentPage = currentPage,
           numberOfItemsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
           href = controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, messageId).url
         )
 
         val rejectionMessageP5ViewModel = viewModelProvider.apply(
-          request.messageData.data.pagedFunctionalErrors(currentPage),
-          request.messageData.data.transitOperation.MRN
+          request.messageData.pagedFunctionalErrors(currentPage),
+          request.messageData.TransitOperation.MRN
         )
 
         rejectionMessageP5ViewModel.map(
           viewModel =>
-            if (request.messageData.data.functionalErrors.nonEmpty) {
+            if (request.messageData.FunctionalError.nonEmpty) {
               Ok(view(viewModel, arrivalId, paginationViewModel))
             } else {
               Redirect(controllers.routes.ErrorController.technicalDifficulties())

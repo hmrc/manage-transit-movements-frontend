@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package models.departureP5
+import generated._
 
-import play.api.libs.json.{__, Reads}
+package object utils {
 
-case class IE051Data(data: IE051MessageData)
+  implicit class RichFlag(value: Flag) {
 
-object IE051Data {
-  implicit val reads: Reads[IE051Data] = (__ \ "body" \ "n1:CC051C").read[IE051MessageData].map(IE051Data.apply)
+    def toBoolean: Boolean = value match {
+      case Number0 => false
+      case Number1 => true
+    }
+  }
+
 }
