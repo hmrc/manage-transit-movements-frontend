@@ -17,7 +17,7 @@ lazy val root = (project in file("."))
   .settings(headerSettings(A11yTest) *)
   .settings(automateHeaderSettings(A11yTest))
   .settings(majorVersion := 0)
-  .settings(scalaVersion := "2.13.8")
+  .settings(scalaVersion := "2.13.12")
   .settings(
     name := appName,
     RoutesKeys.routesImport += "models._",
