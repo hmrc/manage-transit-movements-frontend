@@ -16,7 +16,7 @@
 
 package controllers.arrival
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import base._
 import connectors.ArrivalMovementConnector
 import generators.Generators
