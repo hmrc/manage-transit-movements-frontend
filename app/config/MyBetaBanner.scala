@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package config
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases
+import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 
-case class EoriNumber(eori: String)
+import javax.inject.Inject
 
-object EoriNumber {
-  implicit val format: OFormat[EoriNumber] = Json.format[EoriNumber]
+class MyBetaBanner @Inject() (config: FrontendAppConfig) extends StandardBetaBanner {
+
+  override def apply(url: String)(implicit messages: Messages): Aliases.PhaseBanner =
+    if (config.isTraderTest) super.apply(config.feedbackForm) else super.apply(url)
 }
