@@ -144,7 +144,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
       s"""
          |URL: ${request.uri}$newParagraph
          |Tell us how we can help you here.$newParagraph
-         |Give us a brief description of the issue or question, including detail like…$newLine
+         |Give us a brief description of the issue or question, including details like…$newLine
          | - The screens where you experienced the issue$newLine
          | - What you were trying to do at the time$newLine
          | - The information you entered$newParagraph
