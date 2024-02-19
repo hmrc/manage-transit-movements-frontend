@@ -20,6 +20,8 @@ import com.google.inject.{Inject, Singleton}
 import models.Enrolment.{LegacyEnrolment, NewEnrolment}
 import models.{ArrivalId, DepartureId}
 import play.api.Configuration
+import play.api.i18n.Messages
+import play.api.mvc.Request
 
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
@@ -128,5 +130,28 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
       s"declareTransitMovement${name}Frontend"
     }
     configuration.get[String](s"urls.$url")
+  }
+
+  val isTraderTest: Boolean = configuration.get[Boolean]("trader-test.enabled")
+  val feedbackEmail: String = configuration.get[String]("trader-test.feedback.email")
+  val feedbackForm: String  = configuration.get[String]("trader-test.feedback.link")
+
+  def mailto(implicit request: Request[_], messages: Messages): String = {
+    val subject = messages("site.email.subject")
+    val body = {
+      val newLine      = "%0D%0A"
+      val newParagraph = s"$newLine$newLine"
+      s"""
+         |URL: ${request.uri}$newParagraph
+         |Tell us how we can help you here.$newParagraph
+         |Give us a brief description of the issue or question, including details like…$newLine
+         | - The screens where you experienced the issue$newLine
+         | - What you were trying to do at the time$newLine
+         | - The information you entered$newParagraph
+         |Please include your name and phone number and we’ll get in touch.
+         |""".stripMargin
+    }
+
+    s"mailto:$feedbackEmail?subject=$subject&body=$body"
   }
 }

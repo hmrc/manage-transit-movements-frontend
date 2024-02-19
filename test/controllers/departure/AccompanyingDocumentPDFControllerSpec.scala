@@ -16,7 +16,7 @@
 
 package controllers.departure
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import base.SpecBase
 import connectors.DeparturesMovementConnector
 import controllers.departure.{routes => departureRoutes}

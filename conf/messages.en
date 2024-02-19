@@ -23,6 +23,9 @@ site.userResearch.yes = Sign up to our user research and give us your feedback (
 site.userResearch.no = No thanks
 site.userResearch.no.hidden = No thanks. I do not want to take part in research
 
+site.email.link = If you have any questions or issues, email us at {0}
+site.email.subject = NCTS Phase 5 - Help with testing
+
 viewAllMovements.link.title = View all movements
 search.results.singular = Showing {0} result matching {1}.
 search.results.plural = Showing {0} results matching {1}.
