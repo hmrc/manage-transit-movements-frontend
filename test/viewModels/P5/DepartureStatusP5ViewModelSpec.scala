@@ -890,6 +890,10 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.declarationSent",
           Seq(
             ViewMovementAction(
+              s"${frontendAppConfig.departureAmendUrl(lrn.value, departureIdP5)}",
+              "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
+            ),
+            ViewMovementAction(
               s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
               "movement.status.P5.action.declarationSent.cancelDeclaration"
             ),

@@ -369,6 +369,10 @@ object DepartureStatusP5ViewModel {
           case true =>
             Seq(
               ViewMovementAction(
+                s"${frontendAppConfig.departureAmendUrl(lrn.value, departureId)}",
+                "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
+              ),
+              ViewMovementAction(
                 s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
                 "movement.status.P5.action.declarationSent.cancelDeclaration"
               ),

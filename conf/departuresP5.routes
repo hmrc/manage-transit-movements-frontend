@@ -11,7 +11,7 @@ GET         /:departureId/goods-under-control-document-requested/:messageId     
 
 GET         /:departureId/intention-to-control/:messageId                            controllers.departureP5.IntentionToControlP5Controller.noInformationRequested(departureId: String, messageId: String)
 
-GET         /:departureId/intention-to-control-information-requested/:messageId      controllers.departureP5.IntentionToControlP5Controller.informationRequested(departureId: String, messageId: String)
+GET         /:departureId/intention-to-control-complete-prelodged-declaration/:messageId      controllers.departureP5.IntentionToControlP5Controller.informationRequested(departureId: String, messageId: String)
 
 GET        /:departureId/amend-departure-declaration-errors/:messageId               controllers.departureP5.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String, isAmendmentJourney: Option[Boolean])
 
