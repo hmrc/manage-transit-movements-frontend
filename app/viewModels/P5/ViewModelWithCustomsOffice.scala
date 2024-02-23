@@ -23,19 +23,17 @@ trait ViewModelWithCustomsOffice {
 
   val prefix: String
 
-  val customsOffice: Either[String, CustomsOffice]
+  val customsOffice: CustomsOffice
 
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {
-      case Right(CustomsOffice(_, name, Some(phoneNumber))) if name.nonEmpty && phoneNumber.nonEmpty =>
+      case CustomsOffice(_, name, Some(phoneNumber)) if name.nonEmpty && phoneNumber.nonEmpty =>
         messages(s"$prefix.telephoneAvailable", name, phoneNumber)
-      case Right(CustomsOffice(id, _, Some(phoneNumber))) if phoneNumber.nonEmpty =>
+      case CustomsOffice(id, _, Some(phoneNumber)) if phoneNumber.nonEmpty =>
         messages(s"$prefix.teleAvailAndOfficeNameNotAvail", id, phoneNumber)
-      case Right(CustomsOffice(_, name, _)) if name.nonEmpty =>
+      case CustomsOffice(_, name, _) if name.nonEmpty =>
         messages(s"$prefix.telephoneNotAvailable", name)
-      case Right(CustomsOffice(id, _, _)) =>
-        messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
-      case Left(id) =>
+      case CustomsOffice(id, _, _) =>
         messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
     }
 

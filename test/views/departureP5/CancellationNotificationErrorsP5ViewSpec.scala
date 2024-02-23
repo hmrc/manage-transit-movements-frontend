@@ -16,6 +16,7 @@
 
 package views.departureP5
 
+import models.referenceData.CustomsOffice
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel
 import views.behaviours.ViewBehaviours
@@ -24,7 +25,7 @@ import views.html.departureP5.CancellationNotificationErrorsP5View
 class CancellationNotificationErrorsP5ViewSpec extends ViewBehaviours {
 
   private val cancellationNotificationErrorsP5ViewViewModel =
-    new CancellationNotificationErrorsP5ViewModel("AB123", Left("CD123"))
+    new CancellationNotificationErrorsP5ViewModel("AB123", CustomsOffice("CD123", "", None))
 
   override def view: HtmlFormat.Appendable =
     injector

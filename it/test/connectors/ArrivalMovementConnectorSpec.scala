@@ -16,10 +16,9 @@
 
 package connectors
 
-import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
-import helper.WireMockServerHandler
+import itbase.{ItSpecBase, WireMockServerHandler}
 import models._
 import models.arrival.ArrivalStatus.GoodsReleased
 import models.arrival.{MessagesLocation, MessagesSummary, XMLSubmissionNegativeAcknowledgementMessage}
@@ -34,7 +33,7 @@ import java.time.LocalDateTime
 import scala.concurrent.Future
 import scala.xml.NodeSeq
 
-class ArrivalMovementConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class ArrivalMovementConnectorSpec extends ItSpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
   private lazy val connector: ArrivalMovementConnector = app.injector.instanceOf[ArrivalMovementConnector]
   private val startUrl                                 = "transit-movements-trader-at-destination"

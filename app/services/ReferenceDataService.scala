@@ -18,7 +18,6 @@ package services
 
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
-import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -26,44 +25,21 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) extends ReferenceDataService {
 
-  def getCustomsOffice(customsOfficeId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]] = {
-    val queryParams: Seq[(String, String)] = Seq("data.id" -> customsOfficeId)
-    connector
-      .getCustomsOffices(queryParams)
-      .map(_.headOption)
-      .map {
-        case Some(customsOffice) => Right(customsOffice)
-        case None                => Left(customsOfficeId)
-      }
-      .recover {
-        case _: NoReferenceDataFoundException => Left(customsOfficeId)
-      }
-  }
+  def getCustomsOffice(customsOfficeId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CustomsOffice] =
+    connector.getCustomsOffice(customsOfficeId)
 
-  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
-    lazy val default                       = ControlType(code, "")
-    val queryParams: Seq[(String, String)] = Seq("data.code" -> code)
-    connector.getControlTypes(queryParams).map(_.headOption.getOrElse(default)).recover {
-      case _ => default
-    }
-  }
+  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] =
+    connector.getControlType(code)
 
-  def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
-    lazy val default                       = FunctionalErrorWithDesc(code, "")
-    val queryParams: Seq[(String, String)] = Seq("data.code" -> code)
-    connector.getFunctionalErrors(queryParams).map(_.headOption.getOrElse(default)).recover {
-      case _ => default
-    }
-  }
+  def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] =
+    connector.getFunctionalError(code)
 
   def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] =
-    connector.getFunctionalErrors().recover {
-      case _ => Seq.empty
-    }
+    connector.getFunctionalErrors().map(_.toSeq)
 }
 
 trait ReferenceDataService {
-  def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]]
+  def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CustomsOffice]
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]
   def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]]

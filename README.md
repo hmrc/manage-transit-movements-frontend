@@ -12,33 +12,27 @@ Service manager port: 9485
 ### Testing
 
 Run unit tests:
-
-    sbt test
-
+<pre>sbt test</pre>  
+Run integration tests:
+<pre>sbt it/test</pre>
+Run accessibility linter tests:
+<pre>sbt A11y/test</pre>
 
 ### Running manually or for journey tests
 
-    sm --start CTC_TRADERS_ALL_ACCEPTANCE -r
-    sm --stop MANAGE_TRANSIT_MOVEMENTS_FRONTEND
+#### Phase 4
+
+    sm2 --start CTC_TRADERS_ALL_ACCEPTANCE
+    sm2 --stop MANAGE_TRANSIT_MOVEMENTS_FRONTEND
     sbt run
 
+#### Phase 5
+
+    sm2 --start CTC_TRADERS_P5_ACCEPTANCE
+    sm2 --stop MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5
+    sbt -Dfeatures.isPhase5Enabled run
 
 If you hit the main entry point before running the journey tests, it gets the compile out of the way and can help keep the first tests from failing.
-
-### Testing new Phase 5 frontends and user journeys
-
-This service uses switches defined in application.conf that toggle between Phase 4 and Phase 5 frontends/journeys.
-
-```yaml
-features {
-  isPhase5Enabled = false
-}
-```
-
-Setting the feature to `true` will ensure that links point to the P5 frontends.
-
-The above are set to true in service-manager-config for profile `MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5`.
-
 
 ### License 
 

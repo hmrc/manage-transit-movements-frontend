@@ -57,10 +57,8 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     call = None
   )
 
-  def getCustomsOfficeForDisplay(referenceNumber: String): Future[String] = referenceDataService.getCustomsOffice(referenceNumber).map {
-    case Right(customsOffice) => customsOffice.nameAndCode
-    case Left(id)             => id
-  }
+  def getCustomsOfficeForDisplay(referenceNumber: String): Future[String] =
+    referenceDataService.getCustomsOffice(referenceNumber).map(_.nameAndCode)
 
   def buildOfficeOfDepartureRow: Future[Option[SummaryListRow]] = getCustomsOfficeForDisplay(ie060MessageData.CustomsOfficeOfDeparture.referenceNumber).map {
     customsOffice =>

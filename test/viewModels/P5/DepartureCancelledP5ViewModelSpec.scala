@@ -26,7 +26,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
-import viewModels.P5.departure.DepartureCancelledP5ViewModel
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
 
 import java.time.LocalDateTime
@@ -46,11 +45,13 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
 
     val lrn                = "AB123"
     val customsReferenceId = "CD123"
+    val customsOfficeName  = "custName"
+    val telephoneNo        = Some("123")
 
     val ie009Data: IE009Data = IE009Data(
       IE009MessageData(
         TransitOperationIE009(
-          Some("mrn123")
+          Some("lrn123")
         ),
         Invalidation(
           decisionDateAndTime = Some(LocalDateTime.now()),
@@ -64,84 +65,80 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
       )
     )
 
+    val customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo)
+
     val viewModelProvider = new DepartureCancelledP5ViewModelProvider(mockReferenceDataService)
 
-    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceId)))
+    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
-    def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): DepartureCancelledP5ViewModel =
-      viewModelProvider.apply(ie009Data.data, lrn, customsOffice).futureValue
-
-    "must return correct section" in {
-      viewModel().sections.head.sectionTitle mustBe None
-      viewModel().sections.head.rows.size mustBe 5
-    }
-
-    "title" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Declaration cancelled"
-      }
-    }
-
-    "heading" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Declaration cancelled"
-      }
-    }
-
-    "paragraph" in {
-      viewModel().paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
-    }
-
-    "customsOfficeContent" - {
-
-      "when no customs office found" - {
-        "must return correct message" in {
-          viewModel().customsOfficeContent mustBe s"If you have any questions, contact Customs office $customsReferenceId."
-        }
-      }
+    "apply" - {
 
       "when customs office found with telephone number and name" - {
         "must return correct message" in {
-          val customsOfficeName = "custName"
-          val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo)
 
-          result mustBe s"If you have any questions, contact Customs at $customsOfficeName on ${telephoneNo.get}."
+          val result = viewModelProvider.apply(ie009Data.data, lrn, customsOffice).futureValue
+
+          result.sections.head.sectionTitle mustBe None
+          result.sections.head.rows.size mustBe 5
+          result.title mustBe "Declaration cancelled"
+          result.heading mustBe "Declaration cancelled"
+          result.paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
+          result.hyperlink mustBe "Make another departure declaration"
+          result.caption mustBe s"LRN: $lrn"
+          result.customsOfficeContent mustBe s"If you have any questions, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
       }
 
       "when customs office found with name and no telephone number" - {
         "must return correct message" in {
-          val customsOfficeName = "custName"
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None)
 
-          result mustBe s"If you have any questions, contact Customs at $customsOfficeName."
+          val result = viewModelProvider.apply(ie009Data.data, lrn, customsOffice).futureValue
+
+          result.sections.head.sectionTitle mustBe None
+          result.sections.head.rows.size mustBe 5
+          result.title mustBe "Declaration cancelled"
+          result.heading mustBe "Declaration cancelled"
+          result.paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
+          result.hyperlink mustBe "Make another departure declaration"
+          result.caption mustBe s"LRN: $lrn"
+          result.customsOfficeContent mustBe s"If you have any questions, contact Customs at $customsOfficeName."
         }
       }
 
       "when customs office found with telephone number but empty name" - {
         "must return correct message" in {
-          val customsOfficeName = ""
-          val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, "", telephoneNo)
 
-          result mustBe s"If you have any questions, contact Customs office $customsReferenceId on ${telephoneNo.get}."
+          val result = viewModelProvider.apply(ie009Data.data, lrn, customsOffice).futureValue
+
+          result.sections.head.sectionTitle mustBe None
+          result.sections.head.rows.size mustBe 5
+          result.title mustBe "Declaration cancelled"
+          result.heading mustBe "Declaration cancelled"
+          result.paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
+          result.hyperlink mustBe "Make another departure declaration"
+          result.caption mustBe s"LRN: $lrn"
+          result.customsOfficeContent mustBe s"If you have any questions, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
       }
 
       "when customs office found with no telephone number and empty name" - {
         "must return correct message" in {
-          val customsOfficeName = ""
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, "", None)
 
-          result mustBe s"If you have any questions, contact Customs office $customsReferenceId."
+          val result = viewModelProvider.apply(ie009Data.data, lrn, customsOffice).futureValue
+
+          result.sections.head.sectionTitle mustBe None
+          result.sections.head.rows.size mustBe 5
+          result.title mustBe "Declaration cancelled"
+          result.heading mustBe "Declaration cancelled"
+          result.paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
+          result.hyperlink mustBe "Make another departure declaration"
+          result.caption mustBe s"LRN: $lrn"
+          result.customsOfficeContent mustBe s"If you have any questions, contact Customs office $customsReferenceId."
         }
-      }
-    }
-
-    "hyperlink" - {
-      "must return correct message" in {
-        viewModel().hyperlink mustBe "Make another departure declaration"
       }
     }
   }

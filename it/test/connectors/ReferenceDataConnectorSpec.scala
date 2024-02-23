@@ -16,10 +16,11 @@
 
 package connectors
 
-import base.{AppWithDefaultMockFixtures, SpecBase}
+import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
+import itbase.{ItSpecBase, WireMockServerHandler}
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -29,7 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockSuite {
+class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -68,15 +69,13 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
     }
   }
 
-  private val queryParams = Seq("foo" -> "bar")
-
   "Reference Data" - {
 
     "GET" - {
 
       "getCustomsOffice" - {
 
-        val url = s"$baseUrl/filtered-lists/CustomsOffices?foo=bar"
+        val url = s"$baseUrl/lists/CustomsOffices?data.id=$code"
 
         "should handle a 200 response for customs offices" in {
           server.stubFor(
@@ -84,23 +83,23 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(customsOfficesResponseJson))
           )
 
-          val expectedResult = Seq(CustomsOffice(code, "NAME001", Some("004412323232345")))
+          val expectedResult = CustomsOffice(code, "NAME001", Some("004412323232345"))
 
-          connector.getCustomsOffices(queryParams).futureValue mustBe expectedResult
+          connector.getCustomsOffice(code).futureValue mustBe expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getCustomsOffices(queryParams))
+          checkNoReferenceDataFoundResponse(url, connector.getCustomsOffice(code))
         }
 
         "should handle client and server errors for customs offices" in {
-          checkErrorResponse(url, connector.getCustomsOffices(queryParams))
+          checkErrorResponse(url, connector.getCustomsOffice(code))
         }
       }
 
       "getControlType" - {
 
-        val url = s"$baseUrl/filtered-lists/ControlType?foo=bar"
+        val url = s"$baseUrl/lists/ControlType?data.code=$typeOfControl"
 
         "should handle a 200 response for control types" in {
           server.stubFor(
@@ -108,68 +107,65 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(controlTypesResponseJson))
           )
 
-          val expectedResult = Seq(ControlType(typeOfControl, "Intrusive"))
+          val expectedResult = ControlType(typeOfControl, "Intrusive")
 
-          connector.getControlTypes(queryParams).futureValue mustBe expectedResult
+          connector.getControlType(typeOfControl).futureValue mustBe expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getControlTypes(queryParams))
+          checkNoReferenceDataFoundResponse(url, connector.getControlType(typeOfControl))
         }
 
         "should handle client and server errors for control types" in {
-          checkErrorResponse(url, connector.getControlTypes(queryParams))
+          checkErrorResponse(url, connector.getControlType(typeOfControl))
+        }
+      }
+
+      "getFunctionalError" - {
+
+        val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?data.code=$functionalError"
+
+        "should handle a 200 response for functional errors" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(functionalErrorsResponseJson))
+          )
+
+          val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
+
+          connector.getFunctionalError(functionalError).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getFunctionalError(functionalError))
+        }
+
+        "should handle client and server errors for functional errors" in {
+          checkErrorResponse(url, connector.getFunctionalError(functionalError))
         }
       }
 
       "getFunctionalErrors" - {
 
-        "when filtering" - {
+        val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA"
 
-          val url = s"$baseUrl/filtered-lists/FunctionalErrorCodesIeCA?foo=bar"
+        "should handle a 200 response for functional errors" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(functionalErrorsResponseJson))
+          )
 
-          "should handle a 200 response for functional errors" in {
-            server.stubFor(
-              get(urlEqualTo(url))
-                .willReturn(okJson(functionalErrorsResponseJson))
-            )
+          val expectedResult = NonEmptySet.of(FunctionalErrorWithDesc(functionalError, "Rule violation"))
 
-            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
-
-            connector.getFunctionalErrors(queryParams).futureValue mustBe expectedResult
-          }
-
-          "should throw a NoReferenceDataFoundException for an empty response" in {
-            checkNoReferenceDataFoundResponse(url, connector.getFunctionalErrors(queryParams))
-          }
-
-          "should handle client and server errors for functional errors" in {
-            checkErrorResponse(url, connector.getFunctionalErrors(queryParams))
-          }
+          connector.getFunctionalErrors().futureValue mustBe expectedResult
         }
 
-        "when not filtering" - {
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getFunctionalErrors())
+        }
 
-          val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA"
-
-          "should handle a 200 response for functional errors" in {
-            server.stubFor(
-              get(urlEqualTo(url))
-                .willReturn(okJson(functionalErrorsResponseJson))
-            )
-
-            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
-
-            connector.getFunctionalErrors().futureValue mustBe expectedResult
-          }
-
-          "should throw a NoReferenceDataFoundException for an empty response" in {
-            checkNoReferenceDataFoundResponse(url, connector.getFunctionalErrors())
-          }
-
-          "should handle client and server errors for functional errors" in {
-            checkErrorResponse(url, connector.getFunctionalErrors())
-          }
+        "should handle client and server errors for functional errors" in {
+          checkErrorResponse(url, connector.getFunctionalErrors())
         }
       }
     }

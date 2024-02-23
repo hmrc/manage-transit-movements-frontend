@@ -19,6 +19,7 @@ package viewModels.P5
 import base.SpecBase
 import generators.Generators
 import models.departureP5._
+import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -63,9 +64,11 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
       )
     )
 
+    val customsOffice = CustomsOffice(customsReferenceId, "", None)
+
     val viewModelProvider = new DepartureNotCancelledP5ViewModelProvider(mockReferenceDataService)
 
-    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceId)))
+    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
     val viewModel: DepartureNotCancelledP5ViewModel = viewModelProvider.apply(ie009Data.data, departureIdP5, lrn).futureValue
 

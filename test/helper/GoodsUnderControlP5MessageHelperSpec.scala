@@ -189,7 +189,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
 
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-            .thenReturn(Future.successful(Right(CustomsOffice("22323323", "Office", None))))
+            .thenReturn(Future.successful(CustomsOffice("22323323", "Office", None)))
 
           val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
@@ -197,35 +197,6 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
           result mustBe
             Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("Office (22323323)".toText)))
-        }
-      }
-
-      "must return SummaryListRow with customs office code" - {
-        "when reference data call returns None" in {
-
-          val message: IE060Data = IE060Data(
-            IE060MessageData(
-              TransitOperationIE060(
-                None,
-                None,
-                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                GoodsUnderControlRequestedDocuments
-              ),
-              CustomsOfficeOfDeparture("22323323"),
-              None,
-              None
-            )
-          )
-
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-            .thenReturn(Future.successful(Left("22323323")))
-
-          val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
-
-          val result = helper.buildOfficeOfDepartureRow.futureValue
-
-          result mustBe
-            Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText)))
         }
       }
     }
@@ -382,7 +353,9 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
+        val customsOffice = CustomsOffice("22323323", "", None)
+
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
@@ -415,13 +388,15 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
               LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
               GoodsUnderControlRequestedDocuments
             ),
-            CustomsOfficeOfDeparture("22323323"),
+            CustomsOfficeOfDeparture("GB00060"),
             None,
             None
           )
         )
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
+        val customsOffice = CustomsOffice("GB00060", "BOSTON", None)
+
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
         val helper = new GoodsUnderControlP5MessageHelper(message.data, mockReferenceDataService)
 
@@ -431,7 +406,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
             SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value("LRN1".toText)),
             SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("MRN1".toText)),
             SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15 pm".toText)),
-            SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText))
+            SummaryListRow(key = Key("Office of departure".toText), value = Value("BOSTON (GB00060)".toText))
           )
 
         result mustBe Section(None, firstRow, None)

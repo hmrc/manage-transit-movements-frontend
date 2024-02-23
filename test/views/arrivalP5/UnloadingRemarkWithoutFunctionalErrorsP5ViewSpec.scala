@@ -16,6 +16,7 @@
 
 package views.arrivalP5
 
+import models.referenceData.CustomsOffice
 import play.twirl.api.HtmlFormat
 import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
 import views.behaviours.ViewBehaviours
@@ -24,7 +25,7 @@ import views.html.arrivalP5.UnloadingRemarkWithoutFunctionalErrorsP5View
 class UnloadingRemarkWithoutFunctionalErrorsP5ViewSpec extends ViewBehaviours {
 
   private val unloadingNotificationErrorsP5ViewModel =
-    new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel("AB123", Left("CD123"))
+    new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel("AB123", CustomsOffice("CD123", "", None))
 
   override def view: HtmlFormat.Appendable =
     injector

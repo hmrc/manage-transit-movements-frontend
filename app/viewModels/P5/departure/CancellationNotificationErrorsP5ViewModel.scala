@@ -22,7 +22,7 @@ import viewModels.P5.ViewModelWithCustomsOffice
 
 case class CancellationNotificationErrorsP5ViewModel(
   lrn: String,
-  customsOffice: Either[String, CustomsOffice]
+  customsOffice: CustomsOffice
 ) extends ViewModelWithCustomsOffice {
 
   override val prefix: String = "cancellation.notification.customsOfficeContact"
@@ -44,7 +44,7 @@ object CancellationNotificationErrorsP5ViewModel {
 
     def apply(
       lrn: String,
-      customsOffice: Either[String, CustomsOffice]
+      customsOffice: CustomsOffice
     ): CancellationNotificationErrorsP5ViewModel =
       CancellationNotificationErrorsP5ViewModel(lrn, customsOffice)
   }

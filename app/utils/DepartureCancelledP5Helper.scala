@@ -60,12 +60,8 @@ class DepartureCancelledP5Helper(ie009MessageData: IE009MessageData, referenceDa
     val referenceNumber = ie009MessageData.customsOfficeOfDeparture.referenceNumber
     referenceDataService.getCustomsOffice(referenceNumber).map {
       customsOffice =>
-        val answerToDisplay = customsOffice match {
-          case Right(customsOffice) => customsOffice.nameAndCode
-          case Left(id)             => id
-        }
         buildRowFromAnswer[String](
-          answer = Some(answerToDisplay),
+          answer = Some(customsOffice.nameAndCode),
           formatAnswer = formatAsText,
           prefix = messages("row.label.officeOfDeparture"),
           id = None,

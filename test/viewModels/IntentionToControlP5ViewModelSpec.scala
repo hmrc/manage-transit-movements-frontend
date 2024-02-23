@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.departureP5.IE060MessageType.{GoodsUnderControl, GoodsUnderControlRequestedDocuments, IntentionToControl}
 import models.departureP5._
-import models.referenceData.ControlType
+import models.referenceData.{ControlType, CustomsOffice}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -43,6 +43,8 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
   override def beforeEach(): Unit =
     reset(mockReferenceDataService)
+
+  private val customsOffice = CustomsOffice("22323323", "", None)
 
   "IntentionToControlP5ViewModel" - {
 
@@ -67,7 +69,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
       val viewModelProvider = new IntentionToControlP5ViewModelProvider
       val result            = viewModelProvider.apply(message.data)
@@ -107,7 +109,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
       val viewModelProvider = new IntentionToControlP5ViewModelProvider
       val result            = viewModelProvider.apply(message.data)
@@ -143,7 +145,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
         )
       )
 
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
       val viewModelProvider = new IntentionToControlP5ViewModelProvider
       val result            = viewModelProvider.apply(message.data)
@@ -170,7 +172,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
           )
         )
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
         val viewModelProvider = new IntentionToControlP5ViewModelProvider
         val result            = viewModelProvider.apply(message.data)

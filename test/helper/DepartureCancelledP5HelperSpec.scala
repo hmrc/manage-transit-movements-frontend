@@ -45,6 +45,9 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
       .guiceApplicationBuilder()
       .overrides(api.inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
+  private val customsReferenceNumber = "GB00060"
+  private val customsOffice          = CustomsOffice(customsReferenceNumber, "BOSTON", None)
+
   "DepartureCancelledP5HelperSpec" - {
 
     "buildMRNRow" - {
@@ -240,7 +243,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
           )
         )
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(CustomsOffice("GB00060", "BOSTON", None))))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
         val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
@@ -248,38 +251,6 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
         result mustBe
           Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("BOSTON (GB00060)".toText)))
-      }
-
-      "must return SummaryListRow with code" - {
-        "when customs office returns None" in {
-
-          val message: IE009Data = IE009Data(
-            IE009MessageData(
-              TransitOperationIE009(
-                Some("abd123")
-              ),
-              Invalidation(
-                decisionDateAndTime = Some(LocalDateTime.now()),
-                decision = false,
-                initiatedByCustoms = true,
-                justification = Some("some justification")
-              ),
-              CustomsOfficeOfDeparture(
-                "GB00060"
-              )
-            )
-          )
-
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("GB00060")))
-
-          val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-          val result = helper.buildOfficeOfDepartureRow.futureValue
-
-          result mustBe
-            Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("GB00060".toText)))
-        }
-
       }
     }
 
@@ -355,12 +326,12 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               justification = Some("some justification")
             ),
             CustomsOfficeOfDeparture(
-              "1234"
+              customsReferenceNumber
             )
           )
         )
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("1234")))
+        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
 
         val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
 
@@ -370,7 +341,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText)),
             SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText)),
             SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText)),
-            SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText)),
+            SummaryListRow(key = Key("Office of departure".toText), value = Value("BOSTON (GB00060)".toText)),
             SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText))
           )
 

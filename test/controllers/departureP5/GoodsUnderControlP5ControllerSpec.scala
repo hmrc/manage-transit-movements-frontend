@@ -70,10 +70,11 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("CD3232"),
-                                Some("AB123"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControl
+          TransitOperationIE060(
+            Some("CD3232"),
+            Some("AB123"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            GoodsUnderControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
@@ -83,12 +84,12 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
 
       val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
-      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
+      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
       val request = FakeRequest(GET, goodsUnderControlRequestedDocumentsController)
 
@@ -109,10 +110,11 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
       val message: IE060Data = IE060Data(
         IE060MessageData(
-          TransitOperationIE060(Some("CD3232"),
-                                Some("AB123"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControl
+          TransitOperationIE060(
+            Some("CD3232"),
+            Some("AB123"),
+            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
+            GoodsUnderControl
           ),
           CustomsOfficeOfDeparture("22323323"),
           Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
@@ -122,12 +124,12 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
         .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
       when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
         .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
 
       val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
-      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
+      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
       val request = FakeRequest(GET, goodsUnderControlNoRequestedDocumentsController)
 

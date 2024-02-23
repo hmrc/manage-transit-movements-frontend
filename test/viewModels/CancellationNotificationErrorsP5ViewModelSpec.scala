@@ -20,7 +20,6 @@ import base.SpecBase
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel
 import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel.CancellationNotificationErrorsP5ViewModelProvider
 
 class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -28,81 +27,68 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
   "CancellationNotificationErrorsP5ViewModel" - {
 
     val lrn                = "AB123"
+    val customsOfficeName  = "custName"
     val customsReferenceId = "CD123"
+    val telephoneNo        = Some("123")
 
     val viewModelProvider = new CancellationNotificationErrorsP5ViewModelProvider()
 
-    def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): CancellationNotificationErrorsP5ViewModel =
-      viewModelProvider.apply(lrn, customsOffice)
-
-    "title" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Cancellation errors"
-      }
-    }
-
-    "heading" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Cancellation errors"
-      }
-    }
-
-    "paragraph1" - {
-      "must return correct message when no error" in {
-        viewModel().paragraph1 mustBe s"There are one or more errors with the cancellation of this declaration."
-      }
-    }
-
-    "customsOfficeContent" - {
-
-      "when no customs office found" - {
-        "must return correct message" in {
-          viewModel().customsOfficeContent mustBe s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
-        }
-      }
+    "apply" - {
 
       "when customs office found with telephone number and name" - {
         "must return correct message" in {
-          val customsOfficeName = "custName"
-          val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo)
 
-          result mustBe s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
+          val result = viewModelProvider.apply(lrn, customsOffice)
+
+          result.title mustBe "Cancellation errors"
+          result.heading mustBe "Cancellation errors"
+          result.paragraph1 mustBe "There are one or more errors with the cancellation of this declaration."
+          result.hyperlink mustBe "View departure declarations"
+          result.customsOfficeContent mustBe s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
       }
 
       "when customs office found with name and no telephone number" - {
         "must return correct message" in {
-          val customsOfficeName = "custName"
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None)
 
-          result mustBe s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName."
+          val result = viewModelProvider.apply(lrn, customsOffice)
+
+          result.title mustBe "Cancellation errors"
+          result.heading mustBe "Cancellation errors"
+          result.paragraph1 mustBe "There are one or more errors with the cancellation of this declaration."
+          result.hyperlink mustBe "View departure declarations"
+          result.customsOfficeContent mustBe s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName."
         }
       }
 
       "when customs office found with telephone number but empty name" - {
         "must return correct message" in {
-          val customsOfficeName = ""
-          val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, "", telephoneNo)
 
-          result mustBe s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
+          val result = viewModelProvider.apply(lrn, customsOffice)
+
+          result.title mustBe "Cancellation errors"
+          result.heading mustBe "Cancellation errors"
+          result.paragraph1 mustBe "There are one or more errors with the cancellation of this declaration."
+          result.hyperlink mustBe "View departure declarations"
+          result.customsOfficeContent mustBe s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
       }
 
       "when customs office found with no telephone number and empty name" - {
         "must return correct message" in {
-          val customsOfficeName = ""
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, "", None)
 
-          result mustBe s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
+          val result = viewModelProvider.apply(lrn, customsOffice)
+
+          result.title mustBe "Cancellation errors"
+          result.heading mustBe "Cancellation errors"
+          result.paragraph1 mustBe "There are one or more errors with the cancellation of this declaration."
+          result.hyperlink mustBe "View departure declarations"
+          result.customsOfficeContent mustBe s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
         }
-      }
-    }
-
-    "hyperlink" - {
-      "must return correct message" in {
-        viewModel().hyperlink mustBe "View departure declarations"
       }
     }
   }

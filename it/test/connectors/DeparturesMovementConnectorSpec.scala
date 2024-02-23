@@ -16,10 +16,9 @@
 
 package connectors
 
-import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
-import helper.WireMockServerHandler
+import itbase.{ItSpecBase, WireMockServerHandler}
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import models.departure.DepartureStatus.PositiveAcknowledgement
 import models.departure._
@@ -36,7 +35,7 @@ import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 import scala.xml.NodeSeq
 
-class DeparturesMovementConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
+class DeparturesMovementConnectorSpec extends ItSpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
   private lazy val connector: DeparturesMovementConnector = app.injector.instanceOf[DeparturesMovementConnector]
   private val startUrl                                    = "transits-movements-trader-at-departure"

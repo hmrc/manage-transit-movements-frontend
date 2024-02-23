@@ -16,10 +16,9 @@
 
 package connectors
 
-import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
-import helper.WireMockServerHandler
+import itbase.{ItSpecBase, WireMockServerHandler}
 import models.RejectionType.DeclarationRejection
 import models.departureP5.Prelodged.{NonPrelodgedDeclaration, PrelodgedDeclaration}
 import models.departureP5._
@@ -33,7 +32,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
   private lazy val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
 

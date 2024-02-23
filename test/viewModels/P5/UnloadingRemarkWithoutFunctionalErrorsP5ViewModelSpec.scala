@@ -20,7 +20,6 @@ import base.SpecBase
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
 import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel.UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider
 
 class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -29,81 +28,67 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
 
     val mrn                = "AB123"
     val customsReferenceId = "CD123"
+    val customsOfficeName  = "custName"
+    val telephoneNo        = Some("123")
 
     val viewModelProvider = new UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider()
 
-    def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): UnloadingRemarkWithoutFunctionalErrorsP5ViewModel =
-      viewModelProvider.apply(mrn, customsOffice)
-
-    "title" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Unloading remarks errors"
-      }
-    }
-
-    "heading" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Unloading remarks errors"
-      }
-    }
-
-    "paragraph1" - {
-      "must return correct message" in {
-        viewModel().paragraph1 mustBe s"There are one or more errors with the unloading remarks for this notification."
-      }
-    }
-
-    "customsOfficeContent" - {
-
-      "when no customs office found" - {
-        "must return correct message" in {
-          viewModel().customsOfficeContent mustBe
-            s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId."
-        }
-      }
+    "apply" - {
 
       "when customs office found with telephone number and name" - {
         "must return correct message" in {
-          val customsOfficeName = "custName"
-          val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo)
 
-          result mustBe s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
+          val result = viewModelProvider.apply(mrn, customsOffice)
+
+          result.title mustBe "Unloading remarks errors"
+          result.heading mustBe "Unloading remarks errors"
+          result.paragraph1 mustBe "There are one or more errors with the unloading remarks for this notification."
+          result.hyperlink mustBe "View arrival notifications"
+          result.customsOfficeContent mustBe s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
       }
 
       "when customs office found with name and no telephone number" - {
         "must return correct message" in {
-          val customsOfficeName = "custName"
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None)
 
-          result mustBe s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName."
+          val result = viewModelProvider.apply(mrn, customsOffice)
+
+          result.title mustBe "Unloading remarks errors"
+          result.heading mustBe "Unloading remarks errors"
+          result.paragraph1 mustBe "There are one or more errors with the unloading remarks for this notification."
+          result.hyperlink mustBe "View arrival notifications"
+          result.customsOfficeContent mustBe s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName."
         }
       }
 
       "when customs office found with telephone number but empty name" - {
         "must return correct message" in {
-          val customsOfficeName = ""
-          val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, "", telephoneNo)
 
-          result mustBe s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
+          val result = viewModelProvider.apply(mrn, customsOffice)
+
+          result.title mustBe "Unloading remarks errors"
+          result.heading mustBe "Unloading remarks errors"
+          result.paragraph1 mustBe "There are one or more errors with the unloading remarks for this notification."
+          result.hyperlink mustBe "View arrival notifications"
+          result.customsOfficeContent mustBe s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
       }
 
       "when customs office found with no telephone number and empty name" - {
         "must return correct message" in {
-          val customsOfficeName = ""
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val customsOffice = CustomsOffice(customsReferenceId, "", None)
 
-          result mustBe s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId."
+          val result = viewModelProvider.apply(mrn, customsOffice)
+
+          result.title mustBe "Unloading remarks errors"
+          result.heading mustBe "Unloading remarks errors"
+          result.paragraph1 mustBe "There are one or more errors with the unloading remarks for this notification."
+          result.hyperlink mustBe "View arrival notifications"
+          result.customsOfficeContent mustBe s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId."
         }
-      }
-    }
-
-    "hyperlink" - {
-      "must return correct message" in {
-        viewModel().hyperlink mustBe "View arrival notifications"
       }
     }
   }

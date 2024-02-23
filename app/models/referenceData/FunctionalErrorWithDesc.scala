@@ -16,6 +16,7 @@
 
 package models.referenceData
 
+import cats.Order
 import play.api.libs.json.{Format, Json}
 
 case class FunctionalErrorWithDesc(code: String, description: String) {
@@ -28,6 +29,9 @@ case class FunctionalErrorWithDesc(code: String, description: String) {
 }
 
 object FunctionalErrorWithDesc {
-
   implicit val format: Format[FunctionalErrorWithDesc] = Json.format[FunctionalErrorWithDesc]
+
+  implicit val order: Order[FunctionalErrorWithDesc] = {
+    (x: FunctionalErrorWithDesc, y: FunctionalErrorWithDesc) => x.code.compareToIgnoreCase(y.code)
+  }
 }

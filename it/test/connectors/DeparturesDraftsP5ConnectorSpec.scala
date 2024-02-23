@@ -16,10 +16,9 @@
 
 package connectors
 
-import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import generators.Generators
-import helper.WireMockServerHandler
+import itbase.{ItSpecBase, WireMockServerHandler}
 import models.Sort.{SortByCreatedAtAsc, SortByCreatedAtDesc, SortByLRNAsc, SortByLRNDesc}
 import models.departure.drafts.{Limit, Skip}
 import models.{Availability, DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber, LockCheck}
@@ -32,7 +31,7 @@ import play.api.test.Helpers.OK
 
 import java.time.LocalDateTime
 
-class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
+class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
   private lazy val connector: DeparturesDraftsP5Connector = app.injector.instanceOf[DeparturesDraftsP5Connector]
   private val startUrl                                    = "manage-transit-movements-departure-cache"

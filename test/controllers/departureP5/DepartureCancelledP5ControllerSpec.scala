@@ -19,6 +19,7 @@ package controllers.departureP5
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.departureP5._
+import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Gen
@@ -81,12 +82,14 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
         )
       )
 
+      val customsOffice = CustomsOffice(customsReferenceNumber, "", None)
+
       val departureCancelledP5ViewModel =
-        new DepartureCancelledP5ViewModel(sections, lrn.toString, Left(customsReferenceNumber))
+        new DepartureCancelledP5ViewModel(sections, lrn.toString, customsOffice)
 
       when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
       when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceNumber)))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
       when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(departureCancelledP5ViewModel))
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package models.referenceData
+import cats.data.NonEmptySet
 
-import cats.Order
-import play.api.libs.json.{Json, OFormat}
+package object services {
 
-case class ControlType(code: String, description: String) {
+  implicit class RichNonEmptySet[T](value: NonEmptySet[T]) {
 
-  override def toString: String =
-    description match {
-      case "" => code
-      case _  => s"$code - $description"
-    }
-}
+    def toSeq: Seq[T] =
+      value.toNonEmptyList.toList
 
-object ControlType {
-  implicit val format: OFormat[ControlType] = Json.format[ControlType]
-
-  implicit val order: Order[ControlType] = {
-    (x: ControlType, y: ControlType) => x.code.compareToIgnoreCase(y.code)
   }
 }

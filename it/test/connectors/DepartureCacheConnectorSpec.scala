@@ -16,14 +16,13 @@
 
 package connectors
 
-import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock._
-import helper.WireMockServerHandler
+import itbase.{ItSpecBase, WireMockServerHandler}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, JsBoolean, JsString, Json}
 import play.api.test.Helpers._
 
-class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockServerHandler {
+class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
