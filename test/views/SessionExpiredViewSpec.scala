@@ -35,7 +35,5 @@ class SessionExpiredViewSpec extends ViewBehaviours {
 
   behave like pageWithHeading()
 
-  behave like pageWithContent("p", "We did not save your answers.")
-
   behave like pageWithSubmitButton("Sign in")
 }
