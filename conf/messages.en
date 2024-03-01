@@ -58,7 +58,6 @@ whatDoYouWantToDo.departure.draftDeparturesUnavailable = Draft departure declara
 
 session_expired.title = For your security, we signed you out
 session_expired.heading = For your security, we signed you out
-session_expired.guidance = We did not save your answers.
 session_expired.button = Sign in
 
 unauthorised.title = You cannot use this service
@@ -206,8 +205,7 @@ movement.status.P5.arrival.goodsNotReleased= Goods not released - waiting for di
 technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service
 technicalDifficulties.tryAgain = Try again later.
-technicalDifficulties.contact = You can
-technicalDifficulties.contact.link = contact the New Computerised Transit System helpdesk if you need to speak to someone about transit movements (opens in a new tab)
+technicalDifficulties.contact.link = Contact the New Computerised Transit System (NCTS) helpdesk if you need to speak to someone about your transit movements (opens in a new tab)
 
 viewDepartures.title = Departure declarations
 viewDepartures.heading = Departure declarations
@@ -266,8 +264,7 @@ pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
 pageNotFound.paragraph1 = If you typed the web address, check it is correct.
 pageNotFound.paragraph2 = If you pasted the web address, check you copied the entire address.
-pageNotFound.paragraph3Start = If the web address is correct or you selected a link or button,
-pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpdesk if you need to speak to someone about your transit movement (opens in a new tab)
+pageNotFound.contactLink = Contact the New Computerised Transit System (NCTS) helpdesk if you need to speak to someone about your transit movements (opens in a new tab)
 
 noReleaseForTransit.title = There is a problem with this departure declaration
 noReleaseForTransit.heading = There is a problem with this departure declaration
