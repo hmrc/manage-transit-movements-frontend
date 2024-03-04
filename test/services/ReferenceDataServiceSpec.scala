@@ -88,7 +88,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
         }
 
         "when the connector call returns no data" in {
-          when(mockConnector.getCustomsOffices(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException))
+          when(mockConnector.getCustomsOffices(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
