@@ -36,12 +36,12 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   )
 
   implicit def responseHandlerGeneric[A](implicit reads: Reads[A]): HttpReads[Seq[A]] =
-    (_: String, _: String, response: HttpResponse) => {
+    (_: String, url: String, response: HttpResponse) => {
       response.status match {
         case OK =>
           (response.json \ "data").validate[Seq[A]] match {
             case JsSuccess(Nil, _) =>
-              throw new NoReferenceDataFoundException
+              throw new NoReferenceDataFoundException(url)
             case JsSuccess(value, _) =>
               value
             case JsError(errors) =>
@@ -76,5 +76,5 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
 
 object ReferenceDataConnector {
 
-  class NoReferenceDataFoundException extends Exception("The reference data call was successful but the response body is empty.")
+  class NoReferenceDataFoundException(url: String) extends Exception(s"The reference data call was successful but the response body is empty: $url")
 }
