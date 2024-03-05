@@ -18,6 +18,7 @@ package connectors
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
+import config.{PostTransitionModule, TransitionModule}
 import generators.Generators
 import helper.WireMockServerHandler
 import org.scalacheck.Gen
@@ -27,7 +28,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
+class TransitionManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckPropertyChecks with Generators {
 
   private lazy val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
   private val startUrl                                 = "transit-movements-trader-manage-documents"
@@ -36,6 +37,8 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
     super
       .guiceApplicationBuilder()
       .configure(conf = "microservice.services.transit-movements-trader-manage-documents.port" -> server.port())
+      .disable[PostTransitionModule]
+      .bindings(new TransitionModule)
 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
@@ -49,6 +52,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
       "must return status Ok" in {
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.transition+json"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -66,6 +70,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.transition+json"))
             .willReturn(
               aResponse()
                 .withStatus(genErrorResponse)
