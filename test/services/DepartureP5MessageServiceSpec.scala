@@ -183,7 +183,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         val result = departureP5MessageService.getLatestMessagesForMovement(departureMovements).futureValue
 
         val expectedResult: Seq[MovementAndMessage] = Seq(
-          PrelodgedMovementAndMessage(
+          DepartureMovementAndMessage(
             "AB123",
             LocalReferenceNumber("LRN"),
             dateTimeNow,
