@@ -60,7 +60,7 @@ class ArrivalNotificationWithoutFunctionalErrorP5ViewModelSpec extends SpecBase 
         result.heading mustBe "Notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
+        result.paragraph1 mustBe s"There are one or more errors in this notification that cannot be amended. Make a new notification with the right information. We still have your previous answers - so if you use the same MRN within the next [days_left_before_deletion] days, your answers will be pre-populated."
       }
       "must return correct paragraph 2" in {
         result.paragraph2 mustBe s"Make a new arrival notification with the right information."

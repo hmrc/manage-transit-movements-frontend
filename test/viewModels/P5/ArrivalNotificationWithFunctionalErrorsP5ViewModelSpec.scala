@@ -35,6 +35,7 @@ import scala.concurrent.Future
 
 class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+  val mrnString                                      = "MRNAB123"
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -43,8 +44,6 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
 
   override def beforeEach(): Unit =
     reset(mockReferenceDataService)
-
-  val mrnString = "MRNAB123"
 
   "ArrivalNotificationWithFunctionalErrorsP5ViewModel" - {
 
@@ -76,7 +75,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         result.heading mustBe "Review notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There is a problem with this notification. Review the error and make a new notification with the right information."
+        result.paragraph1 mustBe s"There is a problem with this notification. Review the error and make a new notification with the right information. We still have your previous answers - so if you use the same MRN within the next [days_left_before_deletion] days, your answers will be pre-populated."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
@@ -111,7 +110,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         result.heading mustBe "Review notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There is a problem with this notification. Review the errors and make a new notification with the right information."
+        result.paragraph1 mustBe s"There is a problem with this notification. Review the errors and make a new notification with the right information. We still have your previous answers - so if you use the same MRN within the next [days_left_before_deletion] days, your answers will be pre-populated."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
         result.paragraph2Prefix mustBe "Contact the"
