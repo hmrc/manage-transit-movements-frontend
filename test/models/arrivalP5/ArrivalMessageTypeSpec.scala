@@ -17,33 +17,34 @@
 package models.arrivalP5
 
 import base.SpecBase
+import generators.Generators
 import models.arrivalP5.ArrivalMessageType.UnknownMessageType
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import play.api.libs.json.{JsString, JsSuccess}
+import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 
-class ArrivalMessageTypeSpec extends SpecBase {
-
-  def arrivalStatusesExcluding(exclude: ArrivalMessageType*): Seq[ArrivalMessageType] =
-    ArrivalMessageType.values.filterNot(
-      x => exclude.toSet.contains(x)
-    )
+class ArrivalMessageTypeSpec extends SpecBase with Generators {
 
   "must deserialize" - {
-
     "when given a valid message type" in {
-
-      val gen = Gen.oneOf(ArrivalMessageType.values)
-
-      forAll(gen) {
+      forAll(Gen.oneOf(ArrivalMessageType.values)) {
         arrivalStatus =>
           JsString(arrivalStatus.toString).validate[ArrivalMessageType] mustEqual JsSuccess(arrivalStatus)
       }
     }
 
     "when given an invalid message type" in {
+      forAll(nonEmptyString) {
+        str =>
+          JsString(str).validate[ArrivalMessageType] mustEqual JsSuccess(UnknownMessageType(str))
+      }
+    }
+  }
 
-      JsString("Something else").validate[ArrivalMessageType] mustEqual JsSuccess(UnknownMessageType("Something else"))
+  "must not deserialize" - {
+    "when not given a JsString" in {
+      val json = Json.obj("foo" -> "bar")
+      json.validate[ArrivalMessageType] mustBe a[JsError]
     }
   }
 }

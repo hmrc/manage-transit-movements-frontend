@@ -21,7 +21,7 @@ import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
 
 sealed trait ArrivalMessageType
 
-object ArrivalMessageType extends Enumerable.Implicits {
+object ArrivalMessageType {
 
   case object ArrivalNotification extends WithName("IE007") with ArrivalMessageType
   case object UnloadingRemarks extends WithName("IE044") with ArrivalMessageType
@@ -53,7 +53,7 @@ object ArrivalMessageType extends Enumerable.Implicits {
           .withName(str)
           .map(JsSuccess(_))
           .getOrElse(JsSuccess(UnknownMessageType(str)))
-      case _ =>
-        JsError("error.invalid")
+      case x =>
+        JsError(s"Expected JsString but got $x")
     }
 }

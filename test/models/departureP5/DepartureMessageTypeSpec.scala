@@ -17,33 +17,34 @@
 package models.departureP5
 
 import base.SpecBase
+import generators.Generators
 import models.departureP5.DepartureMessageType.UnknownMessageType
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import play.api.libs.json.{JsString, JsSuccess}
+import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 
-class DepartureMessageTypeSpec extends SpecBase {
-
-  def departureStatusesExcluding(exclude: DepartureMessageType*): Seq[DepartureMessageType] =
-    DepartureMessageType.values.filterNot(
-      x => exclude.toSet.contains(x)
-    )
+class DepartureMessageTypeSpec extends SpecBase with Generators {
 
   "must deserialize" - {
-
     "when given a valid message type" in {
-
-      val gen = Gen.oneOf(DepartureMessageType.values)
-
-      forAll(gen) {
+      forAll(Gen.oneOf(DepartureMessageType.values)) {
         departureStatus =>
           JsString(departureStatus.toString).validate[DepartureMessageType] mustEqual JsSuccess(departureStatus)
       }
     }
 
     "when given an invalid message type" in {
+      forAll(nonEmptyString) {
+        str =>
+          JsString(str).validate[DepartureMessageType] mustEqual JsSuccess(UnknownMessageType(str))
+      }
+    }
+  }
 
-      JsString("Something else").validate[DepartureMessageType] mustEqual JsSuccess(UnknownMessageType("Something else"))
+  "must not deserialize" - {
+    "when not given a JsString" in {
+      val json = Json.obj("foo" -> "bar")
+      json.validate[DepartureMessageType] mustBe a[JsError]
     }
   }
 }
