@@ -17,8 +17,9 @@
 package models.arrivalP5
 
 import models.{Enumerable, WithName}
+import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
 
-trait ArrivalMessageType extends WithName
+sealed trait ArrivalMessageType
 
 object ArrivalMessageType extends Enumerable.Implicits {
 
@@ -27,6 +28,8 @@ object ArrivalMessageType extends Enumerable.Implicits {
   case object GoodsReleasedNotification extends WithName("IE025") with ArrivalMessageType
   case object UnloadingPermission extends WithName("IE043") with ArrivalMessageType
   case object RejectionFromOfficeOfDestination extends WithName("IE057") with ArrivalMessageType
+
+  case class UnknownMessageType(status: String) extends WithName(status) with ArrivalMessageType
 
   val values: Seq[ArrivalMessageType] = Seq(
     ArrivalNotification,
@@ -42,4 +45,15 @@ object ArrivalMessageType extends Enumerable.Implicits {
         v => v.toString -> v
       ): _*
     )
+
+  implicit val reads: Reads[ArrivalMessageType] =
+    Reads {
+      case JsString(str) =>
+        enumerable
+          .withName(str)
+          .map(JsSuccess(_))
+          .getOrElse(JsSuccess(UnknownMessageType(str)))
+      case _ =>
+        JsError("error.invalid")
+    }
 }

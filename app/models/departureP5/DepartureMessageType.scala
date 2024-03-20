@@ -76,14 +76,13 @@ object DepartureMessageType extends Enumerable.Implicits {
       ): _*
     )
 
-  implicit def readsDepartureMessageType(implicit ev: Enumerable[DepartureMessageType]): Reads[DepartureMessageType] =
+  implicit val reads: Reads[DepartureMessageType] =
     Reads {
       case JsString(str) =>
-        ev.withName(str)
+        enumerable
+          .withName(str)
           .map(JsSuccess(_))
-          .getOrElse(
-            JsSuccess(UnknownMessageType(str))
-          )
+          .getOrElse(JsSuccess(UnknownMessageType(str)))
       case _ =>
         JsError("error.invalid")
     }
