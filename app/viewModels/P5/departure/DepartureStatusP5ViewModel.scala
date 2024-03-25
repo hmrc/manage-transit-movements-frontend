@@ -29,7 +29,7 @@ object DepartureStatusP5ViewModel {
 
   def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     movementAndMessage match {
-      case PrelodgedMovementAndMessage(departureId, localReferenceNumber, _, message, isPrelodged) =>
+      case DepartureMovementAndMessage(departureId, localReferenceNumber, _, message, isPrelodged) =>
         preLodgeStatus(departureId, message.latestMessage.messageId, localReferenceNumber, isPrelodged)
           .apply(message.latestMessage)
       case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn) =>
@@ -93,6 +93,10 @@ object DepartureStatusP5ViewModel {
             ViewMovementAction(
               s"${frontendAppConfig.presentationNotificationFrontendUrl(departureId)}",
               "movement.status.P5.action.declarationAmendmentAccepted.completeDeclaration"
+            ),
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
+              "movement.status.P5.action.declarationAmendmentAccepted.cancelDeclaration"
             )
           )
         case false => Seq.empty
