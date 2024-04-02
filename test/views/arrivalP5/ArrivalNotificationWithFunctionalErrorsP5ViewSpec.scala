@@ -82,13 +82,20 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1",
-      s"There is a problem with this notification. Review the error and make a new notification with the right information. We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+      s"There is a problem with this notification. Review the error and make a new notification with the right information."
     )
   }
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
       "paragraph-2",
+      s"We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+    )
+  }
+
+  "must render correct paragraph3 content" in {
+    assertSpecificElementContainsText(
+      "paragraph-3",
       "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
     )
     assertSpecificElementContainsText(

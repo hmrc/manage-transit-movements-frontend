@@ -52,11 +52,18 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnsw
   "must render correct paragraph1 content" in {
     assertSpecificElementContainsText(
       "paragraph-1",
-      s"There are one or more errors in this notification that cannot be amended. Make a new notification with the right information. We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+      s"There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
     )
   }
 
   "must render correct paragraph2 content" in {
+    assertSpecificElementContainsText(
+      "paragraph-2",
+      s"We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+    )
+  }
+
+  "must render correct paragraph3 content" in {
     assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
