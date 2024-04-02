@@ -75,12 +75,15 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         result.heading mustBe "Review notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There is a problem with this notification. Review the error and make a new notification with the right information.\n We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+        result.paragraph1 mustBe "There is a problem with this notification. Review the error and make a new notification with the right information."
       }
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix mustBe "Contact the"
-        result.paragraph2Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 mustBe "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+      }
+      "must return correct paragraph 3 prefix, link and suffix" in {
+        result.paragraph3Prefix mustBe "Contact the"
+        result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
+        result.paragraph3Suffix mustBe "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
         result.hyperlink mustBe "Make another arrival notification"
@@ -110,12 +113,15 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         result.heading mustBe "Review notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There is a problem with this notification. Review the errors and make a new notification with the right information.\n We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+        result.paragraph1 mustBe "There is a problem with this notification. Review the errors and make a new notification with the right information."
       }
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix mustBe "Contact the"
-        result.paragraph2Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 mustBe "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+      }
+      "must return correct paragraph 3 prefix, link and suffix" in {
+        result.paragraph3Prefix mustBe "Contact the"
+        result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
+        result.paragraph3Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
         result.hyperlink mustBe "Make another arrival notification"
