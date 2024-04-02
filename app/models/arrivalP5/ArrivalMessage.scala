@@ -17,7 +17,6 @@
 package models.arrivalP5
 
 import play.api.libs.json.{__, Reads}
-import ArrivalMessageType._
 
 import java.time.LocalDateTime
 

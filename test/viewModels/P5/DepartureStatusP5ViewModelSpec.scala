@@ -146,7 +146,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when prelodged" in {
 
-        val movementAndMessage = PrelodgedMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
           lrn,
           LocalDateTime.now(),
@@ -174,6 +174,10 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ViewMovementAction(
               s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
               "movement.status.P5.action.declarationAmendmentAccepted.completeDeclaration"
+            ),
+            ViewMovementAction(
+              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              "movement.status.P5.action.declarationAmendmentAccepted.cancelDeclaration"
             )
           )
         )
@@ -183,7 +187,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when not prelodged" in {
 
-        val movementAndMessage = PrelodgedMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
           lrn,
           LocalDateTime.now(),
@@ -773,7 +777,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when prelodged" in {
 
-        val movementAndMessage = PrelodgedMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
           lrn,
           LocalDateTime.now(),
@@ -814,7 +818,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when not prelodged" in {
 
-        val movementAndMessage = PrelodgedMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
           lrn,
           LocalDateTime.now(),
@@ -868,7 +872,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when prelodged" in {
 
-        val movementAndMessage = PrelodgedMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
           lrn,
           LocalDateTime.now(),
@@ -909,7 +913,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when not prelodged" in {
 
-        val movementAndMessage = PrelodgedMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
           lrn,
           LocalDateTime.now(),

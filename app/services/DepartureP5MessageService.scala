@@ -19,7 +19,7 @@ package services
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import models.RejectionType
-import models.departureP5.DepartureMessageType.{DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
+import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http.HeaderCarrier
@@ -70,7 +70,7 @@ class DepartureP5MessageService @Inject() (
               case DeclarationAmendmentAccepted | GoodsUnderControl | DeclarationSent =>
                 departureMovementP5Connector.getMessageForMessageId[IE015Data](movement.departureId, message.ie015MessageId).map {
                   ie015 =>
-                    PrelodgedMovementAndMessage(
+                    DepartureMovementAndMessage(
                       movement.departureId,
                       movement.localReferenceNumber,
                       movement.updated,
