@@ -42,17 +42,7 @@ case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(tableRows: Seq[Seq
       "arrival.ie057.review.notification.message.paragraph1.singular"
     )
   }
-
-  def paragraph2(implicit messages: Messages): String = if (multipleErrors) {
-    messages(
-      "arrival.ie057.review.notification.message.paragraph2.plural"
-    )
-  } else {
-    messages(
-      "arrival.ie057.review.notification.message.paragraph2.singular"
-    )
-  }
-
+  def paragraph2(implicit messages: Messages): String       = messages("arrival.ie057.review.notification.message.paragraph2")
   def paragraph3Prefix(implicit messages: Messages): String = messages("arrival.ie057.review.notification.message.paragraph3.prefix")
   def paragraph3Link(implicit messages: Messages): String   = messages("arrival.ie057.review.notification.message.paragraph3.link")
 
