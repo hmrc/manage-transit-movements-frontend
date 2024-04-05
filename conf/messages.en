@@ -476,8 +476,9 @@ cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail
 arrival.notification.errors.message.title   = Notification errors
 arrival.notification.errors.message.heading = Notification errors
 arrival.notification.errors.message.noerrors = There are one or more errors in this notification that cannot be amended. Make a new notification with the right information.
+arrival.notification.errors.message.paragraph2 = We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated.
 arrival.notification.errors.message.elevenpluserrors = There are a number of errors in arrival notification {0}.
-arrival.notification.errors.message.paragraph2 = Make a new arrival notification with the right information.
+arrival.notification.errors.message.paragraph3 = Make a new arrival notification with the right information.
 arrival.notification.errors.message.paragraph3.prefix = Contact the
 arrival.notification.errors.message.paragraph3.link = New Computerised Transit System helpdesk
 arrival.notification.errors.message.paragraph3.suffix = for help understanding the errors (opens in a new tab).
@@ -507,10 +508,11 @@ arrival.ie057.review.notification.message.title = Review notification errors
 arrival.ie057.review.notification.message.heading = Review notification errors
 arrival.ie057.review.notification.message.paragraph1.singular = There is a problem with this notification. Review the error and make a new notification with the right information.
 arrival.ie057.review.notification.message.paragraph1.plural = There is a problem with this notification. Review the errors and make a new notification with the right information.
-arrival.ie057.review.notification.message.paragraph2.prefix = Contact the
-arrival.ie057.review.notification.message.paragraph2.link = New Computerised Transit System helpdesk
-arrival.ie057.review.notification.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
-arrival.ie057.review.notification.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
+arrival.ie057.review.notification.message.paragraph2 = We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated.
+arrival.ie057.review.notification.message.paragraph3.prefix = Contact the
+arrival.ie057.review.notification.message.paragraph3.link = New Computerised Transit System helpdesk
+arrival.ie057.review.notification.message.paragraph3.singular.suffix = for help understanding the error (opens in a new tab).
+arrival.ie057.review.notification.message.paragraph3.plural.suffix = for help understanding the errors (opens in a new tab).
 arrival.ie057.review.notification.message.hyperlink = Make another arrival notification
 
 departure.ie035.message.subheading = LRN: {0}

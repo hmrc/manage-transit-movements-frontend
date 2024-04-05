@@ -42,12 +42,14 @@
 
     <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
+    <p id="paragraph-2" class="govuk-body">@viewModel.paragraph2</p>
+
     @pagination(paginationViewModel, None)
 
     @table(viewModel.tableRows, viewModel.tableHeadCells)
 
-    <p id="paragraph-2" class="govuk-body">@viewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@viewModel.paragraph2Link</a>
-        @viewModel.paragraph2Suffix</p>
+    <p id="paragraph-3" class="govuk-body">@viewModel.paragraph3Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@viewModel.paragraph3Link</a>
+        @viewModel.paragraph3Suffix</p>
 
     <p class="govuk-body">
         <a id="arrival-link" class="govuk-link" href="@config.declareArrivalNotificationStartUrl">@viewModel.hyperlink</a>
