@@ -72,7 +72,7 @@ class DepartureP5MessageService @Inject() (
               case DeclarationAmendmentAccepted | GoodsUnderControl | DeclarationSent =>
                 getMessage[CC015CType](movement.departureId, message.ie015MessageId).map {
                   ie015 =>
-                    PrelodgedMovementAndMessage(
+                    DepartureMovementAndMessage(
                       movement.departureId,
                       movement.localReferenceNumber,
                       movement.updated,

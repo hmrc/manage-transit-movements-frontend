@@ -21,7 +21,7 @@ import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
 
 sealed trait DepartureMessageType
 
-object DepartureMessageType extends Enumerable.Implicits {
+object DepartureMessageType {
 
   case object DepartureNotification extends WithName("IE015") with DepartureMessageType
   case object CancellationRequested extends WithName("IE014") with DepartureMessageType
@@ -76,15 +76,14 @@ object DepartureMessageType extends Enumerable.Implicits {
       ): _*
     )
 
-  implicit def readsDepartureMessageType(implicit ev: Enumerable[DepartureMessageType]): Reads[DepartureMessageType] =
+  implicit val reads: Reads[DepartureMessageType] =
     Reads {
       case JsString(str) =>
-        ev.withName(str)
+        enumerable
+          .withName(str)
           .map(JsSuccess(_))
-          .getOrElse(
-            JsSuccess(UnknownMessageType(str))
-          )
-      case _ =>
-        JsError("error.invalid")
+          .getOrElse(JsSuccess(UnknownMessageType(str)))
+      case x =>
+        JsError(s"Expected JsString but got $x")
     }
 }

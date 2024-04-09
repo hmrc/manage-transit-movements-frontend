@@ -35,10 +35,10 @@ class TechnicalDifficultiesViewSpec extends ViewBehaviours {
 
   behave like pageWithContent("p", "Try again later.")
 
-  behave like pageWithPartialContent("p", "You can ")
   behave like pageWithLink(
     id = "contact",
-    expectedText = "contact the New Computerised Transit System helpdesk if you need to speak to someone about transit movements (opens in a new tab)",
+    expectedText =
+      "Contact the New Computerised Transit System (NCTS) helpdesk if you need to speak to someone about your transit movements (opens in a new tab)",
     expectedHref = frontendAppConfig.nctsEnquiriesUrl
   )
 }

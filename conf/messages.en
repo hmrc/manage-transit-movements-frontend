@@ -58,7 +58,6 @@ whatDoYouWantToDo.departure.draftDeparturesUnavailable = Draft departure declara
 
 session_expired.title = For your security, we signed you out
 session_expired.heading = For your security, we signed you out
-session_expired.guidance = We did not save your answers.
 session_expired.button = Sign in
 
 unauthorised.title = You cannot use this service
@@ -163,7 +162,6 @@ movement.status.P5.action.viewError = View error
 movement.status.P5.action.departureNotification.cancelDeclaration         = Cancel declaration
 movement.status.P5.action.movementNotArrivedResponseSent.viewErrors       = View errors
 movement.status.P5.action.movementNotArrived.respond                      = Respond
-movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration   = Amend declaration
 movement.status.P5.action.cancellationDecision.viewCancellation           = View cancellation decision
 movement.status.P5.action.invalidMRN.amendErrors                          = Amend errors
 movement.status.P5.action.allocatedMRN.cancelDeclaration                  = Cancel declaration
@@ -183,9 +181,11 @@ movement.status.P5.action.incidentDuringTransit.viewErrors                = View
 movement.status.P5.action.declarationSent.amendDeclaration                = Amend declaration
 movement.status.P5.action.declarationSent.cancelDeclaration               = Cancel declaration
 movement.status.P5.action.goodsBeingRecovered.viewDetails                 = View details
-movement.status.P5.action.declarationAmendmentAccepted.completeDeclaration  = Complete declaration
-movement.status.P5.action.goodsUnderControl.completeDeclaration             = Complete declaration
-movement.status.P5.action.declarationSent.completeDeclaration               = Complete declaration
+movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration   = Amend declaration
+movement.status.P5.action.declarationAmendmentAccepted.completeDeclaration  = Complete pre-lodged declaration
+movement.status.P5.action.declarationAmendmentAccepted.cancelDeclaration    = Cancel declaration
+movement.status.P5.action.goodsUnderControl.completeDeclaration             = Complete pre-lodged declaration
+movement.status.P5.action.declarationSent.completeDeclaration               = Complete pre-lodged declaration
 movement.status.P5.action.goodsBeingRecovered.viewErrors                    = View errors
 
 
@@ -206,8 +206,7 @@ movement.status.P5.arrival.goodsNotReleased= Goods not released - waiting for di
 technicalDifficulties.title = Sorry, there is a problem with the service
 technicalDifficulties.heading = Sorry, there is a problem with the service
 technicalDifficulties.tryAgain = Try again later.
-technicalDifficulties.contact = You can
-technicalDifficulties.contact.link = contact the New Computerised Transit System helpdesk if you need to speak to someone about transit movements (opens in a new tab)
+technicalDifficulties.contact.link = Contact the New Computerised Transit System (NCTS) helpdesk if you need to speak to someone about your transit movements (opens in a new tab)
 
 viewDepartures.title = Departure declarations
 viewDepartures.heading = Departure declarations
@@ -266,8 +265,7 @@ pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
 pageNotFound.paragraph1 = If you typed the web address, check it is correct.
 pageNotFound.paragraph2 = If you pasted the web address, check you copied the entire address.
-pageNotFound.paragraph3Start = If the web address is correct or you selected a link or button,
-pageNotFound.contactLink=contact the New Computerised Transit System(NCTS) helpdesk if you need to speak to someone about your transit movement (opens in a new tab)
+pageNotFound.contactLink = Contact the New Computerised Transit System (NCTS) helpdesk if you need to speak to someone about your transit movements (opens in a new tab)
 
 noReleaseForTransit.title = There is a problem with this departure declaration
 noReleaseForTransit.heading = There is a problem with this departure declaration
@@ -381,18 +379,19 @@ departure.ie060.message.paragraph4.prefix = You must wait for the outcome of Cus
 departure.ie060.message.paragraph4.linkText = Check your departure declarations
 departure.ie060.message.paragraph4.suffix = for further updates.
 
-departure.ie060.message.prelodged.requestedDocuments.titleAndHeading = Intention to control - information requested
+departure.ie060.message.prelodged.requestedDocuments.titleAndHeading = Intention to control - complete pre-lodged declaration
 departure.ie060.message.prelodged.titleAndHeading = Intention to control
 
-departure.ie060.message.requestedDocuments.prelodged.paragraph1 = Customs are intending to place this declaration under control and have requested further information. This is because of a possible risk to health and safety.
+departure.ie060.message.requestedDocuments.prelodged.paragraph1 = Customs are intending to place this movement under control and have requested you complete your pre-lodged declaration.
 departure.ie060.message.requestedDocuments.prelodged.paragraph2 = While awaiting your response, the goods will remain under supervision at the office of destination.
 departure.ie060.message.requestedDocuments.prelodged.paragraph3 = Once Customs have reviewed the information you provide, they will notify you with the outcome.
 
 departure.ie060.message.prelodged.paragraph1 = Customs are intending to place this declaration under control while they carry out further checks. This is because of a possible risk to health and safety.
 departure.ie060.message.prelodged.paragraph2 = While under control, the goods will remain under supervision at the office of destination.
 departure.ie060.message.prelodged.paragraph3 = Once Customs have completed their checks, they will notify you with the outcome.
-departure.ie060.message.requestedDocuments.prelodged.whatHappensNext = You must send further information about this movement to the office of destination.
-departure.ie060.message.requestedDocuments.prelodged.button = Send further information
+
+departure.ie060.message.requestedDocuments.prelodged.whatHappensNext = You must complete your pre-lodged declaration.
+departure.ie060.message.requestedDocuments.prelodged.button = Complete pre-lodged declaration
 
 row.label.dateAndTimeOfControlNotification =  Date and time of control notification
 row.label.controlInformation.referenceNumber = Reference number
@@ -477,8 +476,9 @@ cancellation.notification.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail
 arrival.notification.errors.message.title   = Notification errors
 arrival.notification.errors.message.heading = Notification errors
 arrival.notification.errors.message.noerrors = There are one or more errors in this notification that cannot be amended. Make a new notification with the right information.
+arrival.notification.errors.message.paragraph2 = We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated.
 arrival.notification.errors.message.elevenpluserrors = There are a number of errors in arrival notification {0}.
-arrival.notification.errors.message.paragraph2 = Make a new arrival notification with the right information.
+arrival.notification.errors.message.paragraph3 = Make a new arrival notification with the right information.
 arrival.notification.errors.message.paragraph3.prefix = Contact the
 arrival.notification.errors.message.paragraph3.link = New Computerised Transit System helpdesk
 arrival.notification.errors.message.paragraph3.suffix = for help understanding the errors (opens in a new tab).
@@ -508,10 +508,11 @@ arrival.ie057.review.notification.message.title = Review notification errors
 arrival.ie057.review.notification.message.heading = Review notification errors
 arrival.ie057.review.notification.message.paragraph1.singular = There is a problem with this notification. Review the error and make a new notification with the right information.
 arrival.ie057.review.notification.message.paragraph1.plural = There is a problem with this notification. Review the errors and make a new notification with the right information.
-arrival.ie057.review.notification.message.paragraph2.prefix = Contact the
-arrival.ie057.review.notification.message.paragraph2.link = New Computerised Transit System helpdesk
-arrival.ie057.review.notification.message.paragraph2.singular.suffix = for help understanding the error (opens in a new tab).
-arrival.ie057.review.notification.message.paragraph2.plural.suffix = for help understanding the errors (opens in a new tab).
+arrival.ie057.review.notification.message.paragraph2 = We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated.
+arrival.ie057.review.notification.message.paragraph3.prefix = Contact the
+arrival.ie057.review.notification.message.paragraph3.link = New Computerised Transit System helpdesk
+arrival.ie057.review.notification.message.paragraph3.singular.suffix = for help understanding the error (opens in a new tab).
+arrival.ie057.review.notification.message.paragraph3.plural.suffix = for help understanding the errors (opens in a new tab).
 arrival.ie057.review.notification.message.hyperlink = Make another arrival notification
 
 departure.ie035.message.subheading = LRN: {0}

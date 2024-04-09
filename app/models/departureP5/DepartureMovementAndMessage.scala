@@ -20,15 +20,6 @@ import models.{LocalReferenceNumber, RejectionType}
 
 import java.time.LocalDateTime
 
-case class DepartureMovementAndMessage(
-  departureMovement: DepartureMovement,
-  messagesForMovement: MessagesForDepartureMovement,
-  localReferenceNumber: LocalReferenceNumber,
-  rejectionType: Option[RejectionType],
-  isDeclarationAmendable: Boolean,
-  xPaths: Seq[String]
-)
-
 sealed trait MovementAndMessage {
   val departureId: String
   val localReferenceNumber: LocalReferenceNumber
@@ -54,7 +45,7 @@ case class OtherMovementAndMessage(
   message: LatestDepartureMessage
 ) extends MovementAndMessage
 
-case class PrelodgedMovementAndMessage(
+case class DepartureMovementAndMessage(
   departureId: String,
   localReferenceNumber: LocalReferenceNumber,
   updated: LocalDateTime,
