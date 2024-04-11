@@ -22,7 +22,7 @@ import org.scalacheck.{Arbitrary, Gen, Shrink}
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-trait Generators extends ModelGenerators with ViewModelGenerators {
+trait Generators extends ModelGenerators with ViewModelGenerators with MessagesModelGenerators {
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
@@ -40,6 +40,10 @@ trait Generators extends ModelGenerators with ViewModelGenerators {
         m + n
     }
   }
+
+  def positiveBigInts: Gen[BigInt] = Gen.choose(0, 1000)
+
+  def positiveBigDecimals: Gen[BigDecimal] = Gen.choose(0, 1000)
 
   def intsInRangeWithCommas(min: Int, max: Int): Gen[String] = {
     val numberGen = choose[Int](min, max)

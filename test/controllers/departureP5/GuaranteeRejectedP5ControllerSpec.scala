@@ -18,10 +18,12 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
+import generated.CC055CType
 import generators.Generators
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -31,7 +33,6 @@ import services.DepartureP5MessageService
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 import views.html.departureP5.GuaranteeRejectedP5View
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -54,48 +55,38 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
   "GuaranteeRejected" - {
 
     "must return OK and the correct view for a GET" in {
+      forAll(arbitrary[CC055CType]) {
+        message =>
+          val controller: String =
+            controllers.departureP5.routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId, lrn).url
 
-      val controller: String =
-        controllers.departureP5.routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId, lrn).url
+          when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(message))
 
-      val message: IE055Data = IE055Data(
-        IE055MessageData(
-          TransitOperationIE055("MRNCD3232", LocalDate.now()),
-          Seq(
-            GuaranteeReference(
-              "AB123",
-              Seq(InvalidGuaranteeReason("A", None))
-            )
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+
+          when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
+
+          val viewModel = GuaranteeRejectedP5ViewModel(
+            guaranteeReferences = message.GuaranteeReference,
+            lrn = lrn,
+            isAmendable = true,
+            mrn = message.TransitOperation.MRN,
+            acceptanceDate = message.TransitOperation.declarationAcceptanceDate
           )
-        )
-      )
 
-      when(mockDepartureP5MessageService.getMessageWithMessageId[IE055Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(message))
+          val request = FakeRequest(GET, controller)
 
-      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+          val result = route(app, request).value
 
-      when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
+          status(result) mustEqual OK
 
-      val viewModel = GuaranteeRejectedP5ViewModel(
-        message.data.guaranteeReferences,
-        lrn,
-        isAmendable = true,
-        message.data.transitOperation.MRN,
-        message.data.transitOperation.declarationAcceptanceDate
-      )
+          val view = injector.instanceOf[GuaranteeRejectedP5View]
 
-      val request = FakeRequest(GET, controller)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      val view = injector.instanceOf[GuaranteeRejectedP5View]
-
-      contentAsString(result) mustEqual
-        view(viewModel, departureIdP5)(request, messages).toString
+          contentAsString(result) mustEqual
+            view(viewModel, departureIdP5)(request, messages).toString
+      }
     }
 
     "onAmend" - {

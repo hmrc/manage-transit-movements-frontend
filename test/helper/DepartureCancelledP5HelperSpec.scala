@@ -17,22 +17,23 @@
 package helper
 
 import base.SpecBase
+import generated._
 import generators.Generators
-import models.departureP5._
 import models.referenceData.CustomsOffice
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
+import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.DepartureCancelledP5Helper
 import viewModels.sections.Section
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -50,112 +51,68 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
     "buildMRNRow" - {
 
       "must return None" in {
+        forAll(arbitrary[CC009CType].map {
+          x =>
+            x.copy(TransitOperation = x.TransitOperation.copy(MRN = None))
+        }) {
+          message =>
+            val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              None
-            ),
-            Invalidation(
-              decisionDateAndTime = Some(LocalDateTime.now()),
-              decision = false,
-              initiatedByCustoms = true,
-              justification = Some("some justification")
-            ),
-            CustomsOfficeOfDeparture(
-              "1234"
-            )
-          )
-        )
+            val result = helper.buildMRNRow
 
-        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-        val result = helper.buildMRNRow
-
-        result mustBe None
+            result mustBe None
+        }
       }
 
       "must return SummaryListRow" in {
+        forAll(Gen.alphaNumStr) {
+          mrn =>
+            forAll(arbitrary[CC009CType].map {
+              x =>
+                x.copy(TransitOperation = x.TransitOperation.copy(MRN = Some(mrn)))
+            }) {
+              message =>
+                val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              Some("abd123")
-            ),
-            Invalidation(
-              decisionDateAndTime = Some(LocalDateTime.now()),
-              decision = false,
-              initiatedByCustoms = true,
-              justification = Some("some justification")
-            ),
-            CustomsOfficeOfDeparture(
-              "1234"
-            )
-          )
-        )
+                val result = helper.buildMRNRow
 
-        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-        val result = helper.buildMRNRow
-
-        result mustBe
-          Some(SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText)))
+                result mustBe
+                  Some(SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText)))
+            }
+        }
       }
     }
 
     "buildDateTimeDecisionRow" - {
 
       "must return None" in {
+        forAll(arbitrary[CC009CType].map {
+          x =>
+            x.copy(Invalidation = x.Invalidation.copy(decisionDateAndTime = None))
+        }) {
+          message =>
+            val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              Some("abd123")
-            ),
-            Invalidation(
-              decisionDateAndTime = None,
-              decision = false,
-              initiatedByCustoms = true,
-              justification = Some("some justification")
-            ),
-            CustomsOfficeOfDeparture(
-              "1234"
-            )
-          )
-        )
+            val result = helper.buildDateTimeDecisionRow
 
-        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-        val result = helper.buildDateTimeDecisionRow
-
-        result mustBe None
+            result mustBe None
+        }
       }
 
       "must return SummaryListRow" in {
+        val decisionDateAndTime = XMLCalendar("2014-06-09T16:15:04+01:00")
+        forAll(arbitrary[CC009CType].map {
+          x =>
+            x.copy(Invalidation = x.Invalidation.copy(decisionDateAndTime = Some(decisionDateAndTime)))
+        }) {
+          message =>
+            val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              Some("abd123")
-            ),
-            Invalidation(
-              decisionDateAndTime = Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
-              decision = false,
-              initiatedByCustoms = true,
-              justification = Some("some justification")
-            ),
-            CustomsOfficeOfDeparture(
-              "1234"
-            )
-          )
-        )
+            val result = helper.buildDateTimeDecisionRow
 
-        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-        val result = helper.buildDateTimeDecisionRow
-
-        result mustBe
-          Some(SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText)))
+            result mustBe
+              Some(SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText)))
+        }
       }
     }
 
@@ -164,57 +121,33 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
       "must return SummaryListRow" - {
 
         "with yes when InitiatedByCustoms is 1" in {
+          forAll(arbitrary[CC009CType].map {
+            x =>
+              x.copy(Invalidation = x.Invalidation.copy(initiatedByCustoms = Number1))
+          }) {
+            message =>
+              val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-          val message: IE009Data = IE009Data(
-            IE009MessageData(
-              TransitOperationIE009(
-                Some("abd123")
-              ),
-              Invalidation(
-                decisionDateAndTime = Some(LocalDateTime.now()),
-                decision = false,
-                initiatedByCustoms = true,
-                justification = Some("some justification")
-              ),
-              CustomsOfficeOfDeparture(
-                "1234"
-              )
-            )
-          )
+              val result = helper.buildInitiatedByCustomsRow
 
-          val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-          val result = helper.buildInitiatedByCustomsRow
-
-          result mustBe
-            Some(SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText)))
+              result mustBe
+                Some(SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText)))
+          }
         }
 
         "with no when InitiatedByCustoms is 0" in {
+          forAll(arbitrary[CC009CType].map {
+            x =>
+              x.copy(Invalidation = x.Invalidation.copy(initiatedByCustoms = Number0))
+          }) {
+            message =>
+              val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-          val message: IE009Data = IE009Data(
-            IE009MessageData(
-              TransitOperationIE009(
-                Some("abd123")
-              ),
-              Invalidation(
-                decisionDateAndTime = Some(LocalDateTime.now()),
-                decision = false,
-                initiatedByCustoms = false,
-                justification = Some("some justification")
-              ),
-              CustomsOfficeOfDeparture(
-                "1234"
-              )
-            )
-          )
+              val result = helper.buildInitiatedByCustomsRow
 
-          val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-          val result = helper.buildInitiatedByCustomsRow
-
-          result mustBe
-            Some(SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("No".toText)))
+              result mustBe
+                Some(SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("No".toText)))
+          }
         }
       }
     }
@@ -222,162 +155,109 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
     "buildOfficeOfDepartureRow" - {
 
       "must return SummaryListRow with office name and code" in {
+        forAll(Gen.alphaNumStr) {
+          customsOfficeId =>
+            forAll(arbitrary[CC009CType].map {
+              x =>
+                x.copy(CustomsOfficeOfDeparture = x.CustomsOfficeOfDeparture.copy(referenceNumber = customsOfficeId))
+            }) {
+              message =>
+                when(mockReferenceDataService.getCustomsOffice(eqTo(customsOfficeId))(any(), any()))
+                  .thenReturn(Future.successful(Right(CustomsOffice("GB00060", "BOSTON", None))))
 
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              Some("abd123")
-            ),
-            Invalidation(
-              decisionDateAndTime = Some(LocalDateTime.now()),
-              decision = false,
-              initiatedByCustoms = true,
-              justification = Some("some justification")
-            ),
-            CustomsOfficeOfDeparture(
-              "GB00060"
-            )
-          )
-        )
+                val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(CustomsOffice("GB00060", "BOSTON", None))))
+                val result = helper.buildOfficeOfDepartureRow.futureValue
 
-        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-        val result = helper.buildOfficeOfDepartureRow.futureValue
-
-        result mustBe
-          Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("BOSTON (GB00060)".toText)))
-      }
-
-      "must return SummaryListRow with code" - {
-        "when customs office returns None" in {
-
-          val message: IE009Data = IE009Data(
-            IE009MessageData(
-              TransitOperationIE009(
-                Some("abd123")
-              ),
-              Invalidation(
-                decisionDateAndTime = Some(LocalDateTime.now()),
-                decision = false,
-                initiatedByCustoms = true,
-                justification = Some("some justification")
-              ),
-              CustomsOfficeOfDeparture(
-                "GB00060"
-              )
-            )
-          )
-
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("GB00060")))
-
-          val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-          val result = helper.buildOfficeOfDepartureRow.futureValue
-
-          result mustBe
-            Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("GB00060".toText)))
+                result mustBe
+                  Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("BOSTON (GB00060)".toText)))
+            }
         }
 
+        "must return SummaryListRow with code" - {
+          "when customs office returns None" in {
+            forAll(arbitrary[CC009CType]) {
+              message =>
+                when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+                  .thenReturn(Future.successful(Left("GB00060")))
+
+                val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
+
+                val result = helper.buildOfficeOfDepartureRow.futureValue
+
+                result mustBe
+                  Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("GB00060".toText)))
+            }
+          }
+        }
       }
     }
 
     "buildCommentsRow" - {
 
       "must return None" in {
+        forAll(arbitrary[CC009CType].map {
+          x =>
+            x.copy(Invalidation = x.Invalidation.copy(justification = None))
+        }) {
+          message =>
+            val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              Some("abd123")
-            ),
-            Invalidation(
-              decisionDateAndTime = Some(LocalDateTime.now()),
-              decision = false,
-              initiatedByCustoms = true,
-              justification = None
-            ),
-            CustomsOfficeOfDeparture(
-              "1234"
-            )
-          )
-        )
+            val result = helper.buildCommentsRow
 
-        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-        val result = helper.buildCommentsRow
-
-        result mustBe None
+            result mustBe None
+        }
       }
 
       "must return SummaryListRow" in {
+        forAll(Gen.alphaNumStr) {
+          justification =>
+            forAll(arbitrary[CC009CType].map {
+              x =>
+                x.copy(Invalidation = x.Invalidation.copy(justification = Some(justification)))
+            }) {
+              message =>
+                val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              Some("abd123")
-            ),
-            Invalidation(
-              decisionDateAndTime = Some(LocalDateTime.now()),
-              decision = false,
-              initiatedByCustoms = true,
-              justification = Some("some justification")
-            ),
-            CustomsOfficeOfDeparture(
-              "1234"
-            )
-          )
-        )
+                val result = helper.buildCommentsRow
 
-        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-        val result = helper.buildCommentsRow
-
-        result mustBe
-          Some(SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText)))
+                result mustBe
+                  Some(SummaryListRow(key = Key("Comments".toText), value = Value(justification.toText)))
+            }
+        }
       }
     }
 
     "buildInvalidationSection" - {
 
       "must return a Section" in {
+        forAll(arbitrary[CC009CType].map {
+          x =>
+            x
+              .copy(TransitOperation = x.TransitOperation.copy(MRN = Some("MRN1")))
+              .copy(Invalidation = x.Invalidation.copy(decisionDateAndTime = Some(XMLCalendar("2014-06-09T16:15:04+01:00"))))
+              .copy(Invalidation = x.Invalidation.copy(initiatedByCustoms = Number1))
+              .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03("22323323"))
+              .copy(Invalidation = x.Invalidation.copy(justification = Some("some justification")))
+        }) {
+          message =>
+            when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("1234")))
 
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              Some("abd123")
-            ),
-            Invalidation(
-              decisionDateAndTime = Some(LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME)),
-              decision = false,
-              initiatedByCustoms = true,
-              justification = Some("some justification")
-            ),
-            CustomsOfficeOfDeparture(
-              "1234"
-            )
-          )
-        )
+            val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("1234")))
+            val result = helper.buildInvalidationSection.futureValue
+            val firstRow =
+              Seq(
+                SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText)),
+                SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText)),
+                SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText)),
+                SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText)),
+                SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText))
+              )
 
-        val helper = new DepartureCancelledP5Helper(message.data, mockReferenceDataService)
-
-        val result = helper.buildInvalidationSection.futureValue
-        val firstRow =
-          Seq(
-            SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText)),
-            SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText)),
-            SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText)),
-            SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText)),
-            SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText))
-          )
-
-        result mustBe Section(None, firstRow, None)
-
+            result mustBe Section(None, firstRow, None)
+        }
       }
     }
   }
-
 }

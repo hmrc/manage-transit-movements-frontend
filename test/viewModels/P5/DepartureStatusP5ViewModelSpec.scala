@@ -18,8 +18,6 @@ package viewModels.P5
 
 import base.SpecBase
 import generators.Generators
-import models.RejectionType
-import models.RejectionType.AmendmentRejection
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -383,7 +381,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ),
               "ie015MessageId"
             ),
-            rejectionType = AmendmentRejection,
+            rejectionType = "013",
             isDeclarationAmendable = true,
             xPaths = Seq("body/path"),
             doesCacheExistForLrn = true
@@ -419,7 +417,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ),
               "ie015MessageId"
             ),
-            rejectionType = AmendmentRejection,
+            rejectionType = "013",
             isDeclarationAmendable = false,
             xPaths = Nil,
             doesCacheExistForLrn = true
@@ -455,7 +453,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ),
               "ie015MessageId"
             ),
-            rejectionType = AmendmentRejection,
+            rejectionType = "013",
             isDeclarationAmendable = false,
             xPaths = Nil,
             doesCacheExistForLrn = false
@@ -491,7 +489,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ),
               "ie015MessageId"
             ),
-            rejectionType = AmendmentRejection,
+            rejectionType = "013",
             isDeclarationAmendable = false,
             xPaths = Seq("body/path"),
             doesCacheExistForLrn = false
@@ -517,7 +515,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "and head of tail is IE015" - {
 
-        val rejectionType: RejectionType = RejectionType.DeclarationRejection
+        val rejectionType = "015"
 
         "and declaration is amendable" in {
           val movementAndMessage = RejectedMovementAndMessage(
@@ -662,7 +660,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "and head of tail is IE014" - {
 
-        val rejectionType: RejectionType = RejectionType.InvalidationRejection
+        val rejectionType = "014"
 
         "with errors in range 2 to 10" in {
           val movementAndMessage = RejectedMovementAndMessage(

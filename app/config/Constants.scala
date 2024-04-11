@@ -30,4 +30,7 @@ object Constants {
     val DeclarationRejection  = "015"
   }
 
+  object AdditionalDeclarationType {
+    val PreLodged = "D"
+  }
 }

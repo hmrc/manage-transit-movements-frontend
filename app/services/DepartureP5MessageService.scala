@@ -17,6 +17,7 @@
 package services
 
 import cats.implicits._
+import config.Constants.AdditionalDeclarationType.PreLodged
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated.{CC015CType, CC056CType}
 import models.departureP5.DepartureMessageType.{DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
@@ -77,7 +78,7 @@ class DepartureP5MessageService @Inject() (
                       movement.localReferenceNumber,
                       movement.updated,
                       message,
-                      ie015.TransitOperation.additionalDeclarationType == "D"
+                      ie015.TransitOperation.additionalDeclarationType == PreLodged
                     )
                 }
               case _ =>

@@ -17,10 +17,11 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated.CC009CType
 import generators.Generators
-import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
@@ -32,7 +33,6 @@ import viewModels.P5.departure.DepartureCancelledP5ViewModel
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
 import views.html.departureP5.DepartureCancelledP5View
 
-import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -48,7 +48,6 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
     reset(mockDepartureP5MessageService)
     reset(mockReferenceDataService)
     reset(mockDepartureCancelledP5ViewModelProvider)
-
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -63,44 +62,28 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
   "DepartureCancelledP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      forAll(arbitrary[CC009CType]) {
+        message =>
+          val departureCancelledP5ViewModel =
+            new DepartureCancelledP5ViewModel(sections, lrn.toString, Left(customsReferenceNumber))
 
-      val message: IE009Data = IE009Data(
-        IE009MessageData(
-          TransitOperationIE009(
-            Some("abd123")
-          ),
-          Invalidation(
-            decisionDateAndTime = Some(LocalDateTime.now()),
-            decision = true,
-            initiatedByCustoms = true,
-            justification = Some("some justification")
-          ),
-          CustomsOfficeOfDeparture(
-            s"$customsReferenceNumber"
-          )
-        )
-      )
+          when(mockDepartureP5MessageService.getMessage[CC009CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceNumber)))
+          when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
-      val departureCancelledP5ViewModel =
-        new DepartureCancelledP5ViewModel(sections, lrn.toString, Left(customsReferenceNumber))
+          val request = FakeRequest(GET, routes.DepartureCancelledP5Controller.onPageLoad(departureIdP5, messageId).url)
 
-      when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceNumber)))
-      when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(departureCancelledP5ViewModel))
+          val result = route(app, request).value
 
-      val request = FakeRequest(GET, routes.DepartureCancelledP5Controller.onPageLoad(departureIdP5, messageId).url)
+          status(result) mustEqual OK
 
-      val result = route(app, request).value
+          val view = injector.instanceOf[DepartureCancelledP5View]
 
-      status(result) mustEqual OK
-
-      val view = injector.instanceOf[DepartureCancelledP5View]
-
-      contentAsString(result) mustEqual
-        view(departureCancelledP5ViewModel)(request, messages, frontendAppConfig).toString
-
+          contentAsString(result) mustEqual
+            view(departureCancelledP5ViewModel)(request, messages, frontendAppConfig).toString
+      }
     }
   }
 }

@@ -18,10 +18,10 @@ package connectors
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
+import generated._
 import generators.Generators
 import helper.WireMockServerHandler
 import models.RejectionType.DeclarationRejection
-import models.departureP5.Prelodged.{NonPrelodgedDeclaration, PrelodgedDeclaration}
 import models.departureP5._
 import models.{Availability, LocalReferenceNumber}
 import org.scalacheck.Gen
@@ -44,7 +44,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
   private val genError = Gen.chooseNum(400: Int, 599: Int).suchThat(_ != 404)
 
-  val IEO56 = Json.parse(
+  val ie056 = Json.parse(
     """
       |{
       |  "n1:CC056C": {
@@ -86,9 +86,9 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         "id": "62f4ebbb765ba8c2",
         "departureId": "62f4ebbbf581d4aa",
         "received": "2022-08-11T11:44:59.83705",
-        "type": "IE060",
+        "type": "IE056",
         "status": "Success",
-        "body": ${IEO56.toString()}
+        "body": ${ie056.toString()}
       }
       """)
 
@@ -363,9 +363,9 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
       "must return Message" in {
 
-        val expectedResult: IE056Data = IE056Data(
-          IE056MessageData(
-            TransitOperationIE056(Some("CD3232"), Some("AB123"), DeclarationRejection),
+        val expectedResult: CC056CType = CC056CType(
+          CC056CType(
+            TransitOperationType20(MRN = Some("CD3232"), LRN = Some("AB123"), businessRejectionType = "015"),
             CustomsOfficeOfDeparture("22323323"),
             Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
           )
@@ -376,7 +376,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             .willReturn(okJson(responseJson.toString()))
         )
 
-        connector.getMessageForMessageId[IE056Data](departureIdP5, messageId).futureValue mustBe expectedResult
+        connector.getMessageForMessageId[CC056CType](departureIdP5, messageId).futureValue mustBe expectedResult
       }
 
       "must return IE015" - {
