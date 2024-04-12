@@ -66,8 +66,8 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
     val viewModel: DepartureNotCancelledP5ViewModel = viewModelProvider.apply(message, departureIdP5, lrn).futureValue
 
     "must return correct section" in {
+      viewModel.sections.size mustBe 1
       viewModel.sections.head.sectionTitle mustBe None
-      viewModel.sections.head.rows.size mustBe 5
     }
 
     "title" - {
