@@ -99,7 +99,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
       }
 
       "must return SummaryListRow" in {
-        val decisionDateAndTime = XMLCalendar("2014-06-09T16:15:04+01:00")
+        val decisionDateAndTime = XMLCalendar("2014-06-09T16:15:04")
         forAll(arbitrary[CC009CType].map {
           x =>
             x.copy(Invalidation = x.Invalidation.copy(decisionDateAndTime = Some(decisionDateAndTime)))
@@ -236,7 +236,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               .copy(TransitOperation = x.TransitOperation.copy(MRN = Some("abd123")))
               .copy(Invalidation =
                 x.Invalidation.copy(
-                  decisionDateAndTime = Some(XMLCalendar("2014-06-09T16:15:04+01:00")),
+                  decisionDateAndTime = Some(XMLCalendar("2014-06-09T16:15:04")),
                   initiatedByCustoms = Number1,
                   justification = Some("some justification")
                 )

@@ -43,7 +43,7 @@ class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyCheck
             .copy(TransitOperation =
               x.TransitOperation.copy(
                 MRN = "someMRN",
-                declarationSubmissionDateAndTime = XMLCalendar("2014-06-09T16:15:04+01:00"),
+                declarationSubmissionDateAndTime = XMLCalendar("2014-06-09T16:15:04"),
                 noReleaseMotivationCode = "releaseMotivationCode",
                 noReleaseMotivationText = "releaseMotivationText"
               )

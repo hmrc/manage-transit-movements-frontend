@@ -57,7 +57,7 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
     "buildDeclarationAcceptanceDateRow" - {
 
       "must return SummaryListRow" in {
-        val declarationAcceptanceDate = XMLCalendar("2014-06-09T16:15:04+01:00")
+        val declarationAcceptanceDate = XMLCalendar("2014-06-09T16:15:04")
 
         forAll(arbitrary[CC035CType].map {
           x =>
@@ -77,7 +77,7 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
     "buildRecoveryDateRow" - {
 
       "must return SummaryListRow" in {
-        val recoveryNotificationDate = XMLCalendar("2014-06-09T16:15:04+01:00")
+        val recoveryNotificationDate = XMLCalendar("2014-06-09T16:15:04")
 
         forAll(arbitrary[CC035CType].map {
           x =>
@@ -170,12 +170,12 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
               .copy(TransitOperation =
                 x.TransitOperation.copy(
                   MRN = mrn,
-                  declarationAcceptanceDate = XMLCalendar("2014-06-09T16:15:04+01:00")
+                  declarationAcceptanceDate = XMLCalendar("2014-06-09T16:15:04")
                 )
               )
               .copy(RecoveryNotification =
                 x.RecoveryNotification.copy(
-                  recoveryNotificationDate = Some(XMLCalendar("2014-06-09T16:15:04+01:00")),
+                  recoveryNotificationDate = Some(XMLCalendar("2014-06-09T16:15:04")),
                   recoveryNotificationText = Some("text"),
                   amountClaimed = amountClaimed,
                   currency = "EUR"

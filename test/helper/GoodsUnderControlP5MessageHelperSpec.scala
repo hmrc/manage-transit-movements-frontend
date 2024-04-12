@@ -117,7 +117,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
     "buildDateTimeControllerRow" - {
 
       "must return SummaryListRow" in {
-        val controlNotificationDateAndTime = XMLCalendar("2014-06-09T16:15:04+01:00")
+        val controlNotificationDateAndTime = XMLCalendar("2014-06-09T16:15:04")
 
         forAll(arbitrary[CC060CType].map {
           x =>
@@ -317,7 +317,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
                 x.TransitOperation.copy(
                   LRN = Some("LRN1"),
                   MRN = Some("MRN1"),
-                  controlNotificationDateAndTime = XMLCalendar("2014-06-09T16:15:04+01:00")
+                  controlNotificationDateAndTime = XMLCalendar("2014-06-09T16:15:04")
                 )
               )
               .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03("22323323"))
