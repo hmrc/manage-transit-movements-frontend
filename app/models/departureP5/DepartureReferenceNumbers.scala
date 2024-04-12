@@ -30,6 +30,4 @@ object DepartureReferenceNumbers {
         (__ \ "movementReferenceNumber").readNullable[String]
     )(DepartureReferenceNumbers.apply _)
 
-  implicit val writes: OWrites[TypeOfControls] = Json.writes[TypeOfControls]
-
 }

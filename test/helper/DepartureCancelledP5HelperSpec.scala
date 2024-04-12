@@ -32,7 +32,6 @@ import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.DepartureCancelledP5Helper
-import viewModels.sections.Section
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
