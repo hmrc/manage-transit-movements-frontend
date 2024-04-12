@@ -17,8 +17,8 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.{LocalReferenceNumber, RejectionType}
-import models.RejectionType.{AmendmentRejection, DeclarationRejection, InvalidationRejection}
+import models.LocalReferenceNumber
+import config.Constants.BusinessRejectionType._
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import viewModels.ViewMovementAction
@@ -43,7 +43,7 @@ object DepartureStatusP5ViewModel {
   private def rejectedStatus(
     departureId: String,
     messageId: String,
-    rejectionType: RejectionType,
+    rejectionType: String,
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String],
     doesCacheExistForLrn: Boolean
@@ -262,7 +262,7 @@ object DepartureStatusP5ViewModel {
   private def rejectedByOfficeOfDeparture(
     departureId: String,
     messageId: String,
-    rejectionType: RejectionType,
+    rejectionType: String,
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String],
     doesCacheExistForLrn: Boolean

@@ -17,8 +17,8 @@
 package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated._
 import generators.Generators
-import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -46,13 +46,12 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
 
   "RejectionMessageP5ViewModel" - {
 
-    val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "Codelist violation"), FunctionalErrorWithDesc("14", "Rule violation"))
-
     "when there is one error" - {
 
-      val errors: Seq[FunctionalError] = Seq(FunctionalError("14", "12", "MRN incorrect", None))
+      val errors: Seq[FunctionalErrorType04] = Seq(FunctionalErrorType04("14", Number12, "MRN incorrect", None))
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = false).futureValue
@@ -60,7 +59,6 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       "must return correct section length" in {
         result.tableRows.length mustBe 1
       }
-
       "must return correct title" in {
         result.title mustBe "Amend declaration errors"
       }
@@ -82,13 +80,21 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
     }
 
     "when there is multiple errors or amendmentRejection" - {
-      val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+      val functionalErrors = Seq(
+        FunctionalErrorType04("1", Number12, "Codelist violation", None),
+        FunctionalErrorType04("2", Number14, "Rule violation", None)
+      )
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("12", "Codelist violation")))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(functionalErrors, lrnString, isAmendmentJourney = true).futureValue
 
+      "must return correct section length" in {
+        result.tableRows.length mustBe 2
+      }
       "must return correct title" in {
         result.title mustBe "Amend declaration errors"
       }
@@ -110,18 +116,5 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.hyperlink mustBe "Make another departure declaration"
       }
     }
-
-    "must render rows" in {
-      val errors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
-
-      val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = true).futureValue
-
-      result.tableRows.length mustBe 2
-      result.tableRows.head.size mustBe 2
-    }
-
   }
 }

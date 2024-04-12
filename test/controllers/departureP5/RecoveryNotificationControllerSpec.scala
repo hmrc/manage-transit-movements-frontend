@@ -17,6 +17,7 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated.CC035CType
 import generators.Generators
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
@@ -33,8 +34,6 @@ import viewModels.P5.departure.RecoveryNotificationViewModel.RecoveryNotificatio
 import viewModels.sections.Section
 import views.html.departureP5.RecoveryNotificationView
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -54,13 +53,6 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
       .overrides(bind[RecoveryNotificationViewModelProvider].toInstance(mockRecoveryNotificationViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
-  private val message: IE035Data = IE035Data(
-    IE035MessageData(
-      TransitOperationIE035(mrn, LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE)),
-      RecoveryNotification(LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE), "text", "1000", "EUR")
-    )
-  )
-
   private val sections                      = arbitrary[Seq[Section]].sample.value
   private val recoveryNotificationViewModel = new RecoveryNotificationViewModel(sections)
 
@@ -69,23 +61,24 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
   "RecoveryNotificationController Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      forAll(arbitrary[CC035CType]) {
+        message =>
+          when(mockDepartureP5MessageService.getMessage[CC035CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+          when(mockRecoveryNotificationViewModelProvider.apply(any())(any())).thenReturn(recoveryNotificationViewModel)
 
-      when(mockDepartureP5MessageService.getMessageWithMessageId[IE035Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-      when(mockRecoveryNotificationViewModelProvider.apply(any())(any())).thenReturn(recoveryNotificationViewModel)
+          val request = FakeRequest(GET, routes)
 
-      val request = FakeRequest(GET, routes)
+          val result = route(app, request).value
 
-      val result = route(app, request).value
+          status(result) mustEqual OK
 
-      status(result) mustEqual OK
+          val view = injector.instanceOf[RecoveryNotificationView]
 
-      val view = injector.instanceOf[RecoveryNotificationView]
-
-      contentAsString(result) mustEqual
-        view(recoveryNotificationViewModel, lrn)(request, messages).toString
+          contentAsString(result) mustEqual
+            view(recoveryNotificationViewModel, lrn)(request, messages).toString
+      }
     }
-
   }
 }

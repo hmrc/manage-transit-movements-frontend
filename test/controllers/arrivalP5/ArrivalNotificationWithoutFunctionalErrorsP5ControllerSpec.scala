@@ -17,12 +17,11 @@
 package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated.{CC057CType, FunctionalErrorType04}
 import generators.Generators
-import models.ArrivalRejectionType.ArrivalNotificationRejection
-import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
-import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -45,8 +44,6 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
   lazy val arrivalNotificationErrorController: String =
     controllers.arrivalP5.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
 
-  private val mrnString = "MRNAB123"
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalP5MessageService)
@@ -60,49 +57,43 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
   "ArrivalNotificationWithoutFunctionalErrorsP5" - {
 
     "must return OK and the correct view for a GET when no Errors" in {
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNAB123", ArrivalNotificationRejection),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq.empty
-        )
-      )
-      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(message))
+      forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = Nil))) {
+        message =>
+          when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(message))
 
-      val arrivalNotificationErrorP5ViewModel = new ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrnString)
+          val arrivalNotificationErrorP5ViewModel =
+            new ArrivalNotificationWithoutFunctionalErrorP5ViewModel(message.TransitOperation.MRN)
 
-      val request = FakeRequest(GET, arrivalNotificationErrorController)
+          val request = FakeRequest(GET, arrivalNotificationErrorController)
 
-      val result = route(app, request).value
+          val result = route(app, request).value
 
-      status(result) mustEqual OK
+          status(result) mustEqual OK
 
-      val view = injector.instanceOf[ArrivalNotificationWithoutFunctionalErrorsP5View]
+          val view = injector.instanceOf[ArrivalNotificationWithoutFunctionalErrorsP5View]
 
-      contentAsString(result) mustEqual
-        view(arrivalNotificationErrorP5ViewModel)(request, messages, frontendAppConfig).toString
+          contentAsString(result) mustEqual
+            view(arrivalNotificationErrorP5ViewModel)(request, messages, frontendAppConfig).toString
+      }
     }
 
     "must redirect to technical difficulties page when functionalErrors are defined" in {
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
 
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-        )
-      )
+              val request = FakeRequest(GET, arrivalNotificationErrorController)
 
-      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(message))
+              val result = route(app, request).value
 
-      val request = FakeRequest(GET, arrivalNotificationErrorController)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+          }
+      }
     }
   }
 }

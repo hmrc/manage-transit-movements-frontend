@@ -16,7 +16,8 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.IE060MessageData
+import generated.CC060CType
+import models.RichCC060Type
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.IntentionToControlP5MessageHelper
@@ -63,12 +64,12 @@ object IntentionToControlP5ViewModel {
   class IntentionToControlP5ViewModelProvider @Inject() () {
 
     def apply(
-      ie060MessageData: IE060MessageData
+      ie060: CC060CType
     )(implicit messages: Messages): IntentionToControlP5ViewModel = {
-      val helper = new IntentionToControlP5MessageHelper(ie060MessageData)
+      val helper = new IntentionToControlP5MessageHelper(ie060)
 
-      val requestedDocuments: Boolean = ie060MessageData.informationRequested
-      val lrn                         = ie060MessageData.TransitOperation.LRN
+      val requestedDocuments: Boolean = ie060.informationRequested
+      val lrn                         = ie060.TransitOperation.LRN
 
       val intentionToControlSection = helper.buildIntentionToControlSection()
 

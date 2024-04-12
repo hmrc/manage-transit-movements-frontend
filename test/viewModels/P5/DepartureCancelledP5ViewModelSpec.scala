@@ -17,19 +17,20 @@
 package viewModels.P5
 
 import base.SpecBase
+import generated.{CC009CType, CustomsOfficeOfDepartureType03}
 import generators.Generators
-import models.departureP5._
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
+import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import viewModels.P5.departure.DepartureCancelledP5ViewModel
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
 
-import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -47,29 +48,24 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
     val lrn                = "AB123"
     val customsReferenceId = "CD123"
 
-    val ie009Data: IE009Data = IE009Data(
-      IE009MessageData(
-        TransitOperationIE009(
-          Some("mrn123")
-        ),
-        Invalidation(
-          decisionDateAndTime = Some(LocalDateTime.now()),
-          decision = false,
-          initiatedByCustoms = true,
+    val x = arbitrary[CC009CType].sample.value
+
+    val message = x
+      .copy(TransitOperation = x.TransitOperation.copy(MRN = Some("mrn123")))
+      .copy(Invalidation =
+        x.Invalidation.copy(
+          requestDateAndTime = Some(XMLCalendar("2022-07-15")),
           justification = Some("some justification")
-        ),
-        CustomsOfficeOfDeparture(
-          s"$customsReferenceId"
         )
       )
-    )
+      .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03(customsReferenceId))
 
     val viewModelProvider = new DepartureCancelledP5ViewModelProvider(mockReferenceDataService)
 
     when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceId)))
 
     def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): DepartureCancelledP5ViewModel =
-      viewModelProvider.apply(ie009Data.data, lrn, customsOffice).futureValue
+      viewModelProvider.apply(message, lrn, customsOffice).futureValue
 
     "must return correct section" in {
       viewModel().sections.head.sectionTitle mustBe None

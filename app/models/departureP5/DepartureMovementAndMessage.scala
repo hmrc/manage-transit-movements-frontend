@@ -16,7 +16,7 @@
 
 package models.departureP5
 
-import models.{LocalReferenceNumber, RejectionType}
+import models.LocalReferenceNumber
 
 import java.time.LocalDateTime
 
@@ -32,7 +32,7 @@ case class RejectedMovementAndMessage(
   localReferenceNumber: LocalReferenceNumber,
   updated: LocalDateTime,
   message: LatestDepartureMessage,
-  rejectionType: RejectionType,
+  rejectionType: String,
   isDeclarationAmendable: Boolean,
   xPaths: Seq[String],
   doesCacheExistForLrn: Boolean

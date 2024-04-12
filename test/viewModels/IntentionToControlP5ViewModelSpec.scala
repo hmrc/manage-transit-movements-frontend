@@ -17,20 +17,18 @@
 package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated.{CC060CType, RequestedDocumentType, TypeOfControlsType}
 import generators.Generators
-import models.departureP5.IE060MessageType.{GoodsUnderControl, GoodsUnderControlRequestedDocuments, IntentionToControl}
-import models.departureP5._
 import models.referenceData.ControlType
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
 import viewModels.P5.departure.IntentionToControlP5ViewModel.IntentionToControlP5ViewModelProvider
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -46,31 +44,23 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
   "IntentionToControlP5ViewModel" - {
 
-    val typeOfControls    = Some(Seq(TypeOfControls("1", "44", None)))
+    val typeOfControls    = Seq(TypeOfControlsType("1", "44", None))
     val controlType44     = ControlType("44", "")
-    val requestedDocument = Some(Seq(RequestedDocument("1", "44", None)))
+    val requestedDocument = Seq(RequestedDocumentType("1", "44", None))
 
     "when no requested documents" - {
 
-      val message: IE060Data = IE060Data(
-        IE060MessageData(
-          TransitOperationIE060(
-            Some("MRN1"),
-            Some("LRN1"),
-            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-            GoodsUnderControl
-          ),
-          CustomsOfficeOfDeparture("22323323"),
-          typeOfControls,
-          None
-        )
-      )
+      val x = arbitrary[CC060CType].sample.value
+
+      val message = x
+        .copy(TypeOfControls = typeOfControls)
+        .copy(RequestedDocument = Nil)
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
       val viewModelProvider = new IntentionToControlP5ViewModelProvider
-      val result            = viewModelProvider.apply(message.data)
+      val result            = viewModelProvider.apply(message)
 
       "must return correct section length" in {
         result.sections.length mustBe 1
@@ -92,28 +82,24 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
     }
 
     "when there is information requested" - {
-      val message: IE060Data = IE060Data(
-        IE060MessageData(
-          TransitOperationIE060(
-            Some("MRN1"),
-            Some("LRN1"),
-            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-            IntentionToControl
-          ),
-          CustomsOfficeOfDeparture("22323323"),
-          typeOfControls,
-          requestedDocument
-        )
+      val x = arbitrary[CC060CType].sample.value
+
+      val message = x.copy(
+        TypeOfControls = typeOfControls,
+        RequestedDocument = requestedDocument
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
       val viewModelProvider = new IntentionToControlP5ViewModelProvider
-      val result            = viewModelProvider.apply(message.data)
+      val result            = viewModelProvider.apply(message)
 
       "must not render type of control if present" in {
         result.sections.length mustBe 2
+
+        result.sections(1).rows.size mustBe 2
+        result.sections(1).sectionTitle.value mustBe "Control information 1"
       }
 
       "must return correct title and heading" in {
@@ -124,87 +110,6 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
         result.paragraph1 mustBe messages("departure.ie060.message.requestedDocuments.prelodged.paragraph1")
         result.paragraph2 mustBe messages("departure.ie060.message.requestedDocuments.prelodged.paragraph2")
         result.paragraph3 mustBe messages("departure.ie060.message.requestedDocuments.prelodged.paragraph3")
-      }
-    }
-
-    "must render rows" in {
-
-      val message: IE060Data = IE060Data(
-        IE060MessageData(
-          TransitOperationIE060(
-            Some("MRN1"),
-            Some("LRN1"),
-            LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-            IntentionToControl
-          ),
-          CustomsOfficeOfDeparture("22323323"),
-          None,
-          None
-        )
-      )
-
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
-
-      val viewModelProvider = new IntentionToControlP5ViewModelProvider
-      val result            = viewModelProvider.apply(message.data)
-
-      result.sections.length mustBe 1
-      result.sections.head.rows.size mustBe 3
-    }
-
-    "document section" - {
-
-      "must not render document information section if documents not present" in {
-
-        val message: IE060Data = IE060Data(
-          IE060MessageData(
-            TransitOperationIE060(
-              Some("MRN1"),
-              Some("LRN1"),
-              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-              GoodsUnderControlRequestedDocuments
-            ),
-            CustomsOfficeOfDeparture("22323323"),
-            None,
-            None
-          )
-        )
-
-        when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
-
-        val viewModelProvider = new IntentionToControlP5ViewModelProvider
-        val result            = viewModelProvider.apply(message.data)
-
-        result.sections.length mustBe 1
-
-      }
-
-      "must render document section with 2 rows if documents are present" in {
-
-        val requestedDocument = Some(Seq(RequestedDocument("1", "44", None), RequestedDocument("2", "45", Some("Desc1"))))
-        val message: IE060Data = IE060Data(
-          IE060MessageData(
-            TransitOperationIE060(
-              Some("MRN1"),
-              Some("LRN1"),
-              LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-              GoodsUnderControlRequestedDocuments
-            ),
-            CustomsOfficeOfDeparture("22323323"),
-            None,
-            requestedDocument
-          )
-        )
-
-        val viewModelProvider = new IntentionToControlP5ViewModelProvider
-        val result            = viewModelProvider.apply(message.data)
-
-        result.sections.length mustBe 3
-        result.sections(1).rows.size mustBe 2
-        result.sections(2).rows.size mustBe 2
-
-        result.sections(1).sectionTitle.value mustBe "Control information 1"
-        result.sections(2).sectionTitle.value mustBe "Control information 2"
       }
     }
   }

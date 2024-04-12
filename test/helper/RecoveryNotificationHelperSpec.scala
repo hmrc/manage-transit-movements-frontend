@@ -17,132 +17,185 @@
 package helper
 
 import base.SpecBase
+import generated.CC035CType
 import generators.Generators
-import models.departureP5._
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scalaxb.XMLCalendar
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.RecoveryNotificationHelper
-import viewModels.sections.Section
-
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
+  private val amountClaimed: BigDecimal = 1000
+
   "RecoveryNotificationHelper" - {
-
-    val recoveryNotification: RecoveryNotification =
-      RecoveryNotification(LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE), "text", "1000", "EUR")
-
-    val message: IE035Data = IE035Data(
-      IE035MessageData(
-        TransitOperationIE035(mrn, LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE)),
-        recoveryNotification
-      )
-    )
 
     "buildMRNRow" - {
 
       "must return SummaryListRow" in {
+        forAll(Gen.alphaNumStr) {
+          mrn =>
+            forAll(arbitrary[CC035CType].map {
+              x =>
+                x.copy(TransitOperation = x.TransitOperation.copy(MRN = mrn))
+            }) {
+              message =>
+                val helper = new RecoveryNotificationHelper(message)
 
-        val helper = new RecoveryNotificationHelper(message.data)
+                val result = helper.buildMRNRow
 
-        val result = helper.buildMRNRow
-
-        result mustBe
-          Some(SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("ABCD1234567890123".toText)))
+                result mustBe
+                  Some(SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText)))
+            }
+        }
       }
     }
 
     "buildDeclarationAcceptanceDateRow" - {
 
       "must return SummaryListRow" in {
+        val declarationAcceptanceDate = XMLCalendar("2014-06-09T16:15:04")
 
-        val helper = new RecoveryNotificationHelper(message.data)
+        forAll(arbitrary[CC035CType].map {
+          x =>
+            x.copy(TransitOperation = x.TransitOperation.copy(declarationAcceptanceDate = declarationAcceptanceDate))
+        }) {
+          message =>
+            val helper = new RecoveryNotificationHelper(message)
 
-        val result = helper.buildDeclarationAcceptanceDateRow
+            val result = helper.buildDeclarationAcceptanceDateRow
 
-        result mustBe
-          Some(SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText)))
+            result mustBe
+              Some(SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText)))
+        }
       }
     }
 
     "buildRecoveryDateRow" - {
 
       "must return SummaryListRow" in {
+        val recoveryNotificationDate = XMLCalendar("2014-06-09T16:15:04")
 
-        val helper = new RecoveryNotificationHelper(message.data)
+        forAll(arbitrary[CC035CType].map {
+          x =>
+            x.copy(RecoveryNotification = x.RecoveryNotification.copy(recoveryNotificationDate = Some(recoveryNotificationDate)))
+        }) {
+          message =>
+            val helper = new RecoveryNotificationHelper(message)
 
-        val result = helper.buildRecoveryDateRow
+            val result = helper.buildRecoveryDateRow
 
-        result mustBe
-          Some(SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText)))
+            result mustBe
+              Some(SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText)))
+        }
       }
     }
 
     "buildFurtherInformationRow" - {
 
       "must return SummaryListRow" in {
+        forAll(Gen.alphaNumStr) {
+          recoveryNotificationText =>
+            forAll(arbitrary[CC035CType].map {
+              x =>
+                x.copy(RecoveryNotification = x.RecoveryNotification.copy(recoveryNotificationText = Some(recoveryNotificationText)))
+            }) {
+              message =>
+                val helper = new RecoveryNotificationHelper(message)
 
-        val helper = new RecoveryNotificationHelper(message.data)
+                val result = helper.buildFurtherInformationRow
 
-        val result = helper.buildFurtherInformationRow
-
-        result mustBe
-          Some(SummaryListRow(key = Key("Further information".toText), value = Value("text".toText)))
+                result mustBe
+                  Some(SummaryListRow(key = Key("Further information".toText), value = Value(recoveryNotificationText.toText)))
+            }
+        }
       }
     }
 
     "buildAmountRow" - {
-
       "when symbol can be found" - {
         "must return SummaryListRow" in {
+          forAll(arbitrary[CC035CType].map {
+            x =>
+              x.copy(RecoveryNotification =
+                x.RecoveryNotification.copy(
+                  amountClaimed = amountClaimed,
+                  currency = "EUR"
+                )
+              )
+          }) {
+            message =>
+              val helper = new RecoveryNotificationHelper(message)
 
-          val helper = new RecoveryNotificationHelper(message.data)
+              val result = helper.buildAmountRow
 
-          val result = helper.buildAmountRow
-
-          result mustBe
-            Some(SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText)))
+              result mustBe
+                Some(SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText)))
+          }
         }
       }
 
       "when symbol cannot be found" - {
         "must return SummaryListRow" in {
+          forAll(arbitrary[CC035CType].map {
+            x =>
+              x.copy(RecoveryNotification =
+                x.RecoveryNotification.copy(
+                  amountClaimed = amountClaimed,
+                  currency = "FOO"
+                )
+              )
+          }) {
+            message =>
+              val helper = new RecoveryNotificationHelper(message)
 
-          val helper =
-            new RecoveryNotificationHelper(message.data.copy(recoveryNotification = recoveryNotification.copy(currency = "FOO")))
+              val result = helper.buildAmountRow
 
-          val result = helper.buildAmountRow
-
-          result mustBe
-            Some(SummaryListRow(key = Key("Amount claimed".toText), value = Value("1000 FOO".toText)))
+              result mustBe
+                Some(SummaryListRow(key = Key("Amount claimed".toText), value = Value("1000 FOO".toText)))
+          }
         }
       }
-
     }
 
     "buildRecoveryNotificationSection" - {
 
       "must return a Section" in {
+        forAll(arbitrary[CC035CType].map {
+          x =>
+            x
+              .copy(TransitOperation =
+                x.TransitOperation.copy(
+                  MRN = mrn,
+                  declarationAcceptanceDate = XMLCalendar("2014-06-09T16:15:04")
+                )
+              )
+              .copy(RecoveryNotification =
+                x.RecoveryNotification.copy(
+                  recoveryNotificationDate = Some(XMLCalendar("2014-06-09T16:15:04")),
+                  recoveryNotificationText = Some("text"),
+                  amountClaimed = amountClaimed,
+                  currency = "EUR"
+                )
+              )
+        }) {
+          message =>
+            val helper = new RecoveryNotificationHelper(message)
 
-        val helper = new RecoveryNotificationHelper(message.data)
+            val result = helper.buildRecoveryNotificationSection
 
-        val result = helper.buildRecoveryNotificationSection
-        val firstRow =
-          Seq(
-            SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText)),
-            SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText)),
-            SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText)),
-            SummaryListRow(key = Key("Further information".toText), value = Value("text".toText)),
-            SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText))
-          )
+            result.sectionTitle must not be defined
 
-        result mustBe Section(None, firstRow, None)
-
+            result.rows.head mustBe SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText))
+            result.rows(1) mustBe SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText))
+            result.rows(2) mustBe SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText))
+            result.rows(3) mustBe SummaryListRow(key = Key("Further information".toText), value = Value("text".toText))
+            result.rows(4) mustBe SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText))
+        }
       }
     }
   }
-
 }

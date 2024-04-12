@@ -17,10 +17,11 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated._
 import generators.Generators
-import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
@@ -29,7 +30,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
 
-import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class IsDepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -46,73 +46,53 @@ class IsDepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultM
       .p5GuiceApplicationBuilder()
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
-  private val customsReferenceNumber = Gen.alphaNumStr.sample.value
-
   lazy val isDepartureCancelledRoute: String = routes.IsDepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, messageId).url
 
   "IsDepartureCancelledP5Controller" - {
 
     "must redirect to correct controller" - {
-      "when decision is true" in {
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              Some("abd123")
-            ),
-            Invalidation(
-              decisionDateAndTime = Some(LocalDateTime.now()),
-              decision = false,
-              initiatedByCustoms = true,
-              justification = Some("some justification")
-            ),
-            CustomsOfficeOfDeparture(
-              s"$customsReferenceNumber"
-            )
-          )
-        )
+      "when decision is false or undefined" in {
+        forAll(Gen.oneOf(None, Some(Number0))) {
+          decision =>
+            forAll(arbitrary[CC009CType].map {
+              x =>
+                x.copy(Invalidation = x.Invalidation.copy(decision = decision))
+            }) {
+              message =>
+                when(mockDepartureP5MessageService.getMessage[CC009CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+                when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
 
-        when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
+                val request = FakeRequest(GET, isDepartureCancelledRoute)
 
-        val request = FakeRequest(GET, isDepartureCancelledRoute)
+                val result = route(app, request).value
 
-        val result = route(app, request).value
+                status(result) mustEqual SEE_OTHER
 
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual
-          routes.DepartureNotCancelledP5Controller.onPageLoad(departureIdP5, messageId).url
+                redirectLocation(result).value mustEqual
+                  routes.DepartureNotCancelledP5Controller.onPageLoad(departureIdP5, messageId).url
+            }
+        }
       }
 
-      "when decision is false" in {
-        val message: IE009Data = IE009Data(
-          IE009MessageData(
-            TransitOperationIE009(
-              Some("abd123")
-            ),
-            Invalidation(
-              decisionDateAndTime = Some(LocalDateTime.now()),
-              decision = true,
-              initiatedByCustoms = true,
-              justification = Some("some justification")
-            ),
-            CustomsOfficeOfDeparture(
-              s"$customsReferenceNumber"
-            )
-          )
-        )
+      "when decision is true" in {
+        val decision = Some(Number1)
+        forAll(arbitrary[CC009CType].map {
+          x =>
+            x.copy(Invalidation = x.Invalidation.copy(decision = decision))
+        }) {
+          message =>
+            when(mockDepartureP5MessageService.getMessage[CC009CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+            when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
 
-        when(mockDepartureP5MessageService.getMessageWithMessageId[IE009Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-        when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
+            val request = FakeRequest(GET, isDepartureCancelledRoute)
 
-        val request = FakeRequest(GET, isDepartureCancelledRoute)
+            val result = route(app, request).value
 
-        val result = route(app, request).value
+            status(result) mustEqual SEE_OTHER
 
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual
-          routes.DepartureCancelledP5Controller.onPageLoad(departureIdP5, messageId).url
+            redirectLocation(result).value mustEqual
+              routes.DepartureCancelledP5Controller.onPageLoad(departureIdP5, messageId).url
+        }
       }
     }
   }

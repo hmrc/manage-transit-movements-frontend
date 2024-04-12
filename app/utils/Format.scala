@@ -16,8 +16,8 @@
 
 package utils
 
-import java.time.{LocalDate, LocalDateTime, LocalTime, OffsetDateTime}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalDateTime}
 
 object Format {
 
@@ -26,19 +26,10 @@ object Format {
   def dateFormatted(dateTime: LocalDateTime): String = dateTime.format(dateFormatter)
 
   val controlDecisionDateFormatter: DateTimeFormatter               = DateTimeFormatter.ofPattern("dd MMMM yyyy")
-  val controlDecisionDateTimeFormatter: DateTimeFormatter           = DateTimeFormatter.ofPattern("[dd MMMM yyyy] ['at' h:mm a]")
-  val recoveryNotificationFormatter: DateTimeFormatter              = DateTimeFormatter.ofPattern("[dd MMMM yyyy]")
-  val decisionDateTimeFormatter: DateTimeFormatter                  = DateTimeFormatter.ofPattern("[dd MMMM yyyy] ['at' h:mma]")
-  val guaranteeRejectedDateTimeFormatter: DateTimeFormatter         = DateTimeFormatter.ofPattern("dd/MM/yyyy")
   def controlDecisionDateFormatted(date: LocalDate): String         = date.format(controlDecisionDateFormatter)
   def controlDecisionDateFormatted(dateTime: LocalDateTime): String = dateTime.format(controlDecisionDateFormatter)
 
-  val timeFormatter: DateTimeFormatter               = DateTimeFormatter.ofPattern("HHmm")
-  def timeFormatted(dateTime: LocalDateTime): String = dateTime.format(timeFormatter)
-  def timeFormatted(time: LocalTime): String         = time.format(timeFormatter)
-
-  def dateFormattedForHeader(dateTime: OffsetDateTime): String =
-    dateTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
+  val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HHmm")
 
   val dateDisplayFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 }

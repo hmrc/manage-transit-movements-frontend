@@ -17,8 +17,8 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated.{CC060CType, RequestedDocumentType}
 import generators.Generators
-import models.departureP5.IE060MessageType.GoodsUnderControl
 import models.departureP5._
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
@@ -34,8 +34,6 @@ import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5V
 import viewModels.P5.departure.{CustomsOfficeContactViewModel, GoodsUnderControlP5ViewModel}
 import views.html.departureP5.GoodsUnderControlP5View
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -62,83 +60,67 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
   private val customsOffice = arbitrary[CustomsOffice].sample.value
 
-  "UnloadingFindingsController Controller" - {
+  "GoodsUnderControlP5 Controller" - {
 
     "must return OK and the correct view for a GET when requestedDocuments" in {
-      val goodsUnderControlRequestedDocumentsController: String =
-        controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5, messageId).url
+      forAll(listWithMaxLength[RequestedDocumentType]()) {
+        requestedDocuments =>
+          forAll(arbitrary[CC060CType].map(_.copy(RequestedDocument = requestedDocuments))) {
+            message =>
+              val goodsUnderControlRequestedDocumentsController: String =
+                controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureIdP5, messageId).url
 
-      val message: IE060Data = IE060Data(
-        IE060MessageData(
-          TransitOperationIE060(Some("CD3232"),
-                                Some("AB123"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControl
-          ),
-          CustomsOfficeOfDeparture("22323323"),
-          Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
-          Some(Seq(RequestedDocument("3", "doc1", Some("desc1")), RequestedDocument("4", "doc2", None)))
-        )
-      )
-      when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
-      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
-        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
+              when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
+              when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
+                .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
 
-      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
-      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
+              val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
+              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
 
-      val request = FakeRequest(GET, goodsUnderControlRequestedDocumentsController)
+              val request = FakeRequest(GET, goodsUnderControlRequestedDocumentsController)
 
-      val result = route(app, request).value
+              val result = route(app, request).value
 
-      status(result) mustEqual OK
+              status(result) mustEqual OK
 
-      val view = injector.instanceOf[GoodsUnderControlP5View]
+              val view = injector.instanceOf[GoodsUnderControlP5View]
 
-      contentAsString(result) mustEqual
-        view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+              contentAsString(result) mustEqual
+                view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+          }
+      }
     }
 
     "must return OK and the correct view for a GET when noRequestedDocuments" in {
+      forAll(arbitrary[CC060CType].map(_.copy(RequestedDocument = Nil))) {
+        message =>
+          val goodsUnderControlNoRequestedDocumentsController: String =
+            controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureIdP5, messageId).url
 
-      val goodsUnderControlNoRequestedDocumentsController: String =
-        controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureIdP5, messageId).url
+          when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
+          when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
+            .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
 
-      val message: IE060Data = IE060Data(
-        IE060MessageData(
-          TransitOperationIE060(Some("CD3232"),
-                                Some("AB123"),
-                                LocalDateTime.parse("2014-06-09T16:15:04+01:00", DateTimeFormatter.ISO_DATE_TIME),
-                                GoodsUnderControl
-          ),
-          CustomsOfficeOfDeparture("22323323"),
-          Some(Seq(TypeOfControls("1", "type1", Some("text1")), TypeOfControls("2", "type2", None))),
-          None
-        )
-      )
-      when(mockDepartureP5MessageService.getMessageWithMessageId[IE060Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-        .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
-      when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
-        .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
+          val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
+          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
 
-      val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
-      val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
+          val request = FakeRequest(GET, goodsUnderControlNoRequestedDocumentsController)
 
-      val request = FakeRequest(GET, goodsUnderControlNoRequestedDocumentsController)
+          val result = route(app, request).value
 
-      val result = route(app, request).value
+          status(result) mustEqual OK
 
-      status(result) mustEqual OK
+          val view = injector.instanceOf[GoodsUnderControlP5View]
 
-      val view = injector.instanceOf[GoodsUnderControlP5View]
-
-      contentAsString(result) mustEqual
-        view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+          contentAsString(result) mustEqual
+            view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+      }
     }
   }
 }

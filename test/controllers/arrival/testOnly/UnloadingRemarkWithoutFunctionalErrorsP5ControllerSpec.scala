@@ -17,12 +17,11 @@
 package controllers.arrival.testOnly
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated._
 import generators.Generators
-import models.ArrivalRejectionType.ArrivalNotificationRejection
-import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
-import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -42,8 +41,6 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
   lazy val unloadingRemarkWithErrorsController: String =
     controllers.arrivalP5.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
 
-  private val mrnString = "MRNAB123"
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalP5MessageService)
@@ -59,56 +56,49 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
   "UnloadingRemarkWithoutFunctionalErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET when no Errors" in {
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057(s"$mrnString", ArrivalNotificationRejection),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq.empty
-        )
-      )
+      forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = Nil))) {
+        message =>
+          when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(message))
 
-      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(message))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+            .thenReturn(Future.successful(Right(fakeCustomsOffice)))
 
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-        .thenReturn(Future.successful(Right(fakeCustomsOffice)))
+          val unloadingNotificationErrorsP5ViewModel =
+            new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(message.TransitOperation.MRN, Right(fakeCustomsOffice))
 
-      val unloadingNotificationErrorsP5ViewModel = new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrnString, Right(fakeCustomsOffice))
+          val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
 
-      val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
+          val result = route(app, request).value
 
-      val result = route(app, request).value
+          status(result) mustEqual OK
 
-      status(result) mustEqual OK
+          val view = injector.instanceOf[UnloadingRemarkWithoutFunctionalErrorsP5View]
 
-      val view = injector.instanceOf[UnloadingRemarkWithoutFunctionalErrorsP5View]
-
-      contentAsString(result) mustEqual
-        view(unloadingNotificationErrorsP5ViewModel)(request, messages).toString
+          contentAsString(result) mustEqual
+            view(unloadingNotificationErrorsP5ViewModel)(request, messages).toString
+      }
     }
 
     "must redirect to technical difficulties page when functionalErrors is greater than 0" in {
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057(s"$mrnString", ArrivalNotificationRejection),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-        )
-      )
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
 
-      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(message))
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+                .thenReturn(Future.successful(Right(fakeCustomsOffice)))
 
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-        .thenReturn(Future.successful(Right(fakeCustomsOffice)))
+              val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
 
-      val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
+              val result = route(app, request).value
 
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
-
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+          }
+      }
     }
   }
 }

@@ -17,7 +17,7 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.departureP5.IE009MessageData
+import generated.CC009CType
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -52,11 +52,11 @@ object DepartureNotCancelledP5ViewModel {
   class DepartureNotCancelledP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
-      ie009MessageData: IE009MessageData,
+      ie009: CC009CType,
       departureId: String,
       lrn: String
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureNotCancelledP5ViewModel] = {
-      val helper = new DepartureCancelledP5Helper(ie009MessageData, referenceDataService)
+      val helper = new DepartureCancelledP5Helper(ie009, referenceDataService)
 
       helper.buildInvalidationSection.map {
         section =>

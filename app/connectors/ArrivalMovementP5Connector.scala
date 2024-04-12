@@ -17,16 +17,17 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.CustomHttpReads.rawHttpResponseHttpReads
 import models.Availability
 import models.arrivalP5.{ArrivalMovements, LatestArrivalMessage}
 import play.api.http.Status.{NOT_FOUND, OK}
-import play.api.libs.json.Reads
+import scalaxb.XMLFormat
+import scalaxb.`package`.fromXML
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.XML
 
 class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends MovementP5Connector {
 
@@ -57,6 +58,8 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
   }
 
   private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] = {
+    import connectors.CustomHttpReads.rawHttpResponseHttpReads
+
     val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals"
     http
       .GET[HttpResponse](url, queryParams)(rawHttpResponseHttpReads, headers, ec)
@@ -80,14 +83,17 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
     http.GET[LatestArrivalMessage](url)(HttpReads[LatestArrivalMessage], headers, ec)
   }
 
-  def getMessageForMessageId[MessageModel](arrivalId: String, messageId: String)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier,
-    reads: Reads[MessageModel]
-  ): Future[MessageModel] = {
-    val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId"
+  def getMessage[T](
+    arrivalId: String,
+    messageId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, format: XMLFormat[T]): Future[T] = {
+    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+xml"))
+    val url     = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId/body"
     http
-      .GET[MessageModel](url)(messageModelHttpReads, headers, ec)
+      .GET[HttpResponse](url)(implicitly, headers, ec)
+      .map(_.body)
+      .map(XML.loadString)
+      .map(fromXML(_))
   }
 
 }

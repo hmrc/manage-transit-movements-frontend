@@ -18,15 +18,14 @@ package services
 
 import base.SpecBase
 import connectors.ArrivalMovementP5Connector
+import generated._
 import generators.Generators
-import models.ArrivalRejectionType
-import models.ArrivalRejectionType.UnloadingRemarkRejection
 import models.arrivalP5.ArrivalMessageType.RejectionFromOfficeOfDestination
 import models.arrivalP5._
-import models.departureP5.FunctionalError
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -49,8 +48,9 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
 
       "must return RejectedMovementAndMessage when RejectedByOfficeOfDestination" in {
 
-        val dateTimeNow   = LocalDateTime.now(clock)
-        val rejectionType = arbitrary[ArrivalRejectionType].sample.value
+        val dateTimeNow = LocalDateTime.now(clock)
+
+        val rejectionType = Gen.alphaNumStr.sample.value
 
         val latestArrivalMessage: LatestArrivalMessage = LatestArrivalMessage(
           ArrivalMessage(
@@ -73,15 +73,18 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
           totalCount = 1
         )
 
-        val ie057Data: IE057Data = IE057Data(
-          IE057MessageData(
-            TransitOperationIE057(mrn, rejectionType),
-            CustomsOfficeOfDestinationActual("1234"),
-            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-          )
+        val functionalErrors = Seq(
+          FunctionalErrorType04("1", Number12, "Codelist violation", None),
+          FunctionalErrorType04("2", Number14, "Rule violation", None)
         )
 
-        when(mockConnector.getMessageForMessageId[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
+        val x = arbitrary[CC057CType].sample.value
+
+        val ie057 = x
+          .copy(TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType))
+          .copy(FunctionalError = functionalErrors)
+
+        when(mockConnector.getMessage[CC057CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie057))
         when(mockConnector.getLatestMessageForMovement(any())(any())).thenReturn(Future.successful(latestArrivalMessage))
 
         val result: Seq[ArrivalMovementAndMessage] = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
@@ -101,28 +104,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
         )
 
         result mustBe expectedResult
-
       }
     }
-
-    "getMessageWithMessageId" - {
-
-      "must return an IE057Data when given Arrival Id and Message id" in {
-
-        val ie057Data: IE057Data = IE057Data(
-          IE057MessageData(
-            TransitOperationIE057("CD3232", UnloadingRemarkRejection),
-            CustomsOfficeOfDestinationActual("1234"),
-            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-          )
-        )
-
-        when(mockConnector.getMessageForMessageId[IE057Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie057Data))
-
-        arrivalP5MessageService.getMessageWithMessageId[IE057Data](arrivalId = "6365135ba5e821ee", "634982098f02f00b").futureValue mustBe ie057Data
-      }
-    }
-
   }
-
 }

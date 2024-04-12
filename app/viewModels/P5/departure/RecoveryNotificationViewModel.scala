@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.IE035MessageData
+import generated.CC035CType
 import play.api.i18n.Messages
 import utils.RecoveryNotificationHelper
 import viewModels.sections.Section
@@ -36,18 +36,18 @@ case class RecoveryNotificationViewModel(sections: Seq[Section]) {
 object RecoveryNotificationViewModel {
 
   def apply(
-    IE035MessageData: IE035MessageData
+    ie035: CC035CType
   )(implicit
     messages: Messages
   ): RecoveryNotificationViewModel =
-    new RecoveryNotificationViewModelProvider().apply(IE035MessageData)
+    new RecoveryNotificationViewModelProvider().apply(ie035)
 
   class RecoveryNotificationViewModelProvider @Inject() () {
 
     def apply(
-      IE035MessageData: IE035MessageData
+      ie035: CC035CType
     )(implicit messages: Messages): RecoveryNotificationViewModel = {
-      val helper = new RecoveryNotificationHelper(IE035MessageData)
+      val helper = new RecoveryNotificationHelper(ie035)
 
       new RecoveryNotificationViewModel(Seq(helper.buildRecoveryNotificationSection))
 

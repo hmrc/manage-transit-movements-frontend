@@ -17,8 +17,6 @@
 package viewModels.P5.arrival
 
 import config.FrontendAppConfig
-import models.ArrivalRejectionType
-import models.ArrivalRejectionType.{ArrivalNotificationRejection, UnloadingRemarkRejection}
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
 import viewModels.ViewMovementAction
@@ -50,7 +48,7 @@ object ArrivalStatusP5ViewModel {
   private def rejectedStatus(
     arrivalId: String,
     functionalErrorCount: Int,
-    rejectionType: ArrivalRejectionType
+    rejectionType: String
   ): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
     Seq(
       rejectionFromOfficeOfDestinationArrival(arrivalId, functionalErrorCount, rejectionType),
@@ -99,9 +97,9 @@ object ArrivalStatusP5ViewModel {
   private def rejectionFromOfficeOfDestinationUnloading(
     arrivalId: String,
     functionalErrorCount: Int,
-    rejectionType: ArrivalRejectionType
+    rejectionType: String
   ): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
-    case message if message.messageType == RejectionFromOfficeOfDestination && rejectionType == UnloadingRemarkRejection =>
+    case message if message.messageType == RejectionFromOfficeOfDestination && rejectionType == "044" =>
       val href = functionalErrorCount match {
         case 0 =>
           controllers.arrivalP5.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId, message.messageId)
@@ -119,9 +117,9 @@ object ArrivalStatusP5ViewModel {
   private def rejectionFromOfficeOfDestinationArrival(
     arrivalId: String,
     functionalErrorCount: Int,
-    rejectionType: ArrivalRejectionType
+    rejectionType: String
   ): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
-    case message if message.messageType == RejectionFromOfficeOfDestination && rejectionType == ArrivalNotificationRejection =>
+    case message if message.messageType == RejectionFromOfficeOfDestination && rejectionType == "007" =>
       val href = functionalErrorCount match {
         case 0 =>
           controllers.arrivalP5.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId, message.messageId)

@@ -17,24 +17,24 @@
 package utils
 
 import cats.data.OptionT
-import models.departureP5.{IE060MessageData, RequestedDocument, TypeOfControls}
+import generated.{CC060CType, RequestedDocumentType, TypeOfControlsType}
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 
-import java.time.LocalDateTime
+import javax.xml.datatype.XMLGregorianCalendar
 import scala.concurrent.{ExecutionContext, Future}
 
-class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, referenceDataService: ReferenceDataService)(implicit
+class GoodsUnderControlP5MessageHelper(ie060: CC060CType, referenceDataService: ReferenceDataService)(implicit
   messages: Messages,
   hc: HeaderCarrier,
   ec: ExecutionContext
 ) extends DeparturesP5MessageHelper {
 
   def buildLRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = ie060MessageData.TransitOperation.LRN,
+    answer = ie060.TransitOperation.LRN,
     formatAnswer = formatAsText,
     prefix = messages("row.label.localReferenceNumber"),
     id = None,
@@ -42,16 +42,16 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
   )
 
   def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = ie060MessageData.TransitOperation.MRN,
+    answer = ie060.TransitOperation.MRN,
     formatAnswer = formatAsText,
     prefix = messages("row.label.movementReferenceNumber"),
     id = None,
     call = None
   )
 
-  def buildDateTimeControlRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDateTime](
-    answer = Some(ie060MessageData.TransitOperation.controlNotificationDateAndTime),
-    formatAnswer = formatAsDate,
+  def buildDateTimeControlRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
+    answer = Some(ie060.TransitOperation.controlNotificationDateAndTime),
+    formatAnswer = formatAsDateAndTime,
     prefix = messages("row.label.dateAndTimeOfControl"),
     id = None,
     call = None
@@ -62,7 +62,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     case Left(id)             => id
   }
 
-  def buildOfficeOfDepartureRow: Future[Option[SummaryListRow]] = getCustomsOfficeForDisplay(ie060MessageData.CustomsOfficeOfDeparture.referenceNumber).map {
+  def buildOfficeOfDepartureRow: Future[Option[SummaryListRow]] = getCustomsOfficeForDisplay(ie060.CustomsOfficeOfDeparture.referenceNumber).map {
     customsOffice =>
       buildRowFromAnswer[String](
         answer = Some(customsOffice),
@@ -115,8 +115,8 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     call = None
   )
 
-  private def buildTypeOfControlSection(typeOfControl: TypeOfControls): Future[Section] =
-    buildControlTypeRow(typeOfControl.`type`).map {
+  private def buildTypeOfControlSection(typeOfControl: TypeOfControlsType): Future[Section] =
+    buildControlTypeRow(typeOfControl.typeValue).map {
       x =>
         val controlType: Seq[SummaryListRow]        = extractOptionalRow(x)
         val controlDescription: Seq[SummaryListRow] = extractOptionalRow(buildControlDescriptionRow(typeOfControl.text))
@@ -124,7 +124,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
         Section(messages("heading.label.controlInformation", typeOfControl.sequenceNumber), rows, None)
     }
 
-  private def buildDocumentSection(document: RequestedDocument): Section = {
+  private def buildDocumentSection(document: RequestedDocumentType): Section = {
 
     val documentType: Seq[SummaryListRow]        = extractOptionalRow(buildDocumentTypeRow(document.documentType))
     val documentDescription: Seq[SummaryListRow] = extractOptionalRow(buildDocumentDescriptionRow(document.description))
@@ -132,10 +132,7 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
     Section(messages("heading.label.documentInformation", document.sequenceNumber), rows, None)
   }
 
-  def documentSection(): Seq[Section] = ie060MessageData.requestedDocumentsToSeq.map {
-    document =>
-      buildDocumentSection(document)
-  }
+  def documentSection(): Seq[Section] = ie060.RequestedDocument.map(buildDocumentSection)
 
   def buildGoodsUnderControlSection(): Future[Section] =
     buildOfficeOfDepartureRow.map {
@@ -149,12 +146,6 @@ class GoodsUnderControlP5MessageHelper(ie060MessageData: IE060MessageData, refer
         Section(None, rows, None)
     }
 
-  def controlInformationSection(): Future[Seq[Section]] = {
-
-    val controlInformation: Seq[TypeOfControls] = ie060MessageData.typeOfControlsToSeq
-    Future.sequence(controlInformation.map {
-      typeOfControl =>
-        buildTypeOfControlSection(typeOfControl)
-    })
-  }
+  def controlInformationSection(): Future[Seq[Section]] =
+    Future.sequence(ie060.TypeOfControls.map(buildTypeOfControlSection))
 }

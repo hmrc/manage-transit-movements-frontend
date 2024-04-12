@@ -17,12 +17,11 @@
 package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated.{CC057CType, FunctionalErrorType04}
 import generators.Generators
-import models.ArrivalRejectionType.ArrivalNotificationRejection
-import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
-import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -62,60 +61,54 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
   "UnloadingRemarkWithFunctionalErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET when functional errors are defined" in {
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-        )
-      )
-      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(message))
-      when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
+              when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
-      val paginationViewModel = ListPaginationViewModel(
-        totalNumberOfItems = message.data.functionalErrors.length,
-        currentPage = 1,
-        numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-        href = controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url,
-        additionalParams = Seq()
-      )
+              val paginationViewModel = ListPaginationViewModel(
+                totalNumberOfItems = message.FunctionalError.length,
+                currentPage = 1,
+                numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+                href = controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url,
+                additionalParams = Seq()
+              )
 
-      val rejectionMessageP5ViewModel = new UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, true)
+              val rejectionMessageP5ViewModel = new UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, true)
 
-      val request = FakeRequest(GET, controller)
+              val request = FakeRequest(GET, controller)
 
-      val result = route(app, request).value
+              val result = route(app, request).value
 
-      status(result) mustEqual OK
+              status(result) mustEqual OK
 
-      val view = injector.instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
+              val view = injector.instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
 
-      contentAsString(result) mustEqual
-        view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
+              contentAsString(result) mustEqual
+                view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
+          }
+      }
     }
 
     "must redirect to technical difficulties page when functionalErrors is 0" in {
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq.empty
-        )
-      )
-      when(mockArrivalP5MessageService.getMessageWithMessageId[IE057Data](any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(message))
-      when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
+      forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = Nil))) {
+        message =>
+          when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(message))
+          when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
-      val request = FakeRequest(GET, controller)
+          val request = FakeRequest(GET, controller)
 
-      val result = route(app, request).value
+          val result = route(app, request).value
 
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
-
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+      }
     }
   }
 }

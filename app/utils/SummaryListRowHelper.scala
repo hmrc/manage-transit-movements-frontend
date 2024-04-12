@@ -16,15 +16,18 @@
 
 package utils
 
+import generated.RecoveryNotificationType
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.Format.{controlDecisionDateTimeFormatter, decisionDateTimeFormatter, recoveryNotificationFormatter}
 
-import java.time.{LocalDate, LocalDateTime}
+import java.text.SimpleDateFormat
+import java.util.Currency
+import javax.xml.datatype.XMLGregorianCalendar
+import scala.util.{Success, Try}
 
 class SummaryListRowHelper(implicit messages: Messages) {
 
@@ -41,30 +44,34 @@ class SummaryListRowHelper(implicit messages: Messages) {
 
   protected def formatAsText[T](answer: T): Content = s"$answer".toText
 
-  def formatAsDate(answer: LocalDateTime): Content =
-    answer
-      .format(controlDecisionDateTimeFormatter)
+  def formatAsDate(answer: XMLGregorianCalendar): Content = {
+    val date      = answer.toGregorianCalendar.getTime
+    val formatter = new SimpleDateFormat("dd MMMM yyyy")
+    formatter
+      .format(date)
+      .toText
+  }
+
+  def formatAsDateAndTime(answer: XMLGregorianCalendar): Content = {
+    val date      = answer.toGregorianCalendar.getTime
+    val formatter = new SimpleDateFormat("dd MMMM yyyy 'at' h:mma")
+    formatter
+      .format(date)
       .replace("PM", "pm")
       .replace("AM", "am")
       .toText
+  }
 
-  def formatAsDate(answer: LocalDate): Content =
-    answer
-      .format(recoveryNotificationFormatter)
-      .toText
-
-  def formatAsDecisionDateTime(answer: LocalDateTime): Content =
-    answer
-      .format(decisionDateTimeFormatter)
-      .replace("PM", "pm")
-      .replace("AM", "am")
-      .toText
-
-  protected def formatEnumAsText[T](messageKeyPrefix: String)(answer: T): Content =
-    formatEnumAsString(messageKeyPrefix)(answer).toText
-
-  protected def formatEnumAsString[T](messageKeyPrefix: String)(answer: T): String =
-    messages(s"$messageKeyPrefix.$answer")
+  def formatAsCurrency(recoveryNotification: RecoveryNotificationType): Content = {
+    val value = recoveryNotification match {
+      case RecoveryNotificationType(_, _, amountClaimed, currency) =>
+        Try(Currency.getInstance(currency).getSymbol) match {
+          case Success(currency) => s"$currency$amountClaimed"
+          case _                 => s"$amountClaimed $currency"
+        }
+    }
+    value.toText
+  }
 
   def buildRow(
     prefix: String,

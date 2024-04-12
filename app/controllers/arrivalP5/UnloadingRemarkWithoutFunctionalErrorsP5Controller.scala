@@ -17,7 +17,7 @@
 package controllers.arrivalP5
 
 import controllers.actions._
-import models.arrivalP5.IE057Data
+import generated.CC057CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
@@ -41,10 +41,10 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(arrivalId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE057Data](arrivalId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)).async {
       implicit request =>
-        val functionalErrors       = request.messageData.data.functionalErrors
-        val customsOfficeReference = request.messageData.data.customsOfficeOfDestinationActual.referenceNumber
+        val functionalErrors       = request.messageData.FunctionalError
+        val customsOfficeReference = request.messageData.CustomsOfficeOfDestinationActual.referenceNumber
 
         if (functionalErrors.isEmpty) {
           referenceDataService.getCustomsOffice(customsOfficeReference).map {
@@ -52,7 +52,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
               Ok(
                 view(
                   viewModelProvider.apply(
-                    request.messageData.data.transitOperation.MRN,
+                    request.messageData.TransitOperation.MRN,
                     customsOffice
                   )
                 )

@@ -17,7 +17,7 @@
 package controllers.departureP5
 
 import controllers.actions._
-import models.departureP5.IE035Data
+import generated.CC035CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,8 +39,8 @@ class RecoveryNotificationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE035Data](departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC035CType](departureId, messageId)) {
       implicit request =>
-        Ok(view(viewModelProvider.apply(request.messageData.data), request.referenceNumbers.localReferenceNumber))
+        Ok(view(viewModelProvider.apply(request.messageData), request.referenceNumbers.localReferenceNumber))
     }
 }

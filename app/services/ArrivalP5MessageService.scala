@@ -18,9 +18,10 @@ package services
 
 import cats.implicits._
 import connectors.ArrivalMovementP5Connector
+import generated.{CC025CType, CC057CType}
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
-import play.api.libs.json.Reads
+import scalaxb.XMLFormat
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -37,19 +38,19 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
           message =>
             message.latestMessage.messageType match {
               case GoodsReleasedNotification =>
-                arrivalMovementP5Connector.getMessageForMessageId[IE025Data](movement.arrivalId, message.latestMessage.messageId).map {
+                getMessage[CC025CType](movement.arrivalId, message.latestMessage.messageId).map {
                   ie025Data =>
                     GoodsReleasedMovementAndMessage(
                       movement,
                       message,
-                      ie025Data.data.transitOperation.releaseIndicator
+                      ie025Data.TransitOperation.releaseIndicator
                     )
                 }
               case RejectionFromOfficeOfDestination =>
-                arrivalMovementP5Connector.getMessageForMessageId[IE057Data](movement.arrivalId, message.latestMessage.messageId).map {
+                getMessage[CC057CType](movement.arrivalId, message.latestMessage.messageId).map {
                   ie057Data =>
-                    val functionalErrorCount  = ie057Data.data.functionalErrors.length
-                    val businessRejectionType = ie057Data.data.transitOperation.businessRejectionType
+                    val functionalErrorCount  = ie057Data.FunctionalError.length
+                    val businessRejectionType = ie057Data.TransitOperation.businessRejectionType
 
                     RejectedMovementAndMessage(movement, message, functionalErrorCount, businessRejectionType)
                 }
@@ -59,11 +60,9 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
         }
     }
 
-  def getMessageWithMessageId[MessageModel](
+  def getMessage[T](
     arrivalId: String,
     messageId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: Reads[MessageModel]): Future[MessageModel] =
-    arrivalMovementP5Connector
-      .getMessageForMessageId(arrivalId, messageId)
-
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext, format: XMLFormat[T]): Future[T] =
+    arrivalMovementP5Connector.getMessage(arrivalId, messageId)
 }

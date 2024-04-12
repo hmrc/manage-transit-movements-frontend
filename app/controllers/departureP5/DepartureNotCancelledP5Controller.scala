@@ -18,8 +18,8 @@ package controllers.departureP5
 
 import config.FrontendAppConfig
 import controllers.actions._
+import generated.CC009CType
 import models.LocalReferenceNumber
-import models.departureP5.{IE009Data, IE009MessageData}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -41,17 +41,17 @@ class DepartureNotCancelledP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC009CType](departureId, messageId)).async {
       implicit request =>
-        buildView(request.messageData.data, departureId, request.referenceNumbers.localReferenceNumber)
+        buildView(request.messageData, departureId, request.referenceNumbers.localReferenceNumber)
     }
 
   private def buildView(
-    IE009MessageData: IE009MessageData,
+    ie009: CC009CType,
     departureId: String,
     lrn: LocalReferenceNumber
   )(implicit request: Request[_]): Future[Result] =
-    viewModelProvider.apply(IE009MessageData, departureId, lrn.value).map {
+    viewModelProvider.apply(ie009, departureId, lrn.value).map {
       viewModel => Ok(view(viewModel))
     }
 }

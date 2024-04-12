@@ -16,8 +16,8 @@
 
 package viewModels.P5.departure
 
-import models.departureP5.IE060MessageType.GoodsUnderControlRequestedDocuments
-import models.departureP5.{IE060MessageData, IE060MessageType}
+import generated.CC060CType
+import models.RichCC060Type
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import services.ReferenceDataService
@@ -73,24 +73,20 @@ object GoodsUnderControlP5ViewModel {
   class GoodsUnderControlP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
-      ie060MessageData: IE060MessageData
+      ie060: CC060CType
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[GoodsUnderControlP5ViewModel] = {
-      val helper = new GoodsUnderControlP5MessageHelper(ie060MessageData, referenceDataService)
-
-      val notificationType: IE060MessageType = ie060MessageData.TransitOperation.notificationType
-      val requestedDocuments: Boolean        = ie060MessageData.informationRequested
-      val lrn                                = ie060MessageData.TransitOperation.LRN
+      val helper = new GoodsUnderControlP5MessageHelper(ie060, referenceDataService)
 
       helper.buildGoodsUnderControlSection().flatMap {
         goodsUnderControlSection =>
           helper.controlInformationSection().map {
             controlInfoSections =>
-              val sections = notificationType match {
-                case GoodsUnderControlRequestedDocuments => Seq(goodsUnderControlSection) ++ helper.documentSection()
-                case _                                   => Seq(goodsUnderControlSection) ++ controlInfoSections ++ helper.documentSection()
+              val sections = ie060.TransitOperation.notificationType match {
+                case "1" => Seq(goodsUnderControlSection) ++ helper.documentSection()
+                case _   => Seq(goodsUnderControlSection) ++ controlInfoSections ++ helper.documentSection()
               }
 
-              new GoodsUnderControlP5ViewModel(sections, requestedDocuments, lrn)
+              new GoodsUnderControlP5ViewModel(sections, ie060.informationRequested, ie060.TransitOperation.LRN)
           }
       }
     }

@@ -17,10 +17,8 @@
 package viewModels.P5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated._
 import generators.Generators
-import models.ArrivalRejectionType.ArrivalNotificationRejection
-import models.arrivalP5.{CustomsOfficeOfDestinationActual, IE057Data, IE057MessageData, TransitOperationIE057}
-import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -47,27 +45,20 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
 
   "ArrivalNotificationWithFunctionalErrorsP5ViewModel" - {
 
-    val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "Codelist violation"), FunctionalErrorWithDesc("14", "Rule violation"))
-
     "when there is one error" - {
-
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq(FunctionalError("14", "12", "MRN incorrect", None))
-        )
+      val functionalErrors = Seq(
+        FunctionalErrorType04("1", Number12, "Codelist violation", None)
       )
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("12", "Desc")))
 
       val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, mrnString).futureValue
 
       "must return correct section length" in {
         result.tableRows.length mustBe 1
       }
-
       "must return correct title" in {
         result.title mustBe "Review notification errors"
       }
@@ -91,21 +82,21 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
     }
 
     "when there is multiple errors" - {
-      val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
-          CustomsOfficeOfDestinationActual("1234"),
-          functionalErrors
-        )
+      val functionalErrors = Seq(
+        FunctionalErrorType04("1", Number12, "Codelist violation", None),
+        FunctionalErrorType04("2", Number14, "Rule violation", None)
       )
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("12", "Desc1")))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Desc2")))
 
       val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, mrnString).futureValue
 
+      "must return correct section length" in {
+        result.tableRows.length mustBe 2
+      }
       "must return correct title" in {
         result.title mustBe "Review notification errors"
       }
@@ -127,25 +118,5 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
         result.hyperlink mustBe "Make another arrival notification"
       }
     }
-
-    "must render rows" in {
-
-      val message: IE057Data = IE057Data(
-        IE057MessageData(
-          TransitOperationIE057("MRNCD3232", ArrivalNotificationRejection),
-          CustomsOfficeOfDestinationActual("1234"),
-          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-        )
-      )
-
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
-
-      val viewModelProvider = new ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message.data.functionalErrors, mrnString).futureValue
-
-      result.tableRows.length mustBe 2
-      result.tableRows.head.size mustBe 2
-    }
-
   }
 }

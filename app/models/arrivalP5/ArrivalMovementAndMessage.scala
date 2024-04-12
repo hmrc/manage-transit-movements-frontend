@@ -16,8 +16,6 @@
 
 package models.arrivalP5
 
-import models.ArrivalRejectionType
-
 sealed trait ArrivalMovementAndMessage {
   val arrivalMovement: ArrivalMovement
   val latestArrivalMessage: LatestArrivalMessage
@@ -27,7 +25,7 @@ case class RejectedMovementAndMessage(
   arrivalMovement: ArrivalMovement,
   latestArrivalMessage: LatestArrivalMessage,
   functionalErrorCount: Int,
-  rejectedType: ArrivalRejectionType
+  rejectedType: String
 ) extends ArrivalMovementAndMessage
 
 case class OtherMovementAndMessage(

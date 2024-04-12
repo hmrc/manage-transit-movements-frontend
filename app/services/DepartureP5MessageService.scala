@@ -18,10 +18,11 @@ package services
 
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import models.RejectionType
-import models.departureP5.DepartureMessageType._
+import generated.{CC015CType, CC056CType}
+import models.RichCC015Type
+import models.departureP5.DepartureMessageType.{DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
 import models.departureP5._
-import play.api.libs.json.Reads
+import scalaxb.XMLFormat
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -36,11 +37,11 @@ class DepartureP5MessageService @Inject() (
     departureId: String,
     messageId: String,
     lrn: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(RejectionType, Boolean, Seq[String], Boolean)] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(String, Boolean, Seq[String], Boolean)] =
     for {
-      message <- getMessageWithMessageId[IE056Data](departureId, messageId)
-      rejectionType = message.data.transitOperation.businessRejectionType
-      xPaths        = message.data.functionalErrors.map(_.errorPointer)
+      message <- getMessage[CC056CType](departureId, messageId)
+      rejectionType = message.TransitOperation.businessRejectionType
+      xPaths        = message.FunctionalError.map(_.errorPointer)
       isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn, xPaths.filter(_.nonEmpty))
       doesCacheExistForLrn   <- cacheConnector.doesDeclarationExist(lrn)
     } yield (rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn)
@@ -68,14 +69,14 @@ class DepartureP5MessageService @Inject() (
                     )
                 }
               case DeclarationAmendmentAccepted | GoodsUnderControl | DeclarationSent =>
-                departureMovementP5Connector.getMessageForMessageId[IE015Data](movement.departureId, message.ie015MessageId).map {
+                getMessage[CC015CType](movement.departureId, message.ie015MessageId).map {
                   ie015 =>
                     DepartureMovementAndMessage(
                       movement.departureId,
                       movement.localReferenceNumber,
                       movement.updated,
                       message,
-                      ie015.isPrelodged
+                      ie015.isPreLodged
                     )
                 }
               case _ =>
@@ -91,12 +92,11 @@ class DepartureP5MessageService @Inject() (
         }
     }
 
-  def getMessageWithMessageId[MessageModel](
+  def getMessage[T](
     departureId: String,
     messageId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: Reads[MessageModel]): Future[MessageModel] =
-    departureMovementP5Connector
-      .getMessageForMessageId(departureId, messageId)
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext, format: XMLFormat[T]): Future[T] =
+    departureMovementP5Connector.getMessage(departureId, messageId)
 
   def getDepartureReferenceNumbers(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureReferenceNumbers] =
     departureMovementP5Connector.getDepartureReferenceNumbers(departureId)

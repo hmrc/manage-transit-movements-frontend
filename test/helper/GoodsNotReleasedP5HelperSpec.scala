@@ -17,17 +17,16 @@
 package helper
 
 import base.SpecBase
+import generated.CC051CType
 import generators.Generators
-import models.departureP5._
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
+import scalaxb.XMLCalendar
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
-import utils.Format.decisionDateTimeFormatter
 import utils.GoodsNotReleasedP5Helper
 import viewModels.sections.Section
-
-import java.time.LocalDateTime
 
 class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -38,40 +37,34 @@ class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyCheck
   "GoodsNotReleasedP5Helper" - {
 
     "must return a complete section" in {
+      forAll(arbitrary[CC051CType].map {
+        x =>
+          x
+            .copy(TransitOperation =
+              x.TransitOperation.copy(
+                MRN = "someMRN",
+                declarationSubmissionDateAndTime = XMLCalendar("2014-06-09T16:15:04"),
+                noReleaseMotivationCode = "releaseMotivationCode",
+                noReleaseMotivationText = "releaseMotivationText"
+              )
+            )
+      }) {
+        message =>
+          val helper = new GoodsNotReleasedP5Helper(message)
 
-      val now = LocalDateTime.now()
+          val result = helper.buildDetailsSection
 
-      val message: IE051Data = IE051Data(
-        IE051MessageData(
-          TransitOperationIE051(
-            "someMRN",
-            now,
-            "releaseMotivationCode",
-            "releaseMotivationText"
+          result mustBe Section(
+            sectionTitle = None,
+            rows = List(
+              SummaryListRow(Key(Text("Movement Reference Number (MRN)")), Value(Text("someMRN"))),
+              SummaryListRow(Key(Text("Date and time declaration sent")), Value(Text("09 June 2014 at 4:15pm"))),
+              SummaryListRow(Key(Text("Reason")), Value(Text("releaseMotivationCode"))),
+              SummaryListRow(Key(Text("Description")), Value(Text("releaseMotivationText")))
+            ),
+            id = None
           )
-        )
-      )
-
-      val helper = new GoodsNotReleasedP5Helper(message.data)
-
-      val result = helper.buildDetailsSection
-
-      result mustBe Section(
-        None,
-        List(
-          SummaryListRow(Key(Text("Movement Reference Number (MRN)"), ""), Value(Text("someMRN"), ""), "", None),
-          SummaryListRow(Key(Text("Date and time declaration sent"), ""), Value(Text(formatAsDecisionDateTime(now)), ""), "", None),
-          SummaryListRow(Key(Text("Reason"), ""), Value(Text("releaseMotivationCode"), ""), "", None),
-          SummaryListRow(Key(Text("Description"), ""), Value(Text("releaseMotivationText"), ""), "", None)
-        ),
-        None
-      )
+      }
     }
   }
-
-  private def formatAsDecisionDateTime(answer: LocalDateTime): String =
-    answer
-      .format(decisionDateTimeFormatter)
-      .replace("PM", "pm")
-      .replace("AM", "am")
 }

@@ -17,14 +17,13 @@
 package viewModels.P5
 
 import base.SpecBase
+import generated.CC051CType
 import generators.Generators
-import models.departureP5._
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import viewModels.P5.departure.GoodsNotReleasedP5ViewModel
 import viewModels.P5.departure.GoodsNotReleasedP5ViewModel.GoodsNotReleasedP5ViewModelProvider
-
-import java.time.LocalDateTime
 
 class GoodsNotReleasedP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -33,24 +32,14 @@ class GoodsNotReleasedP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
 
   "GoodsNotReleasedP5ViewModelSpec" - {
 
-    val lrn                              = "AB123"
-    val declarationSubmissionDateAndTime = LocalDateTime.now()
+    val lrn = "AB123"
 
-    val iE051Data = IE051Data(
-      IE051MessageData(
-        TransitOperationIE051(
-          "AB123",
-          declarationSubmissionDateAndTime,
-          "G1",
-          "Guarantee not valid"
-        )
-      )
-    )
+    val message = arbitrary[CC051CType].sample.value
 
     val viewModelProvider = new GoodsNotReleasedP5ViewModelProvider()
 
     def viewModel: GoodsNotReleasedP5ViewModel =
-      viewModelProvider.apply(iE051Data.data, lrn)
+      viewModelProvider.apply(message, lrn)
 
     "must return correct section" in {
       viewModel.sections.head.sectionTitle mustBe None
@@ -66,7 +55,7 @@ class GoodsNotReleasedP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
 
     "paragraph" in {
       viewModel.paragraph mustBe
-        s"Customs have reviewed this declaration and decided not to release the goods for transit. This means the movement has now ended."
+        "Customs have reviewed this declaration and decided not to release the goods for transit. This means the movement has now ended."
     }
   }
 }

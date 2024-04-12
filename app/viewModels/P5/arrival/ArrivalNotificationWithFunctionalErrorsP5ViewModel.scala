@@ -16,7 +16,7 @@
 
 package viewModels.P5.arrival
 
-import models.departureP5.FunctionalError
+import generated.FunctionalErrorType04
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -66,7 +66,7 @@ object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
   class ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
-      functionalErrors: Seq[FunctionalError],
+      functionalErrors: Seq[FunctionalErrorType04],
       mrn: String
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ArrivalNotificationWithFunctionalErrorsP5ViewModel] = {
       val helper = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)

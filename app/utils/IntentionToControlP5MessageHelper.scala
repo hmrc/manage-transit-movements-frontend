@@ -16,19 +16,19 @@
 
 package utils
 
-import models.departureP5.{IE060MessageData, RequestedDocument}
+import generated.{CC060CType, RequestedDocumentType}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
 
-import java.time.LocalDateTime
+import javax.xml.datatype.XMLGregorianCalendar
 
-class IntentionToControlP5MessageHelper(ie060MessageData: IE060MessageData)(implicit
+class IntentionToControlP5MessageHelper(ie060: CC060CType)(implicit
   messages: Messages
 ) extends DeparturesP5MessageHelper {
 
   def buildLRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = ie060MessageData.TransitOperation.LRN,
+    answer = ie060.TransitOperation.LRN,
     formatAnswer = formatAsText,
     prefix = messages("row.label.localReferenceNumber"),
     id = None,
@@ -36,16 +36,16 @@ class IntentionToControlP5MessageHelper(ie060MessageData: IE060MessageData)(impl
   )
 
   def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = ie060MessageData.TransitOperation.MRN,
+    answer = ie060.TransitOperation.MRN,
     formatAnswer = formatAsText,
     prefix = messages("row.label.movementReferenceNumber"),
     id = None,
     call = None
   )
 
-  def buildDateTimeControlRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDateTime](
-    answer = Some(ie060MessageData.TransitOperation.controlNotificationDateAndTime),
-    formatAnswer = formatAsDate,
+  def buildDateTimeControlRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
+    answer = Some(ie060.TransitOperation.controlNotificationDateAndTime),
+    formatAnswer = formatAsDateAndTime,
     prefix = messages("row.label.dateAndTimeOfControlNotification"),
     id = None,
     call = None
@@ -67,18 +67,15 @@ class IntentionToControlP5MessageHelper(ie060MessageData: IE060MessageData)(impl
     call = None
   )
 
-  private def buildDocumentSection(document: RequestedDocument): Section = {
+  private def buildDocumentSection(document: RequestedDocumentType): Section = {
 
     val controlType: Seq[SummaryListRow]     = extractOptionalRow(buildDocumentTypeRow(document.documentType))
-    val referenceNumber: Seq[SummaryListRow] = extractOptionalRow(buildReferenceNumberRow(ie060MessageData.CustomsOfficeOfDeparture.referenceNumber))
+    val referenceNumber: Seq[SummaryListRow] = extractOptionalRow(buildReferenceNumberRow(ie060.CustomsOfficeOfDeparture.referenceNumber))
     val rows                                 = controlType ++ referenceNumber
     Section(messages("heading.label.controlInformation", document.sequenceNumber), rows, None)
   }
 
-  def documentSection(): Seq[Section] = ie060MessageData.requestedDocumentsToSeq.map {
-    document =>
-      buildDocumentSection(document)
-  }
+  def documentSection(): Seq[Section] = ie060.RequestedDocument.map(buildDocumentSection)
 
   def buildIntentionToControlSection(): Section = {
     val lrnRow             = extractOptionalRow(buildLRNRow)

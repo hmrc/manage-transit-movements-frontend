@@ -18,8 +18,8 @@ package controllers.departureP5
 
 import config.FrontendAppConfig
 import controllers.actions._
+import generated.CC009CType
 import models.LocalReferenceNumber
-import models.departureP5.{IE009Data, IE009MessageData}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.ReferenceDataService
@@ -43,20 +43,20 @@ class DepartureCancelledP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE009Data](departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC009CType](departureId, messageId)).async {
       implicit request =>
-        buildView(request.messageData.data, request.referenceNumbers.localReferenceNumber)
+        buildView(request.messageData, request.referenceNumbers.localReferenceNumber)
     }
 
   private def buildView(
-    IE009MessageData: IE009MessageData,
+    ie009: CC009CType,
     lrn: LocalReferenceNumber
   )(implicit request: Request[_]): Future[Result] = {
-    val customsOfficeReferenceNumber = IE009MessageData.customsOfficeOfDeparture.referenceNumber
+    val customsOfficeReferenceNumber = ie009.CustomsOfficeOfDeparture.referenceNumber
 
     referenceDataService.getCustomsOffice(customsOfficeReferenceNumber).flatMap {
       customsOffice =>
-        viewModelProvider.apply(IE009MessageData, lrn.value, customsOffice).map {
+        viewModelProvider.apply(ie009, lrn.value, customsOffice).map {
           viewModel => Ok(view(viewModel))
         }
     }

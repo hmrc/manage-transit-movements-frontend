@@ -17,7 +17,7 @@
 package controllers.departureP5
 
 import controllers.actions._
-import models.departureP5.IE060Data
+import generated.CC060CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
@@ -42,13 +42,13 @@ class GoodsUnderControlP5Controller @Inject() (
     with I18nSupport {
 
   private def goodsUnderControlOnPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE060Data](departureId, messageId)).async {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC060CType](departureId, messageId)).async {
       implicit request =>
-        val customsOfficeId = request.messageData.data.CustomsOfficeOfDeparture.referenceNumber
+        val customsOfficeId = request.messageData.CustomsOfficeOfDeparture.referenceNumber
 
         referenceDataService.getCustomsOffice(customsOfficeId).flatMap {
           customsOffice =>
-            val goodsUnderControlP5ViewModel  = viewModelProvider.apply(request.messageData.data)
+            val goodsUnderControlP5ViewModel  = viewModelProvider.apply(request.messageData)
             val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
             goodsUnderControlP5ViewModel.map {
               viewModel =>

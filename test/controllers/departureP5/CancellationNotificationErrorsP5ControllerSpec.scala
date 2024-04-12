@@ -18,11 +18,11 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
+import generated.{CC056CType, FunctionalErrorType04}
 import generators.Generators
-import models.RejectionType
-import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -42,8 +42,6 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
 
   lazy val controllerRoute: String = controllers.departureP5.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureIdP5, messageId).url
 
-  private val rejectionType: RejectionType = RejectionType.InvalidationRejection
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
@@ -61,54 +59,44 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
   "CancellationNotificationErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET when no Errors" in {
+      forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = Nil))) {
+        message =>
+          when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("AB123")))
 
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("AB123"), rejectionType),
-          CustomsOfficeOfDeparture("AB123"),
-          Seq.empty
-        )
-      )
+          val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrn.value, Left("AB123"))
 
-      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("AB123")))
+          val request = FakeRequest(GET, controllerRoute)
 
-      val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrn.value, Left("AB123"))
+          val result = route(app, request).value
 
-      val request = FakeRequest(GET, controllerRoute)
+          status(result) mustEqual OK
 
-      val result = route(app, request).value
+          val view = injector.instanceOf[CancellationNotificationErrorsP5View]
 
-      status(result) mustEqual OK
-
-      val view = injector.instanceOf[CancellationNotificationErrorsP5View]
-
-      contentAsString(result) mustEqual
-        view(cancellationNotificationErrorsP5ViewModel)(request, messages).toString
+          contentAsString(result) mustEqual
+            view(cancellationNotificationErrorsP5ViewModel)(request, messages).toString
+      }
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("AB123")))
 
-      val message: IE056Data = IE056Data(
-        IE056MessageData(
-          TransitOperationIE056(Some("MRNCD3232"), Some("AB123"), rejectionType),
-          CustomsOfficeOfDeparture("AB123"),
-          Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-        )
-      )
+              val request = FakeRequest(GET, controllerRoute)
 
-      when(mockDepartureP5MessageService.getMessageWithMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-      when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("AB123")))
+              val result = route(app, request).value
 
-      val request = FakeRequest(GET, controllerRoute)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
-
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+          }
+      }
     }
   }
 }

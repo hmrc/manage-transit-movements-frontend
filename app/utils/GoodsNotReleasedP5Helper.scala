@@ -16,36 +16,36 @@
 
 package utils
 
-import models.departureP5.IE051MessageData
+import generated.CC051CType
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
 
-import java.time.LocalDateTime
+import javax.xml.datatype.XMLGregorianCalendar
 
 class GoodsNotReleasedP5Helper(
-  iE051MessageData: IE051MessageData
+  ie051: CC051CType
 )(implicit messages: Messages)
     extends DeparturesP5MessageHelper {
 
   def buildMRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(iE051MessageData.transitOperation.MRN),
+    answer = Some(ie051.TransitOperation.MRN),
     formatAnswer = formatAsText,
     prefix = messages("row.label.movementReferenceNumber"),
     id = None,
     call = None
   )
 
-  def buildDateTimeDeclarationRow: Option[SummaryListRow] = buildRowFromAnswer[LocalDateTime](
-    answer = Some(iE051MessageData.transitOperation.declarationSubmissionDateAndTime),
-    formatAnswer = formatAsDecisionDateTime,
+  def buildDateTimeDeclarationRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
+    answer = Some(ie051.TransitOperation.declarationSubmissionDateAndTime),
+    formatAnswer = formatAsDateAndTime,
     prefix = messages("departure.notReleased.row.label.dateTimeDeclaration"),
     id = None,
     call = None
   )
 
   def buildReasonRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(iE051MessageData.transitOperation.noReleaseMotivationCode),
+    answer = Some(ie051.TransitOperation.noReleaseMotivationCode),
     formatAnswer = formatAsText,
     prefix = messages("departure.notReleased.row.label.reason"),
     id = None,
@@ -53,7 +53,7 @@ class GoodsNotReleasedP5Helper(
   )
 
   def buildDescriptionRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(iE051MessageData.transitOperation.noReleaseMotivationText),
+    answer = Some(ie051.TransitOperation.noReleaseMotivationText),
     formatAnswer = formatAsText,
     prefix = messages("departure.notReleased.row.label.description"),
     id = None,

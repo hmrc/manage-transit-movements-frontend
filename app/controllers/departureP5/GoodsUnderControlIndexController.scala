@@ -16,10 +16,12 @@
 
 package controllers.departureP5
 
+import config.Constants.NotificationType._
 import controllers.actions._
 import controllers.routes
-import models.departureP5.IE060Data
-import models.departureP5.IE060MessageType.{GoodsUnderControl, GoodsUnderControlRequestedDocuments, IntentionToControl}
+import generated.CC060CType
+import logging.Logging
+import models.RichCC060Type
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -31,23 +33,26 @@ class GoodsUnderControlIndexController @Inject() (
   cc: MessagesControllerComponents,
   messageRetrievalAction: DepartureMessageRetrievalActionProvider
 ) extends FrontendController(cc)
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[IE060Data](departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC060CType](departureId, messageId)) {
       implicit request =>
-        val call = request.messageData.data.TransitOperation.notificationType match {
-          case GoodsUnderControl =>
+        val call = request.messageData.TransitOperation.notificationType match {
+          case DecisionToControl =>
             controllers.departureP5.routes.GoodsUnderControlP5Controller.noRequestedDocuments(departureId, messageId)
-          case GoodsUnderControlRequestedDocuments =>
+          case AdditionalDocumentsRequest =>
             controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId, messageId)
           case IntentionToControl =>
-            if (request.messageData.data.informationRequested) {
+            if (request.messageData.informationRequested) {
               controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureId, messageId)
             } else {
               controllers.departureP5.routes.IntentionToControlP5Controller.noInformationRequested(departureId, messageId)
             }
-          case _ => routes.ErrorController.technicalDifficulties()
+          case x =>
+            logger.warn(s"Unexpected notification type: $x")
+            routes.ErrorController.technicalDifficulties()
         }
         Redirect(call)
     }
