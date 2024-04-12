@@ -17,8 +17,8 @@
 package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated._
 import generators.Generators
-import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -50,7 +50,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
 
     "when there is one error" - {
 
-      val errors = Seq(FunctionalError("14", "12", "MRN incorrect", None))
+      val errors = Seq(FunctionalErrorType04("14", Number12, "MRN incorrect", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
@@ -80,9 +80,9 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       }
     }
 
-    "when there is one error and amendmentJourney" - {
+    "when there is one error and amendmentJourney" in {
 
-      val errors = Seq(FunctionalError("14", "12", "MRN incorrect", None))
+      val errors = Seq(FunctionalErrorType04("14", Number12, "MRN incorrect", None))
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
@@ -90,11 +90,13 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = true).futureValue
 
       result.paragraph1 mustBe s"There is a problem with this declaration. Review the error and contact the helpdesk to discuss further."
-
     }
 
-    "when there is multiple errors and amendmentJourney" - {
-      val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+    "when there is multiple errors and amendmentJourney" in {
+      val functionalErrors = Seq(
+        FunctionalErrorType04("1", Number12, "Codelist violation", None),
+        FunctionalErrorType04("2", Number14, "Rule violation", None)
+      )
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
@@ -102,11 +104,13 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       val result            = viewModelProvider.apply(functionalErrors, lrnString, isAmendmentJourney = true).futureValue
 
       result.paragraph1 mustBe s"There is a problem with this declaration. Review the errors and contact the helpdesk to discuss further."
-
     }
 
     "when there is multiple errors" - {
-      val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+      val functionalErrors = Seq(
+        FunctionalErrorType04("1", Number12, "Codelist violation", None),
+        FunctionalErrorType04("2", Number14, "Rule violation", None)
+      )
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 
@@ -134,7 +138,10 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
 
     "must render rows" in {
 
-      val errors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+      val errors = Seq(
+        FunctionalErrorType04("1", Number12, "Codelist violation", None),
+        FunctionalErrorType04("2", Number14, "Rule violation", None)
+      )
 
       when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
 

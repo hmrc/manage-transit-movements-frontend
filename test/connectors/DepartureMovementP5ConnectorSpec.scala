@@ -18,10 +18,8 @@ package connectors
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
-import generated._
 import generators.Generators
 import helper.WireMockServerHandler
-import models.RejectionType.DeclarationRejection
 import models.departureP5._
 import models.{Availability, LocalReferenceNumber}
 import org.scalacheck.Gen
@@ -355,90 +353,6 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
               connector.getAvailability().futureValue mustBe Availability.Unavailable
           }
-        }
-      }
-    }
-
-    "getMessageForMessageId" - {
-
-      "must return Message" in {
-
-        val expectedResult: CC056CType = CC056CType(
-          CC056CType(
-            TransitOperationType20(MRN = Some("CD3232"), LRN = Some("AB123"), businessRejectionType = "015"),
-            CustomsOfficeOfDeparture("22323323"),
-            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-          )
-        )
-
-        server.stubFor(
-          get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/$messageId"))
-            .willReturn(okJson(responseJson.toString()))
-        )
-
-        connector.getMessageForMessageId[CC056CType](departureIdP5, messageId).futureValue mustBe expectedResult
-      }
-
-      "must return IE015" - {
-
-        "for non-prelodge" in {
-
-          val responseJson = Json.parse(
-            """
-              |{
-              | "body": {
-              |   "n1:CC015C": {
-              |     "TransitOperation": {
-              |       "additionalDeclarationType": "A"
-              |     }
-              |   }
-              |  }
-              |}
-              |""".stripMargin
-          )
-
-          val expectedResult = IE015Data(
-            IE015MessageData(
-              TransitOperationIE015(NonPrelodgedDeclaration)
-            )
-          )
-
-          server.stubFor(
-            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/$messageId"))
-              .willReturn(okJson(responseJson.toString()))
-          )
-
-          connector.getMessageForMessageId[IE015Data](departureIdP5, messageId).futureValue mustBe expectedResult
-        }
-
-        "for prelodge" in {
-
-          val responseJson = Json.parse(
-            """
-              |{
-              | "body": {
-              |   "n1:CC015C": {
-              |     "TransitOperation": {
-              |       "additionalDeclarationType": "D"
-              |     }
-              |   }
-              |  }
-              |}
-              |""".stripMargin
-          )
-
-          val expectedResult = IE015Data(
-            IE015MessageData(
-              TransitOperationIE015(PrelodgedDeclaration)
-            )
-          )
-
-          server.stubFor(
-            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages/$messageId"))
-              .willReturn(okJson(responseJson.toString()))
-          )
-
-          connector.getMessageForMessageId[IE015Data](departureIdP5, messageId).futureValue mustBe expectedResult
         }
       }
     }

@@ -15,6 +15,7 @@
  */
 
 import cats.data.NonEmptyList
+import config.Constants.AdditionalDeclarationType.PreLodged
 import config.Constants.NotificationType.IntentionToControl
 import config.PaginationAppConfig
 import generated._
@@ -226,5 +227,10 @@ package object models {
         .sortBy(_.errorCode.toString)
         .slice(start, start + paginationAppConfig.arrivalsNumberOfErrorsPerPage)
     }
+  }
+
+  implicit class RichCC015Type(value: CC015CType) {
+
+    def isPreLodged: Boolean = value.TransitOperation.additionalDeclarationType == PreLodged
   }
 }

@@ -18,11 +18,11 @@ package services
 
 import base.SpecBase
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
+import generated._
 import generators.Generators
-import models.RejectionType.DeclarationRejection
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
-import models.{LocalReferenceNumber, RejectionType}
+import models.{LocalReferenceNumber, RichCC015Type}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -47,24 +47,6 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
   "DepartureP5MessageService" - {
 
-    "getMessageForMessageId" - {
-
-      "must return a message by ID" in {
-
-        val ie056Data: IE056Data = IE056Data(
-          IE056MessageData(
-            TransitOperationIE056(Some("CD3232"), None, DeclarationRejection),
-            CustomsOfficeOfDeparture("1234"),
-            Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-          )
-        )
-
-        when(mockMovementConnector.getMessageForMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie056Data))
-
-        departureP5MessageService.getMessageWithMessageId[IE056Data](departureId = "6365135ba5e821ee", messageId = messageId).futureValue mustBe ie056Data
-      }
-    }
-
     "getLatestMessagesForMovement" - {
 
       val dateTimeNow = LocalDateTime.now()
@@ -72,7 +54,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
       "must return RejectedMovementAndMessage when RejectedByOfficeOfDeparture" in {
 
         val isDeclarationAmendable = arbitrary[Boolean].sample.value
-        val rejectionType          = arbitrary[RejectionType].sample.value
+        val rejectionType          = Gen.alphaNumStr.sample.value
 
         val latestDepartureMessage = LatestDepartureMessage(
           DepartureMessage(
@@ -97,22 +79,13 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           totalCount = 1
         )
 
-        val ie056 = IE056Data(
-          IE056MessageData(
-            transitOperation = TransitOperationIE056(None, None, rejectionType),
-            customsOfficeOfDeparture = CustomsOfficeOfDeparture("AB123"),
-            functionalErrors = Seq(
-              FunctionalError("pointer1", "code1", "reason1", None),
-              FunctionalError("pointer2", "code2", "reason2", None)
-            )
-          )
-        )
+        val ie056 = arbitrary[CC056CType].sample.value
 
         when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
           Future.successful(latestDepartureMessage)
         )
 
-        when(mockMovementConnector.getMessageForMessageId[IE056Data](any(), any())(any(), any(), any())).thenReturn(
+        when(mockMovementConnector.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(
           Future.successful(ie056)
         )
 
@@ -134,7 +107,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             latestDepartureMessage,
             rejectionType,
             isDeclarationAmendable = isDeclarationAmendable,
-            xPaths = ie056.data.functionalErrors.map(_.errorPointer),
+            xPaths = ie056.FunctionalError.map(_.errorPointer),
             doesCacheExistForLrn = true
           )
         )
@@ -144,7 +117,6 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
       "must return PrelodgedMovementAndMessage when AllocatedMRN or DeclarationAmendmentAccepted" in {
 
-        val prelodged = Gen.oneOf(Prelodged.values).sample.value
         val genStatus = Gen.oneOf(Seq(DeclarationSent, DeclarationAmendmentAccepted, GoodsUnderControl)).sample.value
 
         val latestDepartureMessage = LatestDepartureMessage(
@@ -170,13 +142,13 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           totalCount = 1
         )
 
-        val ie015 = IE015Data(IE015MessageData(transitOperation = TransitOperationIE015(prelodged)))
+        val ie015 = arbitrary[CC015CType].sample.value
 
         when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
           Future.successful(latestDepartureMessage)
         )
 
-        when(mockMovementConnector.getMessageForMessageId[IE015Data](any(), any())(any(), any(), any())).thenReturn(
+        when(mockMovementConnector.getMessage[CC015CType](any(), any())(any(), any(), any())).thenReturn(
           Future.successful(ie015)
         )
 
@@ -188,7 +160,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             LocalReferenceNumber("LRN"),
             dateTimeNow,
             latestDepartureMessage,
-            ie015.isPrelodged
+            ie015.isPreLodged
           )
         )
 
@@ -196,8 +168,6 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
       }
 
       "must return OtherMovementAndMessage for any other message" in {
-
-        val prelodged = Gen.oneOf(Prelodged.values).sample.value
 
         DepartureMessageType.values
           .filterNot(
@@ -233,13 +203,13 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
                 totalCount = 1
               )
 
-              val ie015 = IE015Data(IE015MessageData(transitOperation = TransitOperationIE015(prelodged)))
+              val ie015 = arbitrary[CC015CType].sample.value
 
               when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
                 Future.successful(latestDepartureMessage)
               )
 
-              when(mockMovementConnector.getMessageForMessageId[IE015Data](any(), any())(any(), any(), any())).thenReturn(
+              when(mockMovementConnector.getMessage[CC015CType](any(), any())(any(), any(), any())).thenReturn(
                 Future.successful(ie015)
               )
 

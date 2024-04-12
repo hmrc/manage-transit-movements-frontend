@@ -17,14 +17,12 @@
 package services
 
 import cats.implicits._
-import config.Constants.AdditionalDeclarationType.PreLodged
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated.{CC015CType, CC056CType}
+import models.RichCC015Type
 import models.departureP5.DepartureMessageType.{DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
 import models.departureP5._
-import play.api.libs.json.Reads
 import scalaxb.XMLFormat
-import scalaxb.`package`.fromXML
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -78,7 +76,7 @@ class DepartureP5MessageService @Inject() (
                       movement.localReferenceNumber,
                       movement.updated,
                       message,
-                      ie015.TransitOperation.additionalDeclarationType == PreLodged
+                      ie015.isPreLodged
                     )
                 }
               case _ =>
@@ -94,18 +92,11 @@ class DepartureP5MessageService @Inject() (
         }
     }
 
-  def getMessageWithMessageId[MessageModel](
-    departureId: String,
-    messageId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: Reads[MessageModel]): Future[MessageModel] =
-    departureMovementP5Connector
-      .getMessageForMessageId(departureId, messageId)
-
   def getMessage[T](
     departureId: String,
     messageId: String
   )(implicit hc: HeaderCarrier, ec: ExecutionContext, format: XMLFormat[T]): Future[T] =
-    departureMovementP5Connector.getMessage(departureId, messageId).map(fromXML(_))
+    departureMovementP5Connector.getMessage(departureId, messageId)
 
   def getDepartureReferenceNumbers(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureReferenceNumbers] =
     departureMovementP5Connector.getDepartureReferenceNumbers(departureId)

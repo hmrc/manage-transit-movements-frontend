@@ -17,29 +17,27 @@
 package helper
 
 import base.SpecBase
+import generated._
 import generators.Generators
-import models.RejectionType
-import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import utils.RejectionMessageP5MessageHelper
-import viewModels.sections.Section
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
-  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
-  val lrnString                            = "LRNAB123"
-  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
+  private val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -50,163 +48,43 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
     "buildErrorCodeRow" - {
 
-      val code1            = "12"
-      val codeDescription1 = "Codelist violation"
-      val code2            = "13"
-      val codeDescription2 = "Codelist violation2"
-
       "must return SummaryListRow" - {
 
         "when description present in reference data" in {
-          val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc(code1, codeDescription1), FunctionalErrorWithDesc(code2, codeDescription2))
+          forAll(Gen.oneOf(AesNctsP5FunctionalErrorCodes.values), Gen.alphaNumStr) {
+            (errorCode, errorDescription) =>
+              forAll(arbitrary[CC056CType].map {
+                _.copy(FunctionalError =
+                  Seq(
+                    FunctionalErrorType04(
+                      errorPointer = "14",
+                      errorCode = errorCode,
+                      errorReason = "MRN incorrect",
+                      originalAttributeValue = None
+                    )
+                  )
+                )
+              }) {
+                message =>
+                  val functionalError = FunctionalErrorWithDesc(errorCode.toString, errorDescription)
 
-          val message: IE056Data = IE056Data(
-            IE056MessageData(
-              TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
-              CustomsOfficeOfDeparture("AB123"),
-              Seq(FunctionalError("14", code1, "MRN incorrect", None))
-            )
-          )
+                  when(mockReferenceDataService.getFunctionalError(eqTo(errorCode.toString))(any(), any()))
+                    .thenReturn(Future.successful(functionalError))
 
-          when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+                  val helper = new RejectionMessageP5MessageHelper(message.FunctionalError, mockReferenceDataService)
 
-          val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
+                  val result = helper.tableRows().futureValue
 
-          val result = helper.buildErrorCodeRow(code1).futureValue
-
-          result mustBe
-            Some(SummaryListRow(key = Key("Error".toText), value = Value(s"$code1 - $codeDescription1".toText)))
-        }
-
-        "when description not present in reference data" in {
-          val functionalErrorReferenceData = FunctionalErrorWithDesc(code1, "")
-
-          val message: IE056Data = IE056Data(
-            IE056MessageData(
-              TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
-              CustomsOfficeOfDeparture("AB123"),
-              Seq(FunctionalError("14", "12", "MRN incorrect", None))
-            )
-          )
-
-          when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(Seq(functionalErrorReferenceData)))
-
-          val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
-
-          val result = helper.buildErrorCodeRow(code1).futureValue
-
-          result mustBe
-            Some(SummaryListRow(key = Key("Error".toText), value = Value(code1.toText)))
+                  result mustBe Seq(
+                    Seq(
+                      TableRow(Text(s"${errorCode.toString} - $errorDescription")),
+                      TableRow(Text("MRN incorrect"))
+                    )
+                  )
+              }
+          }
         }
       }
     }
-
-    "buildErrorReasonRow" - {
-      "must return SummaryListRow" in {
-
-        val message: IE056Data = IE056Data(
-          IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
-            CustomsOfficeOfDeparture("AB123"),
-            Seq(FunctionalError("14", "12", "MRN incorrect", None))
-          )
-        )
-
-        val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
-
-        val result = helper.buildErrorReasonRow("MRN incorrect")
-
-        result mustBe
-          Some(SummaryListRow(key = Key("Reason".toText), value = Value("MRN incorrect".toText)))
-      }
-    }
-
-    "buildErrorRows" - {
-      "must return sequence of summaryListRow when errors present" in {
-
-        val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None))
-
-        val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "MRN Invalid"))
-
-        when(mockReferenceDataService.getFunctionalErrors()).thenReturn(Future.successful(functionalErrorReferenceData))
-
-        val message: IE056Data = IE056Data(
-          IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
-            CustomsOfficeOfDeparture("AB123"),
-            functionalErrors
-          )
-        )
-
-        val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
-
-        val result = helper.buildErrorRows(functionalErrors.head).futureValue
-
-        val firstRow =
-          SummaryListRow(key = Key("Error".toText), value = Value("12 - MRN Invalid".toText))
-
-        val secondRow =
-          SummaryListRow(key = Key("Reason".toText), value = Value("Codelist violation".toText))
-
-        firstRow mustBe result.head
-        secondRow mustBe result(1)
-
-        val seqSummaryRow = Seq(firstRow, secondRow)
-
-        result mustBe seqSummaryRow
-
-      }
-    }
-
-    "errorSection" - {
-      "must return a section of errors when errors present" in {
-
-        val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("1", "14", "Invalid declaration", None))
-
-        val functionalErrorReferenceData1 = FunctionalErrorWithDesc("12", "MRN Invalid")
-        val functionalErrorReferenceData2 = FunctionalErrorWithDesc("14", "Rule Violation")
-
-        val functionalErrorReferenceData = Seq(functionalErrorReferenceData1, functionalErrorReferenceData2)
-
-        when(mockReferenceDataService.getFunctionalErrors()).thenReturn(Future.successful(functionalErrorReferenceData))
-
-        val message: IE056Data = IE056Data(
-          IE056MessageData(
-            TransitOperationIE056(Some("MRNCD3232"), Some(lrnString), rejectionType),
-            CustomsOfficeOfDeparture("AB123"),
-            functionalErrors
-          )
-        )
-
-        val helper = new RejectionMessageP5MessageHelper(message.data.functionalErrors, mockReferenceDataService)
-
-        val result = helper.errorSection().futureValue
-
-        val firstRow =
-          SummaryListRow(key = Key("Error".toText), value = Value("12 - MRN Invalid".toText))
-
-        val secondRow =
-          SummaryListRow(key = Key("Reason".toText), value = Value("Codelist violation".toText))
-
-        val thirdRow =
-          SummaryListRow(key = Key("Error".toText), value = Value("14 - Rule Violation".toText))
-
-        val fourthRow =
-          SummaryListRow(key = Key("Reason".toText), value = Value("Invalid declaration".toText))
-
-        firstRow mustBe result.rows.head
-        secondRow mustBe result.rows(1)
-        thirdRow mustBe result.rows(2)
-        fourthRow mustBe result.rows(3)
-
-        val seqSummaryRows = Seq(firstRow, secondRow, thirdRow, fourthRow)
-
-        result.rows mustBe seqSummaryRows
-
-        result mustBe Section(None, seqSummaryRows, None)
-
-      }
-    }
-
   }
 }

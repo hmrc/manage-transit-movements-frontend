@@ -23,7 +23,6 @@ import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -55,8 +54,6 @@ class DepartureNotCancelledP5ControllerSpec extends SpecBase with AppWithDefault
       .p5GuiceApplicationBuilder()
       .overrides(bind[DepartureNotCancelledP5ViewModelProvider].toInstance(mockDepartureNotCancelledP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
-
-  private val customsReferenceNumber = Gen.alphaNumStr.sample.value
 
   "DepartureCancelledP5Controller" - {
 

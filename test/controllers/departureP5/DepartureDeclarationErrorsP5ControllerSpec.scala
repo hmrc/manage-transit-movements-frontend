@@ -18,9 +18,8 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import generated.{CC056CType, CC057CType}
+import generated.CC056CType
 import generators.Generators
-import models.RejectionType
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -43,7 +42,6 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
 
   lazy val departureDeclarationErrorsController: String =
     controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, messageId, isAmendmentJourney = false).url
-  private val rejectionType: RejectionType = RejectionType.DeclarationRejection
 
   override def beforeEach(): Unit = {
     super.beforeEach()

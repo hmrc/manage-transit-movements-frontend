@@ -46,8 +46,6 @@ class IsDepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultM
       .p5GuiceApplicationBuilder()
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
-  private val customsReferenceNumber = Gen.alphaNumStr.sample.value
-
   lazy val isDepartureCancelledRoute: String = routes.IsDepartureCancelledP5Controller.isDeclarationCancelled(departureIdP5, messageId).url
 
   "IsDepartureCancelledP5Controller" - {

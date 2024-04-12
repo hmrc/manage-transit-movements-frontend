@@ -21,9 +21,7 @@ import connectors.ArrivalMovementP5Connector
 import generated.{CC025CType, CC057CType}
 import models.arrivalP5.ArrivalMessageType._
 import models.arrivalP5._
-import play.api.libs.json.Reads
 import scalaxb.XMLFormat
-import scalaxb.`package`.fromXML
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -62,16 +60,9 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
         }
     }
 
-  def getMessageWithMessageId[MessageModel](
-    arrivalId: String,
-    messageId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: Reads[MessageModel]): Future[MessageModel] =
-    arrivalMovementP5Connector
-      .getMessageForMessageId(arrivalId, messageId)
-
   def getMessage[T](
     arrivalId: String,
     messageId: String
   )(implicit hc: HeaderCarrier, ec: ExecutionContext, format: XMLFormat[T]): Future[T] =
-    arrivalMovementP5Connector.getMessage(arrivalId, messageId).map(fromXML(_))
+    arrivalMovementP5Connector.getMessage(arrivalId, messageId)
 }

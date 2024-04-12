@@ -17,27 +17,20 @@
 package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated.CC035CType
 import generators.Generators
-import models.departureP5._
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.departure.RecoveryNotificationViewModel.RecoveryNotificationViewModelProvider
-
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class RecoveryNotificationViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "RecoveryNotificationViewModel" - {
 
-    val message: IE035Data = IE035Data(
-      IE035MessageData(
-        TransitOperationIE035(mrn, LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE)),
-        RecoveryNotification(LocalDate.parse("2014-06-09", DateTimeFormatter.ISO_DATE), "text", "1000", "EUR")
-      )
-    )
+    val message = arbitrary[CC035CType].sample.value
 
     val viewModelProvider = new RecoveryNotificationViewModelProvider()
-    val result            = viewModelProvider.apply(message.data)
+    val result            = viewModelProvider.apply(message)
 
     "must return correct section length" in {
       result.sections.length mustBe 1

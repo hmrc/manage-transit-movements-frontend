@@ -17,8 +17,8 @@
 package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated._
 import generators.Generators
-import models.departureP5._
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -46,13 +46,12 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
 
   "ReviewCancellationErrorsP5ViewModel" - {
 
-    val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "Codelist violation"), FunctionalErrorWithDesc("14", "Rule violation"))
-
     "when there is one error" - {
 
-      val errors: Seq[FunctionalError] = Seq(FunctionalError("14", "12", "MRN incorrect", None))
+      val errors: Seq[FunctionalErrorType04] = Seq(FunctionalErrorType04("14", Number12, "MRN incorrect", None))
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new ReviewCancellationErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(errors, lrnString).futureValue
@@ -60,7 +59,6 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
       "must return correct section length" in {
         result.tableRows.length mustBe 1
       }
-
       "must return correct title" in {
         result.title mustBe "Review cancellation errors"
       }
@@ -85,9 +83,14 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
     }
 
     "when there is multiple errors" - {
-      val functionalErrors = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
+      val functionalErrors = Seq(
+        FunctionalErrorType04("1", Number12, "Codelist violation", None),
+        FunctionalErrorType04("2", Number14, "Rule violation", None)
+      )
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("12", "Codelist violation")))
 
       val viewModelProvider = new ReviewCancellationErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(functionalErrors, lrnString).futureValue
@@ -95,7 +98,6 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
       "must return correct rows size" in {
         result.tableRows.length mustBe 2
       }
-
       "must return correct title" in {
         result.title mustBe "Review cancellation errors"
       }
@@ -118,18 +120,5 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
         result.viewDeparturesLink mustBe controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
       }
     }
-
-    "must render rows" in {
-      val errors: Seq[FunctionalError] = Seq(FunctionalError("1", "12", "Codelist violation", None), FunctionalError("2", "14", "Rule violation", None))
-
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
-
-      val viewModelProvider = new ReviewCancellationErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString).futureValue
-
-      result.tableRows.length mustBe 2
-      result.tableRows.size mustBe 2
-    }
-
   }
 }

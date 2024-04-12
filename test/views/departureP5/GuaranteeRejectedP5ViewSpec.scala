@@ -16,30 +16,31 @@
 
 package views.departureP5
 
+import generated._
 import generators.Generators
-import models.departureP5.{GuaranteeReference, InvalidGuaranteeReason}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import play.twirl.api.HtmlFormat
+import scalaxb.XMLCalendar
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 import views.behaviours.ViewBehaviours
 import views.html.departureP5.GuaranteeRejectedP5View
 
-import java.time.LocalDate
 import scala.jdk.CollectionConverters._
 
 class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
   override val prefix: String = "guarantee.rejected.message"
 
-  private val guaranteeReferences: Seq[GuaranteeReference] = Gen.nonEmptyListOf(arbitrary[GuaranteeReference]).sample.value
+  private val guaranteeReferences: Seq[GuaranteeReferenceType08] =
+    Gen.nonEmptyListOf(arbitrary[GuaranteeReferenceType08]).sample.value
 
   val defaultViewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
     guaranteeReferences = guaranteeReferences,
     lrn = lrn,
     isAmendable = true,
     mrn = mrn,
-    acceptanceDate = LocalDate.now()
+    acceptanceDate = XMLCalendar("2022-07-15")
   )
 
   override def view: HtmlFormat.Appendable = injector
@@ -62,9 +63,12 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
     "when there is only one guarantee reference with one error" - {
 
-      val viewModel = defaultViewModel.copy(
-        Seq(GuaranteeReference("GRN", Seq(InvalidGuaranteeReason("test", None))))
-      )
+      val viewModel = defaultViewModel
+        .copy(guaranteeReferences =
+          Seq(
+            GuaranteeReferenceType08("1", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None)))
+          )
+        )
 
       val document = parseView(
         injector
@@ -77,9 +81,13 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
     "when there is only one guarantee reference with multiple errors" - {
 
-      val viewModel = defaultViewModel.copy(
-        Seq(GuaranteeReference("GRN", Seq(InvalidGuaranteeReason("test", None), InvalidGuaranteeReason("test2", None))))
-      )
+      val viewModel = defaultViewModel
+        .copy(guaranteeReferences =
+          Seq(
+            GuaranteeReferenceType08("1", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None))),
+            GuaranteeReferenceType08("2", "GRN2", Seq(InvalidGuaranteeReasonType01("1", "test2", None)))
+          )
+        )
 
       val document = parseView(
         injector
@@ -92,12 +100,13 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
     "when there is multiple guarantee references with only one error each" - {
 
-      val viewModel = defaultViewModel.copy(
-        Seq(
-          GuaranteeReference("GRN1", Seq(InvalidGuaranteeReason("test1", None))),
-          GuaranteeReference("GRN2", Seq(InvalidGuaranteeReason("test2", None)))
+      val viewModel = defaultViewModel
+        .copy(guaranteeReferences =
+          Seq(
+            GuaranteeReferenceType08("1", "GRN1", Seq(InvalidGuaranteeReasonType01("1", "test1", None))),
+            GuaranteeReferenceType08("2", "GRN2", Seq(InvalidGuaranteeReasonType01("1", "test2", None)))
+          )
         )
-      )
 
       val document = parseView(
         injector
@@ -110,12 +119,25 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
     "when there is multiple guarantee references with multiple errors each" - {
 
-      val viewModel = defaultViewModel.copy(
-        Seq(
-          GuaranteeReference("GRN1", Seq(InvalidGuaranteeReason("test1", None), InvalidGuaranteeReason("test2", None))),
-          GuaranteeReference("GRN2", Seq(InvalidGuaranteeReason("test3", None), InvalidGuaranteeReason("test4", None)))
+      val viewModel = defaultViewModel
+        .copy(guaranteeReferences =
+          Seq(
+            GuaranteeReferenceType08("1",
+                                     "GRN1",
+                                     Seq(
+                                       InvalidGuaranteeReasonType01("1", "test1", None),
+                                       InvalidGuaranteeReasonType01("2", "test2", None)
+                                     )
+            ),
+            GuaranteeReferenceType08("2",
+                                     "GRN2",
+                                     Seq(
+                                       InvalidGuaranteeReasonType01("1", "test3", None),
+                                       InvalidGuaranteeReasonType01("2", "test4", None)
+                                     )
+            )
+          )
         )
-      )
 
       val document = parseView(
         injector
@@ -132,9 +154,12 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
     "when there is only one reference with one error" - {
 
-      val viewModel = defaultViewModel.copy(
-        Seq(GuaranteeReference("GRN", Seq(InvalidGuaranteeReason("test", None))))
-      )
+      val viewModel = defaultViewModel
+        .copy(guaranteeReferences =
+          Seq(
+            GuaranteeReferenceType08("1", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None)))
+          )
+        )
 
       val document = parseView(
         injector
@@ -147,9 +172,13 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
     "when there is multiple references or errors" - {
 
-      val viewModel = defaultViewModel.copy(
-        Seq(GuaranteeReference("GRN", Seq(InvalidGuaranteeReason("test", None))), GuaranteeReference("GRN", Seq(InvalidGuaranteeReason("test", None))))
-      )
+      val viewModel = defaultViewModel
+        .copy(guaranteeReferences =
+          Seq(
+            GuaranteeReferenceType08("1", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None))),
+            GuaranteeReferenceType08("2", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None)))
+          )
+        )
 
       val document = parseView(
         injector

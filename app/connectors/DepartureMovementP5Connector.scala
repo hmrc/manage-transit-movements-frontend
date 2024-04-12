@@ -20,13 +20,14 @@ import config.FrontendAppConfig
 import models.Availability
 import models.departureP5._
 import play.api.http.Status._
-import play.api.libs.json.Reads
+import scalaxb.XMLFormat
+import scalaxb.`package`.fromXML
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.{Node, XML}
+import scala.xml.XML
 
 class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends MovementP5Connector {
 
@@ -82,22 +83,17 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     http.GET[LatestDepartureMessage](url)(HttpReads[LatestDepartureMessage], headers, ec)
   }
 
-  def getMessageForMessageId[MessageModel](departureId: String, messageId: String)(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier,
-    reads: Reads[MessageModel]
-  ): Future[MessageModel] = {
-    val url = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId"
-    http.GET[MessageModel](url)(messageModelHttpReads, headers, ec)
-  }
-
-  def getMessage(
+  def getMessage[T](
     departureId: String,
     messageId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Node] = {
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, format: XMLFormat[T]): Future[T] = {
     val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+xml"))
     val url     = s"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId/body"
-    http.GET[HttpResponse](url)(implicitly, headers, ec).map(_.body).map(XML.loadString)
+    http
+      .GET[HttpResponse](url)(implicitly, headers, ec)
+      .map(_.body)
+      .map(XML.loadString)
+      .map(fromXML(_))
   }
 
   def getDepartureReferenceNumbers(departureId: String)(implicit

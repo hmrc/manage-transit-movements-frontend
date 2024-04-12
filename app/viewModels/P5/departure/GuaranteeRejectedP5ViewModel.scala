@@ -31,9 +31,7 @@ case class GuaranteeRejectedP5ViewModel(
   isAmendable: Boolean,
   mrn: String,
   acceptanceDate: XMLGregorianCalendar
-)(implicit
-  messages: Messages
-) {
+)(implicit messages: Messages) {
 
   private val multipleGuaranteesOneReference: Boolean = {
     val multipleGuarantee = guaranteeReferences.length > 1

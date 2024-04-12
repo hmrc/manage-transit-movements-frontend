@@ -17,18 +17,19 @@
 package viewModels.P5
 
 import base.SpecBase
+import generated.{CC009CType, CustomsOfficeOfDepartureType03}
 import generators.Generators
-import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
+import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import viewModels.P5.departure.DepartureNotCancelledP5ViewModel
 import viewModels.P5.departure.DepartureNotCancelledP5ViewModel.DepartureNotCancelledP5ViewModelProvider
 
-import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -46,28 +47,19 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
     val lrn                = "AB123"
     val customsReferenceId = "CD123"
 
-    val ie009Data: IE009Data = IE009Data(
-      IE009MessageData(
-        TransitOperationIE009(
-          Some("mrn123")
-        ),
-        Invalidation(
-          Some(LocalDateTime.now()),
-          decision = false,
-          initiatedByCustoms = true,
-          Some("some justification")
-        ),
-        CustomsOfficeOfDeparture(
-          s"$customsReferenceId"
-        )
-      )
-    )
+    val x = arbitrary[CC009CType].sample.value
+
+    val message = x
+      .copy(TransitOperation = x.TransitOperation.copy(MRN = Some("mrn123")))
+      .copy(Invalidation = x.Invalidation.copy(requestDateAndTime = Some(XMLCalendar("2022-07-15"))))
+      .copy(Invalidation = x.Invalidation.copy(justification = Some("some justification")))
+      .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03(customsReferenceId))
 
     val viewModelProvider = new DepartureNotCancelledP5ViewModelProvider(mockReferenceDataService)
 
     when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceId)))
 
-    val viewModel: DepartureNotCancelledP5ViewModel = viewModelProvider.apply(ie009Data.data, departureIdP5, lrn).futureValue
+    val viewModel: DepartureNotCancelledP5ViewModel = viewModelProvider.apply(message, departureIdP5, lrn).futureValue
 
     "must return correct section" in {
       viewModel.sections.head.sectionTitle mustBe None

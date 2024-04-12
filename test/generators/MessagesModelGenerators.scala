@@ -45,6 +45,31 @@ trait MessagesModelGenerators {
       )
     }
 
+  implicit lazy val arbitraryCC015CType: Arbitrary[CC015CType] =
+    Arbitrary {
+      for {
+        messageSequence1                         <- arbitrary[MESSAGESequence]
+        transitOperation                         <- arbitrary[TransitOperationType06]
+        customsOfficeOfDeparture                 <- arbitrary[CustomsOfficeOfDepartureType03]
+        customsOfficeOfDestinationDeclaredType01 <- arbitrary[CustomsOfficeOfDestinationDeclaredType01]
+        holderOfTheTransitProcedure              <- arbitrary[HolderOfTheTransitProcedureType14]
+        consignment                              <- arbitrary[ConsignmentType20]
+      } yield CC015CType(
+        messageSequence1 = messageSequence1,
+        TransitOperation = transitOperation,
+        Authorisation = Nil,
+        CustomsOfficeOfDeparture = customsOfficeOfDeparture,
+        CustomsOfficeOfDestinationDeclared = customsOfficeOfDestinationDeclaredType01,
+        CustomsOfficeOfTransitDeclared = Nil,
+        CustomsOfficeOfExitForTransitDeclared = Nil,
+        HolderOfTheTransitProcedure = holderOfTheTransitProcedure,
+        Representative = None,
+        Guarantee = Nil,
+        Consignment = ???,
+        attributes = Map.empty
+      )
+    }
+
   implicit lazy val arbitraryCC035CType: Arbitrary[CC035CType] =
     Arbitrary {
       for {
@@ -205,6 +230,39 @@ trait MessagesModelGenerators {
       )
     }
 
+  implicit lazy val arbitraryConsignmentType20: Arbitrary[ConsignmentType20] =
+    Arbitrary {
+      for {
+        grossMass <- arbitrary[BigDecimal]
+      } yield ConsignmentType20(
+        countryOfDispatch = None,
+        countryOfDestination = None,
+        containerIndicator = None,
+        inlandModeOfTransport = None,
+        modeOfTransportAtTheBorder = None,
+        grossMass = grossMass,
+        referenceNumberUCR = None,
+        Carrier = None,
+        Consignor = None,
+        Consignee = None,
+        AdditionalSupplyChainActor = Nil,
+        TransportEquipment = Nil,
+        LocationOfGoods = None,
+        DepartureTransportMeans = Nil,
+        CountryOfRoutingOfConsignment = Nil,
+        ActiveBorderTransportMeans = Nil,
+        PlaceOfLoading = None,
+        PlaceOfUnloading = None,
+        PreviousDocument = Nil,
+        SupportingDocument = Nil,
+        TransportDocument = Nil,
+        AdditionalReference = Nil,
+        AdditionalInformation = Nil,
+        TransportCharges = None,
+        HouseConsignment = Nil
+      )
+    }
+
   implicit lazy val arbitraryTransitOperationType03: Arbitrary[TransitOperationType03] =
     Arbitrary {
       for {
@@ -213,6 +271,30 @@ trait MessagesModelGenerators {
       } yield TransitOperationType03(
         LRN = lrn,
         MRN = mrn
+      )
+    }
+
+  implicit lazy val arbitraryTransitOperationType06: Arbitrary[TransitOperationType06] =
+    Arbitrary {
+      for {
+        lrn                       <- Gen.alphaNumStr
+        declarationType           <- Gen.alphaNumStr
+        additionalDeclarationType <- Gen.alphaNumStr
+        security                  <- Gen.alphaNumStr
+        reducedDatasetIndicator   <- arbitrary[Flag]
+        bindingItinerary          <- arbitrary[Flag]
+      } yield TransitOperationType06(
+        LRN = lrn,
+        declarationType = declarationType,
+        additionalDeclarationType = additionalDeclarationType,
+        TIRCarnetNumber = None,
+        presentationOfTheGoodsDateAndTime = None,
+        security = security,
+        reducedDatasetIndicator = reducedDatasetIndicator,
+        specificCircumstanceIndicator = None,
+        communicationLanguageAtDeparture = None,
+        bindingItinerary = bindingItinerary,
+        limitDate = None
       )
     }
 
@@ -337,6 +419,15 @@ trait MessagesModelGenerators {
       )
     }
 
+  implicit lazy val arbitraryCustomsOfficeOfDestinationDeclaredType01: Arbitrary[CustomsOfficeOfDestinationDeclaredType01] =
+    Arbitrary {
+      for {
+        referenceNumber <- Gen.alphaNumStr
+      } yield CustomsOfficeOfDestinationDeclaredType01(
+        referenceNumber = referenceNumber
+      )
+    }
+
   implicit lazy val arbitraryHolderOfTheTransitProcedureType06: Arbitrary[HolderOfTheTransitProcedureType06] =
     Arbitrary {
       for {
@@ -389,6 +480,23 @@ trait MessagesModelGenerators {
         address                       <- Gen.option(arbitrary[AddressType07])
         contactPerson                 <- Gen.option(arbitrary[ContactPersonType04])
       } yield HolderOfTheTransitProcedureType13(
+        identificationNumber = identificationNumber,
+        TIRHolderIdentificationNumber = tirHolderIdentificationNumber,
+        name = name,
+        Address = address,
+        ContactPerson = contactPerson
+      )
+    }
+
+  implicit lazy val arbitraryHolderOfTheTransitProcedureType14: Arbitrary[HolderOfTheTransitProcedureType14] =
+    Arbitrary {
+      for {
+        identificationNumber          <- Gen.option(Gen.alphaNumStr)
+        tirHolderIdentificationNumber <- Gen.option(Gen.alphaNumStr)
+        name                          <- Gen.option(Gen.alphaNumStr)
+        address                       <- Gen.option(arbitrary[AddressType17])
+        contactPerson                 <- Gen.option(arbitrary[ContactPersonType05])
+      } yield HolderOfTheTransitProcedureType14(
         identificationNumber = identificationNumber,
         TIRHolderIdentificationNumber = tirHolderIdentificationNumber,
         name = name,
@@ -923,6 +1031,21 @@ trait MessagesModelGenerators {
       )
     }
 
+  implicit lazy val arbitraryAddressType17: Arbitrary[AddressType17] =
+    Arbitrary {
+      for {
+        streetAndNumber <- Gen.alphaNumStr
+        postcode        <- Gen.option(Gen.alphaNumStr)
+        city            <- Gen.alphaNumStr
+        country         <- Gen.alphaNumStr
+      } yield AddressType17(
+        streetAndNumber = streetAndNumber,
+        postcode = postcode,
+        city = city,
+        country = country
+      )
+    }
+
   implicit lazy val arbitraryAddressType18: Arbitrary[AddressType18] =
     Arbitrary {
       for {
@@ -956,6 +1079,19 @@ trait MessagesModelGenerators {
         phoneNumber  <- Gen.alphaNumStr
         eMailAddress <- Gen.option(Gen.alphaNumStr)
       } yield ContactPersonType04(
+        name = name,
+        phoneNumber = phoneNumber,
+        eMailAddress = eMailAddress
+      )
+    }
+
+  implicit lazy val arbitraryContactPersonType05: Arbitrary[ContactPersonType05] =
+    Arbitrary {
+      for {
+        name         <- Gen.alphaNumStr
+        phoneNumber  <- Gen.alphaNumStr
+        eMailAddress <- Gen.option(Gen.alphaNumStr)
+      } yield ContactPersonType05(
         name = name,
         phoneNumber = phoneNumber,
         eMailAddress = eMailAddress
