@@ -51,7 +51,7 @@ class GoodsUnderControlP5MessageHelper(ie060: CC060CType, referenceDataService: 
 
   def buildDateTimeControlRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
     answer = Some(ie060.TransitOperation.controlNotificationDateAndTime),
-    formatAnswer = formatAsDate,
+    formatAnswer = formatAsDateAndTime,
     prefix = messages("row.label.dateAndTimeOfControl"),
     id = None,
     call = None

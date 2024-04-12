@@ -173,21 +173,21 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
                   Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("BOSTON (GB00060)".toText)))
             }
         }
+      }
 
-        "must return SummaryListRow with code" - {
-          "when customs office returns None" in {
-            forAll(arbitrary[CC009CType]) {
-              message =>
-                when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-                  .thenReturn(Future.successful(Left("GB00060")))
+      "must return SummaryListRow with code" - {
+        "when customs office returns None" in {
+          forAll(arbitrary[CC009CType]) {
+            message =>
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+                .thenReturn(Future.successful(Left("GB00060")))
 
-                val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
+              val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-                val result = helper.buildOfficeOfDepartureRow.futureValue
+              val result = helper.buildOfficeOfDepartureRow.futureValue
 
-                result mustBe
-                  Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("GB00060".toText)))
-            }
+              result mustBe
+                Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("GB00060".toText)))
           }
         }
       }
@@ -234,11 +234,15 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
         forAll(arbitrary[CC009CType].map {
           x =>
             x
-              .copy(TransitOperation = x.TransitOperation.copy(MRN = Some("MRN1")))
-              .copy(Invalidation = x.Invalidation.copy(decisionDateAndTime = Some(XMLCalendar("2014-06-09T16:15:04+01:00"))))
-              .copy(Invalidation = x.Invalidation.copy(initiatedByCustoms = Number1))
+              .copy(TransitOperation = x.TransitOperation.copy(MRN = Some("abd123")))
+              .copy(Invalidation =
+                x.Invalidation.copy(
+                  decisionDateAndTime = Some(XMLCalendar("2014-06-09T16:15:04+01:00")),
+                  initiatedByCustoms = Number1,
+                  justification = Some("some justification")
+                )
+              )
               .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03("22323323"))
-              .copy(Invalidation = x.Invalidation.copy(justification = Some("some justification")))
         }) {
           message =>
             when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("1234")))
@@ -246,16 +250,14 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
             val result = helper.buildInvalidationSection.futureValue
-            val firstRow =
-              Seq(
-                SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText)),
-                SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText)),
-                SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText)),
-                SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText)),
-                SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText))
-              )
 
-            result mustBe Section(None, firstRow, None)
+            result.sectionTitle must not be defined
+
+            result.rows.head mustBe SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText))
+            result.rows(1) mustBe SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText))
+            result.rows(2) mustBe SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText))
+            result.rows(3) mustBe SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText))
+            result.rows(4) mustBe SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText))
         }
       }
     }

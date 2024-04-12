@@ -51,7 +51,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
       "must return SummaryListRow" - {
 
         "when description present in reference data" in {
-          forAll(Gen.oneOf(AesNctsP5FunctionalErrorCodes.values), Gen.alphaNumStr) {
+          forAll(Gen.oneOf(AesNctsP5FunctionalErrorCodes.values), nonEmptyString) {
             (errorCode, errorDescription) =>
               forAll(arbitrary[CC056CType].map {
                 _.copy(FunctionalError =

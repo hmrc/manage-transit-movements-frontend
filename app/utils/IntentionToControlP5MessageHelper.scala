@@ -45,7 +45,7 @@ class IntentionToControlP5MessageHelper(ie060: CC060CType)(implicit
 
   def buildDateTimeControlRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
     answer = Some(ie060.TransitOperation.controlNotificationDateAndTime),
-    formatAnswer = formatAsDate,
+    formatAnswer = formatAsDateAndTime,
     prefix = messages("row.label.dateAndTimeOfControlNotification"),
     id = None,
     call = None

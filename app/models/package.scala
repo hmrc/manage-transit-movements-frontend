@@ -16,7 +16,7 @@
 
 import cats.data.NonEmptyList
 import config.Constants.AdditionalDeclarationType.PreLodged
-import config.Constants.NotificationType.IntentionToControl
+import config.Constants.NotificationType.AdditionalDocumentsRequest
 import config.PaginationAppConfig
 import generated._
 import play.api.libs.json._
@@ -194,7 +194,7 @@ package object models {
 
     def informationRequested: Boolean =
       value.RequestedDocument.nonEmpty ||
-        value.TransitOperation.notificationType == IntentionToControl
+        value.TransitOperation.notificationType == AdditionalDocumentsRequest
   }
 
   // TODO - refactor to use Format

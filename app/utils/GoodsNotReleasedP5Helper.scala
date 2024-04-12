@@ -38,7 +38,7 @@ class GoodsNotReleasedP5Helper(
 
   def buildDateTimeDeclarationRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
     answer = Some(ie051.TransitOperation.declarationSubmissionDateAndTime),
-    formatAnswer = formatAsDecisionDateTime,
+    formatAnswer = formatAsDateAndTime,
     prefix = messages("departure.notReleased.row.label.dateTimeDeclaration"),
     id = None,
     call = None

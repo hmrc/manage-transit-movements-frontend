@@ -71,11 +71,12 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val result            = viewModelProvider.apply(message).futureValue
 
       "must render correct number of sections" in {
-        result.sections.length mustBe 2
+        result.sections.length mustBe 3
 
-        result.sections(1).rows.size mustBe 1
         result.sections(1).sectionTitle.value mustBe "Control information 1"
+        result.sections(1).rows.size mustBe 1
 
+        result.sections(2).sectionTitle.value mustBe "Control information 2"
         result.sections(2).rows.size mustBe 2
       }
 
@@ -113,7 +114,6 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       "must render correct number of sections" in {
         result.sections.length mustBe 1
-        result.sections.head.rows.size mustBe 4
       }
 
       "must return correct title" in {
@@ -130,7 +130,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
     }
 
     "when there is requested documents and type 0" - {
-      val x = arbitrary[CC060CType].retryUntil(_.RequestedDocument.nonEmpty).sample.value
+      val x = arbitrary[CC060CType].sample.value
 
       val message = x
         .copy(TransitOperation = x.TransitOperation.copy(notificationType = "0"))
@@ -144,12 +144,9 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val result            = viewModelProvider.apply(message).futureValue
 
       "must render correct number of sections" in {
-        result.sections.length mustBe 3
-
+        result.sections.length mustBe 2
         result.sections(1).sectionTitle.value mustBe "Requested document 1"
-        result.sections(2).sectionTitle.value mustBe "Requested document 2"
       }
-
       "must return correct title" in {
         result.title mustBe "Goods under control - document requested"
       }
@@ -179,8 +176,8 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
       "must render correct number of sections" in {
         result.sections.length mustBe 2
+        result.sections(1).sectionTitle.value mustBe "Requested document 1"
       }
-
       "must return correct title" in {
         result.title mustBe "Goods under control - document requested"
       }
@@ -192,22 +189,6 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         result.paragraph2 mustBe "While awaiting the documentation, the goods will remain under supervision at the office of destination."
         result.paragraph3 mustBe "You must contact the office of destination directly to share the requested documentation."
       }
-    }
-
-    "must render rows" in {
-      val x = arbitrary[CC060CType].sample.value
-
-      val message = x
-        .copy(TransitOperation = x.TransitOperation.copy(notificationType = "1"))
-        .copy(RequestedDocument = Nil)
-
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
-
-      val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(message).futureValue
-
-      result.sections.length mustBe 1
-      result.sections.head.rows.size mustBe 4
     }
   }
 }

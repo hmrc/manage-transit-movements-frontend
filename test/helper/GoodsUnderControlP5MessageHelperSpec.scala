@@ -129,7 +129,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
             val result = helper.buildDateTimeControlRow
 
             result mustBe
-              Some(SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15 pm".toText)))
+              Some(SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15pm".toText)))
         }
       }
     }
@@ -313,9 +313,13 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         forAll(arbitrary[CC060CType].map {
           x =>
             x
-              .copy(TransitOperation = x.TransitOperation.copy(LRN = Some("LRN1")))
-              .copy(TransitOperation = x.TransitOperation.copy(MRN = Some("MRN1")))
-              .copy(TransitOperation = x.TransitOperation.copy(controlNotificationDateAndTime = XMLCalendar("2014-06-09T16:15:04+01:00")))
+              .copy(TransitOperation =
+                x.TransitOperation.copy(
+                  LRN = Some("LRN1"),
+                  MRN = Some("MRN1"),
+                  controlNotificationDateAndTime = XMLCalendar("2014-06-09T16:15:04+01:00")
+                )
+              )
               .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03("22323323"))
         }) {
           message =>
@@ -324,15 +328,13 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
             val helper = new GoodsUnderControlP5MessageHelper(message, mockReferenceDataService)
 
             val result = helper.buildGoodsUnderControlSection().futureValue
-            val firstRow =
-              Seq(
-                SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value("LRN1".toText)),
-                SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("MRN1".toText)),
-                SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15 pm".toText)),
-                SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText))
-              )
 
-            result mustBe Section(None, firstRow, None)
+            result.sectionTitle must not be defined
+
+            result.rows.head mustBe SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value("LRN1".toText))
+            result.rows(1) mustBe SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("MRN1".toText))
+            result.rows(2) mustBe SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15pm".toText))
+            result.rows(3) mustBe SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText))
         }
       }
     }

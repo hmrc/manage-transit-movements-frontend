@@ -64,12 +64,6 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
       "must return correct section length" in {
         result.sections.length mustBe 1
-
-        result.sections(1).rows.size mustBe 2
-        result.sections(1).sectionTitle.value mustBe "Control information 1"
-
-        result.sections(2).rows.size mustBe 2
-        result.sections(2).sectionTitle.value mustBe "Control information 2"
       }
 
       "must return correct title and heading" in {
@@ -106,9 +100,6 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
         result.sections(1).rows.size mustBe 2
         result.sections(1).sectionTitle.value mustBe "Control information 1"
-
-        result.sections(2).rows.size mustBe 2
-        result.sections(2).sectionTitle.value mustBe "Control information 2"
       }
 
       "must return correct title and heading" in {

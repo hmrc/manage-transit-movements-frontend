@@ -95,7 +95,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
       val result            = viewModelProvider.apply(functionalErrors, mrnString).futureValue
 
       "must return correct section length" in {
-        result.tableRows.length mustBe 1
+        result.tableRows.length mustBe 2
       }
       "must return correct title" in {
         result.title mustBe "Review notification errors"

@@ -84,8 +84,13 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
       val viewModel = defaultViewModel
         .copy(guaranteeReferences =
           Seq(
-            GuaranteeReferenceType08("1", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None))),
-            GuaranteeReferenceType08("2", "GRN2", Seq(InvalidGuaranteeReasonType01("1", "test2", None)))
+            GuaranteeReferenceType08("1",
+                                     "GRN",
+                                     Seq(
+                                       InvalidGuaranteeReasonType01("1", "test", None),
+                                       InvalidGuaranteeReasonType01("2", "test2", None)
+                                     )
+            )
           )
         )
 
@@ -122,19 +127,21 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
       val viewModel = defaultViewModel
         .copy(guaranteeReferences =
           Seq(
-            GuaranteeReferenceType08("1",
-                                     "GRN1",
-                                     Seq(
-                                       InvalidGuaranteeReasonType01("1", "test1", None),
-                                       InvalidGuaranteeReasonType01("2", "test2", None)
-                                     )
+            GuaranteeReferenceType08(
+              "1",
+              "GRN1",
+              Seq(
+                InvalidGuaranteeReasonType01("1", "test1", None),
+                InvalidGuaranteeReasonType01("2", "test2", None)
+              )
             ),
-            GuaranteeReferenceType08("2",
-                                     "GRN2",
-                                     Seq(
-                                       InvalidGuaranteeReasonType01("1", "test3", None),
-                                       InvalidGuaranteeReasonType01("2", "test4", None)
-                                     )
+            GuaranteeReferenceType08(
+              "2",
+              "GRN2",
+              Seq(
+                InvalidGuaranteeReasonType01("1", "test3", None),
+                InvalidGuaranteeReasonType01("2", "test4", None)
+              )
             )
           )
         )

@@ -40,10 +40,14 @@ class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyCheck
       forAll(arbitrary[CC051CType].map {
         x =>
           x
-            .copy(TransitOperation = x.TransitOperation.copy(MRN = "someMRN"))
-            .copy(TransitOperation = x.TransitOperation.copy(declarationSubmissionDateAndTime = XMLCalendar("2014-06-09T16:15:04+01:00")))
-            .copy(TransitOperation = x.TransitOperation.copy(noReleaseMotivationCode = "releaseMotivationCode"))
-            .copy(TransitOperation = x.TransitOperation.copy(noReleaseMotivationText = "releaseMotivationText"))
+            .copy(TransitOperation =
+              x.TransitOperation.copy(
+                MRN = "someMRN",
+                declarationSubmissionDateAndTime = XMLCalendar("2014-06-09T16:15:04+01:00"),
+                noReleaseMotivationCode = "releaseMotivationCode",
+                noReleaseMotivationText = "releaseMotivationText"
+              )
+            )
       }) {
         message =>
           val helper = new GoodsNotReleasedP5Helper(message)

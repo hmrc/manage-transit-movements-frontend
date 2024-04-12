@@ -17,7 +17,7 @@
 package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import generated.CC057CType
+import generated.{CC057CType, FunctionalErrorType04}
 import generators.Generators
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -44,8 +44,6 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
   lazy val arrivalNotificationErrorController: String =
     controllers.arrivalP5.routes.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
 
-  private val mrnString = "MRNAB123"
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalP5MessageService)
@@ -64,7 +62,8 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
           when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
 
-          val arrivalNotificationErrorP5ViewModel = new ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrnString)
+          val arrivalNotificationErrorP5ViewModel =
+            new ArrivalNotificationWithoutFunctionalErrorP5ViewModel(message.TransitOperation.MRN)
 
           val request = FakeRequest(GET, arrivalNotificationErrorController)
 
@@ -80,17 +79,20 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
     }
 
     "must redirect to technical difficulties page when functionalErrors are defined" in {
-      forAll(arbitrary[CC057CType].retryUntil(_.FunctionalError.nonEmpty)) {
-        message =>
-          when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(message))
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
 
-          val request = FakeRequest(GET, arrivalNotificationErrorController)
+              val request = FakeRequest(GET, arrivalNotificationErrorController)
 
-          val result = route(app, request).value
+              val result = route(app, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+          }
       }
     }
   }

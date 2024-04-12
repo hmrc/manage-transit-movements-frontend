@@ -123,7 +123,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
             val result = helper.buildDateTimeControlRow
 
             result mustBe
-              Some(SummaryListRow(key = Key("Date and time of control notification".toText), value = Value("09 June 2014 at 4:15 pm".toText)))
+              Some(SummaryListRow(key = Key("Date and time of control notification".toText), value = Value("09 June 2014 at 4:15pm".toText)))
         }
       }
     }

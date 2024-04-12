@@ -17,7 +17,7 @@
 package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import generated.CC057CType
+import generated.{CC057CType, FunctionalErrorType04}
 import generators.Generators
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -32,7 +32,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
-import viewModels.sections.Section
 import views.html.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5View
 
 import scala.concurrent.Future
@@ -45,7 +44,6 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
 
   lazy val rejectionMessageController: String =
     controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url
-  val sections: Seq[Section] = arbitrarySections.arbitrary.sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -62,33 +60,36 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
   "ArrivalNotificationWithFunctionalErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      forAll(arbitrary[CC057CType].retryUntil(_.FunctionalError.nonEmpty)) {
-        message =>
-          when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(message))
-          when(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
+              when(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
-          val paginationViewModel = ListPaginationViewModel(
-            totalNumberOfItems = message.FunctionalError.length,
-            currentPage = 1,
-            numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-            href = controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url,
-            additionalParams = Seq()
-          )
+              val paginationViewModel = ListPaginationViewModel(
+                totalNumberOfItems = message.FunctionalError.length,
+                currentPage = 1,
+                numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+                href = controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url,
+                additionalParams = Seq()
+              )
 
-          val rejectionMessageP5ViewModel = new ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, true)
+              val rejectionMessageP5ViewModel = new ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, true)
 
-          val request = FakeRequest(GET, rejectionMessageController)
+              val request = FakeRequest(GET, rejectionMessageController)
 
-          val result = route(app, request).value
+              val result = route(app, request).value
 
-          status(result) mustEqual OK
+              status(result) mustEqual OK
 
-          val view = injector.instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
+              val view = injector.instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
 
-          contentAsString(result) mustEqual
-            view(rejectionMessageP5ViewModel, arrivalIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
+              contentAsString(result) mustEqual
+                view(rejectionMessageP5ViewModel, arrivalIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
+          }
       }
     }
 

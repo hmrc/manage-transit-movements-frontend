@@ -42,7 +42,7 @@ class DepartureCancelledP5Helper(ie009: CC009CType, referenceDataService: Refere
 
   def buildDateTimeDecisionRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
     answer = ie009.Invalidation.decisionDateAndTime,
-    formatAnswer = formatAsDecisionDateTime,
+    formatAnswer = formatAsDateAndTime,
     prefix = messages("row.label.dateAndTimeOfDecision"),
     id = None,
     call = None

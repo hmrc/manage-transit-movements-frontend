@@ -17,7 +17,7 @@
 package controllers.departureP5
 
 import base.SpecBase
-import generated.CC060CType
+import generated.{CC060CType, RequestedDocumentType}
 import generators.Generators
 import models.departureP5._
 import models.referenceData.CustomsOffice
@@ -118,28 +118,30 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
     }
 
     "when notification type 2 and control information requested - must redirect to informationRequested controller" in {
-      forAll(
-        arbitrary[CC060CType]
-          .retryUntil {
-            _.RequestedDocument.nonEmpty
+      forAll(listWithMaxLength[RequestedDocumentType]()) {
+        requestedDocuments =>
+          forAll(
+            arbitrary[CC060CType]
+              .map {
+                x =>
+                  x
+                    .copy(TransitOperation = x.TransitOperation.copy(notificationType = "2"))
+                    .copy(RequestedDocument = requestedDocuments)
+              }
+          ) {
+            message =>
+              when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+
+              val request = FakeRequest(GET, controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
+
+              val result = route(app, request).value
+
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual
+                controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureIdP5, messageId).url
           }
-          .map {
-            x =>
-              x.copy(TransitOperation = x.TransitOperation.copy(notificationType = "2"))
-          }
-      ) {
-        message =>
-          when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-
-          val request = FakeRequest(GET, controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
-
-          val result = route(app, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual
-            controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureIdP5, messageId).url
       }
     }
   }

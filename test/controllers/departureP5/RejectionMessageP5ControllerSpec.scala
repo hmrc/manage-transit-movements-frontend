@@ -18,12 +18,13 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import generated.CC056CType
+import generated.{CC056CType, FunctionalErrorType04}
 import generators.Generators
 import models.departureP5._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -77,125 +78,136 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   "RejectionMessageP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      forAll(arbitrary[CC056CType].retryUntil(_.FunctionalError.nonEmpty)) {
-        message =>
-          when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(message))
-          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-          when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-          when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = false)))
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
+              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+              when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = false)))
 
-          val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true, isAmendmentJourney = false)
+              val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true, isAmendmentJourney = false)
 
-          val paginationViewModel = ListPaginationViewModel(
-            totalNumberOfItems = message.FunctionalError.length,
-            currentPage = 1,
-            numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-            href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = None).url,
-            additionalParams = Seq()
-          )
+              val paginationViewModel = ListPaginationViewModel(
+                totalNumberOfItems = message.FunctionalError.length,
+                currentPage = 1,
+                numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+                href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = None).url,
+                additionalParams = Seq()
+              )
 
-          val request = FakeRequest(GET, rejectionMessageController)
+              val request = FakeRequest(GET, rejectionMessageController)
 
-          val result = route(app, request).value
+              val result = route(app, request).value
 
-          status(result) mustEqual OK
+              status(result) mustEqual OK
 
-          val view = injector.instanceOf[RejectionMessageP5View]
+              val view = injector.instanceOf[RejectionMessageP5View]
 
-          contentAsString(result) mustEqual
-            view(
-              rejectionMessageP5ViewModel,
-              departureIdP5,
-              messageId,
-              paginationViewModel,
-              isAmendmentJourney = false,
-              None
-            )(request, messages, frontendAppConfig).toString
+              contentAsString(result) mustEqual
+                view(
+                  rejectionMessageP5ViewModel,
+                  departureIdP5,
+                  messageId,
+                  paginationViewModel,
+                  isAmendmentJourney = false,
+                  None
+                )(request, messages, frontendAppConfig).toString
+          }
       }
     }
 
     "must return OK and the correct view for a GET when amendment journey and declaration is amendable" in {
-      forAll(arbitrary[CC056CType].retryUntil(_.FunctionalError.nonEmpty)) {
-        message =>
-          when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(message))
-          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-          when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
-          when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = true)))
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
+              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
+              when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = true)))
 
-          val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true, isAmendmentJourney = true)
+              val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true, isAmendmentJourney = true)
 
-          val paginationViewModel = ListPaginationViewModel(
-            totalNumberOfItems = message.FunctionalError.length,
-            currentPage = 1,
-            numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-            href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = Some(true)).url,
-            additionalParams = Seq(("isAmendmentJourney", "true"))
-          )
+              val paginationViewModel = ListPaginationViewModel(
+                totalNumberOfItems = message.FunctionalError.length,
+                currentPage = 1,
+                numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+                href =
+                  controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = Some(true)).url,
+                additionalParams = Seq(("isAmendmentJourney", "true"))
+              )
 
-          val request = FakeRequest(GET, rejectionMessageAmendmentController)
+              val request = FakeRequest(GET, rejectionMessageAmendmentController)
 
-          val result = route(app, request).value
+              val result = route(app, request).value
 
-          status(result) mustEqual OK
+              status(result) mustEqual OK
 
-          val view = injector.instanceOf[RejectionMessageP5View]
+              val view = injector.instanceOf[RejectionMessageP5View]
 
-          contentAsString(result) mustEqual
-            view(
-              rejectionMessageP5ViewModel,
-              departureIdP5,
-              messageId,
-              paginationViewModel,
-              isAmendmentJourney = true,
-              None
-            )(request, messages, frontendAppConfig).toString
+              contentAsString(result) mustEqual
+                view(
+                  rejectionMessageP5ViewModel,
+                  departureIdP5,
+                  messageId,
+                  paginationViewModel,
+                  isAmendmentJourney = true,
+                  None
+                )(request, messages, frontendAppConfig).toString
+          }
       }
     }
 
     "must return OK and the correct view for a GET when amendment journey and declaration is not amendable" in {
-      forAll(arbitrary[CC056CType].retryUntil(_.FunctionalError.nonEmpty)) {
-        message =>
-          when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(message))
-          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-          when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
-          when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = true)))
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
+              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
+              when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = true)))
 
-          val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true, isAmendmentJourney = true)
+              val rejectionMessageP5ViewModel = new RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true, isAmendmentJourney = true)
 
-          val paginationViewModel = ListPaginationViewModel(
-            totalNumberOfItems = message.FunctionalError.length,
-            currentPage = 1,
-            numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-            href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = Some(true)).url,
-            additionalParams = Seq(("isAmendmentJourney", "true"))
-          )
+              val paginationViewModel = ListPaginationViewModel(
+                totalNumberOfItems = message.FunctionalError.length,
+                currentPage = 1,
+                numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+                href =
+                  controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId, isAmendmentJourney = Some(true)).url,
+                additionalParams = Seq(("isAmendmentJourney", "true"))
+              )
 
-          val request = FakeRequest(GET, rejectionMessageAmendmentController)
+              val request = FakeRequest(GET, rejectionMessageAmendmentController)
 
-          val result = route(app, request).value
+              val result = route(app, request).value
 
-          status(result) mustEqual OK
+              status(result) mustEqual OK
 
-          val view = injector.instanceOf[RejectionMessageP5View]
+              val view = injector.instanceOf[RejectionMessageP5View]
 
-          contentAsString(result) mustEqual
-            view(
-              rejectionMessageP5ViewModel,
-              departureIdP5,
-              messageId,
-              paginationViewModel,
-              isAmendmentJourney = true,
-              None
-            )(request, messages, frontendAppConfig).toString
+              contentAsString(result) mustEqual
+                view(
+                  rejectionMessageP5ViewModel,
+                  departureIdP5,
+                  messageId,
+                  paginationViewModel,
+                  isAmendmentJourney = true,
+                  None
+                )(request, messages, frontendAppConfig).toString
+          }
       }
     }
 
@@ -275,20 +287,28 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       }
 
       "must redirect to declaration summary page on success of handleErrors" in {
-        forAll(arbitrary[CC056CType]) {
-          message =>
-            when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-            when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-            when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-            when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
+        forAll(listWithMaxLength[FunctionalErrorType04]()) {
+          functionalErrors =>
+            forAll(arbitrary[CC056CType].map {
+              x =>
+                x
+                  .copy(TransitOperation = x.TransitOperation.copy(MRN = None))
+                  .copy(FunctionalError = functionalErrors)
+            }) {
+              message =>
+                when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+                when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+                  .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+                when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+                when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
-            val request = FakeRequest(GET, rejectionMessageOnAmend)
+                val request = FakeRequest(GET, rejectionMessageOnAmend)
 
-            val result = route(app, request).value
+                val result = route(app, request).value
 
-            status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
+                status(result) mustEqual SEE_OTHER
+                redirectLocation(result).value mustEqual frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
+            }
         }
       }
 
@@ -311,21 +331,29 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       }
 
       "must redirect to new local reference number on success of handleErrors and IE028 is present" in {
-        forAll(arbitrary[CC056CType]) {
-          message =>
-            when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
-            when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
-            when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-            when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, Some("mrn"))))
-            when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
+        forAll(Gen.alphaNumStr, listWithMaxLength[FunctionalErrorType04]()) {
+          (mrn, functionalErrors) =>
+            forAll(arbitrary[CC056CType].map {
+              x =>
+                x
+                  .copy(TransitOperation = x.TransitOperation.copy(MRN = Some(mrn)))
+                  .copy(FunctionalError = functionalErrors)
+            }) {
+              message =>
+                when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+                when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
+                when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+                when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+                  .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, Some(mrn))))
+                when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
 
-            val request = FakeRequest(GET, rejectionMessageOnAmend)
+                val request = FakeRequest(GET, rejectionMessageOnAmend)
 
-            val result = route(app, request).value
+                val result = route(app, request).value
 
-            status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual frontendAppConfig.departureNewLocalReferenceNumberUrl(lrn.value)
+                status(result) mustEqual SEE_OTHER
+                redirectLocation(result).value mustEqual frontendAppConfig.departureNewLocalReferenceNumberUrl(lrn.value)
+            }
         }
       }
 

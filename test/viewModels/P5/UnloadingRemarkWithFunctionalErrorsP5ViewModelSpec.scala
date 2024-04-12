@@ -46,13 +46,12 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
 
   "UnloadingRemarkWithFunctionalErrorsP5ViewModel" - {
 
-    val functionalErrorReferenceData = Seq(FunctionalErrorWithDesc("12", "Codelist violation"), FunctionalErrorWithDesc("14", "Rule violation"))
-
     "when there is one error" - {
 
       val functionalErrors = Seq(FunctionalErrorType04("14", Number12, "MRN incorrect", None))
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(functionalErrors, mrnString).futureValue
@@ -86,7 +85,9 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         FunctionalErrorType04("2", Number14, "Rule violation", None)
       )
 
-      when(mockReferenceDataService.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("12", "Codelist violation")))
+        .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(functionalErrors, mrnString).futureValue

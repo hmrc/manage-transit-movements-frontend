@@ -26,7 +26,6 @@ import scalaxb.XMLCalendar
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.RecoveryNotificationHelper
-import viewModels.sections.Section
 
 class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -121,8 +120,12 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
         "must return SummaryListRow" in {
           forAll(arbitrary[CC035CType].map {
             x =>
-              x.copy(RecoveryNotification = x.RecoveryNotification.copy(amountClaimed = amountClaimed))
-              x.copy(RecoveryNotification = x.RecoveryNotification.copy(currency = "EUR"))
+              x.copy(RecoveryNotification =
+                x.RecoveryNotification.copy(
+                  amountClaimed = amountClaimed,
+                  currency = "EUR"
+                )
+              )
           }) {
             message =>
               val helper = new RecoveryNotificationHelper(message)
@@ -139,8 +142,12 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
         "must return SummaryListRow" in {
           forAll(arbitrary[CC035CType].map {
             x =>
-              x.copy(RecoveryNotification = x.RecoveryNotification.copy(amountClaimed = amountClaimed))
-              x.copy(RecoveryNotification = x.RecoveryNotification.copy(currency = "FOO"))
+              x.copy(RecoveryNotification =
+                x.RecoveryNotification.copy(
+                  amountClaimed = amountClaimed,
+                  currency = "FOO"
+                )
+              )
           }) {
             message =>
               val helper = new RecoveryNotificationHelper(message)
@@ -160,26 +167,33 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
         forAll(arbitrary[CC035CType].map {
           x =>
             x
-              .copy(TransitOperation = x.TransitOperation.copy(MRN = "MRN1"))
-              .copy(TransitOperation = x.TransitOperation.copy(declarationAcceptanceDate = XMLCalendar("2014-06-09T16:15:04+01:00")))
-              .copy(RecoveryNotification = x.RecoveryNotification.copy(recoveryNotificationDate = Some(XMLCalendar("2014-06-09T16:15:04+01:00"))))
-              .copy(RecoveryNotification = x.RecoveryNotification.copy(amountClaimed = amountClaimed))
-              .copy(RecoveryNotification = x.RecoveryNotification.copy(currency = "EUR"))
+              .copy(TransitOperation =
+                x.TransitOperation.copy(
+                  MRN = mrn,
+                  declarationAcceptanceDate = XMLCalendar("2014-06-09T16:15:04+01:00")
+                )
+              )
+              .copy(RecoveryNotification =
+                x.RecoveryNotification.copy(
+                  recoveryNotificationDate = Some(XMLCalendar("2014-06-09T16:15:04+01:00")),
+                  recoveryNotificationText = Some("text"),
+                  amountClaimed = amountClaimed,
+                  currency = "EUR"
+                )
+              )
         }) {
           message =>
             val helper = new RecoveryNotificationHelper(message)
 
             val result = helper.buildRecoveryNotificationSection
-            val firstRow =
-              Seq(
-                SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText)),
-                SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText)),
-                SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText)),
-                SummaryListRow(key = Key("Further information".toText), value = Value("text".toText)),
-                SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText))
-              )
 
-            result mustBe Section(None, firstRow, None)
+            result.sectionTitle must not be defined
+
+            result.rows.head mustBe SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText))
+            result.rows(1) mustBe SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText))
+            result.rows(2) mustBe SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText))
+            result.rows(3) mustBe SummaryListRow(key = Key("Further information".toText), value = Value("text".toText))
+            result.rows(4) mustBe SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText))
         }
       }
     }

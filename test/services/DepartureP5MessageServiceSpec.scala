@@ -79,7 +79,10 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           totalCount = 1
         )
 
-        val ie056 = arbitrary[CC056CType].sample.value
+        val x = arbitrary[CC056CType].sample.value
+
+        val ie056 = x
+          .copy(TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType))
 
         when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
           Future.successful(latestDepartureMessage)

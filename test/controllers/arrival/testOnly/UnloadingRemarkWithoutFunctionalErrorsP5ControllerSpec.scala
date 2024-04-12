@@ -41,8 +41,6 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
   lazy val unloadingRemarkWithErrorsController: String =
     controllers.arrivalP5.routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalIdP5, messageId).url
 
-  private val mrnString = "MRNAB123"
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalP5MessageService)
@@ -66,7 +64,8 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
             .thenReturn(Future.successful(Right(fakeCustomsOffice)))
 
-          val unloadingNotificationErrorsP5ViewModel = new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrnString, Right(fakeCustomsOffice))
+          val unloadingNotificationErrorsP5ViewModel =
+            new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(message.TransitOperation.MRN, Right(fakeCustomsOffice))
 
           val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
 
@@ -82,20 +81,23 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
     }
 
     "must redirect to technical difficulties page when functionalErrors is greater than 0" in {
-      forAll(arbitrary[CC057CType].retryUntil(_.FunctionalError.nonEmpty)) {
-        message =>
-          when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(message))
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
 
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-            .thenReturn(Future.successful(Right(fakeCustomsOffice)))
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+                .thenReturn(Future.successful(Right(fakeCustomsOffice)))
 
-          val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
+              val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
 
-          val result = route(app, request).value
+              val result = route(app, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+          }
       }
     }
   }

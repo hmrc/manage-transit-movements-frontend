@@ -18,7 +18,7 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import generated.CC056CType
+import generated.{CC056CType, FunctionalErrorType04}
 import generators.Generators
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -81,18 +81,21 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
-      forAll(arbitrary[CC056CType].retryUntil(_.FunctionalError.nonEmpty)) {
-        message =>
-          when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("AB123")))
+      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+        functionalErrors =>
+          forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = functionalErrors))) {
+            message =>
+              when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("AB123")))
 
-          val request = FakeRequest(GET, controllerRoute)
+              val request = FakeRequest(GET, controllerRoute)
 
-          val result = route(app, request).value
+              val result = route(app, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+          }
       }
     }
   }
