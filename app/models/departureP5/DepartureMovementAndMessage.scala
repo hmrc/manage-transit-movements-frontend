@@ -16,7 +16,7 @@
 
 package models.departureP5
 
-import models.{LocalReferenceNumber, RejectionType}
+import models.LocalReferenceNumber
 
 import java.time.LocalDateTime
 
