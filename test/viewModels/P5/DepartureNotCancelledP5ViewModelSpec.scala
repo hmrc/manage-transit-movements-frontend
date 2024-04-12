@@ -51,8 +51,12 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
 
     val message = x
       .copy(TransitOperation = x.TransitOperation.copy(MRN = Some("mrn123")))
-      .copy(Invalidation = x.Invalidation.copy(requestDateAndTime = Some(XMLCalendar("2022-07-15"))))
-      .copy(Invalidation = x.Invalidation.copy(justification = Some("some justification")))
+      .copy(Invalidation =
+        x.Invalidation.copy(
+          requestDateAndTime = Some(XMLCalendar("2022-07-15")),
+          justification = Some("some justification")
+        )
+      )
       .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03(customsReferenceId))
 
     val viewModelProvider = new DepartureNotCancelledP5ViewModelProvider(mockReferenceDataService)

@@ -16,8 +16,7 @@
 
 package utils
 
-import generated.CC035CType
-import models.RichRecoveryNotificationType
+import generated.{CC035CType, RecoveryNotificationType}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
@@ -60,9 +59,9 @@ class RecoveryNotificationHelper(ie035: CC035CType)(implicit
     call = None
   )
 
-  def buildAmountRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(ie035.RecoveryNotification.formattedCurrency),
-    formatAnswer = formatAsText,
+  def buildAmountRow: Option[SummaryListRow] = buildRowFromAnswer[RecoveryNotificationType](
+    answer = Some(ie035.RecoveryNotification),
+    formatAnswer = formatAsCurrency,
     prefix = messages("row.label.amountClaimed"),
     id = None,
     call = None

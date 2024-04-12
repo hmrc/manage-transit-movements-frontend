@@ -22,17 +22,9 @@ import generated._
 import play.api.libs.json._
 
 import java.time.{Clock, LocalDateTime, ZoneId}
-import java.util.Currency
 import scala.annotation.nowarn
-import scala.util.{Success, Try}
 
 package object models {
-
-  lazy val booleanReads: Reads[Boolean] = Reads {
-    case JsString("0") => JsSuccess(false)
-    case JsString("1") => JsSuccess(true)
-    case x             => JsError(s"$x could not be read as a Boolean")
-  }
 
   implicit class RichJsObject(jsObject: JsObject) {
 
@@ -197,35 +189,25 @@ package object models {
         value.TransitOperation.notificationType == AdditionalDocumentsRequest
   }
 
-  // TODO - refactor to use Format
-  implicit class RichRecoveryNotificationType(value: RecoveryNotificationType) {
-
-    def formattedCurrency: String = value match {
-      case RecoveryNotificationType(_, _, amountClaimed, currency) =>
-        Try(Currency.getInstance(currency).getSymbol) match {
-          case Success(currency) => s"$currency$amountClaimed"
-          case _                 => s"$amountClaimed $currency"
-        }
-    }
-  }
-
   implicit class RichCC056CType(value: CC056CType) {
 
-    def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] = {
-      val start = (page - 1) * paginationAppConfig.departuresNumberOfErrorsPerPage
-      value.FunctionalError
-        .sortBy(_.errorCode.toString)
-        .slice(start, start + paginationAppConfig.departuresNumberOfErrorsPerPage)
-    }
+    def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] =
+      value.FunctionalError.pagedFunctionalErrors(page, paginationAppConfig.departuresNumberOfErrorsPerPage)
   }
 
   implicit class RichCC057CType(value: CC057CType) {
 
-    def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] = {
-      val start = (page - 1) * paginationAppConfig.arrivalsNumberOfErrorsPerPage
-      value.FunctionalError
+    def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] =
+      value.FunctionalError.pagedFunctionalErrors(page, paginationAppConfig.arrivalsNumberOfErrorsPerPage)
+  }
+
+  implicit class RichFunctionalErrors(value: Seq[FunctionalErrorType04]) {
+
+    def pagedFunctionalErrors(page: Int, numberOfErrorsPerPage: Int): Seq[FunctionalErrorType04] = {
+      val start = (page - 1) * numberOfErrorsPerPage
+      value
         .sortBy(_.errorCode.toString)
-        .slice(start, start + paginationAppConfig.arrivalsNumberOfErrorsPerPage)
+        .slice(start, start + numberOfErrorsPerPage)
     }
   }
 

@@ -16,6 +16,7 @@
 
 package utils
 
+import generated.RecoveryNotificationType
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -24,7 +25,9 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
 import java.text.SimpleDateFormat
+import java.util.Currency
 import javax.xml.datatype.XMLGregorianCalendar
+import scala.util.{Success, Try}
 
 class SummaryListRowHelper(implicit messages: Messages) {
 
@@ -57,6 +60,17 @@ class SummaryListRowHelper(implicit messages: Messages) {
       .replace("PM", "pm")
       .replace("AM", "am")
       .toText
+  }
+
+  def formatAsCurrency(recoveryNotification: RecoveryNotificationType): Content = {
+    val value = recoveryNotification match {
+      case RecoveryNotificationType(_, _, amountClaimed, currency) =>
+        Try(Currency.getInstance(currency).getSymbol) match {
+          case Success(currency) => s"$currency$amountClaimed"
+          case _                 => s"$amountClaimed $currency"
+        }
+    }
+    value.toText
   }
 
   def buildRow(
