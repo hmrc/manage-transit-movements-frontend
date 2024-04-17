@@ -32,11 +32,11 @@
 
     <h2 class="govuk-heading-m" data-testrole="movements-list_group-heading">@date</h2>
 
-    <table class="responsive-table">
+    <table class="govuk-table govuk-table--small-text-until-tablet">
         <caption class="govuk-visually-hidden">@visuallyHiddenHeader @date</caption>
 
-        <thead>
-            <tr>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingUpdated</th>
                 <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingReferenceNumber</th>
                 <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingStatus</th>
@@ -44,28 +44,23 @@
             </tr>
         </thead>
 
-        <tbody>
+        <tbody class="govuk-table__body">
             @for((row, rowIndex) <- rows.zip(LazyList from 1)) {
-                <tr data-testrole="movements-list_row@rowIndex">
-
-                    <td data-testrole="movements-list_row@rowIndex-updated">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingUpdated</span>
+                <tr data-testrole="movements-list_row@rowIndex" class="govuk-table__row">
+                    <td data-testrole="movements-list_row@rowIndex-updated" class="govuk-table__cell">
                         @row.updated
                     </td>
 
-                    <td data-testrole="movements-list_row@rowIndex-ref">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
+                    <td data-testrole="movements-list_row@rowIndex-ref" class="govuk-table__cell">
                         @row.referenceNumber
                     </td>
 
-                    <td data-testrole="movements-list_row@rowIndex-status">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingStatus</span>
+                    <td data-testrole="movements-list_row@rowIndex-status" class="govuk-table__cell">
                         @messages(row.status)
                     </td>
 
-                    <td data-testrole="movements-list_row@rowIndex-actions">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingAction</span>
-                        <ul class="govuk-list responsive-table__list">
+                    <td data-testrole="movements-list_row@rowIndex-actions" class="govuk-table__cell">
+                        <ul class="govuk-list govuk-table__list">
                             @for((action, actionIndex) <- row.actions.zip(LazyList from 1)) {
                                 <li>
                                     <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link" data-testrole="movements-list_row@rowIndex-action@actionIndex">@messages(action.key)
@@ -75,7 +70,6 @@
                             }
                         </ul>
                     </td>
-
                 </tr>
             }
         </tbody>
