@@ -47,7 +47,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
         }
       }
 
-      val rows: Elements = doc.select("tr[data-testrole^=movements-list_row]")
+      val rows: Elements = doc.getElementsByClass("govuk-table__body")
 
       "must generate a row for each movement" in {
         rows.size() mustEqual viewMovements.size
@@ -64,25 +64,25 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
                 element.ownText() mustBe text
 
               "must display time" in {
-                val updated   = row.selectFirst("td[data-testrole*=-updated]")
+                val updated   = row.getElementsByClass("govuk-table__cell").first()
                 val timeRegex = "^(([1-9])|([1][0-2])):(([0][0-9])|([1-5][0-9]))(am|pm)$"
                 updated.ownText().matches(timeRegex) mustBe true
               }
 
               "must display correct reference number" in {
-                val ref = row.selectFirst("td[data-testrole*=-ref]")
+                val ref = row.getElementsByClass("govuk-table__cell").get(1)
 
                 behave like elementWithVisibleText(ref, viewMovement.referenceNumber)
               }
 
               "must display correct status" in {
-                val status = row.selectFirst("td[data-testrole*=-status]")
+                val status = row.getElementsByClass("govuk-table__cell").get(2)
 
                 behave like elementWithVisibleText(status, viewMovement.status)
               }
 
               "must display actions" - {
-                val actions = row.selectFirst("td[data-testrole*=-actions]")
+                val actions = row.getElementsByClass("govuk-table__cell").get(3)
 
                 val actionLinks = actions.getElementsByClass("govuk-link")
                 actionLinks.zipWithIndex.foreach {

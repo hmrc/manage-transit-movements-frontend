@@ -17,61 +17,52 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import viewModels.ViewMovement
 
-@this()
+@this(govukTable: GovukTable)
 
 @(
-    dataRows: Seq[(String, Seq[ViewMovement])],
-    visuallyHiddenHeader: String,
-    rowHeadingUpdated: String,
-    rowHeadingReferenceNumber: String,
-    rowHeadingStatus: String,
-    rowHeadingAction: String
+  dataRows: Seq[(String, Seq[ViewMovement])],
+  visuallyHiddenHeader: String,
+  rowHeadingUpdated: String,
+  rowHeadingReferenceNumber: String,
+  rowHeadingStatus: String,
+  rowHeadingAction: String
 )(implicit messages: Messages)
 
 @for((date, rows) <- dataRows) {
 
-    <h2 class="govuk-heading-m" data-testrole="movements-list_group-heading">@date</h2>
+  <h2 class="govuk-heading-m" data-testrole="movements-list_group-heading">@date</h2>
 
-    <table class="govuk-table govuk-table--small-text-until-tablet">
-        <caption class="govuk-visually-hidden">@visuallyHiddenHeader @date</caption>
-
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingUpdated</th>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingReferenceNumber</th>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingStatus</th>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingAction</th>
-            </tr>
-        </thead>
-
-        <tbody class="govuk-table__body">
-            @for((row, rowIndex) <- rows.zip(LazyList from 1)) {
-                <tr data-testrole="movements-list_row@rowIndex" class="govuk-table__row">
-                    <td data-testrole="movements-list_row@rowIndex-updated" class="govuk-table__cell">
-                        @row.updated
-                    </td>
-
-                    <td data-testrole="movements-list_row@rowIndex-ref" class="govuk-table__cell">
-                        @row.referenceNumber
-                    </td>
-
-                    <td data-testrole="movements-list_row@rowIndex-status" class="govuk-table__cell">
-                        @messages(row.status)
-                    </td>
-
-                    <td data-testrole="movements-list_row@rowIndex-actions" class="govuk-table__cell">
-                        <ul class="govuk-list govuk-table__list">
-                            @for((action, actionIndex) <- row.actions.zip(LazyList from 1)) {
-                                <li>
-                                    <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link" data-testrole="movements-list_row@rowIndex-action@actionIndex">@messages(action.key)
-                                        <span class="govuk-visually-hidden">@messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+  @govukTable(Table(
+    head = Some(Seq(
+      HeadCell(content = Text(rowHeadingUpdated), classes = "govuk-!-width-one-quarter"),
+      HeadCell(content = Text(rowHeadingReferenceNumber), classes = "govuk-!-width-one-quarter"),
+      HeadCell(content = Text(rowHeadingStatus), classes = "govuk-!-width-one-quarter"),
+      HeadCell(content = Text(rowHeadingAction), classes = "govuk-!-width-one-quarter")
+    )),
+    rows = rows.zipWithIndex.flatMap { case (row, rowIndex) =>
+      Seq(
+        Seq(
+          TableRow(content = Text(row.updated)),
+          TableRow(content = Text(row.referenceNumber)),
+          TableRow(content = Text(messages(row.status))),
+          TableRow(content = HtmlContent(
+            Html(
+              s"""
+                  ${row.actions.zipWithIndex.map { case (action, actionIndex) =>
+                s"""
+                <div>
+                    <a id="${action.id(row.referenceNumber)}" href="${action.href}" class="govuk-link">
+                        ${messages(action.key)}
+                        <span class="govuk-visually-hidden">${messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)}</span>
+                    </a>
+                </div>
+                """
+              }.mkString}
+              """
+            )
+          ))
+        )
+      )
+    }
+  ))
 }
