@@ -56,7 +56,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
-      .apply(viewModel, arrivalIdP5, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, arrivalIdP5, paginationViewModel)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable = applyView(viewModel, paginationViewModel)
 
@@ -93,14 +93,13 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
-      "paragraph-2",
+      "helpdesk",
       "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
     )
     assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
-
   }
 
   behave like pageWithLink(

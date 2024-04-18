@@ -14,45 +14,50 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Button, Heading, AnswerSections, Pagination, Table}
+@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
 @import config.FrontendAppConfig
 @import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 @import viewModels.pagination.ListPaginationViewModel
 
 @this(
-mainTemplate: MainTemplate,
-heading: Heading,
-table: Table,
-button: Button,
-pagination: Pagination,
-formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    table: Table,
+    button: Button,
+    pagination: Pagination,
+    formHelper: FormWithCSRF,
+    helpdeskLink: HelpdeskLink
 )
 
 @(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: ListPaginationViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
-    @mainTemplate(
-        title = rejectionMessageP5ViewModel.title,
-        showBackLink = true
-    ) {
+@mainTemplate(
+    title = rejectionMessageP5ViewModel.title,
+    showBackLink = true
+) {
 
-        @heading(
-            heading = rejectionMessageP5ViewModel.heading,
-            caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
-        )
+    @heading(
+        heading = rejectionMessageP5ViewModel.heading,
+        caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
+    )
 
-        <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
+    <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
 
-        @mrn.map{mrn => <p id="mrn" class="govuk-label--s">MRN: @mrn</p> }
+    @mrn.map{mrn => <p id="mrn" class="govuk-label--s">MRN: @mrn</p> }
 
-        @pagination(paginationViewModel, None)
+    @pagination(paginationViewModel, None)
 
-        @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
+    @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
 
-        <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
+    @helpdeskLink(
+        rejectionMessageP5ViewModel.paragraph2Prefix,
+        rejectionMessageP5ViewModel.paragraph2Link,
+        rejectionMessageP5ViewModel.paragraph2Suffix
+    )
 
-        @if(!isAmendmentJourney){
+    @if(!isAmendmentJourney){
         <p class="govuk-body">
             <a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a>
         </p>
-        }
+    }
 }

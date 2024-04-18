@@ -64,10 +64,13 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
+      "helpdesk",
+      "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
+    )
+    assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
-
   }
 
   "must render correct link text" in {

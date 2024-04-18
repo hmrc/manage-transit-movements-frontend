@@ -16,16 +16,17 @@
 
 @import config.FrontendAppConfig
 @import viewModels.P5.departure.RejectionMessageP5ViewModel
-@import views.html.components.{Button, Heading, Pagination, Table}
+@import views.html.components.{Button, Heading, HelpdeskLink, Pagination, Table}
 @import viewModels.pagination.PaginationViewModel
 
 @this(
-        mainTemplate: MainTemplate,
-        heading: Heading,
-        table: Table,
-        button: Button,
-        formHelper: FormWithCSRF,
-        pagination: Pagination
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    table: Table,
+    button: Button,
+    formHelper: FormWithCSRF,
+    pagination: Pagination,
+    helpdeskLink: HelpdeskLink
 )
 @(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
@@ -49,9 +50,11 @@
         @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
     }
 
-
-    <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a>
-        @rejectionMessageP5ViewModel.paragraph2Suffix</p>
+    @helpdeskLink(
+        rejectionMessageP5ViewModel.paragraph2Prefix,
+        rejectionMessageP5ViewModel.paragraph2Link,
+        rejectionMessageP5ViewModel.paragraph2Suffix
+    )
 
     @button(
         attributes = Map("id" -> "submit"),
@@ -61,7 +64,5 @@
 
     @if(!isAmendmentJourney) {
         <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
-    }else {
-        <br>
     }
 }

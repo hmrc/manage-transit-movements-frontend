@@ -95,14 +95,13 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
 
   "must render correct paragraph3 content" in {
     assertSpecificElementContainsText(
-      "paragraph-3",
+      "helpdesk",
       "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
     )
     assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
-
   }
 
   behave like pageWithLink(

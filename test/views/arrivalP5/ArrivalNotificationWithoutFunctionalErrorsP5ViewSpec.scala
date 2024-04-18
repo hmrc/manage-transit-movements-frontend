@@ -65,10 +65,13 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnsw
 
   "must render correct paragraph3 content" in {
     assertSpecificElementContainsText(
+      "helpdesk",
+      "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
+    )
+    assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
-
   }
 
   "must render correct link text" in {

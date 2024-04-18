@@ -99,7 +99,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
               val view = injector.instanceOf[ReviewCancellationErrorsP5View]
 
               contentAsString(result) mustEqual
-                view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
+                view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages).toString
           }
       }
     }

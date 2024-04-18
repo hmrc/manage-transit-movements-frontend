@@ -16,16 +16,17 @@
 
 @import config.FrontendAppConfig
 @import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
-@import views.html.components.{AnswerSections, Button, Heading, Pagination, Table}
+@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
 @import viewModels.pagination.ListPaginationViewModel
 
 @this(
-        mainTemplate: MainTemplate,
-        heading: Heading,
-        table: Table,
-        button: Button,
-        pagination: Pagination,
-        formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    table: Table,
+    button: Button,
+    pagination: Pagination,
+    formHelper: FormWithCSRF,
+    helpdeskLink: HelpdeskLink
 )
 
 @(viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel, arrivalId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
@@ -48,8 +49,11 @@
 
     @table(viewModel.tableRows, viewModel.tableHeadCells)
 
-    <p id="paragraph-3" class="govuk-body">@viewModel.paragraph3Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@viewModel.paragraph3Link</a>
-        @viewModel.paragraph3Suffix</p>
+    @helpdeskLink(
+        viewModel.paragraph3Prefix,
+        viewModel.paragraph3Link,
+        viewModel.paragraph3Suffix
+    )
 
     <p class="govuk-body">
         <a id="arrival-link" class="govuk-link" href="@config.declareArrivalNotificationStartUrl">@viewModel.hyperlink</a>

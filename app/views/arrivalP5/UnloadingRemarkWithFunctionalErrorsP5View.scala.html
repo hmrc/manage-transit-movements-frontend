@@ -14,21 +14,22 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Button, Heading, AnswerSections, Pagination, Table}
+@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
 @import config.FrontendAppConfig
 @import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 @import viewModels.pagination.ListPaginationViewModel
 
 @this(
-        mainTemplate: MainTemplate,
-        heading: Heading,
-        table: Table,
-        button: Button,
-        formHelper: FormWithCSRF,
-        pagination: Pagination
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    table: Table,
+    button: Button,
+    formHelper: FormWithCSRF,
+    pagination: Pagination,
+    helpdeskLink: HelpdeskLink
 )
 
-@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,
@@ -46,8 +47,11 @@
 
     @table(viewModel.tableRows, viewModel.tableHeadCells)
 
-    <p id="paragraph-2" class="govuk-body">@viewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@viewModel.paragraph2Link</a>
-        @viewModel.paragraph2Suffix</p>
+    @helpdeskLink(
+        viewModel.paragraph2Prefix,
+        viewModel.paragraph2Link,
+        viewModel.paragraph2Suffix
+    )
 
     <p class="govuk-body">
         <a id="arrival-link" class="govuk-link" href="@controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)">@viewModel.hyperlink</a>
