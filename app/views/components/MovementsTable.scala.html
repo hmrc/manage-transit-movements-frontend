@@ -28,6 +28,16 @@
   rowHeadingAction: String
 )(implicit messages: Messages)
 
+@links(row: ViewMovement) = {
+  @row.actions.map { action =>
+    <div>
+      <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link">@messages(action.key)
+        <span class="govuk-visually-hidden">@messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)</span>
+      </a>
+    </div>
+  }
+}
+
 @for((date, rows) <- dataRows) {
 
   <h2 class="govuk-heading-m" data-testrole="movements-list_group-heading">@date</h2>
@@ -39,29 +49,12 @@
       HeadCell(content = Text(rowHeadingStatus), classes = "govuk-!-width-one-quarter"),
       HeadCell(content = Text(rowHeadingAction), classes = "govuk-!-width-one-quarter")
     )),
-    rows = rows.zipWithIndex.flatMap { case (row, rowIndex) =>
+    rows = rows.map { row =>
       Seq(
-        Seq(
-          TableRow(content = Text(row.updated)),
-          TableRow(content = Text(row.referenceNumber)),
-          TableRow(content = Text(messages(row.status))),
-          TableRow(content = HtmlContent(
-            Html(
-              s"""
-                  ${row.actions.zipWithIndex.map { case (action, actionIndex) =>
-                s"""
-                <div>
-                    <a id="${action.id(row.referenceNumber)}" href="${action.href}" class="govuk-link">
-                        ${messages(action.key)}
-                        <span class="govuk-visually-hidden">${messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)}</span>
-                    </a>
-                </div>
-                """
-              }.mkString}
-              """
-            )
-          ))
-        )
+        TableRow(content = Text(row.updated)),
+        TableRow(content = Text(row.referenceNumber)),
+        TableRow(content = Text(messages(row.status))),
+        TableRow(content = HtmlContent(links(row)))
       )
     },
     caption = Some(s"$visuallyHiddenHeader $date"),
