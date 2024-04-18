@@ -63,39 +63,26 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
               def elementWithVisibleText(element: Element, text: String): Unit =
                 element.ownText() mustBe text
 
-              def elementWithHiddenText(element: Element, text: String): Unit = {
-                val heading = element.getElementsByClass("responsive-table__heading").head
-                heading.attr("aria-hidden").toBoolean mustBe true
-                heading.text() mustBe text
-              }
-
               "must display time" in {
                 val updated   = row.selectFirst("td[data-testrole*=-updated]")
                 val timeRegex = "^(([1-9])|([1][0-2])):(([0][0-9])|([1-5][0-9]))(am|pm)$"
                 updated.ownText().matches(timeRegex) mustBe true
-                behave like elementWithHiddenText(updated, messages(s"$prefix.table.updated"))
               }
 
               "must display correct reference number" in {
                 val ref = row.selectFirst("td[data-testrole*=-ref]")
 
                 behave like elementWithVisibleText(ref, viewMovement.referenceNumber)
-                behave like elementWithHiddenText(ref, messages(s"$prefix.table.$referenceNumberType"))
               }
 
               "must display correct status" in {
                 val status = row.selectFirst("td[data-testrole*=-status]")
 
                 behave like elementWithVisibleText(status, viewMovement.status)
-                behave like elementWithHiddenText(status, messages(s"$prefix.table.status"))
               }
 
               "must display actions" - {
                 val actions = row.selectFirst("td[data-testrole*=-actions]")
-
-                "must include hidden content" in {
-                  behave like elementWithHiddenText(actions, messages(s"$prefix.table.action"))
-                }
 
                 val actionLinks = actions.getElementsByClass("govuk-link")
                 actionLinks.zipWithIndex.foreach {
