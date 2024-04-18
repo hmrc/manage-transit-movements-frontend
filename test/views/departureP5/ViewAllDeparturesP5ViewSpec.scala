@@ -89,7 +89,7 @@ class ViewAllDeparturesP5ViewSpec
     id = "go-to-manage-transit-movements",
     expectedText = "Manage your transit movements",
     expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
-  )a
+  )
 
   "must render search result text" - {
     "when 1 page" - {
