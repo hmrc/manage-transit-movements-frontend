@@ -20,18 +20,21 @@ import viewModels.pagination.PaginationViewModel
 
 case class ViewAllArrivalMovementsP5ViewModel(
   dataRows: Seq[(String, Seq[ViewArrivalP5])],
-  paginationViewModel: PaginationViewModel
+  paginationViewModel: PaginationViewModel,
+  searchParam: Option[String]
 )
 
 object ViewAllArrivalMovementsP5ViewModel {
 
   def apply(
     movementsAndMessages: Seq[ViewArrivalP5],
-    paginationViewModel: PaginationViewModel
+    paginationViewModel: PaginationViewModel,
+    searchParam: Option[String]
   )(implicit d: DummyImplicit): ViewAllArrivalMovementsP5ViewModel =
     new ViewAllArrivalMovementsP5ViewModel(
       ViewArrivalMovementsP5(movementsAndMessages).dataRows,
-      paginationViewModel
+      paginationViewModel,
+      searchParam
     )
 
 }

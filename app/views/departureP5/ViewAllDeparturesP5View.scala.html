@@ -36,12 +36,12 @@
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("viewDepartureDeclarationsP5.title"),
+    title = pageTitle(viewModel.searchParam),
     showBackLink = false,
     fullWidth = true
 ) {
 
-    @heading(messages("viewDepartureDeclarationsP5.heading"))
+    @heading(pageHeading(viewModel.searchParam))
 
     <p class="govuk-body">
         <a id="make-departure-declaration" class="govuk-link" href=@config.startDepartureDeclarationStartUrl>
@@ -75,4 +75,16 @@
             @messages("viewDepartureDeclarationsP5.link.manage")
         </a>
     </p>
+}
+
+@pageHeading(searchParam: Option[String]) = @{
+    viewModel.searchParam match {
+        case Some(searchParam) => { messages("viewDepartureDeclarationsP5.searchResult.heading", searchParam)}
+        case None => { messages("viewDepartureDeclarationsP5.heading")}}
+}
+
+@pageTitle(searchParam: Option[String]) = @{
+    viewModel.searchParam match {
+        case Some(searchParam) => { messages("viewDepartureDeclarationsP5.searchResult.title", searchParam)}
+        case None => { messages("viewDepartureDeclarationsP5.title")}}
 }

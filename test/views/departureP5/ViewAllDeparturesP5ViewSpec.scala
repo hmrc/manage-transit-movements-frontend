@@ -47,14 +47,15 @@ class ViewAllDeparturesP5ViewSpec
   override val viewMovements: Seq[ViewDepartureP5] = dataRows.flatMap(_._2)
 
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
-    viewWithSpecificPagination(form, Nil, paginationViewModel)
+    viewWithSpecificPagination(form, Nil, paginationViewModel, None)
 
   private def viewWithSpecificPagination(
     form: Form[String],
     departures: Seq[ViewDepartureP5],
-    paginationViewModel: ListPaginationViewModel
+    paginationViewModel: ListPaginationViewModel,
+    searchParam: Option[String]
   ): HtmlFormat.Appendable =
-    applyView(form, ViewAllDepartureMovementsP5ViewModel(departures, paginationViewModel))
+    applyView(form, ViewAllDepartureMovementsP5ViewModel(departures, paginationViewModel, searchParam))
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsP5ViewModel)
 
@@ -88,24 +89,28 @@ class ViewAllDeparturesP5ViewSpec
     id = "go-to-manage-transit-movements",
     expectedText = "Manage your transit movements",
     expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
-  )
+  )a
 
   "must render search result text" - {
     "when 1 page" - {
       "and search param provided" in {
         val departures          = listWithMaxLength[ViewDepartureP5]().sample.value
         val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
-        val filledForm          = form.fill("LRN123")
-        val doc: Document       = parseView(viewWithSpecificPagination(filledForm, departures, paginationViewModel))
+        val searchParam         = "LRN123"
+        val filledForm          = form.fill(searchParam)
+        val doc: Document       = parseView(viewWithSpecificPagination(filledForm, departures, paginationViewModel, Some(searchParam)))
         val p                   = doc.getElementById("results-count")
         p.text() mustBe "Showing 1 result matching LRN123"
         boldWords(p) mustBe Seq("1")
+
+        val title = doc.getElementsByClass("hmrc-page-heading")
+        title.text() mustBe "Search results for \"LRN123\" - Departure declarations"
       }
 
       "when search param not provided" in {
         val departures          = listWithMaxLength[ViewDepartureP5]().sample.value
         val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
-        val doc: Document       = parseView(viewWithSpecificPagination(form, departures, paginationViewModel))
+        val doc: Document       = parseView(viewWithSpecificPagination(form, departures, paginationViewModel, None))
         val p                   = doc.getElementById("results-count")
         p.text() mustBe "Showing 1 result"
         boldWords(p) mustBe Seq("1")
@@ -114,7 +119,7 @@ class ViewAllDeparturesP5ViewSpec
 
     "when there are no results" in {
       val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
-      val doc: Document       = parseView(viewWithSpecificPagination(form, Nil, paginationViewModel))
+      val doc: Document       = parseView(viewWithSpecificPagination(form, Nil, paginationViewModel, None))
       val p                   = doc.getElementById("no-results-found")
       p.text() mustBe "No results found"
     }
