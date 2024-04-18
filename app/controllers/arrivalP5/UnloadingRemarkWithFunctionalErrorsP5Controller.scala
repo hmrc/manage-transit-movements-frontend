@@ -16,7 +16,7 @@
 
 package controllers.arrivalP5
 
-import config.{FrontendAppConfig, PaginationAppConfig}
+import config.PaginationAppConfig
 import controllers.actions._
 import generated.CC057CType
 import models.RichCC057CType
@@ -37,7 +37,7 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider,
   view: UnloadingRemarkWithFunctionalErrorsP5View
-)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
+)(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 

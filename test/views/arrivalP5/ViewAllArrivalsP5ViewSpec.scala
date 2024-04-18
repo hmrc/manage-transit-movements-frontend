@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.arrival
+package views.arrivalP5
 
 import generators.Generators
 import org.jsoup.nodes.Document

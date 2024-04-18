@@ -89,7 +89,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
               val view = injector.instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
 
               contentAsString(result) mustEqual
-                view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
+                view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages).toString
           }
       }
     }

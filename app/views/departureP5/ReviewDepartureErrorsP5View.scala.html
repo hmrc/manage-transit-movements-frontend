@@ -14,18 +14,19 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Button, Heading, AnswerSections, Pagination, Table}
+@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
 @import config.FrontendAppConfig
 @import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 @import viewModels.pagination.ListPaginationViewModel
 
 @this(
-mainTemplate: MainTemplate,
-heading: Heading,
-table: Table,
-button: Button,
-pagination: Pagination,
-formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    table: Table,
+    button: Button,
+    pagination: Pagination,
+    formHelper: FormWithCSRF,
+    helpdeskLink: HelpdeskLink
 )
 
 @(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: ListPaginationViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
@@ -47,6 +48,12 @@ formHelper: FormWithCSRF
         @pagination(paginationViewModel, None)
 
         @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
+
+        @helpdeskLink(
+            rejectionMessageP5ViewModel.paragraph2Prefix,
+            rejectionMessageP5ViewModel.paragraph2Link,
+            rejectionMessageP5ViewModel.paragraph2Suffix
+        )
 
         <p id="paragraph-2" class="govuk-body">@rejectionMessageP5ViewModel.paragraph2Prefix <a id="helpdesk-link" class="govuk-link" target="_blank" href=@config.nctsEnquiriesUrl>@rejectionMessageP5ViewModel.paragraph2Link</a> @rejectionMessageP5ViewModel.paragraph2Suffix</p>
 

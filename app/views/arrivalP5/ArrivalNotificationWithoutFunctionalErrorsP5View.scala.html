@@ -16,33 +16,39 @@
 
 @import config.FrontendAppConfig
 @import viewModels.P5.arrival.ArrivalNotificationWithoutFunctionalErrorP5ViewModel
-@import views.html.components.{AnswerSections, Button, Heading}
+@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink}
 
 @this(
-mainTemplate: MainTemplate,
-heading: Heading,
-answerSections: AnswerSections,
-button: Button,
-formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    answerSections: AnswerSections,
+    button: Button,
+    formHelper: FormWithCSRF,
+    helpdeskLink: HelpdeskLink
 )
+
 @(arrivalNotificationErrorP5ViewModel: ArrivalNotificationWithoutFunctionalErrorP5ViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
-    @mainTemplate(
-        title = arrivalNotificationErrorP5ViewModel.title,
-        showBackLink = true
-    ) {
+@mainTemplate(
+    title = arrivalNotificationErrorP5ViewModel.title,
+    showBackLink = true
+) {
 
-        @heading(
-            heading = arrivalNotificationErrorP5ViewModel.heading,
-            caption = Some(messages("arrival.messages.caption", arrivalNotificationErrorP5ViewModel.mrn))
-        )
+    @heading(
+        heading = arrivalNotificationErrorP5ViewModel.heading,
+        caption = Some(messages("arrival.messages.caption", arrivalNotificationErrorP5ViewModel.mrn))
+    )
 
-        <p id="paragraph-1" class="govuk-body">@arrivalNotificationErrorP5ViewModel.paragraph1</p>
+    <p id="paragraph-1" class="govuk-body">@arrivalNotificationErrorP5ViewModel.paragraph1</p>
 
-        <p id="paragraph-2" class="govuk-body">@arrivalNotificationErrorP5ViewModel.paragraph2</p>
+    <p id="paragraph-2" class="govuk-body">@arrivalNotificationErrorP5ViewModel.paragraph2</p>
 
-        <p id="paragraph-3" class="govuk-body">@arrivalNotificationErrorP5ViewModel.paragraph3Prefix <a id="helpdesk-link" class="govuk-link"  target="_blank" href=@config.nctsEnquiriesUrl>@arrivalNotificationErrorP5ViewModel.paragraph3Link</a> @arrivalNotificationErrorP5ViewModel.paragraph3Suffix</p>
+    @helpdeskLink(
+        arrivalNotificationErrorP5ViewModel.paragraph3Prefix,
+        arrivalNotificationErrorP5ViewModel.paragraph3Link,
+        arrivalNotificationErrorP5ViewModel.paragraph3Suffix
+    )
 
-        <p id="create-another-arrival-notification" class="govuk-body"><a id="arrival-link" class="govuk-link" href="@config.declareArrivalNotificationStartUrl">@arrivalNotificationErrorP5ViewModel.hyperlink</a></p>
+    <p id="create-another-arrival-notification" class="govuk-body"><a id="arrival-link" class="govuk-link" href="@config.declareArrivalNotificationStartUrl">@arrivalNotificationErrorP5ViewModel.hyperlink</a></p>
 
-    }
+}

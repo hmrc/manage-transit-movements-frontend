@@ -16,9 +16,12 @@
 
 package views.departureP5
 
+import config.FrontendAppConfig
 import generators.Generators
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Helpers.running
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
@@ -97,14 +100,13 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
-      "paragraph-2",
+      "helpdesk",
       "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
     )
     assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
-
   }
 
   "must render correct link text" in {
@@ -148,4 +150,33 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
     assertRenderedById(doc, "mrn")
   }
 
+  "when trader test enabled" - {
+    "must not display helpdesk link" - {
+      val app = new GuiceApplicationBuilder()
+        .configure("trader-test.enabled" -> true)
+        .build()
+
+      running(app) {
+        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
+        val view = app.injector
+          .instanceOf[RejectionMessageP5View]
+          .apply(
+            rejectionMessageP5ViewModel,
+            departureIdP5,
+            messageId,
+            paginationViewModel,
+            isAmendmentJourney = false,
+            None
+          )(fakeRequest, messages, frontendAppConfig)
+
+        val doc = parseView(view)
+
+        behave like pageWithoutLink(
+          doc,
+          "helpdesk-link"
+        )
+      }
+    }
+  }
 }

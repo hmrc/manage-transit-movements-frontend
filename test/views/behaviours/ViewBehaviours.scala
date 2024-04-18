@@ -177,6 +177,11 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
       assertElementContainsHref(link, expectedHref)
     }
 
+  def pageWithoutLink(doc: Document, id: String): Unit =
+    s"must not render link with id $id" in {
+      assertNotRenderedById(doc, id)
+    }
+
   def pageWithBackLink(): Unit =
     "must render back link" in {
       val link = getElementByClass(doc, "govuk-back-link")

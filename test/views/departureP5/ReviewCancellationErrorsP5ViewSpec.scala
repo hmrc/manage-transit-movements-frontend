@@ -48,7 +48,7 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewCancellationErrorsP5View]
-      .apply(reviewRejectionViewModel, departureId.toString, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
+      .apply(reviewRejectionViewModel, departureId.toString, paginationViewModel)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable = applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
@@ -85,14 +85,13 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
 
   "must render correct paragraph2 content" in {
     assertSpecificElementContainsText(
-      "paragraph-2",
+      "helpdesk",
       "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
     )
     assertSpecificElementContainsText(
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
-
   }
 
   behave like pageWithLink(
