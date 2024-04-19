@@ -106,9 +106,6 @@ class ViewAllArrivalsP5ViewSpec
         val p                   = doc.getElementById("results-count")
         p.text() mustBe "Showing 1 result matching LRN123"
         boldWords(p) mustBe Seq("1")
-
-        val title = doc.getElementsByClass("hmrc-page-heading")
-        title.text() mustBe "Search results for \"LRN123\" - Arrival notifications"
       }
 
       "when search param not provided" in {

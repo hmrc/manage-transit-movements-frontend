@@ -36,12 +36,12 @@
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = pageTitle(viewModel.searchParam),
+    title = viewModel.pageTitle,
     showBackLink = false,
     fullWidth = true
 ) {
 
-    @heading(pageHeading(viewModel.searchParam))
+    @heading(viewModel.pageHeading)
 
     <p class="govuk-body">
         <a id="make-arrival-notification" class="govuk-link" href=@config.declareArrivalNotificationStartUrl>
@@ -75,16 +75,4 @@
             @messages("viewArrivalNotificationsP5.goToManageTransitMovements")
         </a>
     </p>
-}
-
-@pageHeading(searchParam: Option[String]) = @{
-    viewModel.searchParam match {
-        case Some(searchParam) => { messages("viewArrivalNotificationsP5.searchResult.heading", searchParam)}
-        case None => { messages("viewArrivalNotificationsP5.heading")}}
-}
-
-@pageTitle(searchParam: Option[String]) = @{
-    viewModel.searchParam match {
-        case Some(searchParam) => { messages("viewArrivalNotificationsP5.searchResult.title", searchParam)}
-        case None => { messages("viewArrivalNotificationsP5.title")}}
 }
