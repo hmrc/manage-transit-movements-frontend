@@ -17,6 +17,7 @@
 package connectors.testOnly
 
 import config.FrontendAppConfig
+import play.api.libs.json.JsValue
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -69,5 +70,16 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: Fr
     val serviceUrl = s"${config.transitMovementsUrl}transit-movements/traders/movements/$arrivalId/messages"
 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
+  }
+
+  def getMessage(arrivalId: String, messageId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[JsValue] = {
+
+    val newHeaders: HeaderCarrier = headerCarrier
+      .copy(authorization = headers.get("Authorization").map(Authorization))
+      .withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json")
+
+    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId"
+
+    http.GET[JsValue](serviceUrl)(rds = implicitly, hc = newHeaders, ec = ec)
   }
 }

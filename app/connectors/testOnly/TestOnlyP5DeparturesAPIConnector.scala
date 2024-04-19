@@ -72,7 +72,7 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClient, config: 
     http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
   }
 
-  def departureMessage(departureId: String, messageId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[JsValue] = {
+  def getMessage(departureId: String, messageId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[JsValue] = {
 
     val newHeaders: HeaderCarrier = headerCarrier
       .copy(authorization = headers.get("Authorization").map(Authorization))
