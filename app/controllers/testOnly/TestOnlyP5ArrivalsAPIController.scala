@@ -17,7 +17,7 @@
 package controllers.testOnly
 
 import connectors.testOnly.TestOnlyP5ArrivalsAPIConnector
-import play.api.mvc.{Action, DefaultActionBuilder, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -63,5 +63,12 @@ class TestOnlyP5ArrivalsAPIController @Inject() (
           case response =>
             BadRequest(s"[inboundArrivalMessage] Failed to post inbound arrival message with error: ${response.status} - ${response.body}")
         }
+  }
+
+  def getMessage(arrivalId: String, messageId: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      connector
+        .getMessage(arrivalId, messageId, request.headers)
+        .map(Ok(_))
   }
 }
