@@ -17,67 +17,47 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import viewModels.ViewMovement
 
-@this()
+@this(govukTable: GovukTable)
 
 @(
-    dataRows: Seq[(String, Seq[ViewMovement])],
-    visuallyHiddenHeader: String,
-    rowHeadingUpdated: String,
-    rowHeadingReferenceNumber: String,
-    rowHeadingStatus: String,
-    rowHeadingAction: String
+  dataRows: Seq[(String, Seq[ViewMovement])],
+  visuallyHiddenHeader: String,
+  rowHeadingUpdated: String,
+  rowHeadingReferenceNumber: String,
+  rowHeadingStatus: String,
+  rowHeadingAction: String
 )(implicit messages: Messages)
+
+@links(row: ViewMovement) = {
+  @row.actions.map { action =>
+    <div>
+      <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link">@messages(action.key)
+        <span class="govuk-visually-hidden">@messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)</span>
+      </a>
+    </div>
+  }
+}
 
 @for((date, rows) <- dataRows) {
 
-    <h2 class="govuk-heading-m" data-testrole="movements-list_group-heading">@date</h2>
+  <h2 class="govuk-heading-m" data-testrole="movements-list_group-heading">@date</h2>
 
-    <table class="responsive-table">
-        <caption class="govuk-visually-hidden">@visuallyHiddenHeader @date</caption>
-
-        <thead>
-            <tr>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingUpdated</th>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingReferenceNumber</th>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingStatus</th>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@rowHeadingAction</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @for((row, rowIndex) <- rows.zip(LazyList from 1)) {
-                <tr data-testrole="movements-list_row@rowIndex">
-
-                    <td data-testrole="movements-list_row@rowIndex-updated">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingUpdated</span>
-                        @row.updated
-                    </td>
-
-                    <td data-testrole="movements-list_row@rowIndex-ref">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingReferenceNumber</span>
-                        @row.referenceNumber
-                    </td>
-
-                    <td data-testrole="movements-list_row@rowIndex-status">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingStatus</span>
-                        @messages(row.status)
-                    </td>
-
-                    <td data-testrole="movements-list_row@rowIndex-actions">
-                        <span class="responsive-table__heading" aria-hidden="true">@rowHeadingAction</span>
-                        <ul class="govuk-list responsive-table__list">
-                            @for((action, actionIndex) <- row.actions.zip(LazyList from 1)) {
-                                <li>
-                                    <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link" data-testrole="movements-list_row@rowIndex-action@actionIndex">@messages(action.key)
-                                        <span class="govuk-visually-hidden">@messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </td>
-
-                </tr>
-            }
-        </tbody>
-    </table>
+  @govukTable(Table(
+    head = Some(Seq(
+      HeadCell(content = Text(rowHeadingUpdated), classes = "govuk-!-width-one-quarter"),
+      HeadCell(content = Text(rowHeadingReferenceNumber), classes = "govuk-!-width-one-quarter"),
+      HeadCell(content = Text(rowHeadingStatus), classes = "govuk-!-width-one-quarter"),
+      HeadCell(content = Text(rowHeadingAction), classes = "govuk-!-width-one-quarter")
+    )),
+    rows = rows.map { row =>
+      Seq(
+        TableRow(content = Text(row.updated), classes = "word-break"),
+        TableRow(content = Text(row.referenceNumber), classes = "word-break"),
+        TableRow(content = Text(messages(row.status)), classes = "word-break"),
+        TableRow(content = HtmlContent(links(row)), classes = "word-break")
+      )
+    },
+    caption = Some(s"$visuallyHiddenHeader $date"),
+    captionClasses = "govuk-visually-hidden")
+  )
 }
