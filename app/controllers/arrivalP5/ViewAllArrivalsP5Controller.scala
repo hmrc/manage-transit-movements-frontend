@@ -92,7 +92,7 @@ class ViewAllArrivalsP5Controller @Inject() (
             block(
               view(
                 form = form,
-                viewModel = ViewAllArrivalMovementsP5ViewModel(viewArrivalP5, paginationViewModel)
+                viewModel = ViewAllArrivalMovementsP5ViewModel(viewArrivalP5, paginationViewModel, searchParam)
               )
             )
         }

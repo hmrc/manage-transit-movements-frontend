@@ -124,7 +124,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
           numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
         )
-        val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
+        val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel, None)
 
         contentAsString(result) mustEqual
           view(form, expectedViewModel)(request, messages).toString
@@ -162,7 +162,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
           numberOfItemsPerPage = paginationAppConfig.arrivalsNumberOfMovements,
           href = controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
         )
-        val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel)
+        val expectedViewModel = ViewAllArrivalMovementsP5ViewModel(Seq(mockViewMovement), expectedPaginationViewModel, Some(searchParam))
 
         contentAsString(result) mustEqual
           view(filledForm, expectedViewModel)(request, messages).toString

@@ -36,12 +36,12 @@
 )(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("viewArrivalNotificationsP5.title"),
+    title = viewModel.pageTitle,
     showBackLink = false,
     fullWidth = true
 ) {
 
-    @heading(messages("viewArrivalNotificationsP5.heading"))
+    @heading(viewModel.pageHeading)
 
     <p class="govuk-body">
         <a id="make-arrival-notification" class="govuk-link" href=@config.declareArrivalNotificationStartUrl>

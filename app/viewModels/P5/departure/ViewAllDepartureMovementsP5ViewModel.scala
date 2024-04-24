@@ -16,22 +16,43 @@
 
 package viewModels.P5.departure
 
+import play.api.i18n.Messages
 import viewModels.pagination.PaginationViewModel
 
 case class ViewAllDepartureMovementsP5ViewModel(
   dataRows: Seq[(String, Seq[ViewDepartureP5])],
-  paginationViewModel: PaginationViewModel
-)
+  paginationViewModel: PaginationViewModel,
+  searchParam: Option[String]
+) {
+
+  def pageHeading(implicit messages: Messages): String =
+    searchParam match {
+      case Some(searchParam) =>
+        messages("viewDepartureDeclarationsP5.searchResult.heading", searchParam)
+      case None =>
+        messages("viewDepartureDeclarationsP5.heading")
+    }
+
+  def pageTitle(implicit messages: Messages): String =
+    searchParam match {
+      case Some(searchParam) =>
+        messages("viewDepartureDeclarationsP5.searchResult.title", searchParam)
+      case None =>
+        messages("viewDepartureDeclarationsP5.title")
+    }
+}
 
 object ViewAllDepartureMovementsP5ViewModel {
 
   def apply(
     movementsAndMessages: Seq[ViewDepartureP5],
-    paginationViewModel: PaginationViewModel
+    paginationViewModel: PaginationViewModel,
+    searchParam: Option[String]
   )(implicit d: DummyImplicit): ViewAllDepartureMovementsP5ViewModel =
     new ViewAllDepartureMovementsP5ViewModel(
       ViewDepartureMovementsP5(movementsAndMessages).dataRows,
-      paginationViewModel
+      paginationViewModel,
+      searchParam
     )
 
 }

@@ -53,7 +53,7 @@ trait ViewModelGenerators {
       for {
         viewArrivals        <- listWithMaxLength[ViewArrivalP5]()
         paginationViewModel <- arbitrary[ListPaginationViewModel]
-      } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, paginationViewModel)
+      } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, paginationViewModel, None)
     }
 
   implicit lazy val arbitraryViewAllDepartureMovementsP5ViewModel: Arbitrary[ViewAllDepartureMovementsP5ViewModel] =
@@ -61,7 +61,7 @@ trait ViewModelGenerators {
       for {
         viewArrivals        <- listWithMaxLength[ViewDepartureP5]()
         paginationViewModel <- arbitrary[ListPaginationViewModel]
-      } yield ViewAllDepartureMovementsP5ViewModel(viewArrivals, paginationViewModel)
+      } yield ViewAllDepartureMovementsP5ViewModel(viewArrivals, paginationViewModel, None)
     }
 
   implicit lazy val arbitraryViewAllDepartureMovementsViewModel: Arbitrary[ViewAllDepartureMovementsViewModel] =

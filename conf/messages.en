@@ -91,6 +91,8 @@ viewArrivalNotifications.table.action.hidden                  = for {0}
 
 viewArrivalNotificationsP5.title                            = Arrival notifications
 viewArrivalNotificationsP5.heading                          = Arrival notifications
+viewArrivalNotificationsP5.searchResult.title               = Search results for ‘{0}’ - Arrival notifications
+viewArrivalNotificationsP5.searchResult.heading             = Search results for ‘{0}’ - Arrival notifications
 viewArrivalNotificationsP5.heading.hidden                   = Table of arrival notifications, updated on
 viewArrivalNotificationsP5.makeArrivalNotification          = Make an arrival notification
 viewArrivalNotificationsP5.goToManageTransitMovements       = Manage your transit movements
@@ -110,6 +112,8 @@ viewArrivalNotificationsP5.search.title                     = Search by Movement
 
 viewDepartureDeclarationsP5.title                            = Departure declarations
 viewDepartureDeclarationsP5.heading                          = Departure declarations
+viewDepartureDeclarationsP5.searchResult.title               = Search results for ‘{0}’ - Departure declarations
+viewDepartureDeclarationsP5.searchResult.heading             = Search results for ‘{0}’ - Departure declarations
 viewDepartureDeclarationsP5.heading.hidden                   = Table of departure declarations, updated on
 viewDepartureDeclarationsP5.link.create                      = Make a departure declaration
 viewDepartureDeclarationsP5.search.title                     = Search by Local Reference Number (LRN)

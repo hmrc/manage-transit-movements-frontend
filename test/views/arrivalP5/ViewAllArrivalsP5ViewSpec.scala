@@ -47,14 +47,15 @@ class ViewAllArrivalsP5ViewSpec
   override val viewMovements: Seq[ViewArrivalP5] = dataRows.flatMap(_._2)
 
   override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
-    viewWithSpecificPagination(form, Nil, paginationViewModel)
+    viewWithSpecificPagination(form, Nil, paginationViewModel, None)
 
   private def viewWithSpecificPagination(
     form: Form[String],
     arrivals: Seq[ViewArrivalP5],
-    paginationViewModel: ListPaginationViewModel
+    paginationViewModel: ListPaginationViewModel,
+    searchParam: Option[String]
   ): HtmlFormat.Appendable =
-    applyView(form, ViewAllArrivalMovementsP5ViewModel(arrivals, paginationViewModel))
+    applyView(form, ViewAllArrivalMovementsP5ViewModel(arrivals, paginationViewModel, searchParam))
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllArrivalMovementsP5ViewModel)
 
@@ -99,8 +100,9 @@ class ViewAllArrivalsP5ViewSpec
       "and search param provided" in {
         val arrivals            = listWithMaxLength[ViewArrivalP5]().sample.value
         val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
-        val filledForm          = form.fill("LRN123")
-        val doc: Document       = parseView(viewWithSpecificPagination(filledForm, arrivals, paginationViewModel))
+        val searchParam         = "LRN123"
+        val filledForm          = form.fill(searchParam)
+        val doc: Document       = parseView(viewWithSpecificPagination(filledForm, arrivals, paginationViewModel, Some(searchParam)))
         val p                   = doc.getElementById("results-count")
         p.text() mustBe "Showing 1 result matching LRN123"
         boldWords(p) mustBe Seq("1")
@@ -109,7 +111,7 @@ class ViewAllArrivalsP5ViewSpec
       "when search param not provided" in {
         val arrivals            = listWithMaxLength[ViewArrivalP5]().sample.value
         val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
-        val doc: Document       = parseView(viewWithSpecificPagination(form, arrivals, paginationViewModel))
+        val doc: Document       = parseView(viewWithSpecificPagination(form, arrivals, paginationViewModel, None))
         val p                   = doc.getElementById("results-count")
         p.text() mustBe "Showing 1 result"
         boldWords(p) mustBe Seq("1")
@@ -118,7 +120,7 @@ class ViewAllArrivalsP5ViewSpec
 
     "when there are no results" in {
       val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
-      val doc: Document       = parseView(viewWithSpecificPagination(form, Nil, paginationViewModel))
+      val doc: Document       = parseView(viewWithSpecificPagination(form, Nil, paginationViewModel, None))
       val p                   = doc.getElementById("no-results-found")
       p.text() mustBe "No results found"
     }
