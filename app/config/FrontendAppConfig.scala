@@ -100,12 +100,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
       s"$departureFrontendUrl/local-reference-number"
     }
 
-  def departureFrontendTaskListUrl(lrn: String)                     = s"$departureFrontendUrl/$lrn/declaration-summary"
-  def departureNewLocalReferenceNumberUrl(lrn: String)              = s"$departureFrontendUrl/$lrn/new-local-reference-number"
-  def departureAmendUrl(lrn: String, departureId: String)           = s"$departureFrontendUrl/$lrn/amend-declaration/$departureId"
-  def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
-  def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
-  def presentationNotificationFrontendUrl(departureId: String)      = s"$presentationNotificationFrontend/$departureId"
+  def departureFrontendTaskListUrl(lrn: String)                          = s"$departureFrontendUrl/$lrn/declaration-summary"
+  def departureNewLocalReferenceNumberUrl(lrn: String)                   = s"$departureFrontendUrl/$lrn/new-local-reference-number"
+  def departureAmendErrorsUrl(lrn: String, departureId: String)          = s"$departureFrontendUrl/$lrn/amend-errors/$departureId"
+  def departureAmendGuaranteeErrorsUrl(lrn: String, departureId: String) = s"$departureFrontendUrl/$lrn/amend-guarantee-errors/$departureId"
+  def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$departureFrontendUrl/${departureId.index}/guarantee-rejection"
+  def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$departureFrontendUrl/${departureId.index}/departure-declaration-fail"
+  def presentationNotificationFrontendUrl(departureId: String)           = s"$presentationNotificationFrontend/$departureId"
 
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId): String =
     if (phase5Enabled) {

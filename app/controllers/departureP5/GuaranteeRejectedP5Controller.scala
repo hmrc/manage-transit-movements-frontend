@@ -63,7 +63,7 @@ class GuaranteeRejectedP5Controller @Inject() (
     (Action andThen actions.checkP5Switch()).async {
       implicit request =>
         departureCacheConnector.handleGuaranteeRejection(lrn.value).map {
-          case true  => Redirect(frontendAppConfig.departureAmendUrl(lrn.value, departureId))
+          case true  => Redirect(frontendAppConfig.departureAmendGuaranteeErrorsUrl(lrn.value, departureId))
           case false => Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
     }
