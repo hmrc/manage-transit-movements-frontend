@@ -84,12 +84,13 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
       val viewModel = defaultViewModel
         .copy(guaranteeReferences =
           Seq(
-            GuaranteeReferenceType08("1",
-                                     "GRN",
-                                     Seq(
-                                       InvalidGuaranteeReasonType01("1", "test", None),
-                                       InvalidGuaranteeReasonType01("2", "test2", None)
-                                     )
+            GuaranteeReferenceType08(
+              "1",
+              "GRN",
+              Seq(
+                InvalidGuaranteeReasonType01("1", "test", None),
+                InvalidGuaranteeReasonType01("2", "test2", None)
+              )
             )
           )
         )
@@ -249,12 +250,10 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
         .apply(viewModel, departureIdP5)(fakeRequest, messages)
     )
 
-    behave like pageWithButton(document, "Amend errors") {
-      assertElementContainsHref(_, controllers.departureP5.routes.GuaranteeRejectedP5Controller.onAmend(lrn, departureIdP5).url)
-    }
+    behave like pageWithSubmitButton(document, "Amend errors")
   }
 
-  "must not render button when not amendable" in {
+  "must not render button when not amendable" - {
 
     val viewModel = defaultViewModel.copy(isAmendable = false)
 
@@ -264,6 +263,6 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
         .apply(viewModel, departureIdP5)(fakeRequest, messages)
     )
 
-    assertNotRenderedById(document, "submit")
+    behave like pageWithoutSubmitButton(document)
   }
 }

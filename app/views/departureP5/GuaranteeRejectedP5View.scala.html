@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import controllers.departureP5.routes
 @import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 @import views.html.components.Heading
 @import views.html.components.Button
@@ -21,52 +22,50 @@
 @import config.FrontendAppConfig
 
 @this(
-        mainTemplate: MainTemplate,
-        heading: Heading,
-        formHelper: FormWithCSRF,
-        tableDetails: TableDetails,
-        table: GovukTable,
-        config: FrontendAppConfig,
-        button: Button
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    formHelper: FormWithCSRF,
+    tableDetails: TableDetails,
+    table: GovukTable,
+    config: FrontendAppConfig,
+    button: Button
 )
 
 @(viewModel: GuaranteeRejectedP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages)
 
-    @mainTemplate(
-        title = messages("guarantee.rejected.message.title"),
-        showBackLink = true
-    ) {
+@mainTemplate(
+    title = messages("guarantee.rejected.message.title"),
+    showBackLink = true
+) {
 
-        @heading(
-            heading = messages("guarantee.rejected.message.heading"),
-            caption = Some(messages("departure.messages.caption", viewModel.lrn.value))
+    @heading(
+        heading = messages("guarantee.rejected.message.heading"),
+        caption = Some(messages("departure.messages.caption", viewModel.lrn.value))
+    )
 
-        )
+    <p class="govuk-body" id="paragraph1">@viewModel.paragraph1</p>
 
-        <p class="govuk-body" id="paragraph1">@viewModel.paragraph1</p>
+    <p class="govuk-body"><span class="govuk-!-font-weight-bold">@messages("guarantee.rejected.message.movementReferenceNumber")</span> @{viewModel.mrn}</p>
 
-        <p class="govuk-body"><span class="govuk-!-font-weight-bold">@messages("guarantee.rejected.message.movementReferenceNumber")</span> @{viewModel.mrn}</p>
+    <p class="govuk-body"><span class="govuk-!-font-weight-bold">@messages("guarantee.rejected.message.acceptanceDate")</span> @{viewModel.formatDateTime}</p>
 
-        <p class="govuk-body"><span class="govuk-!-font-weight-bold">@messages("guarantee.rejected.message.acceptanceDate")</span> @{viewModel.formatDateTime}</p>
+    @tableDetails(viewModel.toTables)
 
-        @tableDetails(viewModel.toTables)
+    <p class="govuk-body" id="paragraph2">@messages("guarantee.rejected.message.contact.start")
+        <a class="govuk-link" rel="noreferrer noopener" href=@config.nctsEnquiriesUrl target="_blank" id="contact">@messages("guarantee.rejected.message.contact.link")</a>
+        @viewModel.paragraph2
+    </p>
 
-        <p class="govuk-body" id="paragraph2">@messages("guarantee.rejected.message.contact.start")
-            <a class="govuk-link" rel="noreferrer noopener" href=@config.nctsEnquiriesUrl target="_blank" id="contact">@messages("guarantee.rejected.message.contact.link")</a>
-            @viewModel.paragraph2
-        </p>
-
-        @if(viewModel.isAmendable) {
+    @if(viewModel.isAmendable) {
+        @formHelper(action = routes.GuaranteeRejectedP5Controller.onAmend(viewModel.lrn,departureId), Symbol("autoComplete") -> "off") {
             @button(
                 attributes = Map("id" -> "submit"),
-                messageKey = messages("site.amendErrors"),
-                href = Some(controllers.departureP5.routes.GuaranteeRejectedP5Controller.onAmend(viewModel.lrn,departureId).url)
+                messageKey = messages("site.amendErrors")
             )
         }
-
-        <div class="govuk-body">
-            <a class="govuk-link" href=@config.declareDepartureStartWithLRNUrl id="makeNewDeparture">@messages("guarantee.rejected.message.makeAnotherDeparture")</a>
-        </div>
-
-
     }
+
+    <div class="govuk-body">
+        <a class="govuk-link" href=@config.declareDepartureStartWithLRNUrl id="makeNewDeparture">@messages("guarantee.rejected.message.makeAnotherDeparture")</a>
+    </div>
+}

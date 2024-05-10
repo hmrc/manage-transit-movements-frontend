@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+@import controllers.departureP5.routes
 @import viewModels.P5.departure.RejectionMessageP5ViewModel
 @import views.html.components.{Button, Heading, HelpdeskLink, Pagination, Table}
 @import viewModels.pagination.PaginationViewModel
@@ -56,11 +57,12 @@
         rejectionMessageP5ViewModel.paragraph2Suffix
     )
 
-    @button(
-        attributes = Map("id" -> "submit"),
-        messageKey = messages("site.amendErrors"),
-        href = Some(controllers.departureP5.routes.RejectionMessageP5Controller.onAmend(departureId, messageId, isAmendmentJourney).url)
-    )
+    @formHelper(action = routes.RejectionMessageP5Controller.onAmend(departureId, messageId, isAmendmentJourney), Symbol("autoComplete") -> "off") {
+        @button(
+            attributes = Map("id" -> "submit"),
+            messageKey = messages("site.amendErrors")
+        )
+    }
 
     @if(!isAmendmentJourney) {
         <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.declareDepartureStartWithLRNUrl">@rejectionMessageP5ViewModel.hyperlink</a></p>
