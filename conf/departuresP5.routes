@@ -14,6 +14,7 @@ GET         /:departureId/intention-to-control/:messageId                       
 GET         /:departureId/intention-to-control-complete-prelodged-declaration/:messageId      controllers.departureP5.IntentionToControlP5Controller.informationRequested(departureId: String, messageId: String)
 
 GET        /:departureId/amend-departure-declaration-errors/:messageId               controllers.departureP5.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String, isAmendmentJourney: Option[Boolean])
+POST       /:departureId/amend-departure-declaration-errors/:messageId               controllers.departureP5.RejectionMessageP5Controller.onAmend(departureId: String, messageId: String, isAmendmentJourney: Boolean)
 
 GET        /:departureId/departure-declaration-errors/:messageId                     controllers.departureP5.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, messageId: String, isAmendmentJourney: Boolean)
 
@@ -25,7 +26,6 @@ GET        /:departureId/review-departure-declaration-errors/:messageId         
 
 GET        /:departureId/review-cancellation-errors/:messageId                       controllers.departureP5.ReviewCancellationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 
-GET        /:departureId/send-departure-declaration-errors/:messageId                controllers.departureP5.RejectionMessageP5Controller.onAmend(departureId: String, messageId: String, isAmendmentJourney: Boolean)
 
 GET        /:departureId/is-declaration-cancelled/:messageId                         controllers.departureP5.IsDepartureCancelledP5Controller.isDeclarationCancelled(departureId: String, messageId: String)
 
@@ -37,6 +37,5 @@ GET        /:departureId/transit-accompanying-document/:messageId               
 
 GET        /:departureId/goods-not-released/:messageId                               controllers.departureP5.GoodsNotReleasedP5Controller.goodsNotReleased(departureId: String, messageId: String)
 
-GET        /:arrivalId/:messageId/amend-guarantee-errors/:lrn                        controllers.departureP5.GuaranteeRejectedP5Controller.onPageLoad(arrivalId: String, messageId: String, lrn: LocalReferenceNumber)
-
-GET        /send-guarantee-errors/:lrn                                               controllers.departureP5.GuaranteeRejectedP5Controller.onAmend(lrn: LocalReferenceNumber, departureId: String)
+GET        /:departureId/:messageId/amend-guarantee-errors/:lrn                      controllers.departureP5.GuaranteeRejectedP5Controller.onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber)
+POST       /:departureId/:messageId/amend-guarantee-errors/:lrn                      controllers.departureP5.GuaranteeRejectedP5Controller.onAmend(departureId: String, messageId: String, lrn: LocalReferenceNumber)

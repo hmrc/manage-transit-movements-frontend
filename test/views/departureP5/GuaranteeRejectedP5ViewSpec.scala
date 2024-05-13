@@ -45,7 +45,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
   override def view: HtmlFormat.Appendable = injector
     .instanceOf[GuaranteeRejectedP5View]
-    .apply(defaultViewModel, departureIdP5)(fakeRequest, messages)
+    .apply(defaultViewModel, departureIdP5, messageId)(fakeRequest, messages)
 
   behave like pageWithTitle()
 
@@ -73,7 +73,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
       val document = parseView(
         injector
           .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5)(fakeRequest, messages)
+          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
       behave like pageWithContent(document, "p", "There is a problem with the guarantee in this declaration. Amend the error and resend the declaration.")
@@ -98,7 +98,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
       val document = parseView(
         injector
           .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5)(fakeRequest, messages)
+          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
       behave like pageWithContent(document, "p", "There is a problem with the guarantee in this declaration. Amend the errors and resend the declaration.")
@@ -117,7 +117,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
       val document = parseView(
         injector
           .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5)(fakeRequest, messages)
+          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
       behave like pageWithContent(document, "p", "There is a problem with the guarantees in this declaration. Amend the error and resend the declaration.")
@@ -150,7 +150,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
       val document = parseView(
         injector
           .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5)(fakeRequest, messages)
+          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
       behave like pageWithContent(document, "p", "There is a problem with the guarantees in this declaration. Amend the errors and resend the declaration.")
@@ -172,7 +172,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
       val document = parseView(
         injector
           .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5)(fakeRequest, messages)
+          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
       behave like pageWithContent(document, "p", "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab).")
@@ -191,7 +191,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
       val document = parseView(
         injector
           .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5)(fakeRequest, messages)
+          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
       behave like pageWithContent(document, "p", "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab).")
@@ -247,7 +247,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
     val document = parseView(
       injector
         .instanceOf[GuaranteeRejectedP5View]
-        .apply(viewModel, departureIdP5)(fakeRequest, messages)
+        .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
     )
 
     behave like pageWithSubmitButton(document, "Amend errors")
@@ -260,7 +260,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
     val document = parseView(
       injector
         .instanceOf[GuaranteeRejectedP5View]
-        .apply(viewModel, departureIdP5)(fakeRequest, messages)
+        .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
     )
 
     behave like pageWithoutSubmitButton(document)

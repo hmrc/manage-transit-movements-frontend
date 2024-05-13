@@ -16,7 +16,7 @@
 
 package controllers.departureP5
 
-import config.{FrontendAppConfig, PaginationAppConfig}
+import config.PaginationAppConfig
 import controllers.actions._
 import generated.CC056CType
 import models.RichCC056CType
@@ -37,7 +37,7 @@ class ReviewCancellationErrorsP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: ReviewCancellationErrorsP5ViewModelProvider,
   view: ReviewCancellationErrorsP5View
-)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationAppConfig: PaginationAppConfig)
+)(implicit val executionContext: ExecutionContext, paginationAppConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 

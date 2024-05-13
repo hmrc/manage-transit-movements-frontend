@@ -55,12 +55,12 @@ class GuaranteeRejectedP5Controller @Inject() (
               request.messageData.TransitOperation.declarationAcceptanceDate
             )
 
-            Ok(view(viewModel, departureId))
+            Ok(view(viewModel, departureId, messageId))
         }
     }
 
-  def onAmend(lrn: LocalReferenceNumber, departureId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch()).async {
+  def onAmend(departureId: String, messageId: String, lrn: LocalReferenceNumber): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
         departureCacheConnector.handleGuaranteeRejection(lrn.value).map {
           case true  => Redirect(frontendAppConfig.departureAmendGuaranteeErrorsUrl(lrn.value, departureId))

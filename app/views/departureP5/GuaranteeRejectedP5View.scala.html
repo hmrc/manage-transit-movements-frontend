@@ -31,7 +31,7 @@
     button: Button
 )
 
-@(viewModel: GuaranteeRejectedP5ViewModel, departureId: String)(implicit request: Request[_], messages: Messages)
+@(viewModel: GuaranteeRejectedP5ViewModel, departureId: String, messageId: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("guarantee.rejected.message.title"),
@@ -57,7 +57,7 @@
     </p>
 
     @if(viewModel.isAmendable) {
-        @formHelper(action = routes.GuaranteeRejectedP5Controller.onAmend(viewModel.lrn,departureId), Symbol("autoComplete") -> "off") {
+        @formHelper(action = routes.GuaranteeRejectedP5Controller.onAmend(departureId, messageId, viewModel.lrn), Symbol("autoComplete") -> "off") {
             @button(
                 attributes = Map("id" -> "submit"),
                 messageKey = messages("site.amendErrors")
