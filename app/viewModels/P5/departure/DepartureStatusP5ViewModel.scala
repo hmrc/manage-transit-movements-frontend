@@ -258,6 +258,10 @@ object DepartureStatusP5ViewModel {
       )
   }
 
+  // TODO - consider making isAmendmentJourney a Boolean instead of Option[Boolean]. All we ever do is call .getOrElse(false) on it.
+  //  My understanding is that it is an indicator of whether this is their first rejection (i.e. business rejection type 015)
+  //  or a subsequent rejection (i.e. business rejection type 013) and is used for rendering specific content
+
   // scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,

@@ -54,71 +54,85 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
   "GuaranteeRejected" - {
 
-    "must return OK and the correct view for a GET" in {
-      forAll(arbitrary[CC055CType]) {
-        message =>
-          val controller: String =
-            controllers.departureP5.routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId, lrn).url
+    lazy val controller = routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId, lrn).url
 
-          when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(message))
+    "onPageLoad" - {
 
-          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+      "must return OK and the correct view for a GET" in {
+        forAll(arbitrary[CC055CType]) {
+          message =>
+            when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(message))
 
-          when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
+            when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
 
-          val viewModel = GuaranteeRejectedP5ViewModel(
-            guaranteeReferences = message.GuaranteeReference,
-            lrn = lrn,
-            isAmendable = true,
-            mrn = message.TransitOperation.MRN,
-            acceptanceDate = message.TransitOperation.declarationAcceptanceDate
-          )
+            when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
 
-          val request = FakeRequest(GET, controller)
+            val viewModel = GuaranteeRejectedP5ViewModel(
+              guaranteeReferences = message.GuaranteeReference,
+              lrn = lrn,
+              isAmendable = true,
+              mrn = message.TransitOperation.MRN,
+              acceptanceDate = message.TransitOperation.declarationAcceptanceDate
+            )
 
-          val result = route(app, request).value
+            val request = FakeRequest(GET, controller)
 
-          status(result) mustEqual OK
+            val result = route(app, request).value
 
-          val view = injector.instanceOf[GuaranteeRejectedP5View]
+            status(result) mustEqual OK
 
-          contentAsString(result) mustEqual
-            view(viewModel, departureIdP5)(request, messages).toString
+            val view = injector.instanceOf[GuaranteeRejectedP5View]
+
+            contentAsString(result) mustEqual
+              view(viewModel, departureIdP5, messageId)(request, messages).toString
+        }
       }
     }
 
     "onAmend" - {
 
+      lazy val controller = routes.GuaranteeRejectedP5Controller.onAmend(departureIdP5, messageId, lrn).url
+
       "must redirect to NewLocalReferenceNumber page on success" in {
+        forAll(arbitrary[CC055CType]) {
+          message =>
+            when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(message))
 
-        val controller: String =
-          controllers.departureP5.routes.GuaranteeRejectedP5Controller.onAmend(lrn, departureIdP5).url
+            when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
 
-        when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(true)
+            when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(true)
 
-        val request = FakeRequest(GET, controller)
+            val request = FakeRequest(POST, controller)
 
-        val result = route(app, request).value
+            val result = route(app, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe frontendAppConfig.departureAmendGuaranteeErrorsUrl(lrn.value, departureIdP5)
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustBe frontendAppConfig.departureAmendGuaranteeErrorsUrl(lrn.value, departureIdP5)
+        }
       }
 
       "must redirect to technical difficulties page on failure" in {
+        forAll(arbitrary[CC055CType]) {
+          message =>
+            when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(message))
 
-        val controller: String =
-          controllers.departureP5.routes.GuaranteeRejectedP5Controller.onAmend(lrn, departureIdP5).url
+            when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
 
-        when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(false)
+            when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(false)
 
-        val request = FakeRequest(GET, controller)
+            val request = FakeRequest(POST, controller)
 
-        val result = route(app, request).value
+            val result = route(app, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.ErrorController.technicalDifficulties().url
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustBe controllers.routes.ErrorController.technicalDifficulties().url
+        }
       }
     }
   }

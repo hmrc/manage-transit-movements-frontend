@@ -156,7 +156,15 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
       button => assertElementContainsId(button, "submit")
     }
 
+  def pageWithSubmitButton(doc: Document, expectedText: String): Unit =
+    pageWithButton(doc, expectedText) {
+      button => assertElementContainsId(button, "submit")
+    }
+
   def pageWithoutSubmitButton(): Unit =
+    pageWithoutSubmitButton(doc)
+
+  def pageWithoutSubmitButton(doc: Document): Unit =
     "must not render submit" in {
       assertElementDoesNotExist(doc, "submit")
     }
