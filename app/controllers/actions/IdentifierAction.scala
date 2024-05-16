@@ -69,11 +69,11 @@ class AuthenticatedIdentifierAction @Inject() (
                         logger.info(s"User with EORI $enrolmentIdentifier is on legacy enrolment")
                         Future.successful(Some(Right(Redirect(config.enrolmentGuidancePage))))
                       case _ =>
-                        logger.info("Identifier Requested")
+                        logger.info(s"EORI found for ${e.key}")
                         block(IdentifierRequest(request, enrolmentIdentifier.value)).map(Right(_)).map(Some(_))
                     }
                   case None =>
-                    logger.info(s"Could not get identifier for: ${e.identifierKey}")
+                    logger.info(s"EORI not found for ${e.key}")
                     Future.successful(Some(Left(Redirect(routes.UnauthorisedController.onPageLoad()))))
 
                 }
