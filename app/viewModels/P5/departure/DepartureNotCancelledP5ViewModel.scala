@@ -44,7 +44,7 @@ case class DepartureNotCancelledP5ViewModel(
   def caption(implicit messages: Messages): String = messages("departure.messages.caption", lrn)
 
   def tryAgainUrl(implicit config: FrontendAppConfig): String =
-    s"${config.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn"
+    s"${config.p5Cancellation}/$departureId/index/$lrn"
 }
 
 object DepartureNotCancelledP5ViewModel {

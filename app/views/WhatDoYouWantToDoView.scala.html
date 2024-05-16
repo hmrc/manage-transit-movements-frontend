@@ -14,17 +14,18 @@
  * limitations under the License.
  *@
 
-@import views.html.components.Heading
+@import views.html.components.{Heading, ViewMovements}
 @import config.FrontendAppConfig
-@import models.Availability
+@import models.Features
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    config: FrontendAppConfig
+    config: FrontendAppConfig,
+    viewMovements: ViewMovements
 )
 
-@(arrivalsAvailability: Availability, departuresAvailability: Availability, draftDepartureAvailability: Option[Availability], viewAllArrivalUrl: String, viewAllDeparturesUrl: String)(implicit request: Request[_], messages: Messages)
+@(arrivalsAvailability: Features, departuresAvailability: Features, draftDepartureAvailability: Features)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("whatDoYouWantToDo.title")
@@ -32,57 +33,54 @@
     @heading(messages("whatDoYouWantToDo.heading"))
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.arrival")</h2>
-    <p class="govuk-body">
-        <a href=@config.declareArrivalNotificationStartUrl class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.makeArrival")</a>
-    </p>
 
-    <p class="govuk-body">
-        @arrivalsAvailability match {
-            case Availability.NonEmpty => {
-                <a href=@viewAllArrivalUrl class="govuk-link" id="view-arrival-notifications">@messages("whatDoYouWantToDo.link.arrival.viewArrival")</a>
-            }
-            case Availability.Empty => {
-                @messages("whatDoYouWantToDo.arrival.noArrivals")
-            }
-            case Availability.Unavailable => {
-                @messages("whatDoYouWantToDo.arrival.arrivalsUnavailable")
-            }
+    @arrivalsAvailability match {
+        case Features(Some(phase4), None) => {
+            <p class="govuk-body"><a href=@config.p4ArrivalStart class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
+            @viewMovements(phase4, "arrival", "view-arrival-notifications")
         }
-    </p>
+        case Features(None, Some(phase5)) => {
+            <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
+            @viewMovements(phase5, "arrival", "view-arrival-notifications")
+        }
+        case Features(Some(phase4), Some(phase5)) => {
+            <p class="govuk-body"><a href=@config.p4ArrivalStart class="govuk-link" id="make-ncts-4-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.p4.make")</a></p>
+            <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-ncts-5-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.p5.make")</a></p>
+            @viewMovements(phase4, "arrival.p4", "view-ncts-4-arrival-notifications")
+            @viewMovements(phase5, "arrival.p5", "view-ncts-5-arrival-notifications")
+        }
+        case Features(None, None) => {
+            <p class="govuk-body">@messages(s"whatDoYouWantToDo.arrival.unavailable")</p>
+        }
+    }
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.departure")</h2>
-    <p class="govuk-body">
-        <a href=@config.declareDepartureStartWithLRNUrl class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.makeDeparture")</a>
-    </p>
 
-    <p class="govuk-body">
-        @departuresAvailability match {
-            case Availability.NonEmpty => {
-                <a href=@viewAllDeparturesUrl class="govuk-link" id="view-departure-declarations">@messages("whatDoYouWantToDo.link.departure.viewDepartures")</a>
-            }
-            case Availability.Empty => {
-                @messages("whatDoYouWantToDo.departure.noDepartures")
-            }
-            case Availability.Unavailable => {
-                @messages("whatDoYouWantToDo.departure.departuresUnavailable")
-            }
+    @departuresAvailability match {
+        case Features(Some(phase4), None) => {
+            <p class="govuk-body"><a href=@config.p4DepartureStart class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
+            @viewMovements(phase4, "departure", "view-departure-declarations")
         }
-    </p>
+        case Features(None, Some(phase5)) => {
+            <p class="govuk-body"><a href=@config.p5Departure class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
+            @viewMovements(phase5, "departure", "view-departure-declarations")
+        }
+        case Features(Some(phase4), Some(phase5)) => {
+            <p class="govuk-body"><a href=@config.p4DepartureStart class="govuk-link" id="make-ncts-4-departure-declaration">@messages("whatDoYouWantToDo.link.departure.p4.make")</a></p>
+            <p class="govuk-body"><a href=@config.p5Departure class="govuk-link" id="make-ncts-5-departure-declaration">@messages("whatDoYouWantToDo.link.departure.p5.make")</a></p>
+            @viewMovements(phase4, "departure.p4", "view-ncts-4-departure-declarations")
+            @viewMovements(phase5, "departure.p5", "view-ncts-5-departure-declarations")
+        }
+        case Features(None, None) => {
+            <p class="govuk-body">@messages(s"whatDoYouWantToDo.departure.unavailable")</p>
+        }
+    }
 
-    @draftDepartureAvailability.map { availability =>
-        <p class="govuk-body">
-        @availability match {
-            case Availability.NonEmpty => {
-                <a href="@controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url" class="govuk-link" id="view-draft-departures">@messages("whatDoYouWantToDo.link.departure.viewDraftDepartures")</a>
-            }
-            case Availability.Empty => {
-                @messages("whatDoYouWantToDo.departure.noDraftDepartures")
-            }
-            case Availability.Unavailable => {
-                @messages("whatDoYouWantToDo.departure.draftDeparturesUnavailable")
-            }
+    @draftDepartureAvailability match {
+        case Features(_, Some(phase5)) => {
+            @viewMovements(phase5, "departure.drafts", "view-draft-departures")
         }
-        </p>
+        case _ => {}
     }
 
     @if(config.isGuaranteeBalanceEnabled) {

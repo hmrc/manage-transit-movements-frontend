@@ -26,6 +26,7 @@ import play.api.mvc.{ActionFilter, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
+// TODO - if either are true then user can proceed
 class P5SwitchActionProvider @Inject() (config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
   def apply(): ActionFilter[IdentifierRequest] =

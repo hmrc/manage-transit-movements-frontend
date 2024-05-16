@@ -55,6 +55,6 @@ class DepartureNotCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours wit
   behave like pageWithLink(
     id = "link",
     expectedText = "Make another departure declaration",
-    expectedHref = frontendAppConfig.declareDepartureStartWithLRNUrl
+    expectedHref = frontendAppConfig.p5Departure
   )
 }

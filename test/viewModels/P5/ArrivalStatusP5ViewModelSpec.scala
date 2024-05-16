@@ -78,7 +78,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
           "movement.status.P5.unloadingPermissionReceived",
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}/${movementAndMessage.arrivalMovement.arrivalId}/unloading-remarks/$messageId",
+              s"${frontendAppConfig.p5Unloading}/${movementAndMessage.arrivalMovement.arrivalId}/unloading-remarks/$messageId",
               "movement.status.P5.action.unloadingPermission.unloadingRemarks"
             ),
             ViewMovementAction(

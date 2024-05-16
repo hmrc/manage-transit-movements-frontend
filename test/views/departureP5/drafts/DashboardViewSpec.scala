@@ -41,7 +41,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
   val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(2, 1, 2, "test")
 
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
-    AllDraftDeparturesViewModel(departuresSummary, 20, None, frontendAppConfig.departureFrontendUrl, paginationViewModel)
+    AllDraftDeparturesViewModel(departuresSummary, 20, None, frontendAppConfig.p5Departure, paginationViewModel)
 
   val dataRows: Seq[DraftDepartureRow] = viewAllDepartureMovementsViewModel.dataRows
 
@@ -58,7 +58,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
         arbitrary[DeparturesSummary].sample.value,
         movementsPerPage,
         None,
-        frontendAppConfig.departureFrontendUrl,
+        frontendAppConfig.p5Departure,
         paginationViewModelP5
       )
     )
@@ -130,7 +130,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
 
             "must have correct href" in {
 
-              val redirectLink = s"${frontendAppConfig.departureFrontendUrl}/drafts/${draft.lrn}"
+              val redirectLink = s"${frontendAppConfig.p5Departure}/drafts/${draft.lrn}"
               lrnLink.attr("href") mustBe redirectLink
             }
           }
@@ -173,7 +173,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
 
       val draftDeparture = DeparturesSummary(1, 0, List.empty)
       val view = applyView(viewAllDepartureMovementsViewModel =
-        AllDraftDeparturesViewModel(draftDeparture, 20, Some("AB123"), frontendAppConfig.departureFrontendUrl, paginationViewModel)
+        AllDraftDeparturesViewModel(draftDeparture, 20, Some("AB123"), frontendAppConfig.p5Departure, paginationViewModel)
       )
 
       val doc = Jsoup.parse(view.toString())
@@ -192,7 +192,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
 
       val draftDeparture = DeparturesSummary(0, 0, List.empty)
       val view = applyView(viewAllDepartureMovementsViewModel =
-        AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.departureFrontendUrl, paginationViewModel)
+        AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.p5Departure, paginationViewModel)
       )
 
       val doc = Jsoup.parse(view.toString())
@@ -204,7 +204,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
 
       val draftDeparture = DeparturesSummary(1, 0, List.empty)
       val view = applyView(viewAllDepartureMovementsViewModel =
-        AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.departureFrontendUrl, paginationViewModel)
+        AllDraftDeparturesViewModel(draftDeparture, 20, None, frontendAppConfig.p5Departure, paginationViewModel)
       )
 
       val doc = Jsoup.parse(view.toString())
@@ -233,7 +233,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
 
     "must render href button" in {
       panel.head.getElementsByClass("govuk-button").text() mustBe "Start now"
-      panel.head.getElementsByClass("govuk-button").attr("href") mustBe frontendAppConfig.declareDepartureStartWithLRNUrl
+      panel.head.getElementsByClass("govuk-button").attr("href") mustBe frontendAppConfig.p5Departure
     }
   }
 }

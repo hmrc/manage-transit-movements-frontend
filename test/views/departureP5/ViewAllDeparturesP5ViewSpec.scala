@@ -80,7 +80,7 @@ class ViewAllDeparturesP5ViewSpec
   behave like pageWithLink(
     id = "make-departure-declaration",
     expectedText = "Make a departure declaration",
-    expectedHref = frontendAppConfig.startDepartureDeclarationStartUrl
+    expectedHref = frontendAppConfig.p5Departure
   )
 
   behave like pageWithMovementSearch("Search by Movement Reference Number (MRN)")
