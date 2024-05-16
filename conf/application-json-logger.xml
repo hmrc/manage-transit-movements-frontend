@@ -13,4 +13,6 @@
     <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>
+
+    <logger name="controllers.actions" level="INFO"/>
 </configuration>

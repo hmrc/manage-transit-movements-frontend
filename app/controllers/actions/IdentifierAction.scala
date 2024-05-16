@@ -54,11 +54,14 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(EmptyPredicate)
       .retrieve(Retrievals.allEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
-          def checkEnrolment[E <: Enrolment](e: E)(implicit hc: HeaderCarrier): Future[Option[Either[Result, Result]]] =
+          logger.info(s"Enrolment keys found: '${enrolments.enrolments.map(_.key).mkString(",")}'")
+          def checkEnrolment[E <: Enrolment](e: E)(implicit hc: HeaderCarrier): Future[Option[Either[Result, Result]]] = {
+            logger.info(s"Enrolment key given: ${e.key}")
             enrolments.enrolments
               .filter(_.isActivated)
               .find(_.key.equals(e.key)) match {
               case Some(enrolment) =>
+                logger.info(s"Enrolment found for ${e.key}")
                 enrolment.getIdentifier(e.identifierKey) match {
                   case Some(enrolmentIdentifier) =>
                     e match {
@@ -66,10 +69,13 @@ class AuthenticatedIdentifierAction @Inject() (
                         logger.info(s"User with EORI $enrolmentIdentifier is on legacy enrolment")
                         Future.successful(Some(Right(Redirect(config.enrolmentGuidancePage))))
                       case _ =>
+                        logger.info(s"EORI found for ${e.key}")
                         block(IdentifierRequest(request, enrolmentIdentifier.value)).map(Right(_)).map(Some(_))
                     }
                   case None =>
+                    logger.info(s"EORI not found for ${e.key}")
                     Future.successful(Some(Left(Redirect(routes.UnauthorisedController.onPageLoad()))))
+
                 }
               case None =>
                 maybeGroupId match {
@@ -81,20 +87,25 @@ class AuthenticatedIdentifierAction @Inject() (
                         None
                     }
                   case None =>
+                    logger.info("No Enrolment and No group id")
                     Future.successful(None)
                 }
             }
+          }
 
-          def rec(enrolments: List[Enrolment], results: List[Result] = Nil): Future[Result] = enrolments match {
-            case Nil =>
-              Future.successful(results.headOption.getOrElse(Redirect(config.eccEnrolmentSplashPage)))
-            case head :: tail =>
-              checkEnrolment(head)
-                .flatMap {
-                  case Some(Right(onEnrolmentFound))   => Future.successful(onEnrolmentFound)
-                  case Some(Left(onEnrolmentNotFound)) => rec(tail, results :+ onEnrolmentNotFound)
-                  case None                            => rec(tail, results)
-                }
+          def rec(enrolments: List[Enrolment], results: List[Result] = Nil): Future[Result] = {
+            logger.info(s"Results: ${results.mkString(",")}")
+            enrolments match {
+              case Nil =>
+                Future.successful(results.headOption.getOrElse(Redirect(config.eccEnrolmentSplashPage)))
+              case head :: tail =>
+                checkEnrolment(head)
+                  .flatMap {
+                    case Some(Right(onEnrolmentFound))   => Future.successful(onEnrolmentFound)
+                    case Some(Left(onEnrolmentNotFound)) => rec(tail, results :+ onEnrolmentNotFound)
+                    case None                            => rec(tail, results)
+                  }
+            }
           }
 
           rec(List(config.newEnrolment, config.legacyEnrolment))
