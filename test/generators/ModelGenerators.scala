@@ -212,8 +212,9 @@ trait ModelGenerators {
     Arbitrary {
       for {
         availability <- arbitrary[Availability]
+        enabled      <- arbitrary[Boolean]
         href         <- nonEmptyString
-      } yield Feature(availability, href)
+      } yield Feature(availability, enabled, href)
     }
 
   implicit lazy val arbitraryFeatures: Arbitrary[Features] =

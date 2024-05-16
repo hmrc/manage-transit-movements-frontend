@@ -62,195 +62,205 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
   "WhatDoYouWantToDoService" - {
 
     "fetchArrivalsAvailability" - {
-      "must get availability when phase 4 disabled and phase 5 disabled" in {
-        when(mockFrontendAppConfig.phase4Enabled).thenReturn(false)
-        when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
+      "must get availability" - {
+        "when phase 4 disabled and phase 5 disabled" in {
+          when(mockFrontendAppConfig.phase4Enabled).thenReturn(false)
+          when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
 
-        whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe
-          Features(
-            phase4 = None,
-            phase5 = None
-          )
+          whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe
+            Features(
+              phase4 = None,
+              phase5 = None
+            )
 
-        verifyNoInteractions(mockArrivalMovementsConnector)
-        verifyNoInteractions(mockArrivalMovementsP5Connector)
-      }
-
-      "must get availability when phase 4 enabled and phase 5 disabled" in {
-        forAll(arbitrary[Availability]) {
-          availability =>
-            beforeEach()
-
-            when(mockFrontendAppConfig.phase4Enabled).thenReturn(true)
-            when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
-
-            when(mockArrivalMovementsConnector.getArrivalsAvailability()(any())).thenReturn(Future.successful(availability))
-
-            whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe
-              Features(
-                phase4 = Some(Feature(availability, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)),
-                phase5 = None
-              )
-
-            verify(mockArrivalMovementsConnector).getArrivalsAvailability()
-            verifyNoInteractions(mockArrivalMovementsP5Connector)
+          verifyNoInteractions(mockArrivalMovementsConnector)
+          verifyNoInteractions(mockArrivalMovementsP5Connector)
         }
-      }
 
-      "must get availability when phase 4 disabled and phase 5 enabled" in {
-        forAll(arbitrary[Availability]) {
-          availability =>
-            beforeEach()
+        "when phase 4 enabled and phase 5 disabled" in {
+          forAll(arbitrary[Availability]) {
+            availability =>
+              beforeEach()
 
-            when(mockFrontendAppConfig.phase4Enabled).thenReturn(false)
-            when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
+              when(mockFrontendAppConfig.phase4Enabled).thenReturn(true)
+              when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
 
-            when(mockArrivalMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(availability))
+              when(mockArrivalMovementsConnector.getArrivalsAvailability()(any())).thenReturn(Future.successful(availability))
 
-            whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe
-              Features(
-                phase4 = None,
-                phase5 = Some(Feature(availability, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url))
-              )
+              whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe
+                Features(
+                  phase4 = Some(Feature(availability, enabled = true, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)),
+                  phase5 = None
+                )
 
-            verifyNoInteractions(mockArrivalMovementsConnector)
-            verify(mockArrivalMovementsP5Connector).getAvailability()
+              verify(mockArrivalMovementsConnector).getArrivalsAvailability()
+              verifyNoInteractions(mockArrivalMovementsP5Connector)
+          }
         }
-      }
 
-      "must get availability when phase 4 enabled and phase 5 enabled" in {
-        forAll(arbitrary[Availability], arbitrary[Availability]) {
-          (p4Availability, p5Availability) =>
-            beforeEach()
+        "when phase 4 disabled and phase 5 enabled" in {
+          forAll(arbitrary[Availability], arbitrary[Availability]) {
+            (p4Availability, p5Availability) =>
+              beforeEach()
 
-            when(mockFrontendAppConfig.phase4Enabled).thenReturn(true)
-            when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
+              when(mockFrontendAppConfig.phase4Enabled).thenReturn(false)
+              when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
 
-            when(mockArrivalMovementsConnector.getArrivalsAvailability()(any())).thenReturn(Future.successful(p4Availability))
-            when(mockArrivalMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(p5Availability))
+              when(mockArrivalMovementsConnector.getArrivalsAvailability()(any())).thenReturn(Future.successful(p4Availability))
+              when(mockArrivalMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(p5Availability))
 
-            whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe
-              Features(
-                phase4 = Some(Feature(p4Availability, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)),
-                phase5 = Some(Feature(p5Availability, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url))
-              )
+              whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe
+                Features(
+                  phase4 = Some(Feature(p4Availability, enabled = false, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)),
+                  phase5 = Some(Feature(p5Availability, enabled = true, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url))
+                )
 
-            verify(mockArrivalMovementsConnector).getArrivalsAvailability()
-            verify(mockArrivalMovementsP5Connector).getAvailability()
+              verify(mockArrivalMovementsConnector).getArrivalsAvailability()
+              verify(mockArrivalMovementsP5Connector).getAvailability()
+          }
+        }
+
+        "when phase 4 enabled and phase 5 enabled" in {
+          forAll(arbitrary[Availability], arbitrary[Availability]) {
+            (p4Availability, p5Availability) =>
+              beforeEach()
+
+              when(mockFrontendAppConfig.phase4Enabled).thenReturn(true)
+              when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
+
+              when(mockArrivalMovementsConnector.getArrivalsAvailability()(any())).thenReturn(Future.successful(p4Availability))
+              when(mockArrivalMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(p5Availability))
+
+              whatDoYouWantToDoService.fetchArrivalsAvailability().futureValue mustBe
+                Features(
+                  phase4 = Some(Feature(p4Availability, enabled = true, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)),
+                  phase5 = Some(Feature(p5Availability, enabled = true, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url))
+                )
+
+              verify(mockArrivalMovementsConnector).getArrivalsAvailability()
+              verify(mockArrivalMovementsP5Connector).getAvailability()
+          }
         }
       }
     }
 
     "fetchDeparturesAvailability" - {
-      "must get availability when phase 4 disabled and phase 5 disabled" in {
-        when(mockFrontendAppConfig.phase4Enabled).thenReturn(false)
-        when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
+      "must get availability" - {
+        "when phase 4 disabled and phase 5 disabled" in {
+          when(mockFrontendAppConfig.phase4Enabled).thenReturn(false)
+          when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
 
-        whatDoYouWantToDoService.fetchDeparturesAvailability().futureValue mustBe
-          Features(
-            phase4 = None,
-            phase5 = None
-          )
+          whatDoYouWantToDoService.fetchDeparturesAvailability().futureValue mustBe
+            Features(
+              phase4 = None,
+              phase5 = None
+            )
 
-        verifyNoInteractions(mockDepartureMovementsConnector)
-        verifyNoInteractions(mockDepartureMovementsP5Connector)
-      }
-
-      "must get availability when phase 4 enabled and phase 5 disabled" in {
-        forAll(arbitrary[Availability]) {
-          availability =>
-            beforeEach()
-
-            when(mockFrontendAppConfig.phase4Enabled).thenReturn(true)
-            when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
-
-            when(mockDepartureMovementsConnector.getDeparturesAvailability()(any())).thenReturn(Future.successful(availability))
-
-            whatDoYouWantToDoService.fetchDeparturesAvailability().futureValue mustBe
-              Features(
-                phase4 = Some(Feature(availability, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url)),
-                phase5 = None
-              )
-
-            verify(mockDepartureMovementsConnector).getDeparturesAvailability()
-            verifyNoInteractions(mockDepartureMovementsP5Connector)
+          verifyNoInteractions(mockDepartureMovementsConnector)
+          verifyNoInteractions(mockDepartureMovementsP5Connector)
         }
-      }
 
-      "must get availability when phase 4 disabled and phase 5 enabled" in {
-        forAll(arbitrary[Availability]) {
-          availability =>
-            beforeEach()
+        "when phase 4 enabled and phase 5 disabled" in {
+          forAll(arbitrary[Availability]) {
+            availability =>
+              beforeEach()
 
-            when(mockFrontendAppConfig.phase4Enabled).thenReturn(false)
-            when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
+              when(mockFrontendAppConfig.phase4Enabled).thenReturn(true)
+              when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
 
-            when(mockDepartureMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(availability))
+              when(mockDepartureMovementsConnector.getDeparturesAvailability()(any())).thenReturn(Future.successful(availability))
 
-            whatDoYouWantToDoService.fetchDeparturesAvailability().futureValue mustBe
-              Features(
-                phase4 = None,
-                phase5 = Some(Feature(availability, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url))
-              )
+              whatDoYouWantToDoService.fetchDeparturesAvailability().futureValue mustBe
+                Features(
+                  phase4 = Some(Feature(availability, enabled = true, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url)),
+                  phase5 = None
+                )
 
-            verifyNoInteractions(mockDepartureMovementsConnector)
-            verify(mockDepartureMovementsP5Connector).getAvailability()
+              verify(mockDepartureMovementsConnector).getDeparturesAvailability()
+              verifyNoInteractions(mockDepartureMovementsP5Connector)
+          }
         }
-      }
 
-      "must get availability when phase 4 enabled and phase 5 enabled" in {
-        forAll(arbitrary[Availability], arbitrary[Availability]) {
-          (p4Availability, p5Availability) =>
-            beforeEach()
+        "when phase 4 disabled and phase 5 enabled" in {
+          forAll(arbitrary[Availability], arbitrary[Availability]) {
+            (p4Availability, p5Availability) =>
+              beforeEach()
 
-            when(mockFrontendAppConfig.phase4Enabled).thenReturn(true)
-            when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
+              when(mockFrontendAppConfig.phase4Enabled).thenReturn(false)
+              when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
 
-            when(mockDepartureMovementsConnector.getDeparturesAvailability()(any())).thenReturn(Future.successful(p4Availability))
-            when(mockDepartureMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(p5Availability))
+              when(mockDepartureMovementsConnector.getDeparturesAvailability()(any())).thenReturn(Future.successful(p4Availability))
+              when(mockDepartureMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(p5Availability))
 
-            whatDoYouWantToDoService.fetchDeparturesAvailability().futureValue mustBe
-              Features(
-                phase4 = Some(Feature(p4Availability, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url)),
-                phase5 = Some(Feature(p5Availability, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url))
-              )
+              whatDoYouWantToDoService.fetchDeparturesAvailability().futureValue mustBe
+                Features(
+                  phase4 = Some(Feature(p4Availability, enabled = false, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url)),
+                  phase5 =
+                    Some(Feature(p5Availability, enabled = true, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url))
+                )
 
-            verify(mockDepartureMovementsConnector).getDeparturesAvailability()
-            verify(mockDepartureMovementsP5Connector).getAvailability()
+              verify(mockDepartureMovementsConnector).getDeparturesAvailability()
+              verify(mockDepartureMovementsP5Connector).getAvailability()
+          }
+        }
+
+        "when phase 4 enabled and phase 5 enabled" in {
+          forAll(arbitrary[Availability], arbitrary[Availability]) {
+            (p4Availability, p5Availability) =>
+              beforeEach()
+
+              when(mockFrontendAppConfig.phase4Enabled).thenReturn(true)
+              when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
+
+              when(mockDepartureMovementsConnector.getDeparturesAvailability()(any())).thenReturn(Future.successful(p4Availability))
+              when(mockDepartureMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(p5Availability))
+
+              whatDoYouWantToDoService.fetchDeparturesAvailability().futureValue mustBe
+                Features(
+                  phase4 = Some(Feature(p4Availability, enabled = true, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None).url)),
+                  phase5 =
+                    Some(Feature(p5Availability, enabled = true, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url))
+                )
+
+              verify(mockDepartureMovementsConnector).getDeparturesAvailability()
+              verify(mockDepartureMovementsP5Connector).getAvailability()
+          }
         }
       }
     }
 
     "fetchDraftDeparturesAvailability" - {
-      "must get availability when phase 5 enabled" in {
-        forAll(arbitrary[Availability]) {
-          availability =>
-            beforeEach()
+      "must get availability" - {
+        "when phase 5 enabled" in {
+          forAll(arbitrary[Availability]) {
+            availability =>
+              beforeEach()
 
-            when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
+              when(mockFrontendAppConfig.phase5Enabled).thenReturn(true)
 
-            when(mockDepartureDraftsP5Connector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(availability))
+              when(mockDepartureDraftsP5Connector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(availability))
 
-            whatDoYouWantToDoService.fetchDraftDepartureAvailability().futureValue mustBe
-              Features(
-                None,
-                Some(Feature(availability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url))
-              )
+              whatDoYouWantToDoService.fetchDraftDepartureAvailability().futureValue mustBe
+                Features(
+                  None,
+                  Some(Feature(availability, enabled = true, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url))
+                )
 
-            verifyNoInteractions(mockDepartureMovementsConnector)
+              verifyNoInteractions(mockDepartureMovementsConnector)
+          }
         }
-      }
 
-      "must return None when phase 5 disabled" in {
-        when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
+        "when phase 5 disabled" in {
+          when(mockFrontendAppConfig.phase5Enabled).thenReturn(false)
 
-        whatDoYouWantToDoService.fetchDraftDepartureAvailability().futureValue mustBe
-          Features(
-            None,
-            None
-          )
+          whatDoYouWantToDoService.fetchDraftDepartureAvailability().futureValue mustBe
+            Features(
+              None,
+              None
+            )
 
-        verifyNoInteractions(mockDepartureDraftsP5Connector)
+          verifyNoInteractions(mockDepartureDraftsP5Connector)
+        }
       }
     }
   }

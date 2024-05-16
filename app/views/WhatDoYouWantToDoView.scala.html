@@ -39,17 +39,18 @@
             <p class="govuk-body"><a href=@config.p4ArrivalStart class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
             @viewMovements(phase4, "arrival", "view-arrival-notifications")
         }
-        case Features(None, Some(phase5)) => {
-            <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
-            @viewMovements(phase5, "arrival", "view-arrival-notifications")
-        }
-        case Features(Some(phase4), Some(phase5)) => {
+        case Features(Some(phase4), Some(phase5)) if phase4.enabled => {
             <p class="govuk-body"><a href=@config.p4ArrivalStart class="govuk-link" id="make-ncts-4-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.p4.make")</a></p>
             <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-ncts-5-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.p5.make")</a></p>
             @viewMovements(phase4, "arrival.p4", "view-ncts-4-arrival-notifications")
             @viewMovements(phase5, "arrival.p5", "view-ncts-5-arrival-notifications")
         }
-        case Features(None, None) => {
+        case Features(Some(phase4), Some(phase5)) => {
+            <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
+            @viewMovements(phase4, "arrival.p4", "view-ncts-4-arrival-notifications")
+            @viewMovements(phase5, "arrival.p5", "view-ncts-5-arrival-notifications")
+        }
+        case _ => {
             <p class="govuk-body">@messages(s"whatDoYouWantToDo.arrival.unavailable")</p>
         }
     }
@@ -61,17 +62,18 @@
             <p class="govuk-body"><a href=@config.p4DepartureStart class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
             @viewMovements(phase4, "departure", "view-departure-declarations")
         }
-        case Features(None, Some(phase5)) => {
-            <p class="govuk-body"><a href=@config.p5Departure class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
-            @viewMovements(phase5, "departure", "view-departure-declarations")
-        }
-        case Features(Some(phase4), Some(phase5)) => {
+        case Features(Some(phase4), Some(phase5)) if phase4.enabled => {
             <p class="govuk-body"><a href=@config.p4DepartureStart class="govuk-link" id="make-ncts-4-departure-declaration">@messages("whatDoYouWantToDo.link.departure.p4.make")</a></p>
             <p class="govuk-body"><a href=@config.p5Departure class="govuk-link" id="make-ncts-5-departure-declaration">@messages("whatDoYouWantToDo.link.departure.p5.make")</a></p>
             @viewMovements(phase4, "departure.p4", "view-ncts-4-departure-declarations")
             @viewMovements(phase5, "departure.p5", "view-ncts-5-departure-declarations")
         }
-        case Features(None, None) => {
+        case Features(Some(phase4), Some(phase5)) => {
+            <p class="govuk-body"><a href=@config.p5Departure class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
+            @viewMovements(phase4, "departure.p4", "view-ncts-4-departure-declarations")
+            @viewMovements(phase5, "departure.p5", "view-ncts-5-departure-declarations")
+        }
+        case _ => {
             <p class="govuk-body">@messages(s"whatDoYouWantToDo.departure.unavailable")</p>
         }
     }

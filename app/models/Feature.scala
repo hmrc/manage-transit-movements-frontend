@@ -18,5 +18,6 @@ package models
 
 case class Feature(
   availability: Availability,
+  enabled: Boolean,
   href: String
 )

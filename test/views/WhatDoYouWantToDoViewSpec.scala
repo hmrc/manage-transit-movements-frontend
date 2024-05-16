@@ -74,13 +74,15 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   behave like pageWithContent("h2", "Departures")
 
   "phase 4 enabled and phase 5 disabled" - {
+    val isPhase4Enabled = true
+
     val arrivalsFeatures = Features(
-      phase4 = Some(Feature(arrivalsAvailability, p4ArrivalsHref)),
+      phase4 = Some(Feature(arrivalsAvailability, isPhase4Enabled, p4ArrivalsHref)),
       phase5 = None
     )
 
     val departuresFeatures = Features(
-      phase4 = Some(Feature(departuresAvailability, p4DeparturesHref)),
+      phase4 = Some(Feature(departuresAvailability, isPhase4Enabled, p4DeparturesHref)),
       phase5 = None
     )
 
@@ -103,7 +105,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "arrivals" - {
       "unavailable" - {
         val arrivalsFeatures = Features(
-          phase4 = Some(Feature(Availability.Unavailable, p4ArrivalsHref)),
+          phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4ArrivalsHref)),
           phase5 = None
         )
 
@@ -114,7 +116,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "none" - {
         val arrivalsFeatures = Features(
-          phase4 = Some(Feature(Availability.Empty, p4ArrivalsHref)),
+          phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4ArrivalsHref)),
           phase5 = None
         )
 
@@ -125,7 +127,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "available" - {
         val arrivalsFeatures = Features(
-          phase4 = Some(Feature(Availability.NonEmpty, p4ArrivalsHref)),
+          phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4ArrivalsHref)),
           phase5 = None
         )
 
@@ -143,7 +145,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "departures" - {
       "unavailable" - {
         val departuresFeatures = Features(
-          phase4 = Some(Feature(Availability.Unavailable, p4DeparturesHref)),
+          phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4DeparturesHref)),
           phase5 = None
         )
 
@@ -154,7 +156,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "none" - {
         val departuresFeatures = Features(
-          phase4 = Some(Feature(Availability.Empty, p4DeparturesHref)),
+          phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4DeparturesHref)),
           phase5 = None
         )
 
@@ -165,7 +167,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "available" - {
         val departuresFeatures = Features(
-          phase4 = Some(Feature(Availability.NonEmpty, p4DeparturesHref)),
+          phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4DeparturesHref)),
           phase5 = None
         )
 
@@ -196,14 +198,17 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   }
 
   "phase 4 disabled and phase 5 enabled" - {
+    val isPhase4Enabled = false
+    val isPhase5Enabled = true
+
     val arrivalsFeatures = Features(
-      phase4 = None,
-      phase5 = Some(Feature(arrivalsAvailability, p5ArrivalsHref))
+      phase4 = Some(Feature(arrivalsAvailability, isPhase4Enabled, p4ArrivalsHref)),
+      phase5 = Some(Feature(arrivalsAvailability, isPhase5Enabled, p5ArrivalsHref))
     )
 
     val departuresFeatures = Features(
-      phase4 = None,
-      phase5 = Some(Feature(departuresAvailability, p5DeparturesHref))
+      phase4 = Some(Feature(departuresAvailability, isPhase4Enabled, p4DeparturesHref)),
+      phase5 = Some(Feature(departuresAvailability, isPhase5Enabled, p5DeparturesHref))
     )
 
     val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -225,38 +230,47 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "arrivals" - {
       "unavailable" - {
         val arrivalsFeatures = Features(
-          phase4 = None,
-          phase5 = Some(Feature(Availability.Unavailable, p5ArrivalsHref))
+          phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4ArrivalsHref)),
+          phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, p5ArrivalsHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
 
-        behave like pageWithContent(doc, "p", "View arrival notifications is currently unavailable")
+        behave like pageWithContent(doc, "p", "View NCTS 4 arrival notifications is currently unavailable")
+        behave like pageWithContent(doc, "p", "View NCTS 5 arrival notifications is currently unavailable")
       }
 
       "none" - {
         val arrivalsFeatures = Features(
-          phase4 = None,
-          phase5 = Some(Feature(Availability.Empty, p5ArrivalsHref))
+          phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4ArrivalsHref)),
+          phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, p5ArrivalsHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
 
-        behave like pageWithContent(doc, "p", "You have no arrival notifications")
+        behave like pageWithContent(doc, "p", "You have no NCTS 4 arrival notifications")
+        behave like pageWithContent(doc, "p", "You have no NCTS 5 arrival notifications")
       }
 
       "available" - {
         val arrivalsFeatures = Features(
-          phase4 = None,
-          phase5 = Some(Feature(Availability.NonEmpty, p5ArrivalsHref))
+          phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4ArrivalsHref)),
+          phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, p5ArrivalsHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
 
         behave like pageWithLink(
           doc,
-          "view-arrival-notifications",
-          "View arrival notifications",
+          "view-ncts-4-arrival-notifications",
+          "View NCTS 4 arrival notifications",
+          p4ArrivalsHref
+        )
+
+        behave like pageWithLink(
+          doc,
+          "view-ncts-5-arrival-notifications",
+          "View NCTS 5 arrival notifications",
           p5ArrivalsHref
         )
       }
@@ -265,48 +279,59 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "departures" - {
       "unavailable" - {
         val departuresFeatures = Features(
-          phase4 = None,
-          phase5 = Some(Feature(Availability.Unavailable, p5DeparturesHref))
+          phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4DeparturesHref)),
+          phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, p5DeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
 
-        behave like pageWithContent(doc, "p", "View departure declarations is currently unavailable")
+        behave like pageWithContent(doc, "p", "View NCTS 4 departure declarations is currently unavailable")
+        behave like pageWithContent(doc, "p", "View NCTS 5 departure declarations is currently unavailable")
       }
 
       "none" - {
         val departuresFeatures = Features(
-          phase4 = None,
-          phase5 = Some(Feature(Availability.Empty, p5DeparturesHref))
+          phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4DeparturesHref)),
+          phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, p5DeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
 
-        behave like pageWithContent(doc, "p", "You have no departure declarations")
+        behave like pageWithContent(doc, "p", "You have no NCTS 4 departure declarations")
+        behave like pageWithContent(doc, "p", "You have no NCTS 5 departure declarations")
       }
 
       "available" - {
         val departuresFeatures = Features(
-          phase4 = None,
-          phase5 = Some(Feature(Availability.NonEmpty, p5DeparturesHref))
+          phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4DeparturesHref)),
+          phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, p5DeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
 
         behave like pageWithLink(
           doc,
-          "view-departure-declarations",
-          "View departure declarations",
+          "view-ncts-4-departure-declarations",
+          "View NCTS 4 departure declarations",
+          p4DeparturesHref
+        )
+
+        behave like pageWithLink(
+          doc,
+          "view-ncts-5-departure-declarations",
+          "View NCTS 5 departure declarations",
           p5DeparturesHref
         )
       }
     }
 
     "draft departures" - {
+      val enabled = true
+
       "unavailable" - {
         val draftDeparturesFeatures = Features(
           phase4 = None,
-          phase5 = Some(Feature(Availability.Unavailable, draftDeparturesHref))
+          phase5 = Some(Feature(Availability.Unavailable, enabled, draftDeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -317,7 +342,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
       "none" - {
         val draftDeparturesFeatures = Features(
           phase4 = None,
-          phase5 = Some(Feature(Availability.Empty, draftDeparturesHref))
+          phase5 = Some(Feature(Availability.Empty, enabled, draftDeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -328,7 +353,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
       "available" - {
         val draftDeparturesFeatures = Features(
           phase4 = None,
-          phase5 = Some(Feature(Availability.NonEmpty, draftDeparturesHref))
+          phase5 = Some(Feature(Availability.NonEmpty, enabled, draftDeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -344,14 +369,17 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   }
 
   "phase 4 enabled and phase 5 enabled" - {
+    val isPhase4Enabled = true
+    val isPhase5Enabled = true
+
     val arrivalsFeatures = Features(
-      phase4 = Some(Feature(arrivalsAvailability, p4ArrivalsHref)),
-      phase5 = Some(Feature(arrivalsAvailability, p5ArrivalsHref))
+      phase4 = Some(Feature(arrivalsAvailability, isPhase4Enabled, p4ArrivalsHref)),
+      phase5 = Some(Feature(arrivalsAvailability, isPhase5Enabled, p5ArrivalsHref))
     )
 
     val departuresFeatures = Features(
-      phase4 = Some(Feature(departuresAvailability, p4DeparturesHref)),
-      phase5 = Some(Feature(departuresAvailability, p5DeparturesHref))
+      phase4 = Some(Feature(departuresAvailability, isPhase4Enabled, p4DeparturesHref)),
+      phase5 = Some(Feature(departuresAvailability, isPhase5Enabled, p5DeparturesHref))
     )
 
     val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -387,8 +415,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "arrivals" - {
       "unavailable" - {
         val arrivalsFeatures = Features(
-          phase4 = Some(Feature(Availability.Unavailable, p4ArrivalsHref)),
-          phase5 = Some(Feature(Availability.Unavailable, p5ArrivalsHref))
+          phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4ArrivalsHref)),
+          phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, p5ArrivalsHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -399,8 +427,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "none" - {
         val arrivalsFeatures = Features(
-          phase4 = Some(Feature(Availability.Empty, p4ArrivalsHref)),
-          phase5 = Some(Feature(Availability.Empty, p5ArrivalsHref))
+          phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4ArrivalsHref)),
+          phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, p5ArrivalsHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -411,8 +439,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "available" - {
         val arrivalsFeatures = Features(
-          phase4 = Some(Feature(Availability.NonEmpty, p4ArrivalsHref)),
-          phase5 = Some(Feature(Availability.NonEmpty, p5ArrivalsHref))
+          phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4ArrivalsHref)),
+          phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, p5ArrivalsHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -436,8 +464,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "departures" - {
       "unavailable" - {
         val departuresFeatures = Features(
-          phase4 = Some(Feature(Availability.Unavailable, p4DeparturesHref)),
-          phase5 = Some(Feature(Availability.Unavailable, p5DeparturesHref))
+          phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4DeparturesHref)),
+          phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, p5DeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -448,8 +476,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "none" - {
         val departuresFeatures = Features(
-          phase4 = Some(Feature(Availability.Empty, p4DeparturesHref)),
-          phase5 = Some(Feature(Availability.Empty, p5DeparturesHref))
+          phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4DeparturesHref)),
+          phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, p5DeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -460,8 +488,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "available" - {
         val departuresFeatures = Features(
-          phase4 = Some(Feature(Availability.NonEmpty, p4DeparturesHref)),
-          phase5 = Some(Feature(Availability.NonEmpty, p5DeparturesHref))
+          phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4DeparturesHref)),
+          phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, p5DeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -485,8 +513,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "draft departures" - {
       "unavailable" - {
         val draftDeparturesFeatures = Features(
-          phase4 = Some(Feature(Availability.Unavailable, draftDeparturesHref)),
-          phase5 = Some(Feature(Availability.Unavailable, draftDeparturesHref))
+          phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, draftDeparturesHref)),
+          phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, draftDeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -496,8 +524,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "none" - {
         val draftDeparturesFeatures = Features(
-          phase4 = Some(Feature(Availability.Empty, draftDeparturesHref)),
-          phase5 = Some(Feature(Availability.Empty, draftDeparturesHref))
+          phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, draftDeparturesHref)),
+          phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, draftDeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
@@ -507,8 +535,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
       "available" - {
         val draftDeparturesFeatures = Features(
-          phase4 = Some(Feature(Availability.NonEmpty, draftDeparturesHref)),
-          phase5 = Some(Feature(Availability.NonEmpty, draftDeparturesHref))
+          phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, draftDeparturesHref)),
+          phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, draftDeparturesHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
