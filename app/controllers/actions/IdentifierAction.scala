@@ -115,9 +115,6 @@ class AuthenticatedIdentifierAction @Inject() (
       Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
     case _: AuthorisationException =>
       Redirect(routes.UnauthorisedController.onPageLoad())
-    case e =>
-      logger.warn(s"Unknown exception: ${e.getMessage}")
-      Redirect(routes.SessionExpiredController.onPageLoad())
   }
   // scalastyle:on method.length
   // scalastyle:on cyclomatic.complexity
