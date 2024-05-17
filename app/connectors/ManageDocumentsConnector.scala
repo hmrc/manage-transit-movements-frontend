@@ -16,8 +16,9 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import logging.Logging
+import play.api.http.HeaderNames.ACCEPT
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -25,15 +26,23 @@ import java.net.URL
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManageDocumentsConnector @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+class ManageDocumentsConnector @Inject() (
+  appConfig: FrontendAppConfig,
+  phaseConfig: PhaseConfig,
+  http: HttpClientV2
+)(implicit ec: ExecutionContext)
+    extends Logging {
 
   def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val url: URL = url"${config.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
-    http.get(url).stream
+    val url: URL = url"${appConfig.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
+    http
+      .get(url)
+      .setHeader(ACCEPT -> phaseConfig.manageDocumentsAcceptHeader)
+      .stream
   }
 
   def getUnloadingPermission(arrivalId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val url: URL = url"${config.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
+    val url: URL = url"${appConfig.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
     http.get(url).stream
   }
 }
