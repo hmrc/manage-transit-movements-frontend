@@ -43,9 +43,6 @@ class ManageDocumentsConnector @Inject() (
 
   def getUnloadingPermission(arrivalId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url: URL = url"${appConfig.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
-    http
-      .get(url)
-      .setHeader(ACCEPT -> phaseConfig.manageDocumentsAcceptHeader)
-      .stream
+    http.get(url).stream
   }
 }
