@@ -16,6 +16,7 @@
 
 package base
 
+import config.{PostTransitionModule, TransitionModule}
 import controllers.actions._
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.mockito.MockitoSugar
@@ -45,5 +46,15 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
   def p5GuiceApplicationBuilder(): GuiceApplicationBuilder =
     defaultApplicationBuilder()
       .configure("microservice.services.features.isPhase5Enabled" -> true)
+
+  protected def transitionApplicationBuilder(): GuiceApplicationBuilder =
+    guiceApplicationBuilder()
+      .disable[PostTransitionModule]
+      .bindings(new TransitionModule)
+
+  protected def postTransitionApplicationBuilder(): GuiceApplicationBuilder =
+    guiceApplicationBuilder()
+      .disable[TransitionModule]
+      .bindings(new PostTransitionModule)
 
 }
