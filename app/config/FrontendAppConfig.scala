@@ -96,7 +96,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def departureAmendErrorsUrl(lrn: String, departureId: String)          = s"$p5Departure/$lrn/amend-errors/$departureId"
   def departureAmendGuaranteeErrorsUrl(lrn: String, departureId: String) = s"$p5Departure/$lrn/amend-guarantee-errors/$departureId"
   def departureFrontendRejectedUrl(departureId: DepartureId)             = s"$p4Departure/${departureId.index}/guarantee-rejection"
-  def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$p5Departure/${departureId.index}/departure-declaration-fail"
+  def departureFrontendDeclarationFailUrl(departureId: DepartureId)      = s"$p4Departure/${departureId.index}/departure-declaration-fail"
   def presentationNotificationFrontendUrl(departureId: String)           = s"$presentationNotificationFrontend/$departureId"
 
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId): String =
