@@ -113,7 +113,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
   behave like pageWithLink(
     "arrival-link",
     "Make another arrival notification",
-    frontendAppConfig.declareArrivalNotificationStartUrl
+    frontendAppConfig.p5Arrival
   )
 
   private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {

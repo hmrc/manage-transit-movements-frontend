@@ -122,7 +122,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   behave like pageWithLink(
     "departure-link",
     "Make another departure declaration",
-    frontendAppConfig.declareDepartureStartWithLRNUrl
+    frontendAppConfig.p5Departure
   )
 
   "must not render table headings when no table rows" in {

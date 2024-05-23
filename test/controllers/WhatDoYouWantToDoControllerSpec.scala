@@ -22,7 +22,6 @@ import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -54,26 +53,18 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with ScalaCheckPropertyCh
     "must return OK and the correct view for a GET" in {
 
       forAll(
-        arbitrary[Availability],
-        arbitrary[Availability],
-        Gen.option(arbitrary[Availability]),
-        Gen.alphaNumStr,
-        Gen.alphaNumStr
+        arbitrary[Features],
+        arbitrary[Features],
+        arbitrary[Features]
       ) {
-        (arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalsUrl, viewAllDeparturesUrl) =>
+        (arrivalsAvailability, departuresAvailability, draftDeparturesAvailability) =>
           beforeEach()
 
-          when(mockWhatDoYouWantToDoService.fetchArrivalsAvailability()(any()))
+          when(mockWhatDoYouWantToDoService.fetchArrivalsAvailability()(any(), any()))
             .thenReturn(Future.successful(arrivalsAvailability))
 
-          when(mockWhatDoYouWantToDoService.fetchArrivalsUrl())
-            .thenReturn(viewAllArrivalsUrl)
-
-          when(mockWhatDoYouWantToDoService.fetchDeparturesAvailability()(any()))
+          when(mockWhatDoYouWantToDoService.fetchDeparturesAvailability()(any(), any()))
             .thenReturn(Future.successful(departuresAvailability))
-
-          when(mockWhatDoYouWantToDoService.fetchDeparturesUrl())
-            .thenReturn(viewAllDeparturesUrl)
 
           when(mockWhatDoYouWantToDoService.fetchDraftDepartureAvailability()(any(), any()))
             .thenReturn(Future.successful(draftDeparturesAvailability))
@@ -86,10 +77,11 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with ScalaCheckPropertyCh
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalsUrl, viewAllDeparturesUrl)(
-              request,
-              messages
-            ).toString
+            view(
+              arrivalsAvailability,
+              departuresAvailability,
+              draftDeparturesAvailability
+            )(request, messages).toString
 
           verify(mockWhatDoYouWantToDoService).fetchDraftDepartureAvailability()(any(), any())
       }

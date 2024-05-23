@@ -95,7 +95,7 @@ object DepartureStatusP5ViewModel {
               "movement.status.P5.action.declarationAmendmentAccepted.completeDeclaration"
             ),
             ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
+              s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
               "movement.status.P5.action.declarationAmendmentAccepted.cancelDeclaration"
             )
           )
@@ -126,7 +126,7 @@ object DepartureStatusP5ViewModel {
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           ),
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
+            s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
             "movement.status.P5.action.allocatedMRN.cancelDeclaration"
           )
         )
@@ -164,7 +164,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.movementNotArrivedResponseSent",
         actions = Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+            s"${frontendAppConfig.p5Unloading}",
             "movement.status.P5.action.movementNotArrivedResponseSent.viewErrors"
           )
         )
@@ -176,7 +176,7 @@ object DepartureStatusP5ViewModel {
       DepartureStatusP5ViewModel(
         "movement.status.P5.movementNotArrived",
         actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}", "movement.status.P5.action.movementNotArrived.respond")
+          ViewMovementAction(s"${frontendAppConfig.p5Unloading}", "movement.status.P5.action.movementNotArrived.respond")
         )
       )
   }
@@ -251,7 +251,7 @@ object DepartureStatusP5ViewModel {
             "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
+            s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
             "movement.status.P5.action.guaranteeRejected.cancelDeclaration"
           )
         )
@@ -350,7 +350,7 @@ object DepartureStatusP5ViewModel {
         actions = Seq(
           goodsUnderControlAction,
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
+            s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
             "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
           )
         ) ++ prelodgeAction
@@ -381,7 +381,7 @@ object DepartureStatusP5ViewModel {
                 "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
               ),
               ViewMovementAction(
-                s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureId/index/$lrn",
+                s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
                 "movement.status.P5.action.declarationSent.cancelDeclaration"
               ),
               ViewMovementAction(

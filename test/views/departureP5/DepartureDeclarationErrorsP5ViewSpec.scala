@@ -86,7 +86,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   behave like pageWithLink(
     "departure-link",
     "Make another departure declaration",
-    frontendAppConfig.declareDepartureStartWithLRNUrl
+    frontendAppConfig.p5Departure
   )
 
   "must not render add another declaration link when isAmendmentJourney is true" in {

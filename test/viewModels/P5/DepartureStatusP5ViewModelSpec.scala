@@ -112,7 +112,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.movementNotArrivedResponseSent",
         Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+            s"${frontendAppConfig.p5Unloading}",
             "movement.status.P5.action.movementNotArrivedResponseSent.viewErrors"
           )
         )
@@ -131,7 +131,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.movementNotArrived",
         Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsUnloadingFrontend}",
+            s"${frontendAppConfig.p5Unloading}",
             "movement.status.P5.action.movementNotArrived.respond"
           )
         )
@@ -174,7 +174,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "movement.status.P5.action.declarationAmendmentAccepted.completeDeclaration"
             ),
             ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
               "movement.status.P5.action.declarationAmendmentAccepted.cancelDeclaration"
             )
           )
@@ -292,7 +292,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           ),
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+            s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
             "movement.status.P5.action.allocatedMRN.cancelDeclaration"
           )
         )
@@ -353,7 +353,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
           ViewMovementAction(
-            s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+            s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
             "movement.status.P5.action.guaranteeRejected.cancelDeclaration"
           )
         )
@@ -801,7 +801,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "movement.status.P5.action.goodsUnderControl.viewDetails"
             ),
             ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
               "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
             ),
             ViewMovementAction(
@@ -842,7 +842,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "movement.status.P5.action.goodsUnderControl.viewDetails"
             ),
             ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
               "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
             )
           )
@@ -896,7 +896,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             ),
             ViewMovementAction(
-              s"${frontendAppConfig.manageTransitMovementsCancellationFrontend}/$departureIdP5/index/$lrn",
+              s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
               "movement.status.P5.action.declarationSent.cancelDeclaration"
             ),
             ViewMovementAction(

@@ -72,7 +72,7 @@ class ViewAllArrivalsViewSpec
   behave like pageWithLink(
     id = "make-arrival-notification",
     expectedText = "Make an arrival notification",
-    expectedHref = frontendAppConfig.declareArrivalNotificationStartUrl
+    expectedHref = frontendAppConfig.p4ArrivalStart
   )
 
   behave like pageWithMovementSearch("Search by movement reference number")

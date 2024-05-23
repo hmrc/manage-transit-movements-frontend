@@ -72,7 +72,7 @@ class ViewAllDeparturesViewSpec
   behave like pageWithLink(
     id = "make-departure-declaration",
     expectedText = "Make a departure declaration",
-    expectedHref = frontendAppConfig.declareDepartureStartWithLRNUrl
+    expectedHref = frontendAppConfig.p4DepartureStart
   )
 
   behave like pageWithMovementSearch("Search by local reference number")

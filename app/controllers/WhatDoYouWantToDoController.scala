@@ -38,13 +38,11 @@ class WhatDoYouWantToDoController @Inject() (
   def onPageLoad(): Action[AnyContent] = (Action andThen identify).async {
     implicit request =>
       for {
-        arrivalsAvailability <- whatDoYouWantToDoService.fetchArrivalsAvailability()
-        viewAllArrivalUrl = whatDoYouWantToDoService.fetchArrivalsUrl()
-        departuresAvailability <- whatDoYouWantToDoService.fetchDeparturesAvailability()
-        viewAllDeparturesUrl = whatDoYouWantToDoService.fetchDeparturesUrl()
+        arrivalsAvailability        <- whatDoYouWantToDoService.fetchArrivalsAvailability()
+        departuresAvailability      <- whatDoYouWantToDoService.fetchDeparturesAvailability()
         draftDeparturesAvailability <- whatDoYouWantToDoService.fetchDraftDepartureAvailability()
       } yield Ok(
-        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, viewAllArrivalUrl, viewAllDeparturesUrl)
+        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability)
       )
   }
 }

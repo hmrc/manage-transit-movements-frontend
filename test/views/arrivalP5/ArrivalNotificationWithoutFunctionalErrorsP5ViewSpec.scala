@@ -87,7 +87,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnsw
   behave like pageWithLink(
     "arrival-link",
     "Make another arrival notification",
-    frontendAppConfig.declareArrivalNotificationStartUrl
+    frontendAppConfig.p5Arrival
   )
 
 }

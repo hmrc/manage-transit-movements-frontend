@@ -74,7 +74,7 @@ class DashboardControllerSpec extends SpecBase {
         val view                = injector.instanceOf[DashboardView]
         val paginationViewModel = ListPaginationViewModel(draftDeparture.userAnswers.length, 1, 2, "test")
         val viewModel =
-          AllDraftDeparturesViewModel(draftDeparture, draftDeparture.userAnswers.length, None, frontendAppConfig.departureFrontendUrl, paginationViewModel)
+          AllDraftDeparturesViewModel(draftDeparture, draftDeparture.userAnswers.length, None, frontendAppConfig.p5Departure, paginationViewModel)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
@@ -115,7 +115,7 @@ class DashboardControllerSpec extends SpecBase {
             AllDraftDeparturesViewModel(draftDeparture,
                                         draftDeparture.userAnswers.length,
                                         None,
-                                        frontendAppConfig.departureFrontendUrl,
+                                        frontendAppConfig.p5Departure,
                                         paginationViewModel,
                                         sortParams = sortParam
             )
@@ -157,7 +157,7 @@ class DashboardControllerSpec extends SpecBase {
             AllDraftDeparturesViewModel(draftDeparture,
                                         draftDeparture.userAnswers.length,
                                         None,
-                                        frontendAppConfig.departureFrontendUrl,
+                                        frontendAppConfig.p5Departure,
                                         paginationViewModel,
                                         sortParams = sortParam
             )
@@ -199,7 +199,7 @@ class DashboardControllerSpec extends SpecBase {
             AllDraftDeparturesViewModel(draftDeparture,
                                         draftDeparture.userAnswers.length,
                                         None,
-                                        frontendAppConfig.departureFrontendUrl,
+                                        frontendAppConfig.p5Departure,
                                         paginationViewModel,
                                         sortParams = sortParam
             )
@@ -241,7 +241,7 @@ class DashboardControllerSpec extends SpecBase {
             AllDraftDeparturesViewModel(draftDeparture,
                                         draftDeparture.userAnswers.length,
                                         None,
-                                        frontendAppConfig.departureFrontendUrl,
+                                        frontendAppConfig.p5Departure,
                                         paginationViewModel,
                                         sortParams = sortParam
             )
@@ -286,7 +286,7 @@ class DashboardControllerSpec extends SpecBase {
               draftDeparture,
               draftDeparture.userAnswers.length,
               Some(lrn),
-              frontendAppConfig.departureFrontendUrl,
+              frontendAppConfig.p5Departure,
               paginationViewModel,
               sortParams = sortParam
             )
@@ -330,7 +330,7 @@ class DashboardControllerSpec extends SpecBase {
               draftDeparture,
               draftDeparture.userAnswers.length,
               Some(lrn),
-              frontendAppConfig.departureFrontendUrl,
+              frontendAppConfig.p5Departure,
               paginationViewModel,
               sortParams = sortParam
             )
@@ -374,7 +374,7 @@ class DashboardControllerSpec extends SpecBase {
               draftDeparture,
               draftDeparture.userAnswers.length,
               Some(lrn),
-              frontendAppConfig.departureFrontendUrl,
+              frontendAppConfig.p5Departure,
               paginationViewModel,
               sortParams = sortParam
             )
@@ -418,7 +418,7 @@ class DashboardControllerSpec extends SpecBase {
               draftDeparture,
               draftDeparture.userAnswers.length,
               Some(lrn),
-              frontendAppConfig.departureFrontendUrl,
+              frontendAppConfig.p5Departure,
               paginationViewModel,
               sortParams = sortParam
             )

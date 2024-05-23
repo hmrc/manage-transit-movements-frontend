@@ -115,7 +115,7 @@ class DashboardController @Inject() (
       additionalParams = additionalParams
     )
 
-    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.departureFrontendUrl, pvm, sortParams)
+    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.p5Departure, pvm, sortParams)
   }
 
 }

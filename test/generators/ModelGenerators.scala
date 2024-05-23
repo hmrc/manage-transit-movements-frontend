@@ -208,6 +208,23 @@ trait ModelGenerators {
       Gen.oneOf(Availability.NonEmpty, Availability.Empty, Availability.Unavailable)
     }
 
+  implicit lazy val arbitraryFeature: Arbitrary[Feature] =
+    Arbitrary {
+      for {
+        availability <- arbitrary[Availability]
+        enabled      <- arbitrary[Boolean]
+        href         <- nonEmptyString
+      } yield Feature(availability, enabled, href)
+    }
+
+  implicit lazy val arbitraryFeatures: Arbitrary[Features] =
+    Arbitrary {
+      for {
+        phase4 <- Gen.option(arbitrary[Feature])
+        phase5 <- Gen.option(arbitrary[Feature])
+      } yield Features(phase4, phase5)
+    }
+
   implicit lazy val arbitraryArrivals: Arbitrary[Arrivals] =
     Arbitrary {
       for {
