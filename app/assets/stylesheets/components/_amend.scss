@@ -5,8 +5,7 @@
 }
 
 .summary-title-secondary {
-  margin-bottom: 0;
-  display: inline-block;
+  @extend .summary-title;
   float: right;
 }
 
