@@ -24,6 +24,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.implicits.RichRadiosSupport
+import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
 import utils.Format
 
 object ViewUtils {
@@ -38,7 +39,9 @@ object ViewUtils {
       label = Label(
         content = messages(label).toText
       ),
-      formGroupClasses = "search-input-custom",
+      formGroup = FormGroup(
+        classes = Some("search-input-custom")
+      ),
       errorMessage = field.error.map {
         e =>
           ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))

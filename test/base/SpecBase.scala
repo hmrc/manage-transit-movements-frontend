@@ -26,7 +26,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
@@ -47,8 +47,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
 
   val departureReferenceNumbers = DepartureReferenceNumbers(lrn, None)
 
-  def injector: Injector                               = app.injector
-  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
+  def injector: Injector                   = app.injector
+  def fakeRequest: FakeRequest[AnyContent] = FakeRequest("", "")
 
   def messagesApi: MessagesApi    = injector.instanceOf[MessagesApi]
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
