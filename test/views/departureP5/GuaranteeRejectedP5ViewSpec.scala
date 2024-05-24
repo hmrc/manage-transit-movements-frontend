@@ -208,7 +208,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
   "must render summary titles" in {
 
-    val renderSummaryLists = doc.getElementsByClass("govuk-details__summary-text").asScala
+    val renderSummaryLists = doc.getElementsByClass("summary-text").asScala
 
     guaranteeReferences.zipWithIndex.map {
       case (reference, index) =>
