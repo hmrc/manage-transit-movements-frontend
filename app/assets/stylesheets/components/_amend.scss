@@ -1,5 +1,4 @@
 .summary-title {
-  @extend .govuk-heading-m;
   margin-bottom: 0;
   display: inline-block;
   color: $govuk-link-colour;
@@ -7,22 +6,10 @@
 
 .summary-title-secondary {
   @extend .summary-title;
-  margin-bottom: 0;
-  display: inline-block;
   float: right;
-}
-
-.govuk-link-view-summary {
-  @extend .govuk-body;
-  @extend .govuk-link;
-  text-align: right;
-  width: 10%;
-  float: right;
-  margin-bottom: 0;
 }
 
 .summary-text {
-  @extend .govuk-details__summary-text;
   text-decoration: none;
 }
 

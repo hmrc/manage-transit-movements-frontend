@@ -31,7 +31,8 @@ import views.html.templates.MainTemplate
 
 class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckPropertyChecks with Generators {
 
-  implicit private lazy val request: FakeRequest[AnyContent] = FakeRequest("GET", "/foo")
+  private val path                                           = "foo"
+  implicit private lazy val request: FakeRequest[AnyContent] = FakeRequest("GET", path)
 
   "when not in trader test" - {
     val app = new GuiceApplicationBuilder()
@@ -50,7 +51,7 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
           val doc = Jsoup.parse(view.toString())
 
           val link = getElementBySelector(doc, ".govuk-phase-banner__text > .govuk-link")
-          getElementHref(link) must fullyMatch regex "http:\\/\\/localhost:9250\\/contact\\/beta-feedback\\?service=CTCTraders&referrerUrl=.*"
+          getElementHref(link) mustBe s"http://localhost:9250/contact/beta-feedback?service=CTCTraders&referrerUrl=$path"
       }
     }
 
@@ -66,7 +67,7 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
           val doc = Jsoup.parse(view.toString())
 
           val link = getElementBySelector(doc, ".hmrc-report-technical-issue")
-          getElementHref(link) must fullyMatch regex "http:\\/\\/localhost:9250\\/contact\\/report-technical-problem\\?newTab=.*"
+          getElementHref(link) mustBe s"http://localhost:9250/contact/report-technical-problem?newTab=true&service=CTCTraders&referrerUrl=$path"
           link.text() mustBe "Is this page not working properly? (opens in new tab)"
       }
     }
