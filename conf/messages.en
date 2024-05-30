@@ -602,5 +602,7 @@ departure.notReleased.row.label.dateTimeDeclaration = Date and time declaration 
 departure.notReleased.row.label.reason = Reason
 departure.notReleased.row.label.description = Description
 
-error.table.errorCode = Error code
+error.table.errorCode = Error
 error.table.errorReason = Reason
+error.table.attributeValue = Invalid answer
+error.table.pointer = Invalid data item

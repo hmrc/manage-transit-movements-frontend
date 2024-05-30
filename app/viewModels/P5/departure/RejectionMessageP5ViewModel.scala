@@ -57,7 +57,9 @@ case class RejectionMessageP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: Strin
 
   def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
     HeadCell(Text(messages("error.table.errorCode"))),
-    HeadCell(Text(messages("error.table.errorReason")))
+    HeadCell(Text(messages("error.table.errorReason"))),
+    HeadCell(Text(messages("error.table.pointer"))),
+    HeadCell(Text(messages("error.table.attributeValue")))
   )
 }
 

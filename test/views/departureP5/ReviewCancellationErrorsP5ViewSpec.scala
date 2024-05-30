@@ -28,9 +28,11 @@ import views.html.departureP5.ReviewCancellationErrorsP5View
 
 class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
 
-  override val prefix: String           = "departure.ie056.review.cancellation.message"
-  override val headCells: Seq[HeadCell] = Seq(HeadCell(Text("Error code")), HeadCell(Text("Reason")))
-  val tableRows: Seq[TableRow]          = arbitrary[Seq[TableRow]].sample.value
+  override val prefix: String = "departure.ie056.review.cancellation.message"
+
+  override val headCells: Seq[HeadCell] =
+    Seq(HeadCell(Text("Error")), HeadCell(Text("Reason")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+  val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
 
   override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
     ListPaginationViewModel(_, _, _, _)

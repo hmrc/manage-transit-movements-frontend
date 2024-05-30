@@ -30,10 +30,12 @@ import views.html.departureP5.ReviewDepartureErrorsP5View
 
 class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
 
-  override val prefix: String           = "departure.ie056.review.message"
-  override val headCells: Seq[HeadCell] = Seq(HeadCell(Text("Error code")), HeadCell(Text("Reason")))
-  val tableRows: Seq[TableRow]          = arbitrary[Seq[TableRow]].sample.value
-  private val sections: Seq[Section]    = arbitrary[List[Section]].sample.value
+  override val prefix: String = "departure.ie056.review.message"
+
+  override val headCells: Seq[HeadCell] =
+    Seq(HeadCell(Text("Error")), HeadCell(Text("Reason")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+  val tableRows: Seq[TableRow]       = arbitrary[Seq[TableRow]].sample.value
+  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
   private val reviewRejectionMessageP5ViewModel =
     new ReviewDepartureErrorsP5ViewModel(Seq(tableRows), lrn.toString, false, isAmendmentJourney = false)
