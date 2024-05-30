@@ -30,7 +30,7 @@ import views.html.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5View
 class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
 
   override val headCells: Seq[HeadCell] =
-    Seq(HeadCell(Text("Error")), HeadCell(Text("Reason")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+    Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
   val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
 
   override val prefix: String        = "arrival.ie057.review.notification.message"

@@ -31,7 +31,7 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
   override val prefix: String = "departure.ie056.review.cancellation.message"
 
   override val headCells: Seq[HeadCell] =
-    Seq(HeadCell(Text("Error")), HeadCell(Text("Reason")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+    Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
   val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
 
   override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
