@@ -20,3 +20,7 @@ case class Features(
   phase4: Option[Feature],
   phase5: Option[Feature]
 )
+
+object Features {
+  def apply(): Features = Features(None, None)
+}
