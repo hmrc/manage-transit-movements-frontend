@@ -569,33 +569,81 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   }
 
   "guarantee balance" - {
+    val paragraph =
+      "You can only check guarantee balances for GB declarations between 28 June and 1 July. Balances for XI declarations will be available from 1 July."
+
+    val href = "http://localhost:9462/check-transit-guarantee-balance/start?referral=ncts"
+
     "when enabled" - {
-      val app = super
-        .guiceApplicationBuilder()
-        .configure(
-          "microservice.services.features.isGuaranteeBalanceEnabled" -> true
-        )
-        .build()
+      "and phase 4 enabled and phase 5 enabled" - {
+        val app = super
+          .guiceApplicationBuilder()
+          .configure(
+            "microservice.services.features.isGuaranteeBalanceEnabled" -> true,
+            "microservice.services.features.isPhase4Enabled"           -> true,
+            "microservice.services.features.isPhase5Enabled"           -> true
+          )
+          .build()
 
-      running(app) {
-        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
+        running(app) {
+          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
 
-        behave like pageWithContent(doc, "h2", "Guarantees")
-        behave like pageWithLink(
-          doc,
-          "check-guarantee-balance",
-          "Check your guarantee balance",
-          "http://localhost:9462/check-transit-guarantee-balance/start?referral=ncts"
-        )
+          behave like pageWithContent(doc, "h2", "Guarantees")
+
+          behave like pageWithLink(
+            doc,
+            "check-guarantee-balance",
+            "Check your guarantee balance for GB declarations",
+            href
+          )
+
+          behave like pageWithContent(doc, "p", paragraph)
+        }
+      }
+
+      "and otherwise" - {
+        val (isPhase4Enabled, isPhase5Enabled) = arbitrary[(Boolean, Boolean)]
+          .retryUntil {
+            case (x, y) => !(x && y)
+          }
+          .sample
+          .value
+
+        val app = super
+          .guiceApplicationBuilder()
+          .configure(
+            "microservice.services.features.isGuaranteeBalanceEnabled" -> true,
+            "microservice.services.features.isPhase4Enabled"           -> isPhase4Enabled,
+            "microservice.services.features.isPhase5Enabled"           -> isPhase5Enabled
+          )
+          .build()
+
+        running(app) {
+          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
+
+          behave like pageWithContent(doc, "h2", "Guarantees")
+
+          behave like pageWithLink(
+            doc,
+            "check-guarantee-balance",
+            "Check your guarantee balance",
+            href
+          )
+
+          behave like pageWithoutContent(doc, "p", paragraph)
+        }
       }
     }
 
     "when disabled" - {
+      val (isPhase4Enabled, isPhase5Enabled) = arbitrary[(Boolean, Boolean)].sample.value
 
       val app = super
         .guiceApplicationBuilder()
         .configure(
-          "microservice.services.features.isGuaranteeBalanceEnabled" -> false
+          "microservice.services.features.isGuaranteeBalanceEnabled" -> false,
+          "microservice.services.features.isPhase4Enabled"           -> isPhase4Enabled,
+          "microservice.services.features.isPhase5Enabled"           -> isPhase5Enabled
         )
         .build()
 
@@ -603,10 +651,8 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
 
         behave like pageWithoutContent(doc, "h2", "Guarantees")
-        behave like pageWithoutLink(
-          doc,
-          "check-guarantee-balance"
-        )
+        behave like pageWithoutLink(doc, "check-guarantee-balance")
+        behave like pageWithoutContent(doc, "p", paragraph)
       }
     }
   }

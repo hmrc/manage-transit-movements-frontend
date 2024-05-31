@@ -87,8 +87,18 @@
 
     @if(config.isGuaranteeBalanceEnabled) {
         <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.guarantee")</h2>
-        <p class="govuk-body">
-            <a href=@config.checkGuaranteeBalanceUrl class="govuk-link" id="check-guarantee-balance">@messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance")</a>
-        </p>
+
+        @if(config.phase4Enabled && config.phase5Enabled) {
+            <p class="govuk-body">
+                <a href=@config.checkGuaranteeBalanceUrl class="govuk-link" id="check-guarantee-balance">@messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance.crossover")</a>
+            </p>
+            <p class="govuk-body">
+                @messages("whatDoYouWantToDo.guarantee.checkGuaranteeBalance.crossover.paragraph")
+            </p>
+        } else {
+            <p class="govuk-body">
+                <a href=@config.checkGuaranteeBalanceUrl class="govuk-link" id="check-guarantee-balance">@messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance")</a>
+            </p>
+        }
     }
 }
