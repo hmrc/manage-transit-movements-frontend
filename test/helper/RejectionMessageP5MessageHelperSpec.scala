@@ -80,7 +80,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
                       TableRow(Text(s"${errorCode.toString} - $errorDescription")),
                       TableRow(Text("MRN incorrect")),
                       TableRow(Text("/CC015C/HolderOfTheTransitProcedure/TIRHolderIdentificationNumber"), classes = "text-wrap"),
-                      TableRow(Text("N/A"))
+                      TableRow(Text("N/A"), classes = "text-wrap")
                     )
                   )
               }
