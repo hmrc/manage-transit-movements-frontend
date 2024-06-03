@@ -57,7 +57,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
                 _.copy(FunctionalError =
                   Seq(
                     FunctionalErrorType04(
-                      errorPointer = "14",
+                      errorPointer = "/CC015C/HolderOfTheTransitProcedure/TIRHolderIdentificationNumber",
                       errorCode = errorCode,
                       errorReason = "MRN incorrect",
                       originalAttributeValue = None
@@ -78,7 +78,9 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
                   result mustBe Seq(
                     Seq(
                       TableRow(Text(s"${errorCode.toString} - $errorDescription")),
-                      TableRow(Text("MRN incorrect"))
+                      TableRow(Text("MRN incorrect")),
+                      TableRow(Text("/CC015C/HolderOfTheTransitProcedure/TIRHolderIdentificationNumber"), classes = "text-wrap"),
+                      TableRow(Text("N/A"), classes = "text-wrap")
                     )
                   )
               }
