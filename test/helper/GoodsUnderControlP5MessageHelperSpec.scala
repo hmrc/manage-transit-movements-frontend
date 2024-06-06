@@ -17,6 +17,7 @@
 package helper
 
 import base.SpecBase
+import generated._
 import generators.Generators
 import models.referenceData.{ControlType, CustomsOffice}
 import models.referenceData.{RequestedDocumentType => RequestedDocumentTypeRef}
@@ -27,6 +28,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
+import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
@@ -284,8 +286,8 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val requestedDocument2: RequestedDocumentTypeRef = RequestedDocumentTypeRef("C620", "T2LF document")
 
         val requestedDocuments = Seq(
-          RequestedDocumentType("C605", None),
-          RequestedDocumentType("C620", Some("Desc1"))
+          RequestedDocumentType("1", "C605", None),
+          RequestedDocumentType("2", "C620", Some("Desc1"))
         )
 
         when(mockReferenceDataService.getRequestedDocumentType("C605")).thenReturn(Future.successful(requestedDocument1))
@@ -320,8 +322,8 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val requestedDocument2: RequestedDocumentTypeRef = RequestedDocumentTypeRef("C620", "")
 
         val requestedDocuments = Seq(
-          RequestedDocumentType("C605", None),
-          RequestedDocumentType("C620", Some("T2LF document"))
+          RequestedDocumentType("1", "C605", None),
+          RequestedDocumentType("2", "C620", Some("T2LF document"))
         )
 
         when(mockReferenceDataService.getRequestedDocumentType("C605")).thenReturn(Future.successful(requestedDocument1))
