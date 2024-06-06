@@ -54,22 +54,22 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     }
 
   def getCustomsOffices(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[CustomsOffice]] = {
-    val url = s"${config.customsReferenceDataUrl}/filtered-lists/CustomsOffices"
+    val url = s"${config.customsReferenceDataUrl}/lists/CustomsOffices"
     http.GET[Seq[CustomsOffice]](url = url, headers = version2Header, queryParams = queryParams)
   }
 
   def getControlTypes(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[ControlType]] = {
-    val url = s"${config.customsReferenceDataUrl}/filtered-lists/ControlType"
+    val url = s"${config.customsReferenceDataUrl}/lists/ControlType"
     http.GET[Seq[ControlType]](url = url, headers = version2Header, queryParams = queryParams)
   }
 
   def getRequestedDocumentTypes(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[RequestedDocumentType]] = {
-    val url = s"${config.customsReferenceDataUrl}/filtered-lists/RequestedDocumentType"
+    val url = s"${config.customsReferenceDataUrl}/lists/RequestedDocumentType"
     http.GET[Seq[RequestedDocumentType]](url = url, headers = version2Header, queryParams = queryParams)
   }
 
   def getFunctionalErrors(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] = {
-    val url = s"${config.customsReferenceDataUrl}/filtered-lists/FunctionalErrorCodesIeCA"
+    val url = s"${config.customsReferenceDataUrl}/lists/FunctionalErrorCodesIeCA"
     http.GET[Seq[FunctionalErrorWithDesc]](url = url, headers = version2Header, queryParams = queryParams)
   }
 

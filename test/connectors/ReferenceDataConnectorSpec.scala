@@ -76,7 +76,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
       "getCustomsOffice" - {
 
-        val url = s"$baseUrl/filtered-lists/CustomsOffices?foo=bar"
+        val url = s"$baseUrl/lists/CustomsOffices?foo=bar"
 
         "should handle a 200 response for customs offices" in {
           server.stubFor(
@@ -100,7 +100,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
       "getControlType" - {
 
-        val url = s"$baseUrl/filtered-lists/ControlType?foo=bar"
+        val url = s"$baseUrl/lists/ControlType?foo=bar"
 
         "should handle a 200 response for control types" in {
           server.stubFor(
@@ -124,7 +124,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
       "getRequestedDocumentTypes" - {
 
-        val url = s"$baseUrl/filtered-lists/RequestedDocumentType?foo=bar"
+        val url = s"$baseUrl/lists/RequestedDocumentType?foo=bar"
 
         "should handle a 200 response for control types" in {
           server.stubFor(
@@ -150,7 +150,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
         "when filtering" - {
 
-          val url = s"$baseUrl/filtered-lists/FunctionalErrorCodesIeCA?foo=bar"
+          val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?foo=bar"
 
           "should handle a 200 response for functional errors" in {
             server.stubFor(
