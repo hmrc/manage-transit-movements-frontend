@@ -299,13 +299,13 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           message =>
             val helper = new GoodsUnderControlP5MessageHelper(message, mockReferenceDataService)
 
-            val result = helper.controlInformationSection().futureValue
+            val result = helper.documentSection().futureValue
 
             val firstRow =
               Seq(SummaryListRow(key = Key("Type".toText), value = Value("C605 - Information sheet INF3".toText)))
 
             val secondRow = Seq(
-              SummaryListRow(key = Key("Type".toText), value = Value("C620 - T2FL document".toText)),
+              SummaryListRow(key = Key("Type".toText), value = Value("C620 - T2LF document".toText)),
               SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
             )
 
@@ -323,7 +323,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
         val requestedDocuments = Seq(
           RequestedDocumentType("1", "C605", None),
-          RequestedDocumentType("2", "C620", Some("T2LF document"))
+          RequestedDocumentType("2", "C620", Some("Desc1"))
         )
 
         when(mockReferenceDataService.getRequestedDocumentType("C605")).thenReturn(Future.successful(requestedDocument1))
@@ -335,7 +335,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           message =>
             val helper = new GoodsUnderControlP5MessageHelper(message, mockReferenceDataService)
 
-            val result = helper.controlInformationSection().futureValue
+            val result = helper.documentSection().futureValue
 
             val firstRow =
               Seq(SummaryListRow(key = Key("Type".toText), value = Value("C605".toText)))
