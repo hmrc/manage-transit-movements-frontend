@@ -416,7 +416,7 @@ departure.ie060.message.requestedDocuments.prelodged.whatHappensNext = You must 
 departure.ie060.message.requestedDocuments.prelodged.button = Complete pre-lodged declaration
 
 row.label.dateAndTimeOfControlNotification =  Date and time of control notification
-row.label.controlInformation.referenceNumber = Reference number
+row.label.controlInformation.officeOfDeparture = Office of departure
 
 row.label.localReferenceNumber =     Local Reference Number (LRN)
 row.label.movementReferenceNumber =  Movement Reference Number (MRN)
@@ -425,6 +425,7 @@ row.label.officeOfDeparture =   Office of departure
 heading.label.controlInformation =  Control information {0}
 heading.label.documentInformation =  Requested document {0}
 row.label.type =  Type
+row.label.documentType =  Document type
 row.label.control =  Control
 row.label.description =  Description
 

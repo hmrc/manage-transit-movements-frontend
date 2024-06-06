@@ -161,13 +161,14 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
             val result = helper.documentSection()
 
             val firstRow =
-              Seq(SummaryListRow(key = Key("Type".toText), value = Value("44".toText)),
-                  SummaryListRow(key = Key("Reference number".toText), value = Value("22323323".toText))
+              Seq(
+                SummaryListRow(key = Key("Document type".toText), value = Value("44".toText)),
+                SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText))
               )
 
             val secondRow = Seq(
-              SummaryListRow(key = Key("Type".toText), value = Value("45".toText)),
-              SummaryListRow(key = Key("Reference number".toText), value = Value("22323323".toText))
+              SummaryListRow(key = Key("Document type".toText), value = Value("45".toText)),
+              SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText))
             )
 
             val seqSummaryRow = Seq(Section(Some("Control information 1"), firstRow, None), Section(Some("Control information 2"), secondRow, None))
