@@ -79,14 +79,16 @@ object GoodsUnderControlP5ViewModel {
 
       helper.buildGoodsUnderControlSection().flatMap {
         goodsUnderControlSection =>
-          helper.controlInformationSection().map {
+          helper.controlInformationSection().flatMap {
             controlInfoSections =>
-              val sections = ie060.TransitOperation.notificationType match {
-                case "1" => Seq(goodsUnderControlSection) ++ helper.documentSection()
-                case _   => Seq(goodsUnderControlSection) ++ controlInfoSections ++ helper.documentSection()
+              helper.documentSection().map {
+                documentSection =>
+                  val sections = ie060.TransitOperation.notificationType match {
+                    case "1" => Seq(goodsUnderControlSection) ++ documentSection
+                    case _   => Seq(goodsUnderControlSection) ++ controlInfoSections ++ documentSection
+                  }
+                  new GoodsUnderControlP5ViewModel(sections, ie060.informationRequested, ie060.TransitOperation.LRN)
               }
-
-              new GoodsUnderControlP5ViewModel(sections, ie060.informationRequested, ie060.TransitOperation.LRN)
           }
       }
     }

@@ -17,9 +17,9 @@
 package helper
 
 import base.SpecBase
-import generated._
 import generators.Generators
 import models.referenceData.{ControlType, CustomsOffice}
+import models.referenceData.{RequestedDocumentType => RequestedDocumentTypeRef}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -27,7 +27,6 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
-import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
@@ -272,17 +271,25 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           message =>
             val helper = new GoodsUnderControlP5MessageHelper(message, mockReferenceDataService)
 
-            val result = helper.documentSection()
+            val result = helper.documentSection().futureValue
 
             result mustBe Seq.empty
         }
       }
 
-      "must return Sequence of Sections" in {
+      "must return Sequence of Sections when RequestedDocumentType is found in referenceData" in {
+
+        val requestedDocument1: RequestedDocumentTypeRef = RequestedDocumentTypeRef("C605", "Information sheet INF3")
+
+        val requestedDocument2: RequestedDocumentTypeRef = RequestedDocumentTypeRef("C620", "T2LF document")
+
         val requestedDocuments = Seq(
-          RequestedDocumentType("1", "44", None),
-          RequestedDocumentType("2", "45", Some("Desc1"))
+          RequestedDocumentType("C605", None),
+          RequestedDocumentType("C620", Some("Desc1"))
         )
+
+        when(mockReferenceDataService.getRequestedDocumentType("C605")).thenReturn(Future.successful(requestedDocument1))
+        when(mockReferenceDataService.getRequestedDocumentType("C620")).thenReturn(Future.successful(requestedDocument2))
 
         forAll(arbitrary[CC060CType].map {
           _.copy(RequestedDocument = requestedDocuments)
@@ -290,13 +297,13 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
           message =>
             val helper = new GoodsUnderControlP5MessageHelper(message, mockReferenceDataService)
 
-            val result = helper.documentSection()
+            val result = helper.controlInformationSection().futureValue
 
             val firstRow =
-              Seq(SummaryListRow(key = Key("Type".toText), value = Value("44".toText)))
+              Seq(SummaryListRow(key = Key("Type".toText), value = Value("C605 - Information sheet INF3".toText)))
 
             val secondRow = Seq(
-              SummaryListRow(key = Key("Type".toText), value = Value("45".toText)),
+              SummaryListRow(key = Key("Type".toText), value = Value("C620 - T2FL document".toText)),
               SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
             )
 
@@ -305,6 +312,43 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
             result mustBe seqSummaryRow
         }
       }
+
+      "must return Sequence of Sections when RequestedDocumentType is not found in referenceData" in {
+
+        val requestedDocument1: RequestedDocumentTypeRef = RequestedDocumentTypeRef("C605", "")
+
+        val requestedDocument2: RequestedDocumentTypeRef = RequestedDocumentTypeRef("C620", "")
+
+        val requestedDocuments = Seq(
+          RequestedDocumentType("C605", None),
+          RequestedDocumentType("C620", Some("T2LF document"))
+        )
+
+        when(mockReferenceDataService.getRequestedDocumentType("C605")).thenReturn(Future.successful(requestedDocument1))
+        when(mockReferenceDataService.getRequestedDocumentType("C620")).thenReturn(Future.successful(requestedDocument2))
+
+        forAll(arbitrary[CC060CType].map {
+          _.copy(RequestedDocument = requestedDocuments)
+        }) {
+          message =>
+            val helper = new GoodsUnderControlP5MessageHelper(message, mockReferenceDataService)
+
+            val result = helper.controlInformationSection().futureValue
+
+            val firstRow =
+              Seq(SummaryListRow(key = Key("Type".toText), value = Value("C605".toText)))
+
+            val secondRow = Seq(
+              SummaryListRow(key = Key("Type".toText), value = Value("C620".toText)),
+              SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
+            )
+
+            val seqSummaryRow = Seq(Section(Some("Requested document 1"), firstRow, None), Section(Some("Requested document 2"), secondRow, None))
+
+            result mustBe seqSummaryRow
+        }
+      }
+
     }
 
     "buildGoodsUnderControlSection" - {
