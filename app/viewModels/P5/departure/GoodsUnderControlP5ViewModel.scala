@@ -77,19 +77,16 @@ object GoodsUnderControlP5ViewModel {
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[GoodsUnderControlP5ViewModel] = {
       val helper = new GoodsUnderControlP5MessageHelper(ie060, referenceDataService)
 
-      helper.buildGoodsUnderControlSection().flatMap {
-        goodsUnderControlSection =>
-          helper.controlInformationSection().flatMap {
-            controlInfoSections =>
-              helper.documentSection().map {
-                documentSection =>
-                  val sections = ie060.TransitOperation.notificationType match {
-                    case "1" => Seq(goodsUnderControlSection) ++ documentSection
-                    case _   => Seq(goodsUnderControlSection) ++ controlInfoSections ++ documentSection
-                  }
-                  new GoodsUnderControlP5ViewModel(sections, ie060.informationRequested, ie060.TransitOperation.LRN)
-              }
-          }
+      for {
+        goodsUnderControlSection <- helper.buildGoodsUnderControlSection()
+        controlInfoSections      <- helper.controlInformationSection()
+        documentSection          <- helper.documentSection()
+      } yield {
+        val sections = ie060.TransitOperation.notificationType match {
+          case "1" => Seq(goodsUnderControlSection) ++ documentSection
+          case _   => Seq(goodsUnderControlSection) ++ controlInfoSections ++ documentSection
+        }
+        new GoodsUnderControlP5ViewModel(sections, ie060.informationRequested, ie060.TransitOperation.LRN)
       }
     }
   }
