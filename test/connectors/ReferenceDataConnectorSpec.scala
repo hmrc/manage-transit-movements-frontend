@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
@@ -122,6 +122,30 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         }
       }
 
+      "getRequestedDocumentTypes" - {
+
+        val url = s"$baseUrl/filtered-lists/RequestedDocumentType?foo=bar"
+
+        "should handle a 200 response for control types" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(requestedDocumentTypeJson))
+          )
+
+          val expectedResult = Seq(RequestedDocumentType("C620", "T2FL document"))
+
+          connector.getRequestedDocumentTypes(queryParams).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getRequestedDocumentTypes(queryParams))
+        }
+
+        "should handle client and server errors for control types" in {
+          checkErrorResponse(url, connector.getRequestedDocumentTypes(queryParams))
+        }
+      }
+
       "getFunctionalErrors" - {
 
         "when filtering" - {
@@ -178,9 +202,10 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
 object ReferenceDataConnectorSpec {
 
-  private val code            = "GB00001"
-  private val typeOfControl   = "44"
-  private val functionalError = "14"
+  private val code                  = "GB00001"
+  private val typeOfControl         = "44"
+  private val requestedDocumentType = "C620"
+  private val functionalError       = "14"
 
   private val baseUrl = "/customs-reference-data/test-only"
 
@@ -204,6 +229,18 @@ object ReferenceDataConnectorSpec {
        |    {
        |      "code": "$typeOfControl",
        |      "description": "Intrusive"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
+
+  private val requestedDocumentTypeJson: String =
+    s"""
+       |{
+       |  "data": [
+       |    {
+       |      "code": "$requestedDocumentType",
+       |      "description": "T2FL document"
        |    }
        |  ]
        |}

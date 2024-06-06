@@ -19,7 +19,7 @@ package services
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,6 +44,14 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
     lazy val default                       = ControlType(code, "")
     val queryParams: Seq[(String, String)] = Seq("data.code" -> code)
     connector.getControlTypes(queryParams).map(_.headOption.getOrElse(default)).recover {
+      case _ => default
+    }
+  }
+
+  def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType] = {
+    lazy val default                       = RequestedDocumentType(code, "")
+    val queryParams: Seq[(String, String)] = Seq("data.code" -> code)
+    connector.getRequestedDocumentTypes(queryParams).map(_.headOption.getOrElse(default)).recover {
       case _ => default
     }
   }

@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
@@ -44,6 +44,12 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val controlType2       = ControlType("2", "CT2")
   private val defaultControlType = ControlType(controlTypeCode, "")
   private val controlTypes       = Seq(controlType1, controlType2)
+
+  private val requestedDocumentTypeCode    = "C620"
+  private val requestedDocumentType1       = RequestedDocumentType(requestedDocumentTypeCode, "T2FL document")
+  private val requestedDocumentType2       = RequestedDocumentType("C612", "Internal Community transit declaration, T2F")
+  private val defaultRequestedDocumentType = RequestedDocumentType(requestedDocumentTypeCode, "")
+  private val requestedDocumentTypes       = Seq(requestedDocumentType1, requestedDocumentType2)
 
   private val functionalErrorCode    = "1"
   private val functionalError1       = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
@@ -134,6 +140,45 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
           service.getControlType(controlTypeCode).futureValue mustBe defaultControlType
 
           verify(mockConnector).getControlTypes(eqTo(expectedQueryParams))(any(), any())
+        }
+      }
+    }
+
+    "getRequestedDocumentType" - {
+
+      val expectedQueryParams = Seq("data.code" -> requestedDocumentTypeCode)
+
+      "should return a requested document type" - {
+        "when the requested document type is found" in {
+          when(mockConnector.getRequestedDocumentTypes(any())(any(), any())).thenReturn(Future.successful(requestedDocumentTypes))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue mustBe requestedDocumentType1
+
+          verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams))(any(), any())
+        }
+      }
+
+      "should return default" - {
+        "when the requested document type can't be found" in {
+          when(mockConnector.getRequestedDocumentTypes(any())(any(), any())).thenReturn(Future.successful(Nil))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue mustBe defaultRequestedDocumentType
+
+          verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams))(any(), any())
+        }
+
+        "when the call fails" in {
+          when(mockConnector.getRequestedDocumentTypes(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue mustBe defaultRequestedDocumentType
+
+          verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams))(any(), any())
         }
       }
     }

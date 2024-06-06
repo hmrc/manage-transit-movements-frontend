@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import logging.Logging
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Reads}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
@@ -61,6 +61,11 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   def getControlTypes(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[ControlType]] = {
     val url = s"${config.customsReferenceDataUrl}/filtered-lists/ControlType"
     http.GET[Seq[ControlType]](url = url, headers = version2Header, queryParams = queryParams)
+  }
+
+  def getRequestedDocumentTypes(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[RequestedDocumentType]] = {
+    val url = s"${config.customsReferenceDataUrl}/filtered-lists/RequestedDocumentType"
+    http.GET[Seq[RequestedDocumentType]](url = url, headers = version2Header, queryParams = queryParams)
   }
 
   def getFunctionalErrors(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] = {
