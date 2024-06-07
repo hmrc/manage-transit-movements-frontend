@@ -17,6 +17,7 @@
 package connectors
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
@@ -84,7 +85,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(customsOfficesResponseJson))
           )
 
-          val expectedResult = Seq(CustomsOffice(code, "NAME001", Some("004412323232345")))
+          val expectedResult = NonEmptySet.of(CustomsOffice(code, "NAME001", Some("004412323232345")))
 
           connector.getCustomsOffices(queryParams).futureValue mustBe expectedResult
         }
@@ -108,7 +109,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(controlTypesResponseJson))
           )
 
-          val expectedResult = Seq(ControlType(typeOfControl, "Intrusive"))
+          val expectedResult = NonEmptySet.of(ControlType(typeOfControl, "Intrusive"))
 
           connector.getControlTypes(queryParams).futureValue mustBe expectedResult
         }
@@ -132,7 +133,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(requestedDocumentTypeJson))
           )
 
-          val expectedResult = Seq(RequestedDocumentType("C620", "T2FL document"))
+          val expectedResult = NonEmptySet.of(RequestedDocumentType("C620", "T2FL document"))
 
           connector.getRequestedDocumentTypes(queryParams).futureValue mustBe expectedResult
         }
@@ -158,7 +159,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
                 .willReturn(okJson(functionalErrorsResponseJson))
             )
 
-            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
+            val expectedResult = NonEmptySet.of(FunctionalErrorWithDesc(functionalError, "Rule violation"))
 
             connector.getFunctionalErrors(queryParams).futureValue mustBe expectedResult
           }
@@ -182,7 +183,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
                 .willReturn(okJson(functionalErrorsResponseJson))
             )
 
-            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
+            val expectedResult = NonEmptySet.of(FunctionalErrorWithDesc(functionalError, "Rule violation"))
 
             connector.getFunctionalErrors().futureValue mustBe expectedResult
           }

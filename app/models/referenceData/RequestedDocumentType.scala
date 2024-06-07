@@ -16,6 +16,7 @@
 
 package models.referenceData
 
+import cats.Order
 import play.api.libs.json.{Json, OWrites, Reads}
 
 case class RequestedDocumentType(code: String, description: String) {
@@ -32,4 +33,7 @@ object RequestedDocumentType {
   implicit val writes: OWrites[RequestedDocumentType] = Json.writes[RequestedDocumentType]
 
   implicit val readFromFile: Reads[RequestedDocumentType] = Json.reads[RequestedDocumentType]
+
+  implicit val order: Order[RequestedDocumentType] = (x: RequestedDocumentType, y: RequestedDocumentType) => (x, y).compareBy(_.code)
+
 }

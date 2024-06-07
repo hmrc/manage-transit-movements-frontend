@@ -30,11 +30,9 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
     val queryParams: Seq[(String, String)] = Seq("data.id" -> customsOfficeId)
     connector
       .getCustomsOffices(queryParams)
-      .map(_.headOption)
-      .map {
-        case Some(customsOffice) => Right(customsOffice)
-        case None                => Left(customsOfficeId)
-      }
+      .map(
+        x => Right(x.head)
+      )
       .recover {
         case _: NoReferenceDataFoundException => Left(customsOfficeId)
       }
@@ -43,7 +41,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
     lazy val default                       = ControlType(code, "")
     val queryParams: Seq[(String, String)] = Seq("data.code" -> code)
-    connector.getControlTypes(queryParams).map(_.headOption.getOrElse(default)).recover {
+    connector.getControlTypes(queryParams).map(_.head).recover {
       case _ => default
     }
   }
@@ -51,7 +49,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
   def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType] = {
     lazy val default                       = RequestedDocumentType(code, "")
     val queryParams: Seq[(String, String)] = Seq("data.code" -> code)
-    connector.getRequestedDocumentTypes(queryParams).map(_.headOption.getOrElse(default)).recover {
+    connector.getRequestedDocumentTypes(queryParams).map(_.head).recover {
       case _ => default
     }
   }
@@ -59,13 +57,13 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
     lazy val default                       = FunctionalErrorWithDesc(code, "")
     val queryParams: Seq[(String, String)] = Seq("data.code" -> code)
-    connector.getFunctionalErrors(queryParams).map(_.headOption.getOrElse(default)).recover {
+    connector.getFunctionalErrors(queryParams).map(_.head).recover {
       case _ => default
     }
   }
 
   def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] =
-    connector.getFunctionalErrors().recover {
+    connector.getFunctionalErrors().map(_.toSeq).recover {
       case _ => Seq.empty
     }
 }
