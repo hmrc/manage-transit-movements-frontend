@@ -62,16 +62,16 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
     "getCustomsOfficeByCode" - {
 
-      val expectedQueryParams = "data.id" -> customsOfficeId
+      val expectedQueryParams = Seq("data.id" -> customsOfficeId)
 
       "should return customs office" in {
-        when(mockConnector.getCustomsOffices(eqTo(expectedQueryParams))(any(), any())).thenReturn(Future.successful(customsOffices))
+        when(mockConnector.getCustomsOffices(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(customsOffices))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
         service.getCustomsOffice(customsOfficeId).futureValue mustBe Right(customsOffice1)
 
-        verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams))(any(), any())
+        verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams): _*)(any(), any())
       }
 
       "should return Left" - {
@@ -82,14 +82,14 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
           service.getCustomsOffice(customsOfficeId).futureValue mustBe Left(customsOfficeId)
 
-          verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams))(any(), any())
+          verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams): _*)(any(), any())
         }
       }
     }
 
     "getControlType" - {
 
-      val expectedQueryParams = "data.code" -> controlTypeCode
+      val expectedQueryParams = Seq("data.code" -> controlTypeCode)
 
       "should return a control type" in {
         when(mockConnector.getControlTypes(any())(any(), any())).thenReturn(Future.successful(controlTypes))
@@ -98,13 +98,13 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
         service.getControlType(controlTypeCode).futureValue mustBe controlType1
 
-        verify(mockConnector).getControlTypes(eqTo(expectedQueryParams))(any(), any())
+        verify(mockConnector).getControlTypes(eqTo(expectedQueryParams): _*)(any(), any())
       }
     }
 
     "getRequestedDocumentType" - {
 
-      val expectedQueryParams: (String, String) = "data.code" -> requestedDocumentTypeCode
+      val expectedQueryParams = Seq("data.code" -> requestedDocumentTypeCode)
 
       "should return a requested document type" in {
 
@@ -115,13 +115,13 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
         service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue mustBe requestedDocumentType1
 
-        verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams))(any(), any())
+        verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams): _*)(any(), any())
       }
     }
 
     "getFunctionalError" - {
 
-      val expectedQueryParams = "data.code" -> functionalErrorCode
+      val expectedQueryParams = Seq("data.code" -> functionalErrorCode)
 
       "should return a functional error" in {
         when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.successful(functionalErrors))
@@ -130,7 +130,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
         service.getFunctionalError(functionalErrorCode).futureValue mustBe functionalError1
 
-        verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
+        verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams): _*)(any(), any())
       }
 
     }
