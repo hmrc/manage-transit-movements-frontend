@@ -20,6 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated._
 import generators.Generators
 import models.referenceData.ControlType
+import models.referenceData.{RequestedDocumentType => RequestedDocumentTypeRef}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -53,8 +54,10 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
     val controlType44 = ControlType("44", "")
 
     val requestedDocuments = Seq(
-      RequestedDocumentType("1", "44", None)
+      RequestedDocumentType("1", "C620", None)
     )
+
+    val requestedDocumentType = RequestedDocumentTypeRef("C620", "")
 
     "when no requested documents and type 0" - {
       val x = arbitrary[CC060CType].sample.value
@@ -138,6 +141,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         .copy(RequestedDocument = requestedDocuments)
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
+      when(mockReferenceDataService.getRequestedDocumentType(any())(any(), any())).thenReturn(Future.successful(requestedDocumentType))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)
@@ -169,6 +173,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
         .copy(RequestedDocument = requestedDocuments)
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
+      when(mockReferenceDataService.getRequestedDocumentType(any())(any(), any())).thenReturn(Future.successful(requestedDocumentType))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
 
       val viewModelProvider = new GoodsUnderControlP5ViewModelProvider(mockReferenceDataService)

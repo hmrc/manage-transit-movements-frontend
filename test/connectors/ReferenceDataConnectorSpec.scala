@@ -17,10 +17,11 @@
 package connectors
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
@@ -68,7 +69,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
     }
   }
 
-  private val queryParams = Seq("foo" -> "bar")
+  private val queryParams = "foo" -> "bar"
 
   "Reference Data" - {
 
@@ -76,7 +77,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
       "getCustomsOffice" - {
 
-        val url = s"$baseUrl/filtered-lists/CustomsOffices?foo=bar"
+        val url = s"$baseUrl/lists/CustomsOffices?foo=bar"
 
         "should handle a 200 response for customs offices" in {
           server.stubFor(
@@ -84,7 +85,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(customsOfficesResponseJson))
           )
 
-          val expectedResult = Seq(CustomsOffice(code, "NAME001", Some("004412323232345")))
+          val expectedResult = NonEmptySet.of(CustomsOffice(code, "NAME001", Some("004412323232345")))
 
           connector.getCustomsOffices(queryParams).futureValue mustBe expectedResult
         }
@@ -100,7 +101,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
       "getControlType" - {
 
-        val url = s"$baseUrl/filtered-lists/ControlType?foo=bar"
+        val url = s"$baseUrl/lists/ControlType?foo=bar"
 
         "should handle a 200 response for control types" in {
           server.stubFor(
@@ -108,7 +109,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               .willReturn(okJson(controlTypesResponseJson))
           )
 
-          val expectedResult = Seq(ControlType(typeOfControl, "Intrusive"))
+          val expectedResult = NonEmptySet.of(ControlType(typeOfControl, "Intrusive"))
 
           connector.getControlTypes(queryParams).futureValue mustBe expectedResult
         }
@@ -122,11 +123,35 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         }
       }
 
+      "getRequestedDocumentTypes" - {
+
+        val url = s"$baseUrl/lists/RequestedDocumentType?foo=bar"
+
+        "should handle a 200 response for control types" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(requestedDocumentTypeJson))
+          )
+
+          val expectedResult = NonEmptySet.of(RequestedDocumentType("C620", "T2FL document"))
+
+          connector.getRequestedDocumentTypes(queryParams).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getRequestedDocumentTypes(queryParams))
+        }
+
+        "should handle client and server errors for control types" in {
+          checkErrorResponse(url, connector.getRequestedDocumentTypes(queryParams))
+        }
+      }
+
       "getFunctionalErrors" - {
 
         "when filtering" - {
 
-          val url = s"$baseUrl/filtered-lists/FunctionalErrorCodesIeCA?foo=bar"
+          val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?foo=bar"
 
           "should handle a 200 response for functional errors" in {
             server.stubFor(
@@ -134,7 +159,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
                 .willReturn(okJson(functionalErrorsResponseJson))
             )
 
-            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
+            val expectedResult = NonEmptySet.of(FunctionalErrorWithDesc(functionalError, "Rule violation"))
 
             connector.getFunctionalErrors(queryParams).futureValue mustBe expectedResult
           }
@@ -158,7 +183,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
                 .willReturn(okJson(functionalErrorsResponseJson))
             )
 
-            val expectedResult = Seq(FunctionalErrorWithDesc(functionalError, "Rule violation"))
+            val expectedResult = NonEmptySet.of(FunctionalErrorWithDesc(functionalError, "Rule violation"))
 
             connector.getFunctionalErrors().futureValue mustBe expectedResult
           }
@@ -178,9 +203,10 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
 object ReferenceDataConnectorSpec {
 
-  private val code            = "GB00001"
-  private val typeOfControl   = "44"
-  private val functionalError = "14"
+  private val code                  = "GB00001"
+  private val typeOfControl         = "44"
+  private val requestedDocumentType = "C620"
+  private val functionalError       = "14"
 
   private val baseUrl = "/customs-reference-data/test-only"
 
@@ -204,6 +230,18 @@ object ReferenceDataConnectorSpec {
        |    {
        |      "code": "$typeOfControl",
        |      "description": "Intrusive"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
+
+  private val requestedDocumentTypeJson: String =
+    s"""
+       |{
+       |  "data": [
+       |    {
+       |      "code": "$requestedDocumentType",
+       |      "description": "T2FL document"
        |    }
        |  ]
        |}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package models.referenceData
+import cats.data.NonEmptySet
 
-import cats.Order
-import play.api.libs.json.{Json, OFormat}
+package object services {
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  def nameAndCode: String = s"${this.name} (${this.id})"
-
-}
-
-object CustomsOffice {
-  implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
-
-  implicit val order: Order[CustomsOffice] = (x: CustomsOffice, y: CustomsOffice) => (x, y).compareBy(_.name, _.id)
-
+  implicit class RichNonEmptySet[T](value: NonEmptySet[T]) {
+    def toSeq: Seq[T] = value.toNonEmptyList.toList
+  }
 }
