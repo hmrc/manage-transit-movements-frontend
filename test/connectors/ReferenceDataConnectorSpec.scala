@@ -69,7 +69,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
     }
   }
 
-  private val queryParams = Seq("foo" -> "bar")
+  private val queryParams = "foo" -> "bar"
 
   "Reference Data" - {
 

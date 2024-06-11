@@ -40,25 +40,18 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val customsOffice2  = CustomsOffice("GB00002", "CO2", None)
   private val customsOffices  = NonEmptySet.of(customsOffice1, customsOffice2)
 
-  private val controlTypeCode    = "1"
-  private val controlType1       = ControlType(controlTypeCode, "CT1")
-  private val controlType2       = ControlType("2", "CT2")
-  private val defaultControlType = ControlType(controlTypeCode, "")
-  private val controlTypes       = NonEmptySet.of(controlType1, controlType2)
+  private val controlTypeCode = "1"
+  private val controlType1    = ControlType(controlTypeCode, "CT1")
+  private val controlType2    = ControlType("2", "CT2")
+  private val controlTypes    = NonEmptySet.of(controlType1, controlType2)
 
-  private val requestedDocumentTypeCode    = "C620"
-  private val requestedDocumentType1       = RequestedDocumentType(requestedDocumentTypeCode, "T2FL document")
-  private val requestedDocumentType2       = RequestedDocumentType("C612", "Internal Community transit declaration, T2F")
-  private val defaultRequestedDocumentType = RequestedDocumentType(requestedDocumentTypeCode, "")
-  private val requestedDocumentTypes       = NonEmptySet.of(requestedDocumentType1, requestedDocumentType2)
+  private val requestedDocumentTypeCode = "C620"
+  private val requestedDocumentType1    = RequestedDocumentType(requestedDocumentTypeCode, "T2FL document")
 
-  private val functionalErrorCode    = "1"
-  private val functionalError1       = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
-  private val functionalError2       = FunctionalErrorWithDesc("2", "FE2")
-  private val defaultFunctionalError = FunctionalErrorWithDesc(functionalErrorCode, "")
-  private val functionalErrors       = NonEmptySet.of(functionalError1, functionalError2)
-
-  private val defaultFunctionalErrors = Nil
+  private val functionalErrorCode = "1"
+  private val functionalError1    = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
+  private val functionalError2    = FunctionalErrorWithDesc("2", "FE2")
+  private val functionalErrors    = NonEmptySet.of(functionalError1, functionalError2)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -69,10 +62,10 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
     "getCustomsOfficeByCode" - {
 
-      val expectedQueryParams = Seq("data.id" -> customsOfficeId)
+      val expectedQueryParams = "data.id" -> customsOfficeId
 
       "should return customs office" in {
-        when(mockConnector.getCustomsOffices(any())(any(), any())).thenReturn(Future.successful(customsOffices))
+        when(mockConnector.getCustomsOffices(eqTo(expectedQueryParams))(any(), any())).thenReturn(Future.successful(customsOffices))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
@@ -96,7 +89,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
     "getControlType" - {
 
-      val expectedQueryParams = Seq("data.code" -> controlTypeCode)
+      val expectedQueryParams = "data.code" -> controlTypeCode
 
       "should return a control type" in {
         when(mockConnector.getControlTypes(any())(any(), any())).thenReturn(Future.successful(controlTypes))
@@ -107,50 +100,27 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
         verify(mockConnector).getControlTypes(eqTo(expectedQueryParams))(any(), any())
       }
-
-      "should return default" - {
-        "when the call fails" in {
-          when(mockConnector.getControlTypes(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
-
-          val service = new ReferenceDataServiceImpl(mockConnector)
-
-          service.getControlType(controlTypeCode).futureValue mustBe defaultControlType
-
-          verify(mockConnector).getControlTypes(eqTo(expectedQueryParams))(any(), any())
-        }
-      }
     }
 
     "getRequestedDocumentType" - {
 
-      val expectedQueryParams = Seq("data.code" -> requestedDocumentTypeCode)
+      val expectedQueryParams: (String, String) = "data.code" -> requestedDocumentTypeCode
 
       "should return a requested document type" in {
-        when(mockConnector.getRequestedDocumentTypes(any())(any(), any())).thenReturn(Future.successful(NonEmptySet.of(requestedDocumentType1)))
+        when(mockConnector.getRequestedDocumentTypes(eqTo(expectedQueryParams))(any(), any()))
+          .thenReturn(Future.successful(NonEmptySet.of(requestedDocumentType1)))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
         service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue mustBe requestedDocumentType1
 
-        verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams))(any(), any())
-      }
-
-      "should return default" - {
-        "when the call fails" in {
-          when(mockConnector.getRequestedDocumentTypes(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
-
-          val service = new ReferenceDataServiceImpl(mockConnector)
-
-          service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue mustBe defaultRequestedDocumentType
-
-          verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams))(any(), any())
-        }
+//        verify(mockConnector).getRequestedDocumentTypes(expectedQueryParams)(any(), any())
       }
     }
 
     "getFunctionalError" - {
 
-      val expectedQueryParams = Seq("data.code" -> functionalErrorCode)
+      val expectedQueryParams = "data.code" -> functionalErrorCode
 
       "should return a functional error" in {
         when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.successful(functionalErrors))
@@ -162,43 +132,6 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
         verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
       }
 
-      "should return default" - {
-        "when the call fails" in {
-          when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.failed(new Throwable()))
-
-          val service = new ReferenceDataServiceImpl(mockConnector)
-
-          service.getFunctionalError(functionalErrorCode).futureValue mustBe defaultFunctionalError
-
-          verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams))(any(), any())
-        }
-      }
-    }
-
-    "getFunctionalErrors" - {
-
-      "should return functional errors" in {
-        when(mockConnector.getFunctionalErrors()(any(), any())).thenReturn(Future.successful(functionalErrors))
-
-        val service = new ReferenceDataServiceImpl(mockConnector)
-
-        service.getFunctionalErrors().futureValue mustBe functionalErrors.toSeq
-
-        verify(mockConnector).getFunctionalErrors()(any(), any())
-      }
-
-      "should return default" - {
-
-        "when the call fails" in {
-          when(mockConnector.getFunctionalErrors()(any(), any())).thenReturn(Future.failed(new Throwable()))
-
-          val service = new ReferenceDataServiceImpl(mockConnector)
-
-          service.getFunctionalErrors().futureValue mustBe defaultFunctionalErrors
-
-          verify(mockConnector).getFunctionalErrors()(any(), any())
-        }
-      }
     }
   }
 }

@@ -33,10 +33,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClientV2) extends Logging {
 
-  private type QueryParams = Seq[(String, String)]
+  private type QueryParams = (String, String)
 
   def getCustomsOffices(
-    queryParams: QueryParams
+    queryParams: QueryParams*
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[CustomsOffice]] = {
     val url = url"${config.customsReferenceDataUrl}/lists/CustomsOffices"
     http
@@ -46,7 +46,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .execute[NonEmptySet[CustomsOffice]]
   }
 
-  def getControlTypes(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[ControlType]] = {
+  def getControlTypes(queryParams: QueryParams*)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[ControlType]] = {
     val url = url"${config.customsReferenceDataUrl}/lists/ControlType"
     http
       .get(url)
@@ -55,7 +55,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .execute[NonEmptySet[ControlType]]
   }
 
-  def getRequestedDocumentTypes(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[RequestedDocumentType]] = {
+  def getRequestedDocumentTypes(queryParams: QueryParams*)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[RequestedDocumentType]] = {
     val url = url"${config.customsReferenceDataUrl}/lists/RequestedDocumentType"
     http
       .get(url)
@@ -64,20 +64,12 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .execute[NonEmptySet[RequestedDocumentType]]
   }
 
-  def getFunctionalErrors(queryParams: QueryParams)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[FunctionalErrorWithDesc]] = {
+  def getFunctionalErrors(queryParams: QueryParams*)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[FunctionalErrorWithDesc]] = {
     val url = url"${config.customsReferenceDataUrl}/lists/FunctionalErrorCodesIeCA"
     http
       .get(url)
       .setHeader(version2Header)
       .transform(_.withQueryStringParameters(queryParams: _*))
-      .execute[NonEmptySet[FunctionalErrorWithDesc]]
-  }
-
-  def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[FunctionalErrorWithDesc]] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/FunctionalErrorCodesIeCA"
-    http
-      .get(url)
-      .setHeader(version2Header)
       .execute[NonEmptySet[FunctionalErrorWithDesc]]
   }
 
