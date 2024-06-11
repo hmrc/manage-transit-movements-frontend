@@ -107,14 +107,15 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       val expectedQueryParams: (String, String) = "data.code" -> requestedDocumentTypeCode
 
       "should return a requested document type" in {
-        when(mockConnector.getRequestedDocumentTypes(eqTo(expectedQueryParams))(any(), any()))
+
+        when(mockConnector.getRequestedDocumentTypes(any())(any(), any()))
           .thenReturn(Future.successful(NonEmptySet.of(requestedDocumentType1)))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
         service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue mustBe requestedDocumentType1
 
-//        verify(mockConnector).getRequestedDocumentTypes(expectedQueryParams)(any(), any())
+        verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams))(any(), any())
       }
     }
 
