@@ -14,6 +14,7 @@ site.search = Search
 site.service_name = Manage your transit movements
 site.section = This section is
 site.amendErrors = Amend errors
+site.warning = Warning
 
 site.ascending = ascending
 site.descending = descending
@@ -40,6 +41,7 @@ checkYourAnswers.heading = Check your answers
 
 whatDoYouWantToDo.title = Manage your transit movements
 whatDoYouWantToDo.heading = Manage your transit movements
+whatDoYouWantToDo.warning = This service will be unavailable between 9am and 4pm on Friday 28 June. This is while we upgrade the service from Phase 4 to Phase 5.
 whatDoYouWantToDo.subHeading.arrival = Arrivals
 whatDoYouWantToDo.link.arrival.make = Make an arrival notification
 whatDoYouWantToDo.link.arrival.p4.make = Make a GB arrival notification (NCTS 4)

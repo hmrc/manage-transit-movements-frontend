@@ -213,6 +213,11 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
     val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures))
 
+    behave like pageWithWarningText(
+      doc,
+      "This service will be unavailable between 9am and 4pm on Friday 28 June. This is while we upgrade the service from Phase 4 to Phase 5."
+    )
+
     behave like pageWithLink(
       doc,
       "make-arrival-notification",
