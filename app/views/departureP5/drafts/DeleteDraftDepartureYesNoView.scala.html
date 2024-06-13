@@ -25,14 +25,14 @@
     inputYesNo: InputYesNo,
     errorSummary: ErrorSummary,
     button: Button,
-    govukInsetText : GovukInsetText
+    insetText : InsetText,
 )
 
 @(form: Form[Boolean], lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @html = {
 <p class="govuk-body">@messages("departure.drafts.deleteDraftDepartureYesNo.paragraph")</p>
-<div class="govuk-body">@govukInsetText(InsetText(content = Text(messages("departure.drafts.dashboard.table.action.delete.hidden", lrn))))</div>
+@insetText(messages("departure.drafts.dashboard.table.action.delete.hidden", lrn))
 }
 
 @mainTemplate(
