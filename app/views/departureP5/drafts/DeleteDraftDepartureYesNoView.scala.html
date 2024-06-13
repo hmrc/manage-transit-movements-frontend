@@ -17,14 +17,15 @@
 @import controllers.departureP5.drafts.routes
 @import models.LocalReferenceNumber
 @import viewModels.components.InputYesNoViewModel._
-@import views.html.components.{Button, ErrorSummary, InputYesNo}
+@import views.html.components.{Button, ErrorSummary, InputYesNo, InsetText}
 
 @this(
     mainTemplate: MainTemplate,
     formHelper: FormWithCSRF,
     inputYesNo: InputYesNo,
     errorSummary: ErrorSummary,
-    button: Button
+    button: Button,
+    govukInsetText : GovukInsetText
 )
 
 @(form: Form[Boolean], lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String])(implicit request: Request[_], messages: Messages)
@@ -42,8 +43,9 @@
             field = form("value"),
             yesNoType = YesNoWithAdditionalHtml(
                 heading = messages("departure.drafts.deleteDraftDepartureYesNo.heading"),
-                additionalHtml = Html(s"""<p class="govuk-body">${messages("departure.drafts.deleteDraftDepartureYesNo.paragraph")}</p><dl class="govuk-summary-list"><div class="govuk-summary-list__row"><dt class="govuk-summary-list__key">Local reference number</dt><dd class="govuk-summary-list__value">$lrn</dd></div></dl>""")
-
+                additionalHtml =
+Html(s"""<p class="govuk-body">${messages("departure.drafts.deleteDraftDepartureYesNo.paragraph")}</p><div class="govuk-body">${govukInsetText(InsetText(content = Text(messages("departure.drafts.dashboard.table.action.delete.hidden", lrn))))}
+</div>""")
             )
         )
 

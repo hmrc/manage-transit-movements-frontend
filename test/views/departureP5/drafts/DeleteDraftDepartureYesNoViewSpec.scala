@@ -47,10 +47,8 @@ class DeleteDraftDepartureYesNoViewSpec extends YesNoViewBehaviours with ScalaCh
     def elementWithVisibleText(element: Element, text: String): Unit =
       element.ownText() mustBe text
 
-    val lrnLabel = doc.getElementsByClass("govuk-summary-list__key").head
-    val lrnValue = doc.getElementsByClass("govuk-summary-list__value").head
+    val lrnLabel = doc.getElementsByClass("govuk-inset-text").head
 
-    behave like elementWithVisibleText(lrnLabel, "Local reference number")
-    behave like elementWithVisibleText(lrnValue, lrn.toString)
+    behave like elementWithVisibleText(lrnLabel, s"Local Reference Number (LRN) ${lrn.toString}")
   }
 }
