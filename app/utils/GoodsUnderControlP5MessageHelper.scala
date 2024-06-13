@@ -99,13 +99,23 @@ class GoodsUnderControlP5MessageHelper(ie060: CC060CType, referenceDataService: 
     call = None
   )
 
-  private def buildDocumentTypeRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(documentSequence),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.type"),
-    id = None,
-    call = None
-  )
+  private def getRequestedDocumentTypeDescription(requestedDocumentTypeCode: String): Future[Option[String]] =
+    (for {
+      y <- OptionT.liftF(referenceDataService.getRequestedDocumentType(requestedDocumentTypeCode)(ec, hc))
+      x = y.toString
+    } yield x).value
+
+  private def buildDocumentTypeRow(requestedDocumentTypeCode: String): Future[Option[SummaryListRow]] =
+    getRequestedDocumentTypeDescription(requestedDocumentTypeCode).map(
+      codeAndDescription =>
+        buildRowFromAnswer[String](
+          answer = codeAndDescription,
+          formatAnswer = formatAsText,
+          prefix = messages("row.label.type"),
+          id = None,
+          call = None
+        )
+    )
 
   private def buildDocumentDescriptionRow(description: Option[String]): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = description,
@@ -124,15 +134,16 @@ class GoodsUnderControlP5MessageHelper(ie060: CC060CType, referenceDataService: 
         Section(messages("heading.label.controlInformation", typeOfControl.sequenceNumber), rows, None)
     }
 
-  private def buildDocumentSection(document: RequestedDocumentType): Section = {
+  private def buildDocumentSection(document: RequestedDocumentType): Future[Section] =
+    buildDocumentTypeRow(document.documentType).map {
+      x =>
+        val documentType: Seq[SummaryListRow]        = extractOptionalRow(x)
+        val documentDescription: Seq[SummaryListRow] = extractOptionalRow(buildDocumentDescriptionRow(document.description))
+        val rows                                     = documentType ++ documentDescription
+        Section(messages("heading.label.documentInformation", document.sequenceNumber), rows, None)
+    }
 
-    val documentType: Seq[SummaryListRow]        = extractOptionalRow(buildDocumentTypeRow(document.documentType))
-    val documentDescription: Seq[SummaryListRow] = extractOptionalRow(buildDocumentDescriptionRow(document.description))
-    val rows                                     = documentType ++ documentDescription
-    Section(messages("heading.label.documentInformation", document.sequenceNumber), rows, None)
-  }
-
-  def documentSection(): Seq[Section] = ie060.RequestedDocument.map(buildDocumentSection)
+  def documentSection(): Future[Seq[Section]] = Future.sequence(ie060.RequestedDocument.map(buildDocumentSection))
 
   def buildGoodsUnderControlSection(): Future[Section] =
     buildOfficeOfDepartureRow.map {

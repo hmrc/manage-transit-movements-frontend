@@ -54,15 +54,15 @@ class IntentionToControlP5MessageHelper(ie060: CC060CType)(implicit
   private def buildDocumentTypeRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(documentSequence),
     formatAnswer = formatAsText,
-    prefix = messages("row.label.type"),
+    prefix = messages("row.label.documentType"),
     id = None,
     call = None
   )
 
-  private def buildReferenceNumberRow(referenceNumber: String): Option[SummaryListRow] = buildRowFromAnswer[String](
+  private def buildOfficeOfDepartureRow(referenceNumber: String): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(referenceNumber),
     formatAnswer = formatAsText,
-    prefix = messages("row.label.controlInformation.referenceNumber"),
+    prefix = messages("row.label.controlInformation.officeOfDeparture"),
     id = None,
     call = None
   )
@@ -70,7 +70,7 @@ class IntentionToControlP5MessageHelper(ie060: CC060CType)(implicit
   private def buildDocumentSection(document: RequestedDocumentType): Section = {
 
     val controlType: Seq[SummaryListRow]     = extractOptionalRow(buildDocumentTypeRow(document.documentType))
-    val referenceNumber: Seq[SummaryListRow] = extractOptionalRow(buildReferenceNumberRow(ie060.CustomsOfficeOfDeparture.referenceNumber))
+    val referenceNumber: Seq[SummaryListRow] = extractOptionalRow(buildOfficeOfDepartureRow(ie060.CustomsOfficeOfDeparture.referenceNumber))
     val rows                                 = controlType ++ referenceNumber
     Section(messages("heading.label.controlInformation", document.sequenceNumber), rows, None)
   }

@@ -16,11 +16,21 @@
 
 package models
 
-case class Features(
-  phase4: Option[Feature],
-  phase5: Option[Feature]
-)
+package object referenceData {
 
-object Features {
-  def apply(): Features = Features(None, None)
+  implicit class RichComparison[T](value: (T, T)) {
+
+    def compareBy(fs: (T => String)*): Int =
+      value match {
+        case (x, y) =>
+          fs.toList match {
+            case Nil => 0
+            case f :: tail =>
+              f(x).compareToIgnoreCase(f(y)) match {
+                case 0      => compareBy(tail: _*)
+                case result => result
+              }
+          }
+      }
+  }
 }

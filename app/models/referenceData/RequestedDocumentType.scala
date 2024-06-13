@@ -17,9 +17,9 @@
 package models.referenceData
 
 import cats.Order
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OWrites, Reads}
 
-case class FunctionalErrorWithDesc(code: String, description: String) {
+case class RequestedDocumentType(code: String, description: String) {
 
   override def toString: String =
     description match {
@@ -28,10 +28,12 @@ case class FunctionalErrorWithDesc(code: String, description: String) {
     }
 }
 
-object FunctionalErrorWithDesc {
+object RequestedDocumentType {
 
-  implicit val format: Format[FunctionalErrorWithDesc] = Json.format[FunctionalErrorWithDesc]
+  implicit val writes: OWrites[RequestedDocumentType] = Json.writes[RequestedDocumentType]
 
-  implicit val order: Order[FunctionalErrorWithDesc] = (x: FunctionalErrorWithDesc, y: FunctionalErrorWithDesc) => (x, y).compareBy(_.code)
+  implicit val readFromFile: Reads[RequestedDocumentType] = Json.reads[RequestedDocumentType]
+
+  implicit val order: Order[RequestedDocumentType] = (x: RequestedDocumentType, y: RequestedDocumentType) => (x, y).compareBy(_.code)
 
 }

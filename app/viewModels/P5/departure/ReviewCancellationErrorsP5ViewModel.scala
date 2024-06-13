@@ -58,7 +58,9 @@ case class ReviewCancellationErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lr
 
   def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
     HeadCell(Text(messages("error.table.errorCode"))),
-    HeadCell(Text(messages("error.table.errorReason")))
+    HeadCell(Text(messages("error.table.errorReason"))),
+    HeadCell(Text(messages("error.table.pointer"))),
+    HeadCell(Text(messages("error.table.attributeValue")))
   )
 
 }

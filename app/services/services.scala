@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package models
+import cats.data.NonEmptySet
 
-case class Features(
-  phase4: Option[Feature],
-  phase5: Option[Feature]
-)
+package object services {
 
-object Features {
-  def apply(): Features = Features(None, None)
+  implicit class RichNonEmptySet[T](value: NonEmptySet[T]) {
+    def toSeq: Seq[T] = value.toNonEmptyList.toList
+  }
 }

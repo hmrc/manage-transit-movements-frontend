@@ -68,6 +68,8 @@ whatDoYouWantToDo.departure.p4.unavailable = View NCTS 4 departure declarations 
 whatDoYouWantToDo.departure.p5.unavailable = View NCTS 5 departure declarations is currently unavailable
 whatDoYouWantToDo.subHeading.guarantee = Guarantees
 whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance = Check your guarantee balance
+whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance.crossover = Check your guarantee balance for GB declarations
+whatDoYouWantToDo.guarantee.checkGuaranteeBalance.crossover.paragraph = You can only check guarantee balances for GB declarations between 28 June and 1 July. Balances for XI declarations will be available from 1 July.
 whatDoYouWantToDo.link.departure.drafts.view = View draft departure declarations
 whatDoYouWantToDo.departure.drafts.none = You have no draft departure declarations
 whatDoYouWantToDo.departure.drafts.unavailable = Draft departure declarations unavailable
@@ -414,7 +416,7 @@ departure.ie060.message.requestedDocuments.prelodged.whatHappensNext = You must 
 departure.ie060.message.requestedDocuments.prelodged.button = Complete pre-lodged declaration
 
 row.label.dateAndTimeOfControlNotification =  Date and time of control notification
-row.label.controlInformation.referenceNumber = Reference number
+row.label.controlInformation.officeOfDeparture = Office of departure
 
 row.label.localReferenceNumber =     Local Reference Number (LRN)
 row.label.movementReferenceNumber =  Movement Reference Number (MRN)
@@ -423,6 +425,7 @@ row.label.officeOfDeparture =   Office of departure
 heading.label.controlInformation =  Control information {0}
 heading.label.documentInformation =  Requested document {0}
 row.label.type =  Type
+row.label.documentType =  Document type
 row.label.control =  Control
 row.label.description =  Description
 
@@ -602,5 +605,7 @@ departure.notReleased.row.label.dateTimeDeclaration = Date and time declaration 
 departure.notReleased.row.label.reason = Reason
 departure.notReleased.row.label.description = Description
 
-error.table.errorCode = Error code
-error.table.errorReason = Reason
+error.table.errorCode = Error
+error.table.errorReason = Business rule ID
+error.table.attributeValue = Invalid answer
+error.table.pointer = Invalid data item

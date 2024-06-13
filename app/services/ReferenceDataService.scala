@@ -19,7 +19,7 @@ package services
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,37 +27,34 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) extends ReferenceDataService {
 
   def getCustomsOffice(customsOfficeId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]] = {
-    val queryParams: Seq[(String, String)] = Seq("data.id" -> customsOfficeId)
+    val queryParams: (String, String) = "data.id" -> customsOfficeId
     connector
       .getCustomsOffices(queryParams)
-      .map(_.headOption)
-      .map {
-        case Some(customsOffice) => Right(customsOffice)
-        case None                => Left(customsOfficeId)
-      }
+      .map(
+        x => Right(x.head)
+      )
       .recover {
         case _: NoReferenceDataFoundException => Left(customsOfficeId)
       }
   }
 
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
-    lazy val default                       = ControlType(code, "")
-    val queryParams: Seq[(String, String)] = Seq("data.code" -> code)
-    connector.getControlTypes(queryParams).map(_.headOption.getOrElse(default)).recover {
-      case _ => default
-    }
+    val queryParams: (String, String) = "data.code" -> code
+    connector.getControlTypes(queryParams).map(_.head)
+  }
+
+  def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType] = {
+    val queryParams: (String, String) = "data.code" -> code
+    connector.getRequestedDocumentTypes(queryParams).map(_.head)
   }
 
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
-    lazy val default                       = FunctionalErrorWithDesc(code, "")
-    val queryParams: Seq[(String, String)] = Seq("data.code" -> code)
-    connector.getFunctionalErrors(queryParams).map(_.headOption.getOrElse(default)).recover {
-      case _ => default
-    }
+    val queryParams: (String, String) = "data.code" -> code
+    connector.getFunctionalErrors(queryParams).map(_.head)
   }
 
   def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] =
-    connector.getFunctionalErrors().recover {
+    connector.getFunctionalErrors().map(_.toSeq).recover {
       case _ => Seq.empty
     }
 }
@@ -65,6 +62,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
 trait ReferenceDataService {
   def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]]
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
+  def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType]
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]
   def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]]
 }

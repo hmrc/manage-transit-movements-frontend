@@ -29,10 +29,12 @@ import views.html.arrivalP5.UnloadingRemarkWithFunctionalErrorsP5View
 
 class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
 
-  override val prefix: String           = "arrival.ie057.review.unloading.message"
-  override val headCells: Seq[HeadCell] = Seq(HeadCell(Text("Error code")), HeadCell(Text("Reason")))
-  val tableRows: Seq[TableRow]          = arbitrary[Seq[TableRow]].sample.value
-  private val sections: Seq[Section]    = arbitrary[List[Section]].sample.value
+  override val prefix: String = "arrival.ie057.review.unloading.message"
+
+  override val headCells: Seq[HeadCell] =
+    Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+  val tableRows: Seq[TableRow]       = arbitrary[Seq[TableRow]].sample.value
+  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
   private val viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel =
     new UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(tableRows), mrn, false)

@@ -36,7 +36,7 @@ class WhatDoYouWantToDoService @Inject() (
   def fetchArrivalsAvailability()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Features] =
     (appConfig.phase4Enabled, appConfig.phase5Enabled) match {
       case (false, false) =>
-        Future.successful(Features(None, None))
+        Future.successful(Features())
       case (true, false) =>
         for {
           p4Availability <- arrivalMovementConnector.getArrivalsAvailability()
@@ -57,7 +57,7 @@ class WhatDoYouWantToDoService @Inject() (
   def fetchDeparturesAvailability()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Features] =
     (appConfig.phase4Enabled, appConfig.phase5Enabled) match {
       case (false, false) =>
-        Future.successful(Features(None, None))
+        Future.successful(Features())
       case (true, false) =>
         for {
           p4Availability <- departuresMovementConnector.getDeparturesAvailability()
@@ -84,6 +84,6 @@ class WhatDoYouWantToDoService @Inject() (
         Some(Feature(draftsAvailability, enabled = true, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url))
       )
     } else {
-      Future.successful(Features(None, None))
+      Future.successful(Features())
     }
 }

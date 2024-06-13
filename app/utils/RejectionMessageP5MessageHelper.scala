@@ -39,7 +39,9 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalErrorType0
       functionalError =>
         Seq(
           TableRow(Text(functionalError.toString)),
-          TableRow(Text(error.errorReason))
+          TableRow(Text(error.errorReason)),
+          TableRow(Text(error.errorPointer), classes = "text-wrap"),
+          TableRow(Text(error.originalAttributeValue.getOrElse("N/A")), classes = "text-wrap")
         )
     }
 }

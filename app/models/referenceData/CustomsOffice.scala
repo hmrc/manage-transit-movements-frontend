@@ -16,12 +16,17 @@
 
 package models.referenceData
 
+import cats.Order
 import play.api.libs.json.{Json, OFormat}
 
 case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
   def nameAndCode: String = s"${this.name} (${this.id})"
+
 }
 
 object CustomsOffice {
   implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
+
+  implicit val order: Order[CustomsOffice] = (x: CustomsOffice, y: CustomsOffice) => (x, y).compareBy(_.name, _.id)
+
 }
