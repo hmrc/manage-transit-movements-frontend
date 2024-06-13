@@ -17,7 +17,7 @@
 package connectors.testOnly
 
 import config.FrontendAppConfig
-import logging.Logging
+import play.api.Logging
 import play.api.libs.json.JsValue
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.HttpReads.Implicits._

@@ -17,7 +17,7 @@
 package connectors
 
 import config.{FrontendAppConfig, PhaseConfig}
-import logging.Logging
+import play.api.Logging
 import play.api.http.HeaderNames.ACCEPT
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}

@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.EnrolmentStoreConnector
 import controllers.routes
-import logging.Logging
+import play.api.Logging
 import models.Enrolment
 import models.Enrolment.LegacyEnrolment
 import models.requests.IdentifierRequest

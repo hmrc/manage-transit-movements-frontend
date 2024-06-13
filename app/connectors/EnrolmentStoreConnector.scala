@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import logging.Logging
+import play.api.Logging
 import models.GroupEnrolmentResponse
 import models.GroupEnrolmentResponse._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}

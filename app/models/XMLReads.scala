@@ -20,7 +20,7 @@ import java.time.{LocalDate, LocalTime}
 
 import com.lucidchart.open.xtract.XmlReader.{intReader, strictReadSeq}
 import com.lucidchart.open.xtract._
-import logging.Logging
+import play.api.Logging
 import utils.Format.{dateFormatter, timeFormatter}
 
 import scala.util.{Failure, Success, Try}
