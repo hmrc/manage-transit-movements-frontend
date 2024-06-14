@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import logging.Logging
+import play.api.Logging
 import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
 import models.departure.drafts.{Limit, Skip}
 import models.{Availability, DeparturesSummary, LockCheck, Sort}

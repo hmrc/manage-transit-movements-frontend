@@ -20,7 +20,7 @@ import config.Constants.NotificationType._
 import controllers.actions._
 import controllers.routes
 import generated.CC060CType
-import logging.Logging
+import play.api.Logging
 import models.RichCC060Type
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -16,7 +16,7 @@
 
 package connectors
 
-import logging.Logging
+import play.api.Logging
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http.{HttpReads, HttpReadsTry, HttpResponse}
 

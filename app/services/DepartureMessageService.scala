@@ -17,7 +17,7 @@
 package services
 
 import connectors.DeparturesMovementConnector
-import logging.Logging
+import play.api.Logging
 import models.departure.{ControlDecision, NoReleaseForTransitMessage}
 import models.DepartureId
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage

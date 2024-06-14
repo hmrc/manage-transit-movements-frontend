@@ -16,7 +16,7 @@
 
 package handlers
 
-import logging.Logging
+import play.api.Logging
 import play.api.PlayException
 import play.api.http.HttpErrorHandler
 import play.api.http.Status._

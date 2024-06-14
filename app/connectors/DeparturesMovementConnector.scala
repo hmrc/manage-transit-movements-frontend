@@ -19,7 +19,7 @@ package connectors
 import com.lucidchart.open.xtract.XmlReader
 import config.FrontendAppConfig
 import connectors.CustomHttpReads.rawHttpResponseHttpReads
-import logging.Logging
+import play.api.Logging
 import models.arrival.XMLSubmissionNegativeAcknowledgementMessage
 import models.departure.{ControlDecision, MessagesSummary, NoReleaseForTransitMessage}
 import models.{Availability, DepartureId, Departures, ResponseMessage}

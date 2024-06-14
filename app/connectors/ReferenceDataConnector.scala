@@ -20,7 +20,7 @@ import cats.Order
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import logging.Logging
+import play.api.Logging
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Reads}
