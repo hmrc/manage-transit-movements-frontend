@@ -254,4 +254,10 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
 
   def pageWithButton(expectedText: String)(additionalAssertions: Element => Assertion*): Unit =
     pageWithButton(doc, expectedText)(additionalAssertions: _*)
+
+  def pageWithWarningText(doc: Document, expectedText: String): Unit =
+    s"must render warning text" in {
+      val warning = getElementByClass(doc, "govuk-warning-text__text")
+      assertElementContainsText(warning, s"Warning $expectedText")
+    }
 }

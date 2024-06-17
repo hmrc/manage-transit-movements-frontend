@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Heading, ViewMovements}
+@import views.html.components.{Heading, ViewMovements, Warning}
 @import config.FrontendAppConfig
 @import models.Features
 
@@ -22,7 +22,8 @@
     mainTemplate: MainTemplate,
     heading: Heading,
     config: FrontendAppConfig,
-    viewMovements: ViewMovements
+    viewMovements: ViewMovements,
+    warning: Warning
 )
 
 @(arrivalsAvailability: Features, departuresAvailability: Features, draftDepartureAvailability: Features)(implicit request: Request[_], messages: Messages)
@@ -31,6 +32,10 @@
     title = messages("whatDoYouWantToDo.title")
 ) {
     @heading(messages("whatDoYouWantToDo.heading"))
+
+    @if(config.phase4Enabled && !config.phase5Enabled) {
+        @warning(messages("whatDoYouWantToDo.warning"))
+    }
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.arrival")</h2>
 
