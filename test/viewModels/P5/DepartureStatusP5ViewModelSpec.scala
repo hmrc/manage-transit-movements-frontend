@@ -166,7 +166,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.declarationAmendmentAccepted",
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.departureAmendErrorsUrl(lrn.value, departureIdP5)}",
+              s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureIdP5)}",
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             ),
             ViewMovementAction(
@@ -207,7 +207,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.declarationAmendmentAccepted",
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.departureAmendErrorsUrl(lrn.value, departureIdP5)}",
+              s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureIdP5)}",
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             )
           )
@@ -288,7 +288,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.allocatedMRN",
         Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.departureAmendErrorsUrl(lrn.value, departureIdP5)}",
+            s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureIdP5)}",
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           ),
           ViewMovementAction(
@@ -892,7 +892,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.declarationSent",
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.departureAmendErrorsUrl(lrn.value, departureIdP5)}",
+              s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureIdP5)}",
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             ),
             ViewMovementAction(

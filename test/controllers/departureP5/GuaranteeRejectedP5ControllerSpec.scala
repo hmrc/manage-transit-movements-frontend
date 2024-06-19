@@ -111,7 +111,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
             val result = route(app, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustBe frontendAppConfig.departureAmendGuaranteeErrorsUrl(lrn.value, departureIdP5)
+            redirectLocation(result).value mustBe frontendAppConfig.departureGuaranteeAmendmentUrl(lrn.value, departureIdP5)
         }
       }
 

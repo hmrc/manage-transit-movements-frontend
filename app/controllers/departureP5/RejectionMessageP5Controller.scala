@@ -100,7 +100,7 @@ class RejectionMessageP5Controller @Inject() (
             handleAmendmentErrors <- cacheConnector.handleAmendmentErrors(lrn.value, xPaths)
           } yield (doesCacheExistForLrn, handleAmendmentErrors) match {
             case (true, true) =>
-              Redirect(config.departureAmendErrorsUrl(lrn.value, departureId))
+              Redirect(config.departureAmendmentUrl(lrn.value, departureId))
             case _ =>
               Redirect(controllers.routes.ErrorController.technicalDifficulties())
           }
