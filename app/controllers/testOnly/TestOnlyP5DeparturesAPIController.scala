@@ -18,7 +18,7 @@ package controllers.testOnly
 
 import connectors.testOnly.TestOnlyP5DeparturesAPIConnector
 import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
-import uk.gov.hmrc.http.HttpReads.is2xx
+import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
