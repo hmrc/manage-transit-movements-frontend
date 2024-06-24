@@ -17,30 +17,34 @@
 package views.departureP5
 
 import generators.Generators
+import models.departureP5.BusinessRejectionType
 import org.jsoup.nodes.Document
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
 import views.html.departureP5.DepartureDeclarationErrorsP5View
 
-class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with Generators {
+class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviours with ScalaCheckPropertyChecks with Generators {
 
   override val prefix: String = "departure.declaration.errors.message"
-  val lrnString               = "LRNAB123"
 
-  private val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel =
-    new DepartureDeclarationErrorsP5ViewModel(lrnString, isAmendmentJourney = false)
+  private val lrnString = nonEmptyString.sample.value
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
-    injector
-      .instanceOf[DepartureDeclarationErrorsP5View]
-      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney = false, None)(fakeRequest, messages, frontendAppConfig)
+    buildView(None, BusinessRejectionType.DeclarationRejection)
 
-  def viewWithSpecificAmendment(isAmendmentJourney: Boolean, mrn: Option[String] = None): HtmlFormat.Appendable =
+  private def buildView(mrn: Option[String], businessRejectionType: BusinessRejectionType): HtmlFormat.Appendable = {
+    val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel =
+      new DepartureDeclarationErrorsP5ViewModel(lrnString, mrn, businessRejectionType)
+
     injector
       .instanceOf[DepartureDeclarationErrorsP5View]
-      .apply(departureDeclarationErrorsP5ViewModel, isAmendmentJourney, mrn)(fakeRequest, messages, frontendAppConfig)
+      .apply(departureDeclarationErrorsP5ViewModel)(fakeRequest, messages, frontendAppConfig)
+  }
 
   behave like pageWithTitle()
 
@@ -50,31 +54,29 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
 
   behave like pageWithHeading()
 
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
-
   "must render correct paragraph1 content" in {
-    assertSpecificElementContainsText(
+    assertElementWithIdContainsText(
+      doc,
       "paragraph-1",
       s"There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
     )
   }
 
   "must render correct paragraph2 content" in {
-    assertSpecificElementContainsText(
+    assertElementWithIdContainsText(
+      doc,
       "helpdesk",
       "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
     )
-    assertSpecificElementContainsText(
+    assertElementWithIdContainsText(
+      doc,
       "helpdesk-link",
       "New Computerised Transit System helpdesk"
     )
   }
 
   "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-declaration", "Make another departure declaration")
+    assertElementWithIdContainsText(doc, "create-another-declaration", "Make another departure declaration")
   }
 
   behave like pageWithLink(
@@ -90,18 +92,26 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   )
 
   "must not render add another declaration link when isAmendmentJourney is true" in {
-    val doc: Document = parseView(viewWithSpecificAmendment(isAmendmentJourney = true))
-    assertNotRenderedById(doc, "create-another-declaration")
+    forAll(Gen.option(nonEmptyString)) {
+      mrn =>
+        val doc: Document = parseView(buildView(mrn, BusinessRejectionType.AmendmentRejection))
+        assertNotRenderedById(doc, "create-another-declaration")
+    }
   }
 
   "must not render mrn when None" in {
-    val doc: Document = parseView(viewWithSpecificAmendment(isAmendmentJourney = true, None))
-    assertNotRenderedById(doc, "mrn")
+    forAll(arbitrary[BusinessRejectionType]) {
+      businessRejectionType =>
+        val doc: Document = parseView(buildView(None, businessRejectionType))
+        assertNotRenderedById(doc, "mrn")
+    }
   }
 
   "must render mrn when provided" in {
-    val doc: Document = parseView(viewWithSpecificAmendment(isAmendmentJourney = true, Some("mrn")))
-    assertRenderedById(doc, "mrn")
+    forAll(nonEmptyString, arbitrary[BusinessRejectionType]) {
+      (mrn, businessRejectionType) =>
+        val doc: Document = parseView(buildView(Some(mrn), businessRejectionType))
+        assertElementWithIdContainsText(doc, "mrn", s"MRN: $mrn")
+    }
   }
-
 }

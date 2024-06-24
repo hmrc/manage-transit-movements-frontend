@@ -258,10 +258,6 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  // TODO - consider making isAmendmentJourney a Boolean instead of Option[Boolean]. All we ever do is call .getOrElse(false) on it.
-  //  My understanding is that it is an indicator of whether this is their first rejection (i.e. business rejection type 015)
-  //  or a subsequent rejection (i.e. business rejection type 013) and is used for rendering specific content
-
   // scalastyle:off cyclomatic.complexity
   private def rejectedByOfficeOfDeparture(
     departureId: String,
@@ -275,34 +271,22 @@ object DepartureStatusP5ViewModel {
     case message if message.messageType == RejectedByOfficeOfDeparture =>
       val (key, href) = rejectionType match {
         case DeclarationRejection if isDeclarationAmendable =>
-          ("amendDeclaration",
-           controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = None).url
-          )
+          ("amendDeclaration", controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url)
 
         case DeclarationRejection if xPaths.isEmpty =>
-          (errorsActionText(xPaths),
-           controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, messageId, isAmendmentJourney = false).url
-          )
+          (errorsActionText(xPaths), controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, messageId).url)
 
         case DeclarationRejection =>
-          (errorsActionText(xPaths),
-           controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = None).url
-          )
+          (errorsActionText(xPaths), controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
         case AmendmentRejection if doesCacheExistForLrn =>
-          ("amendDeclaration",
-           controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = Some(true)).url
-          )
+          ("amendDeclaration", controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url)
 
         case AmendmentRejection if xPaths.isEmpty =>
-          (errorsActionText(xPaths),
-           controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, messageId, isAmendmentJourney = true).url
-          )
+          (errorsActionText(xPaths), controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId, messageId).url)
 
         case AmendmentRejection =>
-          (errorsActionText(xPaths),
-           controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId, isAmendmentJourney = Some(true)).url
-          )
+          (errorsActionText(xPaths), controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
         case InvalidationRejection if xPaths.isEmpty =>
           (errorsActionText(xPaths), controllers.departureP5.routes.CancellationNotificationErrorsP5Controller.onPageLoad(departureId, messageId).url)

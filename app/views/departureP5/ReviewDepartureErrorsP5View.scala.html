@@ -29,7 +29,7 @@
     helpdeskLink: HelpdeskLink
 )
 
-@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: ListPaginationViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: ListPaginationViewModel, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
     title = rejectionMessageP5ViewModel.title,
@@ -55,9 +55,9 @@
         rejectionMessageP5ViewModel.paragraph2Suffix
     )
 
-    @if(!isAmendmentJourney){
+    @rejectionMessageP5ViewModel.hyperlink.map { value =>
         <p class="govuk-body">
-            <a id="departure-link" class="govuk-link" href="@config.p5Departure">@rejectionMessageP5ViewModel.hyperlink</a>
+            <a id="departure-link" class="govuk-link" href="@config.p5Departure">@value</a>
         </p>
     }
 }

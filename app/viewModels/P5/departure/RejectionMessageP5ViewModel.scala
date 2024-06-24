@@ -17,6 +17,8 @@
 package viewModels.P5.departure
 
 import generated.FunctionalErrorType04
+import models.departureP5.BusinessRejectionType
+import models.departureP5.BusinessRejectionType._
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -27,33 +29,37 @@ import utils.RejectionMessageP5MessageHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class RejectionMessageP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean, isAmendmentJourney: Boolean) {
+case class RejectionMessageP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean, businessRejectionType: BusinessRejectionType) {
   def title(implicit messages: Messages): String = messages("departure.ie056.message.title")
 
   def heading(implicit messages: Messages): String = messages("departure.ie056.message.heading")
 
   def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph1.prefix", lrn)
 
-  def paragraph1(implicit messages: Messages): String = if (multipleErrors || isAmendmentJourney) {
-    messages(
-      "departure.ie056.message.paragraph1.plural"
-    )
+  private val plural: Boolean = businessRejectionType match {
+    case AmendmentRejection   => true
+    case DeclarationRejection => multipleErrors
+  }
+
+  def paragraph1(implicit messages: Messages): String = if (plural) {
+    messages("departure.ie056.message.paragraph1.plural")
   } else {
-    messages(
-      "departure.ie056.message.paragraph1.singular"
-    )
+    messages("departure.ie056.message.paragraph1.singular")
   }
 
   def paragraph2Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph2.prefix")
   def paragraph2Link(implicit messages: Messages): String   = messages("departure.ie056.message.paragraph2.link")
 
-  def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors || isAmendmentJourney) {
+  def paragraph2Suffix(implicit messages: Messages): String = if (plural) {
     messages("departure.ie056.message.paragraph2.plural.suffix")
   } else {
     messages("departure.ie056.message.paragraph2.singular.suffix")
   }
 
-  def hyperlink(implicit messages: Messages): String = messages("departure.ie056.message.hyperlink")
+  def hyperlink(implicit messages: Messages): Option[String] = businessRejectionType match {
+    case BusinessRejectionType.AmendmentRejection   => None
+    case BusinessRejectionType.DeclarationRejection => Some(messages("departure.ie056.message.hyperlink"))
+  }
 
   def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
     HeadCell(Text(messages("error.table.errorCode"))),
@@ -70,13 +76,13 @@ object RejectionMessageP5ViewModel {
     def apply(
       functionalErrors: Seq[FunctionalErrorType04],
       lrn: String,
-      isAmendmentJourney: Boolean
+      businessRejectionType: BusinessRejectionType
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[RejectionMessageP5ViewModel] = {
 
       val helper         = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
       val multipleErrors = functionalErrors.length > 1
 
-      helper.tableRows().map(RejectionMessageP5ViewModel(_, lrn, multipleErrors, isAmendmentJourney))
+      helper.tableRows().map(RejectionMessageP5ViewModel(_, lrn, multipleErrors, businessRejectionType))
     }
   }
 }

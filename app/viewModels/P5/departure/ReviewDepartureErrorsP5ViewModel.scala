@@ -17,6 +17,8 @@
 package viewModels.P5.departure
 
 import generated.FunctionalErrorType04
+import models.departureP5.BusinessRejectionType
+import models.departureP5.BusinessRejectionType._
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -27,7 +29,7 @@ import utils.RejectionMessageP5MessageHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class ReviewDepartureErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean, isAmendmentJourney: Boolean) {
+case class ReviewDepartureErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean, businessRejectionType: BusinessRejectionType) {
 
   def title(implicit messages: Messages): String = messages("departure.ie056.review.message.title")
 
@@ -35,10 +37,9 @@ case class ReviewDepartureErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: 
 
   def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.review.message.paragraph1.prefix", lrn)
 
-  def paragraph1(implicit messages: Messages): String = if (isAmendmentJourney) {
-    paragraph1Amendment
-  } else {
-    paragraph1NoAmendment
+  def paragraph1(implicit messages: Messages): String = businessRejectionType match {
+    case AmendmentRejection   => paragraph1Amendment
+    case DeclarationRejection => paragraph1NoAmendment
   }
 
   def paragraph1NoAmendment(implicit messages: Messages): String = if (multipleErrors) {
@@ -88,12 +89,12 @@ object ReviewDepartureErrorsP5ViewModel {
     def apply(
       functionalErrors: Seq[FunctionalErrorType04],
       lrn: String,
-      isAmendmentJourney: Boolean
+      businessRejectionType: BusinessRejectionType
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewDepartureErrorsP5ViewModel] = {
 
       val helper         = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
       val multipleErrors = functionalErrors.length > 1
-      helper.tableRows().map(ReviewDepartureErrorsP5ViewModel(_, lrn, multipleErrors, isAmendmentJourney))
+      helper.tableRows().map(ReviewDepartureErrorsP5ViewModel(_, lrn, multipleErrors, businessRejectionType))
     }
   }
 }

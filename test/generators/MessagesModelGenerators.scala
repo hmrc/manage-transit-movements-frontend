@@ -17,6 +17,7 @@
 package generators
 
 import generated._
+import models.departureP5.BusinessRejectionType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.const
 import org.scalacheck.{Arbitrary, Gen}
@@ -335,7 +336,7 @@ trait MessagesModelGenerators {
       for {
         lrn                   <- Gen.option(nonEmptyString)
         mrn                   <- Gen.option(nonEmptyString)
-        businessRejectionType <- nonEmptyString
+        businessRejectionType <- arbitrary[BusinessRejectionType].map(_.toString)
         rejectionDateAndTime  <- arbitrary[XMLGregorianCalendar]
         rejectionCode         <- nonEmptyString
         rejectionReason       <- Gen.option(nonEmptyString)
@@ -353,7 +354,7 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         mrn                   <- nonEmptyString
-        businessRejectionType <- nonEmptyString
+        businessRejectionType <- arbitrary[BusinessRejectionType].map(_.toString)
         rejectionDateAndTime  <- arbitrary[XMLGregorianCalendar]
         rejectionCode         <- nonEmptyString
         rejectionReason       <- Gen.option(nonEmptyString)

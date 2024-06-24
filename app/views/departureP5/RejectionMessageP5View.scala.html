@@ -29,42 +29,42 @@
     pagination: Pagination,
     helpdeskLink: HelpdeskLink
 )
-@(rejectionMessageP5ViewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(viewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
-    title = rejectionMessageP5ViewModel.title,
+    title = viewModel.title,
     showBackLink = true
 ) {
 
     @heading(
-        heading = rejectionMessageP5ViewModel.heading,
-        caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
+        heading = viewModel.heading,
+        caption = Some(messages("departure.messages.caption", viewModel.lrn))
     )
 
-    <p id="paragraph-1" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
+    <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
     @mrn.map { mrn => <p id="mrn" class="govuk-label--s">MRN: @mrn</p> }
 
     @pagination(paginationViewModel, None)
 
-    @if(rejectionMessageP5ViewModel.tableRows.nonEmpty) {
-        @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
+    @if(viewModel.tableRows.nonEmpty) {
+        @table(viewModel.tableRows, viewModel.tableHeadCells)
     }
 
     @helpdeskLink(
-        rejectionMessageP5ViewModel.paragraph2Prefix,
-        rejectionMessageP5ViewModel.paragraph2Link,
-        rejectionMessageP5ViewModel.paragraph2Suffix
+        viewModel.paragraph2Prefix,
+        viewModel.paragraph2Link,
+        viewModel.paragraph2Suffix
     )
 
-    @formHelper(action = routes.RejectionMessageP5Controller.onAmend(departureId, messageId, isAmendmentJourney), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.RejectionMessageP5Controller.onAmend(departureId, messageId), Symbol("autoComplete") -> "off") {
         @button(
             attributes = Map("id" -> "submit"),
             messageKey = messages("site.amendErrors")
         )
     }
 
-    @if(!isAmendmentJourney) {
-        <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.p5Departure">@rejectionMessageP5ViewModel.hyperlink</a></p>
+    @viewModel.hyperlink.map { value =>
+        <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.p5Departure">@value</a></p>
     }
 }

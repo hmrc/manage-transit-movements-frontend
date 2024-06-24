@@ -19,6 +19,7 @@ package viewModels
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated._
 import generators.Generators
+import models.departureP5.BusinessRejectionType
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -54,7 +55,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = false).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString, BusinessRejectionType.DeclarationRejection).futureValue
 
       "must return correct section length" in {
         result.tableRows.length mustBe 1
@@ -86,7 +87,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = true).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString, BusinessRejectionType.AmendmentRejection).futureValue
 
       result.paragraph1 mustBe s"There is a problem with this declaration. Review the error and contact the helpdesk to discuss further."
     }
@@ -102,7 +103,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(functionalErrors, lrnString, isAmendmentJourney = true).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, lrnString, BusinessRejectionType.AmendmentRejection).futureValue
 
       result.paragraph1 mustBe s"There is a problem with this declaration. Review the errors and contact the helpdesk to discuss further."
     }
@@ -118,7 +119,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(functionalErrors, lrnString, isAmendmentJourney = false).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, lrnString, BusinessRejectionType.DeclarationRejection).futureValue
 
       "must return correct section length" in {
         result.tableRows.length mustBe 2
