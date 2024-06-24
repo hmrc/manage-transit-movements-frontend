@@ -42,7 +42,7 @@ class EnrolmentStoreConnector @Inject() (
         case NoEnrolments                   => false
         case BadRequest("INVALID_GROUP_ID") => false
         case e =>
-          logger.warn(s"[EnrolmentStoreProxyConnector][checkSaGroup] Enrolment Store Proxy error: $e")
+          logger.warn(s"[EnrolmentStoreConnector][checkGroupEnrolments] Enrolment Store Proxy error: $e")
           throw new Exception(s"Call to enrolment store failed: $e")
       }
   }
