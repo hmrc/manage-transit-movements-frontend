@@ -26,7 +26,7 @@ import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.{AlternatePredicate, EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -54,7 +54,7 @@ class AuthenticatedIdentifierAction @Inject() (
 
     val predicate = validEnrolments.foldLeft[Predicate](EmptyPredicate) {
       case (acc, enrolment) =>
-        AlternatePredicate(acc, enrolment.toPredicate)
+        acc.or(enrolment.toPredicate)
     }
 
     authorised(predicate)
