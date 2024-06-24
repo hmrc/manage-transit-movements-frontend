@@ -17,8 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import models.Enrolment.{LegacyEnrolment, NewEnrolment}
-import models.{ArrivalId, DepartureId}
+import models.{ArrivalId, DepartureId, Enrolment}
 import play.api.Configuration
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -74,8 +73,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val destinationUrl: String                    = configuration.get[Service]("microservice.services.destination").fullServiceUrl
   lazy val routerUrl: String                         = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
   lazy val enrolmentProxyUrl: String                 = configuration.get[Service]("microservice.services.enrolment-store-proxy").fullServiceUrl
-  lazy val newEnrolment: NewEnrolment                = configuration.get[NewEnrolment]("enrolments.new")
-  lazy val legacyEnrolment: LegacyEnrolment          = configuration.get[LegacyEnrolment]("enrolments.legacy")
+  lazy val enrolments: Seq[Enrolment]                = configuration.get[Seq[Enrolment]]("enrolments")
   lazy val manageService: String                     = configuration.get[String]("appName")
   lazy val commonTransitConventionTradersUrl: String = configuration.get[Service]("microservice.services.common-transit-convention-traders").fullServiceUrl
   lazy val transitMovementsUrl: String               = configuration.get[Service]("microservice.services.transit-movements").fullServiceUrl
