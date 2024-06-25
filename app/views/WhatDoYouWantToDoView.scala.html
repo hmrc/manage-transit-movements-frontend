@@ -28,13 +28,25 @@
 
 @(arrivalsAvailability: Features, departuresAvailability: Features, draftDepartureAvailability: Features)(implicit request: Request[_], messages: Messages)
 
+@warningHtml = {
+    @if(config.phase5Enabled) {
+        @messages("whatDoYouWantToDo.warning.1")
+    } else {
+        @messages("whatDoYouWantToDo.warning.2")
+        <ul class="govuk-list govuk-list--bullet">
+            <li><strong>@messages("whatDoYouWantToDo.warning.3")</strong></li>
+            <li><strong>@messages("whatDoYouWantToDo.warning.4")</strong></li>
+        </ul>
+    }
+}
+
 @mainTemplate(
     title = messages("whatDoYouWantToDo.title")
 ) {
     @heading(messages("whatDoYouWantToDo.heading"))
 
-    @if(config.phase4Enabled && !config.phase5Enabled) {
-        @warning(messages("whatDoYouWantToDo.warning"))
+    @if(config.phase4Enabled) {
+        @warning(warningHtml)
     }
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.arrival")</h2>
