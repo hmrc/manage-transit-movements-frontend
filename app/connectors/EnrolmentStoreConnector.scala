@@ -17,25 +17,33 @@
 package connectors
 
 import config.FrontendAppConfig
-import play.api.Logging
 import models.GroupEnrolmentResponse
 import models.GroupEnrolmentResponse._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.Logging
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnrolmentStoreConnector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
+class EnrolmentStoreConnector @Inject() (
+  config: FrontendAppConfig,
+  http: HttpClientV2
+)(implicit ec: ExecutionContext)
+    extends Logging {
 
   def checkGroupEnrolments(groupId: String, enrolmentKey: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url: String = s"${config.enrolmentProxyUrl}/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"
-    http.GET[GroupEnrolmentResponse](url).map {
-      case Enrolments(enrolments)              => enrolments.map(_.service).contains(enrolmentKey)
-      case GroupEnrolmentResponse.NoEnrolments => false
-      case BadRequest("INVALID_GROUP_ID")      => false
-      case e =>
-        logger.info(s"[EnrolmentStoreProxyConnector][checkSaGroup] Enrolment Store Proxy error: $e")
-        throw new Exception(s"Call to enrolment store failed: $e")
-    }
+    val url = url"${config.enrolmentProxyUrl}/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey"
+    http
+      .get(url)
+      .execute[GroupEnrolmentResponse]
+      .map {
+        case Enrolments(enrolments)         => enrolments.map(_.service).contains(enrolmentKey)
+        case NoEnrolments                   => false
+        case BadRequest("INVALID_GROUP_ID") => false
+        case e =>
+          logger.warn(s"[EnrolmentStoreConnector][checkGroupEnrolments] Enrolment Store Proxy error: $e")
+          throw new Exception(s"Call to enrolment store failed: $e")
+      }
   }
 }

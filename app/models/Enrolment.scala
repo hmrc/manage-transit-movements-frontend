@@ -17,31 +17,25 @@
 package models
 
 import com.typesafe.config.Config
-import play.api.{ConfigLoader, Configuration}
+import play.api.ConfigLoader
+import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
+import uk.gov.hmrc.auth
+import uk.gov.hmrc.auth.core.authorise.Predicate
 
-sealed trait Enrolment {
-  val key: String
-  val identifierKey: String
+case class Enrolment(key: String, identifierKey: String) {
+
+  def toPredicate: Predicate =
+    auth.core.Enrolment.apply(key)
 }
 
 object Enrolment {
 
-  case class NewEnrolment(key: String, identifierKey: String) extends Enrolment
-
-  object NewEnrolment {
-    implicit val configLoader: ConfigLoader[NewEnrolment] = loadConfig(NewEnrolment.apply)
-  }
-
-  case class LegacyEnrolment(key: String, identifierKey: String) extends Enrolment
-
-  object LegacyEnrolment {
-    implicit val configLoader: ConfigLoader[LegacyEnrolment] = loadConfig(LegacyEnrolment.apply)
-  }
-
-  private def loadConfig[T <: Enrolment](apply: (String, String) => T): ConfigLoader[T] = (config: Config, path: String) => {
-    val enrolment     = Configuration(config).get[Configuration](path)
-    val key           = enrolment.get[String]("key")
-    val identifierKey = enrolment.get[String]("identifierKey")
-    apply(key, identifierKey)
+  implicit val configLoader: ConfigLoader[Seq[Enrolment]] = (config: Config, path: String) => {
+    config.getConfigList(path).toList.map {
+      enrolment =>
+        val key           = enrolment.getString("key")
+        val identifierKey = enrolment.getString("identifierKey")
+        Enrolment(key, identifierKey)
+    }
   }
 }
