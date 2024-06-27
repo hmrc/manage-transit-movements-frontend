@@ -852,15 +852,67 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       }
     }
 
-    "when given Message with head of incidentDuringTransit" in {
+    "when given Message with head of incidentDuringTransit containing multiple incidents" in {
 
-      val movementAndMessage = otherMovementAndMessage(IncidentDuringTransit)
+      val movementAndMessage = IncidentMovementAndMessage(
+        departureIdP5,
+        lrn,
+        LocalDateTime.now(),
+        LatestDepartureMessage(
+          DepartureMessage(
+            messageId,
+            LocalDateTime.now(),
+            IncidentDuringTransit,
+            "body/path"
+          ),
+          "messageId"
+        ),
+        hasMultipleIncidents = true
+      )
 
       val result = DepartureStatusP5ViewModel(movementAndMessage)
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.incidentDuringTransit",
-        Nil
+        Seq(
+          ViewMovementAction(
+            "#", //TODO: Add href as part of CTCP-5553
+            "movement.status.P5.action.incidentDuringTransit.viewIncidents"
+          )
+        )
+      )
+
+      result mustBe expectedResult
+    }
+
+    "when given Message with head of incidentDuringTransit containing one incident" in {
+
+      val movementAndMessage = IncidentMovementAndMessage(
+        departureIdP5,
+        lrn,
+        LocalDateTime.now(),
+        LatestDepartureMessage(
+          DepartureMessage(
+            messageId,
+            LocalDateTime.now(),
+            IncidentDuringTransit,
+            "body/path"
+          ),
+          "messageId"
+        ),
+        hasMultipleIncidents = false
+      )
+
+      val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.incidentDuringTransit",
+        Seq(
+          ViewMovementAction(
+            "#", //TODO: Add href as part of CTCP-5553
+            "movement.status.P5.action.incidentDuringTransit.viewIncident"
+          )
+        )
       )
 
       result mustBe expectedResult

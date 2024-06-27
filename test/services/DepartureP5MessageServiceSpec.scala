@@ -21,7 +21,7 @@ import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated._
 import generators.Generators
 import models.departureP5.DepartureMessageType._
-import models.departureP5._
+import models.departureP5.{DepartureMessageType, _}
 import models.{LocalReferenceNumber, RichCC015Type}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -170,6 +170,56 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         result mustBe expectedResult
       }
 
+      "must return IncidentMovementAndMessage when IncidentDuringTransit" in {
+
+        val latestDepartureMessage = LatestDepartureMessage(
+          DepartureMessage(
+            "messageId",
+            dateTimeNow,
+            IncidentDuringTransit,
+            "body/path"
+          ),
+          "messageId"
+        )
+
+        val departureMovements = DepartureMovements(
+          departureMovements = Seq(
+            DepartureMovement(
+              "AB123",
+              Some("MRN"),
+              LocalReferenceNumber("LRN"),
+              dateTimeNow,
+              "location"
+            )
+          ),
+          totalCount = 1
+        )
+
+        val ie182 = arbitrary[CC182CType].sample.value
+
+        when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+          Future.successful(latestDepartureMessage)
+        )
+
+        when(mockMovementConnector.getMessage[CC182CType](any(), any())(any(), any(), any())).thenReturn(
+          Future.successful(ie182)
+        )
+
+        val result = departureP5MessageService.getLatestMessagesForMovement(departureMovements).futureValue
+
+        val expectedResult: Seq[MovementAndMessage] = Seq(
+          IncidentMovementAndMessage(
+            "AB123",
+            LocalReferenceNumber("LRN"),
+            dateTimeNow,
+            latestDepartureMessage,
+            hasMultipleIncidents = ie182.Consignment.Incident.length > 1
+          )
+        )
+
+        result mustBe expectedResult
+      }
+
       "must return OtherMovementAndMessage for any other message" in {
 
         DepartureMessageType.values
@@ -178,7 +228,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               value == DeclarationAmendmentAccepted ||
                 value == RejectedByOfficeOfDeparture ||
                 value == GoodsUnderControl ||
-                value == DeclarationSent
+                value == DeclarationSent ||
+                value == IncidentDuringTransit
           )
           .map {
 

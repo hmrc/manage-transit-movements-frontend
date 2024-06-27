@@ -35,6 +35,9 @@ object DepartureStatusP5ViewModel {
       case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn) =>
         rejectedStatus(departureId, message.latestMessage.messageId, rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn)
           .apply(message.latestMessage)
+      case IncidentMovementAndMessage(_, _, _, message, hasMultipleIncidents) =>
+        incidentDuringTransit(hasMultipleIncidents)
+          .apply(message.latestMessage)
       case OtherMovementAndMessage(departureId, localReferenceNumber, _, message) =>
         currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber)
           .apply(message.latestMessage)
@@ -78,7 +81,6 @@ object DepartureStatusP5ViewModel {
       releasedForTransit(departureId),
       goodsNotReleased(departureId),
       guaranteeRejected(departureId, localReferenceNumber),
-      incidentDuringTransit(),
       goodsBeingRecovered(departureId, messageId),
       movementEnded
     ).reduce(_ orElse _)
@@ -357,11 +359,26 @@ object DepartureStatusP5ViewModel {
       )
   }
 
-  private def incidentDuringTransit(): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def incidentDuringTransit(hasMultipleIncidents: Boolean): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == IncidentDuringTransit =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.incidentDuringTransit",
-        actions = Nil
+        actions = hasMultipleIncidents match {
+          case true =>
+            Seq(
+              ViewMovementAction(
+                "#", //TODO: Add href as part of CTCP-5553
+                s"movement.status.P5.action.incidentDuringTransit.viewIncidents"
+              )
+            )
+          case false =>
+            Seq(
+              ViewMovementAction(
+                "#", //TODO: Add href as part of CTCP-5553
+                s"movement.status.P5.action.incidentDuringTransit.viewIncident"
+              )
+            )
+        }
       )
   }
 
