@@ -18,47 +18,62 @@ package connectors
 
 import config.FrontendAppConfig
 import play.api.Logging
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DepartureCacheConnector @Inject() (
   config: FrontendAppConfig,
-  http: HttpClient
+  http: HttpClientV2
 )(implicit ec: ExecutionContext)
     extends Logging {
 
   private val baseUrl = s"${config.departureCacheUrl}"
 
   def isDeclarationAmendable(lrn: String, xPaths: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = s"$baseUrl/x-paths/$lrn/is-declaration-amendable"
+    val url = url"$baseUrl/x-paths/$lrn/is-declaration-amendable"
 
-    http.POST[Seq[String], Boolean](url, xPaths)
+    http
+      .post(url)
+      .withBody(Json.toJson(xPaths))
+      .execute[Boolean]
   }
 
   def handleErrors(lrn: String, functionalErrors: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = s"$baseUrl/x-paths/$lrn/handle-errors"
+    val url = url"$baseUrl/x-paths/$lrn/handle-errors"
 
-    http.POST[Seq[String], Boolean](url, functionalErrors)
+    http
+      .post(url)
+      .withBody(Json.toJson(functionalErrors))
+      .execute[Boolean]
   }
 
   def handleAmendmentErrors(lrn: String, functionalErrors: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = s"$baseUrl/x-paths/$lrn/handle-amendment-errors"
+    val url = url"$baseUrl/x-paths/$lrn/handle-amendment-errors"
 
-    http.POST[Seq[String], Boolean](url, functionalErrors)
+    http
+      .post(url)
+      .withBody(Json.toJson(functionalErrors))
+      .execute[Boolean]
   }
 
   def handleGuaranteeRejection(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = s"$baseUrl/x-paths/$lrn/handle-guarantee-errors"
+    val url = url"$baseUrl/x-paths/$lrn/handle-guarantee-errors"
 
-    http.GET[Boolean](url)
+    http
+      .get(url)
+      .execute[Boolean]
   }
 
   def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = s"$baseUrl/does-cache-exists-for-lrn/$lrn"
+    val url = url"$baseUrl/does-cache-exists-for-lrn/$lrn"
 
-    http.GET[Boolean](url)
+    http
+      .get(url)
+      .execute[Boolean]
   }
 }
