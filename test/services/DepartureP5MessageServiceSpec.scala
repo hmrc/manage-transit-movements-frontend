@@ -22,7 +22,7 @@ import generated._
 import generators.Generators
 import models.departureP5.DepartureMessageType._
 import models.departureP5.{DepartureMessageType, _}
-import models.{LocalReferenceNumber, RichCC015Type}
+import models.{LocalReferenceNumber, RichCC015Type, RichCC182Type}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -213,7 +213,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             LocalReferenceNumber("LRN"),
             dateTimeNow,
             latestDepartureMessage,
-            hasMultipleIncidents = ie182.Consignment.Incident.length > 1
+            ie182.hasMultipleIncidents
           )
         )
 

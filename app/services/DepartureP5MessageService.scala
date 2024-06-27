@@ -19,7 +19,7 @@ package services
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated.{CC015CType, CC056CType, CC182CType}
-import models.RichCC015Type
+import models.{RichCC015Type, RichCC182Type}
 import models.departureP5.DepartureMessageType.{
   DeclarationAmendmentAccepted,
   DeclarationSent,
@@ -94,7 +94,7 @@ class DepartureP5MessageService @Inject() (
                       movement.localReferenceNumber,
                       movement.updated,
                       message,
-                      ie182.Consignment.Incident.length > 1
+                      ie182.hasMultipleIncidents
                     )
                 }
 
