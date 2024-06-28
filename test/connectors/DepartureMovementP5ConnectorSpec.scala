@@ -156,15 +156,13 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               "63651574c3447b12",
               Some("27WF9X1FQ9RCKN0TM3"),
               LocalReferenceNumber("AB123"),
-              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-              "movements/departures/63651574c3447b12/messages"
+              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
             ),
             DepartureMovement(
               "6365135ba5e821ee",
               Some("27WF9X1FQ9RCKN0TM3"),
               LocalReferenceNumber("CD123"),
-              LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
-              "movements/departures/6365135ba5e821ee/messages"
+              LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME)
             )
           ),
           totalCount = 2
@@ -241,8 +239,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 "63651574c3447b12",
                 None,
                 LocalReferenceNumber("LRN12345"),
-                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-                "movements/departures/63651574c3447b12/messages"
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
               )
             ),
             totalCount = 1
@@ -265,8 +262,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 "63651574c3447b12",
                 None,
                 LocalReferenceNumber("LRN12345"),
-                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-                "movements/departures/63651574c3447b12/messages"
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
               )
             ),
             totalCount = 1
@@ -408,6 +404,60 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
         val expectedResult = DepartureReferenceNumbers(LocalReferenceNumber("DEF456"), None)
 
         connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustBe expectedResult
+      }
+    }
+
+    "getLatestMessageForMovement" - {
+      val messageId = "634982098f02f00a"
+
+      "must return latest message" - {
+        "when arrival returned" in {
+          val responseJson: JsValue = Json.parse(s"""
+               |{
+               |  "_links": {
+               |    "self": {
+               |      "href": "/customs/transits/movements/departures/$departureIdP5/messages"
+               |    },
+               |    "departure": {
+               |      "href": "/customs/transits/movements/departures/$departureIdP5"
+               |    }
+               |  },
+               |  "totalCount": 1,
+               |  "messages": [
+               |    {
+               |      "_links": {
+               |        "self": {
+               |          "href": "/customs/transits/movements/departures/$departureIdP5/messages/$messageId"
+               |        },
+               |        "arrival": {
+               |          "href": "/customs/transits/movements/departures/$departureIdP5"
+               |        }
+               |      },
+               |      "id": "$messageId",
+               |      "departureId": "$departureIdP5",
+               |      "received": "2022-11-10T15:32:51.459Z",
+               |      "type": "IE015",
+               |      "status": "Success"
+               |    }
+               |  ]
+               |}
+               |""".stripMargin)
+
+          server.stubFor(
+            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getLatestMessageForMovement(departureIdP5).futureValue mustBe
+            LatestDepartureMessage(
+              latestMessage = DepartureMessage(
+                messageId = messageId,
+                received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
+                messageType = DepartureMessageType.DepartureNotification
+              ),
+              ie015MessageId = messageId
+            )
+        }
       }
     }
 
