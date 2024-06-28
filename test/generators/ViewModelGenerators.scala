@@ -43,7 +43,7 @@ trait ViewModelGenerators {
   implicit lazy val arbitraryViewAllArrivalMovementsViewModel: Arbitrary[ViewAllArrivalMovementsViewModel] =
     Arbitrary {
       for {
-        viewArrivals        <- listWithMaxLength[ViewArrival]()
+        viewArrivals        <- distinctListWithMaxLength[ViewArrival, LocalDate](_.updatedDate)()
         paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllArrivalMovementsViewModel(viewArrivals, paginationViewModel)
     }
@@ -51,7 +51,7 @@ trait ViewModelGenerators {
   implicit lazy val arbitraryViewAllArrivalMovementsP5ViewModel: Arbitrary[ViewAllArrivalMovementsP5ViewModel] =
     Arbitrary {
       for {
-        viewArrivals        <- listWithMaxLength[ViewArrivalP5]()
+        viewArrivals        <- distinctListWithMaxLength[ViewArrivalP5, LocalDate](_.updatedDate)()
         paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, paginationViewModel, None)
     }
@@ -59,7 +59,7 @@ trait ViewModelGenerators {
   implicit lazy val arbitraryViewAllDepartureMovementsP5ViewModel: Arbitrary[ViewAllDepartureMovementsP5ViewModel] =
     Arbitrary {
       for {
-        viewArrivals        <- listWithMaxLength[ViewDepartureP5]()
+        viewArrivals        <- distinctListWithMaxLength[ViewDepartureP5, LocalDate](_.updatedDate)()
         paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllDepartureMovementsP5ViewModel(viewArrivals, paginationViewModel, None)
     }
@@ -67,7 +67,7 @@ trait ViewModelGenerators {
   implicit lazy val arbitraryViewAllDepartureMovementsViewModel: Arbitrary[ViewAllDepartureMovementsViewModel] =
     Arbitrary {
       for {
-        viewDepartures      <- listWithMaxLength[ViewDeparture]()
+        viewDepartures      <- distinctListWithMaxLength[ViewDeparture, LocalDate](_.updatedDate)()
         paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllDepartureMovementsViewModel(viewDepartures, paginationViewModel)
     }

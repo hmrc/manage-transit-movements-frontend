@@ -35,9 +35,6 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
   def pageWithMovementsData(): Unit =
     "page with a movements data table" - {
 
-      println("***")
-      viewMovements.foreach(println)
-
       "must generate a heading for each unique day" in {
         val elements: Elements = doc.getElementsByAttributeValue("data-testrole", "movements-list_group-heading")
 
