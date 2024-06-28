@@ -407,6 +407,60 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
       }
     }
 
+    "getLatestMessageForMovement" - {
+      val messageId = "634982098f02f00a"
+
+      "must return latest message" - {
+        "when arrival returned" in {
+          val responseJson: JsValue = Json.parse(s"""
+               |{
+               |  "_links": {
+               |    "self": {
+               |      "href": "/customs/transits/movements/departures/$departureIdP5/messages"
+               |    },
+               |    "departure": {
+               |      "href": "/customs/transits/movements/departures/$departureIdP5"
+               |    }
+               |  },
+               |  "totalCount": 1,
+               |  "messages": [
+               |    {
+               |      "_links": {
+               |        "self": {
+               |          "href": "/customs/transits/movements/departures/$departureIdP5/messages/$messageId"
+               |        },
+               |        "arrival": {
+               |          "href": "/customs/transits/movements/departures/$departureIdP5"
+               |        }
+               |      },
+               |      "id": "$messageId",
+               |      "departureId": "$departureIdP5",
+               |      "received": "2022-11-10T15:32:51.459Z",
+               |      "type": "IE015",
+               |      "status": "Success"
+               |    }
+               |  ]
+               |}
+               |""".stripMargin)
+
+          server.stubFor(
+            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getLatestMessageForMovement(departureIdP5).futureValue mustBe
+            LatestDepartureMessage(
+              latestMessage = DepartureMessage(
+                messageId = messageId,
+                received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
+                messageType = DepartureMessageType.DepartureNotification
+              ),
+              ie015MessageId = messageId
+            )
+        }
+      }
+    }
+
   }
 
 }

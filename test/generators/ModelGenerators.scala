@@ -341,8 +341,7 @@ trait ModelGenerators {
         messageId   <- nonEmptyString
         received    <- arbitrary[LocalDateTime]
         messageType <- arbitrary[models.departureP5.DepartureMessageType]
-        bodyPath    <- nonEmptyString
-      } yield models.departureP5.DepartureMessage(messageId, received, messageType, bodyPath)
+      } yield models.departureP5.DepartureMessage(messageId, received, messageType)
     }
 }
 // scalastyle:on magic.number

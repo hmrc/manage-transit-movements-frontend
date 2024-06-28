@@ -82,8 +82,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
       DepartureMessage(
         "messageId",
         dateTime,
-        DepartureMessageType.DepartureNotification,
-        "body/path"
+        DepartureMessageType.DepartureNotification
       ),
       List.empty[DepartureMessage]
     )
@@ -117,8 +116,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
                     DepartureMessage(
                       "messageId",
                       dateTime,
-                      DepartureNotification,
-                      "body/path"
+                      DepartureNotification
                     ),
                     "ie015MessageId"
                   )
@@ -168,8 +166,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
                     DepartureMessage(
                       "messageId",
                       dateTime,
-                      DepartureNotification,
-                      "body/path"
+                      DepartureNotification
                     ),
                     "ie015MessageId"
                   )

@@ -39,8 +39,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           DepartureMessage(
             messageId,
             LocalDateTime.now(),
-            messageType,
-            "body/path"
+            messageType
           ),
           "ie015MessageId"
         )
@@ -152,8 +151,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             DepartureMessage(
               messageId,
               LocalDateTime.now(),
-              DeclarationAmendmentAccepted,
-              "body/path"
+              DeclarationAmendmentAccepted
             ),
             "ie015MessageId"
           ),
@@ -193,8 +191,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             DepartureMessage(
               messageId,
               LocalDateTime.now(),
-              DeclarationAmendmentAccepted,
-              "body/path"
+              DeclarationAmendmentAccepted
             ),
             "ie015MessageId"
           ),
@@ -275,8 +272,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           DepartureMessage(
             messageId,
             LocalDateTime.now(),
-            AllocatedMRN,
-            "body/path"
+            AllocatedMRN
           ),
           "ie015MessageId"
         )
@@ -376,8 +372,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -412,8 +407,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -448,8 +442,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -484,8 +477,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -526,8 +518,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -561,8 +552,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -596,8 +586,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -631,8 +620,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -671,8 +659,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -706,8 +693,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -741,8 +727,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               DepartureMessage(
                 messageId,
                 LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                "body/path"
+                RejectedByOfficeOfDeparture
               ),
               "ie015MessageId"
             ),
@@ -783,8 +768,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             DepartureMessage(
               messageId,
               LocalDateTime.now(),
-              GoodsUnderControl,
-              "body/path"
+              GoodsUnderControl
             ),
             "ie015MessageId"
           ),
@@ -824,8 +808,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             DepartureMessage(
               messageId,
               LocalDateTime.now(),
-              GoodsUnderControl,
-              "body/path"
+              GoodsUnderControl
             ),
             "ie015MessageId"
           ),
@@ -878,8 +861,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             DepartureMessage(
               messageId,
               LocalDateTime.now(),
-              DeclarationSent,
-              "body/path"
+              DeclarationSent
             ),
             "ie015MessageId"
           ),
@@ -919,8 +901,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             DepartureMessage(
               messageId,
               LocalDateTime.now(),
-              DeclarationSent,
-              "body/path"
+              DeclarationSent
             ),
             "ie015MessageId"
           ),
