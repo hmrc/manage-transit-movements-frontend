@@ -22,7 +22,6 @@ import models.arrivalP5.{ArrivalMovements, LatestArrivalMessage}
 import play.api.http.Status.{NOT_FOUND, OK}
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
-import sttp.model.HeaderNames
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -58,12 +57,11 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
   }
 
   private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] = {
-    val url    = url"${config.commonTransitConventionTradersUrl}movements/arrivals"
-    val header = HeaderNames.Accept -> "application/vnd.hmrc.2.0+json"
+    val url = url"${config.commonTransitConventionTradersUrl}movements/arrivals"
 
     http
       .get(url)
-      .setHeader(header)
+      .setHeader(jsonAcceptHeader)
       .transform(_.withQueryStringParameters(queryParams: _*))
       .execute[HttpResponse]
       .map {
@@ -82,12 +80,11 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
   }
 
   def getLatestMessageForMovement(arrivalId: String)(implicit hc: HeaderCarrier): Future[LatestArrivalMessage] = {
-    val url    = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
-    val header = HeaderNames.Accept -> "application/vnd.hmrc.2.0+json"
+    val url = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
 
     http
       .get(url)
-      .setHeader(header)
+      .setHeader(jsonAcceptHeader)
       .execute[LatestArrivalMessage]
   }
 
@@ -95,12 +92,11 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
     arrivalId: String,
     messageId: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, format: XMLFormat[T]): Future[T] = {
-    val url    = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId/body"
-    val header = HeaderNames.Accept -> "application/vnd.hmrc.2.0+xml"
+    val url = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId/body"
 
     http
       .get(url)
-      .setHeader(header)
+      .setHeader(xmlAcceptHeader)
       .execute[HttpResponse]
       .map(_.body)
       .map(XML.loadString)

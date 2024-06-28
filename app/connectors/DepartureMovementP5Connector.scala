@@ -22,7 +22,6 @@ import models.departureP5._
 import play.api.http.Status._
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
-import sttp.model.HeaderNames
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -58,12 +57,11 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
   }
 
   private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] = {
-    val url    = url"${config.commonTransitConventionTradersUrl}movements/departures"
-    val header = HeaderNames.Accept -> "application/vnd.hmrc.2.0+json"
+    val url = url"${config.commonTransitConventionTradersUrl}movements/departures"
 
     http
       .get(url)
-      .setHeader(header)
+      .setHeader(jsonAcceptHeader)
       .transform(_.withQueryStringParameters(queryParams: _*))
       .execute[HttpResponse]
       .map {
@@ -82,12 +80,11 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
   }
 
   def getLatestMessageForMovement(departureId: String)(implicit hc: HeaderCarrier): Future[LatestDepartureMessage] = {
-    val url    = url"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
-    val header = HeaderNames.Accept -> "application/vnd.hmrc.2.0+json"
+    val url = url"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages"
 
     http
       .get(url)
-      .setHeader(header)
+      .setHeader(jsonAcceptHeader)
       .execute[LatestDepartureMessage]
   }
 
@@ -95,12 +92,11 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     departureId: String,
     messageId: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, format: XMLFormat[T]): Future[T] = {
-    val url    = url"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId/body"
-    val header = HeaderNames.Accept -> "application/vnd.hmrc.2.0+xml"
+    val url = url"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId/body"
 
     http
       .get(url)
-      .setHeader(header)
+      .setHeader(xmlAcceptHeader)
       .execute[HttpResponse]
       .map(_.body)
       .map(XML.loadString)
@@ -111,12 +107,11 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     ec: ExecutionContext,
     hc: HeaderCarrier
   ): Future[DepartureReferenceNumbers] = {
-    val url    = url"${config.commonTransitConventionTradersUrl}movements/departures/$departureId"
-    val header = HeaderNames.Accept -> "application/vnd.hmrc.2.0+json"
+    val url = url"${config.commonTransitConventionTradersUrl}movements/departures/$departureId"
 
     http
       .get(url)
-      .setHeader(header)
+      .setHeader(jsonAcceptHeader)
       .execute[DepartureReferenceNumbers]
   }
 
