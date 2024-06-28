@@ -238,11 +238,10 @@ trait ModelGenerators {
   implicit lazy val arbitraryArrivalMovement: Arbitrary[ArrivalMovement] =
     Arbitrary {
       for {
-        arrivalId        <- arbitrary[String]
-        mrn              <- arbitrary[String]
-        updated          <- arbitrary[LocalDateTime]
-        messagesLocation <- arbitrary[String]
-      } yield ArrivalMovement(arrivalId, mrn, updated, messagesLocation)
+        arrivalId <- arbitrary[String]
+        mrn       <- arbitrary[String]
+        updated   <- arbitrary[LocalDateTime]
+      } yield ArrivalMovement(arrivalId, mrn, updated)
     }
 
   implicit lazy val arbitraryArrivalMovements: Arbitrary[ArrivalMovements] =
@@ -256,12 +255,11 @@ trait ModelGenerators {
   implicit lazy val arbitraryDepartureMovement: Arbitrary[DepartureMovement] =
     Arbitrary {
       for {
-        departureId      <- arbitrary[String]
-        mrn              <- arbitrary[String]
-        lrn              <- arbitrary[LocalReferenceNumber]
-        updated          <- arbitrary[LocalDateTime]
-        messagesLocation <- arbitrary[String]
-      } yield DepartureMovement(departureId, Some(mrn), lrn, updated, messagesLocation)
+        departureId <- arbitrary[String]
+        mrn         <- arbitrary[String]
+        lrn         <- arbitrary[LocalReferenceNumber]
+        updated     <- arbitrary[LocalDateTime]
+      } yield DepartureMovement(departureId, Some(mrn), lrn, updated)
     }
 
   implicit lazy val arbitraryDepartureMovements: Arbitrary[DepartureMovements] =

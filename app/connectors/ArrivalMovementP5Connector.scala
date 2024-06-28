@@ -81,8 +81,8 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
       }
   }
 
-  def getLatestMessageForMovement(location: String)(implicit hc: HeaderCarrier): Future[LatestArrivalMessage] = {
-    val url    = url"${config.commonTransitConventionTradersUrl}$location"
+  def getLatestMessageForMovement(arrivalId: String)(implicit hc: HeaderCarrier): Future[LatestArrivalMessage] = {
+    val url    = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
     val header = HeaderNames.Accept -> "application/vnd.hmrc.2.0+json"
 
     http

@@ -156,15 +156,13 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               "63651574c3447b12",
               Some("27WF9X1FQ9RCKN0TM3"),
               LocalReferenceNumber("AB123"),
-              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-              "movements/departures/63651574c3447b12/messages"
+              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
             ),
             DepartureMovement(
               "6365135ba5e821ee",
               Some("27WF9X1FQ9RCKN0TM3"),
               LocalReferenceNumber("CD123"),
-              LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
-              "movements/departures/6365135ba5e821ee/messages"
+              LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME)
             )
           ),
           totalCount = 2
@@ -241,8 +239,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 "63651574c3447b12",
                 None,
                 LocalReferenceNumber("LRN12345"),
-                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-                "movements/departures/63651574c3447b12/messages"
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
               )
             ),
             totalCount = 1
@@ -265,8 +262,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 "63651574c3447b12",
                 None,
                 LocalReferenceNumber("LRN12345"),
-                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-                "movements/departures/63651574c3447b12/messages"
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
               )
             ),
             totalCount = 1

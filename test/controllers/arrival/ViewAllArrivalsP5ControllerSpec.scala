@@ -66,8 +66,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with ScalaCheckPropertyCh
   val arrivalMovement: ArrivalMovement = ArrivalMovement(
     "63651574c3447b12",
     mrn,
-    dateTime,
-    "movements/arrivals/63651574c3447b12/messages"
+    dateTime
   )
 
   val mockArrivalMovementResponse: ArrivalMovements = ArrivalMovements(

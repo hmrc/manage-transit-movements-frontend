@@ -51,7 +51,7 @@ class DepartureP5MessageService @Inject() (
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[MovementAndMessage]] =
     departureMovements.departureMovements.traverse {
       movement =>
-        departureMovementP5Connector.getLatestMessageForMovement(movement.messagesLocation).flatMap {
+        departureMovementP5Connector.getLatestMessageForMovement(movement.departureId).flatMap {
           message =>
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>

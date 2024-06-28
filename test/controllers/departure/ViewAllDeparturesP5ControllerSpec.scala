@@ -69,8 +69,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
     "63651574c3447b12",
     None,
     LocalReferenceNumber("AB123"),
-    dateTime,
-    "movements/departures/63651574c3447b12/messages"
+    dateTime
   )
 
   val mockDepartureMovementResponse: DepartureMovements = DepartureMovements(

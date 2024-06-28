@@ -72,8 +72,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               "AB123",
               Some("MRN"),
               LocalReferenceNumber("LRN"),
-              dateTimeNow,
-              "location"
+              dateTimeNow
             )
           ),
           totalCount = 1
@@ -138,8 +137,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               "AB123",
               Some("MRN"),
               LocalReferenceNumber("LRN"),
-              dateTimeNow,
-              "location"
+              dateTimeNow
             )
           ),
           totalCount = 1
@@ -199,8 +197,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
                     "AB123",
                     Some("MRN"),
                     LocalReferenceNumber("LRN"),
-                    dateTimeNow,
-                    "location"
+                    dateTimeNow
                   )
                 ),
                 totalCount = 1
