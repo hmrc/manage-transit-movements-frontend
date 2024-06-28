@@ -42,7 +42,7 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
       .guiceApplicationBuilder()
       .overrides(api.inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
-  "DepartureCancelledP5ViewModelSpec" - {
+  "DepartureNotCancelledP5ViewModelSpec" - {
 
     val lrn                = "AB123"
     val customsReferenceId = "CD123"
