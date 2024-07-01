@@ -1,0 +1,63 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package viewModels.P5.arrival
+
+import models.referenceData.CustomsOffice
+import play.api.i18n.Messages
+import viewModels.P5.ViewModelWithCustomsOffice
+
+case class IncidentsDuringTransitP5ViewModel(
+  mrn: String,
+  customsOffice: Either[String, CustomsOffice],
+  isMultipleIncidents: Boolean
+) extends ViewModelWithCustomsOffice {
+
+  override val prefix: String = "arrival.notification.incidents.customsOfficeContact"
+
+  def title(implicit messages: Messages): String = if (isMultipleIncidents) {
+    messages("arrival.notification.incidents.title")
+  } else {
+    messages("arrival.notification.incident.title")
+  }
+
+  def heading(implicit messages: Messages): String = if (isMultipleIncidents) {
+    messages("arrival.notification.incidents.heading")
+  } else {
+    messages("arrival.notification.incident.heading")
+  }
+
+  def paragraph1(implicit messages: Messages): String = if (isMultipleIncidents) {
+    messages("arrival.notification.incidents.paragraph1")
+  } else {
+    messages("arrival.notification.incident.paragraph1")
+  }
+
+  def paragraph2HyperLink(implicit messages: Messages): String = messages("arrival.notification.incidents.paragraph2.hyperlink")
+
+  def paragraph2End(implicit messages: Messages): String = messages("arrival.notification.incidents.paragraph2.end")
+
+}
+
+object IncidentsDuringTransitP5ViewModel {
+
+  class IncidentsDuringTransitP5ViewModelProvider {
+
+    def apply(mrn: String, customsOffice: Either[String, CustomsOffice], isMultipleIncidents: Boolean): IncidentsDuringTransitP5ViewModel =
+      IncidentsDuringTransitP5ViewModel(mrn, customsOffice, isMultipleIncidents)
+  }
+
+}

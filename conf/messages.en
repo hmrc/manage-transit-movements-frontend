@@ -615,3 +615,19 @@ error.table.errorCode = Error
 error.table.errorReason = Business rule ID
 error.table.attributeValue = Invalid answer
 error.table.pointer = Invalid data item
+
+arrival.notification.incidents.title = Incidents during transit
+arrival.notification.incidents.heading = Incidents during transit
+arrival.notification.incidents.paragraph1 = Multiple incidents have been reported by the customs office of incident. Review the incident details and contact the carrier for more information.
+
+arrival.notification.incident.title = Incident during transit
+arrival.notification.incident.heading = Incident during transit
+arrival.notification.incident.paragraph1 = An incident has been reported by the customs office of incident. Review the incident details and contact the carrier for more information.
+
+arrival.notification.incidents.paragraph2.hyperlink = Check your departure declarations
+arrival.notification.incidents.paragraph2.end = for further updates.
+
+arrival.notification.incidents.customsOfficeContact.telephoneAvailable = For further help, contact the carrier or Customs at {0} on {1}.
+arrival.notification.incidents.customsOfficeContact.telephoneNotAvailable = For further help, contact Customs at {0}.
+arrival.notification.incidents.customsOfficeContact.teleAvailAndOfficeNameNotAvail = For further help, contact Customs office {0} on {1}.
+arrival.notification.incidents.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = For further help, contact Customs office {0}.
