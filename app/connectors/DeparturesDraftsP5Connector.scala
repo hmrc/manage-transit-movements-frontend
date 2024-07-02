@@ -40,8 +40,8 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
       .execute[DeparturesSummary]
       .map(Some(_))
       .recover {
-        case _ =>
-          logger.error(s"get Departures Summary failed to return data")
+        case e =>
+          logger.warn(s"getDeparturesSummary failed to return data: ${e.getMessage}")
           None
       }
   }

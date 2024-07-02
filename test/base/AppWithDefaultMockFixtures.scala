@@ -36,7 +36,7 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
   private def defaultApplicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        bind[IdentifierAction].to[FakeIdentifierAction]
+        bind[IdentifierAction].toInstance(FakeIdentifierAction(true))
       )
 
   def guiceApplicationBuilder(): GuiceApplicationBuilder =
