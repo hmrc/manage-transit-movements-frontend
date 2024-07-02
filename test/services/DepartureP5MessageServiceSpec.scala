@@ -60,8 +60,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           DepartureMessage(
             "messageId1",
             dateTimeNow,
-            RejectedByOfficeOfDeparture,
-            "body/path/2"
+            RejectedByOfficeOfDeparture
           ),
           "messageId2"
         )
@@ -72,8 +71,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               "AB123",
               Some("MRN"),
               LocalReferenceNumber("LRN"),
-              dateTimeNow,
-              "location"
+              dateTimeNow
             )
           ),
           totalCount = 1
@@ -126,8 +124,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           DepartureMessage(
             "messageId1",
             dateTimeNow,
-            genStatus,
-            "body/path/2"
+            genStatus
           ),
           "messageId2"
         )
@@ -138,8 +135,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               "AB123",
               Some("MRN"),
               LocalReferenceNumber("LRN"),
-              dateTimeNow,
-              "location"
+              dateTimeNow
             )
           ),
           totalCount = 1
@@ -238,8 +234,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
                 DepartureMessage(
                   "messageId1",
                   dateTimeNow,
-                  status,
-                  "body/path/2"
+                  status
                 ),
                 "messageId2"
               )
@@ -250,8 +245,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
                     "AB123",
                     Some("MRN"),
                     LocalReferenceNumber("LRN"),
-                    dateTimeNow,
-                    "location"
+                    dateTimeNow
                   )
                 ),
                 totalCount = 1

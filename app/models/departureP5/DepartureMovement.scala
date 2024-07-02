@@ -25,8 +25,7 @@ case class DepartureMovement(
   departureId: String,
   movementReferenceNumber: Option[String],
   localReferenceNumber: LocalReferenceNumber,
-  updated: LocalDateTime,
-  messagesLocation: String
+  updated: LocalDateTime
 ) extends Movement
 
 object DepartureMovement {
@@ -37,10 +36,7 @@ object DepartureMovement {
       (__ \ "id").read[String] and
         (__ \ "movementReferenceNumber").readNullable[String] and
         (__ \ "localReferenceNumber").read[LocalReferenceNumber] and
-        (__ \ "updated").read[LocalDateTime] and
-        (__ \ "_links" \ "messages" \ "href")
-          .read[String]
-          .map(_.replace("/customs/transits/", ""))
+        (__ \ "updated").read[LocalDateTime]
     )(DepartureMovement.apply _)
   }
 }

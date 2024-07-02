@@ -21,7 +21,7 @@ import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime
 
-case class ArrivalMovement(arrivalId: String, movementReferenceNumber: String, updated: LocalDateTime, messagesLocation: String) extends Movement
+case class ArrivalMovement(arrivalId: String, movementReferenceNumber: String, updated: LocalDateTime) extends Movement
 
 object ArrivalMovement {
 
@@ -30,10 +30,7 @@ object ArrivalMovement {
     (
       (__ \ "id").read[String] and
         (__ \ "movementReferenceNumber").read[String] and
-        (__ \ "updated").read[LocalDateTime] and
-        (__ \ "_links" \ "messages" \ "href")
-          .read[String]
-          .map(_.replace("/customs/transits/", ""))
+        (__ \ "updated").read[LocalDateTime]
     )(ArrivalMovement.apply _)
   }
 }

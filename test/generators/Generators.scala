@@ -143,6 +143,12 @@ trait Generators extends ModelGenerators with ViewModelGenerators with MessagesM
       seq    <- listOfN(length, arbitrary[A])
     } yield seq
 
+  def distinctListWithMaxLength[A, B](f: A => B)(maxLength: Int = 10)(implicit a: Arbitrary[A]): Gen[List[A]] =
+    for {
+      length <- choose(1, maxLength)
+      seq    <- listOfN(length, arbitrary[A])
+    } yield seq.distinctBy(f)
+
   def alphaNumericWithMaxLength(maxLength: Int): Gen[String] =
     for {
       length <- choose(1, maxLength)

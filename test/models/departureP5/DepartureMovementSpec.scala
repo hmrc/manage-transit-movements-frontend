@@ -52,8 +52,7 @@ class DepartureMovementSpec extends SpecBase {
         "63651574c3447b12",
         Some("27WF9X1FQ9RCKN0TM3"),
         LocalReferenceNumber("AB123"),
-        LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-        "movements/departures/63651574c3447b12/messages"
+        LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
       )
 
       val result: DepartureMovement = json.validate[DepartureMovement].asOpt.value
