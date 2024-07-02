@@ -22,5 +22,8 @@ case class DeparturesSummary(totalMovements: Int, totalMatchingMovements: Int, u
 
 object DeparturesSummary {
 
+  def apply(): DeparturesSummary =
+    new DeparturesSummary(0, 0, List.empty[DepartureUserAnswerSummary])
+
   implicit val format: OFormat[DeparturesSummary] = Json.format[DeparturesSummary]
 }

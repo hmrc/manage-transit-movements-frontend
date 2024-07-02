@@ -18,13 +18,11 @@ package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import models.LockCheck
-import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{Action, AnyContent, Request, Results}
-import play.api.test.FakeRequest
+import play.api.mvc.{Action, AnyContent, Results}
 import play.api.test.Helpers._
 import services.DraftDepartureService
 
@@ -33,11 +31,9 @@ import scala.concurrent.Future
 
 class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
-  val dataRequest: IdentifierRequest[AnyContent] = IdentifierRequest(FakeRequest(GET, "/").asInstanceOf[Request[AnyContent]], "id")
-
   class Harness(authAction: LockActionProvider) {
 
-    def onPageLoad(): Action[AnyContent] = (stubControllerComponents().actionBuilder andThen FakeIdentifierAction.apply() andThen authAction(lrn.toString)) {
+    def onPageLoad(): Action[AnyContent] = (stubControllerComponents().actionBuilder andThen FakeIdentifierAction(true) andThen authAction(lrn.toString)) {
       _ =>
         Results.Ok
     }
