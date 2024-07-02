@@ -19,7 +19,6 @@ package controllers.departureP5
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.CC182CType
 import generators.Generators
-import models.departureP5.DepartureReferenceNumbers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
