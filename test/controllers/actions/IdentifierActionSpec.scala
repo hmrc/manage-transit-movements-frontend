@@ -77,8 +77,10 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         .configure(
           "enrolments.0.key"           -> NEW_ENROLMENT_KEY,
           "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY,
+          "enrolments.0.legacy"        -> false,
           "enrolments.1.key"           -> LEGACY_ENROLMENT_KEY,
-          "enrolments.1.identifierKey" -> LEGACY_ENROLMENT_ID_KEY
+          "enrolments.1.identifierKey" -> LEGACY_ENROLMENT_ID_KEY,
+          "enrolments.1.legacy"        -> true
         )
         .build()
 
@@ -90,8 +92,10 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         .configure(
           "enrolments.0.key"           -> NEW_ENROLMENT_KEY,
           "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY,
+          "enrolments.0.legacy"        -> false,
           "enrolments.1.key"           -> LEGACY_ENROLMENT_KEY,
-          "enrolments.1.identifierKey" -> LEGACY_ENROLMENT_ID_KEY
+          "enrolments.1.identifierKey" -> LEGACY_ENROLMENT_ID_KEY,
+          "enrolments.1.legacy"        -> true
         )
         .build()
 
@@ -454,7 +458,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             .onPageLoad {
               request =>
                 request.eoriNumber mustBe "999"
-                request.isOnLatestEnrolment mustBe false
+                request.isOnLegacyEnrolment mustBe true
             }
             .apply(fakeRequest)
 
@@ -482,7 +486,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             .onPageLoad {
               request =>
                 request.eoriNumber mustBe "456"
-                request.isOnLatestEnrolment mustBe true
+                request.isOnLegacyEnrolment mustBe false
             }
             .apply(fakeRequest)
 
@@ -510,7 +514,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             .onPageLoad {
               request =>
                 request.eoriNumber mustBe "123"
-                request.isOnLatestEnrolment mustBe false
+                request.isOnLegacyEnrolment mustBe true
             }
             .apply(fakeRequest)
 
@@ -538,7 +542,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             .onPageLoad {
               request =>
                 request.eoriNumber mustBe "456"
-                request.isOnLatestEnrolment mustBe true
+                request.isOnLegacyEnrolment mustBe false
             }
             .apply(fakeRequest)
 
@@ -595,7 +599,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             .onPageLoad {
               request =>
                 request.eoriNumber mustBe "456"
-                request.isOnLatestEnrolment mustBe true
+                request.isOnLegacyEnrolment mustBe false
             }
             .apply(fakeRequest)
 
@@ -615,7 +619,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         )
         .configure(
           "enrolments.0.key"           -> NEW_ENROLMENT_KEY,
-          "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY
+          "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY,
+          "enrolments.0.legacy"        -> false
         )
         .build()
 
@@ -626,7 +631,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         )
         .configure(
           "enrolments.0.key"           -> NEW_ENROLMENT_KEY,
-          "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY
+          "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY,
+          "enrolments.0.legacy"        -> false
         )
         .build()
 
@@ -1011,7 +1017,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             .onPageLoad {
               request =>
                 request.eoriNumber mustBe "456"
-                request.isOnLatestEnrolment mustBe true
+                request.isOnLegacyEnrolment mustBe false
             }
             .apply(fakeRequest)
 
@@ -1064,7 +1070,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             .onPageLoad {
               request =>
                 request.eoriNumber mustBe "456"
-                request.isOnLatestEnrolment mustBe true
+                request.isOnLegacyEnrolment mustBe false
             }
             .apply(fakeRequest)
 
@@ -1121,7 +1127,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             .onPageLoad {
               request =>
                 request.eoriNumber mustBe "456"
-                request.isOnLatestEnrolment mustBe true
+                request.isOnLegacyEnrolment mustBe false
             }
             .apply(fakeRequest)
 

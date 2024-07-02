@@ -18,4 +18,4 @@ package models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
 
-case class IdentifierRequest[A](request: Request[A], eoriNumber: String, isOnLatestEnrolment: Boolean) extends WrappedRequest[A](request)
+case class IdentifierRequest[A](request: Request[A], eoriNumber: String, isOnLegacyEnrolment: Boolean) extends WrappedRequest[A](request)

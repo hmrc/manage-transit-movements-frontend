@@ -60,14 +60,14 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(predicate)
       .retrieve(Retrievals.authorisedEnrolments and Retrievals.groupIdentifier) {
         case enrolments ~ maybeGroupId =>
-          def checkEnrolment(e: Enrolment, isOnLatestEnrolment: Boolean)(implicit hc: HeaderCarrier): Future[Option[Either[Result, Result]]] =
+          def checkEnrolment(e: Enrolment)(implicit hc: HeaderCarrier): Future[Option[Either[Result, Result]]] =
             enrolments.enrolments
               .filter(_.isActivated)
               .find(_.key.equals(e.key)) match {
               case Some(enrolment) =>
                 enrolment.getIdentifier(e.identifierKey) match {
                   case Some(enrolmentIdentifier) =>
-                    block(IdentifierRequest(request, enrolmentIdentifier.value, isOnLatestEnrolment)).map(Right(_)).map(Some(_))
+                    block(IdentifierRequest(request, enrolmentIdentifier.value, e.legacy)).map(Right(_)).map(Some(_))
                   case None =>
                     Future.successful(Some(Left(Redirect(routes.UnauthorisedController.onPageLoad()))))
                 }
@@ -85,19 +85,19 @@ class AuthenticatedIdentifierAction @Inject() (
                 }
             }
 
-          def rec(enrolments: List[Enrolment], results: List[Result] = Nil, isOnLatestEnrolment: Boolean): Future[Result] = enrolments match {
+          def rec(enrolments: List[Enrolment], results: List[Result] = Nil): Future[Result] = enrolments match {
             case Nil =>
               Future.successful(results.headOption.getOrElse(Redirect(config.eccEnrolmentSplashPage)))
             case head :: tail =>
-              checkEnrolment(head, isOnLatestEnrolment)
+              checkEnrolment(head)
                 .flatMap {
                   case Some(Right(onEnrolmentFound))   => Future.successful(onEnrolmentFound)
-                  case Some(Left(onEnrolmentNotFound)) => rec(tail, results :+ onEnrolmentNotFound, isOnLatestEnrolment = false)
-                  case None                            => rec(tail, results, isOnLatestEnrolment = false)
+                  case Some(Left(onEnrolmentNotFound)) => rec(tail, results :+ onEnrolmentNotFound)
+                  case None                            => rec(tail, results)
                 }
           }
 
-          rec(validEnrolments.toList, isOnLatestEnrolment = true)
+          rec(validEnrolments.toList)
       }
   } recover {
     case _: NoActiveSession =>
