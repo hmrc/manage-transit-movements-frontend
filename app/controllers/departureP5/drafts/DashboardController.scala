@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   val controllerComponents: MessagesControllerComponents,
   draftDepartureService: DraftDepartureService,
   view: DashboardView,
@@ -53,23 +53,25 @@ class DashboardController @Inject() (
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-  def onPageLoad(pageNumber: Option[Int], lrn: Option[String], sortParams: Option[String]): Action[AnyContent] = (Action andThen identify).async {
-    implicit request =>
-      buildView(form, pageNumber, lrn, Sort(sortParams))(Ok(_))
-  }
+  def onPageLoad(pageNumber: Option[Int], lrn: Option[String], sortParams: Option[String]): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch()).async {
+      implicit request =>
+        buildView(form, pageNumber, lrn, Sort(sortParams))(Ok(_))
+    }
 
-  def onSubmit(sortParams: Option[String]): Action[AnyContent] = (Action andThen identify).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => buildView(formWithErrors)(BadRequest(_)),
-          lrn => {
-            val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
-            buildView(form, lrn = fuzzyLrn, sortParams = Sort(sortParams))(Ok(_))
-          }
-        )
-  }
+  def onSubmit(sortParams: Option[String]): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch()).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => buildView(formWithErrors)(BadRequest(_)),
+            lrn => {
+              val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
+              buildView(form, lrn = fuzzyLrn, sortParams = Sort(sortParams))(Ok(_))
+            }
+          )
+    }
 
   private def buildView(
     form: Form[String],

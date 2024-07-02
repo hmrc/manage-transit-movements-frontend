@@ -23,6 +23,7 @@ import models.{Availability, DeparturesSummary, LockCheck, Sort}
 import play.api.Logging
 import play.api.http.Status.{LOCKED, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.UpstreamErrorResponse.{Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -31,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
-  def getDeparturesSummary(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
+  private def getDeparturesSummary(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
     val url = url"${config.departureCacheUrl}/user-answers"
 
     http
@@ -40,7 +41,10 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
       .execute[DeparturesSummary]
       .map(Some(_))
       .recover {
-        case e =>
+        case Upstream4xxResponse(e) =>
+          logger.info(s"getDeparturesSummary failed to return data: ${e.getMessage}")
+          Some(DeparturesSummary())
+        case Upstream5xxResponse(e) =>
           logger.warn(s"getDeparturesSummary failed to return data: ${e.getMessage}")
           None
       }
