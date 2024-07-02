@@ -18,9 +18,15 @@ package services
 
 import cats.implicits._
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import generated.{CC015CType, CC056CType}
-import models.RichCC015Type
-import models.departureP5.DepartureMessageType.{DeclarationAmendmentAccepted, DeclarationSent, GoodsUnderControl, RejectedByOfficeOfDeparture}
+import generated.{CC015CType, CC056CType, CC182CType}
+import models.{RichCC015Type, RichCC182Type}
+import models.departureP5.DepartureMessageType.{
+  DeclarationAmendmentAccepted,
+  DeclarationSent,
+  GoodsUnderControl,
+  IncidentDuringTransit,
+  RejectedByOfficeOfDeparture
+}
 import models.departureP5._
 import scalaxb.XMLFormat
 import uk.gov.hmrc.http.HeaderCarrier
@@ -79,6 +85,19 @@ class DepartureP5MessageService @Inject() (
                       ie015.isPreLodged
                     )
                 }
+
+              case IncidentDuringTransit =>
+                getMessage[CC182CType](movement.departureId, message.latestMessage.messageId).map {
+                  ie182 =>
+                    IncidentMovementAndMessage(
+                      movement.departureId,
+                      movement.localReferenceNumber,
+                      movement.updated,
+                      message,
+                      ie182.hasMultipleIncidents
+                    )
+                }
+
               case _ =>
                 Future.successful(
                   OtherMovementAndMessage(

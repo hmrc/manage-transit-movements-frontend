@@ -215,4 +215,9 @@ package object models {
 
     def isPreLodged: Boolean = value.TransitOperation.additionalDeclarationType == PreLodged
   }
+
+  implicit class RichCC182Type(value: CC182CType) {
+
+    def hasMultipleIncidents: Boolean = value.Consignment.Incident.length > 1
+  }
 }

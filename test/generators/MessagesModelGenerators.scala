@@ -188,6 +188,24 @@ trait MessagesModelGenerators {
       )
     }
 
+  implicit lazy val arbitraryCC182CType: Arbitrary[CC182CType] =
+    Arbitrary {
+      for {
+        messageSequence1                    <- arbitrary[MESSAGESequence]
+        transitOperation                    <- arbitrary[TransitOperationType47]
+        customsOfficeOfDeparture            <- arbitrary[CustomsOfficeOfDepartureType03]
+        customsOfficeOfIncidentRegistration <- arbitrary[CustomsOfficeOfIncidentRegistrationType02]
+        consignment                         <- arbitrary[ConsignmentType22]
+      } yield CC182CType(
+        messageSequence1 = messageSequence1,
+        TransitOperation = transitOperation,
+        CustomsOfficeOfDeparture = customsOfficeOfDeparture,
+        CustomsOfficeOfIncidentRegistration = customsOfficeOfIncidentRegistration,
+        Consignment = consignment,
+        attributes = Map.empty
+      )
+    }
+
   implicit lazy val arbitraryMESSAGESequence: Arbitrary[MESSAGESequence] =
     Arbitrary {
       for {
@@ -260,6 +278,15 @@ trait MessagesModelGenerators {
         AdditionalInformation = Nil,
         TransportCharges = None,
         HouseConsignment = Nil
+      )
+    }
+
+  implicit lazy val arbitraryConsignmentType22: Arbitrary[ConsignmentType22] =
+    Arbitrary {
+      for {
+        incident <- arbitrary[Seq[IncidentType03]]
+      } yield ConsignmentType22(
+        Incident = incident
       )
     }
 
@@ -378,6 +405,17 @@ trait MessagesModelGenerators {
         MRN = mrn,
         controlNotificationDateAndTime = controlNotificationDateAndTime,
         notificationType = notificationType
+      )
+    }
+
+  implicit lazy val arbitraryTransitOperationType47: Arbitrary[TransitOperationType47] =
+    Arbitrary {
+      for {
+        mrn                             <- nonEmptyString
+        incidentNotificationDateAndTime <- arbitrary[XMLGregorianCalendar]
+      } yield TransitOperationType47(
+        MRN = mrn,
+        incidentNotificationDateAndTime = incidentNotificationDateAndTime
       )
     }
 
@@ -900,6 +938,24 @@ trait MessagesModelGenerators {
     } yield TranshipmentType02(flag, TransportMeansType02(sequenceNumber, typeValue, referenceNumber))
   }
 
+  implicit lazy val arbitraryIncidentType03: Arbitrary[generated.IncidentType03] =
+    Arbitrary {
+      for {
+        sequenceNumber <- nonEmptyString
+        code           <- nonEmptyString
+        text           <- nonEmptyString
+        loc            <- arbitraryLocationType02.arbitrary
+      } yield generated.IncidentType03(
+        sequenceNumber = sequenceNumber,
+        code = code,
+        text = text,
+        Endorsement = None,
+        Location = loc,
+        TransportEquipment = Nil,
+        Transhipment = None
+      )
+    }
+
   implicit lazy val arbitraryIncidentType04: Arbitrary[generated.IncidentType04] =
     Arbitrary {
       for {
@@ -1273,6 +1329,15 @@ trait MessagesModelGenerators {
         identificationNumber = identificationNumber,
         name = name,
         Address = address
+      )
+    }
+
+  implicit lazy val arbitraryCustomsOfficeOfIncidentRegistrationType02: Arbitrary[CustomsOfficeOfIncidentRegistrationType02] =
+    Arbitrary {
+      for {
+        referenceNumber <- nonEmptyString
+      } yield CustomsOfficeOfIncidentRegistrationType02(
+        referenceNumber = referenceNumber
       )
     }
 }
