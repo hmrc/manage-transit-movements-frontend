@@ -38,6 +38,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
 
   private val errorResponses4xx: Gen[Int] = Gen.chooseNum(400: Int, 499: Int)
   private val errorResponses5xx: Gen[Int] = Gen.chooseNum(500: Int, 599: Int)
+  private val errorResponses: Gen[Int]    = Gen.oneOf(errorResponses4xx, errorResponses5xx)
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -168,8 +169,8 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
       }
 
-      "must return none for 5xx" in {
-        forAll(errorResponses5xx) {
+      "must return none for 4xx/5xx" in {
+        forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
               get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.asc&state=notSubmitted"))
@@ -181,22 +182,6 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
 
             val expectedResult = None
             connector.sortDraftDepartures(SortByLRNAsc, limit = Limit(limit), skip = Skip(skip)).futureValue mustBe expectedResult
-        }
-      }
-
-      "must return empty list for 4xx" in {
-        forAll(errorResponses4xx) {
-          errorResponse =>
-            server.stubFor(
-              get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.asc&state=notSubmitted"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(errorResponse)
-                )
-            )
-
-            val expectedResult = DeparturesSummary(0, 0, List.empty[DepartureUserAnswerSummary])
-            connector.sortDraftDepartures(SortByLRNAsc, limit = Limit(limit), skip = Skip(skip)).futureValue.value mustBe expectedResult
         }
       }
     }
@@ -225,24 +210,8 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustBe expectedResult
       }
 
-      "must return empty list for 4xx response" in {
-        forAll(errorResponses4xx) {
-          errorResponse =>
-            server.stubFor(
-              get(urlEqualTo(url))
-                .willReturn(
-                  aResponse()
-                    .withStatus(errorResponse)
-                )
-            )
-
-            val expectedResult = DeparturesSummary(0, 0, List.empty[DepartureUserAnswerSummary])
-            connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustBe expectedResult
-        }
-      }
-
-      "must return none for 5xx response" in {
-        forAll(errorResponses5xx) {
+      "must return none for 4xx/5xx response" in {
+        forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
               get(urlEqualTo(url))
@@ -320,23 +289,8 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         connector.getDraftDeparturesAvailability().futureValue mustBe Availability.Empty
       }
 
-      "must return empty for 4xx response" in {
-        forAll(errorResponses4xx) {
-          errorResponse =>
-            server.stubFor(
-              get(urlEqualTo(url))
-                .willReturn(
-                  aResponse()
-                    .withStatus(errorResponse)
-                )
-            )
-
-            connector.getDraftDeparturesAvailability().futureValue mustBe Availability.Empty
-        }
-      }
-
-      "must return unavailable for 5xx response" in {
-        forAll(errorResponses5xx) {
+      "must return unavailable for 4xx/5xx response" in {
+        forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
               get(urlEqualTo(url))

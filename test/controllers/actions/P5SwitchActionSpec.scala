@@ -24,15 +24,14 @@ import play.api.test.Helpers._
 
 class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks {
 
-  private class Harness(actionProvider: P5SwitchActionProvider, isOnLatestEnrolment: Boolean) {
+  private class Harness(actionProvider: P5SwitchActionProvider, isOnLegacyEnrolment: Boolean) {
 
     def onPageLoad(): Action[AnyContent] = (
       stubControllerComponents().actionBuilder andThen
-        FakeIdentifierAction.apply(isOnLatestEnrolment) andThen
+        FakeIdentifierAction.apply(isOnLegacyEnrolment) andThen
         actionProvider()
     ) {
-      request =>
-        Results.Ok
+      _ => Results.Ok
     }
   }
 
@@ -49,7 +48,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with S
           running(app) {
             val actionProvider: P5SwitchActionProvider = app.injector.instanceOf[P5SwitchActionProvider]
 
-            val controller = new Harness(actionProvider, isOnLatestEnrolment = true)
+            val controller = new Harness(actionProvider, isOnLegacyEnrolment = false)
             val result     = controller.onPageLoad()(fakeRequest)
 
             status(result) mustBe OK
@@ -57,8 +56,8 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with S
         }
       }
 
-      "and user is not on latest enrolment" - {
-        "must redirect to enrolment splash page" in {
+      "and user is on legacy enrolment" - {
+        "must redirect to enrolment guidance page" in {
           val app = super
             .guiceApplicationBuilder()
             .configure("microservice.services.features.isPhase5Enabled" -> true)
@@ -67,11 +66,11 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with S
           running(app) {
             val actionProvider: P5SwitchActionProvider = app.injector.instanceOf[P5SwitchActionProvider]
 
-            val controller = new Harness(actionProvider, isOnLatestEnrolment = false)
+            val controller = new Harness(actionProvider, isOnLegacyEnrolment = true)
             val result     = controller.onPageLoad()(fakeRequest)
 
             status(result) mustBe SEE_OTHER
-            redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
+            redirectLocation(result).value mustBe frontendAppConfig.enrolmentGuidancePage
           }
         }
       }
@@ -80,7 +79,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with S
     "when P5 is disabled" - {
       "must redirect to not found" in {
         forAll(arbitrary[Boolean]) {
-          isOnLatestEnrolment =>
+          isOnLegacyEnrolment =>
             val app = super
               .guiceApplicationBuilder()
               .configure("microservice.services.features.isPhase5Enabled" -> false)
@@ -89,7 +88,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with S
             running(app) {
               val actionProvider: P5SwitchActionProvider = app.injector.instanceOf[P5SwitchActionProvider]
 
-              val controller = new Harness(actionProvider, isOnLatestEnrolment)
+              val controller = new Harness(actionProvider, isOnLegacyEnrolment)
               val result     = controller.onPageLoad()(fakeRequest)
 
               status(result) mustBe SEE_OTHER

@@ -43,7 +43,7 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
       .recover {
         case Upstream4xxResponse(e) =>
           logger.info(s"getDeparturesSummary failed to return data: ${e.getMessage}")
-          Some(DeparturesSummary())
+          None
         case Upstream5xxResponse(e) =>
           logger.warn(s"getDeparturesSummary failed to return data: ${e.getMessage}")
           None
