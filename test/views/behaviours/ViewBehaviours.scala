@@ -260,4 +260,9 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
       val warning = getElementByClass(doc, "govuk-warning-text__text")
       assertElementContainsText(warning, s"Warning $expectedText")
     }
+
+  def pageWithoutWarningText(doc: Document): Unit =
+    s"must render warning text" in {
+      assertElementDoesNotExist(doc, "govuk-warning-text")
+    }
 }
