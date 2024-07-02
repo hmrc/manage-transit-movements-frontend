@@ -64,6 +64,10 @@ class AccompanyingDocumentPDFController @Inject() (
         .toSeq
 
     header(CONTENT_DISPOSITION) ++
-      header(CONTENT_TYPE)
+      header(CONTENT_TYPE) ++
+      // To stop search engines continuously hitting this url with random departureId's which is causing a high number of 404 errors
+      noIndex
   }
+
+  private val noIndex = Seq("X-Robots-Tag" -> "noindex")
 }
