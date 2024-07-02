@@ -18,17 +18,22 @@ package viewModels.P5
 
 import base.SpecBase
 import generators.Generators
+import models.LocalReferenceNumber
+import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.arrival.IncidentsDuringTransitP5ViewModel
-import viewModels.P5.arrival.IncidentsDuringTransitP5ViewModel.IncidentsDuringTransitP5ViewModelProvider
+import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel
+import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel.IncidentsDuringTransitP5ViewModelProvider
 
 class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "IncidentsDuringTransitP5ViewModel" - {
 
     val mrn                = "AB123"
+    val lrn                = "LRN123"
     val customsReferenceId = "CD123"
+
+    val departureReferenceNumbers = DepartureReferenceNumbers(LocalReferenceNumber(lrn), Some(mrn))
 
     val viewModelProvider = new IncidentsDuringTransitP5ViewModelProvider()
 
@@ -36,7 +41,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId),
       isMultipleIncidents: Boolean = true
     ): IncidentsDuringTransitP5ViewModel =
-      viewModelProvider.apply(mrn, customsOffice, isMultipleIncidents)
+      viewModelProvider.apply(departureReferenceNumbers, customsOffice, isMultipleIncidents)
 
     "when multiple incident" - {
       "title" - {

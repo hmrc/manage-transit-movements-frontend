@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package viewModels.P5.arrival
+package viewModels.P5.departure
 
+import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import viewModels.P5.ViewModelWithCustomsOffice
 
 case class IncidentsDuringTransitP5ViewModel(
-  mrn: String,
+  lrn: String,
   customsOffice: Either[String, CustomsOffice],
   isMultipleIncidents: Boolean
 ) extends ViewModelWithCustomsOffice {
@@ -56,8 +57,16 @@ object IncidentsDuringTransitP5ViewModel {
 
   class IncidentsDuringTransitP5ViewModelProvider {
 
-    def apply(mrn: String, customsOffice: Either[String, CustomsOffice], isMultipleIncidents: Boolean): IncidentsDuringTransitP5ViewModel =
-      IncidentsDuringTransitP5ViewModel(mrn, customsOffice, isMultipleIncidents)
+    def apply(
+      referenceNumbers: DepartureReferenceNumbers,
+      customsOffice: Either[String, CustomsOffice],
+      isMultipleIncidents: Boolean
+    ): IncidentsDuringTransitP5ViewModel =
+      IncidentsDuringTransitP5ViewModel(
+        referenceNumbers.localReferenceNumber.value,
+        customsOffice,
+        isMultipleIncidents
+      )
   }
 
 }
