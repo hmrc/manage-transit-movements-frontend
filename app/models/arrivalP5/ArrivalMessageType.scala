@@ -28,6 +28,7 @@ object ArrivalMessageType {
   case object GoodsReleasedNotification extends WithName("IE025") with ArrivalMessageType
   case object UnloadingPermission extends WithName("IE043") with ArrivalMessageType
   case object RejectionFromOfficeOfDestination extends WithName("IE057") with ArrivalMessageType
+  case object MovementEnded extends WithName("IE045") with ArrivalMessageType
 
   case class UnknownMessageType(status: String) extends WithName(status) with ArrivalMessageType
 
@@ -36,7 +37,8 @@ object ArrivalMessageType {
     UnloadingRemarks,
     GoodsReleasedNotification,
     UnloadingPermission,
-    RejectionFromOfficeOfDestination
+    RejectionFromOfficeOfDestination,
+    MovementEnded
   )
 
   implicit val enumerable: Enumerable[ArrivalMessageType] =
