@@ -845,8 +845,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           DepartureMessage(
             messageId,
             LocalDateTime.now(),
-            IncidentDuringTransit,
-            "body/path"
+            IncidentDuringTransit
           ),
           "messageId"
         ),
@@ -859,7 +858,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.incidentDuringTransit",
         Seq(
           ViewMovementAction(
-            "#", //TODO: Add href as part of CTCP-5553
+            "#", //TODO: Add href as part of fCTCP-5553
             "movement.status.P5.action.incidentDuringTransit.viewIncidents"
           )
         )
@@ -878,8 +877,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           DepartureMessage(
             messageId,
             LocalDateTime.now(),
-            IncidentDuringTransit,
-            "body/path"
+            IncidentDuringTransit
           ),
           "messageId"
         ),

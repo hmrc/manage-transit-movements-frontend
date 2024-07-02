@@ -172,8 +172,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           DepartureMessage(
             "messageId",
             dateTimeNow,
-            IncidentDuringTransit,
-            "body/path"
+            IncidentDuringTransit
           ),
           "messageId"
         )
@@ -184,8 +183,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               "AB123",
               Some("MRN"),
               LocalReferenceNumber("LRN"),
-              dateTimeNow,
-              "location"
+              dateTimeNow
             )
           ),
           totalCount = 1

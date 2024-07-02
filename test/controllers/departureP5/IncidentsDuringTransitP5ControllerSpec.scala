@@ -17,8 +17,9 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import generated.{CC057CType, CC182CType, FunctionalErrorType04}
+import generated.CC182CType
 import generators.Generators
+import models.departureP5.DepartureReferenceNumbers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -28,26 +29,20 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{ArrivalP5MessageService, DepartureP5MessageService, ReferenceDataService}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
-import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
-import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel.UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider
+import services.{DepartureP5MessageService, ReferenceDataService}
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel.IncidentsDuringTransitP5ViewModelProvider
-import viewModels.pagination.ListPaginationViewModel
-import viewModels.sections.Section
-import views.html.arrivalP5.UnloadingRemarkWithFunctionalErrorsP5View
 import views.html.departureP5.IncidentsDuringTransitP5View
 
 import scala.concurrent.Future
 
 class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockReferenceDataService = mock[ReferenceDataService]
+  private val mockReferenceDataService                      = mock[ReferenceDataService]
   private val mockIncidentsDuringTransitP5ViewModelProvider = mock[IncidentsDuringTransitP5ViewModelProvider]
-  private val mockDepartureP5MessageService = mock[DepartureP5MessageService]
+  private val mockDepartureP5MessageService                 = mock[DepartureP5MessageService]
 
-  lazy val controller: String = controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url
+  lazy val controller: String        = controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
 
   override def beforeEach(): Unit = {
@@ -64,17 +59,18 @@ class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaul
       .overrides(bind[IncidentsDuringTransitP5ViewModelProvider].toInstance(mockIncidentsDuringTransitP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
-
   "IncidentsDuringTransitP5Controller" - {
 
     val incidentsViewModel = new IncidentsDuringTransitP5ViewModel(lrn.toString, Left(customsReferenceNumber), isMultipleIncidents = true)
 
-    "must return OK and the correct view for a GET when functional errors are defined" in {
+    "must return OK and the correct view for a GET" in {
       forAll(arbitrary[CC182CType]) {
         message =>
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceNumber)))
           when(mockDepartureP5MessageService.getMessage[CC182CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+            .thenReturn(Future.successful(departureReferenceNumbers))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceNumber)))
           when(mockIncidentsDuringTransitP5ViewModelProvider.apply(any(), any(), any()))
             .thenReturn(incidentsViewModel)
 
