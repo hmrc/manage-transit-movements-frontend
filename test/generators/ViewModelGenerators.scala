@@ -32,6 +32,7 @@ import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination.{ListPaginationViewModel, MetaData}
 import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 import java.time.{LocalDate, LocalTime}
 
@@ -39,6 +40,14 @@ trait ViewModelGenerators {
   self: Generators =>
 
   private val maxSeqLength = 10
+
+  lazy val arbitraryStaticSectionNoChildren: Arbitrary[StaticSection] = Arbitrary {
+    for {
+      sectionTitle <- nonEmptyString
+      length       <- Gen.choose(1, maxSeqLength)
+      rows         <- Gen.containerOfN[Seq, SummaryListRow](length, arbitrary[SummaryListRow])
+    } yield StaticSection(sectionTitle, rows)
+  }
 
   implicit lazy val arbitraryViewAllArrivalMovementsViewModel: Arbitrary[ViewAllArrivalMovementsViewModel] =
     Arbitrary {
@@ -218,7 +227,7 @@ trait ViewModelGenerators {
       sectionTitle <- nonEmptyString
       length       <- Gen.choose(1, maxSeqLength)
       rows         <- Gen.containerOfN[Seq, SummaryListRow](length, arbitrary[SummaryListRow])
-    } yield Section(sectionTitle, rows)
+    } yield StaticSection(sectionTitle, rows)
   }
 
   implicit lazy val arbitrarySections: Arbitrary[List[Section]] = Arbitrary {

@@ -27,6 +27,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.GoodsNotReleasedP5Helper
 import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -54,15 +55,14 @@ class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyCheck
 
           val result = helper.buildDetailsSection
 
-          result mustBe Section(
+          result mustBe StaticSection(
             sectionTitle = None,
             rows = List(
               SummaryListRow(Key(Text("Movement Reference Number (MRN)")), Value(Text("someMRN"))),
               SummaryListRow(Key(Text("Date and time declaration sent")), Value(Text("09 June 2014 at 4:15pm"))),
               SummaryListRow(Key(Text("Reason")), Value(Text("releaseMotivationCode"))),
               SummaryListRow(Key(Text("Description")), Value(Text("releaseMotivationText")))
-            ),
-            id = None
+            )
           )
       }
     }

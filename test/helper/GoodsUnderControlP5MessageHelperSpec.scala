@@ -33,7 +33,7 @@ import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.GoodsUnderControlP5MessageHelper
-import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -222,7 +222,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
               SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
             )
 
-            val seqSummaryRow = Seq(Section(Some("Control information 1"), firstRow, None), Section(Some("Control information 2"), secondRow, None))
+            val seqSummaryRow = Seq(StaticSection(Some("Control information 1"), firstRow), StaticSection(Some("Control information 2"), secondRow))
 
             result mustBe seqSummaryRow
         }
@@ -257,7 +257,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
               SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
             )
 
-            val seqSummaryRow = Seq(Section(Some("Control information 1"), firstRow, None), Section(Some("Control information 2"), secondRow, None))
+            val seqSummaryRow = Seq(StaticSection(Some("Control information 1"), firstRow), StaticSection(Some("Control information 2"), secondRow))
 
             result mustBe seqSummaryRow
         }
@@ -309,7 +309,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
               SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
             )
 
-            val seqSummaryRow = Seq(Section(Some("Requested document 1"), firstRow, None), Section(Some("Requested document 2"), secondRow, None))
+            val seqSummaryRow = Seq(StaticSection(Some("Requested document 1"), firstRow), StaticSection(Some("Requested document 2"), secondRow))
 
             result mustBe seqSummaryRow
         }
@@ -345,7 +345,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
               SummaryListRow(key = Key("Description".toText), value = Value("Desc1".toText))
             )
 
-            val seqSummaryRow = Seq(Section(Some("Requested document 1"), firstRow, None), Section(Some("Requested document 2"), secondRow, None))
+            val seqSummaryRow = Seq(StaticSection(Some("Requested document 1"), firstRow), StaticSection(Some("Requested document 2"), secondRow))
 
             result mustBe seqSummaryRow
         }

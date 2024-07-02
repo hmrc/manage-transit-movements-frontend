@@ -20,6 +20,7 @@ import generated.CC051CType
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 import javax.xml.datatype.XMLGregorianCalendar
 
@@ -68,7 +69,7 @@ class GoodsNotReleasedP5Helper(
 
     val rows = mrnRow ++ dateTimeRow ++ reasonRow ++ descriptionRow
 
-    Section(None, rows, None)
+    StaticSection(None, rows)
   }
 
 }
