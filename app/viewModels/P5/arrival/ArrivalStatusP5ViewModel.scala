@@ -37,7 +37,8 @@ object ArrivalStatusP5ViewModel {
     Seq(
       arrivalNotification,
       unloadingRemarks,
-      unloadingPermission(arrivalId)
+      unloadingPermission(arrivalId),
+      movementEnded
     ).reduce(_ orElse _)
 
   private def goodsReleasedStatus(releasedIndicator: String): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
@@ -132,6 +133,11 @@ object ArrivalStatusP5ViewModel {
           ViewMovementAction(s"$href", s"movement.status.P5.action.${errorsActionText(functionalErrorCount)}")
         )
       )
+  }
+
+  private def movementEnded: PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
+    case message if message.messageType == MovementEnded =>
+      ArrivalStatusP5ViewModel("movement.status.P5.movementEnded", actions = Nil)
   }
 
   def errorsActionText(errors: Int): String = if (errors == 1) {
