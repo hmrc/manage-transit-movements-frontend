@@ -14,14 +14,17 @@
  * limitations under the License.
  *@
 
-@import viewModels.sections.Section
-@import viewModels.sections.Section._
-@import views.html.components.AnswerSection
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.Link
 
-@this(
-    answerSection: AnswerSection
-)
+@this()
 
-@(sections: Seq[Section])(implicit messages: Messages)
+@(link: Link)
 
-@sections.map(answerSection(_))
+<p class="govuk-body">
+    <a class="govuk-link" href=@link.href id="@link.id">
+        @link.text @link.visuallyHidden.map { value =>
+            <span class="govuk-visually-hidden">@value</span>
+        }
+    </a>
+</p>
