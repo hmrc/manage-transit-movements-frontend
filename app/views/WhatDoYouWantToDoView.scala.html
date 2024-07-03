@@ -26,18 +26,13 @@
     warning: Warning
 )
 
-@(arrivalsAvailability: Features, departuresAvailability: Features, draftDepartureAvailability: Features)(implicit request: Request[_], messages: Messages)
+@(arrivalsAvailability: Features, departuresAvailability: Features, draftDepartureAvailability: Features, isOnLegacyEnrolment: Boolean)(implicit request: Request[_], messages: Messages)
 
 @warningHtml = {
-    @if(config.phase5Enabled) {
-        @messages("whatDoYouWantToDo.warning.1")
-    } else {
-        @messages("whatDoYouWantToDo.warning.2")
-        <ul class="govuk-list govuk-list--bullet">
-            <li><strong>@messages("whatDoYouWantToDo.warning.3")</strong></li>
-            <li><strong>@messages("whatDoYouWantToDo.warning.4")</strong></li>
-        </ul>
-    }
+    <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.warning.1")</h2>
+    <p class="govuk-body">
+        <strong>@messages("whatDoYouWantToDo.warning.2") <a class="govuk-link" href="@config.enrolmentGuidancePage">@messages("whatDoYouWantToDo.warning.3")</a></strong>.
+    </p>
 }
 
 @mainTemplate(
@@ -45,7 +40,7 @@
 ) {
     @heading(messages("whatDoYouWantToDo.heading"))
 
-    @if(config.phase4Enabled) {
+    @if(isOnLegacyEnrolment) {
         @warning(warningHtml)
     }
 

@@ -80,7 +80,8 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with ScalaCheckPropertyCh
             view(
               arrivalsAvailability,
               departuresAvailability,
-              draftDeparturesAvailability
+              draftDeparturesAvailability,
+              isOnLegacyEnrolment
             )(request, messages).toString
 
           verify(mockWhatDoYouWantToDoService).fetchDraftDepartureAvailability()(any(), any())

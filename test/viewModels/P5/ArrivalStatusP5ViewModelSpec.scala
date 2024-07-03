@@ -259,6 +259,20 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
         }
       }
 
+      "when given Message with head of movementEnded" in {
+
+        val movementAndMessage = movementAndMessagesOther(MovementEnded)
+
+        val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = ArrivalStatusP5ViewModel(
+          "movement.status.P5.movementEnded",
+          Nil
+        )
+
+        result mustBe expectedResult
+      }
+
       "when errors are more than one " - {
 
         val expectedResult = "viewErrors"

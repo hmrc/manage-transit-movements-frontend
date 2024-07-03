@@ -22,7 +22,7 @@ import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import uk.gov.hmrc.auth
 import uk.gov.hmrc.auth.core.authorise.Predicate
 
-case class Enrolment(key: String, identifierKey: String) {
+case class Enrolment(key: String, identifierKey: String, legacy: Boolean) {
 
   def toPredicate: Predicate =
     auth.core.Enrolment.apply(key)
@@ -35,7 +35,8 @@ object Enrolment {
       enrolment =>
         val key           = enrolment.getString("key")
         val identifierKey = enrolment.getString("identifierKey")
-        Enrolment(key, identifierKey)
+        val legacy        = enrolment.getBoolean("legacy")
+        Enrolment(key, identifierKey, legacy)
     }
   }
 }

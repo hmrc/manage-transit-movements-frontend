@@ -21,6 +21,7 @@ import com.google.inject.Inject
 import connectors.EnrolmentStoreConnector
 import controllers.actions.AuthActionSpec._
 import controllers.routes
+import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.Application
@@ -39,8 +40,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   private class Harness(authAction: IdentifierAction) {
 
-    def onPageLoad(): Action[AnyContent] = (stubControllerComponents().actionBuilder andThen authAction) {
-      _ =>
+    def onPageLoad(f: IdentifierRequest[AnyContent] => Unit): Action[AnyContent] = (stubControllerComponents().actionBuilder andThen authAction) {
+      request =>
+        f(request)
         Results.Ok
     }
   }
@@ -75,8 +77,10 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         .configure(
           "enrolments.0.key"           -> NEW_ENROLMENT_KEY,
           "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY,
+          "enrolments.0.legacy"        -> false,
           "enrolments.1.key"           -> LEGACY_ENROLMENT_KEY,
-          "enrolments.1.identifierKey" -> LEGACY_ENROLMENT_ID_KEY
+          "enrolments.1.identifierKey" -> LEGACY_ENROLMENT_ID_KEY,
+          "enrolments.1.legacy"        -> true
         )
         .build()
 
@@ -88,8 +92,10 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         .configure(
           "enrolments.0.key"           -> NEW_ENROLMENT_KEY,
           "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY,
+          "enrolments.0.legacy"        -> false,
           "enrolments.1.key"           -> LEGACY_ENROLMENT_KEY,
-          "enrolments.1.identifierKey" -> LEGACY_ENROLMENT_ID_KEY
+          "enrolments.1.identifierKey" -> LEGACY_ENROLMENT_ID_KEY,
+          "enrolments.1.legacy"        -> true
         )
         .build()
 
@@ -112,7 +118,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new MissingBearerToken)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
@@ -124,7 +132,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new BearerTokenExpired)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
@@ -136,7 +146,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new InsufficientEnrolments)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -148,7 +160,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new InsufficientConfidenceLevel)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -160,7 +174,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new UnsupportedAuthProvider)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -172,7 +188,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new UnsupportedAffinityGroup)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -184,7 +202,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new UnsupportedCredentialRole)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -208,7 +228,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -234,7 +256,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -259,7 +283,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
@@ -284,7 +310,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
@@ -309,7 +337,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
@@ -334,7 +364,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
@@ -352,7 +384,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
@@ -370,7 +404,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
@@ -389,7 +425,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
@@ -416,7 +454,13 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller
+            .onPageLoad {
+              request =>
+                request.eoriNumber mustBe "999"
+                request.isOnLegacyEnrolment mustBe true
+            }
+            .apply(fakeRequest)
 
           status(result) mustBe OK
 
@@ -438,7 +482,13 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller
+            .onPageLoad {
+              request =>
+                request.eoriNumber mustBe "456"
+                request.isOnLegacyEnrolment mustBe false
+            }
+            .apply(fakeRequest)
 
           status(result) mustBe OK
 
@@ -460,7 +510,13 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller
+            .onPageLoad {
+              request =>
+                request.eoriNumber mustBe "123"
+                request.isOnLegacyEnrolment mustBe true
+            }
+            .apply(fakeRequest)
 
           status(result) mustBe OK
 
@@ -482,7 +538,13 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller
+            .onPageLoad {
+              request =>
+                request.eoriNumber mustBe "456"
+                request.isOnLegacyEnrolment mustBe false
+            }
+            .apply(fakeRequest)
 
           status(result) mustBe OK
 
@@ -505,7 +567,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -531,7 +595,13 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller
+            .onPageLoad {
+              request =>
+                request.eoriNumber mustBe "456"
+                request.isOnLegacyEnrolment mustBe false
+            }
+            .apply(fakeRequest)
 
           status(result) mustBe OK
 
@@ -549,7 +619,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         )
         .configure(
           "enrolments.0.key"           -> NEW_ENROLMENT_KEY,
-          "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY
+          "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY,
+          "enrolments.0.legacy"        -> false
         )
         .build()
 
@@ -560,7 +631,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         )
         .configure(
           "enrolments.0.key"           -> NEW_ENROLMENT_KEY,
-          "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY
+          "enrolments.0.identifierKey" -> NEW_ENROLMENT_ID_KEY,
+          "enrolments.0.legacy"        -> false
         )
         .build()
 
@@ -580,7 +652,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new MissingBearerToken)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
@@ -592,7 +666,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new BearerTokenExpired)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
@@ -604,7 +680,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new InsufficientEnrolments)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -616,7 +694,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new InsufficientConfidenceLevel)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -628,7 +708,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new UnsupportedAuthProvider)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -640,7 +722,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new UnsupportedAffinityGroup)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -652,7 +736,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val app        = applicationBuilderWithFake(new UnsupportedCredentialRole)
           val authAction = app.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -676,7 +762,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
@@ -702,7 +790,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -727,7 +817,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
@@ -752,7 +844,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
@@ -777,7 +871,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
@@ -802,7 +898,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
@@ -820,7 +918,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
@@ -838,7 +938,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
@@ -857,7 +959,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
@@ -884,7 +988,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
@@ -907,7 +1013,13 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller
+            .onPageLoad {
+              request =>
+                request.eoriNumber mustBe "456"
+                request.isOnLegacyEnrolment mustBe false
+            }
+            .apply(fakeRequest)
 
           status(result) mustBe OK
 
@@ -929,7 +1041,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -952,7 +1066,13 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller
+            .onPageLoad {
+              request =>
+                request.eoriNumber mustBe "456"
+                request.isOnLegacyEnrolment mustBe false
+            }
+            .apply(fakeRequest)
 
           status(result) mustBe OK
 
@@ -975,7 +1095,9 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller.onPageLoad(
+            _ => ()
+          )(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
@@ -1001,7 +1123,13 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
           val authAction = applicationBuilderWithMock.injector.instanceOf[AuthenticatedIdentifierAction]
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(fakeRequest)
+          val result = controller
+            .onPageLoad {
+              request =>
+                request.eoriNumber mustBe "456"
+                request.isOnLegacyEnrolment mustBe false
+            }
+            .apply(fakeRequest)
 
           status(result) mustBe OK
 

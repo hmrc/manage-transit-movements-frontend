@@ -26,9 +26,6 @@ import scala.concurrent.Future
 
 class MongoDraftDepartureService @Inject() (connector: DeparturesDraftsP5Connector) extends DraftDepartureService {
 
-  override def getAll(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
-    connector.getDeparturesSummary(queryParams)
-
   override def getLRNs(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.lrnFuzzySearch(lrn, limit)
 

@@ -67,7 +67,7 @@ class AuthenticatedIdentifierAction @Inject() (
               case Some(enrolment) =>
                 enrolment.getIdentifier(e.identifierKey) match {
                   case Some(enrolmentIdentifier) =>
-                    block(IdentifierRequest(request, enrolmentIdentifier.value)).map(Right(_)).map(Some(_))
+                    block(IdentifierRequest(request, enrolmentIdentifier.value, e.legacy)).map(Right(_)).map(Some(_))
                   case None =>
                     Future.successful(Some(Left(Redirect(routes.UnauthorisedController.onPageLoad()))))
                 }
