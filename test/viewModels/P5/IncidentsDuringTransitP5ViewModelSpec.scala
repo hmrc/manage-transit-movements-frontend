@@ -17,10 +17,12 @@
 package viewModels.P5
 
 import base.SpecBase
+import generated.CC182CType
 import generators.Generators
 import models.LocalReferenceNumber
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
+import org.scalacheck.Arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel.IncidentsDuringTransitP5ViewModelProvider
@@ -37,11 +39,13 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
 
     val viewModelProvider = new IncidentsDuringTransitP5ViewModelProvider()
 
+    val cc128Data = Arbitrary.arbitrary[CC182CType].sample.value
+
     def viewModel(
       customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId),
       isMultipleIncidents: Boolean = true
     ): IncidentsDuringTransitP5ViewModel =
-      viewModelProvider.apply(departureReferenceNumbers, customsOffice, isMultipleIncidents)
+      viewModelProvider.apply(cc128Data, departureReferenceNumbers, customsOffice, isMultipleIncidents)
 
     "when multiple incident" - {
       "title" - {

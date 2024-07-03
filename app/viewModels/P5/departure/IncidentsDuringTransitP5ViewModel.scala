@@ -16,9 +16,11 @@
 
 package viewModels.P5.departure
 
+import generated.CC182CType
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
+import utils.IncidentsDuringTransitP5Helper
 import viewModels.P5.ViewModelWithCustomsOffice
 
 case class IncidentsDuringTransitP5ViewModel(
@@ -58,15 +60,20 @@ object IncidentsDuringTransitP5ViewModel {
   class IncidentsDuringTransitP5ViewModelProvider {
 
     def apply(
+      data: CC182CType,
       referenceNumbers: DepartureReferenceNumbers,
       customsOffice: Either[String, CustomsOffice],
       isMultipleIncidents: Boolean
-    ): IncidentsDuringTransitP5ViewModel =
+    )(implicit messages: Messages): IncidentsDuringTransitP5ViewModel = {
+
+      val helper = new IncidentsDuringTransitP5Helper(data)
+
       IncidentsDuringTransitP5ViewModel(
         referenceNumbers.localReferenceNumber.value,
         customsOffice,
         isMultipleIncidents
       )
+    }
   }
 
 }

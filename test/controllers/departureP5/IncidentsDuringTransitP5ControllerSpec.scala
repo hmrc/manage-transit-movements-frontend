@@ -67,10 +67,14 @@ class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaul
         message =>
           when(mockDepartureP5MessageService.getMessage[CC182CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
+
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
             .thenReturn(Future.successful(departureReferenceNumbers))
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceNumber)))
-          when(mockIncidentsDuringTransitP5ViewModelProvider.apply(any(), any(), any()))
+
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+            .thenReturn(Future.successful(Left(customsReferenceNumber)))
+
+          when(mockIncidentsDuringTransitP5ViewModelProvider.apply(any(), any(), any(), any())(any()))
             .thenReturn(incidentsViewModel)
 
           val request = FakeRequest(GET, controller)

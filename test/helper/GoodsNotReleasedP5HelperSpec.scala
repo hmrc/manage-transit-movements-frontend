@@ -26,7 +26,6 @@ import scalaxb.XMLCalendar
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.GoodsNotReleasedP5Helper
-import viewModels.sections.Section
 import viewModels.sections.Section.StaticSection
 
 class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {

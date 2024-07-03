@@ -78,6 +78,10 @@ object Section {
 
     def apply(sectionTitle: String, rows: Seq[SummaryListRow], id: Option[String]): StaticSection =
       new StaticSection(Some(sectionTitle), rows, id = id)
+
+    def apply(sectionTitle: String, rows: Seq[SummaryListRow], children: Seq[Section]): StaticSection =
+      new StaticSection(sectionTitle = Some(sectionTitle), rows = rows, children = children)
+
   }
 
 }
