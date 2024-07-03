@@ -19,10 +19,11 @@ package utils
 import generated.CC182CType
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewModels.sections.Section.StaticSection
+import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 class IncidentsDuringTransitP5Helper(
-  data: CC182CType
+  data: CC182CType,
+  isMultipleIncidents: Boolean
 )(implicit messages: Messages)
     extends DeparturesP5MessageHelper {
 
@@ -34,10 +35,70 @@ class IncidentsDuringTransitP5Helper(
     call = None
   )
 
+  def dateTimeIncidentReportedRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some("time of incident here"), // TODO: Pull from incident data
+    formatAnswer = formatAsText,
+    prefix =
+      if (isMultipleIncidents) "arrival.notification.incidents.label.dateAndTime.plural" else "arrival.notification.incidents.label.dateAndTime.singular",
+    id = None,
+    call = None
+  )
+
+  def customsOfficeOfIncidentRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some("customs office of incident"), // TODO: Pull from incident data
+    formatAnswer = formatAsText,
+    prefix = "arrival.notification.incidents.label.officeOfIncident",
+    id = None,
+    call = None
+  )
+
+  def officeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some("office of departure"), // TODO: Pull from incident data
+    formatAnswer = formatAsText,
+    prefix = "arrival.notification.incidents.label.officeOfDeparture",
+    id = None,
+    call = None
+  )
+
+  def incidentCodeRow(incidentIndex: Int): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some("incident code here"), // TODO: Pull from incident data
+    formatAnswer = formatAsText,
+    prefix = "arrival.notification.incidents.incident.code.label",
+    id = None,
+    call = None
+  )
+
+  def incidentDescriptionRow(incidentIndex: Int): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some("incident description here"), // TODO: Pull from incident data
+    formatAnswer = formatAsText,
+    prefix = "arrival.notification.incidents.incident.description.label",
+    id = None,
+    call = None
+  )
+
   def incidentInformationSection: StaticSection = StaticSection(
     sectionTitle = None,
     rows = Seq(
-      mrnRow
+      mrnRow,
+      dateTimeIncidentReportedRow,
+      customsOfficeOfIncidentRow,
+      officeOfDepartureRow
     ).flatten
   )
+
+  def incidentsSection: AccordionSection = AccordionSection(
+    sectionTitle = Some(messages("arrival.notification.incidents.heading")),
+    children = data.Consignment.Incident.zipWithIndex.map {
+      case (_, index) => incidentSection(index)
+    }
+  )
+
+  def incidentSection(incidentIndex: Int): AccordionSection = AccordionSection(
+    sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex + 1),
+    rows = Seq(
+      incidentCodeRow(incidentIndex),
+      incidentDescriptionRow(incidentIndex)
+    ).flatten
+  )
+
 }

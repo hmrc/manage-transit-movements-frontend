@@ -44,6 +44,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val departureIdP5: String    = "643cffea2dca70b2"
   val arrivalIdP5: String      = "62f4ebbb765ba8c2"
 
+  val incidentIndex: Int = 0
+
   val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"))
 
   val departureReferenceNumbers = DepartureReferenceNumbers(lrn, None)

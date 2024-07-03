@@ -68,7 +68,7 @@ object IncidentsDuringTransitP5ViewModel {
       isMultipleIncidents: Boolean
     )(implicit messages: Messages): IncidentsDuringTransitP5ViewModel = {
 
-      val helper = new IncidentsDuringTransitP5Helper(data)
+      val helper = new IncidentsDuringTransitP5Helper(data, isMultipleIncidents)
 
       val sections = Seq(
         helper.incidentInformationSection

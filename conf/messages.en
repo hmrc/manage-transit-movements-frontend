@@ -635,8 +635,8 @@ arrival.notification.incidents.customsOfficeContact.teleNotAvailAndOfficeNameNot
 arrival.notification.incidents.label.mrn = Movement Reference Number (MRN)
 arrival.notification.incidents.label.dateAndTime.singular = Date and time incident reported
 arrival.notification.incidents.label.dateAndTime.plural = Date and time incidents reported
-arrival.notification.incidents.label.officeOfIncident = Date and time incidents reported
-arrival.notification.incidents.label.officeOfDeparture = Date and time incidents reported
+arrival.notification.incidents.label.officeOfIncident = Customs office of incident
+arrival.notification.incidents.label.officeOfDeparture = Office of departure
 arrival.notification.incidents.heading.incident = Incidents
 arrival.notification.incidents.subheading.incident = Incident {0}
 arrival.notification.incidents.link = More details
