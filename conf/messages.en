@@ -631,3 +631,17 @@ arrival.notification.incidents.customsOfficeContact.telephoneAvailable = For fur
 arrival.notification.incidents.customsOfficeContact.telephoneNotAvailable = For further help, contact Customs at {0}.
 arrival.notification.incidents.customsOfficeContact.teleAvailAndOfficeNameNotAvail = For further help, contact Customs office {0} on {1}.
 arrival.notification.incidents.customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = For further help, contact Customs office {0}.
+
+arrival.notification.incidents.label.mrn = Movement Reference Number (MRN)
+arrival.notification.incidents.label.dateAndTime.singular = Date and time incident reported
+arrival.notification.incidents.label.dateAndTime.plural = Date and time incidents reported
+arrival.notification.incidents.label.officeOfIncident = Date and time incidents reported
+arrival.notification.incidents.label.officeOfDeparture = Date and time incidents reported
+arrival.notification.incidents.heading.incident = Incidents
+arrival.notification.incidents.subheading.incident = Incident {0}
+arrival.notification.incidents.link = More details
+arrival.notification.incidents.link.hidden = more details on incident {0}
+arrival.notification.incidents.incident.code.label = Incident code
+arrival.notification.incidents.incident.description.label = Description
+
+

@@ -16,15 +16,28 @@
 
 package utils
 
-import config.PhaseConfig
 import generated.CC182CType
-import models.Link
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewModels.sections.Section
-import viewModels.sections.Section.{AccordionSection, StaticSection}
+import viewModels.sections.Section.StaticSection
 
 class IncidentsDuringTransitP5Helper(
   data: CC182CType
 )(implicit messages: Messages)
-    extends DeparturesP5MessageHelper {}
+    extends DeparturesP5MessageHelper {
+
+  def mrnRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(data.TransitOperation.MRN),
+    formatAnswer = formatAsText,
+    prefix = "arrival.notification.incidents.label.mrn",
+    id = None,
+    call = None
+  )
+
+  def incidentInformationSection: StaticSection = StaticSection(
+    sectionTitle = None,
+    rows = Seq(
+      mrnRow
+    ).flatten
+  )
+}

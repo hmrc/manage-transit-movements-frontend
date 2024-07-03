@@ -22,11 +22,13 @@ import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import utils.IncidentsDuringTransitP5Helper
 import viewModels.P5.ViewModelWithCustomsOffice
+import viewModels.sections.Section
 
 case class IncidentsDuringTransitP5ViewModel(
   lrn: String,
   customsOffice: Either[String, CustomsOffice],
-  isMultipleIncidents: Boolean
+  isMultipleIncidents: Boolean,
+  sections: Seq[Section]
 ) extends ViewModelWithCustomsOffice {
 
   override val prefix: String = "arrival.notification.incidents.customsOfficeContact"
@@ -68,10 +70,15 @@ object IncidentsDuringTransitP5ViewModel {
 
       val helper = new IncidentsDuringTransitP5Helper(data)
 
+      val sections = Seq(
+        helper.incidentInformationSection
+      )
+
       IncidentsDuringTransitP5ViewModel(
         referenceNumbers.localReferenceNumber.value,
         customsOffice,
-        isMultipleIncidents
+        isMultipleIncidents,
+        sections
       )
     }
   }

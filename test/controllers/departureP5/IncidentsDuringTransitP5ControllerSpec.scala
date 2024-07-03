@@ -31,6 +31,7 @@ import play.api.test.Helpers._
 import services.{DepartureP5MessageService, ReferenceDataService}
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel.IncidentsDuringTransitP5ViewModelProvider
+import viewModels.sections.Section
 import views.html.departureP5.IncidentsDuringTransitP5View
 
 import scala.concurrent.Future
@@ -43,6 +44,7 @@ class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaul
 
   lazy val controller: String        = controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url
   private val customsReferenceNumber = Gen.alphaNumStr.sample.value
+  private val sections               = arbitrary[Seq[Section]].sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -60,7 +62,7 @@ class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaul
 
   "IncidentsDuringTransitP5Controller" - {
 
-    val incidentsViewModel = new IncidentsDuringTransitP5ViewModel(lrn.toString, Left(customsReferenceNumber), isMultipleIncidents = true)
+    val incidentsViewModel = new IncidentsDuringTransitP5ViewModel(lrn.toString, Left(customsReferenceNumber), isMultipleIncidents = true, sections)
 
     "must return OK and the correct view for a GET" in {
       forAll(arbitrary[CC182CType]) {

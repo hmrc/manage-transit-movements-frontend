@@ -16,12 +16,14 @@
 
 @import views.html.components.{Button, Heading}
 @import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel
+@import views.html.components.AnswerSections
 
 @this(
-        mainTemplate: MainTemplate,
-        heading: Heading,
-        button: Button,
-        formHelper: FormWithCSRF
+mainTemplate: MainTemplate,
+heading: Heading,
+answerSections: AnswerSections,
+button: Button,
+formHelper: FormWithCSRF
 )
 
 @(viewModel: IncidentsDuringTransitP5ViewModel)(implicit request: Request[_], messages: Messages)
@@ -37,6 +39,8 @@
     )
 
     <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
+
+    @answerSections(viewModel.sections)
 
     <p class="govuk-body" id="what-happens-next">@viewModel.customsOfficeContent</p>
 
