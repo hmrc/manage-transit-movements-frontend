@@ -25,6 +25,7 @@ sealed trait Section {
   val children: Seq[Section]
   val viewLinks: Seq[Link]
   val id: Option[String]
+  val isOpen: Boolean
 
   def margin: String = {
     val indent = if (sectionTitle.isDefined) 1 else 0
@@ -43,7 +44,8 @@ object Section {
     rows: Seq[SummaryListRow] = Nil,
     children: Seq[Section] = Nil,
     viewLinks: Seq[Link] = Nil,
-    id: Option[String] = None
+    id: Option[String] = None,
+    isOpen: Boolean = false
   ) extends Section {
 
     override def isEmpty: Boolean = false
@@ -54,11 +56,12 @@ object Section {
     def apply(sectionTitle: String, rows: Seq[SummaryListRow]): AccordionSection =
       new AccordionSection(sectionTitle = Some(sectionTitle), rows = rows)
 
-    def apply(sectionTitle: String, rows: Seq[SummaryListRow], viewLinks: Seq[Link], id: String): AccordionSection =
-      new AccordionSection(Some(sectionTitle), rows = rows, viewLinks = viewLinks, id = Some(id))
+    def apply(sectionTitle: String, rows: Seq[SummaryListRow], isOpen: Boolean): AccordionSection =
+      new AccordionSection(sectionTitle = Some(sectionTitle), rows = rows, isOpen = isOpen)
 
-    def apply(sectionTitle: String, rows: Seq[SummaryListRow], children: Seq[Section], viewLinks: Seq[Link], id: String): AccordionSection =
-      new AccordionSection(Some(sectionTitle), rows, children, viewLinks, id = Some(id))
+    def apply(sectionTitle: String, rows: Seq[SummaryListRow], viewLinks: Seq[Link], isOpen: Boolean): AccordionSection =
+      new AccordionSection(Some(sectionTitle), rows = rows, viewLinks = viewLinks, isOpen = isOpen)
+
   }
 
   case class StaticSection(
@@ -66,7 +69,8 @@ object Section {
     rows: Seq[SummaryListRow] = Nil,
     viewLinks: Seq[Link] = Nil,
     id: Option[String] = None,
-    children: Seq[Section] = Nil
+    children: Seq[Section] = Nil,
+    isOpen: Boolean = false
   ) extends Section {
 
     override def isEmpty: Boolean = rows.isEmpty && children.isEmpty

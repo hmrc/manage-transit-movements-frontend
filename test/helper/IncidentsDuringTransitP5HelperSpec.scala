@@ -20,7 +20,8 @@ import base.SpecBase
 import generators.Generators
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import generated.{CC182CType}
+import generated.CC182CType
+import models.Link
 import utils.IncidentsDuringTransitP5Helper
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
@@ -199,6 +200,8 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val result = helper.incidentSection(incidentIndex)
 
               result mustBe a[AccordionSection]
+              result.sectionTitle mustBe Some("Incident 1")
+              result.isOpen mustBe true
               result.rows.size mustBe 2
           }
         }
@@ -225,9 +228,28 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val result = helper.incidentsSection
 
               result mustBe a[AccordionSection]
+              result.sectionTitle mustBe Some("Incidents")
               result.children.size mustBe 2
+
               result.children.head mustBe a[AccordionSection]
+              result.children.head.isOpen mustBe true
+
               result.children(1) mustBe a[AccordionSection]
+              result.children(1).isOpen mustBe false
+
+              result.children.head.viewLinks.head mustBe Link(
+                id = s"more-details-incident-${1}",
+                text = "More details",
+                href = controllers.routes.SessionExpiredController.onPageLoad().url,
+                visuallyHidden = Some("more details on incident 1")
+              )
+
+              result.children(1).viewLinks.head mustBe Link(
+                id = s"more-details-incident-${2}",
+                text = "More details",
+                href = controllers.routes.SessionExpiredController.onPageLoad().url,
+                visuallyHidden = Some("more details on incident 2")
+              )
           }
         }
       }

@@ -17,7 +17,9 @@
 package utils
 
 import generated.CC182CType
+import models.Link
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
@@ -87,18 +89,28 @@ class IncidentsDuringTransitP5Helper(
   )
 
   def incidentsSection: AccordionSection = AccordionSection(
-    sectionTitle = Some(messages("arrival.notification.incidents.heading")),
+    sectionTitle = Some(messages("arrival.notification.incidents.heading.incident")),
     children = data.Consignment.Incident.zipWithIndex.map {
       case (_, index) => incidentSection(index)
-    }
+    },
+    isOpen = true
   )
 
   def incidentSection(incidentIndex: Int): AccordionSection = AccordionSection(
-    sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex + 1),
+    sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex.toDisplay),
     rows = Seq(
       incidentCodeRow(incidentIndex),
       incidentDescriptionRow(incidentIndex)
-    ).flatten
+    ).flatten,
+    isOpen = if (incidentIndex == 0) true else false,
+    viewLinks = Seq(
+      Link(
+        id = s"more-details-incident-${incidentIndex.toDisplay}",
+        text = messages("arrival.notification.incidents.link"),
+        href = controllers.routes.SessionExpiredController.onPageLoad().url, //TODO: Update navigation to incident page once implemented
+        visuallyHidden = Some(messages("arrival.notification.incidents.link.hidden", incidentIndex.toDisplay))
+      )
+    )
   )
 
 }

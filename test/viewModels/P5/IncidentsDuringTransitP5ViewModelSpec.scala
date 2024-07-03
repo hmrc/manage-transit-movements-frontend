@@ -22,7 +22,7 @@ import generators.Generators
 import models.LocalReferenceNumber
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
-import org.scalacheck.Arbitrary
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel.IncidentsDuringTransitP5ViewModelProvider
@@ -42,10 +42,35 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
     val cc128Data = Arbitrary.arbitrary[CC182CType].sample.value
 
     def viewModel(
+      cc128Data: CC182CType = cc128Data,
       customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId),
       isMultipleIncidents: Boolean = true
     ): IncidentsDuringTransitP5ViewModel =
       viewModelProvider.apply(cc128Data, departureReferenceNumbers, customsOffice, isMultipleIncidents)
+
+    "viewModel must have correct sections" in {
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (code, text) =>
+          val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
+            code = code,
+            text = text
+          )
+
+          val updatedConsignment = cc128Data.Consignment.copy(
+            Incident = Seq(updatedIncident, updatedIncident)
+          )
+
+          val modifiedCC182CType = cc128Data.copy(
+            Consignment = updatedConsignment
+          )
+
+          val modifiedViewModel = viewModel(modifiedCC182CType)
+
+          val sections = modifiedViewModel.sections
+
+          sections.length mustBe 2
+      }
+    }
 
     "when multiple incident" - {
       "title" - {

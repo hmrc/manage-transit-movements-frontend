@@ -26,4 +26,9 @@ package object utils {
     }
   }
 
+  implicit class RichInt(value: Int) {
+
+    def toDisplay: Int = value + 1
+  }
+
 }

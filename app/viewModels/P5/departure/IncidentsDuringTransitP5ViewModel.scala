@@ -71,7 +71,8 @@ object IncidentsDuringTransitP5ViewModel {
       val helper = new IncidentsDuringTransitP5Helper(data, isMultipleIncidents)
 
       val sections = Seq(
-        helper.incidentInformationSection
+        helper.incidentInformationSection,
+        helper.incidentsSection
       )
 
       IncidentsDuringTransitP5ViewModel(
