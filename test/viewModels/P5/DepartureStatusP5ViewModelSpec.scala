@@ -845,8 +845,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           DepartureMessage(
             messageId,
             LocalDateTime.now(),
-            IncidentDuringTransit,
-            "body/path"
+            IncidentDuringTransit
           ),
           "messageId"
         ),
@@ -878,8 +877,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           DepartureMessage(
             messageId,
             LocalDateTime.now(),
-            IncidentDuringTransit,
-            "body/path"
+            IncidentDuringTransit
           ),
           "messageId"
         ),
