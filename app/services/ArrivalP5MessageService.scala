@@ -34,7 +34,7 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ArrivalMovementAndMessage]] =
     arrivalMovements.arrivalMovements.traverse {
       movement =>
-        arrivalMovementP5Connector.getLatestMessageForMovement(movement.messagesLocation).flatMap {
+        arrivalMovementP5Connector.getLatestMessageForMovement(movement.arrivalId).flatMap {
           message =>
             message.latestMessage.messageType match {
               case GoodsReleasedNotification =>

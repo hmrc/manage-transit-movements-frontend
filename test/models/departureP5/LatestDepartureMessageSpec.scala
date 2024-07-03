@@ -70,8 +70,7 @@ class LatestDepartureMessageSpec extends SpecBase {
         DepartureMessage(
           "messageId3",
           LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.ReleasedForTransit,
-          "movements/departures/1/messages/3"
+          DepartureMessageType.ReleasedForTransit
         ),
         ie015MessageId = "messageId1"
       )
@@ -125,8 +124,7 @@ class LatestDepartureMessageSpec extends SpecBase {
         DepartureMessage(
           "messageId3",
           LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.ReleasedForTransit,
-          "movements/departures/1/messages/3"
+          DepartureMessageType.ReleasedForTransit
         ),
         ie015MessageId = "messageId1"
       )

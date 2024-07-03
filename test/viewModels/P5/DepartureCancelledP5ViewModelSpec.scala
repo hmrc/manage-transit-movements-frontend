@@ -48,53 +48,61 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
     val lrn                = "AB123"
     val customsReferenceId = "CD123"
 
-    val x = arbitrary[CC009CType].sample.value
-
-    val message = x
-      .copy(TransitOperation = x.TransitOperation.copy(MRN = Some("mrn123")))
-      .copy(Invalidation =
-        x.Invalidation.copy(
-          requestDateAndTime = Some(XMLCalendar("2022-07-15")),
-          justification = Some("some justification")
-        )
-      )
-      .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03(customsReferenceId))
+    val message = arbitrary[CC009CType]
+      .map {
+        ie009 =>
+          ie009
+            .copy(
+              TransitOperation = ie009.TransitOperation.copy(
+                MRN = Some("mrn123")
+              ),
+              Invalidation = ie009.Invalidation.copy(
+                decisionDateAndTime = Some(XMLCalendar("2022-07-15")),
+                justification = Some("some justification")
+              ),
+              CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03(customsReferenceId)
+            )
+      }
+      .sample
+      .value
 
     val viewModelProvider = new DepartureCancelledP5ViewModelProvider(mockReferenceDataService)
 
     when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceId)))
 
-    def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): DepartureCancelledP5ViewModel =
+    def viewModel(customsOffice: Either[String, CustomsOffice]): DepartureCancelledP5ViewModel =
       viewModelProvider.apply(message, lrn, customsOffice).futureValue
 
-    "must return correct section" in {
-      viewModel().sections.head.sectionTitle mustBe None
-      viewModel().sections.head.rows.size mustBe 5
-    }
+    "must" - {
+      val result = viewModel(Left(customsReferenceId))
 
-    "title" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Declaration cancelled"
+      "return correct section" in {
+        result.sections.head.sectionTitle mustBe None
+        result.sections.head.rows.size mustBe 5
       }
-    }
 
-    "heading" - {
-      "must return correct message" in {
-        viewModel().title mustBe "Declaration cancelled"
+      "return correct title" in {
+        result.title mustBe "Declaration cancelled"
       }
-    }
 
-    "paragraph" in {
-      viewModel().paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
+      "return correct heading" in {
+        result.heading mustBe "Declaration cancelled"
+      }
+
+      "return correct paragraph" in {
+        result.paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
+      }
+
+      "return correct hyperlink" in {
+        result.hyperlink mustBe "Make another departure declaration"
+      }
+
+      "must return correct customs office content" in {
+        result.customsOfficeContent mustBe s"If you have any questions, contact Customs office $customsReferenceId."
+      }
     }
 
     "customsOfficeContent" - {
-
-      "when no customs office found" - {
-        "must return correct message" in {
-          viewModel().customsOfficeContent mustBe s"If you have any questions, contact Customs office $customsReferenceId."
-        }
-      }
 
       "when customs office found with telephone number and name" - {
         "must return correct message" in {
@@ -132,12 +140,6 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
 
           result mustBe s"If you have any questions, contact Customs office $customsReferenceId."
         }
-      }
-    }
-
-    "hyperlink" - {
-      "must return correct message" in {
-        viewModel().hyperlink mustBe "Make another departure declaration"
       }
     }
   }

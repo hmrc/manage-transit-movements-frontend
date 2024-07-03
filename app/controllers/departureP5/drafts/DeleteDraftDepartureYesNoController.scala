@@ -16,7 +16,7 @@
 
 package controllers.departureP5.drafts
 
-import controllers.actions.{IdentifierAction, LockActionProvider}
+import controllers.actions.{Actions, LockActionProvider}
 import forms.YesNoFormProvider
 import models.LocalReferenceNumber
 import play.api.http.Status.{OK => StatusOK}
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeleteDraftDepartureYesNoController @Inject() (
   override val messagesApi: MessagesApi,
   formProvider: YesNoFormProvider,
-  identify: IdentifierAction,
+  actions: Actions,
   lockAction: LockActionProvider,
   val controllerComponents: MessagesControllerComponents,
   view: DeleteDraftDepartureYesNoView,
@@ -44,13 +44,13 @@ class DeleteDraftDepartureYesNoController @Inject() (
   private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
   def onPageLoad(lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
-    (Action andThen identify andThen lockAction(lrn.value)) {
+    (Action andThen actions.checkP5Switch() andThen lockAction(lrn.value)) {
       implicit request =>
         Ok(view(form, lrn.value, pageNumber, numberOfRows, searchLrn))
     }
 
   def onSubmit(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
-    (Action andThen identify andThen lockAction(lrn)).async {
+    (Action andThen actions.checkP5Switch() andThen lockAction(lrn)).async {
       implicit request =>
         form
           .bindFromRequest()

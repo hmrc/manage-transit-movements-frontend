@@ -17,16 +17,18 @@
 package controllers.actions
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.mvc.{Action, AnyContent, Results}
 import play.api.test.Helpers._
 
-class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures {
+class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks {
 
-  private class Harness(actionProvider: P5SwitchActionProvider) {
+  private class Harness(actionProvider: P5SwitchActionProvider, isOnLegacyEnrolment: Boolean) {
 
     def onPageLoad(): Action[AnyContent] = (
       stubControllerComponents().actionBuilder andThen
-        FakeIdentifierAction.apply() andThen
+        FakeIdentifierAction.apply(isOnLegacyEnrolment) andThen
         actionProvider()
     ) {
       _ => Results.Ok
@@ -35,36 +37,64 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   "P5 Enabled Action" - {
 
-    "must return Ok when P5 is enabled" in {
-      val app = super
-        .guiceApplicationBuilder()
-        .configure("microservice.services.features.isPhase5Enabled" -> true)
-        .build()
+    "when P5 is enabled" - {
+      "and user is on latest enrolment" - {
+        "must return Ok" in {
+          val app = super
+            .guiceApplicationBuilder()
+            .configure("microservice.services.features.isPhase5Enabled" -> true)
+            .build()
 
-      running(app) {
-        val actionProvider: P5SwitchActionProvider = app.injector.instanceOf[P5SwitchActionProvider]
+          running(app) {
+            val actionProvider: P5SwitchActionProvider = app.injector.instanceOf[P5SwitchActionProvider]
 
-        val controller = new Harness(actionProvider)
-        val result     = controller.onPageLoad()(fakeRequest)
+            val controller = new Harness(actionProvider, isOnLegacyEnrolment = false)
+            val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe OK
+            status(result) mustBe OK
+          }
+        }
+      }
+
+      "and user is on legacy enrolment" - {
+        "must redirect to enrolment guidance page" in {
+          val app = super
+            .guiceApplicationBuilder()
+            .configure("microservice.services.features.isPhase5Enabled" -> true)
+            .build()
+
+          running(app) {
+            val actionProvider: P5SwitchActionProvider = app.injector.instanceOf[P5SwitchActionProvider]
+
+            val controller = new Harness(actionProvider, isOnLegacyEnrolment = true)
+            val result     = controller.onPageLoad()(fakeRequest)
+
+            status(result) mustBe SEE_OTHER
+            redirectLocation(result).value mustBe frontendAppConfig.enrolmentGuidancePage
+          }
+        }
       }
     }
 
-    "must redirect to not found when P5 is disabled" in {
-      val app = super
-        .guiceApplicationBuilder()
-        .configure("microservice.services.features.isPhase5Enabled" -> false)
-        .build()
+    "when P5 is disabled" - {
+      "must redirect to not found" in {
+        forAll(arbitrary[Boolean]) {
+          isOnLegacyEnrolment =>
+            val app = super
+              .guiceApplicationBuilder()
+              .configure("microservice.services.features.isPhase5Enabled" -> false)
+              .build()
 
-      running(app) {
-        val actionProvider: P5SwitchActionProvider = app.injector.instanceOf[P5SwitchActionProvider]
+            running(app) {
+              val actionProvider: P5SwitchActionProvider = app.injector.instanceOf[P5SwitchActionProvider]
 
-        val controller = new Harness(actionProvider)
-        val result     = controller.onPageLoad()(fakeRequest)
+              val controller = new Harness(actionProvider, isOnLegacyEnrolment)
+              val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.ErrorController.notFound().url
+              status(result) mustBe SEE_OTHER
+              redirectLocation(result).value mustBe controllers.routes.ErrorController.notFound().url
+            }
+        }
       }
     }
   }

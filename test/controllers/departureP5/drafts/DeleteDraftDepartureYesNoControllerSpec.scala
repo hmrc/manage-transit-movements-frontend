@@ -46,7 +46,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .guiceApplicationBuilder()
+      .p5GuiceApplicationBuilder()
       .overrides(
         bind[DraftDepartureService].toInstance(draftDepartureService),
         bind[LockActionProvider].toInstance(mockLockActionProvider)
