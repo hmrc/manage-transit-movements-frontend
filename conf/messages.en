@@ -179,6 +179,7 @@ movement.status.P5.movementEnded                                        = Moveme
 movement.status.P5.prelodgedDeclarationSent	                            = Prelodged declaration sent
 movement.status.P5.goodsNotReleased                                     = Goods not released
 movement.status.P5.goodsReleased                                        = Goods released
+movement.status.P5.discrepancies                                        = Goods not released - discrepancies
 
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
