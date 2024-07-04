@@ -85,6 +85,7 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     http
       .get(url)
       .setHeader(jsonAcceptHeader)
+      .transform(_.withQueryStringParameters("count" -> config.apiResults.toString))
       .execute[LatestDepartureMessage]
   }
 

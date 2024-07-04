@@ -444,7 +444,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                |""".stripMargin)
 
           server.stubFor(
-            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages"))
+            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages?count=500"))
               .willReturn(okJson(responseJson.toString()))
           )
 
