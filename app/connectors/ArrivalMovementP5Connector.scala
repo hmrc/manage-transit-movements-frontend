@@ -85,6 +85,7 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
     http
       .get(url)
       .setHeader(jsonAcceptHeader)
+      .transform(_.withQueryStringParameters("count" -> config.apiResults.toString))
       .execute[LatestArrivalMessage]
   }
 

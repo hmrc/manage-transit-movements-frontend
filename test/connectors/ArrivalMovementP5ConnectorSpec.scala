@@ -350,7 +350,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
               |""".stripMargin)
 
           server.stubFor(
-            get(urlEqualTo(s"/movements/arrivals/$arrivalIdP5/messages"))
+            get(urlEqualTo(s"/movements/arrivals/$arrivalIdP5/messages?count=500"))
               .willReturn(okJson(responseJson.toString()))
           )
 
