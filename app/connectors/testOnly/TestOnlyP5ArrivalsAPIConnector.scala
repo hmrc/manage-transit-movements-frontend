@@ -37,8 +37,8 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClientV2, config: 
     val headerSeq = headers.get("Authorization").map(authorizationHeader).foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader))(_ :+ _)
     http
       .post(serviceUrl)
-      .withBody(requestData.toString)
       .setHeader(headerSeq: _*)
+      .withBody(requestData)
       .execute[HttpResponse]
   }
 
@@ -53,8 +53,8 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClientV2, config: 
         .foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader, messageTypeHeader(headers.get("X-Message-Type"))))(_ :+ _)
     http
       .post(serviceUrl)
-      .withBody(requestData.toString)
       .setHeader(headerSeq: _*)
+      .withBody(requestData)
       .execute[HttpResponse]
   }
 
@@ -68,8 +68,8 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClientV2, config: 
         .foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader, messageTypeHeader(headers.get("X-Message-Type"))))(_ :+ _)
     http
       .post(serviceUrl)
-      .withBody(requestData.toString)
       .setHeader(headerSeq: _*)
+      .withBody(requestData)
       .execute[HttpResponse]
   }
 

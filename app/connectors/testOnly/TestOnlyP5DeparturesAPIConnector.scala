@@ -35,11 +35,13 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClientV2, config
     val serviceUrl = url"${config.commonTransitConventionTradersUrl}movements/departures"
 
     val headerSeq = headers.get("Authorization").map(authorizationHeader).foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader))(_ :+ _)
+
     http
       .post(serviceUrl)
-      .withBody(requestData.toString)
       .setHeader(headerSeq: _*)
+      .withBody(requestData)
       .execute[HttpResponse]
+
   }
 
   def departureInbound(requestData: NodeSeq, departureId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
@@ -50,10 +52,11 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClientV2, config
         .get("Authorization")
         .map(authorizationHeader)
         .foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader, messageTypeHeader(headers.get("X-Message-Type"))))(_ :+ _)
+
     http
       .post(serviceUrl)
-      .withBody(requestData.toString)
       .setHeader(headerSeq: _*)
+      .withBody(requestData)
       .execute[HttpResponse]
   }
 
@@ -65,10 +68,11 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClientV2, config
         .get("Authorization")
         .map(authorizationHeader)
         .foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader, messageTypeHeader(headers.get("X-Message-Type"))))(_ :+ _)
+
     http
       .post(serviceUrl)
-      .withBody(requestData.toString)
       .setHeader(headerSeq: _*)
+      .withBody(requestData)
       .execute[HttpResponse]
   }
 
@@ -80,10 +84,10 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (val http: HttpClientV2, config
         .get("Authorization")
         .map(authorizationHeader)
         .foldLeft(Seq(jsonAcceptHeader))(_ :+ _)
+
     http
       .get(serviceUrl)
       .setHeader(headerSeq: _*)
       .execute[JsValue]
-
   }
 }
