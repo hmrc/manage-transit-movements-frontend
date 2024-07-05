@@ -69,8 +69,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
     "63651574c3447b12",
     None,
     LocalReferenceNumber("AB123"),
-    dateTime,
-    "movements/departures/63651574c3447b12/messages"
+    dateTime
   )
 
   val mockDepartureMovementResponse: DepartureMovements = DepartureMovements(
@@ -83,8 +82,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
       DepartureMessage(
         "messageId",
         dateTime,
-        DepartureMessageType.DepartureNotification,
-        "body/path"
+        DepartureMessageType.DepartureNotification
       ),
       List.empty[DepartureMessage]
     )
@@ -118,8 +116,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
                     DepartureMessage(
                       "messageId",
                       dateTime,
-                      DepartureNotification,
-                      "body/path"
+                      DepartureNotification
                     ),
                     "ie015MessageId"
                   )
@@ -169,8 +166,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
                     DepartureMessage(
                       "messageId",
                       dateTime,
-                      DepartureNotification,
-                      "body/path"
+                      DepartureNotification
                     ),
                     "ie015MessageId"
                   )

@@ -23,15 +23,14 @@ import play.api.http.Status.{NOT_FOUND, OK}
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.XML
 
-class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends MovementP5Connector {
-
-  private def headers(implicit hc: HeaderCarrier): HeaderCarrier = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+json"))
+class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends MovementP5Connector {
 
   def getAllMovements()(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] =
     getMovements(Seq.empty)
@@ -58,11 +57,13 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
   }
 
   private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] = {
-    import connectors.CustomHttpReads.rawHttpResponseHttpReads
+    val url = url"${config.commonTransitConventionTradersUrl}movements/arrivals"
 
-    val url = s"${config.commonTransitConventionTradersUrl}movements/arrivals"
     http
-      .GET[HttpResponse](url, queryParams)(rawHttpResponseHttpReads, headers, ec)
+      .get(url)
+      .setHeader(jsonAcceptHeader)
+      .transform(_.withQueryStringParameters(queryParams: _*))
+      .execute[HttpResponse]
       .map {
         response =>
           response.status match {
@@ -78,19 +79,26 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
       }
   }
 
-  def getLatestMessageForMovement(location: String)(implicit hc: HeaderCarrier): Future[LatestArrivalMessage] = {
-    val url = s"${config.commonTransitConventionTradersUrl}$location"
-    http.GET[LatestArrivalMessage](url)(HttpReads[LatestArrivalMessage], headers, ec)
+  def getLatestMessageForMovement(arrivalId: String)(implicit hc: HeaderCarrier): Future[LatestArrivalMessage] = {
+    val url = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
+
+    http
+      .get(url)
+      .setHeader(jsonAcceptHeader)
+      .transform(_.withQueryStringParameters("count" -> config.apiResults.toString))
+      .execute[LatestArrivalMessage]
   }
 
   def getMessage[T](
     arrivalId: String,
     messageId: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, format: XMLFormat[T]): Future[T] = {
-    val headers = hc.withExtraHeaders(("Accept", "application/vnd.hmrc.2.0+xml"))
-    val url     = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId/body"
+    val url = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId/body"
+
     http
-      .GET[HttpResponse](url)(implicitly, headers, ec)
+      .get(url)
+      .setHeader(xmlAcceptHeader)
+      .execute[HttpResponse]
       .map(_.body)
       .map(XML.loadString)
       .map(fromXML(_))

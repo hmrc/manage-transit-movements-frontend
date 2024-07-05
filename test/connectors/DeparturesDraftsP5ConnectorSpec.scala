@@ -25,10 +25,9 @@ import models.departure.drafts.{Limit, Skip}
 import models.{Availability, DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber, LockCheck}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.http.Status.LOCKED
+import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.Helpers.OK
 
 import java.time.LocalDateTime
 
@@ -37,7 +36,9 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
   private lazy val connector: DeparturesDraftsP5Connector = app.injector.instanceOf[DeparturesDraftsP5Connector]
   private val startUrl                                    = "manage-transit-movements-departure-cache"
 
-  private val errorResponses: Gen[Int] = Gen.chooseNum(400, 599).suchThat(_ != 404)
+  private val errorResponses4xx: Gen[Int] = Gen.chooseNum(400: Int, 499: Int)
+  private val errorResponses5xx: Gen[Int] = Gen.chooseNum(500: Int, 599: Int)
+  private val errorResponses: Gen[Int]    = Gen.oneOf(errorResponses4xx, errorResponses5xx)
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -47,56 +48,6 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
   private val createdAt = LocalDateTime.now()
 
   "DeparturesMovementConnector" - {
-
-    "getDeparturesSummary" - {
-
-      "must return DeparturesSummary when given successful response" in {
-
-        val expectedResult = DeparturesSummary(
-          0,
-          0,
-          List(
-            DepartureUserAnswerSummary(LocalReferenceNumber("AB123"), createdAt, 29),
-            DepartureUserAnswerSummary(LocalReferenceNumber("CD123"), createdAt, 28)
-          )
-        )
-
-        server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?state=notSubmitted"))
-            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
-        )
-
-        connector.getDeparturesSummary().futureValue.value mustBe expectedResult
-      }
-
-      "must return DeparturesSummary when given successful response with empty user answers" in {
-
-        val expectedResult = DeparturesSummary(0, 0, List.empty)
-
-        server.stubFor(
-          get(urlEqualTo(s"/$startUrl/user-answers?state=notSubmitted"))
-            .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
-        )
-
-        connector.getDeparturesSummary().futureValue.value mustBe expectedResult
-      }
-
-      "must return none on failure" in {
-        errorResponses.map {
-          errorResponse =>
-            server.stubFor(
-              get(urlEqualTo(s"/$startUrl/user-answers"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(errorResponse)
-                )
-            )
-
-            val expectedResult = None
-            connector.getDeparturesSummary().futureValue mustBe expectedResult
-        }
-      }
-    }
 
     "sortDraftDepartures" - {
 
@@ -218,8 +169,8 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
       }
 
-      "must return none on failure" in {
-        errorResponses.map {
+      "must return none for 4xx/5xx" in {
+        forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
               get(urlEqualTo(s"/$startUrl/user-answers?limit=$limit&skip=$skip&sortBy=lrn.asc&state=notSubmitted"))
@@ -259,8 +210,8 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustBe expectedResult
       }
 
-      "must return none on failure" in {
-        errorResponses.map {
+      "must return none for 4xx/5xx response" in {
+        forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
               get(urlEqualTo(url))
@@ -272,7 +223,6 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
 
             val expectedResult = None
             connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue mustBe expectedResult
-
         }
       }
     }
@@ -339,9 +289,8 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
         connector.getDraftDeparturesAvailability().futureValue mustBe Availability.Empty
       }
 
-      "must return unavailable when given an error response" in {
-
-        errorResponses.map {
+      "must return unavailable for 4xx/5xx response" in {
+        forAll(errorResponses) {
           errorResponse =>
             server.stubFor(
               get(urlEqualTo(url))

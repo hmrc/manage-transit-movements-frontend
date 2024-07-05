@@ -19,9 +19,9 @@
 
 @this(govukWarningText: GovukWarningText)
 
-@(text: String)(implicit messages: Messages)
+@(html: Html)(implicit messages: Messages)
 
 @govukWarningText(WarningText(
     iconFallbackText = Some(messages("site.warning")),
-    content = Text(text)
+    content = HtmlContent(html)
 ))

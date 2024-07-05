@@ -17,18 +17,26 @@
 package connectors
 
 import play.api.Logging
-import play.api.libs.json.Reads
-import uk.gov.hmrc.http.{HttpReads, HttpReadsTry, HttpResponse}
+import sttp.model.HeaderNames
 
-trait MovementP5Connector extends HttpReadsTry with Logging {
+trait MovementP5Connector extends Logging {
 
-  def messageModelHttpReads[T](implicit reads: Reads[T]): HttpReads[T] =
-    (_: String, _: String, response: HttpResponse) =>
-      response.json
-        .validate[T]
-        .fold(
-          errors => throw new Exception(s"Failed to read message: ${errors.mkString}"),
-          identity
-        )
+  private def acceptHeader(format: String): (String, String) =
+    HeaderNames.Accept -> s"application/vnd.hmrc.2.0+$format"
+
+  def authorizationHeader(authorization: String): (String, String) =
+    HeaderNames.Authorization -> authorization
+
+  private def contentTypeHeader(contentType: String): (String, String) =
+    HeaderNames.ContentType -> s"application/$contentType"
+
+  def messageTypeHeader(messageType: Option[String]): (String, String) =
+    "X-Message-Type" -> messageType.getOrElse("No x-message-type")
+
+  val jsonAcceptHeader: (String, String) = acceptHeader("json")
+  val xmlAcceptHeader: (String, String)  = acceptHeader("xml")
+
+  val xmlContentTypeHeader: (String, String)  = contentTypeHeader("xml")
+  val jsonContentTypeHeader: (String, String) = contentTypeHeader("json")
 
 }

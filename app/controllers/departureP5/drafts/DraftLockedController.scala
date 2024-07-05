@@ -26,13 +26,13 @@ import javax.inject.Inject
 
 class DraftLockedController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  actions: Actions,
   val controllerComponents: MessagesControllerComponents,
   view: DraftLockedView
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen identify) {
+  def onPageLoad(): Action[AnyContent] = (Action andThen actions.checkP5Switch()) {
     implicit request =>
       Ok(view())
   }

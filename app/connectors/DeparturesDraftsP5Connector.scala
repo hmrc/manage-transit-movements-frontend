@@ -17,28 +17,35 @@
 package connectors
 
 import config.FrontendAppConfig
-import play.api.Logging
 import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
 import models.departure.drafts.{Limit, Skip}
 import models.{Availability, DeparturesSummary, LockCheck, Sort}
+import play.api.Logging
 import play.api.http.Status.{LOCKED, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.UpstreamErrorResponse.{Upstream4xxResponse, Upstream5xxResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
+class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
-  def getDeparturesSummary(queryParams: Seq[(String, String)] = Seq.empty)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
-    val url = s"${config.departureCacheUrl}/user-answers"
+  private def getDeparturesSummary(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
+    val url = url"${config.departureCacheUrl}/user-answers"
 
     http
-      .GET[DeparturesSummary](url, queryParams :+ ("state" -> "notSubmitted"))
+      .get(url)
+      .transform(_.withQueryStringParameters(queryParams :+ ("state" -> "notSubmitted"): _*))
+      .execute[DeparturesSummary]
       .map(Some(_))
       .recover {
-        case _ =>
-          logger.error(s"get Departures Summary failed to return data")
+        case Upstream4xxResponse(e) =>
+          logger.info(s"getDeparturesSummary failed to return data: ${e.getMessage}")
+          None
+        case Upstream5xxResponse(e) =>
+          logger.warn(s"getDeparturesSummary failed to return data: ${e.getMessage}")
           None
       }
   }
@@ -59,18 +66,22 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
     getDeparturesSummary(Seq("limit" -> limit.value.toString, "skip" -> skip.value.toString, "sortBy" -> sortParams.convertParams, "lrn" -> lrn))
 
   def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val url = s"${config.departureCacheUrl}/user-answers/$lrn"
-    http.DELETE[HttpResponse](url)
+    val url = url"${config.departureCacheUrl}/user-answers/$lrn"
+
+    http
+      .delete(url)
+      .execute[HttpResponse]
   }
 
   def getDraftDeparturesAvailability()(implicit hc: HeaderCarrier): Future[Availability] =
     getDeparturesSummary(Seq("limit" -> "1")).map(_.map(_.userAnswers)).map(Availability(_))
 
   def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[LockCheck] = {
-    val url = s"${config.departureCacheUrl}/user-answers/$lrn/lock"
+    val url = url"${config.departureCacheUrl}/user-answers/$lrn/lock"
 
     http
-      .GET[HttpResponse](url)
+      .get(url)
+      .execute[HttpResponse]
       .map {
         _.status match {
           case OK     => Unlocked

@@ -36,6 +36,14 @@ class P5SwitchAction(config: FrontendAppConfig)(implicit val executionContext: E
 
   override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
     Future.successful {
-      if (config.phase5Enabled) None else Some(Redirect(routes.ErrorController.notFound()))
+      if (config.phase5Enabled) {
+        if (request.isOnLegacyEnrolment) {
+          Some(Redirect(config.enrolmentGuidancePage))
+        } else {
+          None
+        }
+      } else {
+        Some(Redirect(routes.ErrorController.notFound()))
+      }
     }
 }

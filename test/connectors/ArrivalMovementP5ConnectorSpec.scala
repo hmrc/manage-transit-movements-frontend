@@ -104,14 +104,12 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
             ArrivalMovement(
               "63651574c3447b12",
               "27WF9X1FQ9RCKN0TM3",
-              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-              "movements/arrivals/63651574c3447b12/messages"
+              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
             ),
             ArrivalMovement(
               "6365135ba5e821ee",
               "27WF9X1FQ9RCKN0TM3",
-              LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME),
-              "movements/arrivals/6365135ba5e821ee/messages"
+              LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME)
             )
           ),
           totalCount = 2
@@ -187,8 +185,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
               ArrivalMovement(
                 "63651574c3447b12",
                 "MRN12345",
-                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-                "movements/arrivals/63651574c3447b12/messages"
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
               )
             ),
             totalCount = 1
@@ -210,8 +207,7 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
               ArrivalMovement(
                 "63651574c3447b12",
                 "MRN12345",
-                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME),
-                "movements/arrivals/63651574c3447b12/messages"
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
               )
             ),
             totalCount = 1
@@ -313,6 +309,60 @@ class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler
 
               connector.getAvailability().futureValue mustBe Availability.Unavailable
           }
+        }
+      }
+    }
+
+    "getLatestMessageForMovement" - {
+      val messageId = "634982098f02f00a"
+
+      "must return latest message" - {
+        "when arrival returned" in {
+          val responseJson: JsValue = Json.parse(s"""
+              |{
+              |  "_links": {
+              |    "self": {
+              |      "href": "/customs/transits/movements/arrivals/$arrivalIdP5/messages"
+              |    },
+              |    "arrival": {
+              |      "href": "/customs/transits/movements/arrivals/$arrivalIdP5"
+              |    }
+              |  },
+              |  "totalCount": 1,
+              |  "messages": [
+              |    {
+              |      "_links": {
+              |        "self": {
+              |          "href": "/customs/transits/movements/arrivals/$arrivalIdP5/messages/$messageId"
+              |        },
+              |        "arrival": {
+              |          "href": "/customs/transits/movements/arrivals/$arrivalIdP5"
+              |        }
+              |      },
+              |      "id": "$messageId",
+              |      "arrivalId": "$arrivalIdP5",
+              |      "received": "2022-11-10T15:32:51.459Z",
+              |      "type": "IE007",
+              |      "status": "Success"
+              |    }
+              |  ]
+              |}
+              |""".stripMargin)
+
+          server.stubFor(
+            get(urlEqualTo(s"/movements/arrivals/$arrivalIdP5/messages?count=500"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getLatestMessageForMovement(arrivalIdP5).futureValue mustBe
+            LatestArrivalMessage(
+              latestMessage = ArrivalMessage(
+                messageId = messageId,
+                received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
+                messageType = ArrivalMessageType.ArrivalNotification
+              ),
+              ie007Id = messageId
+            )
         }
       }
     }

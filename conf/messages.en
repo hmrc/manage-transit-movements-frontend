@@ -41,7 +41,9 @@ checkYourAnswers.heading = Check your answers
 
 whatDoYouWantToDo.title = Manage your transit movements
 whatDoYouWantToDo.heading = Manage your transit movements
-whatDoYouWantToDo.warning = This service will be unavailable between 9am and 4pm on Friday 28 June. This is while we upgrade the service from Phase 4 to Phase 5.
+whatDoYouWantToDo.warning.1 = You need to upgrade your NCTS subscription
+whatDoYouWantToDo.warning.2 = Phase 5 of NCTS went live on 1 July 2024. To continue using NCTS, you need to
+whatDoYouWantToDo.warning.3 = upgrade your subscription from Phase 4 to Phase 5
 whatDoYouWantToDo.subHeading.arrival = Arrivals
 whatDoYouWantToDo.link.arrival.make = Make an arrival notification
 whatDoYouWantToDo.link.arrival.p4.make = Make a GB arrival notification (NCTS 4)
@@ -177,6 +179,7 @@ movement.status.P5.movementEnded                                        = Moveme
 movement.status.P5.prelodgedDeclarationSent	                            = Prelodged declaration sent
 movement.status.P5.goodsNotReleased                                     = Goods not released
 movement.status.P5.goodsReleased                                        = Goods released
+movement.status.P5.discrepancies                                        = Goods not released - discrepancies
 
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF

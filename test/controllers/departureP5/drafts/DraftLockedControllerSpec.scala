@@ -18,11 +18,16 @@ package controllers.departureP5.drafts
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.departureP5.drafts.DraftLockedView
 
 class DraftLockedControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .p5GuiceApplicationBuilder()
 
   "Draft Locked Controller" - {
 

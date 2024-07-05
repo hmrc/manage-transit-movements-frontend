@@ -66,8 +66,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
             ArrivalMovement(
               arrivalId = arrivalIdP5,
               movementReferenceNumber = mrn,
-              updated = dateTimeNow,
-              messagesLocation = "location"
+              updated = dateTimeNow
             )
           ),
           totalCount = 1
@@ -94,8 +93,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
             ArrivalMovement(
               arrivalId = arrivalIdP5,
               movementReferenceNumber = mrn,
-              updated = dateTimeNow,
-              messagesLocation = "location"
+              updated = dateTimeNow
             ),
             latestArrivalMessage = latestArrivalMessage,
             functionalErrorCount = 2,

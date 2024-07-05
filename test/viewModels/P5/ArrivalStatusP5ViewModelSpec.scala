@@ -40,8 +40,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
           ArrivalMovement(
             "arrivalID",
             "mrn",
-            LocalDateTime.now(),
-            "location"
+            LocalDateTime.now()
           ),
           LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5)
         )
@@ -99,8 +98,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
             ArrivalMovement(
               "arrivalID",
               "mrn",
-              LocalDateTime.now(),
-              "location"
+              LocalDateTime.now()
             ),
             LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, GoodsReleasedNotification), arrivalIdP5),
             goodsReleased
@@ -136,8 +134,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
               ArrivalMovement(
                 arrivalIdP5,
                 mrn,
-                LocalDateTime.now(),
-                "location"
+                LocalDateTime.now()
               ),
               LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5),
               functionalErrorCount = 0,
@@ -174,8 +171,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
               ArrivalMovement(
                 "arrivalID",
                 "mrn",
-                LocalDateTime.now(),
-                "location"
+                LocalDateTime.now()
               ),
               LatestArrivalMessage(messages.messages.head, arrivalIdP5),
               functionalErrorCount = 3,
@@ -214,8 +210,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
               ArrivalMovement(
                 "arrivalID",
                 "mrn",
-                LocalDateTime.now(),
-                "location"
+                LocalDateTime.now()
               ),
               LatestArrivalMessage(messages.messages.head, arrivalIdP5),
               functionalErrorCount = 3,
@@ -241,8 +236,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
               ArrivalMovement(
                 arrivalIdP5,
                 "mrn",
-                LocalDateTime.now(),
-                "location"
+                LocalDateTime.now()
               ),
               LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5),
               functionalErrorCount = 0,
@@ -263,6 +257,20 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           result mustBe expectedResult
         }
+      }
+
+      "when given Message with head of movementEnded" in {
+
+        val movementAndMessage = movementAndMessagesOther(MovementEnded)
+
+        val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = ArrivalStatusP5ViewModel(
+          "movement.status.P5.movementEnded",
+          Nil
+        )
+
+        result mustBe expectedResult
       }
 
       "when errors are more than one " - {
