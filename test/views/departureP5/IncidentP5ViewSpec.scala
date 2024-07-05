@@ -45,6 +45,8 @@ class IncidentP5ViewSpec extends DetailsListViewBehaviours with Generators {
 
   behave like pageWithHeading(incidentIndex.display)
 
+  behave like pageWithSubmitButton("Back to summary")
+
   behave like pageWithContent(
     "p",
     "An incident has been reported by the customs office of incident. Review the incident details and contact the carrier for more information."
