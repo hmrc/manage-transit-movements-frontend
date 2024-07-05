@@ -72,19 +72,19 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       }
     }
 
+    "title" - {
+      "must return correct message" in {
+        viewModel().title mustBe "Incident 1"
+      }
+    }
+
+    "heading" - {
+      "must return correct message" in {
+        viewModel().title mustBe "Incident 1"
+      }
+    }
+
     "when multiple incident" - {
-      "title" - {
-        "must return correct message" in {
-          viewModel().title mustBe "Incident1"
-        }
-      }
-
-      "heading" - {
-        "must return correct message" in {
-          viewModel().title mustBe "Incident1"
-        }
-      }
-
       "paragraph1" - {
         "must return correct message" in {
           viewModel().paragraph1 mustBe
@@ -94,18 +94,6 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "when 1 incident" - {
-      "title" - {
-        "must return correct message" in {
-          viewModel(isMultipleIncidents = false).title mustBe "Incident1"
-        }
-      }
-
-      "heading" - {
-        "must return correct message" in {
-          viewModel(isMultipleIncidents = false).title mustBe "Incident1"
-        }
-      }
-
       "paragraph1" - {
         "must return correct message" in {
           viewModel(isMultipleIncidents = false).paragraph1 mustBe

@@ -645,8 +645,8 @@ arrival.notification.incidents.link.hidden = more details on incident {0}
 arrival.notification.incidents.incident.code.label = Incident code
 arrival.notification.incidents.incident.description.label = Description
 
-departure.notification.incident.index.title = Incident{0}
-departure.notification.incident.index.heading = Incident{0}
+departure.notification.incident.index.title = Incident {0}
+departure.notification.incident.index.heading = Incident {0}
 departure.notification.incident.index.paragraph1 = An incident has been reported by the customs office of incident. Review the incident details and contact the carrier for more information.
 departure.notification.incident.index.multi.paragraph1 = Multiple incidents have been reported by the customs office of incident. Review the incident details and contact the carrier for more information.
 

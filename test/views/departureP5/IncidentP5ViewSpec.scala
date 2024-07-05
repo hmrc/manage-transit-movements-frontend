@@ -17,8 +17,6 @@
 package views.departureP5
 
 import generators.Generators
-import models.Index
-import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.IncidentP5ViewModel
 import views.behaviours.DetailsListViewBehaviours
@@ -26,34 +24,44 @@ import views.html.departureP5.IncidentP5View
 
 class IncidentP5ViewSpec extends DetailsListViewBehaviours with Generators {
 
-  private val isMultipleIncidents = arbitrary[Boolean].sample.value
-
   override val prefix: String = "departure.notification.incident.index"
 
-  override def view: HtmlFormat.Appendable =
+  def applyView(
+    isMultipleIncidents: Boolean
+  ): HtmlFormat.Appendable =
     injector.instanceOf[IncidentP5View].apply(viewModel(isMultipleIncidents), departureId.toString, messageId)(fakeRequest, messages)
+
+  override def view: HtmlFormat.Appendable =
+    injector.instanceOf[IncidentP5View].apply(viewModel(false), departureId.toString, messageId)(fakeRequest, messages)
 
   private def viewModel(isMultipleIncidents: Boolean): IncidentP5ViewModel =
     new IncidentP5ViewModel(lrn.toString, Left("customId"), isMultipleIncidents, sections, incidentIndex)
 
-  behave like pageWithTitle(viewModel(false).title)
+  behave like pageWithTitle(incidentIndex.display)
 
   behave like pageWithBackLink()
 
   behave like pageWithCaption(s"LRN: ${lrn.toString}")
 
-  behave like pageWithHeading(viewModel(true).title)
+  behave like pageWithHeading(incidentIndex.display)
 
   behave like pageWithContent(
     "p",
-    if (isMultipleIncidents) {
-      "Multiple incidents have been reported by the customs office of incident. Review the incident details and contact the carrier for more information."
-    } else {
-      "An incident has been reported by the customs office of incident. Review the incident details and contact the carrier for more information."
-    }
+    "An incident has been reported by the customs office of incident. Review the incident details and contact the carrier for more information."
   )
 
   behave like pageWithSections()
+
+  "when isMultipleIncidents is true" - {
+    val doc = parseView(applyView(isMultipleIncidents = true))
+    "must render correct paragraph" - {
+      behave like pageWithContent(
+        doc,
+        "p",
+        "Multiple incidents have been reported by the customs office of incident. Review the incident details and contact the carrier for more information."
+      )
+    }
+  }
 
   "must render section titles when rows are non-empty" - {
     sections.foreach(_.sectionTitle.map {
