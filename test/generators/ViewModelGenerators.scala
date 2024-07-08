@@ -194,9 +194,9 @@ trait ViewModelGenerators {
   implicit val arbitraryRejectionMessageP5ViewModel: Arbitrary[RejectionMessageP5ViewModel] =
     Arbitrary {
       for {
-        tableRows                   <- listWithMaxLength()(arbitraryTableRows)
+        tableRows             <- listWithMaxLength()(arbitraryTableRows)
         lrn                   <- nonEmptyString
-        multipleErrors                   <- arbitrary[Boolean]
+        multipleErrors        <- arbitrary[Boolean]
         businessRejectionType <- arbitrary[BusinessRejectionType]
       } yield RejectionMessageP5ViewModel(tableRows, lrn, multipleErrors, businessRejectionType)
     }

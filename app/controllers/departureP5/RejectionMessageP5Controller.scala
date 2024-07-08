@@ -17,14 +17,15 @@
 package controllers.departureP5
 
 import config.{FrontendAppConfig, PaginationAppConfig}
-import connectors.DepartureCacheConnector
 import controllers.actions._
 import generated.CC056CType
 import models.RichCC056CType
 import models.departureP5.BusinessRejectionType
 import models.departureP5.BusinessRejectionType._
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.DepartureCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
@@ -39,11 +40,12 @@ class RejectionMessageP5Controller @Inject() (
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
-  cacheConnector: DepartureCacheConnector,
+  cacheService: DepartureCacheService,
   view: RejectionMessageP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
@@ -51,14 +53,7 @@ class RejectionMessageP5Controller @Inject() (
         val lrn              = request.referenceNumbers.localReferenceNumber
         val functionalErrors = request.messageData.FunctionalError
 
-        val isDataValid: Future[Boolean] = BusinessRejectionType(request.messageData) match {
-          case AmendmentRejection =>
-            cacheConnector.doesDeclarationExist(lrn.value)
-          case DeclarationRejection =>
-            cacheConnector.isDeclarationAmendable(lrn.value, functionalErrors.map(_.errorPointer))
-        }
-
-        isDataValid.flatMap {
+        cacheService.canProceedWithAmendment(request.messageData, lrn).flatMap {
           case true =>
             val currentPage = page.getOrElse(1)
 
@@ -85,6 +80,7 @@ class RejectionMessageP5Controller @Inject() (
                 )
             )
           case _ =>
+            logger.warn(s"[RejectionMessageP5Controller] Could not proceed with amending $departureId")
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
     }
@@ -98,16 +94,17 @@ class RejectionMessageP5Controller @Inject() (
         BusinessRejectionType(request.messageData) match {
           case AmendmentRejection =>
             for {
-              handleAmendmentErrors <- cacheConnector.handleAmendmentErrors(lrn.value, xPaths)
-            } yield if (handleAmendmentErrors) {
-              Redirect(config.departureAmendmentUrl(lrn.value, departureId))
-            } else {
-              Redirect(controllers.routes.ErrorController.technicalDifficulties())
-            }
+              handleAmendmentErrors <- cacheService.handleAmendmentErrors(lrn, xPaths)
+            } yield
+              if (handleAmendmentErrors) {
+                Redirect(config.departureAmendmentUrl(lrn.value, departureId))
+              } else {
+                Redirect(controllers.routes.ErrorController.technicalDifficulties())
+              }
           case DeclarationRejection =>
             for {
-              isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn.value, xPaths)
-              handleErrors           <- cacheConnector.handleErrors(lrn.value, xPaths)
+              isDeclarationAmendable <- cacheService.isDeclarationAmendable(lrn, xPaths)
+              handleErrors           <- cacheService.handleErrors(lrn, xPaths)
             } yield (isDeclarationAmendable, handleErrors) match {
               case (true, true) if xPaths.nonEmpty =>
                 if (request.referenceNumbers.movementReferenceNumber.isDefined) {

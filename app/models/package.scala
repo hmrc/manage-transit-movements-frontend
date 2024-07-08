@@ -191,6 +191,9 @@ package object models {
 
   implicit class RichCC056CType(value: CC056CType) {
 
+    val xPaths: Seq[String] =
+      value.FunctionalError.map(_.errorPointer)
+
     def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] =
       value.FunctionalError.pagedFunctionalErrors(page, paginationAppConfig.departuresNumberOfErrorsPerPage)
   }
