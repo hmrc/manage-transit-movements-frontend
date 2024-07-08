@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.Availability
 import models.arrivalP5.{ArrivalMovements, LatestArrivalMessage}
 import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.libs.json.{JsError, JsSuccess}
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -67,14 +68,24 @@ class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: Htt
       .map {
         response =>
           response.status match {
-            case OK        => response.json.asOpt[ArrivalMovements]
-            case NOT_FOUND => Some(ArrivalMovements(Seq.empty, 0))
-            case _         => None
+            case OK =>
+              response.json.validateOpt[ArrivalMovements] match {
+                case JsSuccess(value, _) =>
+                  value
+                case JsError(errors) =>
+                  logger.warn(s"[ArrivalMovementP5Connector][getMovements]: $errors")
+                  Some(ArrivalMovements(Seq.empty, 0))
+              }
+            case NOT_FOUND =>
+              Some(ArrivalMovements(Seq.empty, 0))
+            case e =>
+              logger.warn(s"[ArrivalMovementP5Connector][getMovements]: $e")
+              None
           }
       }
       .recover {
         case e =>
-          logger.error(s"Failed to get arrival movements with error: $e")
+          logger.error(s"[ArrivalMovementP5Connector][getMovements]: $e")
           None
       }
   }
