@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,6 @@
  * limitations under the License.
  */
 
-import generated._
+package models
 
-package object utils {
-
-  implicit class RichFlag(value: Flag) {
-
-    def toBoolean: Boolean = value match {
-      case Number0 => false
-      case Number1 => true
-    }
-  }
-
-  implicit class RichInt(value: Int) {
-
-    def toDisplay: Int = value + 1
-  }
-
-}
+case class Link(id: String, text: String, href: String, visuallyHidden: Option[String] = None)

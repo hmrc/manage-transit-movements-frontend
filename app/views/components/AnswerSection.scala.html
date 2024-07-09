@@ -16,22 +16,78 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import viewModels.sections.Section
+@import viewModels.sections.Section._
 
-@this(govukSummaryList: GovukSummaryList)
+@this(
+    govukSummaryList: GovukSummaryList,
+    govukDetails: GovukDetails,
+    answerSectionLink: AnswerSectionLink
+)
 
-@(section: Section)(html: Html = Html(""))
+@(section: Section)(implicit messages: Messages)
 
-@if(section.rows.nonEmpty) {
-    @section.sectionTitle.map { title =>
-        <h2 class="govuk-heading-m">@title</h2>
+@if(section.nonEmpty) {
+    @section match {
+        case x: StaticSection => {
+            <div class="govuk-!-margin-bottom-9">
+                @section.sectionTitle.map { title =>
+                    <h2 class="govuk-heading-m">@title</h2>
+                }
+
+                <div class="@section.margin">
+                    @if(section.rows.nonEmpty) {
+                        @govukSummaryList(
+                            SummaryList(
+                                rows = section.rows
+                            )
+                        )
+                    }
+
+                    @section.children.map(this(_))
+
+                    @section.viewLinks.map { link =>
+                        @answerSectionLink(link)
+                    }
+                </div>
+            </div>
+        }
+        case x: AccordionSection => {
+            @govukDetails(
+                Details(
+                    summary = HtmlContent(header),
+                    content = HtmlContent(content),
+                    id = section.id,
+                    open = section.isOpen
+                )
+            )
+        }
     }
+}
 
-    @govukSummaryList(
-        SummaryList(
-            rows = section.rows,
-            classes = "govuk-!-margin-bottom-9 ctc-add-to-a-list"
-        )
-    )
-} else {
-    @html
+@header = {
+    @section.sectionTitle.map { title =>
+        <span class="govuk-details__summary-text summary-text">
+            <span class="govuk-heading-m summary-title govuk-!-margin-bottom-0">@title</span>
+        </span>
+    }
+}
+
+@content = {
+    <div class="@section.margin">
+        @if(section.rows.nonEmpty) {
+            @govukSummaryList(
+                SummaryList(
+                    rows = section.rows
+                )
+            )
+        } else if(section.children.isEmpty) {
+            <p class="govuk-body">@messages("unloadingFindings.noInformationProvided")</p>
+        }
+
+        @section.children.map(this(_))
+
+        @section.viewLinks.map { link =>
+            @answerSectionLink(link)
+        }
+    </div>
 }

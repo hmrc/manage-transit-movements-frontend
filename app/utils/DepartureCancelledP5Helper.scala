@@ -22,6 +22,7 @@ import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 import javax.xml.datatype.XMLGregorianCalendar
 import scala.concurrent.{ExecutionContext, Future}
@@ -93,7 +94,7 @@ class DepartureCancelledP5Helper(ie009: CC009CType, referenceDataService: Refere
 
         val rows = mrnRow ++ dateTimeRow ++ initiatedByCustomsRow ++ officeOfDepartureRow ++ commentsRow
 
-        Section(None, rows, None)
+        StaticSection(None, rows)
     }
 
 }

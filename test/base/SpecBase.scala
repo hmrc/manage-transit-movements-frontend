@@ -19,7 +19,7 @@ package base
 import config.{FrontendAppConfig, PaginationAppConfig}
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
-import models.{DepartureId, LocalReferenceNumber}
+import models.{DepartureId, Index, LocalReferenceNumber}
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -28,6 +28,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Content, Key, Value}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 import java.time.Clock
@@ -42,6 +43,9 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val messageId: String        = "343ffafafaaf"
   val departureIdP5: String    = "643cffea2dca70b2"
   val arrivalIdP5: String      = "62f4ebbb765ba8c2"
+
+//  val incidentIndex: Int = 0  // TODO
+  val incidentIndex: Index = Index(0)
 
   val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"))
 
@@ -60,4 +64,19 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
 
   implicit val clock: Clock = Clock.systemDefaultZone()
 
+  implicit class RichContent(c: Content) {
+    def value: String = c.asHtml.toString()
+  }
+
+  implicit class RichValue(v: Value) {
+    def value: String = v.content.value
+  }
+
+  implicit class RichAction(ai: ActionItem) {
+    def id: String = ai.attributes.get("id").value
+  }
+
+  implicit class RichKey(k: Key) {
+    def value: String = k.content.value
+  }
 }
