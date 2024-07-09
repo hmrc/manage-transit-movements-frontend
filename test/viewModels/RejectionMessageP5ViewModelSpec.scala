@@ -76,7 +76,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another departure declaration"
+        result.hyperlink.value mustBe "Make another departure declaration"
       }
     }
 
@@ -114,7 +114,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another departure declaration"
+        result.hyperlink mustBe None
       }
     }
   }

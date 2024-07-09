@@ -75,11 +75,11 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another departure declaration"
+        result.hyperlink.value mustBe "Make another departure declaration"
       }
     }
 
-    "when there is one error and amendmentJourney" in {
+    "when there is one error and amendmentJourney" - {
 
       val errors = Seq(FunctionalErrorType04("14", Number12, "MRN incorrect", None))
 
@@ -89,10 +89,15 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(errors, lrnString, BusinessRejectionType.AmendmentRejection).futureValue
 
-      result.paragraph1 mustBe s"There is a problem with this declaration. Review the error and contact the helpdesk to discuss further."
+      "must return correct paragraph 1" in {
+        result.paragraph1 mustBe "There is a problem with this declaration. Review the error and contact the helpdesk to discuss further."
+      }
+      "must return correct hyperlink text" in {
+        result.hyperlink mustBe None
+      }
     }
 
-    "when there is multiple errors and amendmentJourney" in {
+    "when there is multiple errors and amendmentJourney" - {
       val functionalErrors = Seq(
         FunctionalErrorType04("12", Number12, "Codelist violation", None),
         FunctionalErrorType04("14", Number14, "Rule violation", None)
@@ -105,7 +110,12 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       val viewModelProvider = new ReviewDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(functionalErrors, lrnString, BusinessRejectionType.AmendmentRejection).futureValue
 
-      result.paragraph1 mustBe s"There is a problem with this declaration. Review the errors and contact the helpdesk to discuss further."
+      "must return correct paragraph 1" in {
+        result.paragraph1 mustBe "There is a problem with this declaration. Review the errors and contact the helpdesk to discuss further."
+      }
+      "must return correct hyperlink text" in {
+        result.hyperlink mustBe None
+      }
     }
 
     "when there is multiple errors" - {
@@ -139,7 +149,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
         result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another departure declaration"
+        result.hyperlink.value mustBe "Make another departure declaration"
       }
     }
   }

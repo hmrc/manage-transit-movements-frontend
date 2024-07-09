@@ -71,7 +71,10 @@ case class ReviewDepartureErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: 
     messages("departure.ie056.review.message.paragraph2.singular.suffix")
   }
 
-  def hyperlink(implicit messages: Messages): String = messages("departure.ie056.review.message.hyperlink")
+  def hyperlink(implicit messages: Messages): Option[String] = businessRejectionType match {
+    case AmendmentRejection   => None
+    case DeclarationRejection => Some(messages("departure.ie056.review.message.hyperlink"))
+  }
 
   def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
     HeadCell(Text(messages("error.table.errorCode"))),

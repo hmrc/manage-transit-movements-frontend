@@ -57,8 +57,8 @@ case class RejectionMessageP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: Strin
   }
 
   def hyperlink(implicit messages: Messages): Option[String] = businessRejectionType match {
-    case BusinessRejectionType.AmendmentRejection   => None
-    case BusinessRejectionType.DeclarationRejection => Some(messages("departure.ie056.message.hyperlink"))
+    case AmendmentRejection   => None
+    case DeclarationRejection => Some(messages("departure.ie056.message.hyperlink"))
   }
 
   def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
