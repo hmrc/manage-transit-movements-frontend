@@ -17,69 +17,74 @@
 package connectors.testOnly
 
 import config.FrontendAppConfig
+import connectors.MovementP5Connector
 import play.api.libs.json.JsValue
 import play.api.mvc.Headers
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClient, config: FrontendAppConfig)(implicit ec: ExecutionContext) {
+class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClientV2, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends MovementP5Connector {
 
   def arrivalOutbound(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
-    val newHeaders: HeaderCarrier = headerCarrier
-      .copy(authorization = headers.get("Authorization").map(Authorization))
-      .withExtraHeaders(
-        "Content-Type" -> "application/xml",
-        ("Accept", "application/vnd.hmrc.2.0+json")
-      )
+    val serviceUrl = url"${config.commonTransitConventionTradersUrl}movements/arrivals"
 
-    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/arrivals"
-
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
+    val headerSeq = headers.get("Authorization").map(authorizationHeader).foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader))(_ :+ _)
+    http
+      .post(serviceUrl)
+      .setHeader(headerSeq: _*)
+      .withBody(requestData)
+      .execute[HttpResponse]
   }
 
   def unloadingOutbound(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
-    val newHeaders: HeaderCarrier = headerCarrier
-      .copy(authorization = headers.get("Authorization").map(Authorization))
-      .withExtraHeaders(
-        "Content-Type" -> "application/xml",
-        ("Accept", "application/vnd.hmrc.2.0+json"),
-        ("X-Message-Type", headers.get("X-Message-Type").getOrElse("No x-message-type"))
-      )
+    val serviceUrl = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
 
-    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
-
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
+    val headerSeq =
+      headers
+        .get("Authorization")
+        .map(authorizationHeader)
+        .foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader, messageTypeHeader(headers.get("X-Message-Type"))))(_ :+ _)
+    http
+      .post(serviceUrl)
+      .setHeader(headerSeq: _*)
+      .withBody(requestData)
+      .execute[HttpResponse]
   }
 
   def arrivalInbound(requestData: NodeSeq, arrivalId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
-    val newHeaders: HeaderCarrier = headerCarrier
-      .copy(authorization = headers.get("Authorization").map(Authorization))
-      .withExtraHeaders(
-        "Content-Type" -> "application/xml",
-        ("Accept", "application/vnd.hmrc.2.0+json"),
-        ("X-Message-Type", headers.get("X-Message-Type").getOrElse("No x-message-type"))
-      )
-
-    val serviceUrl = s"${config.transitMovementsUrl}transit-movements/traders/movements/$arrivalId/messages"
-
-    http.POSTString[HttpResponse](serviceUrl, requestData.toString)(rds = HttpReads[HttpResponse], hc = newHeaders, ec = ec)
+    val serviceUrl = url"${config.transitMovementsUrl}transit-movements/traders/movements/$arrivalId/messages"
+    val headerSeq =
+      headers
+        .get("Authorization")
+        .map(authorizationHeader)
+        .foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader, messageTypeHeader(headers.get("X-Message-Type"))))(_ :+ _)
+    http
+      .post(serviceUrl)
+      .setHeader(headerSeq: _*)
+      .withBody(requestData)
+      .execute[HttpResponse]
   }
 
   def getMessage(arrivalId: String, messageId: String, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[JsValue] = {
 
-    val newHeaders: HeaderCarrier = headerCarrier
-      .copy(authorization = headers.get("Authorization").map(Authorization))
-      .withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json")
+    val serviceUrl = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId"
 
-    val serviceUrl = s"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages/$messageId"
-
-    http.GET[JsValue](serviceUrl)(rds = implicitly, hc = newHeaders, ec = ec)
+    val headerSeq =
+      headers
+        .get("Authorization")
+        .map(authorizationHeader)
+        .foldLeft(Seq(jsonAcceptHeader))(_ :+ _)
+    http
+      .get(serviceUrl)
+      .setHeader(headerSeq: _*)
+      .execute[JsValue]
   }
 }
