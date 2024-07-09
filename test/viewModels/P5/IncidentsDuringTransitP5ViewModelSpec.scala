@@ -128,6 +128,10 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       }
     }
 
+    "must have correct message for what happens next section" in {
+      viewModel().whatHappensNextHeader mustBe "What happens next"
+    }
+
     "customsOfficeContent" - {
 
       "when no customs office found" - {
