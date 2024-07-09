@@ -90,12 +90,12 @@ class IncidentsDuringTransitP5Helper(
   def incidentsSection(departureId: String, messageId: String): AccordionSection = AccordionSection(
     sectionTitle = Some(messages("arrival.notification.incidents.heading.incident")),
     children = data.Consignment.Incident.zipWithIndex.map {
-      case (_, index) => incidentSection(departureId, messageId, Index(index))
+      case (_, index) => incidentSection(departureId, Index(index), messageId)
     },
     isOpen = true
   )
 
-  def incidentSection(departureId: String, messageId: String, incidentIndex: Index): AccordionSection = AccordionSection(
+  def incidentSection(departureId: String, incidentIndex: Index, messageId: String): AccordionSection = AccordionSection(
     sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex.display),
     rows = Seq(
       incidentCodeRow(incidentIndex),

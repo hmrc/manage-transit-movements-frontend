@@ -19,8 +19,7 @@ package controllers.departureP5
 import config.FrontendAppConfig
 import controllers.actions.{Actions, DepartureMessageRetrievalActionProvider}
 import generated.CC182CType
-import models.Index
-import models.RichCC182Type
+import models.{Index, RichCC182Type}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
@@ -55,6 +54,11 @@ class IncidentP5Controller @Inject() (
 
             Ok(view(incidentP5ViewModel, departureId, messageId))
         }
+    }
+
+  def onSubmit(departureId: String, incidentIndex: Index, messageId: String): Action[AnyContent] =
+    (Action andThen actions.identify()) {
+      Redirect(controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureId, messageId))
     }
 
 }

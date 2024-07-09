@@ -197,7 +197,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               )
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
-              val result = helper.incidentSection(departureIdP5, messageId, incidentIndex)
+              val result = helper.incidentSection(departureIdP5, incidentIndex, messageId)
 
               result mustBe a[AccordionSection]
               result.sectionTitle mustBe Some("Incident 1")
