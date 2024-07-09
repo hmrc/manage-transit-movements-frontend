@@ -19,7 +19,6 @@ package utils
 import generated.CC182CType
 import models.Link
 import play.api.i18n.Messages
-import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 

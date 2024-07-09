@@ -55,6 +55,8 @@ case class IncidentsDuringTransitP5ViewModel(
 
   def paragraph2End(implicit messages: Messages): String = messages("arrival.notification.incidents.paragraph2.end")
 
+  def whatHappensNextHeader(implicit messages: Messages): String = messages("arrival.notification.incidents.whatHappensNextHeader")
+
 }
 
 object IncidentsDuringTransitP5ViewModel {

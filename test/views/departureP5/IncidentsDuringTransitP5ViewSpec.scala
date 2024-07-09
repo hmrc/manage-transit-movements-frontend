@@ -52,6 +52,8 @@ class IncidentsDuringTransitP5ViewSpec extends DetailsListViewBehaviours with Ge
     }
   )
 
+  behave like pageWithContent("h2", "What happens next")
+
   behave like pageWithContent("p", "Check your departure declarations for further updates.")
 
   behave like pageWithLink(

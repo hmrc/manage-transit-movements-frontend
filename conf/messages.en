@@ -626,6 +626,7 @@ arrival.notification.incident.paragraph1 = An incident has been reported by the 
 
 arrival.notification.incidents.paragraph2.hyperlink = Check your departure declarations
 arrival.notification.incidents.paragraph2.end = for further updates.
+arrival.notification.incidents.whatHappensNextHeader = What happens next
 
 arrival.notification.incidents.customsOfficeContact.telephoneAvailable = For further help, contact the carrier or Customs at {0} on {1}.
 arrival.notification.incidents.customsOfficeContact.telephoneNotAvailable = For further help, contact Customs at {0}.
