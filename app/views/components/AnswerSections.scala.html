@@ -15,12 +15,13 @@
  *@
 
 @import viewModels.sections.Section
+@import viewModels.sections.Section._
 @import views.html.components.AnswerSection
 
-@this(answerSection: AnswerSection)
+@this(
+    answerSection: AnswerSection
+)
 
-@(sections: Seq[Section])
+@(sections: Seq[Section])(implicit messages: Messages)
 
-@for(section <- sections) {
-    @answerSection(section)()
-}
+@sections.map(answerSection(_))

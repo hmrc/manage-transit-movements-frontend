@@ -18,7 +18,7 @@ package components
 
 import a11ySpecBase.A11ySpecBase
 import org.scalacheck.Arbitrary.arbitrary
-import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 import views.html.components.AnswerSections
 import views.html.templates.MainTemplate
 
@@ -29,7 +29,7 @@ class AnswerSectionsSpec extends A11ySpecBase {
     val component = app.injector.instanceOf[AnswerSections]
 
     val title    = nonEmptyString.sample.value
-    val sections = arbitrary[List[Section]].sample.value
+    val sections = arbitrary[List[StaticSection]].sample.value
 
     val content = template.apply(title) {
       component.apply(sections).withHeading(title)

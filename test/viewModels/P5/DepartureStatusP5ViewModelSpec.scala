@@ -858,7 +858,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.incidentDuringTransit",
         Seq(
           ViewMovementAction(
-            "#", //TODO: Add href as part of CTCP-5553
+            controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url,
             "movement.status.P5.action.incidentDuringTransit.viewIncidents"
           )
         )
@@ -890,7 +890,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.incidentDuringTransit",
         Seq(
           ViewMovementAction(
-            "#", //TODO: Add href as part of CTCP-5553
+            controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url,
             "movement.status.P5.action.incidentDuringTransit.viewIncident"
           )
         )
