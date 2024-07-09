@@ -16,24 +16,27 @@
 
 package models.departureP5
 
+import config.Constants
 import generated.CC056CType
 
-sealed trait BusinessRejectionType
+sealed trait BusinessRejectionType {
+  val value: String
+}
 
 object BusinessRejectionType {
 
   case object AmendmentRejection extends BusinessRejectionType {
-    override def toString: String = "013"
+    override val value: String = Constants.BusinessRejectionType.AmendmentRejection
   }
 
   case object DeclarationRejection extends BusinessRejectionType {
-    override def toString: String = "015"
+    override val value: String = Constants.BusinessRejectionType.DeclarationRejection
   }
 
   def apply(value: String): BusinessRejectionType = value match {
-    case "013" => AmendmentRejection
-    case "015" => DeclarationRejection
-    case x     => throw new IllegalArgumentException(s"Unexpected business rejection type: $x")
+    case AmendmentRejection.value   => AmendmentRejection
+    case DeclarationRejection.value => DeclarationRejection
+    case x                          => throw new IllegalArgumentException(s"Unexpected business rejection type: $x")
   }
 
   def apply(ie056: CC056CType): BusinessRejectionType =

@@ -336,7 +336,7 @@ trait MessagesModelGenerators {
       for {
         lrn                   <- Gen.option(nonEmptyString)
         mrn                   <- Gen.option(nonEmptyString)
-        businessRejectionType <- arbitrary[BusinessRejectionType].map(_.toString)
+        businessRejectionType <- arbitrary[BusinessRejectionType].map(_.value)
         rejectionDateAndTime  <- arbitrary[XMLGregorianCalendar]
         rejectionCode         <- nonEmptyString
         rejectionReason       <- Gen.option(nonEmptyString)
@@ -354,7 +354,7 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         mrn                   <- nonEmptyString
-        businessRejectionType <- arbitrary[BusinessRejectionType].map(_.toString)
+        businessRejectionType <- arbitrary[BusinessRejectionType].map(_.value)
         rejectionDateAndTime  <- arbitrary[XMLGregorianCalendar]
         rejectionCode         <- nonEmptyString
         rejectionReason       <- Gen.option(nonEmptyString)
