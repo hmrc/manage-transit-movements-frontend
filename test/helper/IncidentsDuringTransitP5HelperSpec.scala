@@ -21,7 +21,7 @@ import generators.Generators
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import generated.CC182CType
-import models.Link
+import models.{Index, Link}
 import utils.IncidentsDuringTransitP5Helper
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
@@ -197,7 +197,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               )
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
-              val result = helper.incidentSection(incidentIndex)
+              val result = helper.incidentSection(departureIdP5, messageId, incidentIndex)
 
               result mustBe a[AccordionSection]
               result.sectionTitle mustBe Some("Incident 1")
@@ -225,7 +225,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               )
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
-              val result = helper.incidentsSection
+              val result = helper.incidentsSection(departureIdP5, messageId)
 
               result mustBe a[AccordionSection]
               result.sectionTitle mustBe Some("Incidents")
@@ -240,14 +240,14 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               result.children.head.viewLinks.head mustBe Link(
                 id = s"more-details-incident-${1}",
                 text = "More details",
-                href = controllers.routes.SessionExpiredController.onPageLoad().url,
+                href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, Index(0), messageId).url,
                 visuallyHidden = Some("more details on incident 1")
               )
 
               result.children(1).viewLinks.head mustBe Link(
                 id = s"more-details-incident-${2}",
                 text = "More details",
-                href = controllers.routes.SessionExpiredController.onPageLoad().url,
+                href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, Index(1), messageId).url,
                 visuallyHidden = Some("more details on incident 2")
               )
           }

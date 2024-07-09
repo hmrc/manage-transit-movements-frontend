@@ -62,6 +62,8 @@ object IncidentsDuringTransitP5ViewModel {
   class IncidentsDuringTransitP5ViewModelProvider {
 
     def apply(
+      departureId: String,
+      messageId: String,
       data: CC182CType,
       referenceNumbers: DepartureReferenceNumbers,
       customsOffice: Either[String, CustomsOffice],
@@ -72,7 +74,7 @@ object IncidentsDuringTransitP5ViewModel {
 
       val sections = Seq(
         helper.incidentInformationSection,
-        helper.incidentsSection
+        helper.incidentsSection(departureId, messageId)
       )
 
       IncidentsDuringTransitP5ViewModel(

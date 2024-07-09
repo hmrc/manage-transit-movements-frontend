@@ -51,6 +51,8 @@ class IncidentsDuringTransitP5Controller @Inject() (
             Ok(
               view(
                 viewModelProvider.apply(
+                  departureId,
+                  messageId,
                   request.messageData,
                   request.referenceNumbers,
                   customsOffice,

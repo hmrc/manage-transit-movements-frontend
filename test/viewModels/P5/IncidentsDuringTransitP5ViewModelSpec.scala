@@ -46,7 +46,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId),
       isMultipleIncidents: Boolean = true
     ): IncidentsDuringTransitP5ViewModel =
-      viewModelProvider.apply(cc128Data, departureReferenceNumbers, customsOffice, isMultipleIncidents)
+      viewModelProvider.apply(departureIdP5, messageId, cc128Data, departureReferenceNumbers, customsOffice, isMultipleIncidents)
 
     "viewModel must have correct sections" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
