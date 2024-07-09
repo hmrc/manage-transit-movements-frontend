@@ -16,7 +16,7 @@
 
 package controllers
 
-import play.api.http.HeaderNames.{CONTENT_LENGTH, CONTENT_TYPE}
+import play.api.http.HeaderNames._
 import play.api.http.HttpEntity
 import play.api.http.Status.OK
 import play.api.mvc.Result
@@ -28,15 +28,12 @@ trait DocumentController {
   def stream(response: HttpResponse): Result =
     response.status match {
       case OK =>
-        def header(key: String): Option[String] =
-          response.headers.get(key).flatMap(_.headOption)
+        def header(key: String): Option[(String, String)] =
+          response.header(key).map(key -> _)
 
-        val headers = response.headers.toSeq.flatMap {
-          case (key, values) => values.map(key -> _)
-        }
-
-        val contentLength = header(CONTENT_LENGTH).flatMap(_.toLongOption)
-        val contentType   = header(CONTENT_TYPE)
+        val contentLength = header(CONTENT_LENGTH).map(_._2).flatMap(_.toLongOption)
+        val contentType   = header(CONTENT_TYPE).map(_._2)
+        val headers       = header(CONTENT_DISPOSITION).toSeq
 
         Ok.sendEntity(HttpEntity.Streamed(response.bodyAsSource, contentLength, contentType))
           .withHeaders(headers: _*)
