@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.Availability
 import models.departureP5._
 import play.api.http.Status._
+import play.api.libs.json.{JsError, JsSuccess}
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -67,14 +68,24 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
       .map {
         response =>
           response.status match {
-            case OK        => response.json.asOpt[DepartureMovements]
-            case NOT_FOUND => Some(DepartureMovements(Seq.empty, 0))
-            case _         => None
+            case OK =>
+              response.json.validateOpt[DepartureMovements] match {
+                case JsSuccess(value, _) =>
+                  value
+                case JsError(errors) =>
+                  logger.warn(s"[DepartureMovementP5Connector][getMovements]: $errors")
+                  Some(DepartureMovements(Seq.empty, 0))
+              }
+            case NOT_FOUND =>
+              Some(DepartureMovements(Seq.empty, 0))
+            case e =>
+              logger.warn(s"[DepartureMovementP5Connector][getMovements]: $e")
+              None
           }
       }
       .recover {
         case e =>
-          logger.error(s"Failed to get departure movements with error: $e")
+          logger.error(s"[DepartureMovementP5Connector][getMovements]: $e")
           None
       }
   }
@@ -85,6 +96,7 @@ class DepartureMovementP5Connector @Inject() (config: FrontendAppConfig, http: H
     http
       .get(url)
       .setHeader(jsonAcceptHeader)
+      .transform(_.withQueryStringParameters("count" -> config.apiResults.toString))
       .execute[LatestDepartureMessage]
   }
 
