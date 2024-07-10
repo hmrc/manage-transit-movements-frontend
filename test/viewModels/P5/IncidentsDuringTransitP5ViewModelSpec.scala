@@ -54,6 +54,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
   }
 
   "IncidentsDuringTransitP5ViewModel" - {
+    ap
 
     val mrn                = "AB123"
     val lrn                = "LRN123"
