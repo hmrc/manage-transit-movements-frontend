@@ -60,7 +60,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
   "ReferenceDataService" - {
 
-    "getCustomsOfficeByCode" - {
+    "getCustomsOffice" - {
 
       val expectedQueryParams = Seq("data.id" -> customsOfficeId)
 

@@ -20,9 +20,14 @@ import generated.CC182CType
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
+import services.ReferenceDataService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncidentsDuringTransitP5Helper
 import viewModels.P5.ViewModelWithCustomsOffice
 import viewModels.sections.Section
+
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 case class IncidentsDuringTransitP5ViewModel(
   lrn: String,
@@ -61,23 +66,21 @@ case class IncidentsDuringTransitP5ViewModel(
 
 object IncidentsDuringTransitP5ViewModel {
 
-  class IncidentsDuringTransitP5ViewModelProvider {
+  class IncidentsDuringTransitP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
       data: CC182CType,
       referenceNumbers: DepartureReferenceNumbers,
       customsOffice: Either[String, CustomsOffice],
       isMultipleIncidents: Boolean
-    )(implicit messages: Messages): IncidentsDuringTransitP5ViewModel = {
+    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentsDuringTransitP5ViewModel] = {
 
-      val helper = new IncidentsDuringTransitP5Helper(data, isMultipleIncidents)
+      val helper = new IncidentsDuringTransitP5Helper(data, isMultipleIncidents, referenceDataService)
 
-      val sections = Seq(
-        helper.incidentInformationSection,
-        helper.incidentsSection
-      )
-
-      IncidentsDuringTransitP5ViewModel(
+      for {
+        incidentInformationSection <- helper.incidentInformationSection
+        sections = Seq(incidentInformationSection, helper.incidentsSection)
+      } yield IncidentsDuringTransitP5ViewModel(
         referenceNumbers.localReferenceNumber.value,
         customsOffice,
         isMultipleIncidents,

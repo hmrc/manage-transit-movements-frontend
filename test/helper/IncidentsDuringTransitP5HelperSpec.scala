@@ -20,15 +20,30 @@ import base.SpecBase
 import generated.CC182CType
 import generators.Generators
 import models.Link
+import models.referenceData.CustomsOffice
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import scalaxb.XMLCalendar
+import play.api.inject
+import play.api.inject.guice.GuiceApplicationBuilder
+import services.ReferenceDataService
 import utils.IncidentsDuringTransitP5Helper
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 import javax.xml.datatype.XMLGregorianCalendar
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+
+  private val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   "ConsignmentAnswersHelper" - {
 
@@ -41,7 +56,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
             value =>
               val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation.copy(MRN = value))
 
-              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.mrnRow.value
 
               result.key.value mustBe "Movement Reference Number (MRN)"
@@ -56,7 +71,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
           "when isMultipleIncidents is false" in {
             val value: XMLGregorianCalendar = XMLCalendar("2024-07-14T20:59:00")
             val modifiedCC182CType          = CC182CType.copy(TransitOperation = CC182CType.TransitOperation.copy(incidentNotificationDateAndTime = value))
-            val helper                      = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = false)
+            val helper                      = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = false, mockReferenceDataService)
 
             val result = helper.dateTimeIncidentReportedRow.value
 
@@ -69,7 +84,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
             val value: XMLGregorianCalendar = XMLCalendar("2024-07-08T20:59:00")
 
             val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation.copy(incidentNotificationDateAndTime = value))
-            val helper             = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+            val helper             = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
 
             val result = helper.dateTimeIncidentReportedRow.value
 
@@ -87,7 +102,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val modifiedCC182CType =
                 CC182CType.copy(CustomsOfficeOfIncidentRegistration = CC182CType.CustomsOfficeOfIncidentRegistration.copy(referenceNumber = value))
 
-              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.customsOfficeOfIncidentRow.value
 
               result.key.value mustBe "Customs office of incident"
@@ -98,17 +113,39 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
       }
 
       "officeOfDepartureRow" - {
-        "must return a row" in {
+        "must return a row with name and code when reference data succeeds" in {
           forAll(Gen.alphaNumStr) {
             value =>
-              val modifiedCC182CType =
-                CC182CType.copy(CustomsOfficeOfIncidentRegistration = CC182CType.CustomsOfficeOfIncidentRegistration.copy(referenceNumber = value))
+              val customsOffice = CustomsOffice("XI000142", "Belfast", None)
 
-              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
-              val result = helper.officeOfDepartureRow.value
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+                .thenReturn(Future.successful(Right(customsOffice)))
+
+              val modifiedCC182CType =
+                CC182CType.copy(CustomsOfficeOfDeparture = CC182CType.CustomsOfficeOfDeparture.copy(referenceNumber = value))
+
+              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
+              val result = helper.officeOfDepartureRow.futureValue.value
 
               result.key.value mustBe "Office of departure"
-              result.value.value mustBe "office of departure"
+              result.value.value mustBe "Belfast (XI000142)"
+              result.actions must not be defined
+          }
+        }
+        "must return a row with id when reference data fails" in {
+          forAll(Gen.alphaNumStr) {
+            value =>
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+                .thenReturn(Future.successful(Left(value)))
+
+              val modifiedCC182CType =
+                CC182CType.copy(CustomsOfficeOfDeparture = CC182CType.CustomsOfficeOfDeparture.copy(referenceNumber = value))
+
+              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
+              val result = helper.officeOfDepartureRow.futureValue.value
+
+              result.key.value mustBe "Office of departure"
+              result.value.value mustBe value
               result.actions must not be defined
           }
         }
@@ -130,7 +167,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
                 Consignment = updatedConsignment
               )
 
-              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.incidentCodeRow(incidentIndex).value
 
               result.key.value mustBe "Incident code"
@@ -156,7 +193,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
                 Consignment = updatedConsignment
               )
 
-              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.incidentDescriptionRow(incidentIndex).value
 
               result.key.value mustBe "Description"
@@ -170,8 +207,8 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
     "sections" - {
       "incidentInformationSection" - {
         "must return a static section" in {
-          val helper = new IncidentsDuringTransitP5Helper(CC182CType, isMultipleIncidents = true)
-          val result = helper.incidentInformationSection
+          val helper = new IncidentsDuringTransitP5Helper(CC182CType, isMultipleIncidents = true, mockReferenceDataService)
+          val result = helper.incidentInformationSection.futureValue
 
           result mustBe a[StaticSection]
           result.rows.size mustBe 4
@@ -195,7 +232,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
                 Consignment = updatedConsignment
               )
 
-              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.incidentSection(incidentIndex)
 
               result mustBe a[AccordionSection]
@@ -223,7 +260,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
                 Consignment = updatedConsignment
               )
 
-              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.incidentsSection
 
               result mustBe a[AccordionSection]

@@ -19,15 +19,20 @@ package utils
 import generated.CC182CType
 import models.{Index, Link}
 import play.api.i18n.Messages
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 import javax.xml.datatype.XMLGregorianCalendar
 
+import scala.concurrent.{ExecutionContext, Future}
+
 class IncidentsDuringTransitP5Helper(
   data: CC182CType,
-  isMultipleIncidents: Boolean
-)(implicit messages: Messages)
+  isMultipleIncidents: Boolean,
+  referenceDataService: ReferenceDataService
+)(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
     extends DeparturesP5MessageHelper {
 
   def mrnRow: Option[SummaryListRow] = buildRowFromAnswer[String](
@@ -55,13 +60,23 @@ class IncidentsDuringTransitP5Helper(
     call = None
   )
 
-  def officeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("office of departure"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "arrival.notification.incidents.label.officeOfDeparture",
-    id = None,
-    call = None
-  )
+  def officeOfDepartureRow: Future[Option[SummaryListRow]] = {
+    val referenceNumber = data.CustomsOfficeOfDeparture.referenceNumber
+    referenceDataService.getCustomsOffice(referenceNumber).map {
+      customsOffice =>
+        val answerToDisplay = customsOffice match {
+          case Right(customsOffice) => customsOffice.nameAndCode
+          case Left(id)             => id
+        }
+        buildRowFromAnswer[String](
+          answer = Some(answerToDisplay),
+          formatAnswer = formatAsText,
+          prefix = "arrival.notification.incidents.label.officeOfDeparture",
+          id = None,
+          call = None
+        )
+    }
+  }
 
   def incidentCodeRow(incidentIndex: Index): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("incident code here"), // TODO: Pull from incident data
@@ -79,15 +94,14 @@ class IncidentsDuringTransitP5Helper(
     call = None
   )
 
-  def incidentInformationSection: StaticSection = StaticSection(
-    sectionTitle = None,
-    rows = Seq(
-      mrnRow,
-      dateTimeIncidentReportedRow,
-      customsOfficeOfIncidentRow,
-      officeOfDepartureRow
-    ).flatten
-  )
+  def incidentInformationSection: Future[StaticSection] =
+    for {
+      officeOfDepartureRow <- officeOfDepartureRow
+      rows = Seq(mrnRow, dateTimeIncidentReportedRow, customsOfficeOfIncidentRow, officeOfDepartureRow).flatten
+    } yield StaticSection(
+      sectionTitle = None,
+      rows = rows
+    )
 
   def incidentsSection: AccordionSection = AccordionSection(
     sectionTitle = Some(messages("arrival.notification.incidents.heading.incident")),

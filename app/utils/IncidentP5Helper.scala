@@ -17,10 +17,9 @@
 package utils
 
 import generated.CC182CType
-import models.Link
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewModels.sections.Section.{AccordionSection, StaticSection}
+import viewModels.sections.Section.StaticSection
 
 class IncidentP5Helper(
   data: CC182CType,

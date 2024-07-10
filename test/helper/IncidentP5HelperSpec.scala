@@ -19,13 +19,10 @@ package helper
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.Link
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.Arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.IncidentP5Helper
 import viewModels.sections.Section.StaticSection
-
-import javax.xml.datatype.XMLGregorianCalendar
 
 class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

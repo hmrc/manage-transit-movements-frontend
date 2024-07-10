@@ -39,7 +39,7 @@ class IncidentP5Controller @Inject() (
   viewModelProvider: IncidentP5ViewModelProvider,
   referenceDataService: ReferenceDataService,
   view: IncidentP5View
-)(implicit val executionContext: ExecutionContext, frontendAppConfig: FrontendAppConfig)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
