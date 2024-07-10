@@ -27,7 +27,7 @@ import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel.IncidentsDuring
 import views.html.departureP5.IncidentsDuringTransitP5View
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class IncidentsDuringTransitP5Controller @Inject() (
   override val messagesApi: MessagesApi,

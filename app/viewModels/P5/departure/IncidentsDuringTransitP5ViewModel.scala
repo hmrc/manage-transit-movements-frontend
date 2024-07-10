@@ -79,7 +79,8 @@ object IncidentsDuringTransitP5ViewModel {
 
       for {
         incidentInformationSection <- helper.incidentInformationSection
-        sections = Seq(incidentInformationSection, helper.incidentsSection)
+        incidentsSection           <- helper.incidentsSection
+        sections = Seq(incidentInformationSection, incidentsSection)
       } yield IncidentsDuringTransitP5ViewModel(
         referenceNumbers.localReferenceNumber.value,
         customsOffice,

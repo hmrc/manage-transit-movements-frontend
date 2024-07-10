@@ -16,7 +16,6 @@
 
 package controllers.departureP5
 
-import config.FrontendAppConfig
 import controllers.actions.{Actions, DepartureMessageRetrievalActionProvider}
 import generated.CC182CType
 import models.Index
