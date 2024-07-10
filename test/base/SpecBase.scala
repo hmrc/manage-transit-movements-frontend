@@ -19,7 +19,7 @@ package base
 import config.{FrontendAppConfig, PaginationAppConfig}
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
-import models.{DepartureId, LocalReferenceNumber}
+import models.{DepartureId, Index, LocalReferenceNumber}
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -44,7 +44,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val departureIdP5: String    = "643cffea2dca70b2"
   val arrivalIdP5: String      = "62f4ebbb765ba8c2"
 
-  val incidentIndex: Int = 0
+  val incidentIndex: Index = Index(0)
 
   val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"))
 

@@ -15,6 +15,7 @@ site.service_name = Manage your transit movements
 site.section = This section is
 site.amendErrors = Amend errors
 site.warning = Warning
+site.summary = Back to summary
 
 site.ascending = ascending
 site.descending = descending
@@ -645,4 +646,25 @@ arrival.notification.incidents.link.hidden = more details on incident {0}
 arrival.notification.incidents.incident.code.label = Incident code
 arrival.notification.incidents.incident.description.label = Description
 
+departure.notification.incident.index.title = Incident {0}
+departure.notification.incident.index.heading = Incident {0}
+departure.notification.incident.index.paragraph1 = An incident has been reported by the customs office of incident. Review the incident details and contact the carrier for more information.
+departure.notification.incident.index.multi.paragraph1 = Multiple incidents have been reported by the customs office of incident. Review the incident details and contact the carrier for more information.
+
+departure.notification.incident.index.code = Incident code
+departure.notification.incident.index.description = Description
+departure.notification.incident.index.country = Country
+departure.notification.incident.index.identifierType = Identifier Type
+departure.notification.incident.index.coordinates = Coordinates
+
+departure.notification.incident.index.endorsement.section.title = Endorsement
+departure.notification.incident.index.endorsement = Endorsement date
+departure.notification.incident.index.authority = Authority
+departure.notification.incident.index.endorsementCountry = Country
+departure.notification.incident.index.location = Location
+
+departure.notification.incident.index.replacement.section.title = Replacement means of transport
+departure.notification.incident.index.identificationType = Identification type
+departure.notification.incident.index.identification = Identification
+departure.notification.incident.index.registeredCountry = Registered Country
 

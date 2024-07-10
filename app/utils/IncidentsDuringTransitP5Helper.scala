@@ -17,7 +17,7 @@
 package utils
 
 import generated.CC182CType
-import models.Link
+import models.{Index, Link}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section.{AccordionSection, StaticSection}
@@ -61,7 +61,7 @@ class IncidentsDuringTransitP5Helper(
     call = None
   )
 
-  def incidentCodeRow(incidentIndex: Int): Option[SummaryListRow] = buildRowFromAnswer[String](
+  def incidentCodeRow(incidentIndex: Index): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("incident code here"), // TODO: Pull from incident data
     formatAnswer = formatAsText,
     prefix = "arrival.notification.incidents.incident.code.label",
@@ -69,7 +69,7 @@ class IncidentsDuringTransitP5Helper(
     call = None
   )
 
-  def incidentDescriptionRow(incidentIndex: Int): Option[SummaryListRow] = buildRowFromAnswer[String](
+  def incidentDescriptionRow(incidentIndex: Index): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("incident description here"), // TODO: Pull from incident data
     formatAnswer = formatAsText,
     prefix = "arrival.notification.incidents.incident.description.label",
@@ -90,24 +90,24 @@ class IncidentsDuringTransitP5Helper(
   def incidentsSection: AccordionSection = AccordionSection(
     sectionTitle = Some(messages("arrival.notification.incidents.heading.incident")),
     children = data.Consignment.Incident.zipWithIndex.map {
-      case (_, index) => incidentSection(index)
+      case (_, index) => incidentSection(Index(index))
     },
     isOpen = true
   )
 
-  def incidentSection(incidentIndex: Int): AccordionSection = AccordionSection(
-    sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex.toDisplay),
+  def incidentSection(incidentIndex: Index): AccordionSection = AccordionSection(
+    sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex.display),
     rows = Seq(
       incidentCodeRow(incidentIndex),
       incidentDescriptionRow(incidentIndex)
     ).flatten,
-    isOpen = if (incidentIndex == 0) true else false,
+    isOpen = if (incidentIndex.position == 0) true else false,
     viewLinks = Seq(
       Link(
-        id = s"more-details-incident-${incidentIndex.toDisplay}",
+        id = s"more-details-incident-${incidentIndex.display}",
         text = messages("arrival.notification.incidents.link"),
         href = controllers.routes.SessionExpiredController.onPageLoad().url, //TODO: Update navigation to incident page once implemented
-        visuallyHidden = Some(messages("arrival.notification.incidents.link.hidden", incidentIndex.toDisplay))
+        visuallyHidden = Some(messages("arrival.notification.incidents.link.hidden", incidentIndex.display))
       )
     )
   )
