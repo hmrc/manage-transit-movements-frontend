@@ -20,6 +20,7 @@ import cats.Order
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
+import models.IncidentCode
 import play.api.Logging
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import play.api.http.Status.OK
@@ -44,6 +45,17 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .setHeader(version2Header)
       .transform(_.withQueryStringParameters(queryParams: _*))
       .execute[NonEmptySet[CustomsOffice]]
+  }
+
+  def getIncidentCodes(
+    queryParams: QueryParams*
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[IncidentCode]] = {
+    val url = url"${config.customsReferenceDataUrl}/lists/IncidentCode"
+    http
+      .get(url)
+      .setHeader(version2Header)
+      .transform(_.withQueryStringParameters(queryParams: _*))
+      .execute[NonEmptySet[IncidentCode]]
   }
 
   def getControlTypes(queryParams: QueryParams*)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[ControlType]] = {

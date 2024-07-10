@@ -21,6 +21,7 @@ import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
+import models.IncidentCode
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -123,6 +124,36 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         }
       }
 
+      "getIncidentCodes" - {
+
+        val url = s"$baseUrl/lists/IncidentCode?foo=bar"
+
+        "should handle a 200 response for incident codes" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(incidentCodeResponseJson))
+          )
+
+          val expectedResult =
+            NonEmptySet.of(
+              IncidentCode(
+                incidentCodeCode,
+                "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+              )
+            )
+
+          connector.getIncidentCodes(queryParams).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getIncidentCodes(queryParams))
+        }
+
+        "should handle client and server errors for incident codes" in {
+          checkErrorResponse(url, connector.getIncidentCodes(queryParams))
+        }
+      }
+
       "getRequestedDocumentTypes" - {
 
         val url = s"$baseUrl/lists/RequestedDocumentType?foo=bar"
@@ -205,6 +236,7 @@ object ReferenceDataConnectorSpec {
 
   private val code                  = "GB00001"
   private val typeOfControl         = "44"
+  private val incidentCodeCode      = "1"
   private val requestedDocumentType = "C620"
   private val functionalError       = "14"
 
@@ -230,6 +262,18 @@ object ReferenceDataConnectorSpec {
        |    {
        |      "code": "$typeOfControl",
        |      "description": "Intrusive"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
+
+  private val incidentCodeResponseJson: String =
+    s"""
+       |{
+       |  "data": [
+       |    {
+       |      "code": "$incidentCodeCode",
+       |      "description": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
        |    }
        |  ]
        |}
