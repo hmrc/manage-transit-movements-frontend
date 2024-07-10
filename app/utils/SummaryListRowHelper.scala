@@ -62,6 +62,12 @@ class SummaryListRowHelper(implicit messages: Messages) {
       .toText
   }
 
+  def formatAsIncidentDateTime(answer: XMLGregorianCalendar): Content = {
+    val date      = answer.toGregorianCalendar.getTime
+    val formatter = new SimpleDateFormat("d MMMM yyyy HH:mm")
+    formatter.format(date).toText
+  }
+
   def formatAsCurrency(recoveryNotification: RecoveryNotificationType): Content = {
     val value = recoveryNotification match {
       case RecoveryNotificationType(_, _, amountClaimed, currency) =>
