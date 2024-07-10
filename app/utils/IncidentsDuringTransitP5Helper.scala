@@ -22,6 +22,8 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
+import javax.xml.datatype.XMLGregorianCalendar
+
 class IncidentsDuringTransitP5Helper(
   data: CC182CType,
   isMultipleIncidents: Boolean
@@ -36,9 +38,9 @@ class IncidentsDuringTransitP5Helper(
     call = None
   )
 
-  def dateTimeIncidentReportedRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("time of incident here"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
+  def dateTimeIncidentReportedRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
+    answer = Some(data.TransitOperation.incidentNotificationDateAndTime),
+    formatAnswer = formatAsIncidentDateTime,
     prefix =
       if (isMultipleIncidents) "arrival.notification.incidents.label.dateAndTime.plural" else "arrival.notification.incidents.label.dateAndTime.singular",
     id = None,

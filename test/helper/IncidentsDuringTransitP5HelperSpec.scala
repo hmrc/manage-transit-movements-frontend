@@ -17,11 +17,12 @@
 package helper
 
 import base.SpecBase
+import generated.CC182CType
 import generators.Generators
+import models.Link
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import generated.CC182CType
-import models.Link
+import scalaxb.XMLCalendar
 import utils.IncidentsDuringTransitP5Helper
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
@@ -53,30 +54,28 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
       "dateTimeIncidentReportedRow" - {
         "must return a row with correct heading" - {
           "when isMultipleIncidents is false" in {
-            forAll(Arbitrary.arbitrary[XMLGregorianCalendar]) {
-              value =>
-                val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation.copy(incidentNotificationDateAndTime = value))
-                val helper             = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = false)
+            val value: XMLGregorianCalendar = XMLCalendar("2024-07-14T20:59:00")
+            val modifiedCC182CType          = CC182CType.copy(TransitOperation = CC182CType.TransitOperation.copy(incidentNotificationDateAndTime = value))
+            val helper                      = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = false)
 
-                val result = helper.dateTimeIncidentReportedRow.value
+            val result = helper.dateTimeIncidentReportedRow.value
 
-                result.key.value mustBe "Date and time incident reported"
-                result.value.value mustBe "time of incident here"
-                result.actions must not be defined
-            }
+            result.key.value mustBe "Date and time incident reported"
+            result.value.value mustBe "14 July 2024 20:59"
+            result.actions must not be defined
           }
+
           "when isMultipleIncidents is true" in {
-            forAll(Arbitrary.arbitrary[XMLGregorianCalendar]) {
-              value =>
-                val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation.copy(incidentNotificationDateAndTime = value))
-                val helper             = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+            val value: XMLGregorianCalendar = XMLCalendar("2024-07-08T20:59:00")
 
-                val result = helper.dateTimeIncidentReportedRow.value
+            val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation.copy(incidentNotificationDateAndTime = value))
+            val helper             = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true)
 
-                result.key.value mustBe "Date and time incidents reported"
-                result.value.value mustBe "time of incident here"
-                result.actions must not be defined
-            }
+            val result = helper.dateTimeIncidentReportedRow.value
+
+            result.key.value mustBe "Date and time incidents reported"
+            result.value.value mustBe "8 July 2024 20:59"
+            result.actions must not be defined
           }
         }
       }
