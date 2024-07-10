@@ -49,11 +49,12 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockReferenceDataService)
-    when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
-      .thenReturn(Future.successful(customsOffice))
+    when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+      .thenReturn(Future.successful(Right(customsOffice)))
   }
 
   "IncidentsDuringTransitP5ViewModel" - {
+    ap
 
     val mrn                = "AB123"
     val lrn                = "LRN123"

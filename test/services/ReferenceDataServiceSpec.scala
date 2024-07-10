@@ -87,21 +87,6 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       }
     }
 
-    "getCustomsOfficeByCode" - {
-
-      val expectedQueryParams = Seq("data.id" -> customsOfficeId)
-
-      "should return customs office" in {
-        when(mockConnector.getCustomsOffices(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(customsOffices))
-
-        val service = new ReferenceDataServiceImpl(mockConnector)
-
-        service.getCustomsOfficeByCode(customsOfficeId).futureValue mustBe customsOffice1
-
-        verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams): _*)(any(), any())
-      }
-    }
-
     "getControlType" - {
 
       val expectedQueryParams = Seq("data.code" -> controlTypeCode)
