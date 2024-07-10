@@ -60,10 +60,14 @@ class IncidentsDuringTransitP5Helper(
 
   def officeOfDepartureRow: Future[Option[SummaryListRow]] = {
     val referenceNumber = data.CustomsOfficeOfDeparture.referenceNumber
-    referenceDataService.getCustomsOfficeByCode(referenceNumber).map {
+    referenceDataService.getCustomsOffice(referenceNumber).map {
       customsOffice =>
+        val answerToDisplay = customsOffice match {
+          case Right(customsOffice) => customsOffice.nameAndCode
+          case Left(id)             => id
+        }
         buildRowFromAnswer[String](
-          answer = Some(customsOffice.nameAndCode),
+          answer = Some(answerToDisplay),
           formatAnswer = formatAsText,
           prefix = "arrival.notification.incidents.label.officeOfDeparture",
           id = None,
