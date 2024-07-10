@@ -18,7 +18,6 @@ package services
 
 import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
-import models.LocalReferenceNumber
 import models.departureP5.BusinessRejectionType
 import models.departureP5.BusinessRejectionType._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,27 +32,27 @@ class BusinessRejectionTypeService @Inject() (
 
   def canProceedWithAmendment(
     businessRejectionType: BusinessRejectionType,
-    lrn: LocalReferenceNumber,
+    lrn: String,
     xPaths: Seq[String]
   )(implicit hc: HeaderCarrier): Future[Boolean] =
     businessRejectionType match {
       case AmendmentRejection =>
-        cacheConnector.doesDeclarationExist(lrn.value)
+        cacheConnector.doesDeclarationExist(lrn)
       case DeclarationRejection =>
-        cacheConnector.isDeclarationAmendable(lrn.value, xPaths)
+        cacheConnector.isDeclarationAmendable(lrn, xPaths)
     }
 
   def handleErrors(
     businessRejectionType: BusinessRejectionType,
-    lrn: LocalReferenceNumber,
+    lrn: String,
     xPaths: Seq[String]
   )(implicit hc: HeaderCarrier): Future[Boolean] =
     businessRejectionType match {
       case AmendmentRejection =>
-        cacheConnector.handleAmendmentErrors(lrn.value, xPaths)
+        cacheConnector.handleAmendmentErrors(lrn, xPaths)
       case DeclarationRejection =>
         if (xPaths.nonEmpty) {
-          cacheConnector.handleErrors(lrn.value, xPaths)
+          cacheConnector.handleErrors(lrn, xPaths)
         } else {
           Future.successful(false)
         }
@@ -61,18 +60,18 @@ class BusinessRejectionTypeService @Inject() (
 
   def nextPage(
     businessRejectionType: BusinessRejectionType,
-    lrn: LocalReferenceNumber,
+    lrn: String,
     departureId: String,
     mrn: Option[String]
   ): String =
     businessRejectionType match {
       case AmendmentRejection =>
-        config.departureAmendmentUrl(lrn.value, departureId)
+        config.departureAmendmentUrl(lrn, departureId)
       case DeclarationRejection =>
         if (mrn.isDefined) {
-          config.departureNewLocalReferenceNumberUrl(lrn.value)
+          config.departureNewLocalReferenceNumberUrl(lrn)
         } else {
-          config.departureFrontendTaskListUrl(lrn.value)
+          config.departureFrontendTaskListUrl(lrn)
         }
     }
 }

@@ -46,11 +46,11 @@ class DeleteDraftDepartureYesNoController @Inject() (
   def onPageLoad(lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen lockAction(lrn.value)) {
       implicit request =>
-        Ok(view(form, lrn.value, pageNumber, numberOfRows, searchLrn))
+        Ok(view(form, lrn, pageNumber, numberOfRows, searchLrn))
     }
 
-  def onSubmit(lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen lockAction(lrn)).async {
+  def onSubmit(lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen lockAction(lrn.value)).async {
       implicit request =>
         form
           .bindFromRequest()
@@ -58,7 +58,7 @@ class DeleteDraftDepartureYesNoController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, pageNumber, numberOfRows, searchLrn))),
             {
               case true =>
-                draftDepartureService.deleteDraftDeparture(lrn) map {
+                draftDepartureService.deleteDraftDeparture(lrn.value) map {
                   case response if response.status == StatusOK =>
                     val redirectPageNumber: Int = pageNumber match {
                       case 1                               => 1

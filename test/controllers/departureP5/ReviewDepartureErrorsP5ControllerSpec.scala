@@ -75,7 +75,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
               when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
               when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
               val rejectionMessageP5ViewModel =

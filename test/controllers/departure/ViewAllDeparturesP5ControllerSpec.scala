@@ -21,7 +21,6 @@ import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
 import forms.DeparturesSearchFormProvider
 import generators.Generators
-import models.LocalReferenceNumber
 import models.departureP5.DepartureMessageType.DepartureNotification
 import models.departureP5._
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
@@ -68,7 +67,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
   val departureMovement: DepartureMovement = DepartureMovement(
     "63651574c3447b12",
     None,
-    LocalReferenceNumber("AB123"),
+    "AB123",
     dateTime
   )
 
@@ -110,7 +109,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
               Seq(
                 OtherMovementAndMessage(
                   departureIdP5,
-                  lrn,
+                  lrn.value,
                   dateTime,
                   LatestDepartureMessage(
                     DepartureMessage(
@@ -160,7 +159,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with ScalaCheckProperty
               Seq(
                 OtherMovementAndMessage(
                   departureIdP5,
-                  lrn,
+                  lrn.value,
                   dateTime,
                   LatestDepartureMessage(
                     DepartureMessage(

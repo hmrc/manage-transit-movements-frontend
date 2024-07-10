@@ -20,8 +20,8 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
+import models.Availability
 import models.departureP5._
-import models.{Availability, LocalReferenceNumber}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -155,13 +155,13 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             DepartureMovement(
               "63651574c3447b12",
               Some("27WF9X1FQ9RCKN0TM3"),
-              LocalReferenceNumber("AB123"),
+              "AB123",
               LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
             ),
             DepartureMovement(
               "6365135ba5e821ee",
               Some("27WF9X1FQ9RCKN0TM3"),
-              LocalReferenceNumber("CD123"),
+              "CD123",
               LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME)
             )
           ),
@@ -238,7 +238,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               DepartureMovement(
                 "63651574c3447b12",
                 None,
-                LocalReferenceNumber("LRN12345"),
+                "LRN12345",
                 LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
               )
             ),
@@ -261,7 +261,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               DepartureMovement(
                 "63651574c3447b12",
                 None,
-                LocalReferenceNumber("LRN12345"),
+                "LRN12345",
                 LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
               )
             ),
@@ -376,7 +376,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             .willReturn(okJson(responseJson.toString()))
         )
 
-        val expectedResult = DepartureReferenceNumbers(LocalReferenceNumber("DEF456"), Some("ABC123"))
+        val expectedResult = DepartureReferenceNumbers("DEF456", Some("ABC123"))
 
         connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustBe expectedResult
       }
@@ -401,7 +401,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             .willReturn(okJson(responseJson.toString()))
         )
 
-        val expectedResult = DepartureReferenceNumbers(LocalReferenceNumber("DEF456"), None)
+        val expectedResult = DepartureReferenceNumbers("DEF456", None)
 
         connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustBe expectedResult
       }

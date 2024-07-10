@@ -259,7 +259,7 @@ trait ModelGenerators {
         mrn         <- arbitrary[String]
         lrn         <- arbitrary[LocalReferenceNumber]
         updated     <- arbitrary[LocalDateTime]
-      } yield DepartureMovement(departureId, Some(mrn), lrn, updated)
+      } yield DepartureMovement(departureId, Some(mrn), lrn.value, updated)
     }
 
   implicit lazy val arbitraryDepartureMovements: Arbitrary[DepartureMovements] =

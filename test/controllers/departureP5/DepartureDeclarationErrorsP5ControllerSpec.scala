@@ -74,7 +74,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
             .thenReturn(Future.successful(message))
 
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, mrn)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, mrn)))
 
           when(mockViewModelProvider.apply(any(), any(), any()))
             .thenReturn(viewModel)
@@ -103,7 +103,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
                 .thenReturn(Future.successful(message))
 
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, mrn)))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, mrn)))
 
               val request = FakeRequest(GET, departureDeclarationErrorsController)
 

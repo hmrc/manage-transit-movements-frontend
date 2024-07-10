@@ -47,7 +47,7 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
           Ok(
             view(
               viewModelProvider.apply(
-                request.referenceNumbers.localReferenceNumber.value,
+                request.referenceNumbers.localReferenceNumber,
                 request.referenceNumbers.movementReferenceNumber,
                 BusinessRejectionType(request.messageData)
               )

@@ -57,7 +57,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
         val rejectionMessageP5ViewModel =
           viewModelProvider.apply(
             request.messageData.pagedFunctionalErrors(currentPage),
-            request.referenceNumbers.localReferenceNumber.value,
+            request.referenceNumbers.localReferenceNumber,
             BusinessRejectionType(request.messageData)
           )
         rejectionMessageP5ViewModel.map(

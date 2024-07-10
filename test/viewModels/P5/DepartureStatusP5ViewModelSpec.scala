@@ -33,7 +33,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
     def otherMovementAndMessage(messageType: DepartureMessageType): OtherMovementAndMessage =
       OtherMovementAndMessage(
         departureIdP5,
-        lrn,
+        lrn.value,
         LocalDateTime.now(),
         LatestDepartureMessage(
           DepartureMessage(
@@ -145,7 +145,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
-          lrn,
+          lrn.value,
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
@@ -185,7 +185,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
-          lrn,
+          lrn.value,
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
@@ -266,7 +266,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val movementAndMessage = OtherMovementAndMessage(
         departureIdP5,
-        lrn,
+        lrn.value,
         LocalDateTime.now(),
         LatestDepartureMessage(
           DepartureMessage(
@@ -345,7 +345,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.guaranteeRejected",
         Seq(
           ViewMovementAction(
-            controllers.departureP5.routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId, lrn).url,
+            controllers.departureP5.routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId).url,
             "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
           ViewMovementAction(
@@ -366,7 +366,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -401,7 +401,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -436,7 +436,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -471,7 +471,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -512,7 +512,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "and declaration is amendable" in {
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -546,7 +546,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "and declaration is not amendable with errors in range 2 to 10" in {
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -580,7 +580,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "and declaration is not amendable with one error" in {
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -614,7 +614,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "and declaration is not amendable and no FunctionalErrors" in {
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -653,7 +653,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "with errors in range 2 to 10" in {
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -687,7 +687,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "with one error " in {
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -721,7 +721,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "with no FunctionalErrors" in {
           val movementAndMessage = RejectedMovementAndMessage(
             departureIdP5,
-            lrn,
+            lrn.value,
             LocalDateTime.now(),
             LatestDepartureMessage(
               DepartureMessage(
@@ -762,7 +762,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
-          lrn,
+          lrn.value,
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
@@ -802,7 +802,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
-          lrn,
+          lrn.value,
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
@@ -855,7 +855,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
-          lrn,
+          lrn.value,
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(
@@ -895,7 +895,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         val movementAndMessage = DepartureMovementAndMessage(
           departureIdP5,
-          lrn,
+          lrn.value,
           LocalDateTime.now(),
           LatestDepartureMessage(
             DepartureMessage(

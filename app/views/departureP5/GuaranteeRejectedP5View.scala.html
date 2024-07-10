@@ -40,7 +40,7 @@
 
     @heading(
         heading = messages("guarantee.rejected.message.heading"),
-        caption = Some(messages("departure.messages.caption", viewModel.lrn.value))
+        caption = Some(messages("departure.messages.caption", viewModel.lrn))
     )
 
     <p class="govuk-body" id="paragraph1">@viewModel.paragraph1</p>
@@ -57,7 +57,7 @@
     </p>
 
     @if(viewModel.isAmendable) {
-        @formHelper(action = routes.GuaranteeRejectedP5Controller.onAmend(departureId, messageId, viewModel.lrn), Symbol("autoComplete") -> "off") {
+        @formHelper(action = routes.GuaranteeRejectedP5Controller.onAmend(departureId, messageId), Symbol("autoComplete") -> "off") {
             @button(
                 attributes = Map("id" -> "submit"),
                 messageKey = messages("site.amendErrors")

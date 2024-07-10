@@ -60,7 +60,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
                 when(mockCacheConnector.doesDeclarationExist(any())(any()))
                   .thenReturn(Future.successful(true))
 
-                val result = service.canProceedWithAmendment(AmendmentRejection, lrn, xPaths).futureValue
+                val result = service.canProceedWithAmendment(AmendmentRejection, lrn.value, xPaths).futureValue
                 result mustBe true
 
                 verify(mockCacheConnector).doesDeclarationExist(eqTo(lrn.value))(any())
@@ -79,7 +79,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
                 when(mockCacheConnector.doesDeclarationExist(any())(any()))
                   .thenReturn(Future.successful(false))
 
-                val result = service.canProceedWithAmendment(AmendmentRejection, lrn, xPaths).futureValue
+                val result = service.canProceedWithAmendment(AmendmentRejection, lrn.value, xPaths).futureValue
                 result mustBe false
 
                 verify(mockCacheConnector).doesDeclarationExist(eqTo(lrn.value))(any())
@@ -100,7 +100,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
                 when(mockCacheConnector.isDeclarationAmendable(any(), any())(any()))
                   .thenReturn(Future.successful(true))
 
-                val result = service.canProceedWithAmendment(DeclarationRejection, lrn, xPaths).futureValue
+                val result = service.canProceedWithAmendment(DeclarationRejection, lrn.value, xPaths).futureValue
                 result mustBe true
 
                 verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
@@ -119,7 +119,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
                 when(mockCacheConnector.isDeclarationAmendable(any(), any())(any()))
                   .thenReturn(Future.successful(false))
 
-                val result = service.canProceedWithAmendment(DeclarationRejection, lrn, xPaths).futureValue
+                val result = service.canProceedWithAmendment(DeclarationRejection, lrn.value, xPaths).futureValue
                 result mustBe false
 
                 verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
@@ -142,7 +142,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
                 when(mockCacheConnector.handleAmendmentErrors(any(), any())(any()))
                   .thenReturn(Future.successful(true))
 
-                val result = service.handleErrors(AmendmentRejection, lrn, xPaths).futureValue
+                val result = service.handleErrors(AmendmentRejection, lrn.value, xPaths).futureValue
                 result mustBe true
 
                 verify(mockCacheConnector).handleAmendmentErrors(eqTo(lrn.value), eqTo(xPaths))(any())
@@ -161,7 +161,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
                 when(mockCacheConnector.handleAmendmentErrors(any(), any())(any()))
                   .thenReturn(Future.successful(false))
 
-                val result = service.handleErrors(AmendmentRejection, lrn, xPaths).futureValue
+                val result = service.handleErrors(AmendmentRejection, lrn.value, xPaths).futureValue
                 result mustBe false
 
                 verify(mockCacheConnector).handleAmendmentErrors(eqTo(lrn.value), eqTo(xPaths))(any())
@@ -182,7 +182,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
                 when(mockCacheConnector.handleErrors(any(), any())(any()))
                   .thenReturn(Future.successful(true))
 
-                val result = service.handleErrors(DeclarationRejection, lrn, xPaths).futureValue
+                val result = service.handleErrors(DeclarationRejection, lrn.value, xPaths).futureValue
                 result mustBe true
 
                 verify(mockCacheConnector).handleErrors(eqTo(lrn.value), eqTo(xPaths))(any())
@@ -198,7 +198,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
 
                 val service = app.injector.instanceOf[BusinessRejectionTypeService]
 
-                val result = service.handleErrors(DeclarationRejection, lrn, Nil).futureValue
+                val result = service.handleErrors(DeclarationRejection, lrn.value, Nil).futureValue
                 result mustBe false
 
                 verifyNoInteractions(mockCacheConnector)
@@ -215,7 +215,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
                 when(mockCacheConnector.handleErrors(any(), any())(any()))
                   .thenReturn(Future.successful(false))
 
-                val result = service.handleErrors(DeclarationRejection, lrn, xPaths).futureValue
+                val result = service.handleErrors(DeclarationRejection, lrn.value, xPaths).futureValue
                 result mustBe false
 
                 verify(mockCacheConnector).handleErrors(eqTo(lrn.value), eqTo(xPaths))(any())
@@ -234,7 +234,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
 
               val service = app.injector.instanceOf[BusinessRejectionTypeService]
 
-              val result = service.nextPage(AmendmentRejection, lrn, departureId, mrn)
+              val result = service.nextPage(AmendmentRejection, lrn.value, departureId, mrn)
 
               result mustBe s"http://localhost:10120/manage-transit-movements/departures/$lrn/amend/$departureId"
           }
@@ -248,7 +248,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
 
                 val service = app.injector.instanceOf[BusinessRejectionTypeService]
 
-                val result = service.nextPage(DeclarationRejection, lrn, departureId, Some(mrn))
+                val result = service.nextPage(DeclarationRejection, lrn.value, departureId, Some(mrn))
 
                 result mustBe s"http://localhost:10120/manage-transit-movements/departures/$lrn/new-local-reference-number"
             }
@@ -261,7 +261,7 @@ class BusinessRejectionTypeServiceSpec extends SpecBase with AppWithDefaultMockF
 
                 val service = app.injector.instanceOf[BusinessRejectionTypeService]
 
-                val result = service.nextPage(DeclarationRejection, lrn, departureId, None)
+                val result = service.nextPage(DeclarationRejection, lrn.value, departureId, None)
 
                 result mustBe s"http://localhost:10120/manage-transit-movements/departures/$lrn/declaration-summary"
             }

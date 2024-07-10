@@ -65,7 +65,7 @@ class RejectionMessageP5Controller @Inject() (
             )
 
             val rejectionMessageP5ViewModel =
-              viewModelProvider.apply(request.messageData.pagedFunctionalErrors(currentPage), lrn.value, BusinessRejectionType(request.messageData))
+              viewModelProvider.apply(request.messageData.pagedFunctionalErrors(currentPage), lrn, BusinessRejectionType(request.messageData))
 
             rejectionMessageP5ViewModel.map(
               viewModel =>

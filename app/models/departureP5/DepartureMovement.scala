@@ -16,7 +16,7 @@
 
 package models.departureP5
 
-import models.{LocalReferenceNumber, Movement}
+import models.Movement
 import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime
@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 case class DepartureMovement(
   departureId: String,
   movementReferenceNumber: Option[String],
-  localReferenceNumber: LocalReferenceNumber,
+  localReferenceNumber: String,
   updated: LocalDateTime
 ) extends Movement
 
@@ -35,7 +35,7 @@ object DepartureMovement {
     (
       (__ \ "id").read[String] and
         (__ \ "movementReferenceNumber").readNullable[String] and
-        (__ \ "localReferenceNumber").read[LocalReferenceNumber] and
+        (__ \ "localReferenceNumber").read[String] and
         (__ \ "updated").read[LocalDateTime]
     )(DepartureMovement.apply _)
   }

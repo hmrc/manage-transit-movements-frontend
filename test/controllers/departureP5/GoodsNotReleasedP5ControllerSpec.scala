@@ -65,7 +65,7 @@ class GoodsNotReleasedP5ControllerSpec extends SpecBase with AppWithDefaultMockF
         message =>
           when(mockDepartureP5MessageService.getMessage[CC051CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockGoodsNotReleasedP5ViewModelProvider.apply(any(), any())(any())).thenReturn(goodsNotReleasedP5ViewModel)
 
           val request = FakeRequest(GET, routes)
