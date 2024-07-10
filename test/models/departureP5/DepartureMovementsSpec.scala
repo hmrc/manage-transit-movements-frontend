@@ -17,7 +17,6 @@
 package models.departureP5
 
 import base.SpecBase
-import models.LocalReferenceNumber
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime
@@ -83,13 +82,13 @@ class DepartureMovementsSpec extends SpecBase {
           DepartureMovement(
             "63651574c3447b12",
             Some("27WF9X1FQ9RCKN0TM3"),
-            LocalReferenceNumber("AB123"),
+            "AB123",
             LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
           ),
           DepartureMovement(
             "6365135ba5e821ee",
             Some("27WF9X1FQ9RCKN0TM3"),
-            LocalReferenceNumber("CD123"),
+            "CD123",
             LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME)
           )
         ),

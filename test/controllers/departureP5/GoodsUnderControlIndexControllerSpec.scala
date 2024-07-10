@@ -62,7 +62,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
         message =>
           when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
           val request = FakeRequest(GET, controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
 
@@ -82,7 +82,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
         message =>
           when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
 
           val request = FakeRequest(GET, controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
@@ -105,7 +105,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
         message =>
           when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
           val request = FakeRequest(GET, controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
 
@@ -132,7 +132,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
             message =>
               when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
               val request = FakeRequest(GET, controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url)
 

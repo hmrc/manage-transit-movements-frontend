@@ -70,7 +70,7 @@ object IncidentP5ViewModel {
       )
 
       IncidentP5ViewModel(
-        referenceNumbers.localReferenceNumber.value,
+        referenceNumbers.localReferenceNumber,
         customsOffice,
         isMultipleIncidents,
         sections,

@@ -65,7 +65,7 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
         message =>
           when(mockDepartureP5MessageService.getMessage[CC035CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockRecoveryNotificationViewModelProvider.apply(any())(any())).thenReturn(recoveryNotificationViewModel)
 
           val request = FakeRequest(GET, routes)
@@ -77,7 +77,7 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
           val view = injector.instanceOf[RecoveryNotificationView]
 
           contentAsString(result) mustEqual
-            view(recoveryNotificationViewModel, lrn)(request, messages).toString
+            view(recoveryNotificationViewModel, lrn.value)(request, messages).toString
       }
     }
   }

@@ -35,7 +35,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
     val lrn                = "LRN123"
     val customsReferenceId = "CD123"
 
-    val departureReferenceNumbers = DepartureReferenceNumbers(LocalReferenceNumber(lrn), Some(mrn))
+    val departureReferenceNumbers = DepartureReferenceNumbers(lrn, Some(mrn))
 
     val viewModelProvider = new IncidentsDuringTransitP5ViewModelProvider()
 

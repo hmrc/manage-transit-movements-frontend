@@ -78,7 +78,7 @@ object IncidentsDuringTransitP5ViewModel {
       )
 
       IncidentsDuringTransitP5ViewModel(
-        referenceNumbers.localReferenceNumber.value,
+        referenceNumbers.localReferenceNumber,
         customsOffice,
         isMultipleIncidents,
         sections
