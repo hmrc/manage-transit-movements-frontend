@@ -38,6 +38,11 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
       }
   }
 
+  def getCustomsOfficeByCode(customsOfficeCode: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CustomsOffice] = {
+    val queryParams: (String, String) = "data.id" -> customsOfficeCode
+    connector.getCustomsOffices(queryParams).map(_.head)
+  }
+
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
     val queryParams: (String, String) = "data.code" -> code
     connector.getControlTypes(queryParams).map(_.head)
@@ -61,6 +66,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
 
 trait ReferenceDataService {
   def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]]
+  def getCustomsOfficeByCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CustomsOffice]
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
   def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType]
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]

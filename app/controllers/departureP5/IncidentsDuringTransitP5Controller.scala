@@ -27,7 +27,7 @@ import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel.IncidentsDuring
 import views.html.departureP5.IncidentsDuringTransitP5View
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IncidentsDuringTransitP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -46,18 +46,19 @@ class IncidentsDuringTransitP5Controller @Inject() (
       implicit request =>
         val customsOfficeReference = request.messageData.CustomsOfficeOfDeparture.referenceNumber
 
-        referenceDataService.getCustomsOffice(customsOfficeReference).map {
+        referenceDataService.getCustomsOffice(customsOfficeReference).flatMap {
           customsOffice =>
-            Ok(
-              view(
-                viewModelProvider.apply(
-                  request.messageData,
-                  request.referenceNumbers,
-                  customsOffice,
-                  request.messageData.hasMultipleIncidents
-                )
-              )
+            val viewModel = viewModelProvider.apply(
+              request.messageData,
+              request.referenceNumbers,
+              customsOffice,
+              request.messageData.hasMultipleIncidents
             )
+
+            viewModel.map {
+              viewModel =>
+                Ok(view(viewModel))
+            }
         }
     }
 }
