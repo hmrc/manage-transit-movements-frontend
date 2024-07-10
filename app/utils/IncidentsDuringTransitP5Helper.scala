@@ -86,13 +86,19 @@ class IncidentsDuringTransitP5Helper(
     }
   }
 
-  def incidentCodeRow(incidentIndex: Int): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("incident code here"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "arrival.notification.incidents.incident.code.label",
-    id = None,
-    call = None
-  )
+  def incidentCodeRow(incidentIndex: Int): Future[Option[SummaryListRow]] = {
+    val incidentCodeCode = data.Consignment.Incident(incidentIndex).code
+    referenceDataService.getIncidentCode(incidentCodeCode).map {
+      incidentCode =>
+        buildRowFromAnswer[String](
+          answer = Some(incidentCode.toString),
+          formatAnswer = formatAsText,
+          prefix = "arrival.notification.incidents.incident.code.label",
+          id = None,
+          call = None
+        )
+    }
+  }
 
   def incidentDescriptionRow(incidentIndex: Int): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(data.Consignment.Incident(incidentIndex).text),
@@ -112,29 +118,40 @@ class IncidentsDuringTransitP5Helper(
       rows = rows
     )
 
-  def incidentsSection: AccordionSection = AccordionSection(
-    sectionTitle = Some(messages("arrival.notification.incidents.heading.incident")),
-    children = data.Consignment.Incident.zipWithIndex.map {
+  def incidentsSection: Future[AccordionSection] = {
+    val incidentSections: Seq[Future[AccordionSection]] = data.Consignment.Incident.zipWithIndex.map {
       case (_, index) => incidentSection(index)
-    },
-    isOpen = true
-  )
+    }
 
-  def incidentSection(incidentIndex: Int): AccordionSection = AccordionSection(
-    sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex.toDisplay),
-    rows = Seq(
-      incidentCodeRow(incidentIndex),
-      incidentDescriptionRow(incidentIndex)
-    ).flatten,
-    isOpen = if (incidentIndex == 0) true else false,
-    viewLinks = Seq(
-      Link(
-        id = s"more-details-incident-${incidentIndex.toDisplay}",
-        text = messages("arrival.notification.incidents.link"),
-        href = controllers.routes.SessionExpiredController.onPageLoad().url, //TODO: Update navigation to incident page once implemented
-        visuallyHidden = Some(messages("arrival.notification.incidents.link.hidden", incidentIndex.toDisplay))
-      )
-    )
-  )
+    Future.sequence(incidentSections).map {
+      sections =>
+        AccordionSection(
+          sectionTitle = Some(messages("arrival.notification.incidents.heading.incident")),
+          children = sections,
+          isOpen = true
+        )
+    }
+  }
+
+  def incidentSection(incidentIndex: Int): Future[AccordionSection] =
+    incidentCodeRow(incidentIndex).map {
+      incidentCode =>
+        AccordionSection(
+          sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex.toDisplay),
+          rows = Seq(
+            incidentCode,
+            incidentDescriptionRow(incidentIndex)
+          ).flatten,
+          isOpen = if (incidentIndex == 0) true else false,
+          viewLinks = Seq(
+            Link(
+              id = s"more-details-incident-${incidentIndex.toDisplay}",
+              text = messages("arrival.notification.incidents.link"),
+              href = controllers.routes.SessionExpiredController.onPageLoad().url, //TODO: Update navigation to incident page once implemented
+              visuallyHidden = Some(messages("arrival.notification.incidents.link.hidden", incidentIndex.toDisplay))
+            )
+          )
+        )
+    }
 
 }

@@ -19,7 +19,7 @@ package viewModels.P5
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.LocalReferenceNumber
+import models.{IncidentCode, LocalReferenceNumber}
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
@@ -51,6 +51,8 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
     reset(mockReferenceDataService)
     when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
       .thenReturn(Future.successful(Right(customsOffice)))
+    when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
+      .thenReturn(Future.successful(IncidentCode("code", "text")))
   }
 
   "IncidentsDuringTransitP5ViewModel" - {
