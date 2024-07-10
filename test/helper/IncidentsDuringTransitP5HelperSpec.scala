@@ -123,7 +123,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
                 .thenReturn(Future.successful(Right(customsOffice)))
 
               val modifiedCC182CType =
-                CC182CType.copy(CustomsOfficeOfIncidentRegistration = CC182CType.CustomsOfficeOfIncidentRegistration.copy(referenceNumber = value))
+                CC182CType.copy(CustomsOfficeOfDeparture = CC182CType.CustomsOfficeOfDeparture.copy(referenceNumber = value))
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.officeOfDepartureRow.futureValue.value
@@ -140,7 +140,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
                 .thenReturn(Future.successful(Left(value)))
 
               val modifiedCC182CType =
-                CC182CType.copy(CustomsOfficeOfIncidentRegistration = CC182CType.CustomsOfficeOfIncidentRegistration.copy(referenceNumber = value))
+                CC182CType.copy(CustomsOfficeOfDeparture = CC182CType.CustomsOfficeOfDeparture.copy(referenceNumber = value))
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.officeOfDepartureRow.futureValue.value
