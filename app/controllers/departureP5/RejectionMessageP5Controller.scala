@@ -50,9 +50,9 @@ class RejectionMessageP5Controller @Inject() (
         val functionalErrors = request.messageData.FunctionalError
 
         val isDataValid: Future[Boolean] = if (isAmendmentJourney.getOrElse(false)) {
-          cacheConnector.doesDeclarationExist(lrn.value)
+          cacheConnector.doesDeclarationExist(lrn)
         } else {
-          cacheConnector.isDeclarationAmendable(lrn.value, functionalErrors.map(_.errorPointer))
+          cacheConnector.isDeclarationAmendable(lrn, functionalErrors.map(_.errorPointer))
         }
 
         isDataValid.flatMap {
@@ -68,7 +68,7 @@ class RejectionMessageP5Controller @Inject() (
             )
 
             val rejectionMessageP5ViewModel =
-              viewModelProvider.apply(request.messageData.pagedFunctionalErrors(currentPage), lrn.value, isAmendmentJourney.getOrElse(false))
+              viewModelProvider.apply(request.messageData.pagedFunctionalErrors(currentPage), lrn, isAmendmentJourney.getOrElse(false))
 
             rejectionMessageP5ViewModel.map(
               viewModel =>
@@ -96,25 +96,25 @@ class RejectionMessageP5Controller @Inject() (
 
         if (isAmendmentJourney) {
           for {
-            doesCacheExistForLrn  <- cacheConnector.doesDeclarationExist(lrn.value)
-            handleAmendmentErrors <- cacheConnector.handleAmendmentErrors(lrn.value, xPaths)
+            doesCacheExistForLrn  <- cacheConnector.doesDeclarationExist(lrn)
+            handleAmendmentErrors <- cacheConnector.handleAmendmentErrors(lrn, xPaths)
           } yield (doesCacheExistForLrn, handleAmendmentErrors) match {
             case (true, true) =>
-              Redirect(config.departureAmendmentUrl(lrn.value, departureId))
+              Redirect(config.departureAmendmentUrl(lrn, departureId))
             case _ =>
               Redirect(controllers.routes.ErrorController.technicalDifficulties())
           }
         } else {
           for {
-            isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn.value, xPaths)
-            handleErrors           <- cacheConnector.handleErrors(lrn.value, xPaths)
+            isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn, xPaths)
+            handleErrors           <- cacheConnector.handleErrors(lrn, xPaths)
           } yield (isDeclarationAmendable, handleErrors) match {
             case (true, true) =>
               if (xPaths.nonEmpty) {
                 if (request.referenceNumbers.movementReferenceNumber.isDefined) {
-                  Redirect(config.departureNewLocalReferenceNumberUrl(lrn.value))
+                  Redirect(config.departureNewLocalReferenceNumberUrl(lrn))
                 } else {
-                  Redirect(config.departureFrontendTaskListUrl(lrn.value))
+                  Redirect(config.departureFrontendTaskListUrl(lrn))
                 }
               } else {
                 Redirect(controllers.routes.ErrorController.technicalDifficulties())

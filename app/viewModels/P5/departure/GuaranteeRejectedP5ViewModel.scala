@@ -17,7 +17,6 @@
 package viewModels.P5.departure
 
 import generated.GuaranteeReferenceType08
-import models.LocalReferenceNumber
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import utils.GuaranteeRejectedP5Helper
@@ -27,7 +26,7 @@ import javax.xml.datatype.XMLGregorianCalendar
 
 case class GuaranteeRejectedP5ViewModel(
   guaranteeReferences: Seq[GuaranteeReferenceType08],
-  lrn: LocalReferenceNumber,
+  lrn: String,
   isAmendable: Boolean,
   mrn: String,
   acceptanceDate: XMLGregorianCalendar

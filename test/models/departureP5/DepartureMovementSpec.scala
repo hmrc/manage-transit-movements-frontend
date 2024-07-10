@@ -17,7 +17,6 @@
 package models.departureP5
 
 import base.SpecBase
-import models.LocalReferenceNumber
 import play.api.libs.json._
 
 import java.time.LocalDateTime
@@ -51,7 +50,7 @@ class DepartureMovementSpec extends SpecBase {
       val expectedResult = DepartureMovement(
         "63651574c3447b12",
         Some("27WF9X1FQ9RCKN0TM3"),
-        LocalReferenceNumber("AB123"),
+        "AB123",
         LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
       )
 

@@ -33,7 +33,7 @@ class RecoveryNotificationViewSpec extends CheckYourAnswersViewBehaviours with G
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[RecoveryNotificationView]
-      .apply(recoveryNotificationViewModel, lrn)(fakeRequest, messages)
+      .apply(recoveryNotificationViewModel, lrn.value)(fakeRequest, messages)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)

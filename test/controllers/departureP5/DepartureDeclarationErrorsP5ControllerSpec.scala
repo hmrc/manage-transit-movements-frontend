@@ -63,7 +63,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
           when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
           val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrn.value, isAmendmentJourney = false)
@@ -89,7 +89,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
               when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
               when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
               val request = FakeRequest(GET, departureDeclarationErrorsController)

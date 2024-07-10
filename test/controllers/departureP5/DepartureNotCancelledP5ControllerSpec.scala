@@ -64,7 +64,7 @@ class DepartureNotCancelledP5ControllerSpec extends SpecBase with AppWithDefault
             new DepartureNotCancelledP5ViewModel(sections, departureIdP5, lrn.toString)
 
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockDepartureP5MessageService.getMessage[CC009CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureNotCancelledP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(departureNotCancelledP5ViewModel))
