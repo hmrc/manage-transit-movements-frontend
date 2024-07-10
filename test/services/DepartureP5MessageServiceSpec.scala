@@ -70,7 +70,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             DepartureMovement(
               "AB123",
               Some("MRN"),
-              LocalReferenceNumber("LRN"),
+              "LRN",
               dateTimeNow
             )
           ),
@@ -103,7 +103,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         val expectedResult: Seq[MovementAndMessage] = Seq(
           RejectedMovementAndMessage(
             "AB123",
-            LocalReferenceNumber("LRN"),
+            "LRN",
             dateTimeNow,
             latestDepartureMessage,
             rejectionType,
@@ -134,7 +134,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             DepartureMovement(
               "AB123",
               Some("MRN"),
-              LocalReferenceNumber("LRN"),
+              "LRN",
               dateTimeNow
             )
           ),
@@ -156,7 +156,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         val expectedResult: Seq[MovementAndMessage] = Seq(
           DepartureMovementAndMessage(
             "AB123",
-            LocalReferenceNumber("LRN"),
+            "LRN",
             dateTimeNow,
             latestDepartureMessage,
             ie015.isPreLodged
@@ -193,7 +193,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
                   DepartureMovement(
                     "AB123",
                     Some("MRN"),
-                    LocalReferenceNumber("LRN"),
+                    "LRN",
                     dateTimeNow
                   )
                 ),
@@ -215,7 +215,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               val expectedResult: Seq[MovementAndMessage] = Seq(
                 OtherMovementAndMessage(
                   "AB123",
-                  LocalReferenceNumber("LRN"),
+                  "LRN",
                   dateTimeNow,
                   latestDepartureMessage
                 )

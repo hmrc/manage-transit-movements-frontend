@@ -45,7 +45,7 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
         if (request.messageData.FunctionalError.isEmpty) {
           Ok(
             view(
-              viewModelProvider.apply(request.referenceNumbers.localReferenceNumber.value, isAmendmentJourney),
+              viewModelProvider.apply(request.referenceNumbers.localReferenceNumber, isAmendmentJourney),
               isAmendmentJourney,
               request.referenceNumbers.movementReferenceNumber
             )

@@ -85,7 +85,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
               when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
               when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
               when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = false)))
@@ -129,7 +129,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
               when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
               when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
               when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = true)))
@@ -173,7 +173,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
               when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
               when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
               when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(RejectionMessageP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, isAmendmentJourney = true)))
@@ -215,7 +215,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
 
           val request = FakeRequest(GET, rejectionMessageController)
@@ -233,7 +233,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(false))
 
           val request = FakeRequest(GET, rejectionMessageAmendmentController)
@@ -252,7 +252,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           message =>
             when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
             when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
             when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
@@ -270,7 +270,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           message =>
             when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
             when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
             when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
             when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
@@ -296,7 +296,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
               message =>
                 when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
                 when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                  .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+                  .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
                 when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
                 when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
 
@@ -315,7 +315,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           message =>
             when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
             when(mockCacheService.handleAmendmentErrors(any(), any())(any())).thenReturn(Future.successful(true))
             when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
 
@@ -342,7 +342,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
                 when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(true))
                 when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
                 when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                  .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, Some(mrn))))
+                  .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, Some(mrn))))
                 when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))
 
                 val request = FakeRequest(POST, rejectionMessageOnAmend)
@@ -360,7 +360,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           message =>
             when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
             when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
             when(mockCacheService.handleErrors(any(), any())(any())).thenReturn(Future.successful(false))
             when(mockCacheService.doesDeclarationExist(any())(any())).thenReturn(Future.successful(true))

@@ -43,7 +43,7 @@ class GoodsNotReleasedP5Controller @Inject() (
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC051CType](departureId, messageId)) {
       implicit request =>
         Ok(
-          view(viewModelProvider.apply(request.messageData, request.referenceNumbers.localReferenceNumber.value))
+          view(viewModelProvider.apply(request.messageData, request.referenceNumbers.localReferenceNumber))
         )
     }
 }
