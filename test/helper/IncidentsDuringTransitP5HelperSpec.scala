@@ -221,7 +221,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val result = helper.incidentDescriptionRow(incidentIndex).value
 
               result.key.value mustBe "Description"
-              result.value.value mustBe "incident description here"
+              result.value.value mustBe value
               result.actions must not be defined
           }
         }

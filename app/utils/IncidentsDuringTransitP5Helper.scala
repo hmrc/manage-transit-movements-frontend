@@ -95,7 +95,7 @@ class IncidentsDuringTransitP5Helper(
   )
 
   def incidentDescriptionRow(incidentIndex: Int): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("incident description here"), // TODO: Pull from incident data
+    answer = Some(data.Consignment.Incident(incidentIndex).text),
     formatAnswer = formatAsText,
     prefix = "arrival.notification.incidents.incident.description.label",
     id = None,
