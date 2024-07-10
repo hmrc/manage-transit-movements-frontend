@@ -50,13 +50,19 @@ class IncidentsDuringTransitP5Helper(
     call = None
   )
 
-  def customsOfficeOfIncidentRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("customs office of incident"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "arrival.notification.incidents.label.officeOfIncident",
-    id = None,
-    call = None
-  )
+  def customsOfficeOfIncidentRow: Future[Option[SummaryListRow]] = {
+    val referenceNumber = data.CustomsOfficeOfIncidentRegistration.referenceNumber
+    referenceDataService.getCustomsOfficeByCode(referenceNumber).map {
+      customsOffice =>
+        buildRowFromAnswer[String](
+          answer = Some(customsOffice.nameAndCode),
+          formatAnswer = formatAsText,
+          prefix = "arrival.notification.incidents.label.officeOfIncident",
+          id = None,
+          call = None
+        )
+    }
+  }
 
   def officeOfDepartureRow: Future[Option[SummaryListRow]] = {
     val referenceNumber = data.CustomsOfficeOfDeparture.referenceNumber
@@ -90,7 +96,8 @@ class IncidentsDuringTransitP5Helper(
 
   def incidentInformationSection: Future[StaticSection] =
     for {
-      officeOfDepartureRow <- officeOfDepartureRow
+      officeOfDepartureRow       <- officeOfDepartureRow
+      customsOfficeOfIncidentRow <- customsOfficeOfIncidentRow
       rows = Seq(mrnRow, dateTimeIncidentReportedRow, customsOfficeOfIncidentRow, officeOfDepartureRow).flatten
     } yield StaticSection(
       sectionTitle = None,

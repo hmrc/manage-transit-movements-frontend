@@ -100,14 +100,19 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
         "must return a row" in {
           forAll(Gen.alphaNumStr) {
             value =>
+              val customsOffice = CustomsOffice("XI000142", "Belfast", None)
+
+              when(mockReferenceDataService.getCustomsOfficeByCode(any())(any(), any()))
+                .thenReturn(Future.successful(customsOffice))
+
               val modifiedCC182CType =
                 CC182CType.copy(CustomsOfficeOfIncidentRegistration = CC182CType.CustomsOfficeOfIncidentRegistration.copy(referenceNumber = value))
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.customsOfficeOfIncidentRow.value
+              val result = helper.customsOfficeOfIncidentRow.futureValue.value
 
               result.key.value mustBe "Customs office of incident"
-              result.value.value mustBe "customs office of incident"
+              result.value.value mustBe "Belfast (XI000142)"
               result.actions must not be defined
           }
         }
