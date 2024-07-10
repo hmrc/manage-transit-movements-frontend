@@ -96,17 +96,40 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
       }
 
       "customsOfficeOfIncidentRow" - {
-        "must return a row" in {
+        "must return a row with name and code when reference data succeeds" in {
           forAll(Gen.alphaNumStr) {
             value =>
+              val customsOffice = CustomsOffice("XI000142", "Belfast", None)
+
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+                .thenReturn(Future.successful(Right(customsOffice)))
+
               val modifiedCC182CType =
                 CC182CType.copy(CustomsOfficeOfIncidentRegistration = CC182CType.CustomsOfficeOfIncidentRegistration.copy(referenceNumber = value))
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.customsOfficeOfIncidentRow.value
+              val result = helper.customsOfficeOfIncidentRow.futureValue.value
 
               result.key.value mustBe "Customs office of incident"
-              result.value.value mustBe "customs office of incident"
+              result.value.value mustBe "Belfast (XI000142)"
+              result.actions must not be defined
+          }
+        }
+
+        "must return a row with id when reference data fails" in {
+          forAll(Gen.alphaNumStr) {
+            value =>
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+                .thenReturn(Future.successful(Left(value)))
+
+              val modifiedCC182CType =
+                CC182CType.copy(CustomsOfficeOfIncidentRegistration = CC182CType.CustomsOfficeOfIncidentRegistration.copy(referenceNumber = value))
+
+              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
+              val result = helper.customsOfficeOfIncidentRow.futureValue.value
+
+              result.key.value mustBe "Customs office of incident"
+              result.value.value mustBe value
               result.actions must not be defined
           }
         }
