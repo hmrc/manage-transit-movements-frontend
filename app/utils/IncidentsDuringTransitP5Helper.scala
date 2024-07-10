@@ -39,7 +39,7 @@ class IncidentsDuringTransitP5Helper(
   )
 
   def dateTimeIncidentReportedRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
-    answer = Some(data.TransitOperation.incidentNotificationDateAndTime), // TODO: Pull from incident data
+    answer = Some(data.TransitOperation.incidentNotificationDateAndTime),
     formatAnswer = formatAsIncidentDateTime,
     prefix =
       if (isMultipleIncidents) "arrival.notification.incidents.label.dateAndTime.plural" else "arrival.notification.incidents.label.dateAndTime.singular",
