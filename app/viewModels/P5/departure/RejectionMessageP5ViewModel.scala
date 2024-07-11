@@ -28,10 +28,11 @@ import utils.RejectionMessageP5MessageHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class RejectionMessageP5ViewModel(tableRows: Seq[Seq[TableRow]],
-                                       lrn: String,
-                                       multipleErrors: Boolean,
-                                       businessRejectionType: DepartureBusinessRejectionType
+case class RejectionMessageP5ViewModel(
+  tableRows: Seq[Seq[TableRow]],
+  lrn: String,
+  multipleErrors: Boolean,
+  businessRejectionType: DepartureBusinessRejectionType
 ) {
   def title(implicit messages: Messages): String = messages("departure.ie056.message.title")
 

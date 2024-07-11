@@ -34,7 +34,7 @@ class DepartureCacheConnector @Inject() (
 
   private val baseUrl = s"${config.departureCacheUrl}"
 
-  // TODO - should all of these methods return Booleans?
+  // TODO - should all of these methods return Booleans? CTCP-5565
 
   def isDeclarationAmendable(lrn: String, xPaths: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
     val url = url"$baseUrl/x-paths/$lrn/is-declaration-amendable"
