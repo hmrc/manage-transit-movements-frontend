@@ -16,7 +16,6 @@
 
 package models.departureP5
 
-import config.Constants
 import generated.CC056CType
 
 sealed trait BusinessRejectionType {
@@ -25,18 +24,39 @@ sealed trait BusinessRejectionType {
 
 object BusinessRejectionType {
 
-  case object AmendmentRejection extends BusinessRejectionType {
-    override val value: String = Constants.BusinessRejectionType.AmendmentRejection
+  sealed trait DepartureBusinessRejectionType extends BusinessRejectionType
+
+  object DepartureBusinessRejectionType {
+
+    def apply(value: String): DepartureBusinessRejectionType = value match {
+      case AmendmentRejection.value   => AmendmentRejection
+      case DeclarationRejection.value => DeclarationRejection
+      case x                          => throw new IllegalArgumentException(s"Unexpected business rejection type: $x")
+    }
+
+    def apply(ie056: CC056CType): DepartureBusinessRejectionType =
+      DepartureBusinessRejectionType.apply(ie056.TransitOperation.businessRejectionType)
   }
 
-  case object DeclarationRejection extends BusinessRejectionType {
-    override val value: String = Constants.BusinessRejectionType.DeclarationRejection
+  case object AmendmentRejection extends DepartureBusinessRejectionType {
+    override val value: String = "013"
   }
+
+  case object InvalidationRejection extends BusinessRejectionType {
+    override val value: String = "014"
+  }
+
+  case object DeclarationRejection extends DepartureBusinessRejectionType {
+    override val value: String = "015"
+  }
+
+  case class OtherBusinessRejectionType(value: String) extends BusinessRejectionType
 
   def apply(value: String): BusinessRejectionType = value match {
-    case AmendmentRejection.value   => AmendmentRejection
-    case DeclarationRejection.value => DeclarationRejection
-    case x                          => throw new IllegalArgumentException(s"Unexpected business rejection type: $x")
+    case AmendmentRejection.value    => AmendmentRejection
+    case InvalidationRejection.value => InvalidationRejection
+    case DeclarationRejection.value  => DeclarationRejection
+    case value                       => OtherBusinessRejectionType(value)
   }
 
   def apply(ie056: CC056CType): BusinessRejectionType =

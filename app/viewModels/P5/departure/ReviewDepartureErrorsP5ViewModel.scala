@@ -17,7 +17,6 @@
 package viewModels.P5.departure
 
 import generated.FunctionalErrorType04
-import models.departureP5.BusinessRejectionType
 import models.departureP5.BusinessRejectionType._
 import play.api.i18n.Messages
 import services.ReferenceDataService
@@ -29,7 +28,11 @@ import utils.RejectionMessageP5MessageHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class ReviewDepartureErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lrn: String, multipleErrors: Boolean, businessRejectionType: BusinessRejectionType) {
+case class ReviewDepartureErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]],
+                                            lrn: String,
+                                            multipleErrors: Boolean,
+                                            businessRejectionType: DepartureBusinessRejectionType
+) {
 
   def title(implicit messages: Messages): String = messages("departure.ie056.review.message.title")
 
@@ -92,7 +95,7 @@ object ReviewDepartureErrorsP5ViewModel {
     def apply(
       functionalErrors: Seq[FunctionalErrorType04],
       lrn: String,
-      businessRejectionType: BusinessRejectionType
+      businessRejectionType: DepartureBusinessRejectionType
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewDepartureErrorsP5ViewModel] = {
 
       val helper         = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)

@@ -19,7 +19,7 @@ package controllers.departureP5
 import config.FrontendAppConfig
 import controllers.actions._
 import generated.CC056CType
-import models.departureP5.BusinessRejectionType
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -49,7 +49,7 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
               viewModelProvider.apply(
                 request.referenceNumbers.localReferenceNumber,
                 request.referenceNumbers.movementReferenceNumber,
-                BusinessRejectionType(request.messageData)
+                DepartureBusinessRejectionType(request.messageData)
               )
             )
           )

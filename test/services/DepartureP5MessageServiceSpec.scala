@@ -54,7 +54,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
       "must return RejectedMovementAndMessage when RejectedByOfficeOfDeparture" in {
 
         val isDeclarationAmendable = arbitrary[Boolean].sample.value
-        val rejectionType          = Gen.alphaNumStr.sample.value
+        val rejectionType          = arbitrary[BusinessRejectionType].sample.value
 
         val latestDepartureMessage = LatestDepartureMessage(
           DepartureMessage(
@@ -79,8 +79,9 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
         val x = arbitrary[CC056CType].sample.value
 
-        val ie056 = x
-          .copy(TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType))
+        val ie056 = x.copy(
+          TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType.value)
+        )
 
         when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
           Future.successful(latestDepartureMessage)

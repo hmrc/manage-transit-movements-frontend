@@ -20,7 +20,7 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
 import generated.CC056CType
 import models.RichCC056CType
-import models.departureP5.BusinessRejectionType
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,7 +49,7 @@ class RejectionMessageP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val businessRejectionType = BusinessRejectionType(request.messageData)
+        val businessRejectionType = DepartureBusinessRejectionType(request.messageData)
         val lrn                   = request.referenceNumbers.localReferenceNumber
         val xPaths                = request.messageData.xPaths
 
@@ -64,8 +64,11 @@ class RejectionMessageP5Controller @Inject() (
               href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url
             )
 
-            val rejectionMessageP5ViewModel =
-              viewModelProvider.apply(request.messageData.pagedFunctionalErrors(currentPage), lrn, BusinessRejectionType(request.messageData))
+            val rejectionMessageP5ViewModel = viewModelProvider.apply(
+              request.messageData.pagedFunctionalErrors(currentPage),
+              lrn,
+              DepartureBusinessRejectionType(request.messageData)
+            )
 
             rejectionMessageP5ViewModel.map(
               viewModel =>
@@ -88,7 +91,7 @@ class RejectionMessageP5Controller @Inject() (
   def onAmend(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val businessRejectionType = BusinessRejectionType(request.messageData)
+        val businessRejectionType = DepartureBusinessRejectionType(request.messageData)
         val lrn                   = request.referenceNumbers.localReferenceNumber
         val xPaths                = request.messageData.xPaths
         val mrn                   = request.referenceNumbers.movementReferenceNumber

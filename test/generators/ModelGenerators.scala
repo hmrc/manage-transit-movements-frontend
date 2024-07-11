@@ -21,6 +21,7 @@ import models._
 import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departure._
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.{BusinessRejectionType, DepartureMovement, DepartureMovements}
 import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
@@ -344,9 +345,29 @@ trait ModelGenerators {
       } yield models.departureP5.DepartureMessage(messageId, received, messageType)
     }
 
-  implicit lazy val arbitraryBusinessRejectionType: Arbitrary[BusinessRejectionType] =
+  implicit lazy val arbitraryBusinessRejectionType: Arbitrary[BusinessRejectionType] = {
+    import models.departureP5.BusinessRejectionType._
     Arbitrary {
-      Gen.oneOf(BusinessRejectionType.AmendmentRejection, BusinessRejectionType.DeclarationRejection)
+      for {
+        value <- nonEmptyString
+        businessRejectionType <- Gen.oneOf(
+          AmendmentRejection,
+          InvalidationRejection,
+          DeclarationRejection,
+          OtherBusinessRejectionType(value)
+        )
+      } yield businessRejectionType
     }
+  }
+
+  implicit lazy val arbitraryDepartureBusinessRejectionType: Arbitrary[DepartureBusinessRejectionType] = {
+    import models.departureP5.BusinessRejectionType._
+    Arbitrary {
+      Gen.oneOf(
+        AmendmentRejection,
+        DeclarationRejection
+      )
+    }
+  }
 }
 // scalastyle:on magic.number

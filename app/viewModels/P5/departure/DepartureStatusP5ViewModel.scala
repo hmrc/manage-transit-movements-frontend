@@ -16,8 +16,8 @@
 
 package viewModels.P5.departure
 
-import config.Constants.BusinessRejectionType._
 import config.FrontendAppConfig
+import models.departureP5.BusinessRejectionType._
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import viewModels.ViewMovementAction
@@ -42,7 +42,7 @@ object DepartureStatusP5ViewModel {
   private def rejectedStatus(
     departureId: String,
     messageId: String,
-    rejectionType: String,
+    rejectionType: BusinessRejectionType,
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String],
     doesCacheExistForLrn: Boolean
@@ -261,7 +261,7 @@ object DepartureStatusP5ViewModel {
   private def rejectedByOfficeOfDeparture(
     departureId: String,
     messageId: String,
-    rejectionType: String,
+    rejectionType: BusinessRejectionType,
     isDeclarationAmendable: Boolean,
     xPaths: Seq[String],
     doesCacheExistForLrn: Boolean

@@ -16,7 +16,7 @@
 
 package generators
 
-import models.departureP5.BusinessRejectionType
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.{DeparturesSummary, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -187,7 +187,7 @@ trait ViewModelGenerators {
       for {
         lrn                   <- nonEmptyString
         mrn                   <- Gen.option(nonEmptyString)
-        businessRejectionType <- arbitrary[BusinessRejectionType]
+        businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
       } yield DepartureDeclarationErrorsP5ViewModel(lrn, mrn, businessRejectionType)
     }
 
@@ -197,7 +197,7 @@ trait ViewModelGenerators {
         tableRows             <- listWithMaxLength()(arbitraryTableRows)
         lrn                   <- nonEmptyString
         multipleErrors        <- arbitrary[Boolean]
-        businessRejectionType <- arbitrary[BusinessRejectionType]
+        businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
       } yield RejectionMessageP5ViewModel(tableRows, lrn, multipleErrors, businessRejectionType)
     }
 

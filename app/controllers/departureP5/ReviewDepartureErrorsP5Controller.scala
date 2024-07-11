@@ -20,7 +20,7 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
 import generated.CC056CType
 import models.RichCC056CType
-import models.departureP5.BusinessRejectionType
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -58,7 +58,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
           viewModelProvider.apply(
             request.messageData.pagedFunctionalErrors(currentPage),
             request.referenceNumbers.localReferenceNumber,
-            BusinessRejectionType(request.messageData)
+            DepartureBusinessRejectionType(request.messageData)
           )
         rejectionMessageP5ViewModel.map(
           viewModel => Ok(view(viewModel, departureId, paginationViewModel, request.referenceNumbers.movementReferenceNumber))

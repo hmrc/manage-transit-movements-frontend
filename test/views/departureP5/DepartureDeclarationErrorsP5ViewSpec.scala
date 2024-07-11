@@ -18,6 +18,7 @@ package views.departureP5
 
 import generators.Generators
 import models.departureP5.BusinessRejectionType
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -37,7 +38,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     buildView(None, BusinessRejectionType.DeclarationRejection)
 
-  private def buildView(mrn: Option[String], businessRejectionType: BusinessRejectionType): HtmlFormat.Appendable = {
+  private def buildView(mrn: Option[String], businessRejectionType: DepartureBusinessRejectionType): HtmlFormat.Appendable = {
     val departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel =
       new DepartureDeclarationErrorsP5ViewModel(lrnString, mrn, businessRejectionType)
 
@@ -100,7 +101,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   }
 
   "must not render mrn when None" in {
-    forAll(arbitrary[BusinessRejectionType]) {
+    forAll(arbitrary[DepartureBusinessRejectionType]) {
       businessRejectionType =>
         val doc: Document = parseView(buildView(None, businessRejectionType))
         assertNotRenderedById(doc, "mrn")
@@ -108,7 +109,7 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
   }
 
   "must render mrn when provided" in {
-    forAll(nonEmptyString, arbitrary[BusinessRejectionType]) {
+    forAll(nonEmptyString, arbitrary[DepartureBusinessRejectionType]) {
       (mrn, businessRejectionType) =>
         val doc: Document = parseView(buildView(Some(mrn), businessRejectionType))
         assertElementWithIdContainsText(doc, "mrn", s"MRN: $mrn")

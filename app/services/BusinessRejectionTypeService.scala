@@ -18,7 +18,6 @@ package services
 
 import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
-import models.departureP5.BusinessRejectionType
 import models.departureP5.BusinessRejectionType._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,7 +30,7 @@ class BusinessRejectionTypeService @Inject() (
 ) {
 
   def canProceedWithAmendment(
-    businessRejectionType: BusinessRejectionType,
+    businessRejectionType: DepartureBusinessRejectionType,
     lrn: String,
     xPaths: Seq[String]
   )(implicit hc: HeaderCarrier): Future[Boolean] =
@@ -43,7 +42,7 @@ class BusinessRejectionTypeService @Inject() (
     }
 
   def handleErrors(
-    businessRejectionType: BusinessRejectionType,
+    businessRejectionType: DepartureBusinessRejectionType,
     lrn: String,
     xPaths: Seq[String]
   )(implicit hc: HeaderCarrier): Future[Boolean] =
@@ -59,7 +58,7 @@ class BusinessRejectionTypeService @Inject() (
     }
 
   def nextPage(
-    businessRejectionType: BusinessRejectionType,
+    businessRejectionType: DepartureBusinessRejectionType,
     lrn: String,
     departureId: String,
     mrn: Option[String]
