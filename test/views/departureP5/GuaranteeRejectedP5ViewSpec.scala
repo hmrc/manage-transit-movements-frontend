@@ -37,7 +37,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
   val defaultViewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
     guaranteeReferences = guaranteeReferences,
-    lrn = lrn,
+    lrn = lrn.value,
     isAmendable = true,
     mrn = mrn,
     acceptanceDate = XMLCalendar("2022-07-15")

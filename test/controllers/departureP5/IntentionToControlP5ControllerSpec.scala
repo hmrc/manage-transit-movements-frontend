@@ -72,7 +72,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
               when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
               when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
                 .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString)))
@@ -104,7 +104,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
           when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
           when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
             .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString)))

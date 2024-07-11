@@ -48,7 +48,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
 
   val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"))
 
-  val departureReferenceNumbers = DepartureReferenceNumbers(lrn, None)
+  val departureReferenceNumbers = DepartureReferenceNumbers(lrn.value, None)
 
   def injector: Injector                   = app.injector
   def fakeRequest: FakeRequest[AnyContent] = FakeRequest("", "")

@@ -54,7 +54,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
   "GuaranteeRejected" - {
 
-    lazy val controller = routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId, lrn).url
+    lazy val controller = routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId).url
 
     "onPageLoad" - {
 
@@ -65,13 +65,13 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               .thenReturn(Future.successful(message))
 
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
             when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
 
             val viewModel = GuaranteeRejectedP5ViewModel(
               guaranteeReferences = message.GuaranteeReference,
-              lrn = lrn,
+              lrn = lrn.value,
               isAmendable = true,
               mrn = message.TransitOperation.MRN,
               acceptanceDate = message.TransitOperation.declarationAcceptanceDate
@@ -93,7 +93,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
     "onAmend" - {
 
-      lazy val controller = routes.GuaranteeRejectedP5Controller.onAmend(departureIdP5, messageId, lrn).url
+      lazy val controller = routes.GuaranteeRejectedP5Controller.onAmend(departureIdP5, messageId).url
 
       "must redirect to NewLocalReferenceNumber page on success" in {
         forAll(arbitrary[CC055CType]) {
@@ -102,7 +102,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               .thenReturn(Future.successful(message))
 
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
             when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(true)
 
@@ -122,7 +122,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               .thenReturn(Future.successful(message))
 
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
+              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
             when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(false)
 

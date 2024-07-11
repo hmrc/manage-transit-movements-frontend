@@ -28,11 +28,11 @@
     insetText : InsetText,
 )
 
-@(form: Form[Boolean], lrn: String, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @html = {
-<p class="govuk-body">@messages("departure.drafts.deleteDraftDepartureYesNo.paragraph")</p>
-@insetText(messages("departure.drafts.dashboard.table.action.delete.hidden", lrn))
+    <p class="govuk-body">@messages("departure.drafts.deleteDraftDepartureYesNo.paragraph")</p>
+    @insetText(messages("departure.drafts.dashboard.table.action.delete.hidden", lrn.value))
 }
 
 @mainTemplate(
@@ -49,8 +49,9 @@
             yesNoType = YesNoWithAdditionalHtml(
                 heading = messages("departure.drafts.deleteDraftDepartureYesNo.heading"),
                 additionalHtml = html
+            )
+        )
 
-        ))
         @button(attributes = Map("id" -> "submit"), messageKey = messages("departure.drafts.deleteDraftDepartureYesNo.button"))
     }
 }

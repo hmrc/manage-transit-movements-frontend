@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
 import controllers.actions._
 import generated.CC055CType
-import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,10 +41,11 @@ class GuaranteeRejectedP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber): Action[AnyContent] =
+  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
-        departureCacheConnector.doesDeclarationExist(lrn.value).map {
+        val lrn = request.referenceNumbers.localReferenceNumber
+        departureCacheConnector.doesDeclarationExist(lrn).map {
           isAmendable =>
             val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
               request.messageData.GuaranteeReference,
@@ -59,11 +59,12 @@ class GuaranteeRejectedP5Controller @Inject() (
         }
     }
 
-  def onAmend(departureId: String, messageId: String, lrn: LocalReferenceNumber): Action[AnyContent] =
+  def onAmend(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
-        departureCacheConnector.handleGuaranteeRejection(lrn.value).map {
-          case true  => Redirect(frontendAppConfig.departureGuaranteeAmendmentUrl(lrn.value, departureId))
+        val lrn = request.referenceNumbers.localReferenceNumber
+        departureCacheConnector.handleGuaranteeRejection(lrn).map {
+          case true  => Redirect(frontendAppConfig.departureGuaranteeAmendmentUrl(lrn, departureId))
           case false => Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
     }

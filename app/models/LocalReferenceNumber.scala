@@ -35,15 +35,12 @@ object LocalReferenceNumber {
     }
 
   implicit val reads: Reads[LocalReferenceNumber] =
-    __.read[String].map(LocalReferenceNumber.format).flatMap {
-      case Some(lrn) =>
-        Reads(
-          _ => JsSuccess(lrn)
-        )
-      case None =>
-        Reads(
-          _ => JsError("Invalid Local Reference Number")
-        )
+    __.read[String].flatMap {
+      str =>
+        LocalReferenceNumber.format(str) match {
+          case Some(lrn) => Reads.pure(lrn)
+          case None      => Reads.failed(s"Invalid Local Reference Number $str")
+        }
     }
 
   implicit val writes: Writes[LocalReferenceNumber] = Writes {

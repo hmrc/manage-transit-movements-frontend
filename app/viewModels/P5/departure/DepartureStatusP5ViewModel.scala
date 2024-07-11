@@ -16,9 +16,8 @@
 
 package viewModels.P5.departure
 
-import config.FrontendAppConfig
-import models.LocalReferenceNumber
 import config.Constants.BusinessRejectionType._
+import config.FrontendAppConfig
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
 import viewModels.ViewMovementAction
@@ -55,7 +54,7 @@ object DepartureStatusP5ViewModel {
       rejectedByOfficeOfDeparture(departureId, messageId, rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn)
     ).reduce(_ orElse _)
 
-  private def preLodgeStatus(departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber, isPrelodge: Boolean)(implicit
+  private def preLodgeStatus(departureId: String, messageId: String, localReferenceNumber: String, isPrelodge: Boolean)(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
@@ -64,7 +63,7 @@ object DepartureStatusP5ViewModel {
       declarationSent(departureId, localReferenceNumber, isPrelodge)
     ).reduce(_ orElse _)
 
-  private def currentStatus(departureId: String, messageId: String, localReferenceNumber: LocalReferenceNumber)(implicit
+  private def currentStatus(departureId: String, messageId: String, localReferenceNumber: String)(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
@@ -85,7 +84,7 @@ object DepartureStatusP5ViewModel {
       movementEnded
     ).reduce(_ orElse _)
 
-  private def declarationAmendmentAccepted(departureId: String, lrn: LocalReferenceNumber, prelodged: Boolean)(implicit
+  private def declarationAmendmentAccepted(departureId: String, lrn: String, prelodged: Boolean)(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == DeclarationAmendmentAccepted =>
@@ -108,7 +107,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.declarationAmendmentAccepted",
         actions = Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureId)}",
+            s"${frontendAppConfig.departureAmendmentUrl(lrn, departureId)}",
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           )
         ) ++ prelodgeAction
@@ -117,14 +116,14 @@ object DepartureStatusP5ViewModel {
 
   private def allocatedMRN(
     departureId: String,
-    lrn: LocalReferenceNumber
+    lrn: String
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == AllocatedMRN =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.allocatedMRN",
         actions = Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureId)}",
+            s"${frontendAppConfig.departureAmendmentUrl(lrn, departureId)}",
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           ),
           ViewMovementAction(
@@ -242,14 +241,14 @@ object DepartureStatusP5ViewModel {
 
   private def guaranteeRejected(
     departureId: String,
-    lrn: LocalReferenceNumber
+    lrn: String
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GuaranteeRejected =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.guaranteeRejected",
         actions = Seq(
           ViewMovementAction(
-            controllers.departureP5.routes.GuaranteeRejectedP5Controller.onPageLoad(departureId, message.messageId, lrn).url,
+            controllers.departureP5.routes.GuaranteeRejectedP5Controller.onPageLoad(departureId, message.messageId).url,
             "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
           ViewMovementAction(
@@ -328,7 +327,7 @@ object DepartureStatusP5ViewModel {
   private def goodsUnderControl(
     departureId: String,
     messageId: String,
-    lrn: LocalReferenceNumber,
+    lrn: String,
     prelodged: Boolean
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == GoodsUnderControl =>
@@ -388,7 +387,7 @@ object DepartureStatusP5ViewModel {
 
   private def declarationSent(
     departureId: String,
-    lrn: LocalReferenceNumber,
+    lrn: String,
     prelodged: Boolean
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == DeclarationSent =>
@@ -397,7 +396,7 @@ object DepartureStatusP5ViewModel {
         actions = if (prelodged) {
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureId)}",
+              s"${frontendAppConfig.departureAmendmentUrl(lrn, departureId)}",
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             ),
             ViewMovementAction(

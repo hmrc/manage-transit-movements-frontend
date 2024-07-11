@@ -38,8 +38,6 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
   private val formProvider = new YesNoFormProvider()
   private val form         = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
-  val lrnString: String = lrn.toString()
-
   private val draftDepartureService = mock[DraftDepartureService]
 
   final val mockLockActionProvider: LockActionProvider = mock[LockActionProvider]
@@ -68,7 +66,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, lrnString, 1, 2, None)(request, messages).toString
+        view(form, lrn, 1, 2, None)(request, messages).toString
     }
 
     "when yes submitted must redirect back to draft departure dashboard when on first page" in {
@@ -159,8 +157,6 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val lrnString = lrn.toString
-
       val invalidValue = ""
       val request      = FakeRequest(POST, deleteDraftDepartureYesNoRoute).withFormUrlEncodedBody(("value", invalidValue))
       val boundForm    = form.bind(Map("value" -> invalidValue))
@@ -174,7 +170,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       val content = contentAsString(result)
 
       content mustEqual
-        view(boundForm, lrnString, 1, 2, None)(request, messages).toString
+        view(boundForm, lrn, 1, 2, None)(request, messages).toString
     }
 
   }

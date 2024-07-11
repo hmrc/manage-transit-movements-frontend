@@ -37,8 +37,8 @@ GET        /:departureId/transit-accompanying-document/:messageId               
 
 GET        /:departureId/goods-not-released/:messageId                               controllers.departureP5.GoodsNotReleasedP5Controller.goodsNotReleased(departureId: String, messageId: String)
 
-GET        /:departureId/:messageId/amend-guarantee-errors/:lrn                      controllers.departureP5.GuaranteeRejectedP5Controller.onPageLoad(departureId: String, messageId: String, lrn: LocalReferenceNumber)
-POST       /:departureId/:messageId/amend-guarantee-errors/:lrn                      controllers.departureP5.GuaranteeRejectedP5Controller.onAmend(departureId: String, messageId: String, lrn: LocalReferenceNumber)
+GET        /:departureId/:messageId/amend-guarantee-errors                           controllers.departureP5.GuaranteeRejectedP5Controller.onPageLoad(departureId: String, messageId: String)
+POST       /:departureId/:messageId/amend-guarantee-errors                           controllers.departureP5.GuaranteeRejectedP5Controller.onAmend(departureId: String, messageId: String)
 
 GET        /:departureId/incident-during-transit/:messageId                          controllers.departureP5.IncidentsDuringTransitP5Controller.onPageLoad(departureId: String, messageId: String)
 
