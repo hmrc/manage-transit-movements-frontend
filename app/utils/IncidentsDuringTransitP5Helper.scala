@@ -87,15 +87,15 @@ class IncidentsDuringTransitP5Helper(
     ).flatten
   )
 
-  def incidentsSection: AccordionSection = AccordionSection(
+  def incidentsSection(departureId: String, messageId: String): AccordionSection = AccordionSection(
     sectionTitle = Some(messages("arrival.notification.incidents.heading.incident")),
     children = data.Consignment.Incident.zipWithIndex.map {
-      case (_, index) => incidentSection(Index(index))
+      case (_, index) => incidentSection(departureId, Index(index), messageId)
     },
     isOpen = true
   )
 
-  def incidentSection(incidentIndex: Index): AccordionSection = AccordionSection(
+  def incidentSection(departureId: String, incidentIndex: Index, messageId: String): AccordionSection = AccordionSection(
     sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex.display),
     rows = Seq(
       incidentCodeRow(incidentIndex),
@@ -106,7 +106,7 @@ class IncidentsDuringTransitP5Helper(
       Link(
         id = s"more-details-incident-${incidentIndex.display}",
         text = messages("arrival.notification.incidents.link"),
-        href = controllers.routes.SessionExpiredController.onPageLoad().url, //TODO: Update navigation to incident page once implemented
+        href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureId, incidentIndex, messageId).url,
         visuallyHidden = Some(messages("arrival.notification.incidents.link.hidden", incidentIndex.display))
       )
     )

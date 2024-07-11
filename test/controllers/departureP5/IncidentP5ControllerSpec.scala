@@ -88,8 +88,18 @@ class IncidentP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
           val view = injector.instanceOf[IncidentP5View]
 
           contentAsString(result) mustEqual
-            view(incidentsViewModel, departureId.toString, messageId)(request, messages).toString
+            view(incidentsViewModel, departureIdP5, messageId)(request, messages).toString
       }
+    }
+
+    "must redirect back to IncidentsDuringTransitP5Controller for a POST" in {
+      val request = FakeRequest(POST, controller)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url
     }
   }
 }
