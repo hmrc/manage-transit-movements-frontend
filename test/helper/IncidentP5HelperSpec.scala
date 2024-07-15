@@ -19,8 +19,9 @@ package helper
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import org.scalacheck.Arbitrary
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scalaxb.XMLCalendar
 import utils.IncidentP5Helper
 import viewModels.sections.Section.StaticSection
 
@@ -98,23 +99,29 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "endorsementDateRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
+          val endorsement        = arbitraryEndorsement03.arbitrary.sample.value.copy(date = XMLCalendar("2022-07-15"))
+          val updatedIncident    = arbitraryIncidentType03.arbitrary.sample.value.copy(Endorsement = Some(endorsement))
+          val updatedConsignment = CC182CType.Consignment.copy(Incident = Seq(updatedIncident))
+          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation, Consignment = updatedConsignment)
 
           val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
-          val result = helper.endorsementDateRow.value
+          val result = helper.endorsementDateRow(incidentIndex).value
 
           result.key.value mustBe "Endorsement date"
-          result.value.value mustBe "endorsement date"
+          result.value.value mustBe "2022-07-15"
           result.actions must not be defined
         }
       }
 
       "authorityRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
+          val endorsement        = arbitraryEndorsement03.arbitrary.sample.value.copy(authority = "authority")
+          val updatedIncident    = arbitraryIncidentType03.arbitrary.sample.value.copy(Endorsement = Some(endorsement))
+          val updatedConsignment = CC182CType.Consignment.copy(Incident = Seq(updatedIncident))
+          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation, Consignment = updatedConsignment)
 
           val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
-          val result = helper.authorityRow.value
+          val result = helper.authorityRow(incidentIndex).value
 
           result.key.value mustBe "Authority"
           result.value.value mustBe "authority"
@@ -124,23 +131,29 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "endorsementCountryRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
+          val endorsement        = arbitraryEndorsement03.arbitrary.sample.value.copy(country = "GB")
+          val updatedIncident    = arbitraryIncidentType03.arbitrary.sample.value.copy(Endorsement = Some(endorsement))
+          val updatedConsignment = CC182CType.Consignment.copy(Incident = Seq(updatedIncident))
+          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation, Consignment = updatedConsignment)
 
           val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
-          val result = helper.endorsementCountryRow.value
+          val result = helper.endorsementCountryRow(incidentIndex).value
 
           result.key.value mustBe "Country"
-          result.value.value mustBe "endorsementCountry"
+          result.value.value mustBe "GB"
           result.actions must not be defined
         }
       }
 
       "locationRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
+          val endorsement        = arbitraryEndorsement03.arbitrary.sample.value.copy(place = "location")
+          val updatedIncident    = arbitraryIncidentType03.arbitrary.sample.value.copy(Endorsement = Some(endorsement))
+          val updatedConsignment = CC182CType.Consignment.copy(Incident = Seq(updatedIncident))
+          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation, Consignment = updatedConsignment)
 
           val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
-          val result = helper.locationRow.value
+          val result = helper.locationRow(incidentIndex).value
 
           result.key.value mustBe "Location"
           result.value.value mustBe "location"
