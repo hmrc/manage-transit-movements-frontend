@@ -61,11 +61,11 @@ object IncidentP5ViewModel {
       incidentIndex: Index
     )(implicit messages: Messages): IncidentP5ViewModel = {
 
-      val helper = new IncidentP5Helper(data, isMultipleIncidents)
+      val helper = new IncidentP5Helper(data.Consignment.Incident(incidentIndex.position))
 
       val sections = Seq(
         helper.incidentInformationSection,
-        helper.endorsementSection(incidentIndex),
+        helper.endorsementSection,
         helper.replacementMeansOfTransportSection
       )
 

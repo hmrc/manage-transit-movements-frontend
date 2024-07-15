@@ -16,15 +16,13 @@
 
 package utils
 
-import generated.CC182CType
-import models.Index
+import generated.IncidentType03
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section.StaticSection
 
 class IncidentP5Helper(
-  data: CC182CType,
-  isMultipleIncidents: Boolean
+  data: IncidentType03
 )(implicit messages: Messages)
     extends DeparturesP5MessageHelper {
 
@@ -79,49 +77,49 @@ class IncidentP5Helper(
     ).flatten
   )
 
-  def endorsementDateRow(incidentIndex: Index): Option[SummaryListRow] =
+  def endorsementDateRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](
-      answer = data.Consignment.Incident(incidentIndex.position).Endorsement.map(_.date.toString),
+      answer = data.Endorsement.map(_.date.toString),
       formatAnswer = formatAsText,
       prefix = "departure.notification.incident.index.endorsement",
       id = None,
       call = None
     )
 
-  def authorityRow(incidentIndex: Index): Option[SummaryListRow] =
+  def authorityRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](
-      answer = data.Consignment.Incident(incidentIndex.position).Endorsement.map(_.authority),
+      answer = data.Endorsement.map(_.authority),
       formatAnswer = formatAsText,
       prefix = "departure.notification.incident.index.authority",
       id = None,
       call = None
     )
 
-  def endorsementCountryRow(incidentIndex: Index): Option[SummaryListRow] =
+  def endorsementCountryRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](
-      answer = data.Consignment.Incident(incidentIndex.position).Endorsement.map(_.country),
+      answer = data.Endorsement.map(_.country),
       formatAnswer = formatAsText,
       prefix = "departure.notification.incident.index.endorsementCountry",
       id = None,
       call = None
     )
 
-  def locationRow(incidentIndex: Index): Option[SummaryListRow] =
+  def locationRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](
-      answer = data.Consignment.Incident(incidentIndex.position).Endorsement.map(_.place),
+      answer = data.Endorsement.map(_.place),
       formatAnswer = formatAsText,
       prefix = "departure.notification.incident.index.location",
       id = None,
       call = None
     )
 
-  def endorsementSection(incidentIndex: Index): StaticSection = StaticSection(
+  def endorsementSection: StaticSection = StaticSection(
     sectionTitle = Some(messages("departure.notification.incident.index.endorsement.section.title")),
     rows = Seq(
-      endorsementDateRow(incidentIndex),
-      authorityRow(incidentIndex),
-      endorsementCountryRow(incidentIndex),
-      locationRow(incidentIndex)
+      endorsementDateRow,
+      authorityRow,
+      endorsementCountryRow,
+      locationRow
     ).flatten
   )
 
