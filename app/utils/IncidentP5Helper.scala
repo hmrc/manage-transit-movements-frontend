@@ -17,6 +17,7 @@
 package utils
 
 import generated.IncidentType03
+import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section.StaticSection
@@ -24,7 +25,10 @@ import viewModels.sections.Section.StaticSection
 class IncidentP5Helper(
   data: IncidentType03
 )(implicit messages: Messages)
-    extends DeparturesP5MessageHelper {
+    extends DeparturesP5MessageHelper
+    with Logging {
+
+  val displayIndex = data.sequenceNumber + 1
 
   def incidentCodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("code"), // TODO: Pull from incident data
@@ -43,18 +47,18 @@ class IncidentP5Helper(
   )
 
   def countryRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("GB"), // TODO: Pull from incident data
+    answer = Some(data.Location.country),
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.country",
-    id = None,
+    id = Some(s"country-$displayIndex"),
     call = None
   )
 
   def identifierTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("identifierType"), // TODO: Pull from incident data
+    answer = Some(data.Location.qualifierOfIdentification),
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.identifierType",
-    id = None,
+    id = Some(s"identifierType-$displayIndex"),
     call = None
   )
 
@@ -66,6 +70,22 @@ class IncidentP5Helper(
     call = None
   )
 
+  def unLocodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = data.Location.UNLocode,
+    formatAnswer = formatAsText,
+    prefix = "departure.notification.incident.index.unLocode",
+    id = Some(s"unLocode-$displayIndex"),
+    call = None
+  )
+
+  def addressRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some("address"), // TODO: Pull from incident data,
+    formatAnswer = formatAsText,
+    prefix = "departure.notification.incident.index.address",
+    id = Some(s"address-$displayIndex"),
+    call = None
+  )
+
   def incidentInformationSection: StaticSection = StaticSection(
     sectionTitle = None,
     rows = Seq(
@@ -73,9 +93,19 @@ class IncidentP5Helper(
       descriptionRow,
       countryRow,
       identifierTypeRow,
-      coordinatesRow
+      selectLocationRow(data.Location.qualifierOfIdentification)
     ).flatten
   )
+
+  private val selectLocationRow: String => Option[SummaryListRow] = qualifierOfIdentification =>
+    qualifierOfIdentification.toUpperCase match {
+      case "W" => coordinatesRow
+      case "U" => unLocodeRow
+      case "Z" => addressRow
+      case _ =>
+        logger.error(s"Unexpected qualifier of identification: $qualifierOfIdentification")
+        None
+    }
 
   def endorsementDateRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](

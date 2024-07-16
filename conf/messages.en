@@ -662,9 +662,10 @@ departure.notification.incident.index.endorsement = Endorsement date
 departure.notification.incident.index.authority = Authority
 departure.notification.incident.index.endorsementCountry = Country
 departure.notification.incident.index.location = Location
+departure.notification.incident.index.unLocode = UN/LOCODE
+departure.notification.incident.index.address = Address
 
 departure.notification.incident.index.replacement.section.title = Replacement means of transport
 departure.notification.incident.index.identificationType = Identification type
 departure.notification.incident.index.identification = Identification
 departure.notification.incident.index.registeredCountry = Registered Country
-

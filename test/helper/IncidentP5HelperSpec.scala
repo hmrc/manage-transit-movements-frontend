@@ -17,9 +17,7 @@
 package helper
 
 import base.SpecBase
-import generated.CC182CType
 import generators.Generators
-import org.scalacheck.Arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import scalaxb.XMLCalendar
 import utils.IncidentP5Helper
@@ -62,7 +60,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val result = helper.countryRow.value
 
           result.key.value mustBe "Country"
-          result.value.value mustBe "GB"
+          result.value.value mustBe incidentType03.Location.country
           result.actions must not be defined
         }
       }
@@ -74,7 +72,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val result = helper.identifierTypeRow.value
 
           result.key.value mustBe "Identifier Type"
-          result.value.value mustBe "identifierType"
+          result.value.value mustBe incidentType03.Location.qualifierOfIdentification
           result.actions must not be defined
         }
       }
@@ -87,6 +85,30 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
           result.key.value mustBe "Coordinates"
           result.value.value mustBe "coordinates"
+          result.actions must not be defined
+        }
+      }
+
+      "unLocodeRow" - {
+        "must return a row" in {
+
+          val helper = new IncidentP5Helper(incidentType03)
+          val result = helper.unLocodeRow.value
+
+          result.key.value mustBe "UN/LOCODE"
+          result.value.value mustBe incidentType03.Location.UNLocode.get
+          result.actions must not be defined
+        }
+      }
+
+      "addressRow" - {
+        "must return a row" in {
+
+          val helper = new IncidentP5Helper(incidentType03)
+          val result = helper.addressRow.value
+
+          result.key.value mustBe "Address"
+          result.value.value mustBe "address"
           result.actions must not be defined
         }
       }
@@ -157,6 +179,30 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
           result mustBe a[StaticSection]
           result.rows.size mustBe 5
+        }
+
+        "must contain coordinates row if the identifier type is W" in {
+          val helper = new IncidentP5Helper(incidentType03.copy(Location = incidentType03.Location.copy(qualifierOfIdentification = "W")))
+          val result = helper.incidentInformationSection
+
+          result.rows.size mustBe 5
+          result.rows.map(_.key.value) must contain("Coordinates")
+        }
+
+        "must contain UN/LOCODE row if the identifier type is U" in {
+          val helper = new IncidentP5Helper(incidentType03.copy(Location = incidentType03.Location.copy(qualifierOfIdentification = "U")))
+          val result = helper.incidentInformationSection
+
+          result.rows.size mustBe 5
+          result.rows.map(_.key.value) must contain("UN/LOCODE")
+        }
+
+        "must contain address row if the identifier type is Z" in {
+          val helper = new IncidentP5Helper(incidentType03.copy(Location = incidentType03.Location.copy(qualifierOfIdentification = "Z")))
+          val result = helper.incidentInformationSection
+
+          result.rows.size mustBe 5
+          result.rows.map(_.key.value) must contain("Address")
         }
       }
     }
