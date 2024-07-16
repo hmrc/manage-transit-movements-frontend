@@ -16,14 +16,13 @@
 
 package utils
 
-import generated.CC182CType
+import generated.IncidentType03
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section.StaticSection
 
 class IncidentP5Helper(
-  data: CC182CType,
-  isMultipleIncidents: Boolean
+  data: IncidentType03
 )(implicit messages: Messages)
     extends DeparturesP5MessageHelper {
 
@@ -78,37 +77,41 @@ class IncidentP5Helper(
     ).flatten
   )
 
-  def endorsementDateRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("endorsement date"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.endorsement",
-    id = None,
-    call = None
-  )
+  def endorsementDateRow: Option[SummaryListRow] =
+    buildRowFromAnswer[String](
+      answer = data.Endorsement.map(_.date.toString),
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.endorsement",
+      id = None,
+      call = None
+    )
 
-  def authorityRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("authority"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.authority",
-    id = None,
-    call = None
-  )
+  def authorityRow: Option[SummaryListRow] =
+    buildRowFromAnswer[String](
+      answer = data.Endorsement.map(_.authority),
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.authority",
+      id = None,
+      call = None
+    )
 
-  def endorsementCountryRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("endorsementCountry"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.endorsementCountry",
-    id = None,
-    call = None
-  )
+  def endorsementCountryRow: Option[SummaryListRow] =
+    buildRowFromAnswer[String](
+      answer = data.Endorsement.map(_.country),
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.endorsementCountry",
+      id = None,
+      call = None
+    )
 
-  def locationRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("location"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.location",
-    id = None,
-    call = None
-  )
+  def locationRow: Option[SummaryListRow] =
+    buildRowFromAnswer[String](
+      answer = data.Endorsement.map(_.place),
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.location",
+      id = None,
+      call = None
+    )
 
   def endorsementSection: StaticSection = StaticSection(
     sectionTitle = Some(messages("departure.notification.incident.index.endorsement.section.title")),
