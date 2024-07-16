@@ -21,12 +21,37 @@ import generated.CC182CType
 import generators.Generators
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
+import models.{Country, LocalReferenceNumber}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject
+import play.api.inject.guice.GuiceApplicationBuilder
+import services.ReferenceDataService
 import viewModels.P5.departure.IncidentP5ViewModel
 import viewModels.P5.departure.IncidentP5ViewModel.IncidentP5ViewModelProvider
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+
+  private val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
+
+  private val country = Country("GB", "United Kingdom")
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockReferenceDataService)
+    when(mockReferenceDataService.getCountry(any())(any(), any()))
+      .thenReturn(Future.successful(Right(country)))
+  }
 
   "IncidentP5ViewModel" - {
 
@@ -45,7 +70,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId),
       isMultipleIncidents: Boolean = true
     ): IncidentP5ViewModel =
-      viewModelProvider.apply(cc182Data, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex)
+      viewModelProvider.apply(cc182Data, mockReferenceDataService, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex).futureValue
 
     "viewModel must have correct sections" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
