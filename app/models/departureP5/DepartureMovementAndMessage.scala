@@ -50,3 +50,11 @@ case class DepartureMovementAndMessage(
   message: LatestDepartureMessage,
   isPrelodged: Boolean
 ) extends MovementAndMessage
+
+case class IncidentMovementAndMessage(
+  departureId: String,
+  localReferenceNumber: String,
+  updated: LocalDateTime,
+  message: LatestDepartureMessage,
+  hasMultipleIncidents: Boolean
+) extends MovementAndMessage

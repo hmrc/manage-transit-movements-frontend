@@ -20,6 +20,7 @@ import generated.{CC035CType, RecoveryNotificationType}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 import javax.xml.datatype.XMLGregorianCalendar
 
@@ -77,6 +78,6 @@ class RecoveryNotificationHelper(ie035: CC035CType)(implicit
 
     val rows = mrnRow ++ declarationAcceptanceDateRow ++ recoveryDateRow ++ furtherInformationRow ++ amountRow
 
-    Section(None, rows, None)
+    StaticSection(None, rows)
   }
 }

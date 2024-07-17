@@ -20,6 +20,7 @@ import generated.{CC060CType, RequestedDocumentType}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 import javax.xml.datatype.XMLGregorianCalendar
 
@@ -72,7 +73,7 @@ class IntentionToControlP5MessageHelper(ie060: CC060CType)(implicit
     val controlType: Seq[SummaryListRow]     = extractOptionalRow(buildDocumentTypeRow(document.documentType))
     val referenceNumber: Seq[SummaryListRow] = extractOptionalRow(buildOfficeOfDepartureRow(ie060.CustomsOfficeOfDeparture.referenceNumber))
     val rows                                 = controlType ++ referenceNumber
-    Section(messages("heading.label.controlInformation", document.sequenceNumber), rows, None)
+    StaticSection(messages("heading.label.controlInformation", document.sequenceNumber), rows)
   }
 
   def documentSection(): Seq[Section] = ie060.RequestedDocument.map(buildDocumentSection)
@@ -82,6 +83,6 @@ class IntentionToControlP5MessageHelper(ie060: CC060CType)(implicit
     val mrnRow             = extractOptionalRow(buildMRNRow)
     val dateTimeControlRow = extractOptionalRow(buildDateTimeControlRow)
     val rows               = lrnRow ++ mrnRow ++ dateTimeControlRow
-    Section(None, rows, None)
+    StaticSection(None, rows)
   }
 }

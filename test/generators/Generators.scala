@@ -24,6 +24,8 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 
 trait Generators extends ModelGenerators with ViewModelGenerators with MessagesModelGenerators {
 
+  private val maxListLength = 10
+
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
   def genIntersperseString(gen: Gen[String], value: String, frequencyV: Int = 1, frequencyN: Int = 10): Gen[String] = {
@@ -143,11 +145,10 @@ trait Generators extends ModelGenerators with ViewModelGenerators with MessagesM
       seq    <- listOfN(length, arbitrary[A])
     } yield seq
 
-  def distinctListWithMaxLength[A, B](f: A => B)(maxLength: Int = 10)(implicit a: Arbitrary[A]): Gen[List[A]] =
+  def distinctListWithMaxLength[A, B](maxLength: Int = maxListLength)(f: A => B)(implicit a: Arbitrary[A]): Gen[List[A]] =
     for {
-      length <- choose(1, maxLength)
-      seq    <- listOfN(length, arbitrary[A])
-    } yield seq.distinctBy(f)
+      values <- listWithMaxLength[A](maxLength)
+    } yield values.distinctBy(f)
 
   def alphaNumericWithMaxLength(maxLength: Int): Gen[String] =
     for {

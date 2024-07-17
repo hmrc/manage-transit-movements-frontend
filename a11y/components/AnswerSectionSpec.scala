@@ -18,8 +18,7 @@ package components
 
 import a11ySpecBase.A11ySpecBase
 import org.scalacheck.Arbitrary.arbitrary
-import play.twirl.api.Html
-import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 import views.html.components.AnswerSection
 import views.html.templates.MainTemplate
 
@@ -30,11 +29,10 @@ class AnswerSectionSpec extends A11ySpecBase {
     val component = app.injector.instanceOf[AnswerSection]
 
     val title   = nonEmptyString.sample.value
-    val section = arbitrary[Section].sample.value
-    val html    = arbitrary[Html].sample.value
+    val section = arbitrary[StaticSection].sample.value
 
     val content = template.apply(title) {
-      component.apply(section)(html).withHeading(title)
+      component.apply(section).withHeading(title)
     }
 
     "pass accessibility checks" in {

@@ -23,6 +23,7 @@ import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 import javax.xml.datatype.XMLGregorianCalendar
 import scala.concurrent.{ExecutionContext, Future}
@@ -131,7 +132,7 @@ class GoodsUnderControlP5MessageHelper(ie060: CC060CType, referenceDataService: 
         val controlType: Seq[SummaryListRow]        = extractOptionalRow(x)
         val controlDescription: Seq[SummaryListRow] = extractOptionalRow(buildControlDescriptionRow(typeOfControl.text))
         val rows                                    = controlType ++ controlDescription
-        Section(messages("heading.label.controlInformation", typeOfControl.sequenceNumber), rows, None)
+        StaticSection(messages("heading.label.controlInformation", typeOfControl.sequenceNumber), rows)
     }
 
   private def buildDocumentSection(document: RequestedDocumentType): Future[Section] =
@@ -140,7 +141,7 @@ class GoodsUnderControlP5MessageHelper(ie060: CC060CType, referenceDataService: 
         val documentType: Seq[SummaryListRow]        = extractOptionalRow(x)
         val documentDescription: Seq[SummaryListRow] = extractOptionalRow(buildDocumentDescriptionRow(document.description))
         val rows                                     = documentType ++ documentDescription
-        Section(messages("heading.label.documentInformation", document.sequenceNumber), rows, None)
+        StaticSection(messages("heading.label.documentInformation", document.sequenceNumber), rows)
     }
 
   def documentSection(): Future[Seq[Section]] = Future.sequence(ie060.RequestedDocument.map(buildDocumentSection))
@@ -154,7 +155,7 @@ class GoodsUnderControlP5MessageHelper(ie060: CC060CType, referenceDataService: 
         val officeOfDepartureRow = extractOptionalRow(officeOfDeparture)
         val rows                 = lrnRow ++ mrnRow ++ dateTimeControlRow ++ officeOfDepartureRow
 
-        Section(None, rows, None)
+        StaticSection(None, rows)
     }
 
   def controlInformationSection(): Future[Seq[Section]] =

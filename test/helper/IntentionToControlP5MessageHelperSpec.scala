@@ -29,7 +29,7 @@ import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import utils.IntentionToControlP5MessageHelper
-import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
@@ -171,7 +171,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
               SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText))
             )
 
-            val seqSummaryRow = Seq(Section(Some("Control information 1"), firstRow, None), Section(Some("Control information 2"), secondRow, None))
+            val seqSummaryRow = Seq(StaticSection(Some("Control information 1"), firstRow), StaticSection(Some("Control information 2"), secondRow))
 
             result mustBe seqSummaryRow
         }

@@ -1,5 +1,5 @@
-/*
- * Copyright 2024 HM Revenue & Customs
+@*
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,23 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-import generated._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.Link
 
-package object utils {
+@this()
 
-  implicit class RichFlag(value: Flag) {
+@(link: Link)
 
-    def toBoolean: Boolean = value match {
-      case Number0 => false
-      case Number1 => true
-    }
-  }
-
-  implicit class RichInt(value: Int) {
-
-    def toDisplay: Int = value + 1
-  }
-
-}
+<p class="govuk-body">
+    <a class="govuk-link" href=@link.href id="@link.id">
+        @link.text @link.visuallyHidden.map { value =>
+            <span class="govuk-visually-hidden">@value</span>
+        }
+    </a>
+</p>
