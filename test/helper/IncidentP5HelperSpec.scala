@@ -17,9 +17,10 @@
 package helper
 
 import base.SpecBase
-import generated.CC182CType
+import generated.AddressType18
 import generators.Generators
-import org.scalacheck.Arbitrary
+import models.RichAddressType18
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import scalaxb.XMLCalendar
 import utils.IncidentP5Helper
@@ -91,6 +92,21 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
         }
       }
 
+      "addressRow" - {
+        "must return a row" in {
+          forAll(arbitrary[AddressType18]) {
+            address =>
+              val modifiedIncidentType03 = incidentType03.copy(Location = incidentType03.Location.copy(Address = Some(address)))
+              val helper                 = new IncidentP5Helper(modifiedIncidentType03)
+              val result                 = helper.addressRow.value
+
+              result.key.value mustBe "Address"
+              result.value.value mustBe address.toDynamicAddress.toString
+              result.actions must not be defined
+          }
+        }
+      }
+
       "endorsementDateRow" - {
         "must return a row" in {
           val endorsement     = arbitraryEndorsement03.arbitrary.sample.value.copy(date = XMLCalendar("2022-07-15"))
@@ -156,7 +172,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val result = helper.incidentInformationSection
 
           result mustBe a[StaticSection]
-          result.rows.size mustBe 5
+          result.rows.size mustBe 6
         }
       }
     }
