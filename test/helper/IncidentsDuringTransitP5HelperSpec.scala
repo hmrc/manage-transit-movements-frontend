@@ -19,7 +19,7 @@ package helper
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.Link
+import models.{IncidentCode, Link}
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -179,6 +179,14 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
         "must return a row" in {
           forAll(Gen.alphaNumStr) {
             value =>
+              val incidentCode = IncidentCode(
+                "1",
+                "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+              )
+
+              when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
+                .thenReturn(Future.successful(incidentCode))
+
               val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
                 code = value
               )
@@ -192,10 +200,11 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               )
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.incidentCodeRow(incidentIndex).value
+              val result = helper.incidentCodeRow(incidentIndex).futureValue.value
 
               result.key.value mustBe "Incident code"
-              result.value.value mustBe "incident code here"
+              result.value.value mustBe
+                "1 - The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
               result.actions must not be defined
           }
         }
@@ -221,7 +230,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val result = helper.incidentDescriptionRow(incidentIndex).value
 
               result.key.value mustBe "Description"
-              result.value.value mustBe "incident description here"
+              result.value.value mustBe value
               result.actions must not be defined
           }
         }
@@ -257,7 +266,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               )
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.incidentSection(incidentIndex)
+              val result = helper.incidentSection(incidentIndex).futureValue
 
               result mustBe a[AccordionSection]
               result.sectionTitle mustBe Some("Incident 1")
@@ -285,7 +294,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               )
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.incidentsSection
+              val result = helper.incidentsSection.futureValue
 
               result mustBe a[AccordionSection]
               result.sectionTitle mustBe Some("Incidents")

@@ -20,6 +20,7 @@ import base.SpecBase
 import cats.data.NonEmptySet
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
+import models.IncidentCode
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
@@ -47,6 +48,14 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
   private val requestedDocumentTypeCode = "C620"
   private val requestedDocumentType1    = RequestedDocumentType(requestedDocumentTypeCode, "T2FL document")
+
+  private val incidentCodeCode = "1"
+
+  private val incidentCode =
+    IncidentCode(
+      incidentCodeCode,
+      "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+    )
 
   private val functionalErrorCode = "1"
   private val functionalError1    = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
@@ -99,6 +108,23 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
         service.getControlType(controlTypeCode).futureValue mustBe controlType1
 
         verify(mockConnector).getControlTypes(eqTo(expectedQueryParams): _*)(any(), any())
+      }
+    }
+
+    "getIncidentCode" - {
+
+      val expectedQueryParams = Seq("data.code" -> incidentCodeCode)
+
+      "should return a incident code" in {
+
+        when(mockConnector.getIncidentCodes(any())(any(), any()))
+          .thenReturn(Future.successful(NonEmptySet.of(incidentCode)))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getIncidentCode(incidentCodeCode).futureValue mustBe incidentCode
+
+        verify(mockConnector).getIncidentCodes(eqTo(expectedQueryParams): _*)(any(), any())
       }
     }
 
