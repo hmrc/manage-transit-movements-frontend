@@ -62,13 +62,19 @@ class IncidentP5Helper(
     call = None
   )
 
-  def coordinatesRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("coordinates"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.coordinates",
-    id = None,
-    call = None
-  )
+  def coordinatesRow: Option[SummaryListRow] = {
+    val coordinates = data.Location.GNSS.map(
+      gnss => Seq(gnss.latitude, gnss.longitude).mkString(",")
+    )
+
+    buildRowFromAnswer[String](
+      answer = coordinates,
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.coordinates",
+      id = None,
+      call = None
+    )
+  }
 
   def unLocodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = data.Location.UNLocode,
