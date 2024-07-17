@@ -49,6 +49,8 @@ class IncidentsDuringTransitP5Controller @Inject() (
         referenceDataService.getCustomsOffice(customsOfficeReference).flatMap {
           customsOffice =>
             val viewModel = viewModelProvider.apply(
+              departureId,
+              messageId,
               request.messageData,
               request.referenceNumbers,
               customsOffice,

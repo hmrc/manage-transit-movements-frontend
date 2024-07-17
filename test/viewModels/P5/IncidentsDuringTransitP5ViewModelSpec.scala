@@ -19,7 +19,7 @@ package viewModels.P5
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.{IncidentCode, LocalReferenceNumber}
+import models.IncidentCode
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
@@ -61,7 +61,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
     val lrn                = "LRN123"
     val customsReferenceId = "CD123"
 
-    val departureReferenceNumbers = DepartureReferenceNumbers(LocalReferenceNumber(lrn), Some(mrn))
+    val departureReferenceNumbers = DepartureReferenceNumbers(lrn, Some(mrn))
 
     val viewModelProvider = new IncidentsDuringTransitP5ViewModelProvider(mockReferenceDataService)
 
@@ -72,7 +72,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId),
       isMultipleIncidents: Boolean = true
     ): IncidentsDuringTransitP5ViewModel =
-      viewModelProvider.apply(cc128Data, departureReferenceNumbers, customsOffice, isMultipleIncidents).futureValue
+      viewModelProvider.apply(departureIdP5, messageId, cc128Data, departureReferenceNumbers, customsOffice, isMultipleIncidents).futureValue
 
     "viewModel must have correct sections" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {

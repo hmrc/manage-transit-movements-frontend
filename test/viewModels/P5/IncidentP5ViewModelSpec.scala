@@ -19,7 +19,6 @@ package viewModels.P5
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.LocalReferenceNumber
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import org.scalacheck.{Arbitrary, Gen}
@@ -35,7 +34,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
     val lrn                = "LRN123"
     val customsReferenceId = "CD123"
 
-    val departureReferenceNumbers = DepartureReferenceNumbers(LocalReferenceNumber(lrn), Some(mrn))
+    val departureReferenceNumbers = DepartureReferenceNumbers(lrn, Some(mrn))
 
     val viewModelProvider = new IncidentP5ViewModelProvider()
 

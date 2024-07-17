@@ -16,17 +16,16 @@
 
 package models.departureP5
 
-import models.LocalReferenceNumber
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 
-case class DepartureReferenceNumbers(localReferenceNumber: LocalReferenceNumber, movementReferenceNumber: Option[String])
+case class DepartureReferenceNumbers(localReferenceNumber: String, movementReferenceNumber: Option[String])
 
 object DepartureReferenceNumbers {
 
   implicit val reads: Reads[DepartureReferenceNumbers] =
     (
-      (__ \ "localReferenceNumber").read[LocalReferenceNumber] and
+      (__ \ "localReferenceNumber").read[String] and
         (__ \ "movementReferenceNumber").readNullable[String]
     )(DepartureReferenceNumbers.apply _)
 

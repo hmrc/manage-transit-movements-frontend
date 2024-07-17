@@ -120,9 +120,9 @@ class IncidentsDuringTransitP5Helper(
       rows = rows
     )
 
-  def incidentsSection: Future[AccordionSection] = {
+  def incidentsSection(departureId: String, messageId: String): Future[AccordionSection] = {
     val incidentSections: Seq[Future[AccordionSection]] = data.Consignment.Incident.zipWithIndex.map {
-      case (_, index) => incidentSection(Index(index))
+      case (_, index) => incidentSection(departureId, Index(index), messageId)
     }
 
     Future.sequence(incidentSections).map {
@@ -135,7 +135,7 @@ class IncidentsDuringTransitP5Helper(
     }
   }
 
-  def incidentSection(incidentIndex: Index): Future[AccordionSection] =
+  def incidentSection(departureId: String, incidentIndex: Index, messageId: String): Future[AccordionSection] =
     incidentCodeRow(incidentIndex).map {
       incidentCode =>
         AccordionSection(
@@ -149,7 +149,7 @@ class IncidentsDuringTransitP5Helper(
             Link(
               id = s"more-details-incident-${incidentIndex.display}",
               text = messages("arrival.notification.incidents.link"),
-              href = controllers.routes.SessionExpiredController.onPageLoad().url, //TODO: Update navigation to incident page once implemented
+              href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureId, incidentIndex, messageId).url,
               visuallyHidden = Some(messages("arrival.notification.incidents.link.hidden", incidentIndex.display))
             )
           )

@@ -19,7 +19,7 @@ package helper
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.{IncidentCode, Link}
+import models.{IncidentCode, Index, Link}
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -265,7 +265,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               )
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.incidentSection(incidentIndex).futureValue
+              val result = helper.incidentSection(departureIdP5, incidentIndex, messageId).futureValue
 
               result mustBe a[AccordionSection]
               result.sectionTitle mustBe Some("Incident 1")
@@ -293,7 +293,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               )
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.incidentsSection.futureValue
+              val result = helper.incidentsSection(departureIdP5, messageId).futureValue
 
               result mustBe a[AccordionSection]
               result.sectionTitle mustBe Some("Incidents")
@@ -308,14 +308,14 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               result.children.head.viewLinks.head mustBe Link(
                 id = s"more-details-incident-${1}",
                 text = "More details",
-                href = controllers.routes.SessionExpiredController.onPageLoad().url,
+                href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, Index(0), messageId).url,
                 visuallyHidden = Some("more details on incident 1")
               )
 
               result.children(1).viewLinks.head mustBe Link(
                 id = s"more-details-incident-${2}",
                 text = "More details",
-                href = controllers.routes.SessionExpiredController.onPageLoad().url,
+                href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, Index(1), messageId).url,
                 visuallyHidden = Some("more details on incident 2")
               )
           }
