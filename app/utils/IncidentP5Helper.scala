@@ -17,6 +17,7 @@
 package utils
 
 import generated.IncidentType03
+import models.{DynamicAddress, RichAddressType18}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section.StaticSection
@@ -66,6 +67,18 @@ class IncidentP5Helper(
     call = None
   )
 
+  def addressRow: Option[SummaryListRow] =
+    data.Location.Address.flatMap {
+      address =>
+        buildRowFromAnswer[DynamicAddress](
+          answer = Some(address.toDynamicAddress),
+          formatAnswer = formatAsDynamicAddress,
+          prefix = "departure.notification.incident.index.address",
+          id = None,
+          call = None
+        )
+    }
+
   def incidentInformationSection: StaticSection = StaticSection(
     sectionTitle = None,
     rows = Seq(
@@ -73,7 +86,8 @@ class IncidentP5Helper(
       descriptionRow,
       countryRow,
       identifierTypeRow,
-      coordinatesRow
+      coordinatesRow,
+      addressRow
     ).flatten
   )
 
