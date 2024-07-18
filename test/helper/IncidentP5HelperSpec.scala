@@ -17,9 +17,8 @@
 package helper
 
 import base.SpecBase
-import generated.{GNSSType, LocationType02}
+import generated.GNSSType
 import generators.Generators
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import scalaxb.XMLCalendar
 import utils.IncidentP5Helper
@@ -87,7 +86,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val result = helper.coordinatesRow.value
 
           result.key.value mustBe "Coordinates"
-          result.value.value mustBe "90.1,90.2"
+          result.value.value mustBe "(90.1, 90.2)"
           result.actions must not be defined
         }
       }

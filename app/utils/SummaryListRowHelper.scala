@@ -45,7 +45,7 @@ class SummaryListRowHelper(implicit messages: Messages) {
   protected def formatAsText[T](answer: T): Content = s"$answer".toText
 
   protected def formatAsCoordinates(answer: GNSSType): Content =
-    Seq(answer.latitude, answer.longitude).mkString(",").toText
+    s"(${answer.latitude}, ${answer.longitude})".toText
 
   def formatAsDate(answer: XMLGregorianCalendar): Content = {
     val date      = answer.toGregorianCalendar.getTime
