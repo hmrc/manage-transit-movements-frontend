@@ -176,7 +176,7 @@ class IncidentP5Helper(
     AccordionSection(
       sectionTitle = Some(messages("departure.notification.incident.index.transportEquipment.heading", equipmentIndex.display)),
       rows = Seq(containerIdentificationNumberRow(equipmentIndex)).flatten,
-      isOpen = true
+      isOpen = if (equipmentIndex.position == 0) true else false
     )
 
   def transportEquipmentsSection: StaticSection = {

@@ -270,7 +270,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
           result.children(1) mustBe a[AccordionSection]
           result.children(1).sectionTitle mustBe Some("Transport equipment 2")
-          result.children(1).isOpen mustBe true
+          result.children(1).isOpen mustBe false
         }
       }
     }
