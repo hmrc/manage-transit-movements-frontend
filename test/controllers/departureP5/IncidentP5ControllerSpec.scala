@@ -76,8 +76,8 @@ class IncidentP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
             .thenReturn(Future.successful(Left(customsReferenceNumber)))
 
-          when(mockIncidentP5ViewModelProvider.apply(any(), any(), any(), any(), any())(any()))
-            .thenReturn(incidentsViewModel)
+          when(mockIncidentP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(incidentsViewModel))
 
           val request = FakeRequest(GET, controller)
 

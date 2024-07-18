@@ -20,9 +20,9 @@ import cats.Order
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import models.IncidentCode
-import play.api.Logging
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
+import models.{Country, IncidentCode}
+import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Reads}
 import sttp.model.HeaderNames
@@ -45,6 +45,17 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .setHeader(version2Header)
       .transform(_.withQueryStringParameters(queryParams: _*))
       .execute[NonEmptySet[CustomsOffice]]
+  }
+
+  def getCountries(
+    queryParams: QueryParams*
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[Country]] = {
+    val url = url"${config.customsReferenceDataUrl}/lists/CountryCodesFullList"
+    http
+      .get(url)
+      .transform(_.withQueryStringParameters(queryParams: _*))
+      .setHeader(version2Header)
+      .execute[NonEmptySet[Country]]
   }
 
   def getIncidentCodes(
