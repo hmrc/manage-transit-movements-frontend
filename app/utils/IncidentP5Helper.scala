@@ -17,13 +17,13 @@
 package utils
 
 import generated.IncidentType03
-import models.{DynamicAddress, RichAddressType18}
+import models.{DynamicAddress, Index, RichAddressType18}
 import play.api.Logging
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
-import viewModels.sections.Section.StaticSection
+import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -196,4 +196,24 @@ class IncidentP5Helper(
     ).flatten
   )
 
+  def goodsReferenceNumber(goodsReferenceNumber: BigInt, index: Index): Option[SummaryListRow] = buildRowFromAnswer[BigInt](
+    answer = Some(goodsReferenceNumber),
+    formatAnswer = formatAsText,
+    prefix = "departure.notification.incident.index.goodsReference.referenceNumber",
+    id = None,
+    call = None,
+    args = index.display
+  )
+
+  def goodsReferenceSection(transportEquipmentIndex: Index): AccordionSection = {
+    val rows = data.TransportEquipment(transportEquipmentIndex.position).GoodsReference.zipWithIndex.map {
+      case (goodsReference, index) =>
+        goodsReferenceNumber(goodsReference.declarationGoodsItemNumber, Index(index))
+    }
+
+    AccordionSection(
+      sectionTitle = Some(messages("departure.notification.incident.index.goodsReference.section.title")),
+      rows = rows.flatten
+    )
+  }
 }

@@ -17,7 +17,7 @@
 package helper
 
 import base.SpecBase
-import generated.AddressType18
+import generated.{AddressType18, GoodsReferenceType01}
 import generators.Generators
 import models.{Country, RichAddressType18}
 import org.mockito.ArgumentMatchers.any
@@ -29,7 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import utils.IncidentP5Helper
-import viewModels.sections.Section.StaticSection
+import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -204,6 +204,21 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
         }
       }
 
+      "goodsReferenceNumber" - {
+        "must return a row" in {
+
+          forAll(arbitrary[BigInt]) {
+            referenceNumber =>
+              val helper = new IncidentP5Helper(incidentType03, refDataService)
+              val result = helper.goodsReferenceNumber(referenceNumber, transportEquipmentIndex).value
+
+              result.key.value mustBe s"Goods item number ${transportEquipmentIndex.display}"
+              result.value.value mustBe referenceNumber.toString()
+              result.actions must not be defined
+          }
+        }
+      }
+
     }
 
     "sections" - {
@@ -214,6 +229,24 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
           result mustBe a[StaticSection]
           result.rows.size mustBe 7
+        }
+      }
+
+      "goodsReferenceSection" - {
+        "must return a accordion section with goodsReference rows" in {
+          val updatedIncidentType = incidentType03.copy(
+            TransportEquipment = Seq(
+              incidentType03.TransportEquipment.head.copy(
+                GoodsReference = Seq(GoodsReferenceType01("1", 1), GoodsReferenceType01("2", 2))
+              )
+            )
+          )
+
+          val helper = new IncidentP5Helper(updatedIncidentType, refDataService)
+          val result = helper.goodsReferenceSection(transportEquipmentIndex)
+
+          result mustBe a[AccordionSection]
+          result.rows.size mustBe 2
         }
       }
     }
