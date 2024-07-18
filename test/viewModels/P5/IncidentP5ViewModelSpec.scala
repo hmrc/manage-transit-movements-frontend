@@ -19,9 +19,9 @@ package viewModels.P5
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
+import models.Country
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
-import models.{Country, LocalReferenceNumber}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.{Arbitrary, Gen}
@@ -92,7 +92,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
           val sections = modifiedViewModel.sections
 
-          sections.length mustBe 3
+          sections.length mustBe 4
       }
     }
 
@@ -104,7 +104,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
     "heading" - {
       "must return correct message" in {
-        viewModel().title mustBe "Incident 1"
+        viewModel().heading mustBe "Incident 1"
       }
     }
 
