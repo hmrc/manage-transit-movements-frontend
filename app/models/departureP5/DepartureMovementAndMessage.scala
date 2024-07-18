@@ -30,7 +30,7 @@ case class RejectedMovementAndMessage(
   localReferenceNumber: String,
   updated: LocalDateTime,
   message: LatestDepartureMessage,
-  rejectionType: String,
+  rejectionType: BusinessRejectionType,
   isDeclarationAmendable: Boolean,
   xPaths: Seq[String],
   doesCacheExistForLrn: Boolean

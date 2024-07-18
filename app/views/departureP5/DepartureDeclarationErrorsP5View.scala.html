@@ -29,29 +29,31 @@
     helpdeskLink: HelpdeskLink
 )
 
-@(departureDeclarationErrorsP5ViewModel: DepartureDeclarationErrorsP5ViewModel, isAmendmentJourney: Boolean, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(viewModel: DepartureDeclarationErrorsP5ViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
-    title = departureDeclarationErrorsP5ViewModel.title,
+    title = viewModel.title,
     showBackLink = true
 ) {
 
     @heading(
-        heading = departureDeclarationErrorsP5ViewModel.heading,
-        caption = Some(messages("departure.messages.caption", departureDeclarationErrorsP5ViewModel.lrn))
+        heading = viewModel.heading,
+        caption = Some(messages("departure.messages.caption", viewModel.lrn))
     )
 
-    <p id="paragraph-1" class="govuk-body">@departureDeclarationErrorsP5ViewModel.paragraph1</p>
+    <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
-    @mrn.map{mrn => <p id="mrn" class="govuk-label--s">MRN: @mrn</p> }
+    @viewModel.mrn.map { value =>
+        <p id="mrn" class="govuk-label--s">MRN: @value</p>
+    }
 
     @helpdeskLink(
-        departureDeclarationErrorsP5ViewModel.paragraph3Prefix,
-        departureDeclarationErrorsP5ViewModel.paragraph3Link,
-        departureDeclarationErrorsP5ViewModel.paragraph3Suffix
+        viewModel.paragraph3Prefix,
+        viewModel.paragraph3Link,
+        viewModel.paragraph3Suffix
     )
 
-    @if(!isAmendmentJourney){
-      <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.p5Departure">@departureDeclarationErrorsP5ViewModel.hyperlink</a></p>
+    @viewModel.hyperlink.map { value =>
+        <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.p5Departure">@value</a></p>
     }
 }

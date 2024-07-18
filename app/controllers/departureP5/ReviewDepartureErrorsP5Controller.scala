@@ -20,6 +20,7 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
 import generated.CC056CType
 import models.RichCC056CType
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -41,7 +42,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(page: Option[Int], departureId: String, messageId: String, isAmendmentJourney: Option[Boolean]): Action[AnyContent] =
+  def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
         val currentPage      = page.getOrElse(1)
@@ -51,18 +52,16 @@ class ReviewDepartureErrorsP5Controller @Inject() (
           totalNumberOfItems = functionalErrors.length,
           currentPage = currentPage,
           numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-          href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId, None).url,
-          additionalParams = Seq(("isAmendmentJourney", isAmendmentJourney.map(_.toString).getOrElse("false")))
+          href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId).url
         )
         val rejectionMessageP5ViewModel =
           viewModelProvider.apply(
             request.messageData.pagedFunctionalErrors(currentPage),
             request.referenceNumbers.localReferenceNumber,
-            isAmendmentJourney.getOrElse(false)
+            DepartureBusinessRejectionType(request.messageData)
           )
         rejectionMessageP5ViewModel.map(
-          viewModel =>
-            Ok(view(viewModel, departureId, paginationViewModel, isAmendmentJourney.getOrElse(false), request.referenceNumbers.movementReferenceNumber))
+          viewModel => Ok(view(viewModel, departureId, paginationViewModel, request.referenceNumbers.movementReferenceNumber))
         )
     }
 }

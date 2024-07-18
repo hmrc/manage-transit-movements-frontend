@@ -67,4 +67,9 @@ trait ViewSpecAssertions extends ViewSpecGetters {
 
   def assertNotRenderedByClass(doc: Document, className: String): Assertion =
     assert(doc.getElementsByClass(className).isEmpty, "\n\nElement with class " + className + " was rendered on the page.\n")
+
+  def assertElementWithIdContainsText(doc: Document, id: String, expectedText: String): Unit = {
+    val element = doc.getElementById(id)
+    assertElementContainsText(element, expectedText)
+  }
 }
