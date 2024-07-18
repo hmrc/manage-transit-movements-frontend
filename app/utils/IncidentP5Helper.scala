@@ -17,13 +17,13 @@
 package utils
 
 import generated.IncidentType03
-import models.{DynamicAddress, Index, RichAddressType18}
+import models.{DynamicAddress, RichAddressType18}
 import play.api.Logging
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
-import viewModels.sections.Section.{AccordionSection, StaticSection}
+import viewModels.sections.Section.StaticSection
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -162,32 +162,6 @@ class IncidentP5Helper(
       locationRow
     ).flatten
   )
-
-  def containerIdentificationNumberRow(equipmentIndex: Index): Option[SummaryListRow] =
-    buildRowFromAnswer[String](
-      answer = Some(data.TransportEquipment(equipmentIndex.position).containerIdentificationNumber).flatten,
-      formatAnswer = formatAsText,
-      prefix = "departure.notification.incident.index.transportEquipment.containerIdentificationNumber",
-      id = None,
-      call = None
-    )
-
-  def transportEquipmentSection(equipmentIndex: Index): AccordionSection =
-    AccordionSection(
-      sectionTitle = Some(messages("departure.notification.incident.index.transportEquipment.heading", equipmentIndex.display)),
-      rows = Seq(containerIdentificationNumberRow(equipmentIndex)).flatten,
-      isOpen = if (equipmentIndex.position == 0) true else false
-    )
-
-  def transportEquipmentsSection: StaticSection = {
-    val transportEquipmentsSections = data.TransportEquipment.zipWithIndex.map {
-      case (_, index) => transportEquipmentSection(Index(index))
-    }
-
-    StaticSection(
-      children = transportEquipmentsSections
-    )
-  }
 
   def identificationTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("Identification type"), // TODO: Pull from incident data

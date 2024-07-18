@@ -19,7 +19,7 @@ package helper
 import base.SpecBase
 import generated.{AddressType18, GNSSType}
 import generators.Generators
-import models.{Country, Index, RichAddressType18}
+import models.{Country, RichAddressType18}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -29,7 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import utils.IncidentP5Helper
-import viewModels.sections.Section.{AccordionSection, StaticSection}
+import viewModels.sections.Section.StaticSection
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -204,20 +204,6 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
         }
       }
 
-      "containerIdentificationNumberRow" - {
-        "must return a row" in {
-          val transportEquipment = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(containerIdentificationNumber = Some("12345"))
-          val updatedIncident    = arbitraryIncidentType03.arbitrary.sample.value.copy(TransportEquipment = Seq(transportEquipment))
-
-          val helper = new IncidentP5Helper(updatedIncident, refDataService)
-          val result = helper.containerIdentificationNumberRow(Index(0)).value
-
-          result.key.value mustBe "Container identification number"
-          result.value.value mustBe "12345"
-          result.actions must not be defined
-        }
-      }
-
     }
 
     "sections" - {
@@ -235,42 +221,6 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
           result mustBe a[StaticSection]
           result.rows.size mustBe 7
-        }
-      }
-
-      "transportEquipmentSection" - {
-        "must return an accordion section" in {
-          val transportEquipment = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(containerIdentificationNumber = Some("12345"))
-          val helper             = new IncidentP5Helper(incidentType03.copy(TransportEquipment = Seq(transportEquipment)), refDataService)
-          val result             = helper.transportEquipmentSection(Index(0))
-
-          result mustBe a[AccordionSection]
-          result.sectionTitle mustBe Some("Transport equipment 1")
-          result.rows.size mustBe 1
-          result.children.size mustBe 0
-          result.isOpen mustBe true
-        }
-      }
-
-      "transportEquipmentsSection" - {
-        "must return a static section" in {
-          val transportEquipment1 = arbitraryTransportEquipmentType07.arbitrary.sample.value
-          val transportEquipment2 = arbitraryTransportEquipmentType07.arbitrary.sample.value
-          val transportEquipments = Seq(transportEquipment1, transportEquipment2)
-          val helper              = new IncidentP5Helper(incidentType03.copy(TransportEquipment = transportEquipments), refDataService)
-          val result              = helper.transportEquipmentsSection
-
-          result mustBe a[StaticSection]
-          result.rows.size mustBe 0
-          result.children.size mustBe 2
-
-          result.children.head mustBe a[AccordionSection]
-          result.children.head.sectionTitle mustBe Some("Transport equipment 1")
-          result.children.head.isOpen mustBe true
-
-          result.children(1) mustBe a[AccordionSection]
-          result.children(1).sectionTitle mustBe Some("Transport equipment 2")
-          result.children(1).isOpen mustBe false
         }
       }
     }

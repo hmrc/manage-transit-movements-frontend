@@ -23,7 +23,7 @@ import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncidentP5Helper
+import utils.{IncidentP5Helper, IncidentP5TransportEquipmentHelper}
 import viewModels.P5.ViewModelWithCustomsOffice
 import viewModels.sections.Section
 
@@ -66,7 +66,8 @@ object IncidentP5ViewModel {
       incidentIndex: Index
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentP5ViewModel] = {
 
-      val helper = new IncidentP5Helper(data.Consignment.Incident(incidentIndex.position), referenceDataService)
+      val helper                   = new IncidentP5Helper(data.Consignment.Incident(incidentIndex.position), referenceDataService)
+      val transportEquipmentHelper = new IncidentP5TransportEquipmentHelper(data.Consignment.Incident(incidentIndex.position).TransportEquipment)
 
       for {
         incidentInformationSection <- helper.incidentInformationSection
@@ -74,7 +75,7 @@ object IncidentP5ViewModel {
         val sections = Seq(
           incidentInformationSection,
           helper.endorsementSection,
-          helper.transportEquipmentsSection,
+          transportEquipmentHelper.transportEquipmentsSection,
           helper.replacementMeansOfTransportSection
         )
 
