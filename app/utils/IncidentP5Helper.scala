@@ -16,7 +16,7 @@
 
 package utils
 
-import generated.IncidentType03
+import generated.{GNSSType, IncidentType03}
 import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -62,19 +62,14 @@ class IncidentP5Helper(
     call = None
   )
 
-  def coordinatesRow: Option[SummaryListRow] = {
-    val coordinates = data.Location.GNSS.map(
-      gnss => Seq(gnss.latitude, gnss.longitude).mkString(",")
-    )
-
-    buildRowFromAnswer[String](
-      answer = coordinates,
-      formatAnswer = formatAsText,
+  def coordinatesRow: Option[SummaryListRow] =
+    buildRowFromAnswer[GNSSType](
+      answer = data.Location.GNSS,
+      formatAnswer = formatAsCoordinates,
       prefix = "departure.notification.incident.index.coordinates",
       id = None,
       call = None
     )
-  }
 
   def unLocodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = data.Location.UNLocode,
