@@ -40,7 +40,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
   }
 
   def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, Country]] = {
-    val queryParams: (String, String) = "data.id" -> code
+    val queryParams: (String, String) = "data.code" -> code
     connector
       .getCountries(queryParams)
       .map(

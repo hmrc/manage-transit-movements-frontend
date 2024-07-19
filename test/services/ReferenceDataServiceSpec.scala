@@ -102,7 +102,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
     "getCountries" - {
 
-      val expectedQueryParams = Seq("data.id" -> countryCode1)
+      val expectedQueryParams = Seq("data.code" -> countryCode1)
 
       "should return countries" in {
         when(mockConnector.getCountries(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(countries))
