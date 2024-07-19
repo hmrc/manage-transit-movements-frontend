@@ -16,7 +16,7 @@
 
 package utils
 
-import generated.{GoodsReferenceType01, TransportEquipmentType07}
+import generated.{GoodsReferenceType01, SealType04, TransportEquipmentType07}
 import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -38,6 +38,27 @@ class IncidentP5TransportEquipmentHelper(
       id = None,
       call = None
     )
+
+  def sealIdentificationNumber(seal: SealType04): Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(seal.identifier),
+    formatAnswer = formatAsText,
+    prefix = "departure.notification.incident.index.transportEquipment.seal.identificationNumber",
+    id = None,
+    call = None,
+    args = seal.sequenceNumber
+  )
+
+  def sealSection: AccordionSection = {
+    val rows = data.Seal.map {
+      seal =>
+        sealIdentificationNumber(seal)
+    }
+
+    AccordionSection(
+      sectionTitle = Some(messages("departure.notification.incident.index.transportEquipment.seal.section.title")),
+      rows = rows.flatten
+    )
+  }
 
   def goodsReferenceNumber(goodsReference: GoodsReferenceType01): Option[SummaryListRow] = buildRowFromAnswer[BigInt](
     answer = Some(goodsReference.declarationGoodsItemNumber),
@@ -67,6 +88,7 @@ class IncidentP5TransportEquipmentHelper(
         containerIdentificationNumberRow
       ).flatten,
       children = Seq(
+        sealSection,
         goodsReferenceSection
       ),
       isOpen = sequenceNumber == "1"
