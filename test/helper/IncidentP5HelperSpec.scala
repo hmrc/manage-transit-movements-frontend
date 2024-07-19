@@ -17,7 +17,6 @@
 package helper
 
 import base.SpecBase
-import generated.{AddressType18, GoodsReferenceType01}
 import generated.{AddressType18, GNSSType}
 import generators.Generators
 import models.{Country, RichAddressType18}
@@ -204,22 +203,6 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           result.actions must not be defined
         }
       }
-
-      "goodsReferenceNumber" - {
-        "must return a row" in {
-
-          forAll(arbitrary[BigInt]) {
-            referenceNumber =>
-              val helper = new IncidentP5Helper(incidentType03, refDataService)
-              val result = helper.goodsReferenceNumber(referenceNumber, transportEquipmentIndex).value
-
-              result.key.value mustBe s"Goods item number ${transportEquipmentIndex.display}"
-              result.value.value mustBe referenceNumber.toString()
-              result.actions must not be defined
-          }
-        }
-      }
-
     }
 
     "sections" - {
@@ -237,24 +220,6 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
           result mustBe a[StaticSection]
           result.rows.size mustBe 7
-        }
-      }
-
-      "goodsReferenceSection" - {
-        "must return a accordion section with goodsReference rows" in {
-          val updatedIncidentType = incidentType03.copy(
-            TransportEquipment = Seq(
-              incidentType03.TransportEquipment.head.copy(
-                GoodsReference = Seq(GoodsReferenceType01("1", 1), GoodsReferenceType01("2", 2))
-              )
-            )
-          )
-
-          val helper = new IncidentP5Helper(updatedIncidentType, refDataService)
-          val result = helper.goodsReferenceSection(transportEquipmentIndex)
-
-          result mustBe a[AccordionSection]
-          result.rows.size mustBe 2
         }
       }
 

@@ -17,6 +17,7 @@
 package utils
 
 import generated.TransportEquipmentType07
+import models.Index
 import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -38,6 +39,27 @@ class IncidentP5TransportEquipmentHelper(
       id = None,
       call = None
     )
+
+  def goodsReferenceNumber(goodsReferenceNumber: BigInt, index: Index): Option[SummaryListRow] = buildRowFromAnswer[BigInt](
+    answer = Some(goodsReferenceNumber),
+    formatAnswer = formatAsText,
+    prefix = "departure.notification.incident.index.goodsReference.referenceNumber",
+    id = None,
+    call = None,
+    args = index.display
+  )
+
+  def goodsReferenceSection: AccordionSection = {
+    val rows = data.GoodsReference.zipWithIndex.map {
+      case (goodsReference, index) =>
+        goodsReferenceNumber(goodsReference.declarationGoodsItemNumber, Index(index))
+    }
+
+    AccordionSection(
+      sectionTitle = Some(messages("departure.notification.incident.index.goodsReference.section.title")),
+      rows = rows.flatten
+    )
+  }
 
   def transportEquipmentSection: AccordionSection =
     AccordionSection(
