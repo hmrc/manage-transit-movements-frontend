@@ -24,12 +24,6 @@ object Constants {
     val IntentionToControl         = "2"
   }
 
-  object BusinessRejectionType {
-    val AmendmentRejection    = "013"
-    val InvalidationRejection = "014"
-    val DeclarationRejection  = "015"
-  }
-
   object AdditionalDeclarationType {
     val PreLodged = "D"
   }

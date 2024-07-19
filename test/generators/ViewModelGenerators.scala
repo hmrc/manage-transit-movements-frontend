@@ -16,6 +16,7 @@
 
 package generators
 
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.{DeparturesSummary, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -27,7 +28,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
+import viewModels.P5.departure.{DepartureDeclarationErrorsP5ViewModel, RejectionMessageP5ViewModel, ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination.{ListPaginationViewModel, MetaData}
@@ -213,6 +214,25 @@ trait ViewModelGenerators {
         url             <- nonEmptyString
         pagination      <- arbitrary[ListPaginationViewModel]
       } yield AllDraftDeparturesViewModel(draftDepartures, pageSize, lrn, url, pagination)
+    }
+
+  implicit val arbitraryDepartureDeclarationErrorsP5ViewModel: Arbitrary[DepartureDeclarationErrorsP5ViewModel] =
+    Arbitrary {
+      for {
+        lrn                   <- nonEmptyString
+        mrn                   <- Gen.option(nonEmptyString)
+        businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
+      } yield DepartureDeclarationErrorsP5ViewModel(lrn, mrn, businessRejectionType)
+    }
+
+  implicit val arbitraryRejectionMessageP5ViewModel: Arbitrary[RejectionMessageP5ViewModel] =
+    Arbitrary {
+      for {
+        tableRows             <- listWithMaxLength()(arbitraryTableRows)
+        lrn                   <- nonEmptyString
+        multipleErrors        <- arbitrary[Boolean]
+        businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
+      } yield RejectionMessageP5ViewModel(tableRows, lrn, multipleErrors, businessRejectionType)
     }
 
   implicit lazy val arbitraryText: Arbitrary[Text] = Arbitrary {

@@ -68,7 +68,7 @@ class DepartureP5MessageService @Inject() (
                       movement.localReferenceNumber,
                       movement.updated,
                       message,
-                      rejectionType,
+                      BusinessRejectionType(rejectionType),
                       isDeclarationAmendable,
                       xPaths,
                       doesCacheExistForLrn
