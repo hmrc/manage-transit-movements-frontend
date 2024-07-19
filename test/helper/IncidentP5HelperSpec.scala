@@ -29,7 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import utils.IncidentP5Helper
-import viewModels.sections.Section.StaticSection
+import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -221,6 +221,28 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
           result mustBe a[StaticSection]
           result.rows.size mustBe 7
+        }
+      }
+
+      "transportEquipmentsSection" - {
+        "must return a static section" in {
+          val transportEquipment1 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = "1")
+          val transportEquipment2 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = "2")
+          val transportEquipments = Seq(transportEquipment1, transportEquipment2)
+          val helper              = new IncidentP5Helper(incidentType03.copy(TransportEquipment = transportEquipments), refDataService)
+          val result              = helper.transportEquipmentsSection
+
+          result mustBe a[StaticSection]
+          result.rows.size mustBe 0
+          result.children.size mustBe 2
+
+          result.children.head mustBe a[AccordionSection]
+          result.children.head.sectionTitle mustBe Some("Transport equipment 1")
+          result.children.head.isOpen mustBe true
+
+          result.children(1) mustBe a[AccordionSection]
+          result.children(1).sectionTitle mustBe Some("Transport equipment 2")
+          result.children(1).isOpen mustBe false
         }
       }
     }

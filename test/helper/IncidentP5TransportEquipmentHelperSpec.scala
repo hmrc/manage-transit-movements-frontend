@@ -18,10 +18,9 @@ package helper
 
 import base.SpecBase
 import generators.Generators
-import models.Index
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.IncidentP5TransportEquipmentHelper
-import viewModels.sections.Section.{AccordionSection, StaticSection}
+import viewModels.sections.Section.AccordionSection
 
 class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -32,8 +31,8 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
         "must return a row" in {
           val transportEquipment = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(containerIdentificationNumber = Some("12345"))
 
-          val helper = new IncidentP5TransportEquipmentHelper(Seq(transportEquipment))
-          val result = helper.containerIdentificationNumberRow(Index(0)).value
+          val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
+          val result = helper.containerIdentificationNumberRow.value
 
           result.key.value mustBe "Container identification number"
           result.value.value mustBe "12345"
@@ -46,37 +45,16 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
     "sections" - {
       "transportEquipmentSection" - {
         "must return an accordion section" in {
-          val transportEquipment = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(containerIdentificationNumber = Some("12345"))
-          val helper             = new IncidentP5TransportEquipmentHelper(Seq(transportEquipment))
-          val result             = helper.transportEquipmentSection(Index(0))
+          val transportEquipment =
+            arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = "1", containerIdentificationNumber = Some("12345"))
+          val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
+          val result = helper.transportEquipmentSection
 
           result mustBe a[AccordionSection]
           result.sectionTitle mustBe Some("Transport equipment 1")
           result.rows.size mustBe 1
           result.children.size mustBe 0
           result.isOpen mustBe true
-        }
-      }
-
-      "transportEquipmentsSection" - {
-        "must return a static section" in {
-          val transportEquipment1 = arbitraryTransportEquipmentType07.arbitrary.sample.value
-          val transportEquipment2 = arbitraryTransportEquipmentType07.arbitrary.sample.value
-          val transportEquipments = Seq(transportEquipment1, transportEquipment2)
-          val helper              = new IncidentP5TransportEquipmentHelper(transportEquipments)
-          val result              = helper.transportEquipmentsSection
-
-          result mustBe a[StaticSection]
-          result.rows.size mustBe 0
-          result.children.size mustBe 2
-
-          result.children.head mustBe a[AccordionSection]
-          result.children.head.sectionTitle mustBe Some("Transport equipment 1")
-          result.children.head.isOpen mustBe true
-
-          result.children(1) mustBe a[AccordionSection]
-          result.children(1).sectionTitle mustBe Some("Transport equipment 2")
-          result.children(1).isOpen mustBe false
         }
       }
     }

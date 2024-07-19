@@ -17,42 +17,35 @@
 package utils
 
 import generated.TransportEquipmentType07
-import models.Index
 import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewModels.sections.Section.{AccordionSection, StaticSection}
+import viewModels.sections.Section.AccordionSection
 
 class IncidentP5TransportEquipmentHelper(
-  data: Seq[TransportEquipmentType07]
+  data: TransportEquipmentType07
 )(implicit messages: Messages)
     extends DeparturesP5MessageHelper
     with Logging {
 
-  def containerIdentificationNumberRow(equipmentIndex: Index): Option[SummaryListRow] =
+  import data._
+
+  def containerIdentificationNumberRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](
-      answer = Some(data(equipmentIndex.position).containerIdentificationNumber).flatten,
+      answer = Some(containerIdentificationNumber).flatten,
       formatAnswer = formatAsText,
       prefix = "departure.notification.incident.index.transportEquipment.containerIdentificationNumber",
       id = None,
       call = None
     )
 
-  def transportEquipmentSection(equipmentIndex: Index): AccordionSection =
+  def transportEquipmentSection: AccordionSection =
     AccordionSection(
-      sectionTitle = Some(messages("departure.notification.incident.index.transportEquipment.heading", equipmentIndex.display)),
-      rows = Seq(containerIdentificationNumberRow(equipmentIndex)).flatten,
-      isOpen = if (equipmentIndex.position == 0) true else false
+      sectionTitle = Some(messages("departure.notification.incident.index.transportEquipment.heading", sequenceNumber)),
+      rows = Seq(
+        containerIdentificationNumberRow
+      ).flatten,
+      isOpen = sequenceNumber == "1"
     )
-
-  def transportEquipmentsSection: StaticSection = {
-    val transportEquipmentsSections = data.zipWithIndex.map {
-      case (_, index) => transportEquipmentSection(Index(index))
-    }
-
-    StaticSection(
-      children = transportEquipmentsSections
-    )
-  }
 
 }
