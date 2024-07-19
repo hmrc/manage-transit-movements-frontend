@@ -16,8 +16,7 @@
 
 package utils
 
-import generated.TransportEquipmentType07
-import models.Index
+import generated.{GoodsReferenceType01, TransportEquipmentType07}
 import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -40,19 +39,19 @@ class IncidentP5TransportEquipmentHelper(
       call = None
     )
 
-  def goodsReferenceNumber(goodsReferenceNumber: BigInt, index: Index): Option[SummaryListRow] = buildRowFromAnswer[BigInt](
-    answer = Some(goodsReferenceNumber),
+  def goodsReferenceNumber(goodsReference: GoodsReferenceType01): Option[SummaryListRow] = buildRowFromAnswer[BigInt](
+    answer = Some(goodsReference.declarationGoodsItemNumber),
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.goodsReference.referenceNumber",
     id = None,
     call = None,
-    args = index.display
+    args = goodsReference.sequenceNumber
   )
 
   def goodsReferenceSection: AccordionSection = {
-    val rows = data.GoodsReference.zipWithIndex.map {
-      case (goodsReference, index) =>
-        goodsReferenceNumber(goodsReference.declarationGoodsItemNumber, Index(index))
+    val rows = data.GoodsReference.map {
+      goodsReference =>
+        goodsReferenceNumber(goodsReference)
     }
 
     AccordionSection(
@@ -67,6 +66,9 @@ class IncidentP5TransportEquipmentHelper(
       rows = Seq(
         containerIdentificationNumberRow
       ).flatten,
+      children = Seq(
+        goodsReferenceSection
+      ),
       isOpen = sequenceNumber == "1"
     )
 

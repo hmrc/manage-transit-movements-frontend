@@ -47,15 +47,16 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
 
           forAll(arbitrary[BigInt]) {
             referenceNumber =>
+              val goodsReference = GoodsReferenceType01("1", referenceNumber)
               val transportEquipment =
                 arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
-                  GoodsReference = Seq(arbitraryGoodsReferenceType01.arbitrary.sample.value.copy(declarationGoodsItemNumber = referenceNumber))
+                  GoodsReference = Seq(goodsReference)
                 )
 
               val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
-              val result = helper.goodsReferenceNumber(referenceNumber, index).value
+              val result = helper.goodsReferenceNumber(goodsReference).value
 
-              result.key.value mustBe s"Goods item number ${index.display}"
+              result.key.value mustBe s"Goods item number 1"
               result.value.value mustBe referenceNumber.toString()
               result.actions must not be defined
           }
@@ -66,17 +67,28 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
 
     "sections" - {
       "transportEquipmentSection" - {
-        "must return an accordion section" in {
+        "must return an accordion section with correct children" in {
           val transportEquipment =
-            arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = "1", containerIdentificationNumber = Some("12345"))
+            arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
+              sequenceNumber = "1",
+              containerIdentificationNumber = Some("12345"),
+              GoodsReference = Seq(GoodsReferenceType01("1", 1), GoodsReferenceType01("2", 2))
+            )
+
           val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
           val result = helper.transportEquipmentSection
 
           result mustBe a[AccordionSection]
           result.sectionTitle mustBe Some("Transport equipment 1")
           result.rows.size mustBe 1
-          result.children.size mustBe 0
           result.isOpen mustBe true
+          result.children.size mustBe 1
+
+          val goodsReferenceSection = result.children.head
+          goodsReferenceSection mustBe a[AccordionSection]
+          goodsReferenceSection.sectionTitle.value mustBe "Goods item numbers"
+          goodsReferenceSection.rows.size mustBe 2
+          goodsReferenceSection.isOpen mustBe false
         }
       }
 
@@ -90,6 +102,7 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
           val result = helper.goodsReferenceSection
 
           result mustBe a[AccordionSection]
+          result.sectionTitle.value mustBe "Goods item numbers"
           result.rows.size mustBe 2
         }
       }
