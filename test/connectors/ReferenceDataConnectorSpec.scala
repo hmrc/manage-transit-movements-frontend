@@ -21,6 +21,7 @@ import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
+import models.{Country, IncidentCode}
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -99,6 +100,30 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         }
       }
 
+      "getCountries" - {
+
+        val url = s"$baseUrl/lists/CountryCodesFullList?foo=bar"
+
+        "should handle a 200 response for countries" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(countriesResponseJson))
+          )
+
+          val expectedResult = NonEmptySet.of(Country("GB", "United Kingdom"), Country("AD", "Andorra"))
+
+          connector.getCountries(queryParams).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getCountries(queryParams))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getCountries(queryParams))
+        }
+      }
+
       "getControlType" - {
 
         val url = s"$baseUrl/lists/ControlType?foo=bar"
@@ -120,6 +145,36 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
         "should handle client and server errors for control types" in {
           checkErrorResponse(url, connector.getControlTypes(queryParams))
+        }
+      }
+
+      "getIncidentCodes" - {
+
+        val url = s"$baseUrl/lists/IncidentCode?foo=bar"
+
+        "should handle a 200 response for incident codes" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(incidentCodeResponseJson))
+          )
+
+          val expectedResult =
+            NonEmptySet.of(
+              IncidentCode(
+                incidentCodeCode,
+                "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+              )
+            )
+
+          connector.getIncidentCodes(queryParams).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getIncidentCodes(queryParams))
+        }
+
+        "should handle client and server errors for incident codes" in {
+          checkErrorResponse(url, connector.getIncidentCodes(queryParams))
         }
       }
 
@@ -205,6 +260,7 @@ object ReferenceDataConnectorSpec {
 
   private val code                  = "GB00001"
   private val typeOfControl         = "44"
+  private val incidentCodeCode      = "1"
   private val requestedDocumentType = "C620"
   private val functionalError       = "14"
 
@@ -223,6 +279,36 @@ object ReferenceDataConnectorSpec {
        |}
        |""".stripMargin
 
+  private val countriesResponseJson: String =
+    s"""
+       |{
+       |  "_links": {
+       |    "self": {
+       |      "href": "/customs-reference-data/lists/CountryCodesFullList"
+       |    }
+       |  },
+       |  "meta": {
+       |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
+       |    "snapshotDate": "2023-01-01"
+       |  },
+       |  "id": "CountryCodesFullList",
+       |  "data": [
+       |    {
+       |      "activeFrom": "2023-01-23",
+       |      "code": "GB",
+       |      "state": "valid",
+       |      "description": "United Kingdom"
+       |    },
+       |    {
+       |      "activeFrom": "2023-01-23",
+       |      "code": "AD",
+       |      "state": "valid",
+       |      "description": "Andorra"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
+
   private val controlTypesResponseJson: String =
     s"""
        |{
@@ -230,6 +316,18 @@ object ReferenceDataConnectorSpec {
        |    {
        |      "code": "$typeOfControl",
        |      "description": "Intrusive"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
+
+  private val incidentCodeResponseJson: String =
+    s"""
+       |{
+       |  "data": [
+       |    {
+       |      "code": "$incidentCodeCode",
+       |      "description": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
        |    }
        |  ]
        |}

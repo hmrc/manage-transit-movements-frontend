@@ -16,17 +16,25 @@
 
 package utils
 
-import generated.CC182CType
-import models.Link
+import generated.IncidentType03
+import models.{DynamicAddress, RichAddressType18}
+import play.api.Logging
 import play.api.i18n.Messages
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewModels.sections.Section.{AccordionSection, StaticSection}
+import uk.gov.hmrc.http.HeaderCarrier
+import viewModels.sections.Section.StaticSection
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class IncidentP5Helper(
-  data: CC182CType,
-  isMultipleIncidents: Boolean
-)(implicit messages: Messages)
-    extends DeparturesP5MessageHelper {
+  data: IncidentType03,
+  refDataService: ReferenceDataService
+)(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
+    extends DeparturesP5MessageHelper
+    with Logging {
+
+  private val displayIndex = data.sequenceNumber
 
   def incidentCodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("code"), // TODO: Pull from incident data
@@ -44,19 +52,24 @@ class IncidentP5Helper(
     call = None
   )
 
-  def countryRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("GB"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.country",
-    id = None,
-    call = None
-  )
+  def countryRow: Future[Option[SummaryListRow]] =
+    refDataService.getCountry(data.Location.country) map {
+      countryResponse =>
+        val countryToDisplay = countryResponse.fold[String](identity, _.description)
+        buildRowFromAnswer[String](
+          answer = Some(countryToDisplay),
+          formatAnswer = formatAsText,
+          prefix = "departure.notification.incident.index.country",
+          id = Some(s"country-$displayIndex"),
+          call = None
+        )
+    }
 
   def identifierTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("identifierType"), // TODO: Pull from incident data
+    answer = Some(data.Location.qualifierOfIdentification),
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.identifierType",
-    id = None,
+    id = Some(s"identifierType-$displayIndex"),
     call = None
   )
 
@@ -68,48 +81,77 @@ class IncidentP5Helper(
     call = None
   )
 
-  def incidentInformationSection: StaticSection = StaticSection(
-    sectionTitle = None,
-    rows = Seq(
-      incidentCodeRow,
-      descriptionRow,
-      countryRow,
-      identifierTypeRow,
-      coordinatesRow
-    ).flatten
-  )
+  def addressRow: Option[SummaryListRow] =
+    data.Location.Address.flatMap {
+      address =>
+        buildRowFromAnswer[DynamicAddress](
+          answer = Some(address.toDynamicAddress),
+          formatAnswer = formatAsDynamicAddress,
+          prefix = "departure.notification.incident.index.address",
+          id = None,
+          call = None
+        )
+    }
 
-  def endorsementDateRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("endorsement date"), // TODO: Pull from incident data
+  def unLocodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = data.Location.UNLocode,
     formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.endorsement",
-    id = None,
+    prefix = "departure.notification.incident.index.unLocode",
+    id = Some(s"unLocode-$displayIndex"),
     call = None
   )
 
-  def authorityRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("authority"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.authority",
-    id = None,
-    call = None
-  )
+  def incidentInformationSection: Future[StaticSection] =
+    for {
+      countryRowOption <- countryRow
+    } yield StaticSection(
+      sectionTitle = None,
+      rows = Seq(
+        incidentCodeRow,
+        descriptionRow,
+        countryRowOption,
+        identifierTypeRow,
+        coordinatesRow,
+        unLocodeRow,
+        addressRow
+      ).flatten
+    )
 
-  def endorsementCountryRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("endorsementCountry"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.endorsementCountry",
-    id = None,
-    call = None
-  )
+  def endorsementDateRow: Option[SummaryListRow] =
+    buildRowFromAnswer[String](
+      answer = data.Endorsement.map(_.date.toString),
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.endorsement",
+      id = None,
+      call = None
+    )
 
-  def locationRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("location"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.location",
-    id = None,
-    call = None
-  )
+  def authorityRow: Option[SummaryListRow] =
+    buildRowFromAnswer[String](
+      answer = data.Endorsement.map(_.authority),
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.authority",
+      id = None,
+      call = None
+    )
+
+  def endorsementCountryRow: Option[SummaryListRow] =
+    buildRowFromAnswer[String](
+      answer = data.Endorsement.map(_.country),
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.endorsementCountry",
+      id = None,
+      call = None
+    )
+
+  def locationRow: Option[SummaryListRow] =
+    buildRowFromAnswer[String](
+      answer = data.Endorsement.map(_.place),
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.location",
+      id = None,
+      call = None
+    )
 
   def endorsementSection: StaticSection = StaticSection(
     sectionTitle = Some(messages("departure.notification.incident.index.endorsement.section.title")),

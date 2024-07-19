@@ -17,11 +17,11 @@
 package utils
 
 import generated.RecoveryNotificationType
+import models.DynamicAddress
 import play.api.i18n.Messages
 import play.api.mvc.Call
-import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
+import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
 import java.text.SimpleDateFormat
@@ -44,6 +44,9 @@ class SummaryListRowHelper(implicit messages: Messages) {
 
   protected def formatAsText[T](answer: T): Content = s"$answer".toText
 
+  protected def formatAsDynamicAddress(address: DynamicAddress): Content =
+    HtmlContent(address.toString)
+
   def formatAsDate(answer: XMLGregorianCalendar): Content = {
     val date      = answer.toGregorianCalendar.getTime
     val formatter = new SimpleDateFormat("dd MMMM yyyy")
@@ -60,6 +63,12 @@ class SummaryListRowHelper(implicit messages: Messages) {
       .replace("PM", "pm")
       .replace("AM", "am")
       .toText
+  }
+
+  def formatAsIncidentDateTime(answer: XMLGregorianCalendar): Content = {
+    val date      = answer.toGregorianCalendar.getTime
+    val formatter = new SimpleDateFormat("d MMMM yyyy HH:mm")
+    formatter.format(date).toText
   }
 
   def formatAsCurrency(recoveryNotification: RecoveryNotificationType): Content = {

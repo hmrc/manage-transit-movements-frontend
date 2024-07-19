@@ -223,4 +223,13 @@ package object models {
 
     def hasMultipleIncidents: Boolean = value.Consignment.Incident.length > 1
   }
+
+  implicit class RichAddressType18(value: AddressType18) {
+
+    def toDynamicAddress: DynamicAddress = DynamicAddress(
+      numberAndStreet = value.streetAndNumber,
+      city = value.city,
+      postalCode = value.postcode
+    )
+  }
 }

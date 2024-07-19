@@ -16,7 +16,6 @@
 
 package controllers.departureP5
 
-import config.FrontendAppConfig
 import controllers.actions.{Actions, DepartureMessageRetrievalActionProvider}
 import generated.CC182CType
 import models.{Index, RichCC182Type}
@@ -38,7 +37,7 @@ class IncidentP5Controller @Inject() (
   viewModelProvider: IncidentP5ViewModelProvider,
   referenceDataService: ReferenceDataService,
   view: IncidentP5View
-)(implicit val executionContext: ExecutionContext, frontendAppConfig: FrontendAppConfig)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -47,12 +46,21 @@ class IncidentP5Controller @Inject() (
       implicit request =>
         val customsOfficeId = request.messageData.CustomsOfficeOfDeparture.referenceNumber
 
-        referenceDataService.getCustomsOffice(customsOfficeId).map {
+        referenceDataService.getCustomsOffice(customsOfficeId).flatMap {
           customsOffice =>
             val incidentP5ViewModel =
-              viewModelProvider.apply(request.messageData, request.referenceNumbers, customsOffice, request.messageData.hasMultipleIncidents, incidentIndex)
+              viewModelProvider.apply(request.messageData,
+                                      referenceDataService,
+                                      request.referenceNumbers,
+                                      customsOffice,
+                                      request.messageData.hasMultipleIncidents,
+                                      incidentIndex
+              )
 
-            Ok(view(incidentP5ViewModel, departureId, messageId))
+            incidentP5ViewModel.map {
+              viewModel =>
+                Ok(view(viewModel, departureId, messageId))
+            }
         }
     }
 

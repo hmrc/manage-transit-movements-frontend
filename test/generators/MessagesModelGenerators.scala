@@ -1187,7 +1187,7 @@ trait MessagesModelGenerators {
   implicit lazy val arbitraryLocationType02: Arbitrary[LocationType02] =
     Arbitrary {
       for {
-        qualifierOfIdentification <- nonEmptyString
+        qualifierOfIdentification <- Gen.oneOf(Seq("W", "U", "Z"))
         unLocode                  <- Gen.option(nonEmptyString)
         country                   <- nonEmptyString
         gnss                      <- Gen.option(arbitrary[GNSSType])

@@ -17,28 +17,40 @@
 package helper
 
 import base.SpecBase
-import generated.CC182CType
+import generated.AddressType18
 import generators.Generators
-import models.Link
-import org.scalacheck.{Arbitrary, Gen}
+import models.{Country, RichAddressType18}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject
+import play.api.inject.guice.GuiceApplicationBuilder
+import scalaxb.XMLCalendar
+import services.ReferenceDataService
 import utils.IncidentP5Helper
 import viewModels.sections.Section.StaticSection
 
-import javax.xml.datatype.XMLGregorianCalendar
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
+  private val refDataService: ReferenceDataService = mock[ReferenceDataService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(inject.bind[ReferenceDataService].toInstance(refDataService))
+
   "IncidentAnswersHelper" - {
 
-    val CC182CType = Arbitrary.arbitrary[CC182CType].sample.value
+    val incidentType03 = arbitraryIncidentType03.arbitrary.sample.value
 
     "rows" - {
       "incidentCodeRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
-
-          val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.incidentCodeRow.value
 
           result.key.value mustBe "Incident code"
@@ -49,9 +61,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "descriptionRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
 
-          val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.descriptionRow.value
 
           result.key.value mustBe "Description"
@@ -61,36 +72,47 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
       }
 
       "countryRow" - {
-        "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
+        "must return a row with description when ref data look up is successfull" in {
+          when(refDataService.getCountry(any())(any(), any()))
+            .thenReturn(Future.successful(Right(Country(incidentType03.Location.country, "description"))))
 
-          val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
-          val result = helper.countryRow.value
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.countryRow.futureValue.value
 
           result.key.value mustBe "Country"
-          result.value.value mustBe "GB"
+          result.value.value mustBe "description"
           result.actions must not be defined
         }
       }
 
+      "must return a row with description when ref data look up cannot find description" in {
+        when(refDataService.getCountry(any())(any(), any()))
+          .thenReturn(Future.successful(Left(incidentType03.Location.country)))
+
+        val helper = new IncidentP5Helper(incidentType03, refDataService)
+        val result = helper.countryRow.futureValue.value
+
+        result.key.value mustBe "Country"
+        result.value.value mustBe incidentType03.Location.country
+        result.actions must not be defined
+      }
+
       "identifierTypeRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
 
-          val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.identifierTypeRow.value
 
           result.key.value mustBe "Identifier Type"
-          result.value.value mustBe "identifierType"
+          result.value.value mustBe incidentType03.Location.qualifierOfIdentification
           result.actions must not be defined
         }
       }
 
       "coordinatesRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
 
-          val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.coordinatesRow.value
 
           result.key.value mustBe "Coordinates"
@@ -99,24 +121,53 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
         }
       }
 
+      "addressRow" - {
+        "must return a row" in {
+          forAll(arbitrary[AddressType18]) {
+            address =>
+              val modifiedIncidentType03 = incidentType03.copy(Location = incidentType03.Location.copy(Address = Some(address)))
+              val helper                 = new IncidentP5Helper(modifiedIncidentType03, refDataService)
+              val result                 = helper.addressRow.value
+
+              result.key.value mustBe "Address"
+              result.value.value mustBe address.toDynamicAddress.toString
+              result.actions must not be defined
+          }
+        }
+      }
+
+      "unLocodeRow" - {
+        "must return a row" in {
+
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.unLocodeRow.value
+
+          result.key.value mustBe "UN/LOCODE"
+          result.value.value mustBe incidentType03.Location.UNLocode.get
+          result.actions must not be defined
+        }
+      }
+
       "endorsementDateRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
+          val endorsement     = arbitraryEndorsement03.arbitrary.sample.value.copy(date = XMLCalendar("2022-07-15"))
+          val updatedIncident = incidentType03.copy(Endorsement = Some(endorsement))
 
-          val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+          val helper = new IncidentP5Helper(updatedIncident, refDataService)
           val result = helper.endorsementDateRow.value
 
           result.key.value mustBe "Endorsement date"
-          result.value.value mustBe "endorsement date"
+          result.value.value mustBe "2022-07-15"
           result.actions must not be defined
         }
       }
 
       "authorityRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
+          val endorsement     = arbitraryEndorsement03.arbitrary.sample.value.copy(authority = "authority")
+          val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(Endorsement = Some(endorsement))
 
-          val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+          val helper = new IncidentP5Helper(updatedIncident, refDataService)
           val result = helper.authorityRow.value
 
           result.key.value mustBe "Authority"
@@ -127,22 +178,24 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "endorsementCountryRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
+          val endorsement     = arbitraryEndorsement03.arbitrary.sample.value.copy(country = "GB")
+          val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(Endorsement = Some(endorsement))
 
-          val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+          val helper = new IncidentP5Helper(updatedIncident, refDataService)
           val result = helper.endorsementCountryRow.value
 
           result.key.value mustBe "Country"
-          result.value.value mustBe "endorsementCountry"
+          result.value.value mustBe "GB"
           result.actions must not be defined
         }
       }
 
       "locationRow" - {
         "must return a row" in {
-          val modifiedCC182CType = CC182CType.copy(TransitOperation = CC182CType.TransitOperation)
+          val endorsement     = arbitraryEndorsement03.arbitrary.sample.value.copy(place = "location")
+          val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(Endorsement = Some(endorsement))
 
-          val helper = new IncidentP5Helper(modifiedCC182CType, isMultipleIncidents = true)
+          val helper = new IncidentP5Helper(updatedIncident, refDataService)
           val result = helper.locationRow.value
 
           result.key.value mustBe "Location"
@@ -156,11 +209,11 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
     "sections" - {
       "incidentInformationSection" - {
         "must return a static section" in {
-          val helper = new IncidentP5Helper(CC182CType, isMultipleIncidents = true)
-          val result = helper.incidentInformationSection
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.incidentInformationSection.futureValue
 
           result mustBe a[StaticSection]
-          result.rows.size mustBe 5
+          result.rows.size mustBe 7
         }
       }
     }

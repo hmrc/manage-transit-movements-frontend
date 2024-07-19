@@ -21,6 +21,7 @@ import cats.data.NonEmptySet
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
+import models.{Country, IncidentCode}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
@@ -40,6 +41,10 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val customsOffice2  = CustomsOffice("GB00002", "CO2", None)
   private val customsOffices  = NonEmptySet.of(customsOffice1, customsOffice2)
 
+  private val countryCode1 = "GB"
+  private val country1     = Country(countryCode1, "United Kingdom")
+  private val countries    = NonEmptySet.of(country1)
+
   private val controlTypeCode = "1"
   private val controlType1    = ControlType(controlTypeCode, "CT1")
   private val controlType2    = ControlType("2", "CT2")
@@ -47,6 +52,14 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
   private val requestedDocumentTypeCode = "C620"
   private val requestedDocumentType1    = RequestedDocumentType(requestedDocumentTypeCode, "T2FL document")
+
+  private val incidentCodeCode = "1"
+
+  private val incidentCode =
+    IncidentCode(
+      incidentCodeCode,
+      "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+    )
 
   private val functionalErrorCode = "1"
   private val functionalError1    = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
@@ -60,7 +73,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
   "ReferenceDataService" - {
 
-    "getCustomsOfficeByCode" - {
+    "getCustomsOffice" - {
 
       val expectedQueryParams = Seq("data.id" -> customsOfficeId)
 
@@ -87,6 +100,33 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       }
     }
 
+    "getCountries" - {
+
+      val expectedQueryParams = Seq("data.code" -> countryCode1)
+
+      "should return countries" in {
+        when(mockConnector.getCountries(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(countries))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getCountry(countryCode1).futureValue mustBe Right(country1)
+
+        verify(mockConnector).getCountries(eqTo(expectedQueryParams): _*)(any(), any())
+      }
+
+      "should return Left" - {
+        "when the connector call returns no data" in {
+          when(mockConnector.getCountries(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getCountry(countryCode1).futureValue mustBe Left(countryCode1)
+
+          verify(mockConnector).getCountries(eqTo(expectedQueryParams): _*)(any(), any())
+        }
+      }
+    }
+
     "getControlType" - {
 
       val expectedQueryParams = Seq("data.code" -> controlTypeCode)
@@ -99,6 +139,23 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
         service.getControlType(controlTypeCode).futureValue mustBe controlType1
 
         verify(mockConnector).getControlTypes(eqTo(expectedQueryParams): _*)(any(), any())
+      }
+    }
+
+    "getIncidentCode" - {
+
+      val expectedQueryParams = Seq("data.code" -> incidentCodeCode)
+
+      "should return a incident code" in {
+
+        when(mockConnector.getIncidentCodes(any())(any(), any()))
+          .thenReturn(Future.successful(NonEmptySet.of(incidentCode)))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getIncidentCode(incidentCodeCode).futureValue mustBe incidentCode
+
+        verify(mockConnector).getIncidentCodes(eqTo(expectedQueryParams): _*)(any(), any())
       }
     }
 
