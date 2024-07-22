@@ -38,7 +38,7 @@ class IncidentsDuringTransitP5Helper(
   def mrnRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(data.TransitOperation.MRN),
     formatAnswer = formatAsText,
-    prefix = "arrival.notification.incidents.label.mrn",
+    prefix = "departure.notification.incidents.label.mrn",
     id = None,
     call = None
   )
@@ -47,7 +47,7 @@ class IncidentsDuringTransitP5Helper(
     answer = Some(data.TransitOperation.incidentNotificationDateAndTime),
     formatAnswer = formatAsIncidentDateTime,
     prefix =
-      if (isMultipleIncidents) "arrival.notification.incidents.label.dateAndTime.plural" else "arrival.notification.incidents.label.dateAndTime.singular",
+      if (isMultipleIncidents) "departure.notification.incidents.label.dateAndTime.plural" else "departure.notification.incidents.label.dateAndTime.singular",
     id = None,
     call = None
   )
@@ -63,7 +63,7 @@ class IncidentsDuringTransitP5Helper(
         buildRowFromAnswer[String](
           answer = Some(answerToDisplay),
           formatAnswer = formatAsText,
-          prefix = "arrival.notification.incidents.label.officeOfIncident",
+          prefix = "departure.notification.incidents.label.officeOfIncident",
           id = None,
           call = None
         )
@@ -81,7 +81,7 @@ class IncidentsDuringTransitP5Helper(
         buildRowFromAnswer[String](
           answer = Some(answerToDisplay),
           formatAnswer = formatAsText,
-          prefix = "arrival.notification.incidents.label.officeOfDeparture",
+          prefix = "departure.notification.incidents.label.officeOfDeparture",
           id = None,
           call = None
         )
@@ -95,7 +95,7 @@ class IncidentsDuringTransitP5Helper(
         buildRowFromAnswer[String](
           answer = Some(incidentCode.toString),
           formatAnswer = formatAsText,
-          prefix = "arrival.notification.incidents.incident.code.label",
+          prefix = "departure.notification.incidents.incident.code.label",
           id = None,
           call = None
         )
@@ -105,7 +105,7 @@ class IncidentsDuringTransitP5Helper(
   def incidentDescriptionRow(incidentIndex: Index): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(data.Consignment.Incident(incidentIndex.position).text),
     formatAnswer = formatAsText,
-    prefix = "arrival.notification.incidents.incident.description.label",
+    prefix = "departure.notification.incidents.incident.description.label",
     id = None,
     call = None
   )
@@ -128,7 +128,7 @@ class IncidentsDuringTransitP5Helper(
     Future.sequence(incidentSections).map {
       sections =>
         AccordionSection(
-          sectionTitle = Some(messages("arrival.notification.incidents.heading.incident")),
+          sectionTitle = Some(messages("departure.notification.incidents.heading.incident")),
           children = sections,
           isOpen = true
         )
@@ -139,7 +139,7 @@ class IncidentsDuringTransitP5Helper(
     incidentCodeRow(incidentIndex).map {
       incidentCode =>
         AccordionSection(
-          sectionTitle = messages("arrival.notification.incidents.subheading.incident", incidentIndex.display),
+          sectionTitle = messages("departure.notification.incidents.subheading.incident", incidentIndex.display),
           rows = Seq(
             incidentCode,
             incidentDescriptionRow(incidentIndex)
@@ -148,9 +148,9 @@ class IncidentsDuringTransitP5Helper(
           viewLinks = Seq(
             Link(
               id = s"more-details-incident-${incidentIndex.display}",
-              text = messages("arrival.notification.incidents.link"),
+              text = messages("departure.notification.incidents.link"),
               href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureId, incidentIndex, messageId).url,
-              visuallyHidden = Some(messages("arrival.notification.incidents.link.hidden", incidentIndex.display))
+              visuallyHidden = Some(messages("departure.notification.incidents.link.hidden", incidentIndex.display))
             )
           )
         )

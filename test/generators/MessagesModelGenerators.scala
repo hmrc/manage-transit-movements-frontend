@@ -17,7 +17,6 @@
 package generators
 
 import generated._
-import models.departureP5.BusinessRejectionType
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.const
