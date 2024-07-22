@@ -70,10 +70,11 @@ object IncidentP5ViewModel {
 
       for {
         incidentInformationSection <- helper.incidentInformationSection
+        endorsementSection         <- helper.endorsementSection
       } yield {
         val sections = Seq(
           incidentInformationSection,
-          helper.endorsementSection,
+          endorsementSection,
           helper.replacementMeansOfTransportSection
         )
 

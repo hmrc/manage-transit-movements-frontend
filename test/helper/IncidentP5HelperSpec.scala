@@ -157,7 +157,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val result = helper.endorsementDateRow.value
 
           result.key.value mustBe "Endorsement date"
-          result.value.value mustBe "2022-07-15"
+          result.value.value mustBe "15 July 2022"
           result.actions must not be defined
         }
       }
@@ -178,14 +178,17 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "endorsementCountryRow" - {
         "must return a row" in {
+          when(refDataService.getCountry(any())(any(), any()))
+            .thenReturn(Future.successful(Right(Country("GB", "United Kingdom"))))
+
           val endorsement     = arbitraryEndorsement03.arbitrary.sample.value.copy(country = "GB")
           val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(Endorsement = Some(endorsement))
 
           val helper = new IncidentP5Helper(updatedIncident, refDataService)
-          val result = helper.endorsementCountryRow.value
+          val result = helper.endorsementCountryRow.futureValue.value
 
           result.key.value mustBe "Country"
-          result.value.value mustBe "GB"
+          result.value.value mustBe "United Kingdom"
           result.actions must not be defined
         }
       }
