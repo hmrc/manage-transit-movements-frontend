@@ -654,7 +654,7 @@ departure.notification.incident.index.multi.paragraph1 = Multiple incidents have
 departure.notification.incident.index.code = Incident code
 departure.notification.incident.index.description = Description
 departure.notification.incident.index.country = Country
-departure.notification.incident.index.identifierType = Identifier Type
+departure.notification.incident.index.identifierType = Identifier type
 departure.notification.incident.index.coordinates = Coordinates
 departure.notification.incident.index.address = Address
 

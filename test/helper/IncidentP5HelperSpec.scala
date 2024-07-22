@@ -123,7 +123,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.identifierTypeRow.value
 
-          result.key.value mustBe "Identifier Type"
+          result.key.value mustBe "Identifier type"
           result.value.value mustBe incidentType03.Location.qualifierOfIdentification
           result.actions must not be defined
         }
