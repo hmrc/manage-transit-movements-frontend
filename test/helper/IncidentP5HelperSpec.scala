@@ -159,11 +159,17 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
       "unLocodeRow" - {
         "must return a row" in {
 
+          val incidentType = incidentType03.copy(
+            Location = incidentType03.Location.copy(
+              UNLocode = Some("UNLocode")
+            )
+          )
+
           val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.unLocodeRow.value
 
           result.key.value mustBe "UN/LOCODE"
-          result.value.value mustBe incidentType03.Location.UNLocode.get
+          result.value.value mustBe "UNLocode"
           result.actions must not be defined
         }
       }
@@ -238,7 +244,14 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           when(refDataService.getIncidentCode(any())(any(), any()))
             .thenReturn(Future.successful(incident))
 
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val incidentType = incidentType03.copy(
+            Location = incidentType03.Location.copy(
+              Address = Some(arbitraryAddressType18.arbitrary.sample.value),
+              UNLocode = Some("UNLocode")
+            )
+          )
+
+          val helper = new IncidentP5Helper(incidentType, refDataService)
           val result = helper.incidentInformationSection.futureValue
 
           result mustBe a[StaticSection]
