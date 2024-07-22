@@ -942,18 +942,21 @@ trait MessagesModelGenerators {
   implicit lazy val arbitraryIncidentType03: Arbitrary[generated.IncidentType03] =
     Arbitrary {
       for {
-        sequenceNumber <- nonEmptyString
-        code           <- nonEmptyString
-        text           <- nonEmptyString
-        loc            <- arbitraryLocationType02.arbitrary
+        sequenceNumber     <- nonEmptyString
+        code               <- nonEmptyString
+        text               <- nonEmptyString
+        loc                <- arbitraryLocationType02.arbitrary
+        endorsement        <- arbitraryEndorsement03.arbitrary
+        transportEquipment <- arbitrary[Seq[TransportEquipmentType07]]
+        transhipment       <- arbitrary[TranshipmentType02]
       } yield generated.IncidentType03(
         sequenceNumber = sequenceNumber,
         code = code,
         text = text,
-        Endorsement = None,
+        Endorsement = Some(endorsement),
         Location = loc,
-        TransportEquipment = Nil,
-        Transhipment = None
+        TransportEquipment = transportEquipment,
+        Transhipment = Some(transhipment)
       )
     }
 

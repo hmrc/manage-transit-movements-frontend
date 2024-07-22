@@ -168,6 +168,18 @@ class IncidentP5Helper(
     ).flatten
   )
 
+  def transportEquipmentsSection: StaticSection = {
+    val transportEquipmentsSections = data.TransportEquipment.map {
+      transportEquipment =>
+        val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
+        helper.transportEquipmentSection
+    }
+
+    StaticSection(
+      children = transportEquipmentsSections
+    )
+  }
+
   def identificationTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("Identification type"), // TODO: Pull from incident data
     formatAnswer = formatAsText,
@@ -200,5 +212,4 @@ class IncidentP5Helper(
       registeredCountry
     ).flatten
   )
-
 }
