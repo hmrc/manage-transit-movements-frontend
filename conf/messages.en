@@ -643,8 +643,6 @@ departure.notification.incidents.heading.incident = Incidents
 departure.notification.incidents.subheading.incident = Incident {0}
 departure.notification.incidents.link = More details
 departure.notification.incidents.link.hidden = more details on incident {0}
-departure.notification.incidents.incident.code.label = Incident code
-departure.notification.incidents.incident.description.label = Description
 
 departure.notification.incident.index.title = Incident {0}
 departure.notification.incident.index.heading = Incident {0}

@@ -25,7 +25,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 import javax.xml.datatype.XMLGregorianCalendar
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncidentsDuringTransitP5Helper(
@@ -33,7 +32,7 @@ class IncidentsDuringTransitP5Helper(
   isMultipleIncidents: Boolean,
   referenceDataService: ReferenceDataService
 )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
-    extends IncidentP5MessageHelper(referenceDataService) {
+    extends DeparturesP5MessageHelper {
 
   def mrnRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(data.TransitOperation.MRN),
@@ -113,20 +112,15 @@ class IncidentsDuringTransitP5Helper(
     }
   }
 
-  def incidentSection(departureId: String, incidentIndex: Index, messageId: String): Future[AccordionSection] =
-    incidentCodeRow(
-      incidentCode = data.Consignment.Incident(incidentIndex.position).code,
-      prefix = "departure.notification.incidents.incident.code.label"
-    ).map {
+  def incidentSection(departureId: String, incidentIndex: Index, messageId: String): Future[AccordionSection] = {
+    val incidentHelper = new IncidentP5Helper(data.Consignment.Incident(incidentIndex.position), referenceDataService)
+    incidentHelper.incidentCodeRow.map {
       incidentCode =>
         AccordionSection(
           sectionTitle = messages("departure.notification.incidents.subheading.incident", incidentIndex.display),
           rows = Seq(
             incidentCode,
-            incidentDescriptionRow(
-              incidentText = data.Consignment.Incident(incidentIndex.position).text,
-              prefix = "departure.notification.incidents.incident.description.label"
-            )
+            incidentHelper.incidentDescriptionRow
           ).flatten,
           isOpen = if (incidentIndex.position == 0) true else false,
           viewLinks = Seq(
@@ -139,5 +133,6 @@ class IncidentsDuringTransitP5Helper(
           )
         )
     }
+  }
 
 }
