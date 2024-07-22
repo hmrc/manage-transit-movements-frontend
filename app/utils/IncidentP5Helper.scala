@@ -163,6 +163,24 @@ class IncidentP5Helper(
     ).flatten
   )
 
+  def identificationTypeRow: Future[Option[SummaryListRow]] =
+    data.Transhipment
+      .map {
+        transhipment =>
+          refDataService.getIdentificationType(transhipment.TransportMeans.typeOfIdentification) map {
+            identificationTypeResponse =>
+              val identificationType = identificationTypeResponse.fold[String](identity, _.description)
+              buildRowFromAnswer[String](
+                answer = Some(identificationType),
+                formatAnswer = formatAsText,
+                prefix = "departure.notification.incident.index.identificationType",
+                id = Some(s"identificationType-$displayIndex"),
+                call = None
+              )
+          }
+      }
+      .getOrElse(Future.successful(None))
+
   def transportEquipmentsSection: StaticSection = {
     val transportEquipmentsSections = data.TransportEquipment.map {
       transportEquipment =>
@@ -175,36 +193,44 @@ class IncidentP5Helper(
     )
   }
 
-  def identificationTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("Identification type"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.identificationType",
-    id = None,
-    call = None
-  )
+  def identificationRow: Option[SummaryListRow] =
+    buildRowFromAnswer[String](
+      answer = data.Transhipment.map(_.TransportMeans.identificationNumber),
+      formatAnswer = formatAsText,
+      prefix = "departure.notification.incident.index.identification",
+      id = Some(s"identification-$displayIndex"),
+      call = None
+    )
 
-  def identificationRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("Identification"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.identification",
-    id = None,
-    call = None
-  )
+  def registeredCountryRow: Future[Option[SummaryListRow]] =
+    data.Transhipment
+      .map {
+        transhipment =>
+          refDataService.getNationality(transhipment.TransportMeans.nationality) map {
+            nationalityResponse =>
+              val nationalityToDisplay = nationalityResponse.fold[String](identity, _.description)
+              buildRowFromAnswer[String](
+                answer = Some(nationalityToDisplay),
+                formatAnswer = formatAsText,
+                prefix = "departure.notification.incident.index.registeredCountry",
+                id = Some(s"registeredCountry-$displayIndex"),
+                call = None
+              )
+          }
+      }
+      .getOrElse(Future.successful(None))
 
-  def registeredCountry: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("Registered Country"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.registeredCountry",
-    id = None,
-    call = None
-  )
+  def replacementMeansOfTransportSection: Future[StaticSection] =
+    for {
+      registeredCountry  <- registeredCountryRow
+      identificationType <- identificationTypeRow
+    } yield StaticSection(
+      sectionTitle = Some(messages("departure.notification.incident.index.replacement.section.title")),
+      rows = Seq(
+        identificationType,
+        identificationRow,
+        registeredCountry
+      ).flatten
+    )
 
-  def replacementMeansOfTransportSection: StaticSection = StaticSection(
-    sectionTitle = Some(messages("departure.notification.incident.index.replacement.section.title")),
-    rows = Seq(
-      identificationTypeRow,
-      identificationRow,
-      registeredCountry
-    ).flatten
-  )
 }

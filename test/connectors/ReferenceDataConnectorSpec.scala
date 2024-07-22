@@ -21,8 +21,8 @@ import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
-import models.{Country, IncidentCode}
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
+import models.{Country, IdentificationType, IncidentCode, Nationality}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
@@ -121,6 +121,57 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
         "should handle client and server errors for customs offices" in {
           checkErrorResponse(url, connector.getCountries(queryParams))
+        }
+      }
+
+      "getIdentificationTypes" - {
+
+        val url = s"$baseUrl/lists/TypeOfIdentificationOfMeansOfTransport?foo=bar"
+
+        "should handle a 200 response for identification types" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(transportIdentifiersResponseJson))
+          )
+
+          val expectedResult = NonEmptySet.of(
+            IdentificationType("10", "IMO Ship Identification Number"),
+            IdentificationType("11", "Name of the sea-going vessel")
+          )
+
+          connector.getIdentificationTypes(queryParams).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getIdentificationTypes(queryParams))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getIdentificationTypes(queryParams))
+        }
+      }
+
+      "getNationalities" - {
+
+        val url = s"$baseUrl/lists/Nationality?foo=bar"
+
+        "should handle a 200 response for nationalities" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(nationalitiesResponseJson))
+          )
+
+          val expectedResult = NonEmptySet.of(Nationality("AR", "Argentina"), Nationality("AU", "Australia"))
+
+          connector.getNationalities(queryParams).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getNationalities(queryParams))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getNationalities(queryParams))
         }
       }
 
@@ -308,6 +359,48 @@ object ReferenceDataConnectorSpec {
        |  ]
        |}
        |""".stripMargin
+
+  private val transportIdentifiersResponseJson: String =
+    """
+      |{
+      |  "data": [
+      |    {
+      |     "type": "10",
+      |     "description": "IMO Ship Identification Number"
+      |    },
+      |    {
+      |     "type": "11",
+      |     "description": "Name of the sea-going vessel"
+      |    }
+      |  ]
+      |}
+      |""".stripMargin
+
+  private val nationalitiesResponseJson: String =
+    """
+      |{
+      |  "_links": {
+      |    "self": {
+      |      "href": "/customs-reference-data/lists/Nationality"
+      |    }
+      |  },
+      |  "meta": {
+      |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
+      |    "snapshotDate": "2023-01-01"
+      |  },
+      |  "id": "Nationality",
+      |  "data": [
+      |    {
+      |      "code":"AR",
+      |      "description":"Argentina"
+      |    },
+      |    {
+      |      "code":"AU",
+      |      "description":"Australia"
+      |    }
+      |  ]
+      |}
+      |""".stripMargin
 
   private val controlTypesResponseJson: String =
     s"""
