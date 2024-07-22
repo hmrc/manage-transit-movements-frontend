@@ -19,7 +19,7 @@ package helper
 import base.SpecBase
 import generated.{AddressType18, GNSSType}
 import generators.Generators
-import models.{Country, IncidentCode, QualifierOfIdentification, RichAddressType18}
+import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification, RichAddressType18}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -244,6 +244,68 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           result.actions must not be defined
         }
       }
+
+      "registeredCountryRow" - {
+        "must return a row with description when ref data look up is successful" in {
+          when(refDataService.getNationality(any())(any(), any()))
+            .thenReturn(Future.successful(Right(Nationality(incidentType03.Transhipment.get.TransportMeans.nationality, "description"))))
+
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.registeredCountryRow.futureValue.value
+
+          result.key.value mustBe "Registered country"
+          result.value.value mustBe "description"
+          result.actions must not be defined
+        }
+
+        "must return a row with description when ref data look up cannot find description" in {
+          when(refDataService.getNationality(any())(any(), any()))
+            .thenReturn(Future.successful(Left(incidentType03.Transhipment.get.TransportMeans.nationality)))
+
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.registeredCountryRow.futureValue.value
+
+          result.key.value mustBe "Registered country"
+          result.value.value mustBe incidentType03.Transhipment.get.TransportMeans.nationality
+          result.actions must not be defined
+        }
+      }
+
+      "identificationTypeRow" - {
+        "must return a row with description when ref data look up is successful" in {
+          when(refDataService.getIdentificationType(any())(any(), any()))
+            .thenReturn(Future.successful(Right(IdentificationType(incidentType03.Transhipment.get.TransportMeans.typeOfIdentification, "description"))))
+
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.identificationTypeRow.futureValue.value
+
+          result.key.value mustBe "Identification type"
+          result.value.value mustBe "description"
+          result.actions must not be defined
+        }
+
+        "must return a row with description when ref data look up cannot find description" in {
+          when(refDataService.getIdentificationType(any())(any(), any()))
+            .thenReturn(Future.successful(Left(incidentType03.Transhipment.get.TransportMeans.typeOfIdentification)))
+
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.identificationTypeRow.futureValue.value
+
+          result.key.value mustBe "Identification type"
+          result.value.value mustBe incidentType03.Transhipment.get.TransportMeans.typeOfIdentification
+          result.actions must not be defined
+        }
+      }
+
+      "identificationRow must return a row" in {
+        val helper = new IncidentP5Helper(incidentType03, refDataService)
+        val result = helper.identificationRow.value
+
+        result.key.value mustBe "Identification"
+        result.value.value mustBe incidentType03.Transhipment.get.TransportMeans.identificationNumber
+        result.actions must not be defined
+      }
+
     }
 
     "sections" - {
@@ -271,6 +333,15 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           result mustBe a[StaticSection]
           result.rows.size mustBe 7
         }
+      }
+
+      "transhipmentSection must return a static section" in {
+        val helper = new IncidentP5Helper(incidentType03, refDataService)
+        val result = helper.replacementMeansOfTransportSection.futureValue
+
+        result mustBe a[StaticSection]
+        result.sectionTitle.get mustBe "Replacement means of transport"
+        result.rows.size mustBe 3
       }
 
       "transportEquipmentsSection" - {

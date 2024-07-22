@@ -21,7 +21,7 @@ import cats.data.NonEmptySet
 import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
-import models.{Country, IncidentCode, QualifierOfIdentification}
+import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Reads}
@@ -67,6 +67,28 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .transform(_.withQueryStringParameters(queryParams: _*))
       .setHeader(version2Header)
       .execute[NonEmptySet[QualifierOfIdentification]]
+  }
+
+  def getIdentificationTypes(
+    queryParams: QueryParams*
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[IdentificationType]] = {
+    val url = url"${config.customsReferenceDataUrl}/lists/TypeOfIdentificationOfMeansOfTransport"
+    http
+      .get(url)
+      .transform(_.withQueryStringParameters(queryParams: _*))
+      .setHeader(version2Header)
+      .execute[NonEmptySet[IdentificationType]]
+  }
+
+  def getNationalities(
+    queryParams: QueryParams*
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[Nationality]] = {
+    val url = url"${config.customsReferenceDataUrl}/lists/Nationality"
+    http
+      .get(url)
+      .transform(_.withQueryStringParameters(queryParams: _*))
+      .setHeader(version2Header)
+      .execute[NonEmptySet[Nationality]]
   }
 
   def getIncidentCodes(

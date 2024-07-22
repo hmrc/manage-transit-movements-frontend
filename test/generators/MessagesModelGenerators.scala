@@ -948,7 +948,8 @@ trait MessagesModelGenerators {
         loc                <- arbitraryLocationType02.arbitrary
         endorsement        <- arbitraryEndorsement03.arbitrary
         transportEquipment <- arbitrary[Seq[TransportEquipmentType07]]
-        transhipment       <- arbitrary[TranshipmentType02]
+        containerIndicator <- arbitrary[Flag]
+        transportmeans     <- arbitraryTransportMeansType02.arbitrary
       } yield generated.IncidentType03(
         sequenceNumber = sequenceNumber,
         code = code,
@@ -956,7 +957,7 @@ trait MessagesModelGenerators {
         Endorsement = Some(endorsement),
         Location = loc,
         TransportEquipment = transportEquipment,
-        Transhipment = Some(transhipment)
+        Transhipment = Some(TranshipmentType02(containerIndicator, transportmeans))
       )
     }
 
@@ -1200,6 +1201,19 @@ trait MessagesModelGenerators {
         country = country,
         GNSS = gnss,
         Address = address
+      )
+    }
+
+  implicit lazy val arbitraryTransportMeansType02: Arbitrary[TransportMeansType02] =
+    Arbitrary {
+      for {
+        typeOfIdentification <- nonEmptyString
+        identificationNumber <- nonEmptyString
+        nationality          <- nonEmptyString
+      } yield TransportMeansType02(
+        typeOfIdentification,
+        identificationNumber,
+        nationality
       )
     }
 

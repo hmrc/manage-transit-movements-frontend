@@ -69,13 +69,14 @@ object IncidentP5ViewModel {
       val helper = new IncidentP5Helper(data.Consignment.Incident(incidentIndex.position), referenceDataService)
 
       for {
-        incidentInformationSection <- helper.incidentInformationSection
+        incidentInformationSection         <- helper.incidentInformationSection
+        replacementMeansOfTransportSection <- helper.replacementMeansOfTransportSection
       } yield {
         val sections = Seq(
           incidentInformationSection,
           helper.endorsementSection,
           helper.transportEquipmentsSection,
-          helper.replacementMeansOfTransportSection
+          replacementMeansOfTransportSection
         )
 
         IncidentP5ViewModel(
