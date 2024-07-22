@@ -122,7 +122,7 @@ class IncidentsDuringTransitP5Helper(
             incidentCode,
             incidentHelper.incidentDescriptionRow
           ).flatten,
-          isOpen = if (incidentIndex.position == 0) true else false,
+          isOpen = incidentIndex.position == 0,
           viewLinks = Seq(
             Link(
               id = s"more-details-incident-${incidentIndex.display}",
