@@ -19,12 +19,12 @@ package viewModels.P5
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.{Country, IncidentCode}
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
+import models.{Country, IncidentCode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.Arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder

@@ -33,7 +33,7 @@ class IncidentsDuringTransitP5Helper(
   isMultipleIncidents: Boolean,
   referenceDataService: ReferenceDataService
 )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
-    extends DeparturesP5MessageHelper {
+    extends IncidentP5MessageHelper(referenceDataService) {
 
   def mrnRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(data.TransitOperation.MRN),
@@ -88,28 +88,6 @@ class IncidentsDuringTransitP5Helper(
     }
   }
 
-  def incidentCodeRow(incidentIndex: Index): Future[Option[SummaryListRow]] = {
-    val incidentCodeCode = data.Consignment.Incident(incidentIndex.position).code
-    referenceDataService.getIncidentCode(incidentCodeCode).map {
-      incidentCode =>
-        buildRowFromAnswer[String](
-          answer = Some(incidentCode.toString),
-          formatAnswer = formatAsText,
-          prefix = "departure.notification.incidents.incident.code.label",
-          id = None,
-          call = None
-        )
-    }
-  }
-
-  def incidentDescriptionRow(incidentIndex: Index): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(data.Consignment.Incident(incidentIndex.position).text),
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incidents.incident.description.label",
-    id = None,
-    call = None
-  )
-
   def incidentInformationSection: Future[StaticSection] =
     for {
       officeOfDepartureRow       <- officeOfDepartureRow
@@ -136,13 +114,19 @@ class IncidentsDuringTransitP5Helper(
   }
 
   def incidentSection(departureId: String, incidentIndex: Index, messageId: String): Future[AccordionSection] =
-    incidentCodeRow(incidentIndex).map {
+    incidentCodeRow(
+      incidentCode = data.Consignment.Incident(incidentIndex.position).code,
+      prefix = "departure.notification.incidents.incident.code.label"
+    ).map {
       incidentCode =>
         AccordionSection(
           sectionTitle = messages("departure.notification.incidents.subheading.incident", incidentIndex.display),
           rows = Seq(
             incidentCode,
-            incidentDescriptionRow(incidentIndex)
+            incidentDescriptionRow(
+              incidentText = data.Consignment.Incident(incidentIndex.position).text,
+              prefix = "departure.notification.incidents.incident.description.label"
+            )
           ).flatten,
           isOpen = if (incidentIndex.position == 0) true else false,
           viewLinks = Seq(
