@@ -22,6 +22,7 @@ import generators.Generators
 import models.{Country, IncidentCode}
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
+import models.{Country, LocalReferenceNumber, QualifierOfIdentification}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary
@@ -46,6 +47,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
   private val country  = Country("GB", "United Kingdom")
   private val incident = IncidentCode("code", "text")
+  private val identification = QualifierOfIdentification("U", "UN/LOCODE")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -54,6 +56,8 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       .thenReturn(Future.successful(incident))
     when(mockReferenceDataService.getCountry(any())(any(), any()))
       .thenReturn(Future.successful(Right(country)))
+    when(mockReferenceDataService.getQualifierOfIdentification(any())(any(), any()))
+      .thenReturn(Future.successful(Right(identification)))
   }
 
   "IncidentP5ViewModel" - {

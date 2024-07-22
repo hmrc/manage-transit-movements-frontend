@@ -19,7 +19,6 @@ package utils
 import generated.{GNSSType, IncidentType03}
 import models.{DynamicAddress, RichAddressType18}
 import play.api.Logging
-import play.api.Logging
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -70,13 +69,18 @@ class IncidentP5Helper(
         )
     }
 
-  def identifierTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(data.Location.qualifierOfIdentification),
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.identifierType",
-    id = Some(s"identifierType-$displayIndex"),
-    call = None
-  )
+  def identifierTypeRow: Future[Option[SummaryListRow]] =
+    refDataService.getQualifierOfIdentification(data.Location.qualifierOfIdentification) map {
+      identificationResponse =>
+        val identification = identificationResponse.fold[String](identity, _.description)
+        buildRowFromAnswer[String](
+          answer = Some(identification),
+          formatAnswer = formatAsText,
+          prefix = "departure.notification.incident.index.identifierType",
+          id = Some(s"identifierType-$displayIndex"),
+          call = None
+        )
+    }
 
   def coordinatesRow: Option[SummaryListRow] =
     buildRowFromAnswer[GNSSType](
@@ -109,15 +113,17 @@ class IncidentP5Helper(
 
   def incidentInformationSection: Future[StaticSection] =
     for {
-      countryRowOption <- countryRow
+      country <- countryRow
       incidentCodeRow  <- incidentCodeRow
+      identification <- identifierTypeRow
     } yield StaticSection(
       sectionTitle = None,
       rows = Seq(
         incidentCodeRow,
         incidentDescriptionRow,
-        countryRowOption,
         identifierTypeRow,
+        country,
+        identification,
         coordinatesRow,
         unLocodeRow,
         addressRow
