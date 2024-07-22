@@ -74,6 +74,7 @@ object IncidentP5ViewModel {
         val sections = Seq(
           incidentInformationSection,
           helper.endorsementSection,
+          helper.transportEquipmentsSection,
           helper.replacementMeansOfTransportSection
         )
 

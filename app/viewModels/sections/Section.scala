@@ -62,6 +62,8 @@ object Section {
     def apply(sectionTitle: String, rows: Seq[SummaryListRow], viewLinks: Seq[Link], isOpen: Boolean): AccordionSection =
       new AccordionSection(Some(sectionTitle), rows = rows, viewLinks = viewLinks, isOpen = isOpen)
 
+    def apply(sectionTitle: String, rows: Seq[SummaryListRow], isOpen: Boolean, children: Seq[Section]): AccordionSection =
+      new AccordionSection(sectionTitle = Some(sectionTitle), rows = rows, children = children, isOpen = isOpen)
   }
 
   case class StaticSection(
