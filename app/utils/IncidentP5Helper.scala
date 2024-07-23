@@ -34,8 +34,6 @@ class IncidentP5Helper(
     extends DeparturesP5MessageHelper
     with Logging {
 
-  private val displayIndex = data.sequenceNumber
-
   def incidentCodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("code"), // TODO: Pull from incident data
     formatAnswer = formatAsText,
@@ -60,7 +58,7 @@ class IncidentP5Helper(
           answer = Some(countryToDisplay),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incident.index.country",
-          id = Some(s"country-$displayIndex"),
+          id = None,
           call = None
         )
     }
@@ -69,7 +67,7 @@ class IncidentP5Helper(
     answer = Some(data.Location.qualifierOfIdentification),
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.identifierType",
-    id = Some(s"identifierType-$displayIndex"),
+    id = None,
     call = None
   )
 
@@ -97,7 +95,7 @@ class IncidentP5Helper(
     answer = data.Location.UNLocode,
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.unLocode",
-    id = Some(s"unLocode-$displayIndex"),
+    id = None,
     call = None
   )
 

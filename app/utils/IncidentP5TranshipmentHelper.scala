@@ -28,7 +28,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IncidentP5TranshipmentHelper(
   transhipment: TranshipmentType02,
-  displayIndex: Int,
   refDataService: ReferenceDataService
 )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
     extends DeparturesP5MessageHelper
@@ -39,7 +38,7 @@ class IncidentP5TranshipmentHelper(
       answer = Some(transhipment.TransportMeans.identificationNumber),
       formatAnswer = formatAsText,
       prefix = "departure.notification.incident.index.identification",
-      id = Some(s"identification-$displayIndex"),
+      id = None,
       call = None
     )
 
@@ -51,7 +50,7 @@ class IncidentP5TranshipmentHelper(
           answer = Some(identificationType),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incident.index.identificationType",
-          id = Some(s"identificationType-$displayIndex"),
+          id = None,
           call = None
         )
     }
@@ -64,7 +63,7 @@ class IncidentP5TranshipmentHelper(
           answer = Some(nationalityToDisplay),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incident.index.registeredCountry",
-          id = Some(s"registeredCountry-$displayIndex"),
+          id = None,
           call = None
         )
     }

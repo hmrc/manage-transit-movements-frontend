@@ -75,7 +75,7 @@ object IncidentP5ViewModel {
       val transhipmentSectionFuture: Future[Option[StaticSection]] =
         incident.Transhipment.map {
           transhipment =>
-            val helper = new IncidentP5TranshipmentHelper(transhipment, incidentIndex.display, referenceDataService)
+            val helper = new IncidentP5TranshipmentHelper(transhipment, referenceDataService)
             helper.replacementMeansOfTransportSection
         }.sequence
 

@@ -34,7 +34,6 @@ import scala.concurrent.Future
 class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private val refDataService: ReferenceDataService = mock[ReferenceDataService]
-  private val displayIndex                         = 1
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -51,7 +50,7 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
           when(refDataService.getNationality(any())(any(), any()))
             .thenReturn(Future.successful(Right(Nationality(transhipment.TransportMeans.nationality, "description"))))
 
-          val helper = new IncidentP5TranshipmentHelper(transhipment, displayIndex, refDataService)
+          val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.registeredCountryRow.futureValue.value
 
           result.key.value mustBe "Registered country"
@@ -63,7 +62,7 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
           when(refDataService.getNationality(any())(any(), any()))
             .thenReturn(Future.successful(Left(transhipment.TransportMeans.nationality)))
 
-          val helper = new IncidentP5TranshipmentHelper(transhipment, displayIndex, refDataService)
+          val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.registeredCountryRow.futureValue.value
 
           result.key.value mustBe "Registered country"
@@ -77,7 +76,7 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
           when(refDataService.getIdentificationType(any())(any(), any()))
             .thenReturn(Future.successful(Right(IdentificationType(transhipment.TransportMeans.typeOfIdentification, "description"))))
 
-          val helper = new IncidentP5TranshipmentHelper(transhipment, displayIndex, refDataService)
+          val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.identificationTypeRow.futureValue.value
 
           result.key.value mustBe "Identification type"
@@ -89,7 +88,7 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
           when(refDataService.getIdentificationType(any())(any(), any()))
             .thenReturn(Future.successful(Left(transhipment.TransportMeans.typeOfIdentification)))
 
-          val helper = new IncidentP5TranshipmentHelper(transhipment, displayIndex, refDataService)
+          val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.identificationTypeRow.futureValue.value
 
           result.key.value mustBe "Identification type"
@@ -99,7 +98,7 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
       }
 
       "identificationRow must return a row" in {
-        val helper = new IncidentP5TranshipmentHelper(transhipment, displayIndex, refDataService)
+        val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
         val result = helper.identificationRow.value
 
         result.key.value mustBe "Identification"
@@ -112,7 +111,7 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
     "sections" - {
       "transhipmentSection" - {
         "must return a static section if Transhipment is defined" in {
-          val helper = new IncidentP5TranshipmentHelper(transhipment, displayIndex, refDataService)
+          val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.replacementMeansOfTransportSection.futureValue
 
           result mustBe a[StaticSection]
