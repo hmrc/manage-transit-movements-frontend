@@ -19,7 +19,6 @@ package viewModels.P5
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.Country
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import models.{Country, IdentificationType, Nationality}
@@ -79,7 +78,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
     ): IncidentP5ViewModel =
       viewModelProvider.apply(cc182Data, mockReferenceDataService, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex).futureValue
 
-    "viewModel must have correct sections" in {
+    "viewModel must have all sections when all defined in incident" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
         (code, text) =>
           val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
@@ -101,6 +100,16 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
           sections.length mustBe 4
       }
+    }
+
+    "viewModel must not have transhipment section if incident doesn't have it" in {
+      val incident = arbitraryIncidentType03.arbitrary.sample.value.copy(Transhipment = None)
+      val vewModel = viewModel(cc182Data.copy(Consignment = cc182Data.Consignment.copy(Incident = Seq(incident))))
+
+      val sections = vewModel.sections
+
+      sections.length mustBe 3
+      sections.flatMap(_.sectionTitle) must not contain "Replacement means of transport"
     }
 
     "title" - {
