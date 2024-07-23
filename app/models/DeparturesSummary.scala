@@ -18,10 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class DeparturesSummary(totalMovements: Int, totalMatchingMovements: Int, userAnswers: List[DepartureUserAnswerSummary]) {
-
-  def nonEmpty: Boolean = userAnswers.nonEmpty
-}
+case class DeparturesSummary(totalMovements: Int, totalMatchingMovements: Int, userAnswers: List[DepartureUserAnswerSummary])
 
 object DeparturesSummary {
 
