@@ -17,11 +17,14 @@
 package viewModels.P5
 
 import base.SpecBase
+import config.FrontendAppConfig
 import generators.Generators
 import models.departureP5.BusinessRejectionType._
 import models.departureP5.DepartureMessageType._
 import models.departureP5._
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.test.Helpers.running
 import viewModels.P5.departure.DepartureStatusP5ViewModel
 import viewModels.ViewMovementAction
 
@@ -838,68 +841,114 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       }
     }
 
-    "when given Message with head of incidentDuringTransit containing multiple incidents" in {
+    "when given Message with head of incidentDuringTransit" - {
+      "and IE182 is enabled" - {
 
-      val movementAndMessage = IncidentMovementAndMessage(
-        departureIdP5,
-        lrn.value,
-        LocalDateTime.now(),
-        LatestDepartureMessage(
-          DepartureMessage(
-            messageId,
+        val app = p5GuiceApplicationBuilder()
+          .configure("microservice.services.features.isIE182Enabled" -> true)
+          .build()
+
+        "and containing multiple incidents" in {
+          running(app) {
+            val movementAndMessage = IncidentMovementAndMessage(
+              departureIdP5,
+              lrn.value,
+              LocalDateTime.now(),
+              LatestDepartureMessage(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  IncidentDuringTransit
+                ),
+                "messageId"
+              ),
+              hasMultipleIncidents = true
+            )
+
+            val result = DepartureStatusP5ViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
+
+            val expectedResult = DepartureStatusP5ViewModel(
+              "movement.status.P5.incidentDuringTransit",
+              Seq(
+                ViewMovementAction(
+                  controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url,
+                  "movement.status.P5.action.incidentDuringTransit.viewIncidents"
+                )
+              )
+            )
+
+            result mustBe expectedResult
+          }
+        }
+
+        "and containing one incident" in {
+
+          val movementAndMessage = IncidentMovementAndMessage(
+            departureIdP5,
+            lrn.value,
             LocalDateTime.now(),
-            IncidentDuringTransit
-          ),
-          "messageId"
-        ),
-        hasMultipleIncidents = true
-      )
-
-      val result = DepartureStatusP5ViewModel(movementAndMessage)
-
-      val expectedResult = DepartureStatusP5ViewModel(
-        "movement.status.P5.incidentDuringTransit",
-        Seq(
-          ViewMovementAction(
-            controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url,
-            "movement.status.P5.action.incidentDuringTransit.viewIncidents"
+            LatestDepartureMessage(
+              DepartureMessage(
+                messageId,
+                LocalDateTime.now(),
+                IncidentDuringTransit
+              ),
+              "messageId"
+            ),
+            hasMultipleIncidents = false
           )
-        )
-      )
 
-      result mustBe expectedResult
-    }
+          val result = DepartureStatusP5ViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
 
-    "when given Message with head of incidentDuringTransit containing one incident" in {
-
-      val movementAndMessage = IncidentMovementAndMessage(
-        departureIdP5,
-        lrn.value,
-        LocalDateTime.now(),
-        LatestDepartureMessage(
-          DepartureMessage(
-            messageId,
-            LocalDateTime.now(),
-            IncidentDuringTransit
-          ),
-          "messageId"
-        ),
-        hasMultipleIncidents = false
-      )
-
-      val result = DepartureStatusP5ViewModel(movementAndMessage)
-
-      val expectedResult = DepartureStatusP5ViewModel(
-        "movement.status.P5.incidentDuringTransit",
-        Seq(
-          ViewMovementAction(
-            controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url,
-            "movement.status.P5.action.incidentDuringTransit.viewIncident"
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.incidentDuringTransit",
+            Seq(
+              ViewMovementAction(
+                controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url,
+                "movement.status.P5.action.incidentDuringTransit.viewIncident"
+              )
+            )
           )
-        )
-      )
 
-      result mustBe expectedResult
+          result mustBe expectedResult
+        }
+      }
+
+      "and IE182 is disabled" in {
+
+        val app = p5GuiceApplicationBuilder()
+          .configure("microservice.services.features.isIE182Enabled" -> false)
+          .build()
+
+        running(app) {
+          forAll(arbitrary[Boolean]) {
+            hasMultipleIncidents =>
+              val movementAndMessage = IncidentMovementAndMessage(
+                departureIdP5,
+                lrn.value,
+                LocalDateTime.now(),
+                LatestDepartureMessage(
+                  DepartureMessage(
+                    messageId,
+                    LocalDateTime.now(),
+                    IncidentDuringTransit
+                  ),
+                  "messageId"
+                ),
+                hasMultipleIncidents
+              )
+
+              val result = DepartureStatusP5ViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
+
+              val expectedResult = DepartureStatusP5ViewModel(
+                "movement.status.P5.incidentDuringTransit",
+                Seq.empty
+              )
+
+              result mustBe expectedResult
+          }
+        }
+      }
     }
 
     "when given Message with head of declarationSent" - {
