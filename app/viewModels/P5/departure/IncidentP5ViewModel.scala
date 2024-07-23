@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{IncidentP5Helper, IncidentP5TranshipmentHelper}
 import viewModels.P5.ViewModelWithCustomsOffice
 import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -69,16 +70,18 @@ object IncidentP5ViewModel {
 
       val incident = data.Consignment.Incident(incidentIndex.position)
       val helper   = new IncidentP5Helper(incident, referenceDataService)
-      val transhipmentHelper = incident.Transhipment.map(
-        transhipment => new IncidentP5TranshipmentHelper(transhipment, incidentIndex.display, referenceDataService)
-      )
 
-      val incidentInformationSectionFuture                                 = helper.incidentInformationSection
-      val transhipmentSectionFuture: Future[Option[Section.StaticSection]] = transhipmentHelper.map(_.replacementMeansOfTransportSection).sequence
+      val incidentInformationSectionFuture = helper.incidentInformationSection
+      val transhipmentSectionFuture: Future[Option[StaticSection]] =
+        incident.Transhipment.map {
+          transhipment =>
+            val helper = new IncidentP5TranshipmentHelper(transhipment, incidentIndex.display, referenceDataService)
+            helper.replacementMeansOfTransportSection
+        }.sequence
 
       for {
         incidentInformationSection <- incidentInformationSectionFuture
-        transhipmentSection  <- transhipmentSectionFuture
+        transhipmentSection        <- transhipmentSectionFuture
       } yield {
         val sections = Seq(
           Some(incidentInformationSection),
