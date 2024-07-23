@@ -17,12 +17,12 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.DeparturesSummary
 import play.api.Logging
+import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -73,12 +73,16 @@ class DepartureCacheConnector @Inject() (
   }
 
   def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = url"$baseUrl/user-answers"
+    val url = url"$baseUrl/user-answers/$lrn"
 
     http
       .get(url)
-      .transform(_.withQueryStringParameters("lrn" -> lrn))
-      .execute[DeparturesSummary]
-      .map(_.nonEmpty)
+      .execute[HttpResponse]
+      .map(_.status)
+      .map {
+        case OK        => true
+        case NOT_FOUND => false
+        case x         => throw new Exception(s"[DepartureCacheConnector][doesDeclarationExist] returned $x")
+      }
   }
 }
