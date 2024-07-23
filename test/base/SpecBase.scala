@@ -44,11 +44,13 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val departureIdP5: String    = "643cffea2dca70b2"
   val arrivalIdP5: String      = "62f4ebbb765ba8c2"
 
-  val incidentIndex: Index = Index(0)
+  val index: Index                   = Index(0)
+  val incidentIndex: Index           = Index(0)
+  val transportEquipmentIndex: Index = Index(0)
 
   val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"))
 
-  val departureReferenceNumbers = DepartureReferenceNumbers(lrn, None)
+  val departureReferenceNumbers = DepartureReferenceNumbers(lrn.value, None)
 
   def injector: Injector                   = app.injector
   def fakeRequest: FakeRequest[AnyContent] = FakeRequest("", "")

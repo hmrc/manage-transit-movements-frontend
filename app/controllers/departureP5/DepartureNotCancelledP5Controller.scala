@@ -19,7 +19,6 @@ package controllers.departureP5
 import config.FrontendAppConfig
 import controllers.actions._
 import generated.CC009CType
-import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -49,9 +48,9 @@ class DepartureNotCancelledP5Controller @Inject() (
   private def buildView(
     ie009: CC009CType,
     departureId: String,
-    lrn: LocalReferenceNumber
+    lrn: String
   )(implicit request: Request[_]): Future[Result] =
-    viewModelProvider.apply(ie009, departureId, lrn.value).map {
+    viewModelProvider.apply(ie009, departureId, lrn).map {
       viewModel => Ok(view(viewModel))
     }
 }

@@ -17,12 +17,14 @@
 package controllers.departureP5
 
 import config.{FrontendAppConfig, PaginationAppConfig}
-import connectors.DepartureCacheConnector
 import controllers.actions._
 import generated.CC056CType
 import models.RichCC056CType
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.BusinessRejectionTypeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
@@ -37,38 +39,36 @@ class RejectionMessageP5Controller @Inject() (
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
-  cacheConnector: DepartureCacheConnector,
+  businessRejectionTypeService: BusinessRejectionTypeService,
   view: RejectionMessageP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  def onPageLoad(page: Option[Int], departureId: String, messageId: String, isAmendmentJourney: Option[Boolean]): Action[AnyContent] =
+  def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val lrn              = request.referenceNumbers.localReferenceNumber
-        val functionalErrors = request.messageData.FunctionalError
+        val businessRejectionType = DepartureBusinessRejectionType(request.messageData)
+        val lrn                   = request.referenceNumbers.localReferenceNumber
+        val xPaths                = request.messageData.xPaths
 
-        val isDataValid: Future[Boolean] = if (isAmendmentJourney.getOrElse(false)) {
-          cacheConnector.doesDeclarationExist(lrn.value)
-        } else {
-          cacheConnector.isDeclarationAmendable(lrn.value, functionalErrors.map(_.errorPointer))
-        }
-
-        isDataValid.flatMap {
+        businessRejectionTypeService.canProceedWithAmendment(businessRejectionType, lrn, xPaths).flatMap {
           case true =>
             val currentPage = page.getOrElse(1)
 
             val paginationViewModel = ListPaginationViewModel(
-              totalNumberOfItems = functionalErrors.length,
+              totalNumberOfItems = xPaths.length,
               currentPage = currentPage,
               numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-              href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId, None).url,
-              additionalParams = Seq(("isAmendmentJourney", isAmendmentJourney.map(_.toString).getOrElse("false")))
+              href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url
             )
 
-            val rejectionMessageP5ViewModel =
-              viewModelProvider.apply(request.messageData.pagedFunctionalErrors(currentPage), lrn.value, isAmendmentJourney.getOrElse(false))
+            val rejectionMessageP5ViewModel = viewModelProvider.apply(
+              request.messageData.pagedFunctionalErrors(currentPage),
+              lrn,
+              DepartureBusinessRejectionType(request.messageData)
+            )
 
             rejectionMessageP5ViewModel.map(
               viewModel =>
@@ -78,50 +78,34 @@ class RejectionMessageP5Controller @Inject() (
                     departureId,
                     messageId,
                     paginationViewModel,
-                    isAmendmentJourney.getOrElse(false),
                     request.referenceNumbers.movementReferenceNumber
                   )
                 )
             )
           case _ =>
+            logger.warn(s"[RejectionMessageP5Controller] Could not proceed with amending $departureId")
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
     }
 
-  def onAmend(departureId: String, messageId: String, isAmendmentJourney: Boolean): Action[AnyContent] =
+  def onAmend(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val lrn         = request.referenceNumbers.localReferenceNumber
-        lazy val xPaths = request.messageData.FunctionalError.map(_.errorPointer)
+        val businessRejectionType = DepartureBusinessRejectionType(request.messageData)
+        val lrn                   = request.referenceNumbers.localReferenceNumber
+        val xPaths                = request.messageData.xPaths
+        val mrn                   = request.referenceNumbers.movementReferenceNumber
 
-        if (isAmendmentJourney) {
-          for {
-            doesCacheExistForLrn  <- cacheConnector.doesDeclarationExist(lrn.value)
-            handleAmendmentErrors <- cacheConnector.handleAmendmentErrors(lrn.value, xPaths)
-          } yield (doesCacheExistForLrn, handleAmendmentErrors) match {
-            case (true, true) =>
-              Redirect(config.departureAmendmentUrl(lrn.value, departureId))
-            case _ =>
-              Redirect(controllers.routes.ErrorController.technicalDifficulties())
-          }
-        } else {
-          for {
-            isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn.value, xPaths)
-            handleErrors           <- cacheConnector.handleErrors(lrn.value, xPaths)
-          } yield (isDeclarationAmendable, handleErrors) match {
-            case (true, true) =>
-              if (xPaths.nonEmpty) {
-                if (request.referenceNumbers.movementReferenceNumber.isDefined) {
-                  Redirect(config.departureNewLocalReferenceNumberUrl(lrn.value))
-                } else {
-                  Redirect(config.departureFrontendTaskListUrl(lrn.value))
-                }
-              } else {
+        businessRejectionTypeService.canProceedWithAmendment(businessRejectionType, lrn, xPaths).flatMap {
+          case true =>
+            businessRejectionTypeService.handleErrors(businessRejectionType, lrn, xPaths).map {
+              case true =>
+                Redirect(businessRejectionTypeService.nextPage(businessRejectionType, lrn, departureId, mrn))
+              case false =>
                 Redirect(controllers.routes.ErrorController.technicalDifficulties())
-              }
-            case _ =>
-              Redirect(controllers.routes.ErrorController.technicalDifficulties())
-          }
+            }
+          case false =>
+            Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
         }
     }
 }

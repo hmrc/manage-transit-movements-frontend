@@ -19,8 +19,8 @@ package services
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import models.IncidentCode
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
+import models.{Country, IncidentCode}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,6 +36,18 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
       )
       .recover {
         case _: NoReferenceDataFoundException => Left(customsOfficeId)
+      }
+  }
+
+  def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, Country]] = {
+    val queryParams: (String, String) = "data.code" -> code
+    connector
+      .getCountries(queryParams)
+      .map(
+        countries => Right(countries.head)
+      )
+      .recover {
+        case _: NoReferenceDataFoundException => Left(code)
       }
   }
 
@@ -67,6 +79,8 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
 
 trait ReferenceDataService {
   def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]]
+
+  def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, Country]]
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
   def getIncidentCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentCode]
   def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType]

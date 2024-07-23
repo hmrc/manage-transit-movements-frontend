@@ -21,7 +21,7 @@ import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
-import models.IncidentCode
+import models.{Country, IncidentCode}
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -97,6 +97,30 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
         "should handle client and server errors for customs offices" in {
           checkErrorResponse(url, connector.getCustomsOffices(queryParams))
+        }
+      }
+
+      "getCountries" - {
+
+        val url = s"$baseUrl/lists/CountryCodesFullList?foo=bar"
+
+        "should handle a 200 response for countries" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(countriesResponseJson))
+          )
+
+          val expectedResult = NonEmptySet.of(Country("GB", "United Kingdom"), Country("AD", "Andorra"))
+
+          connector.getCountries(queryParams).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getCountries(queryParams))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getCountries(queryParams))
         }
       }
 
@@ -250,6 +274,36 @@ object ReferenceDataConnectorSpec {
        |      "id": "$code",
        |      "name": "NAME001",
        |      "phoneNumber": "004412323232345"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
+
+  private val countriesResponseJson: String =
+    s"""
+       |{
+       |  "_links": {
+       |    "self": {
+       |      "href": "/customs-reference-data/lists/CountryCodesFullList"
+       |    }
+       |  },
+       |  "meta": {
+       |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
+       |    "snapshotDate": "2023-01-01"
+       |  },
+       |  "id": "CountryCodesFullList",
+       |  "data": [
+       |    {
+       |      "activeFrom": "2023-01-23",
+       |      "code": "GB",
+       |      "state": "valid",
+       |      "description": "United Kingdom"
+       |    },
+       |    {
+       |      "activeFrom": "2023-01-23",
+       |      "code": "AD",
+       |      "state": "valid",
+       |      "description": "Andorra"
        |    }
        |  ]
        |}

@@ -12,32 +12,53 @@ Service manager port: 9485
 ### Testing
 
 Run unit tests:
-
-    sbt test
-
+<pre>sbt test</pre>
+Run accessibility linter tests:
+<pre>sbt A11y/test</pre>
 
 ### Running manually or for journey tests
 
-    sm --start CTC_TRADERS_ALL_ACCEPTANCE -r
-    sm --stop MANAGE_TRANSIT_MOVEMENTS_FRONTEND
-    sbt run
+To toggle between the Phase 5 transition and post-transition modes we have defined two separate profiles:
 
+#### Transition
+<pre>
+sm2 --start CTC_TRADERS_P5_ACCEPTANCE_TRANSITION
+</pre>
 
-If you hit the main entry point before running the journey tests, it gets the compile out of the way and can help keep the first tests from failing.
+#### Final
+<pre>
+sm2 --start CTC_TRADERS_P5_ACCEPTANCE
+</pre>
 
-### Testing new Phase 5 frontends and user journeys
+We have dedicated modules for handling the phase 5 transition and phase 5 final phases. This is configured through the `play.additional.module` key in `application.conf`.
 
-This service uses switches defined in application.conf that toggle between Phase 4 and Phase 5 frontends/journeys.
+* `config.TransitionModule` will ensure that any requests to the `transit-movements-trader-manage-documents` service will have a 'transition' (`application/vnd.hmrc.transition+pdf`) Accept header.
+* Conversely, `config.PostTransitionModule` will ensure those requests have a 'final' (`application/vnd.hmrc.final+pdf`) Accept header.
+
+This service uses switches defined in `application.conf` that toggle between Phase 4 and Phase 5 frontends/journeys.
+
+Phase 4 and Phase 5 features can co-exist by setting both feature flags to `true`. This will allow users to access any in-flight P4 movements, with the links for new movements pointing to the P5 frontends.
 
 ```yaml
-features {
-  isPhase5Enabled = false
+microservice.services.features {
+  isPhase4Enabled = true
+  isPhase5Enabled = true
 }
 ```
 
-Setting the feature to `true` will ensure that links point to the P5 frontends.
+The above features are covered by several service-manager-config definitions:
 
-The above are set to true in service-manager-config for profile `MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5`.
+1. `MANAGE_TRANSIT_MOVEMENTS_FRONTEND`
+   * `microservice.services.features.isPhase4Enabled = true`
+   * `microservice.services.features.isPhase5Enabled = false`
+2. `MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5`
+   * `microservice.services.features.isPhase4Enabled = false`
+   * `microservice.services.features.isPhase5Enabled = true`
+   * `play.additional.module=config.PostTransitionModule`
+3. `MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5_TRANSITION`
+   * `microservice.services.features.isPhase4Enabled = false`
+   * `microservice.services.features.isPhase5Enabled = true`
+   * `play.additional.module=config.TransitionModule`
 
 
 ### License 

@@ -19,7 +19,6 @@ package controllers.departureP5
 import config.FrontendAppConfig
 import controllers.actions._
 import generated.CC009CType
-import models.LocalReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.ReferenceDataService
@@ -50,13 +49,13 @@ class DepartureCancelledP5Controller @Inject() (
 
   private def buildView(
     ie009: CC009CType,
-    lrn: LocalReferenceNumber
+    lrn: String
   )(implicit request: Request[_]): Future[Result] = {
     val customsOfficeReferenceNumber = ie009.CustomsOfficeOfDeparture.referenceNumber
 
     referenceDataService.getCustomsOffice(customsOfficeReferenceNumber).flatMap {
       customsOffice =>
-        viewModelProvider.apply(ie009, lrn.value, customsOffice).map {
+        viewModelProvider.apply(ie009, lrn, customsOffice).map {
           viewModel => Ok(view(viewModel))
         }
     }

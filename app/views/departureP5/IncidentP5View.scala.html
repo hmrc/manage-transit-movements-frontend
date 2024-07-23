@@ -42,11 +42,8 @@ formHelper: FormWithCSRF
 
     @answerSections(viewModel.sections)
 
-    @button(
-    attributes = Map("id" -> "submit"),
-    messageKey = messages("site.summary")
-    )
-
-    <br/>
+    @formHelper(action = controllers.departureP5.routes.IncidentP5Controller.onSubmit(departureId, viewModel.incidentIndex, messageId), Symbol("autoComplete") -> "off") {
+        @button(attributes = Map("id" -> "submit"), messageKey = messages("site.summary"))
+    }
 
 }

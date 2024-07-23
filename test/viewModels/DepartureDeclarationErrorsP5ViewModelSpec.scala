@@ -18,9 +18,11 @@ package viewModels
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
+import models.departureP5.BusinessRejectionType
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -40,26 +42,32 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
   override def beforeEach(): Unit =
     reset(mockReferenceDataService)
 
-  val lrnString = "LRNAB123"
+  private val lrnString = nonEmptyString.sample.value
+  private val mrnString = Gen.option(nonEmptyString).sample.value
 
   "DepartureDeclarationErrorsP5ViewModel" - {
 
     val functionalErrorReferenceData = FunctionalErrorWithDesc("12", "Codelist violation")
 
-    "when amendment journey" - {
-      when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+    "when 013 rejection type" - {
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new DepartureDeclarationErrorsP5ViewModelProvider()
-      val result            = viewModelProvider.apply(lrnString, isAmendmentJourney = true)
-      result.paragraph1 mustBe s"There are one or more errors in this declaration that cannot be amended. Contact the helpdesk to discuss further."
+      val result            = viewModelProvider.apply(lrnString, mrnString, BusinessRejectionType.AmendmentRejection)
+
+      "must return correct paragraph 1" in {
+        result.paragraph1 mustBe "There are one or more errors in this declaration that cannot be amended. Contact the helpdesk to discuss further."
+      }
     }
 
-    "when there is no error" - {
+    "when 015 rejection type" - {
 
-      when(mockReferenceDataService.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalErrorReferenceData))
+      when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
+        .thenReturn(Future.successful(functionalErrorReferenceData))
 
       val viewModelProvider = new DepartureDeclarationErrorsP5ViewModelProvider()
-      val result            = viewModelProvider.apply(lrnString, isAmendmentJourney = false)
+      val result            = viewModelProvider.apply(lrnString, mrnString, BusinessRejectionType.DeclarationRejection)
 
       "must return correct title" in {
         result.title mustBe "Declaration errors"
@@ -68,7 +76,7 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
         result.heading mustBe "Declaration errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
+        result.paragraph1 mustBe "There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
       }
       "must return correct paragraph 3 prefix, link and suffix" in {
         result.paragraph3Prefix mustBe "Contact the"
@@ -76,7 +84,7 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
         result.paragraph3Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another departure declaration"
+        result.hyperlink.value mustBe "Make another departure declaration"
       }
     }
   }

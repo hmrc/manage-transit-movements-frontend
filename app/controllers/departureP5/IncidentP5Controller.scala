@@ -18,8 +18,7 @@ package controllers.departureP5
 
 import controllers.actions.{Actions, DepartureMessageRetrievalActionProvider}
 import generated.CC182CType
-import models.Index
-import models.RichCC182Type
+import models.{Index, RichCC182Type}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
@@ -47,13 +46,27 @@ class IncidentP5Controller @Inject() (
       implicit request =>
         val customsOfficeId = request.messageData.CustomsOfficeOfDeparture.referenceNumber
 
-        referenceDataService.getCustomsOffice(customsOfficeId).map {
+        referenceDataService.getCustomsOffice(customsOfficeId).flatMap {
           customsOffice =>
             val incidentP5ViewModel =
-              viewModelProvider.apply(request.messageData, request.referenceNumbers, customsOffice, request.messageData.hasMultipleIncidents, incidentIndex)
+              viewModelProvider.apply(request.messageData,
+                                      referenceDataService,
+                                      request.referenceNumbers,
+                                      customsOffice,
+                                      request.messageData.hasMultipleIncidents,
+                                      incidentIndex
+              )
 
-            Ok(view(incidentP5ViewModel, departureId, messageId))
+            incidentP5ViewModel.map {
+              viewModel =>
+                Ok(view(viewModel, departureId, messageId))
+            }
         }
+    }
+
+  def onSubmit(departureId: String, incidentIndex: Index, messageId: String): Action[AnyContent] =
+    (Action andThen actions.identify()) {
+      Redirect(controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureId, messageId))
     }
 
 }

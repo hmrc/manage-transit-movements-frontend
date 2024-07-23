@@ -17,6 +17,7 @@
 package generators
 
 import generated._
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.const
 import org.scalacheck.{Arbitrary, Gen}
@@ -362,7 +363,7 @@ trait MessagesModelGenerators {
       for {
         lrn                   <- Gen.option(nonEmptyString)
         mrn                   <- Gen.option(nonEmptyString)
-        businessRejectionType <- nonEmptyString
+        businessRejectionType <- arbitrary[DepartureBusinessRejectionType].map(_.value)
         rejectionDateAndTime  <- arbitrary[XMLGregorianCalendar]
         rejectionCode         <- nonEmptyString
         rejectionReason       <- Gen.option(nonEmptyString)
@@ -380,7 +381,7 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         mrn                   <- nonEmptyString
-        businessRejectionType <- nonEmptyString
+        businessRejectionType <- arbitrary[DepartureBusinessRejectionType].map(_.value)
         rejectionDateAndTime  <- arbitrary[XMLGregorianCalendar]
         rejectionCode         <- nonEmptyString
         rejectionReason       <- Gen.option(nonEmptyString)
@@ -941,18 +942,21 @@ trait MessagesModelGenerators {
   implicit lazy val arbitraryIncidentType03: Arbitrary[generated.IncidentType03] =
     Arbitrary {
       for {
-        sequenceNumber <- nonEmptyString
-        code           <- nonEmptyString
-        text           <- nonEmptyString
-        loc            <- arbitraryLocationType02.arbitrary
+        sequenceNumber     <- nonEmptyString
+        code               <- nonEmptyString
+        text               <- nonEmptyString
+        loc                <- arbitraryLocationType02.arbitrary
+        endorsement        <- arbitraryEndorsement03.arbitrary
+        transportEquipment <- arbitrary[Seq[TransportEquipmentType07]]
+        transhipment       <- arbitrary[TranshipmentType02]
       } yield generated.IncidentType03(
         sequenceNumber = sequenceNumber,
         code = code,
         text = text,
-        Endorsement = None,
+        Endorsement = Some(endorsement),
         Location = loc,
-        TransportEquipment = Nil,
-        Transhipment = None
+        TransportEquipment = transportEquipment,
+        Transhipment = Some(transhipment)
       )
     }
 

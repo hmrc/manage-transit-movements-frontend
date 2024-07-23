@@ -17,11 +17,11 @@
 package utils
 
 import generated.{GNSSType, RecoveryNotificationType}
+import models.DynamicAddress
 import play.api.i18n.Messages
 import play.api.mvc.Call
-import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
+import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
 import java.text.SimpleDateFormat
@@ -43,6 +43,9 @@ class SummaryListRowHelper(implicit messages: Messages) {
     }.toText
 
   protected def formatAsText[T](answer: T): Content = s"$answer".toText
+
+  protected def formatAsDynamicAddress(address: DynamicAddress): Content =
+    HtmlContent(address.toString)
 
   protected def formatAsCoordinates(answer: GNSSType): Content =
     s"(${answer.latitude}, ${answer.longitude})".toText

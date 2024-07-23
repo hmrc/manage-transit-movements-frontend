@@ -69,6 +69,8 @@ object IncidentsDuringTransitP5ViewModel {
   class IncidentsDuringTransitP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
+      departureId: String,
+      messageId: String,
       data: CC182CType,
       referenceNumbers: DepartureReferenceNumbers,
       customsOffice: Either[String, CustomsOffice],
@@ -79,10 +81,10 @@ object IncidentsDuringTransitP5ViewModel {
 
       for {
         incidentInformationSection <- helper.incidentInformationSection
-        incidentsSection           <- helper.incidentsSection
+        incidentsSection           <- helper.incidentsSection(departureId, messageId)
         sections = Seq(incidentInformationSection, incidentsSection)
       } yield IncidentsDuringTransitP5ViewModel(
-        referenceNumbers.localReferenceNumber.value,
+        referenceNumbers.localReferenceNumber,
         customsOffice,
         isMultipleIncidents,
         sections

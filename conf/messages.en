@@ -28,6 +28,8 @@ site.userResearch.no.hidden = No thanks. I do not want to take part in research
 site.email.link = If you have any questions or issues, email us at {0}
 site.email.subject = NCTS Phase 5 - Help with testing
 
+noInformationProvided = No information provided
+
 viewAllMovements.link.title = View all movements
 search.results.singular = Showing {0} result matching {1}.
 search.results.plural = Showing {0} results matching {1}.
@@ -656,6 +658,7 @@ departure.notification.incident.index.description = Description
 departure.notification.incident.index.country = Country
 departure.notification.incident.index.identifierType = Identifier Type
 departure.notification.incident.index.coordinates = Coordinates
+departure.notification.incident.index.address = Address
 
 departure.notification.incident.index.endorsement.section.title = Endorsement
 departure.notification.incident.index.endorsement = Endorsement date
@@ -664,6 +667,15 @@ departure.notification.incident.index.endorsementCountry = Country
 departure.notification.incident.index.location = Location
 departure.notification.incident.index.unLocode = UN/LOCODE
 departure.notification.incident.index.address = Address
+
+departure.notification.incident.index.transportEquipment.heading = Transport equipment {0}
+departure.notification.incident.index.transportEquipment.containerIdentificationNumber = Container identification number
+
+departure.notification.incident.index.transportEquipment.seal.section.title = Seals
+departure.notification.incident.index.transportEquipment.seal.identificationNumber = Seal {0}
+
+departure.notification.incident.index.goodsReference.section.title = Goods item numbers
+departure.notification.incident.index.goodsReference.referenceNumber = Goods item number {0}
 
 departure.notification.incident.index.replacement.section.title = Replacement means of transport
 departure.notification.incident.index.identificationType = Identification type

@@ -18,14 +18,14 @@
 @import viewModels.P5.departure.RecoveryNotificationViewModel
 
 @this(
-mainTemplate: MainTemplate,
-heading: Heading,
-answerSections: AnswerSections,
-button: Button,
-formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    answerSections: AnswerSections,
+    button: Button,
+    formHelper: FormWithCSRF
 )
 
-@(recoveryNotificationViewModel: RecoveryNotificationViewModel, lrn: LocalReferenceNumber)(implicit request: Request[_], messages: Messages)
+@(recoveryNotificationViewModel: RecoveryNotificationViewModel, lrn: String)(implicit request: Request[_], messages: Messages)
 
     @mainTemplate(
         title = recoveryNotificationViewModel.title,
@@ -34,7 +34,7 @@ formHelper: FormWithCSRF
 
     @heading(
         heading = recoveryNotificationViewModel.heading,
-        caption = Some(messages("departure.ie035.message.subheading", lrn.toString))
+        caption = Some(messages("departure.ie035.message.subheading", lrn))
     )
 
     <p class="govuk-body" id="paragraph1">@recoveryNotificationViewModel.paragraph1</p>

@@ -17,18 +17,25 @@
 package utils
 
 import generated.{GNSSType, IncidentType03}
+import models.{DynamicAddress, RichAddressType18}
+import play.api.Logging
 import play.api.Logging
 import play.api.i18n.Messages
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section.StaticSection
 
+import scala.concurrent.{ExecutionContext, Future}
+
 class IncidentP5Helper(
-  data: IncidentType03
-)(implicit messages: Messages)
+  data: IncidentType03,
+  refDataService: ReferenceDataService
+)(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
     extends DeparturesP5MessageHelper
     with Logging {
 
-  val displayIndex = data.sequenceNumber + 1
+  private val displayIndex = data.sequenceNumber
 
   def incidentCodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("code"), // TODO: Pull from incident data
@@ -46,13 +53,18 @@ class IncidentP5Helper(
     call = None
   )
 
-  def countryRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(data.Location.country),
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.country",
-    id = Some(s"country-$displayIndex"),
-    call = None
-  )
+  def countryRow: Future[Option[SummaryListRow]] =
+    refDataService.getCountry(data.Location.country) map {
+      countryResponse =>
+        val countryToDisplay = countryResponse.fold[String](identity, _.description)
+        buildRowFromAnswer[String](
+          answer = Some(countryToDisplay),
+          formatAnswer = formatAsText,
+          prefix = "departure.notification.incident.index.country",
+          id = Some(s"country-$displayIndex"),
+          call = None
+        )
+    }
 
   def identifierTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(data.Location.qualifierOfIdentification),
@@ -71,6 +83,18 @@ class IncidentP5Helper(
       call = None
     )
 
+  def addressRow: Option[SummaryListRow] =
+    data.Location.Address.flatMap {
+      address =>
+        buildRowFromAnswer[DynamicAddress](
+          answer = Some(address.toDynamicAddress),
+          formatAnswer = formatAsDynamicAddress,
+          prefix = "departure.notification.incident.index.address",
+          id = None,
+          call = None
+        )
+    }
+
   def unLocodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = data.Location.UNLocode,
     formatAnswer = formatAsText,
@@ -79,34 +103,21 @@ class IncidentP5Helper(
     call = None
   )
 
-  def addressRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("address"), // TODO: Pull from incident data,
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.address",
-    id = Some(s"address-$displayIndex"),
-    call = None
-  )
-
-  def incidentInformationSection: StaticSection = StaticSection(
-    sectionTitle = None,
-    rows = Seq(
-      incidentCodeRow,
-      descriptionRow,
-      countryRow,
-      identifierTypeRow,
-      selectLocationRow(data.Location.qualifierOfIdentification)
-    ).flatten
-  )
-
-  private val selectLocationRow: String => Option[SummaryListRow] = qualifierOfIdentification =>
-    qualifierOfIdentification.toUpperCase match {
-      case "W" => coordinatesRow
-      case "U" => unLocodeRow
-      case "Z" => addressRow
-      case _ =>
-        logger.error(s"Unexpected qualifier of identification: $qualifierOfIdentification")
-        None
-    }
+  def incidentInformationSection: Future[StaticSection] =
+    for {
+      countryRowOption <- countryRow
+    } yield StaticSection(
+      sectionTitle = None,
+      rows = Seq(
+        incidentCodeRow,
+        descriptionRow,
+        countryRowOption,
+        identifierTypeRow,
+        coordinatesRow,
+        unLocodeRow,
+        addressRow
+      ).flatten
+    )
 
   def endorsementDateRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](
@@ -154,6 +165,18 @@ class IncidentP5Helper(
     ).flatten
   )
 
+  def transportEquipmentsSection: StaticSection = {
+    val transportEquipmentsSections = data.TransportEquipment.map {
+      transportEquipment =>
+        val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
+        helper.transportEquipmentSection
+    }
+
+    StaticSection(
+      children = transportEquipmentsSections
+    )
+  }
+
   def identificationTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("Identification type"), // TODO: Pull from incident data
     formatAnswer = formatAsText,
@@ -186,5 +209,4 @@ class IncidentP5Helper(
       registeredCountry
     ).flatten
   )
-
 }

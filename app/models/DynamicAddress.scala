@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-object Constants {
+import play.api.libs.json.{Json, OFormat}
 
-  object NotificationType {
-    val DecisionToControl          = "0"
-    val AdditionalDocumentsRequest = "1"
-    val IntentionToControl         = "2"
-  }
+case class DynamicAddress(
+  numberAndStreet: String,
+  city: String,
+  postalCode: Option[String]
+) {
 
-  object AdditionalDeclarationType {
-    val PreLodged = "D"
-  }
+  override def toString: String = Seq(Some(numberAndStreet), Some(city), postalCode).flatten.mkString("<br>")
+}
+
+object DynamicAddress {
+  implicit val format: OFormat[DynamicAddress] = Json.format[DynamicAddress]
 }

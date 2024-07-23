@@ -19,15 +19,39 @@ package viewModels.P5
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.LocalReferenceNumber
+import models.Country
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject
+import play.api.inject.guice.GuiceApplicationBuilder
+import services.ReferenceDataService
 import viewModels.P5.departure.IncidentP5ViewModel
 import viewModels.P5.departure.IncidentP5ViewModel.IncidentP5ViewModelProvider
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+
+  private val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
+
+  private val country = Country("GB", "United Kingdom")
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockReferenceDataService)
+    when(mockReferenceDataService.getCountry(any())(any(), any()))
+      .thenReturn(Future.successful(Right(country)))
+  }
 
   "IncidentP5ViewModel" - {
 
@@ -35,7 +59,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
     val lrn                = "LRN123"
     val customsReferenceId = "CD123"
 
-    val departureReferenceNumbers = DepartureReferenceNumbers(LocalReferenceNumber(lrn), Some(mrn))
+    val departureReferenceNumbers = DepartureReferenceNumbers(lrn, Some(mrn))
 
     val viewModelProvider = new IncidentP5ViewModelProvider()
 
@@ -46,7 +70,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId),
       isMultipleIncidents: Boolean = true
     ): IncidentP5ViewModel =
-      viewModelProvider.apply(cc182Data, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex)
+      viewModelProvider.apply(cc182Data, mockReferenceDataService, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex).futureValue
 
     "viewModel must have correct sections" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
@@ -68,7 +92,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
           val sections = modifiedViewModel.sections
 
-          sections.length mustBe 3
+          sections.length mustBe 4
       }
     }
 
@@ -80,7 +104,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
     "heading" - {
       "must return correct message" in {
-        viewModel().title mustBe "Incident 1"
+        viewModel().heading mustBe "Incident 1"
       }
     }
 

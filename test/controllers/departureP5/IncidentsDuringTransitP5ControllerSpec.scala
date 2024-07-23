@@ -76,7 +76,7 @@ class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaul
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
             .thenReturn(Future.successful(Left(customsReferenceNumber)))
 
-          when(mockIncidentsDuringTransitP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
+          when(mockIncidentsDuringTransitP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(incidentsViewModel))
 
           val request = FakeRequest(GET, controller)

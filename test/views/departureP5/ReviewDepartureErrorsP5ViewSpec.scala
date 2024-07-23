@@ -17,6 +17,7 @@
 package views.departureP5
 
 import generators.Generators
+import models.departureP5.BusinessRejectionType
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
@@ -38,7 +39,7 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
   private val reviewRejectionMessageP5ViewModel =
-    new ReviewDepartureErrorsP5ViewModel(Seq(tableRows), lrn.toString, false, isAmendmentJourney = false)
+    new ReviewDepartureErrorsP5ViewModel(Seq(tableRows), lrn.toString, false, BusinessRejectionType.DeclarationRejection)
 
   override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
 
@@ -49,19 +50,18 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
     totalNumberOfItems = sections.length,
     currentPage = 1,
     numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, None).url,
+    href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
     additionalParams = Seq()
   )
 
   private def applyView(
     viewModel: ReviewDepartureErrorsP5ViewModel,
     paginationViewModel: ListPaginationViewModel,
-    isAmendmentJourney: Boolean = false,
     mrn: Option[String] = None
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewDepartureErrorsP5View]
-      .apply(viewModel, departureId.toString, paginationViewModel, isAmendmentJourney, mrn)(fakeRequest, messages, frontendAppConfig)
+      .apply(viewModel, departureId.toString, paginationViewModel, mrn)(fakeRequest, messages, frontendAppConfig)
 
   override def view: HtmlFormat.Appendable = applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
@@ -81,7 +81,7 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
   behave like pageWithCaption(s"LRN: $lrn")
 
   behave like pageWithPagination(
-    controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId, None).url
+    controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
   )
 
   behave like pageWithTable()
@@ -122,17 +122,20 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
   )
 
   "must not render add another declaration link when isAmendmentJourney is true" in {
-    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true))
+    val reviewRejectionMessageP5ViewModel =
+      new ReviewDepartureErrorsP5ViewModel(Seq(tableRows), lrn.toString, false, BusinessRejectionType.AmendmentRejection)
+
+    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel))
     assertNotRenderedById(doc, "departure-link")
   }
 
   "must not render mrn when None" in {
-    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true, None))
+    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, None))
     assertNotRenderedById(doc, "mrn")
   }
 
   "must render mrn when provided" in {
-    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, isAmendmentJourney = true, Some("mrn")))
+    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, Some("mrn")))
     assertRenderedById(doc, "mrn")
   }
 }

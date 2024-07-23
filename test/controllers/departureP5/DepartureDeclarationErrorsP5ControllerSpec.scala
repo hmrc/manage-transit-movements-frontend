@@ -21,9 +21,10 @@ import connectors.DepartureCacheConnector
 import generated.{CC056CType, FunctionalErrorType04}
 import generators.Generators
 import models.departureP5._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -31,6 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
+import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel.DepartureDeclarationErrorsP5ViewModelProvider
 import views.html.departureP5.DepartureDeclarationErrorsP5View
 
 import scala.concurrent.Future
@@ -40,33 +42,42 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
   private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
   private val mockCacheService: DepartureCacheConnector = mock[DepartureCacheConnector]
 
+  private val mockViewModelProvider = mock[DepartureDeclarationErrorsP5ViewModelProvider]
+
   lazy val departureDeclarationErrorsController: String =
-    controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, messageId, isAmendmentJourney = false).url
+    controllers.departureP5.routes.DepartureDeclarationErrorsP5Controller.onPageLoad(departureIdP5, messageId).url
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
     reset(mockCacheService)
+    reset(mockViewModelProvider)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .p5GuiceApplicationBuilder()
-      .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
-      .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
+      .overrides(
+        bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService),
+        bind[DepartureCacheConnector].toInstance(mockCacheService),
+        bind[DepartureDeclarationErrorsP5ViewModelProvider].toInstance(mockViewModelProvider)
+      )
 
   "DepartureDeclarationErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET when no Errors" in {
-      forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = Nil))) {
-        message =>
+      forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = Nil)), Gen.option(nonEmptyString), arbitrary[DepartureDeclarationErrorsP5ViewModel]) {
+        (message, mrn, viewModel) =>
+          beforeEach()
+
           when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
-          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-          when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
 
-          val departureDeclarationErrorsP5ViewModel = new DepartureDeclarationErrorsP5ViewModel(lrn.value, isAmendmentJourney = false)
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, mrn)))
+
+          when(mockViewModelProvider.apply(any(), any(), any()))
+            .thenReturn(viewModel)
 
           val request = FakeRequest(GET, departureDeclarationErrorsController)
 
@@ -77,20 +88,22 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
           val view = injector.instanceOf[DepartureDeclarationErrorsP5View]
 
           contentAsString(result) mustEqual
-            view(departureDeclarationErrorsP5ViewModel, isAmendmentJourney = false, None)(request, messages, frontendAppConfig).toString
+            view(viewModel)(request, messages, frontendAppConfig).toString
+
+          verify(mockViewModelProvider).apply(eqTo(lrn.value), eqTo(mrn), any())
       }
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
-      forAll(listWithMaxLength[FunctionalErrorType04]()) {
-        functionalErrors =>
+      forAll(listWithMaxLength[FunctionalErrorType04](), Gen.option(nonEmptyString)) {
+        (functionalErrors, mrn) =>
           forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = functionalErrors))) {
             message =>
               when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(message))
+
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn, None)))
-              when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(false))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, mrn)))
 
               val request = FakeRequest(GET, departureDeclarationErrorsController)
 

@@ -16,23 +16,21 @@
 
 package models.departureP5
 
-import models.LocalReferenceNumber
-
 import java.time.LocalDateTime
 
 sealed trait MovementAndMessage {
   val departureId: String
-  val localReferenceNumber: LocalReferenceNumber
+  val localReferenceNumber: String
   val message: LatestDepartureMessage
   val updated: LocalDateTime
 }
 
 case class RejectedMovementAndMessage(
   departureId: String,
-  localReferenceNumber: LocalReferenceNumber,
+  localReferenceNumber: String,
   updated: LocalDateTime,
   message: LatestDepartureMessage,
-  rejectionType: String,
+  rejectionType: BusinessRejectionType,
   isDeclarationAmendable: Boolean,
   xPaths: Seq[String],
   doesCacheExistForLrn: Boolean
@@ -40,14 +38,14 @@ case class RejectedMovementAndMessage(
 
 case class OtherMovementAndMessage(
   departureId: String,
-  localReferenceNumber: LocalReferenceNumber,
+  localReferenceNumber: String,
   updated: LocalDateTime,
   message: LatestDepartureMessage
 ) extends MovementAndMessage
 
 case class DepartureMovementAndMessage(
   departureId: String,
-  localReferenceNumber: LocalReferenceNumber,
+  localReferenceNumber: String,
   updated: LocalDateTime,
   message: LatestDepartureMessage,
   isPrelodged: Boolean
@@ -55,7 +53,7 @@ case class DepartureMovementAndMessage(
 
 case class IncidentMovementAndMessage(
   departureId: String,
-  localReferenceNumber: LocalReferenceNumber,
+  localReferenceNumber: String,
   updated: LocalDateTime,
   message: LatestDepartureMessage,
   hasMultipleIncidents: Boolean

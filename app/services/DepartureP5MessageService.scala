@@ -61,14 +61,14 @@ class DepartureP5MessageService @Inject() (
           message =>
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>
-                isErrorAmendable(movement.departureId, message.latestMessage.messageId, movement.localReferenceNumber.value).map {
+                isErrorAmendable(movement.departureId, message.latestMessage.messageId, movement.localReferenceNumber).map {
                   case (rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn) =>
                     RejectedMovementAndMessage(
                       movement.departureId,
                       movement.localReferenceNumber,
                       movement.updated,
                       message,
-                      rejectionType,
+                      BusinessRejectionType(rejectionType),
                       isDeclarationAmendable,
                       xPaths,
                       doesCacheExistForLrn

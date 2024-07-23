@@ -19,6 +19,7 @@ package viewModels
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated._
 import generators.Generators
+import models.departureP5.BusinessRejectionType
 import models.referenceData.FunctionalErrorWithDesc
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -54,7 +55,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(errors, lrnString, isAmendmentJourney = false).futureValue
+      val result            = viewModelProvider.apply(errors, lrnString, BusinessRejectionType.DeclarationRejection).futureValue
 
       "must return correct section length" in {
         result.tableRows.length mustBe 1
@@ -75,7 +76,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another departure declaration"
+        result.hyperlink.value mustBe "Make another departure declaration"
       }
     }
 
@@ -90,7 +91,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
       val viewModelProvider = new RejectionMessageP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(functionalErrors, lrnString, isAmendmentJourney = true).futureValue
+      val result            = viewModelProvider.apply(functionalErrors, lrnString, BusinessRejectionType.AmendmentRejection).futureValue
 
       "must return correct section length" in {
         result.tableRows.length mustBe 2
@@ -113,7 +114,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another departure declaration"
+        result.hyperlink mustBe None
       }
     }
   }

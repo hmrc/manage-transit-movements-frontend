@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-object Constants {
+import cats.Order
+import models.referenceData.RichComparison
+import play.api.libs.json.{Json, OFormat}
 
-  object NotificationType {
-    val DecisionToControl          = "0"
-    val AdditionalDocumentsRequest = "1"
-    val IntentionToControl         = "2"
-  }
+case class Country(code: String, description: String) {
+  override def toString: String = s"$description - $code"
+}
 
-  object AdditionalDeclarationType {
-    val PreLodged = "D"
+object Country {
+  implicit val format: OFormat[Country] = Json.format[Country]
+
+  implicit val order: Order[Country] = (x: Country, y: Country) => {
+    (x, y).compareBy(_.description, _.code)
   }
 }

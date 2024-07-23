@@ -20,8 +20,8 @@ import base.SpecBase
 import cats.data.NonEmptySet
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import models.IncidentCode
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
+import models.{Country, IncidentCode}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
@@ -40,6 +40,10 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val customsOffice1  = CustomsOffice(customsOfficeId, "CO1", None)
   private val customsOffice2  = CustomsOffice("GB00002", "CO2", None)
   private val customsOffices  = NonEmptySet.of(customsOffice1, customsOffice2)
+
+  private val countryCode1 = "GB"
+  private val country1     = Country(countryCode1, "United Kingdom")
+  private val countries    = NonEmptySet.of(country1)
 
   private val controlTypeCode = "1"
   private val controlType1    = ControlType(controlTypeCode, "CT1")
@@ -92,6 +96,33 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
           service.getCustomsOffice(customsOfficeId).futureValue mustBe Left(customsOfficeId)
 
           verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams): _*)(any(), any())
+        }
+      }
+    }
+
+    "getCountries" - {
+
+      val expectedQueryParams = Seq("data.code" -> countryCode1)
+
+      "should return countries" in {
+        when(mockConnector.getCountries(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(countries))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getCountry(countryCode1).futureValue mustBe Right(country1)
+
+        verify(mockConnector).getCountries(eqTo(expectedQueryParams): _*)(any(), any())
+      }
+
+      "should return Left" - {
+        "when the connector call returns no data" in {
+          when(mockConnector.getCountries(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getCountry(countryCode1).futureValue mustBe Left(countryCode1)
+
+          verify(mockConnector).getCountries(eqTo(expectedQueryParams): _*)(any(), any())
         }
       }
     }
