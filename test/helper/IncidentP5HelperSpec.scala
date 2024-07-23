@@ -285,13 +285,22 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
         }
       }
 
-      "transhipmentSection must return a static section" in {
-        val helper = new IncidentP5Helper(incidentType03, refDataService)
-        val result = helper.replacementMeansOfTransportSection.futureValue
+      "transhipmentSection" - {
+        "must return a static section if Transhipment is defined" in {
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.replacementMeansOfTransportSection.futureValue.get
 
-        result mustBe a[StaticSection]
-        result.sectionTitle.get mustBe "Replacement means of transport"
-        result.rows.size mustBe 3
+          result mustBe a[StaticSection]
+          result.sectionTitle.get mustBe "Replacement means of transport"
+          result.rows.size mustBe 3
+        }
+
+        "must return None if Transhipment is not defined" in {
+          val helper = new IncidentP5Helper(incidentType03.copy(Transhipment = None), refDataService)
+          val result = helper.replacementMeansOfTransportSection.futureValue
+
+          result mustBe None
+        }
       }
 
       "transportEquipmentsSection" - {

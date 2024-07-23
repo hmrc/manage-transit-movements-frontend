@@ -16,6 +16,7 @@
 
 package utils
 
+import cats.implicits._
 import generated.IncidentType03
 import models.{DynamicAddress, RichAddressType18}
 import play.api.Logging
@@ -220,17 +221,19 @@ class IncidentP5Helper(
       }
       .getOrElse(Future.successful(None))
 
-  def replacementMeansOfTransportSection: Future[StaticSection] =
-    for {
-      registeredCountry  <- registeredCountryRow
-      identificationType <- identificationTypeRow
-    } yield StaticSection(
-      sectionTitle = Some(messages("departure.notification.incident.index.replacement.section.title")),
-      rows = Seq(
-        identificationType,
-        identificationRow,
-        registeredCountry
-      ).flatten
-    )
+  def replacementMeansOfTransportSection: Future[Option[StaticSection]] = data.Transhipment.map {
+    _ =>
+      for {
+        registeredCountry  <- registeredCountryRow
+        identificationType <- identificationTypeRow
+      } yield StaticSection(
+        sectionTitle = Some(messages("departure.notification.incident.index.replacement.section.title")),
+        rows = Seq(
+          identificationType,
+          identificationRow,
+          registeredCountry
+        ).flatten
+      )
+  }.sequence
 
 }

@@ -73,11 +73,11 @@ object IncidentP5ViewModel {
         replacementMeansOfTransportSection <- helper.replacementMeansOfTransportSection
       } yield {
         val sections = Seq(
-          incidentInformationSection,
-          helper.endorsementSection,
-          helper.transportEquipmentsSection,
+          Some(incidentInformationSection),
+          Some(helper.endorsementSection),
+          Some(helper.transportEquipmentsSection),
           replacementMeansOfTransportSection
-        )
+        ).flatten
 
         IncidentP5ViewModel(
           referenceNumbers.localReferenceNumber,
