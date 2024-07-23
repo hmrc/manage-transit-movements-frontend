@@ -347,24 +347,23 @@ object DepartureStatusP5ViewModel {
     departureId: String,
     messageId: String,
     hasMultipleIncidents: Boolean
-  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == IncidentDuringTransit =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.incidentDuringTransit",
-        actions = if (hasMultipleIncidents) {
+        actions = if (frontendAppConfig.isIE182Enabled) {
           Seq(
             ViewMovementAction(
               controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureId, messageId).url,
-              s"movement.status.P5.action.incidentDuringTransit.viewIncidents"
+              if (hasMultipleIncidents) {
+                "movement.status.P5.action.incidentDuringTransit.viewIncidents"
+              } else {
+                "movement.status.P5.action.incidentDuringTransit.viewIncident"
+              }
             )
           )
         } else {
-          Seq(
-            ViewMovementAction(
-              controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureId, messageId).url,
-              s"movement.status.P5.action.incidentDuringTransit.viewIncident"
-            )
-          )
+          Seq.empty
         }
       )
   }

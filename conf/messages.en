@@ -671,6 +671,9 @@ departure.notification.incident.index.address = Address
 departure.notification.incident.index.transportEquipment.heading = Transport equipment {0}
 departure.notification.incident.index.transportEquipment.containerIdentificationNumber = Container identification number
 
+departure.notification.incident.index.transportEquipment.seal.section.title = Seals
+departure.notification.incident.index.transportEquipment.seal.identificationNumber = Seal {0}
+
 departure.notification.incident.index.goodsReference.section.title = Goods item numbers
 departure.notification.incident.index.goodsReference.referenceNumber = Goods item number {0}
 
