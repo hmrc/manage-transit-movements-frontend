@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.DeparturesSummary
 import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -72,10 +73,12 @@ class DepartureCacheConnector @Inject() (
   }
 
   def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = url"$baseUrl/does-cache-exists-for-lrn/$lrn"
+    val url = url"$baseUrl/user-answers"
 
     http
       .get(url)
-      .execute[Boolean]
+      .transform(_.withQueryStringParameters("lrn" -> lrn))
+      .execute[DeparturesSummary]
+      .map(_.nonEmpty)
   }
 }

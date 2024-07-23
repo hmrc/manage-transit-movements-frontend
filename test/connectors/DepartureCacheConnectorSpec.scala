@@ -19,9 +19,12 @@ package connectors
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
+import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, JsBoolean, JsString, Json}
 import play.api.test.Helpers._
+
+import java.time.LocalDateTime
 
 class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockServerHandler {
 
@@ -66,12 +69,14 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
 
     "doesDeclarationExist" - {
 
-      val url = s"/manage-transit-movements-departure-cache/does-cache-exists-for-lrn/$lrn"
+      val url = s"/manage-transit-movements-departure-cache/user-answers?lrn=$lrn"
 
-      "must return true when response body contains true" in {
+      "must return true when response body contains user answers" in {
+        val body = DeparturesSummary(1, 1, List(DepartureUserAnswerSummary(lrn, LocalDateTime.now(), 1)))
+
         server.stubFor(
           get(urlEqualTo(url))
-            .willReturn(okJson(Json.stringify(JsBoolean(true))))
+            .willReturn(okJson(Json.stringify(Json.toJson(body))))
         )
 
         val result: Boolean = await(connector.doesDeclarationExist(lrn.toString))
@@ -79,10 +84,12 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
         result mustBe true
       }
 
-      "must return false when response body contains false" in {
+      "must return false when response body contains no user answers" in {
+        val body = DeparturesSummary()
+
         server.stubFor(
           get(urlEqualTo(url))
-            .willReturn(okJson(Json.stringify(JsBoolean(false))))
+            .willReturn(okJson(Json.stringify(Json.toJson(body))))
         )
 
         val result: Boolean = await(connector.doesDeclarationExist(lrn.toString))
