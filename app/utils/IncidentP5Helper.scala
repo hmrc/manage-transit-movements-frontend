@@ -207,5 +207,4 @@ class IncidentP5Helper(
       registeredCountry
     ).flatten
   )
-
 }

@@ -16,7 +16,7 @@
 
 package utils
 
-import generated.TransportEquipmentType07
+import generated.{GoodsReferenceType01, TransportEquipmentType07}
 import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -39,12 +39,36 @@ class IncidentP5TransportEquipmentHelper(
       call = None
     )
 
+  def goodsReferenceNumber(goodsReference: GoodsReferenceType01): Option[SummaryListRow] = buildRowFromAnswer[BigInt](
+    answer = Some(goodsReference.declarationGoodsItemNumber),
+    formatAnswer = formatAsText,
+    prefix = "departure.notification.incident.index.goodsReference.referenceNumber",
+    id = None,
+    call = None,
+    args = goodsReference.sequenceNumber
+  )
+
+  def goodsReferenceSection: AccordionSection = {
+    val rows = data.GoodsReference.map {
+      goodsReference =>
+        goodsReferenceNumber(goodsReference)
+    }
+
+    AccordionSection(
+      sectionTitle = Some(messages("departure.notification.incident.index.goodsReference.section.title")),
+      rows = rows.flatten
+    )
+  }
+
   def transportEquipmentSection: AccordionSection =
     AccordionSection(
       sectionTitle = Some(messages("departure.notification.incident.index.transportEquipment.heading", sequenceNumber)),
       rows = Seq(
         containerIdentificationNumberRow
       ).flatten,
+      children = Seq(
+        goodsReferenceSection
+      ),
       isOpen = sequenceNumber == "1"
     )
 

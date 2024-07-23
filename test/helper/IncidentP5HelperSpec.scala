@@ -203,7 +203,6 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           result.actions must not be defined
         }
       }
-
     }
 
     "sections" - {
