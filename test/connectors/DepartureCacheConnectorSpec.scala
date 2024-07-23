@@ -66,12 +66,12 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
 
     "doesDeclarationExist" - {
 
-      val url = s"/manage-transit-movements-departure-cache/does-cache-exists-for-lrn/$lrn"
+      val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn"
 
-      "must return true when response body contains true" in {
+      "must return true when response is OK" in {
         server.stubFor(
           get(urlEqualTo(url))
-            .willReturn(okJson(Json.stringify(JsBoolean(true))))
+            .willReturn(ok())
         )
 
         val result: Boolean = await(connector.doesDeclarationExist(lrn.toString))
@@ -79,10 +79,10 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
         result mustBe true
       }
 
-      "must return false when response body contains false" in {
+      "must return false when response is NOT_FOUND" in {
         server.stubFor(
           get(urlEqualTo(url))
-            .willReturn(okJson(Json.stringify(JsBoolean(false))))
+            .willReturn(aResponse().withStatus(NOT_FOUND))
         )
 
         val result: Boolean = await(connector.doesDeclarationExist(lrn.toString))
