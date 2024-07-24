@@ -24,7 +24,7 @@ import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncidentP5Helper, IncidentP5TranshipmentHelper}
+import utils.{IncidentEndorsementP5Helper, IncidentP5Helper, IncidentP5TranshipmentHelper}
 import viewModels.P5.ViewModelWithCustomsOffice
 import viewModels.sections.Section
 import viewModels.sections.Section.StaticSection
@@ -80,10 +80,10 @@ object IncidentP5ViewModel {
         }.sequence
 
       val endorsementSectionFuture: Future[Option[StaticSection]] =
-        incident.Transhipment.map {
-          transhipment =>
-            val helper = new IncidentP5TranshipmentHelper(transhipment, referenceDataService)
-            helper.replacementMeansOfTransportSection
+        incident.Endorsement.map {
+          endorsement =>
+            val helper = new IncidentEndorsementP5Helper(endorsement, referenceDataService)
+            helper.endorsementSection
         }.sequence
 
       for {
@@ -93,7 +93,7 @@ object IncidentP5ViewModel {
       } yield {
         val sections = Seq(
           Some(incidentInformationSection),
-          Some(endorsementSection),
+          endorsementSection,
           Some(helper.transportEquipmentsSection),
           transhipmentSection
         ).flatten

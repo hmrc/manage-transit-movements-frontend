@@ -16,28 +16,27 @@
 
 package utils
 
-import generated.{EndorsementType03, IncidentType03}
+import generated.EndorsementType03
 import play.api.Logging
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.http.HeaderCarrier
+import viewModels.sections.Section.StaticSection
 
 import javax.xml.datatype.XMLGregorianCalendar
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncidentEndorsementP5Helper(
-  data: IncidentType03,
+  endorsementType: EndorsementType03,
   refDataService: ReferenceDataService
 )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
     extends DeparturesP5MessageHelper
     with Logging {
 
-  private val displayIndex = data.sequenceNumber
-
   def endorsementDateRow: Option[SummaryListRow] =
     buildRowFromAnswer[XMLGregorianCalendar](
-      answer = data.Endorsement.map(_.date),
+      answer = Some(endorsementType.date),
       formatAnswer = formatAsDate,
       prefix = "departure.notification.incident.index.endorsement",
       id = None,
@@ -46,14 +45,14 @@ class IncidentEndorsementP5Helper(
 
   def authorityRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](
-      answer = data.Endorsement.map(_.authority),
+      answer = Some(endorsementType.authority),
       formatAnswer = formatAsText,
       prefix = "departure.notification.incident.index.authority",
       id = None,
       call = None
     )
 
-  def endorsementCountryRow(endorsementType: EndorsementType03): Future[Option[SummaryListRow]] =
+  def endorsementCountryRow: Future[Option[SummaryListRow]] =
     refDataService.getCountry(endorsementType.country) map {
       countryResponse =>
         val countryToDisplay = countryResponse.fold[String](identity, _.description)
@@ -61,18 +60,31 @@ class IncidentEndorsementP5Helper(
           answer = Some(countryToDisplay),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incident.index.endorsementCountry",
-          id = Some(s"country-$displayIndex"),
+          id = None,
           call = None
         )
     }
 
   def locationRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](
-      answer = data.Endorsement.map(_.place),
+      answer = Some(endorsementType.place),
       formatAnswer = formatAsText,
       prefix = "departure.notification.incident.index.location",
       id = None,
       call = None
+    )
+
+  def endorsementSection: Future[StaticSection] =
+    for {
+      endorsementCountry <- endorsementCountryRow
+    } yield StaticSection(
+      sectionTitle = Some(messages("departure.notification.incident.index.endorsement.section.title")),
+      rows = Seq(
+        endorsementDateRow,
+        authorityRow,
+        endorsementCountry,
+        locationRow
+      ).flatten
     )
 
 }

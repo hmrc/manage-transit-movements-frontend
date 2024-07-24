@@ -34,8 +34,6 @@ class IncidentP5Helper(
     extends DeparturesP5MessageHelper
     with Logging {
 
-  val helper = new IncidentEndorsementP5Helper(data, refDataService)
-
   def incidentCodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some("code"), // TODO: Pull from incident data
     formatAnswer = formatAsText,
@@ -114,22 +112,6 @@ class IncidentP5Helper(
         coordinatesRow,
         unLocodeRow,
         addressRow
-      ).flatten
-    )
-
-  def endorsementSection: Future[StaticSection] =
-    for {
-      endorsementCountryRow <- data.Endorsement match {
-        case Some(endorsement) => helper.endorsementCountryRow(endorsement)
-        case None              => Future.successful(None)
-      }
-    } yield StaticSection(
-      sectionTitle = Some(messages("departure.notification.incident.index.endorsement.section.title")),
-      rows = Seq(
-        helper.endorsementDateRow,
-        helper.authorityRow,
-        endorsementCountryRow,
-        helper.locationRow
       ).flatten
     )
 
