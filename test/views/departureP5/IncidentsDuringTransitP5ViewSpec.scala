@@ -27,7 +27,7 @@ class IncidentsDuringTransitP5ViewSpec extends DetailsListViewBehaviours with Ge
 
   private val isMultipleIncidents = arbitrary[Boolean].sample.value
 
-  override val prefix: String = if (isMultipleIncidents) "arrival.notification.incidents" else "arrival.notification.incident"
+  override val prefix: String = if (isMultipleIncidents) "departure.notification.incidents" else "departure.notification.incident"
 
   override def view: HtmlFormat.Appendable =
     injector.instanceOf[IncidentsDuringTransitP5View].apply(viewModel(isMultipleIncidents))(fakeRequest, messages)

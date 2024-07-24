@@ -37,16 +37,20 @@ class IncidentP5Helper(
 
   private val displayIndex = data.sequenceNumber
 
-  def incidentCodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("code"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.code",
-    id = None,
-    call = None
-  )
+  def incidentCodeRow: Future[Option[SummaryListRow]] =
+    refDataService.getIncidentCode(data.code).map {
+      incidentCode =>
+        buildRowFromAnswer[String](
+          answer = Some(incidentCode.toString),
+          formatAnswer = formatAsText,
+          prefix = "departure.notification.incident.index.code",
+          id = None,
+          call = None
+        )
+    }
 
-  def descriptionRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("description"), // TODO: Pull from incident data
+  def incidentDescriptionRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(data.text),
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.description",
     id = None,
@@ -106,11 +110,12 @@ class IncidentP5Helper(
   def incidentInformationSection: Future[StaticSection] =
     for {
       countryRowOption <- countryRow
+      incidentCodeRow  <- incidentCodeRow
     } yield StaticSection(
       sectionTitle = None,
       rows = Seq(
         incidentCodeRow,
-        descriptionRow,
+        incidentDescriptionRow,
         countryRowOption,
         identifierTypeRow,
         coordinatesRow,
