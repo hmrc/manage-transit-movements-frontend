@@ -111,12 +111,13 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "coordinatesRow" - {
         "must return a row" in {
+          val locationType = arbitraryLocationType02.arbitrary.sample.value.copy(GNSS = Some(GNSSType("90.1", "90.2")))
 
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val helper = new IncidentP5Helper(incidentType03.copy(Location = locationType), refDataService)
           val result = helper.coordinatesRow.value
 
           result.key.value mustBe "Coordinates"
-          result.value.value mustBe "coordinates"
+          result.value.value mustBe "(90.1, 90.2)"
           result.actions must not be defined
         }
       }

@@ -16,8 +16,9 @@
 
 package utils
 
-import generated.IncidentType03
+import generated.{GNSSType, IncidentType03}
 import models.{DynamicAddress, RichAddressType18}
+import play.api.Logging
 import play.api.Logging
 import play.api.i18n.Messages
 import services.ReferenceDataService
@@ -73,13 +74,14 @@ class IncidentP5Helper(
     call = None
   )
 
-  def coordinatesRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("coordinates"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.coordinates",
-    id = None,
-    call = None
-  )
+  def coordinatesRow: Option[SummaryListRow] =
+    buildRowFromAnswer[GNSSType](
+      answer = data.Location.GNSS,
+      formatAnswer = formatAsCoordinates,
+      prefix = "departure.notification.incident.index.coordinates",
+      id = None,
+      call = None
+    )
 
   def addressRow: Option[SummaryListRow] =
     data.Location.Address.flatMap {
