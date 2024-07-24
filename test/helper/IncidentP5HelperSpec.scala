@@ -17,7 +17,7 @@
 package helper
 
 import base.SpecBase
-import generated.AddressType18
+import generated.{AddressType18, GNSSType}
 import generators.Generators
 import models.{Country, RichAddressType18}
 import org.mockito.ArgumentMatchers.any
@@ -29,7 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import utils.IncidentP5Helper
-import viewModels.sections.Section.StaticSection
+import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -72,7 +72,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
       }
 
       "countryRow" - {
-        "must return a row with description when ref data look up is successfull" in {
+        "must return a row with description when ref data look up is successful" in {
           when(refDataService.getCountry(any())(any(), any()))
             .thenReturn(Future.successful(Right(Country(incidentType03.Location.country, "description"))))
 
@@ -83,18 +83,18 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           result.value.value mustBe "description"
           result.actions must not be defined
         }
-      }
 
-      "must return a row with description when ref data look up cannot find description" in {
-        when(refDataService.getCountry(any())(any(), any()))
-          .thenReturn(Future.successful(Left(incidentType03.Location.country)))
+        "must return a row with description when ref data look up cannot find description" in {
+          when(refDataService.getCountry(any())(any(), any()))
+            .thenReturn(Future.successful(Left(incidentType03.Location.country)))
 
-        val helper = new IncidentP5Helper(incidentType03, refDataService)
-        val result = helper.countryRow.futureValue.value
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.countryRow.futureValue.value
 
-        result.key.value mustBe "Country"
-        result.value.value mustBe incidentType03.Location.country
-        result.actions must not be defined
+          result.key.value mustBe "Country"
+          result.value.value mustBe incidentType03.Location.country
+          result.actions must not be defined
+        }
       }
 
       "identifierTypeRow" - {
@@ -212,11 +212,40 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
     "sections" - {
       "incidentInformationSection" - {
         "must return a static section" in {
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
-          val result = helper.incidentInformationSection.futureValue
+          val location = arbitraryLocationType02.arbitrary.sample.value.copy(
+            UNLocode = Some("unlocode"),
+            GNSS = Some(GNSSType("50.1", "50.2")),
+            Address = Some(AddressType18("streetAndNumber", None, "city"))
+          )
+
+          val incident = incidentType03.copy(Location = location)
+          val helper   = new IncidentP5Helper(incident, refDataService)
+          val result   = helper.incidentInformationSection.futureValue
 
           result mustBe a[StaticSection]
           result.rows.size mustBe 7
+        }
+      }
+
+      "transportEquipmentsSection" - {
+        "must return a static section" in {
+          val transportEquipment1 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = "1")
+          val transportEquipment2 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = "2")
+          val transportEquipments = Seq(transportEquipment1, transportEquipment2)
+          val helper              = new IncidentP5Helper(incidentType03.copy(TransportEquipment = transportEquipments), refDataService)
+          val result              = helper.transportEquipmentsSection
+
+          result mustBe a[StaticSection]
+          result.rows.size mustBe 0
+          result.children.size mustBe 2
+
+          result.children.head mustBe a[AccordionSection]
+          result.children.head.sectionTitle mustBe Some("Transport equipment 1")
+          result.children.head.isOpen mustBe true
+
+          result.children(1) mustBe a[AccordionSection]
+          result.children(1).sectionTitle mustBe Some("Transport equipment 2")
+          result.children(1).isOpen mustBe false
         }
       }
     }
