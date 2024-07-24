@@ -45,8 +45,8 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       .guiceApplicationBuilder()
       .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
-  private val country  = Country("GB", "United Kingdom")
-  private val incident = IncidentCode("code", "text")
+  private val country        = Country("GB", "United Kingdom")
+  private val incident       = IncidentCode("code", "text")
   private val identification = QualifierOfIdentification("U", "UN/LOCODE")
 
   override def beforeEach(): Unit = {

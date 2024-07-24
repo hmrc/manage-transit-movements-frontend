@@ -113,17 +113,16 @@ class IncidentP5Helper(
 
   def incidentInformationSection: Future[StaticSection] =
     for {
-      country <- countryRow
-      incidentCodeRow  <- incidentCodeRow
-      identification <- identifierTypeRow
+      country         <- countryRow
+      incidentCodeRow <- incidentCodeRow
+      identification  <- identifierTypeRow
     } yield StaticSection(
       sectionTitle = None,
       rows = Seq(
         incidentCodeRow,
         incidentDescriptionRow,
-        identifierTypeRow,
-        country,
         identification,
+        country,
         coordinatesRow,
         unLocodeRow,
         addressRow
