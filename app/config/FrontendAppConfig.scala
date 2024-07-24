@@ -25,8 +25,9 @@ import play.api.mvc.Request
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
-  val phase4Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isPhase4Enabled")
-  val phase5Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isPhase5Enabled")
+  val phase4Enabled: Boolean  = configuration.get[Boolean]("microservice.services.features.isPhase4Enabled")
+  val phase5Enabled: Boolean  = configuration.get[Boolean]("microservice.services.features.isPhase5Enabled")
+  val isIE182Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isIE182Enabled")
 
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
   val showUserResearchBanner: Boolean = configuration.get[Boolean]("banners.showUserResearch")
