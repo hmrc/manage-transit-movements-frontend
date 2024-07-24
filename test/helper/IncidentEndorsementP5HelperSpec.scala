@@ -17,19 +17,17 @@
 package helper
 
 import base.SpecBase
-import generated.{AddressType18, GNSSType}
 import generators.Generators
-import models.{Country, RichAddressType18}
+import models.Country
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import scalaxb.XMLCalendar
 import services.ReferenceDataService
-import utils.{IncidentEndorsementP5Helper, IncidentP5Helper}
-import viewModels.sections.Section.{AccordionSection, StaticSection}
+import utils.IncidentEndorsementP5Helper
+import viewModels.sections.Section.StaticSection
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
