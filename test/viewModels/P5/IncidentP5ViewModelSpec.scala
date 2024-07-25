@@ -19,12 +19,13 @@ package viewModels.P5
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.Country
+import models.{Country, IncidentCode}
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
+import models.{Country, LocalReferenceNumber, QualifierOfIdentification}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.Arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -44,13 +45,19 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       .guiceApplicationBuilder()
       .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
-  private val country = Country("GB", "United Kingdom")
+  private val country        = Country("GB", "United Kingdom")
+  private val incident       = IncidentCode("code", "text")
+  private val identification = QualifierOfIdentification("U", "UN/LOCODE")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockReferenceDataService)
+    when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
+      .thenReturn(Future.successful(incident))
     when(mockReferenceDataService.getCountry(any())(any(), any()))
       .thenReturn(Future.successful(Right(country)))
+    when(mockReferenceDataService.getQualifierOfIdentification(any())(any(), any()))
+      .thenReturn(Future.successful(Right(identification)))
   }
 
   "IncidentP5ViewModel" - {
@@ -73,27 +80,24 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       viewModelProvider.apply(cc182Data, mockReferenceDataService, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex).futureValue
 
     "viewModel must have correct sections" in {
-      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-        (code, text) =>
-          val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
-            code = code,
-            text = text
-          )
+      val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
+        code = incident.code,
+        text = "text"
+      )
 
-          val updatedConsignment = cc182Data.Consignment.copy(
-            Incident = Seq(updatedIncident, updatedIncident)
-          )
+      val updatedConsignment = cc182Data.Consignment.copy(
+        Incident = Seq(updatedIncident, updatedIncident)
+      )
 
-          val modifiedCC182CType = cc182Data.copy(
-            Consignment = updatedConsignment
-          )
+      val modifiedCC182CType = cc182Data.copy(
+        Consignment = updatedConsignment
+      )
 
-          val modifiedViewModel = viewModel(modifiedCC182CType)
+      val modifiedViewModel = viewModel(modifiedCC182CType)
 
-          val sections = modifiedViewModel.sections
+      val sections = modifiedViewModel.sections
 
-          sections.length mustBe 4
-      }
+      sections.length mustBe 4
     }
 
     "title" - {

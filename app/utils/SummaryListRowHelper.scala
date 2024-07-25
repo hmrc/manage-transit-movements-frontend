@@ -16,7 +16,7 @@
 
 package utils
 
-import generated.RecoveryNotificationType
+import generated.{GNSSType, RecoveryNotificationType}
 import models.DynamicAddress
 import play.api.i18n.Messages
 import play.api.mvc.Call
@@ -46,6 +46,9 @@ class SummaryListRowHelper(implicit messages: Messages) {
 
   protected def formatAsDynamicAddress(address: DynamicAddress): Content =
     HtmlContent(address.toString)
+
+  protected def formatAsCoordinates(answer: GNSSType): Content =
+    s"(${answer.latitude}, ${answer.longitude})".toText
 
   def formatAsDate(answer: XMLGregorianCalendar): Content = {
     val date      = answer.toGregorianCalendar.getTime

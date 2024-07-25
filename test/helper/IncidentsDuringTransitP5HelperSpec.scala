@@ -19,15 +19,15 @@ package helper
 import base.SpecBase
 import generated.CC182CType
 import generators.Generators
-import models.{IncidentCode, Index, Link}
 import models.referenceData.CustomsOffice
+import models.{Country, IncidentCode, Index, Link}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import scalaxb.XMLCalendar
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
+import scalaxb.XMLCalendar
 import services.ReferenceDataService
 import utils.IncidentsDuringTransitP5Helper
 import viewModels.sections.Section.{AccordionSection, StaticSection}
@@ -44,6 +44,8 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
     super
       .guiceApplicationBuilder()
       .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
+
+  private val incident = IncidentCode("code", "text")
 
   "ConsignmentAnswersHelper" - {
 
@@ -173,72 +175,20 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
           }
         }
       }
-
-      "incidentCodeRow" - {
-        "must return a row" in {
-          forAll(Gen.alphaNumStr) {
-            value =>
-              val incidentCode = IncidentCode(
-                "1",
-                "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
-              )
-
-              when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
-                .thenReturn(Future.successful(incidentCode))
-
-              val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
-                code = value
-              )
-
-              val updatedConsignment = CC182CType.Consignment.copy(
-                Incident = Seq(updatedIncident)
-              )
-
-              val modifiedCC182CType = CC182CType.copy(
-                Consignment = updatedConsignment
-              )
-
-              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.incidentCodeRow(incidentIndex).futureValue.value
-
-              result.key.value mustBe "Incident code"
-              result.value.value mustBe
-                "1 - The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
-              result.actions must not be defined
-          }
-        }
-      }
-
-      "incidentDescriptionRow" - {
-        "must return a row" in {
-          forAll(Gen.alphaNumStr) {
-            value =>
-              val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
-                text = value
-              )
-
-              val updatedConsignment = CC182CType.Consignment.copy(
-                Incident = Seq(updatedIncident)
-              )
-
-              val modifiedCC182CType = CC182CType.copy(
-                Consignment = updatedConsignment
-              )
-
-              val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.incidentDescriptionRow(incidentIndex).value
-
-              result.key.value mustBe "Description"
-              result.value.value mustBe value
-              result.actions must not be defined
-          }
-        }
-      }
     }
 
     "sections" - {
       "incidentInformationSection" - {
         "must return a static section" in {
+
+          val country       = Country("code", "description")
+          val customsOffice = CustomsOffice("code", "description", None)
+
+          when(mockReferenceDataService.getCountry(any())(any(), any()))
+            .thenReturn(Future.successful(Right(country)))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
+            .thenReturn(Future.successful(Right(customsOffice)))
+
           val helper = new IncidentsDuringTransitP5Helper(CC182CType, isMultipleIncidents = true, mockReferenceDataService)
           val result = helper.incidentInformationSection.futureValue
 
@@ -251,6 +201,9 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
         "must return a accordion section" in {
           forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
             (code, text) =>
+              when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
+                .thenReturn(Future.successful(incident))
+
               val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
                 code = code,
                 text = text
@@ -279,6 +232,9 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
         "must return 2 child accordion sections when 2 incidents defined" in {
           forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
             (code, text) =>
+              when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
+                .thenReturn(Future.successful(incident))
+
               val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
                 code = code,
                 text = text

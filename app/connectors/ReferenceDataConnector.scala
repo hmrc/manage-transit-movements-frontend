@@ -21,7 +21,7 @@ import cats.data.NonEmptySet
 import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
-import models.{Country, IncidentCode}
+import models.{Country, IncidentCode, QualifierOfIdentification}
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Reads}
@@ -56,6 +56,17 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .transform(_.withQueryStringParameters(queryParams: _*))
       .setHeader(version2Header)
       .execute[NonEmptySet[Country]]
+  }
+
+  def getQualifierOfIdentifications(
+    queryParams: QueryParams*
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[QualifierOfIdentification]] = {
+    val url = url"${config.customsReferenceDataUrl}/lists/QualifierOfTheIdentification"
+    http
+      .get(url)
+      .transform(_.withQueryStringParameters(queryParams: _*))
+      .setHeader(version2Header)
+      .execute[NonEmptySet[QualifierOfIdentification]]
   }
 
   def getIncidentCodes(
