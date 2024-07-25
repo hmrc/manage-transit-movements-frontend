@@ -34,8 +34,6 @@ class IncidentP5Helper(
     extends DeparturesP5MessageHelper
     with Logging {
 
-  private val displayIndex = data.sequenceNumber
-
   def incidentCodeRow: Future[Option[SummaryListRow]] =
     refDataService.getIncidentCode(data.code).map {
       incidentCode =>
@@ -64,7 +62,7 @@ class IncidentP5Helper(
           answer = Some(countryToDisplay),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incident.index.country",
-          id = Some(s"country-$displayIndex"),
+          id = None,
           call = None
         )
     }
@@ -77,7 +75,7 @@ class IncidentP5Helper(
           answer = Some(identification),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incident.index.identifierType",
-          id = Some(s"identifierType-$displayIndex"),
+          id = None,
           call = None
         )
     }
@@ -107,7 +105,7 @@ class IncidentP5Helper(
     answer = data.Location.UNLocode,
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.unLocode",
-    id = Some(s"unLocode-$displayIndex"),
+    id = None,
     call = None
   )
 
@@ -187,36 +185,4 @@ class IncidentP5Helper(
     )
   }
 
-  def identificationTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("Identification type"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.identificationType",
-    id = None,
-    call = None
-  )
-
-  def identificationRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("Identification"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.identification",
-    id = None,
-    call = None
-  )
-
-  def registeredCountry: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("Registered Country"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.registeredCountry",
-    id = None,
-    call = None
-  )
-
-  def replacementMeansOfTransportSection: StaticSection = StaticSection(
-    sectionTitle = Some(messages("departure.notification.incident.index.replacement.section.title")),
-    rows = Seq(
-      identificationTypeRow,
-      identificationRow,
-      registeredCountry
-    ).flatten
-  )
 }

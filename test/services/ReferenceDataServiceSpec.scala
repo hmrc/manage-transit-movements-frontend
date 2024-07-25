@@ -21,7 +21,7 @@ import cats.data.NonEmptySet
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
-import models.{Country, IncidentCode, QualifierOfIdentification}
+import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
@@ -48,6 +48,14 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val identificationCode = "U"
   private val identification     = QualifierOfIdentification("U", "UN/LOCODE")
   private val identifications    = NonEmptySet.of(identification)
+
+  private val identificationTypeCode = "10"
+  private val identificationType     = IdentificationType(identificationTypeCode, "IMO Ship Identification Number")
+  private val identificationTypes    = NonEmptySet.of(identificationType)
+
+  private val nationalityCode = "GB"
+  private val nationality     = Nationality(nationalityCode, "British")
+  private val nationalities   = NonEmptySet.of(nationality)
 
   private val controlTypeCode = "1"
   private val controlType1    = ControlType(controlTypeCode, "CT1")
@@ -104,7 +112,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       }
     }
 
-    "getCountries" - {
+    "getCountry" - {
 
       val expectedQueryParams = Seq("data.code" -> countryCode1)
 
@@ -154,6 +162,60 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
           service.getQualifierOfIdentification(identificationCode).futureValue mustBe Left(identificationCode)
 
           verify(mockConnector).getQualifierOfIdentifications(eqTo(expectedQueryParams): _*)(any(), any())
+        }
+      }
+    }
+
+    "getIdentificationType" - {
+
+      val expectedQueryParams = Seq("data.type" -> identificationTypeCode)
+
+      "should return identification type" in {
+        when(mockConnector.getIdentificationTypes(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(identificationTypes))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getIdentificationType(identificationTypeCode).futureValue mustBe Right(identificationType)
+
+        verify(mockConnector).getIdentificationTypes(eqTo(expectedQueryParams): _*)(any(), any())
+      }
+
+      "should return Left" - {
+        "when the connector call returns no data" in {
+          when(mockConnector.getIdentificationTypes(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getIdentificationType(identificationTypeCode).futureValue mustBe Left(identificationTypeCode)
+
+          verify(mockConnector).getIdentificationTypes(eqTo(expectedQueryParams): _*)(any(), any())
+        }
+      }
+    }
+
+    "getNationalities" - {
+
+      val expectedQueryParams = Seq("data.code" -> nationalityCode)
+
+      "should return nationalities" in {
+        when(mockConnector.getNationalities(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(nationalities))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getNationality(nationalityCode).futureValue mustBe Right(nationality)
+
+        verify(mockConnector).getNationalities(eqTo(expectedQueryParams): _*)(any(), any())
+      }
+
+      "should return Left" - {
+        "when the connector call returns no data" in {
+          when(mockConnector.getNationalities(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getNationality(nationalityCode).futureValue mustBe Left(nationalityCode)
+
+          verify(mockConnector).getNationalities(eqTo(expectedQueryParams): _*)(any(), any())
         }
       }
     }

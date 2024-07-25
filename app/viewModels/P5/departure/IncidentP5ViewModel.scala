@@ -16,6 +16,7 @@
 
 package viewModels.P5.departure
 
+import cats.implicits.toTraverseOps
 import generated.CC182CType
 import models.Index
 import models.departureP5.DepartureReferenceNumbers
@@ -23,9 +24,10 @@ import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncidentP5Helper
+import utils.{IncidentP5Helper, IncidentP5TranshipmentHelper}
 import viewModels.P5.ViewModelWithCustomsOffice
 import viewModels.sections.Section
+import viewModels.sections.Section.StaticSection
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -66,17 +68,27 @@ object IncidentP5ViewModel {
       incidentIndex: Index
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentP5ViewModel] = {
 
-      val helper = new IncidentP5Helper(data.Consignment.Incident(incidentIndex.position), referenceDataService)
+      val incident = data.Consignment.Incident(incidentIndex.position)
+      val helper   = new IncidentP5Helper(incident, referenceDataService)
+
+      val incidentInformationSectionFuture = helper.incidentInformationSection
+      val transhipmentSectionFuture: Future[Option[StaticSection]] =
+        incident.Transhipment.map {
+          transhipment =>
+            val helper = new IncidentP5TranshipmentHelper(transhipment, referenceDataService)
+            helper.replacementMeansOfTransportSection
+        }.sequence
 
       for {
-        incidentInformationSection <- helper.incidentInformationSection
+        incidentInformationSection <- incidentInformationSectionFuture
+        transhipmentSection        <- transhipmentSectionFuture
       } yield {
         val sections = Seq(
-          incidentInformationSection,
-          helper.endorsementSection,
-          helper.transportEquipmentsSection,
-          helper.replacementMeansOfTransportSection
-        )
+          Some(incidentInformationSection),
+          Some(helper.endorsementSection),
+          Some(helper.transportEquipmentsSection),
+          transhipmentSection
+        ).flatten
 
         IncidentP5ViewModel(
           referenceNumbers.localReferenceNumber,
