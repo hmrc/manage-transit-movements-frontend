@@ -21,10 +21,12 @@ import controllers.actions._
 import generated.CC056CType
 import models.RichCC056CType
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
+import models.departureP5.Rejection
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.BusinessRejectionTypeService
+import services.AmendmentService
+import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
 import viewModels.pagination.ListPaginationViewModel
@@ -39,7 +41,7 @@ class RejectionMessageP5Controller @Inject() (
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
-  businessRejectionTypeService: BusinessRejectionTypeService,
+  service: AmendmentService,
   view: RejectionMessageP5View
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
@@ -53,7 +55,7 @@ class RejectionMessageP5Controller @Inject() (
         val lrn                   = request.referenceNumbers.localReferenceNumber
         val xPaths                = request.messageData.xPaths
 
-        businessRejectionTypeService.canProceedWithAmendment(businessRejectionType, lrn, xPaths).flatMap {
+        service.canProceedWithAmendment(businessRejectionType, lrn, xPaths).flatMap {
           case true =>
             val currentPage = page.getOrElse(1)
 
@@ -84,11 +86,11 @@ class RejectionMessageP5Controller @Inject() (
             )
           case _ =>
             logger.warn(s"[RejectionMessageP5Controller] Could not proceed with amending $departureId")
-            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
         }
     }
 
-  def onAmend(departureId: String, messageId: String): Action[AnyContent] =
+  def onSubmit(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
         val businessRejectionType = DepartureBusinessRejectionType(request.messageData)
@@ -96,16 +98,11 @@ class RejectionMessageP5Controller @Inject() (
         val xPaths                = request.messageData.xPaths
         val mrn                   = request.referenceNumbers.movementReferenceNumber
 
-        businessRejectionTypeService.canProceedWithAmendment(businessRejectionType, lrn, xPaths).flatMap {
-          case true =>
-            businessRejectionTypeService.handleErrors(businessRejectionType, lrn, xPaths).map {
-              case true =>
-                Redirect(businessRejectionTypeService.nextPage(businessRejectionType, lrn, departureId, mrn))
-              case false =>
-                Redirect(controllers.routes.ErrorController.technicalDifficulties())
-            }
-          case false =>
-            Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+        service.handleErrors(lrn, Rejection(departureId, businessRejectionType, xPaths)).map {
+          case response if is2xx(response.status) =>
+            Redirect(service.nextPage(businessRejectionType, lrn, mrn))
+          case _ =>
+            Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
     }
 }

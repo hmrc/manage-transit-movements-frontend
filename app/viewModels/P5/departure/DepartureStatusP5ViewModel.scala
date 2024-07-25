@@ -107,7 +107,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.declarationAmendmentAccepted",
         actions = Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.departureAmendmentUrl(lrn, departureId)}",
+            controllers.departureP5.routes.AmendmentController.prepareForAmendment(departureId).url,
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           )
         ) ++ prelodgeAction
@@ -123,7 +123,7 @@ object DepartureStatusP5ViewModel {
         "movement.status.P5.allocatedMRN",
         actions = Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.departureAmendmentUrl(lrn, departureId)}",
+            controllers.departureP5.routes.AmendmentController.prepareForAmendment(departureId).url,
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           ),
           ViewMovementAction(
@@ -379,7 +379,7 @@ object DepartureStatusP5ViewModel {
         actions = if (prelodged) {
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.departureAmendmentUrl(lrn, departureId)}",
+              controllers.departureP5.routes.AmendmentController.prepareForAmendment(departureId).url,
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             ),
             ViewMovementAction(
