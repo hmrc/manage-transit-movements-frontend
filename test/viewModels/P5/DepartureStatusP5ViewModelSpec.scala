@@ -168,7 +168,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.declarationAmendmentAccepted",
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureIdP5)}",
+              controllers.departureP5.routes.AmendmentController.prepareForAmendment(departureIdP5).url,
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             ),
             ViewMovementAction(
@@ -208,7 +208,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.declarationAmendmentAccepted",
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureIdP5)}",
+              controllers.departureP5.routes.AmendmentController.prepareForAmendment(departureIdP5).url,
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             )
           )
@@ -288,7 +288,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         "movement.status.P5.allocatedMRN",
         Seq(
           ViewMovementAction(
-            s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureIdP5)}",
+            controllers.departureP5.routes.AmendmentController.prepareForAmendment(departureIdP5).url,
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           ),
           ViewMovementAction(
@@ -976,7 +976,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           "movement.status.P5.declarationSent",
           Seq(
             ViewMovementAction(
-              s"${frontendAppConfig.departureAmendmentUrl(lrn.value, departureIdP5)}",
+              controllers.departureP5.routes.AmendmentController.prepareForAmendment(departureIdP5).url,
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             ),
             ViewMovementAction(

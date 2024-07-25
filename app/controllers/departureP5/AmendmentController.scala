@@ -18,54 +18,31 @@ package controllers.departureP5
 
 import config.FrontendAppConfig
 import controllers.actions._
-import generated.CC055CType
-import models.departureP5.Rejection
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.AmendmentService
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
-import views.html.departureP5.GuaranteeRejectedP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class GuaranteeRejectedP5Controller @Inject() (
+class AmendmentController @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
-  messageRetrievalAction: DepartureMessageRetrievalActionProvider,
+  departureRetrievalAction: DepartureRetrievalActionProvider,
   cc: MessagesControllerComponents,
-  view: GuaranteeRejectedP5View,
   service: AmendmentService,
   frontendAppConfig: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
-  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
+  def prepareForAmendment(departureId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen departureRetrievalAction(departureId)).async {
       implicit request =>
         val lrn = request.referenceNumbers.localReferenceNumber
-        service.doesDeclarationExist(lrn).map {
-          isAmendable =>
-            val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
-              request.messageData.GuaranteeReference,
-              lrn,
-              isAmendable,
-              request.messageData.TransitOperation.MRN,
-              request.messageData.TransitOperation.declarationAcceptanceDate
-            )
-
-            Ok(view(viewModel, departureId, messageId))
-        }
-    }
-
-  def onSubmit(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
-      implicit request =>
-        val lrn = request.referenceNumbers.localReferenceNumber
-        service.handleErrors(lrn, Rejection(departureId)).map {
+        service.prepareForAmendment(lrn, departureId).map {
           case response if is2xx(response.status) =>
             Redirect(frontendAppConfig.departureFrontendTaskListUrl(lrn))
           case _ =>

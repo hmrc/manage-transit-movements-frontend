@@ -19,12 +19,13 @@ package services
 import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
 import models.departureP5.BusinessRejectionType._
-import uk.gov.hmrc.http.HeaderCarrier
+import models.departureP5.Rejection
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class BusinessRejectionTypeService @Inject() (
+class AmendmentService @Inject() (
   cacheConnector: DepartureCacheConnector,
   config: FrontendAppConfig
 ) {
@@ -36,41 +37,29 @@ class BusinessRejectionTypeService @Inject() (
   )(implicit hc: HeaderCarrier): Future[Boolean] =
     businessRejectionType match {
       case AmendmentRejection =>
-        cacheConnector.doesDeclarationExist(lrn)
+        doesDeclarationExist(lrn)
       case DeclarationRejection =>
         cacheConnector.isDeclarationAmendable(lrn, xPaths)
     }
 
-  def handleErrors(
-    businessRejectionType: DepartureBusinessRejectionType,
-    lrn: String,
-    xPaths: Seq[String]
-  )(implicit hc: HeaderCarrier): Future[Boolean] =
-    businessRejectionType match {
-      case AmendmentRejection =>
-        cacheConnector.handleAmendmentErrors(lrn, xPaths)
-      case DeclarationRejection =>
-        if (xPaths.nonEmpty) {
-          cacheConnector.handleErrors(lrn, xPaths)
-        } else {
-          Future.successful(false)
-        }
-    }
+  def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    cacheConnector.doesDeclarationExist(lrn)
+
+  def handleErrors(lrn: String, rejection: Rejection)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    cacheConnector.handleErrors(lrn, rejection)
+
+  def prepareForAmendment(lrn: String, departureId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    cacheConnector.prepareForAmendment(lrn, departureId)
 
   def nextPage(
     businessRejectionType: DepartureBusinessRejectionType,
     lrn: String,
-    departureId: String,
     mrn: Option[String]
   ): String =
     businessRejectionType match {
-      case AmendmentRejection =>
-        config.departureAmendmentUrl(lrn, departureId)
-      case DeclarationRejection =>
-        if (mrn.isDefined) {
-          config.departureNewLocalReferenceNumberUrl(lrn)
-        } else {
-          config.departureFrontendTaskListUrl(lrn)
-        }
+      case DeclarationRejection if mrn.isDefined =>
+        config.departureNewLocalReferenceNumberUrl(lrn)
+      case _ =>
+        config.departureFrontendTaskListUrl(lrn)
     }
 }

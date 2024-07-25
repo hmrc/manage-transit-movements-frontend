@@ -57,7 +57,7 @@
     </p>
 
     @if(viewModel.isAmendable) {
-        @formHelper(action = routes.GuaranteeRejectedP5Controller.onAmend(departureId, messageId), Symbol("autoComplete") -> "off") {
+        @formHelper(action = routes.GuaranteeRejectedP5Controller.onSubmit(departureId, messageId), Symbol("autoComplete") -> "off") {
             @button(
                 attributes = Map("id" -> "submit"),
                 messageKey = messages("site.amendErrors")

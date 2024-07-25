@@ -19,9 +19,12 @@ package connectors
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helper.WireMockServerHandler
+import models.departureP5.BusinessRejectionType.AmendmentRejection
+import models.departureP5.Rejection
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, JsBoolean, JsString, Json}
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HttpResponse
 
 class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockServerHandler {
 
@@ -36,7 +39,7 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
 
     "isDeclarationAmendable" - {
 
-      val url    = s"/manage-transit-movements-departure-cache/x-paths/$lrn/is-declaration-amendable"
+      val url    = s"/manage-transit-movements-departure-cache/user-answers/$lrn/is-amendable"
       val xPaths = Seq("foo", "bar")
 
       "must return true when response body contains true" in {
@@ -91,61 +94,40 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
       }
     }
 
-    "handleGuaranteeRejection" - {
+    "handleErrors" - {
 
-      val url = s"/manage-transit-movements-departure-cache/x-paths/$lrn/handle-guarantee-errors"
-
-      "must return true when response body contains true" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(okJson(Json.stringify(JsBoolean(true))))
-        )
-
-        val result: Boolean = await(connector.handleGuaranteeRejection(lrn.toString))
-
-        result mustBe true
-      }
-
-      "must return false when response body contains false" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(okJson(Json.stringify(JsBoolean(false))))
-        )
-
-        val result: Boolean = await(connector.handleGuaranteeRejection(lrn.toString))
-
-        result mustBe false
-      }
-    }
-
-    "handleAmendmentErrors" - {
-
-      val url = s"/manage-transit-movements-departure-cache/x-paths/$lrn/handle-amendment-errors"
+      val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn/errors"
 
       val xPaths = Seq("/TransitOperation", "/Authorisations")
 
-      "must return true when response body contains true" in {
+      "must return OK when request succeeds" in {
         server.stubFor(
           post(urlEqualTo(url))
-            .willReturn(okJson(Json.stringify(JsBoolean(true))))
+            .willReturn(ok())
         )
 
-        val result: Boolean = await(connector.handleAmendmentErrors(lrn.toString, xPaths))
+        val rejection = Rejection(departureIdP5, AmendmentRejection, xPaths)
 
-        result mustBe true
-      }
+        val result: HttpResponse = await(connector.handleErrors(lrn.toString, rejection))
 
-      "must return false when response body contains false" in {
-        server.stubFor(
-          post(urlEqualTo(url))
-            .willReturn(okJson(Json.stringify(JsBoolean(false))))
-        )
-
-        val result: Boolean = await(connector.handleAmendmentErrors(lrn.toString, xPaths))
-
-        result mustBe false
+        result.status mustBe OK
       }
     }
 
+    "prepareForAmendment" - {
+
+      val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn"
+
+      "must return OK when request succeeds" in {
+        server.stubFor(
+          patch(urlEqualTo(url))
+            .willReturn(ok())
+        )
+
+        val result: HttpResponse = await(connector.prepareForAmendment(lrn.toString, departureIdP5))
+
+        result.status mustBe OK
+      }
+    }
   }
 }
