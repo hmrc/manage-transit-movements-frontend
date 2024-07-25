@@ -19,7 +19,7 @@ package helper
 import base.SpecBase
 import generated.{AddressType18, GNSSType}
 import generators.Generators
-import models.{Country, IncidentCode, RichAddressType18}
+import models.{Country, IncidentCode, QualifierOfIdentification, RichAddressType18}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
@@ -103,27 +103,41 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           result.value.value mustBe "description"
           result.actions must not be defined
         }
-      }
 
-      "must return a row with description when ref data look up cannot find description" in {
-        when(refDataService.getCountry(any())(any(), any()))
-          .thenReturn(Future.successful(Left(incidentType03.Location.country)))
+        "must return a row with description when ref data look up cannot find description" in {
+          when(refDataService.getCountry(any())(any(), any()))
+            .thenReturn(Future.successful(Left(incidentType03.Location.country)))
 
-        val helper = new IncidentP5Helper(incidentType03, refDataService)
-        val result = helper.countryRow.futureValue.value
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.countryRow.futureValue.value
 
-        result.key.value mustBe "Country"
-        result.value.value mustBe incidentType03.Location.country
-        result.actions must not be defined
+          result.key.value mustBe "Country"
+          result.value.value mustBe incidentType03.Location.country
+          result.actions must not be defined
+        }
       }
 
       "identifierTypeRow" - {
-        "must return a row" in {
+        "must return a row with description when ref data look up is successful" in {
+          when(refDataService.getQualifierOfIdentification(any())(any(), any()))
+            .thenReturn(Future.successful(Right(QualifierOfIdentification(incidentType03.Location.qualifierOfIdentification, "description"))))
 
           val helper = new IncidentP5Helper(incidentType03, refDataService)
-          val result = helper.identifierTypeRow.value
+          val result = helper.identifierTypeRow.futureValue.value
 
-          result.key.value mustBe "Identifier Type"
+          result.key.value mustBe "Identifier type"
+          result.value.value mustBe "description"
+          result.actions must not be defined
+        }
+
+        "must return a row with description when ref data look up cannot find description" in {
+          when(refDataService.getQualifierOfIdentification(any())(any(), any()))
+            .thenReturn(Future.successful(Left(incidentType03.Location.qualifierOfIdentification)))
+
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.identifierTypeRow.futureValue.value
+
+          result.key.value mustBe "Identifier type"
           result.value.value mustBe incidentType03.Location.qualifierOfIdentification
           result.actions must not be defined
         }

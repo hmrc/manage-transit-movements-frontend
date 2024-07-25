@@ -21,7 +21,7 @@ import cats.data.NonEmptySet
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
-import models.{Country, IncidentCode}
+import models.{Country, IncidentCode, QualifierOfIdentification}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
@@ -44,6 +44,10 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val countryCode1 = "GB"
   private val country1     = Country(countryCode1, "United Kingdom")
   private val countries    = NonEmptySet.of(country1)
+
+  private val identificationCode = "U"
+  private val identification     = QualifierOfIdentification("U", "UN/LOCODE")
+  private val identifications    = NonEmptySet.of(identification)
 
   private val controlTypeCode = "1"
   private val controlType1    = ControlType(controlTypeCode, "CT1")
@@ -123,6 +127,33 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
           service.getCountry(countryCode1).futureValue mustBe Left(countryCode1)
 
           verify(mockConnector).getCountries(eqTo(expectedQueryParams): _*)(any(), any())
+        }
+      }
+    }
+
+    "getQualifierOfIdentification" - {
+
+      val expectedQueryParams = Seq("data.qualifier" -> identificationCode)
+
+      "should return countries" in {
+        when(mockConnector.getQualifierOfIdentifications(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(identifications))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getQualifierOfIdentification(identificationCode).futureValue mustBe Right(identification)
+
+        verify(mockConnector).getQualifierOfIdentifications(eqTo(expectedQueryParams): _*)(any(), any())
+      }
+
+      "should return Left" - {
+        "when the connector call returns no data" in {
+          when(mockConnector.getQualifierOfIdentifications(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
+
+          val service = new ReferenceDataServiceImpl(mockConnector)
+
+          service.getQualifierOfIdentification(identificationCode).futureValue mustBe Left(identificationCode)
+
+          verify(mockConnector).getQualifierOfIdentifications(eqTo(expectedQueryParams): _*)(any(), any())
         }
       }
     }
