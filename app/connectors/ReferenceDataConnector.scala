@@ -20,7 +20,7 @@ import cats.Order
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
 import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import play.api.Logging
 import play.api.http.Status.OK
@@ -127,6 +127,15 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
       .setHeader(version2Header)
       .transform(_.withQueryStringParameters(queryParams: _*))
       .execute[NonEmptySet[FunctionalErrorWithDesc]]
+  }
+
+  def getInvalidGuaranteeReasons(queryParams: QueryParams*)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[InvalidGuaranteeReason]] = {
+    val url = url"${config.customsReferenceDataUrl}/lists/InvalidGuaranteeReason"
+    http
+      .get(url)
+      .setHeader(version2Header)
+      .transform(_.withQueryStringParameters(queryParams: _*))
+      .execute[NonEmptySet[InvalidGuaranteeReason]]
   }
 
   private def version2Header: (String, String) =
