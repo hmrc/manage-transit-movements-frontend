@@ -43,14 +43,13 @@ class DepartureP5MessageService @Inject() (
     departureId: String,
     messageId: String,
     lrn: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(String, Boolean, Seq[String], Boolean)] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(String, Boolean, Seq[String])] =
     for {
       message <- getMessage[CC056CType](departureId, messageId)
       rejectionType = message.TransitOperation.businessRejectionType
       xPaths        = message.FunctionalError.map(_.errorPointer)
       isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn, xPaths.filter(_.nonEmpty))
-      doesCacheExistForLrn   <- cacheConnector.doesDeclarationExist(lrn)
-    } yield (rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn)
+    } yield (rejectionType, isDeclarationAmendable, xPaths)
 
   def getLatestMessagesForMovement(
     departureMovements: DepartureMovements
@@ -62,7 +61,7 @@ class DepartureP5MessageService @Inject() (
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>
                 isErrorAmendable(movement.departureId, message.latestMessage.messageId, movement.localReferenceNumber).map {
-                  case (rejectionType, isDeclarationAmendable, xPaths, doesCacheExistForLrn) =>
+                  case (rejectionType, isDeclarationAmendable, xPaths) =>
                     RejectedMovementAndMessage(
                       movement.departureId,
                       movement.localReferenceNumber,
@@ -70,8 +69,7 @@ class DepartureP5MessageService @Inject() (
                       message,
                       BusinessRejectionType(rejectionType),
                       isDeclarationAmendable,
-                      xPaths,
-                      doesCacheExistForLrn
+                      xPaths
                     )
                 }
               case DeclarationAmendmentAccepted | GoodsUnderControl | DeclarationSent =>

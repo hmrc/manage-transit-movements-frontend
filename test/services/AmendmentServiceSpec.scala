@@ -49,83 +49,41 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
   "AmendmentService" - {
 
-    "canProceedWithAmendment" - {
-      "when 013 rejection" - {
-        "must return true" - {
-          "when data exists in cache for given LRN" in {
-            forAll(arbitrary[LocalReferenceNumber], arbitrary[Seq[String]]) {
-              (lrn, xPaths) =>
-                beforeEach()
+    "isDeclarationAmendable" - {
+      "must return true" - {
+        "when declaration is amendable" in {
+          forAll(arbitrary[LocalReferenceNumber], arbitrary[Seq[String]]) {
+            (lrn, xPaths) =>
+              beforeEach()
 
-                val service = app.injector.instanceOf[AmendmentService]
+              val service = app.injector.instanceOf[AmendmentService]
 
-                when(mockCacheConnector.doesDeclarationExist(any())(any()))
-                  .thenReturn(Future.successful(true))
+              when(mockCacheConnector.isDeclarationAmendable(any(), any())(any()))
+                .thenReturn(Future.successful(true))
 
-                val result = service.canProceedWithAmendment(AmendmentRejection, lrn.value, xPaths).futureValue
-                result mustBe true
+              val result = service.isDeclarationAmendable(lrn.value, xPaths).futureValue
+              result mustBe true
 
-                verify(mockCacheConnector).doesDeclarationExist(eqTo(lrn.value))(any())
-            }
-          }
-        }
-
-        "must return false" - {
-          "when data exists in cache for given LRN" in {
-            forAll(arbitrary[LocalReferenceNumber], arbitrary[Seq[String]]) {
-              (lrn, xPaths) =>
-                beforeEach()
-
-                val service = app.injector.instanceOf[AmendmentService]
-
-                when(mockCacheConnector.doesDeclarationExist(any())(any()))
-                  .thenReturn(Future.successful(false))
-
-                val result = service.canProceedWithAmendment(AmendmentRejection, lrn.value, xPaths).futureValue
-                result mustBe false
-
-                verify(mockCacheConnector).doesDeclarationExist(eqTo(lrn.value))(any())
-            }
+              verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
           }
         }
       }
 
-      "when 015 rejection" - {
-        "must return true" - {
-          "when declaration is amendable" in {
-            forAll(arbitrary[LocalReferenceNumber], arbitrary[Seq[String]]) {
-              (lrn, xPaths) =>
-                beforeEach()
+      "must return false" - {
+        "when declaration is not amendable" in {
+          forAll(arbitrary[LocalReferenceNumber], arbitrary[Seq[String]]) {
+            (lrn, xPaths) =>
+              beforeEach()
 
-                val service = app.injector.instanceOf[AmendmentService]
+              val service = app.injector.instanceOf[AmendmentService]
 
-                when(mockCacheConnector.isDeclarationAmendable(any(), any())(any()))
-                  .thenReturn(Future.successful(true))
+              when(mockCacheConnector.isDeclarationAmendable(any(), any())(any()))
+                .thenReturn(Future.successful(false))
 
-                val result = service.canProceedWithAmendment(DeclarationRejection, lrn.value, xPaths).futureValue
-                result mustBe true
+              val result = service.isDeclarationAmendable(lrn.value, xPaths).futureValue
+              result mustBe false
 
-                verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
-            }
-          }
-        }
-
-        "must return false" - {
-          "when declaration is not amendable" in {
-            forAll(arbitrary[LocalReferenceNumber], arbitrary[Seq[String]]) {
-              (lrn, xPaths) =>
-                beforeEach()
-
-                val service = app.injector.instanceOf[AmendmentService]
-
-                when(mockCacheConnector.isDeclarationAmendable(any(), any())(any()))
-                  .thenReturn(Future.successful(false))
-
-                val result = service.canProceedWithAmendment(DeclarationRejection, lrn.value, xPaths).futureValue
-                result mustBe false
-
-                verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
-            }
+              verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
           }
         }
       }

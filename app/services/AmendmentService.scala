@@ -30,17 +30,11 @@ class AmendmentService @Inject() (
   config: FrontendAppConfig
 ) {
 
-  def canProceedWithAmendment(
-    businessRejectionType: DepartureBusinessRejectionType,
+  def isDeclarationAmendable(
     lrn: String,
     xPaths: Seq[String]
   )(implicit hc: HeaderCarrier): Future[Boolean] =
-    businessRejectionType match {
-      case AmendmentRejection =>
-        doesDeclarationExist(lrn)
-      case DeclarationRejection =>
-        cacheConnector.isDeclarationAmendable(lrn, xPaths)
-    }
+    cacheConnector.isDeclarationAmendable(lrn, xPaths)
 
   def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     cacheConnector.doesDeclarationExist(lrn)
