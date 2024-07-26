@@ -49,15 +49,18 @@ class GuaranteeRejectedP5Controller @Inject() (
         val lrn = request.referenceNumbers.localReferenceNumber
         service.doesDeclarationExist(lrn).map {
           isAmendable =>
-            val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
-              request.messageData.GuaranteeReference,
-              lrn,
-              isAmendable,
-              request.messageData.TransitOperation.MRN,
-              request.messageData.TransitOperation.declarationAcceptanceDate
-            )
+            if (isAmendable) {
+              val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
+                request.messageData.GuaranteeReference,
+                lrn,
+                request.messageData.TransitOperation.MRN,
+                request.messageData.TransitOperation.declarationAcceptanceDate
+              )
 
-            Ok(view(viewModel, departureId, messageId))
+              Ok(view(viewModel, departureId, messageId))
+            } else {
+              Redirect(controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller.onPageLoad(departureId, messageId).url)
+            }
         }
     }
 

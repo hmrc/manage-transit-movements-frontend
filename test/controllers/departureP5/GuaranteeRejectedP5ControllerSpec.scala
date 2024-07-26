@@ -57,36 +57,60 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
     lazy val controller = routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId).url
 
     "onPageLoad" - {
+      "when declaration exists" - {
+        "must return OK and the correct view for a GET" in {
+          forAll(arbitrary[CC055CType]) {
+            message =>
+              when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
 
-      "must return OK and the correct view for a GET" in {
-        forAll(arbitrary[CC055CType]) {
-          message =>
-            when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
-              .thenReturn(Future.successful(message))
+              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-            when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-              .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
+              when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
 
-            when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
+              val viewModel = GuaranteeRejectedP5ViewModel(
+                guaranteeReferences = message.GuaranteeReference,
+                lrn = lrn.value,
+                mrn = message.TransitOperation.MRN,
+                acceptanceDate = message.TransitOperation.declarationAcceptanceDate
+              )
 
-            val viewModel = GuaranteeRejectedP5ViewModel(
-              guaranteeReferences = message.GuaranteeReference,
-              lrn = lrn.value,
-              isAmendable = true,
-              mrn = message.TransitOperation.MRN,
-              acceptanceDate = message.TransitOperation.declarationAcceptanceDate
-            )
+              val request = FakeRequest(GET, controller)
 
-            val request = FakeRequest(GET, controller)
+              val result = route(app, request).value
 
-            val result = route(app, request).value
+              status(result) mustEqual OK
 
-            status(result) mustEqual OK
+              val view = injector.instanceOf[GuaranteeRejectedP5View]
 
-            val view = injector.instanceOf[GuaranteeRejectedP5View]
+              contentAsString(result) mustEqual
+                view(viewModel, departureIdP5, messageId)(request, messages).toString
+          }
+        }
+      }
 
-            contentAsString(result) mustEqual
-              view(viewModel, departureIdP5, messageId)(request, messages).toString
+      "when declaration does not exist" - {
+        "must redirect to GuaranteeRejectedNotAmendableP5Controller" in {
+          forAll(arbitrary[CC055CType]) {
+            message =>
+              when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(message))
+
+              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
+
+              when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(false)
+
+              val request = FakeRequest(GET, controller)
+
+              val result = route(app, request).value
+
+              status(result) mustEqual SEE_OTHER
+              redirectLocation(result).value mustBe controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller
+                .onPageLoad(departureIdP5, messageId)
+                .url
+          }
         }
       }
     }

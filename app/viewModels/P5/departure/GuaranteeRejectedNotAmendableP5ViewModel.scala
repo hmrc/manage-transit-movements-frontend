@@ -19,12 +19,12 @@ package viewModels.P5.departure
 import generated.GuaranteeReferenceType08
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
-import utils.GuaranteeRejectedP5Helper
+import utils.GuaranteeRejectedNotAmendableP5Helper
 
 import java.text.SimpleDateFormat
 import javax.xml.datatype.XMLGregorianCalendar
 
-case class GuaranteeRejectedP5ViewModel(
+case class GuaranteeRejectedNotAmendableP5ViewModel(
   guaranteeReferences: Seq[GuaranteeReferenceType08],
   lrn: String,
   mrn: String,
@@ -47,26 +47,23 @@ case class GuaranteeRejectedP5ViewModel(
 
   def paragraph1(implicit messages: Messages): String =
     if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length == 1) {
-      messages("guarantee.rejected.message.paragraph1.singular")
+      messages("guarantee.rejected.message.notAmendable.paragraph1.singular")
     } else if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length > 1) {
-      messages("guarantee.rejected.message.paragraph1.singularGuaranteePluralReference")
+      messages("guarantee.rejected.message.notAmendable.paragraph1.singularGuaranteePluralReference")
     } else if (multipleGuaranteesOneReference) {
-      messages("guarantee.rejected.message.paragraph1.pluralGuaranteeSingularReference")
+      messages("guarantee.rejected.message.notAmendable.paragraph1.pluralGuaranteeSingularReference")
     } else {
-      messages("guarantee.rejected.message.paragraph1.pluralGuaranteePluralReference")
+      messages("guarantee.rejected.message.notAmendable.paragraph1.pluralGuaranteePluralReference")
     }
 
   def paragraph2(implicit messages: Messages): String = if (guaranteeReferences.length == 1 && guaranteeReferences.head.InvalidGuaranteeReason.length == 1) {
-    messages("guarantee.rejected.message.contact.singular")
+    messages("guarantee.rejected.message.notAmendable.contact.singular")
   } else {
-    messages("guarantee.rejected.message.contact.plural")
+    messages("guarantee.rejected.message.notAmendable.contact.plural")
   }
 
-  def buttonContent(implicit messages: Messages): String =
-    messages("guarantee.rejected.message.amendErrors")
-
   def link(implicit messages: Messages): String =
-    messages("guarantee.rejected.message.makeAnotherDeparture")
+    messages("guarantee.rejected.message.notAmendable.notAmendable.makeAnotherDeparture")
 
-  val toTables: Seq[(String, String, Table)] = new GuaranteeRejectedP5Helper(guaranteeReferences).toTables
+  val toTables: Seq[(String, String, Table)] = new GuaranteeRejectedNotAmendableP5Helper(guaranteeReferences).toTables
 }

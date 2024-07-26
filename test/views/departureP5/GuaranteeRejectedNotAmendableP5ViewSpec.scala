@@ -22,20 +22,20 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import play.twirl.api.HtmlFormat
 import scalaxb.XMLCalendar
-import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
+import viewModels.P5.departure.GuaranteeRejectedNotAmendableP5ViewModel
 import views.behaviours.ViewBehaviours
-import views.html.departureP5.GuaranteeRejectedP5View
+import views.html.departureP5.GuaranteeRejectedNotAmendableP5View
 
 import scala.jdk.CollectionConverters._
 
-class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
+class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Generators {
 
-  override val prefix: String = "guarantee.rejected.message"
+  override val prefix: String = "guarantee.rejected.message.notAmendable"
 
   private val guaranteeReferences: Seq[GuaranteeReferenceType08] =
     Gen.nonEmptyListOf(arbitrary[GuaranteeReferenceType08]).sample.value
 
-  val defaultViewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
+  val defaultViewModel: GuaranteeRejectedNotAmendableP5ViewModel = GuaranteeRejectedNotAmendableP5ViewModel(
     guaranteeReferences = guaranteeReferences,
     lrn = lrn.value,
     mrn = mrn,
@@ -43,7 +43,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
   )
 
   override def view: HtmlFormat.Appendable = injector
-    .instanceOf[GuaranteeRejectedP5View]
+    .instanceOf[GuaranteeRejectedNotAmendableP5View]
     .apply(defaultViewModel, departureIdP5, messageId)(fakeRequest, messages)
 
   behave like pageWithTitle()
@@ -52,7 +52,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
   behave like pageWithHeading()
 
-  behave like pageWithSubmitButton("Amend errors")
+  behave like pageWithoutSubmitButton()
 
   behave like pageWithLink(
     "makeNewDeparture",
@@ -73,11 +73,15 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
-      behave like pageWithContent(document, "p", "There is a problem with the guarantee in this declaration. Amend the error and resend the declaration.")
+      behave like pageWithContent(
+        document,
+        "p",
+        "There is a problem with the guarantee in this declaration. Review the error and make a new declaration with the right information."
+      )
     }
 
     "when there is only one guarantee reference with multiple errors" - {
@@ -98,11 +102,15 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
-      behave like pageWithContent(document, "p", "There is a problem with the guarantee in this declaration. Amend the errors and resend the declaration.")
+      behave like pageWithContent(
+        document,
+        "p",
+        "There is a problem with the guarantee in this declaration. Review the errors and make a new declaration with the right information."
+      )
     }
 
     "when there is multiple guarantee references with only one error each" - {
@@ -117,11 +125,15 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
-      behave like pageWithContent(document, "p", "There is a problem with the guarantees in this declaration. Amend the error and resend the declaration.")
+      behave like pageWithContent(
+        document,
+        "p",
+        "There is a problem with the guarantees in this declaration. Review the error and make a new declaration with the right information."
+      )
     }
 
     "when there is multiple guarantee references with multiple errors each" - {
@@ -150,11 +162,15 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
-      behave like pageWithContent(document, "p", "There is a problem with the guarantees in this declaration. Amend the errors and resend the declaration.")
+      behave like pageWithContent(
+        document,
+        "p",
+        "There is a problem with the guarantees in this declaration. Review the errors and make a new declaration with the right information."
+      )
     }
 
   }
@@ -172,7 +188,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
@@ -191,7 +207,7 @@ class GuaranteeRejectedP5ViewSpec extends ViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
