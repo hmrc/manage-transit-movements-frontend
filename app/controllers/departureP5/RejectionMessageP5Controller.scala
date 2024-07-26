@@ -51,11 +51,10 @@ class RejectionMessageP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val businessRejectionType = DepartureBusinessRejectionType(request.messageData)
-        val lrn                   = request.referenceNumbers.localReferenceNumber
-        val xPaths                = request.messageData.xPaths
+        val lrn    = request.referenceNumbers.localReferenceNumber
+        val xPaths = request.messageData.xPaths
 
-        service.canProceedWithAmendment(businessRejectionType, lrn, xPaths).flatMap {
+        service.isDeclarationAmendable(lrn, xPaths).flatMap {
           case true =>
             val currentPage = page.getOrElse(1)
 

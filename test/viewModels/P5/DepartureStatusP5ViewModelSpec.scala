@@ -384,8 +384,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = true,
-            xPaths = Seq("body/path"),
-            doesCacheExistForLrn = true
+            xPaths = Seq("body/path")
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -418,9 +417,8 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = false,
-            xPaths = Nil,
-            doesCacheExistForLrn = true
+            isDeclarationAmendable = true,
+            xPaths = Nil
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -454,8 +452,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = false,
-            xPaths = Nil,
-            doesCacheExistForLrn = false
+            xPaths = Nil
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -489,8 +486,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = false,
-            xPaths = Seq("body/path"),
-            doesCacheExistForLrn = false
+            xPaths = Seq("body/path")
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -530,8 +526,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = true,
-            xPaths = Seq("body/path"),
-            doesCacheExistForLrn = false
+            xPaths = Seq("body/path")
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -564,8 +559,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = false,
-            Seq("body/path", "abc"),
-            doesCacheExistForLrn = false
+            Seq("body/path", "abc")
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -598,8 +592,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = false,
-            Seq("body/path"),
-            doesCacheExistForLrn = false
+            Seq("body/path")
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -632,8 +625,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = false,
-            Seq.empty,
-            doesCacheExistForLrn = false
+            Seq.empty
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -671,8 +663,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = false,
-            Seq("body/path", "abc"),
-            doesCacheExistForLrn = false
+            Seq("body/path", "abc")
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -705,8 +696,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = false,
-            Seq("body/path"),
-            doesCacheExistForLrn = false
+            Seq("body/path")
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)
@@ -739,8 +729,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             ),
             rejectionType = rejectionType,
             isDeclarationAmendable = false,
-            Seq.empty,
-            doesCacheExistForLrn = false
+            Seq.empty
           )
 
           val result = DepartureStatusP5ViewModel(movementAndMessage)

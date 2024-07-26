@@ -32,8 +32,7 @@ case class RejectedMovementAndMessage(
   message: LatestDepartureMessage,
   rejectionType: BusinessRejectionType,
   isDeclarationAmendable: Boolean,
-  xPaths: Seq[String],
-  doesCacheExistForLrn: Boolean
+  xPaths: Seq[String]
 ) extends MovementAndMessage
 
 case class OtherMovementAndMessage(
