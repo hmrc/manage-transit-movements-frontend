@@ -36,31 +36,31 @@ case class IncidentsDuringTransitP5ViewModel(
   sections: Seq[Section]
 ) extends ViewModelWithCustomsOffice {
 
-  override val prefix: String = "arrival.notification.incidents.customsOfficeContact"
+  override val prefix: String = "departure.notification.incidents.customsOfficeContact"
 
   def title(implicit messages: Messages): String = if (isMultipleIncidents) {
-    messages("arrival.notification.incidents.title")
+    messages("departure.notification.incidents.title")
   } else {
-    messages("arrival.notification.incident.title")
+    messages("departure.notification.incident.title")
   }
 
   def heading(implicit messages: Messages): String = if (isMultipleIncidents) {
-    messages("arrival.notification.incidents.heading")
+    messages("departure.notification.incidents.heading")
   } else {
-    messages("arrival.notification.incident.heading")
+    messages("departure.notification.incident.heading")
   }
 
   def paragraph1(implicit messages: Messages): String = if (isMultipleIncidents) {
-    messages("arrival.notification.incidents.paragraph1")
+    messages("departure.notification.incidents.paragraph1")
   } else {
-    messages("arrival.notification.incident.paragraph1")
+    messages("departure.notification.incident.paragraph1")
   }
 
-  def paragraph2HyperLink(implicit messages: Messages): String = messages("arrival.notification.incidents.paragraph2.hyperlink")
+  def paragraph2HyperLink(implicit messages: Messages): String = messages("departure.notification.incidents.paragraph2.hyperlink")
 
-  def paragraph2End(implicit messages: Messages): String = messages("arrival.notification.incidents.paragraph2.end")
+  def paragraph2End(implicit messages: Messages): String = messages("departure.notification.incidents.paragraph2.end")
 
-  def whatHappensNextHeader(implicit messages: Messages): String = messages("arrival.notification.incidents.whatHappensNextHeader")
+  def whatHappensNextHeader(implicit messages: Messages): String = messages("departure.notification.incidents.whatHappensNextHeader")
 
 }
 

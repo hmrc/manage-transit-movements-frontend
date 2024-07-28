@@ -17,11 +17,13 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.departureP5.Rejection
 import play.api.Logging
+import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,12 +34,10 @@ class DepartureCacheConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends Logging {
 
-  private val baseUrl = s"${config.departureCacheUrl}"
-
-  // TODO - should all of these methods return Booleans? CTCP-5565
+  private val baseUrl = config.departureCacheUrl
 
   def isDeclarationAmendable(lrn: String, xPaths: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = url"$baseUrl/x-paths/$lrn/is-declaration-amendable"
+    val url = url"$baseUrl/user-answers/$lrn/is-amendable"
 
     http
       .post(url)
@@ -45,37 +45,35 @@ class DepartureCacheConnector @Inject() (
       .execute[Boolean]
   }
 
-  def handleErrors(lrn: String, functionalErrors: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = url"$baseUrl/x-paths/$lrn/handle-errors"
-
-    http
-      .post(url)
-      .withBody(Json.toJson(functionalErrors))
-      .execute[Boolean]
-  }
-
-  def handleAmendmentErrors(lrn: String, functionalErrors: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = url"$baseUrl/x-paths/$lrn/handle-amendment-errors"
-
-    http
-      .post(url)
-      .withBody(Json.toJson(functionalErrors))
-      .execute[Boolean]
-  }
-
-  def handleGuaranteeRejection(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = url"$baseUrl/x-paths/$lrn/handle-guarantee-errors"
-
-    http
-      .get(url)
-      .execute[Boolean]
-  }
-
   def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = url"$baseUrl/does-cache-exists-for-lrn/$lrn"
+    val url = url"$baseUrl/user-answers/$lrn"
 
     http
       .get(url)
-      .execute[Boolean]
+      .execute[HttpResponse]
+      .map(_.status)
+      .map {
+        case OK        => true
+        case NOT_FOUND => false
+        case x         => throw new Exception(s"[DepartureCacheConnector][doesDeclarationExist] returned $x")
+      }
+  }
+
+  def handleErrors(lrn: String, rejection: Rejection)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val url = url"$baseUrl/user-answers/$lrn/errors"
+
+    http
+      .post(url)
+      .withBody(Json.toJson(rejection))
+      .execute[HttpResponse]
+  }
+
+  def prepareForAmendment(lrn: String, departureId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val url = url"$baseUrl/user-answers/$lrn"
+
+    http
+      .patch(url)
+      .withBody(Json.toJson(departureId))
+      .execute[HttpResponse]
   }
 }

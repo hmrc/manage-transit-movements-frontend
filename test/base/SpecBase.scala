@@ -29,7 +29,7 @@ import play.api.inject.Injector
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Content, Key, Value}
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 
 import java.time.Clock
 
@@ -80,4 +80,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   implicit class RichKey(k: Key) {
     def value: String = k.content.value
   }
+
+  def httpResponse(status: Int): HttpResponse = HttpResponse(status, "")
 }

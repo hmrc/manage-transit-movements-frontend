@@ -21,7 +21,7 @@ import generated.CC182CType
 import generators.Generators
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
-import models.{Country, IdentificationType, Nationality}
+import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.{Arbitrary, Gen}
@@ -45,14 +45,20 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
   private val country            = Country("GB", "United Kingdom")
+  private val incident           = IncidentCode("code", "text")
+  private val identification     = QualifierOfIdentification("U", "UN/LOCODE")
   private val nationality        = Nationality("GB", "United Kingdom")
   private val identificationType = IdentificationType("10", "IMO Ship Identification Number")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockReferenceDataService)
+    when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
+      .thenReturn(Future.successful(incident))
     when(mockReferenceDataService.getCountry(any())(any(), any()))
       .thenReturn(Future.successful(Right(country)))
+    when(mockReferenceDataService.getQualifierOfIdentification(any())(any(), any()))
+      .thenReturn(Future.successful(Right(identification)))
     when(mockReferenceDataService.getNationality(any())(any(), any()))
       .thenReturn(Future.successful(Right(nationality)))
     when(mockReferenceDataService.getIdentificationType(any())(any(), any()))
@@ -79,27 +85,24 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       viewModelProvider.apply(cc182Data, mockReferenceDataService, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex).futureValue
 
     "viewModel must have all sections when all defined in incident" in {
-      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-        (code, text) =>
-          val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
-            code = code,
-            text = text
-          )
+      val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
+        code = incident.code,
+        text = "text"
+      )
 
-          val updatedConsignment = cc182Data.Consignment.copy(
-            Incident = Seq(updatedIncident, updatedIncident)
-          )
+      val updatedConsignment = cc182Data.Consignment.copy(
+        Incident = Seq(updatedIncident, updatedIncident)
+      )
 
-          val modifiedCC182CType = cc182Data.copy(
-            Consignment = updatedConsignment
-          )
+      val modifiedCC182CType = cc182Data.copy(
+        Consignment = updatedConsignment
+      )
 
-          val modifiedViewModel = viewModel(modifiedCC182CType)
+      val modifiedViewModel = viewModel(modifiedCC182CType)
 
-          val sections = modifiedViewModel.sections
+      val sections = modifiedViewModel.sections
 
-          sections.length mustBe 4
-      }
+      sections.length mustBe 4
     }
 
     "viewModel must not have transhipment section if incident doesn't have it" in {

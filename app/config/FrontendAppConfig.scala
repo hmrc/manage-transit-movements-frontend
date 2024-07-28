@@ -25,8 +25,9 @@ import play.api.mvc.Request
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
-  val phase4Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isPhase4Enabled")
-  val phase5Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isPhase5Enabled")
+  val phase4Enabled: Boolean  = configuration.get[Boolean]("microservice.services.features.isPhase4Enabled")
+  val phase5Enabled: Boolean  = configuration.get[Boolean]("microservice.services.features.isPhase5Enabled")
+  val isIE182Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isIE182Enabled")
 
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
   val showUserResearchBanner: Boolean = configuration.get[Boolean]("banners.showUserResearch")
@@ -89,13 +90,11 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val manageDocumentsUrl: String = configuration.get[Service]("microservice.services.transit-movements-trader-manage-documents").fullServiceUrl
 
-  def departureFrontendTaskListUrl(lrn: String)                        = s"$p5Departure/$lrn/declaration-summary"
-  def departureNewLocalReferenceNumberUrl(lrn: String)                 = s"$p5Departure/$lrn/new-local-reference-number"
-  def departureAmendmentUrl(lrn: String, departureId: String)          = s"$p5Departure/$lrn/amend/$departureId"
-  def departureGuaranteeAmendmentUrl(lrn: String, departureId: String) = s"$p5Departure/$lrn/amend-guarantees/$departureId"
-  def departureFrontendRejectedUrl(departureId: DepartureId)           = s"$p4Departure/${departureId.index}/guarantee-rejection"
-  def departureFrontendDeclarationFailUrl(departureId: DepartureId)    = s"$p4Departure/${departureId.index}/departure-declaration-fail"
-  def presentationNotificationFrontendUrl(departureId: String)         = s"$presentationNotificationFrontend/$departureId"
+  def departureFrontendTaskListUrl(lrn: String)                     = s"$p5Departure/$lrn/declaration-summary"
+  def departureNewLocalReferenceNumberUrl(lrn: String)              = s"$p5Departure/$lrn/new-local-reference-number"
+  def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$p4Departure/${departureId.index}/guarantee-rejection"
+  def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$p4Departure/${departureId.index}/departure-declaration-fail"
+  def presentationNotificationFrontendUrl(departureId: String)      = s"$presentationNotificationFrontend/$departureId"
 
   def departureFrontendCancellationDecisionUrl(departureId: DepartureId): String =
     s"$p4Departure/${departureId.index}/cancellation-decision-update"

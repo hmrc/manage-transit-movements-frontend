@@ -21,7 +21,7 @@ import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated._
 import generators.Generators
 import models.departureP5.DepartureMessageType._
-import models.departureP5.{DepartureMessageType, _}
+import models.departureP5._
 import models.{LocalReferenceNumber, RichCC015Type, RichCC182Type}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -95,10 +95,6 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           Future.successful(isDeclarationAmendable)
         )
 
-        when(mockCacheConnector.doesDeclarationExist(any())(any())).thenReturn(
-          Future.successful(true)
-        )
-
         val result = departureP5MessageService.getLatestMessagesForMovement(departureMovements).futureValue
 
         val expectedResult: Seq[MovementAndMessage] = Seq(
@@ -109,8 +105,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             latestDepartureMessage,
             rejectionType,
             isDeclarationAmendable = isDeclarationAmendable,
-            xPaths = ie056.FunctionalError.map(_.errorPointer),
-            doesCacheExistForLrn = true
+            xPaths = ie056.FunctionalError.map(_.errorPointer)
           )
         )
 

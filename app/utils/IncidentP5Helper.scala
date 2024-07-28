@@ -16,7 +16,7 @@
 
 package utils
 
-import generated.IncidentType03
+import generated.{GNSSType, IncidentType03}
 import models.{DynamicAddress, RichAddressType18}
 import play.api.Logging
 import play.api.i18n.Messages
@@ -34,16 +34,20 @@ class IncidentP5Helper(
     extends DeparturesP5MessageHelper
     with Logging {
 
-  def incidentCodeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("code"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.code",
-    id = None,
-    call = None
-  )
+  def incidentCodeRow: Future[Option[SummaryListRow]] =
+    refDataService.getIncidentCode(data.code).map {
+      incidentCode =>
+        buildRowFromAnswer[String](
+          answer = Some(incidentCode.toString),
+          formatAnswer = formatAsText,
+          prefix = "departure.notification.incident.index.code",
+          id = None,
+          call = None
+        )
+    }
 
-  def descriptionRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("description"), // TODO: Pull from incident data
+  def incidentDescriptionRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(data.text),
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.description",
     id = None,
@@ -63,21 +67,27 @@ class IncidentP5Helper(
         )
     }
 
-  def identifierTypeRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(data.Location.qualifierOfIdentification),
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.identifierType",
-    id = None,
-    call = None
-  )
+  def identifierTypeRow: Future[Option[SummaryListRow]] =
+    refDataService.getQualifierOfIdentification(data.Location.qualifierOfIdentification) map {
+      identificationResponse =>
+        val identification = identificationResponse.fold[String](identity, _.description)
+        buildRowFromAnswer[String](
+          answer = Some(identification),
+          formatAnswer = formatAsText,
+          prefix = "departure.notification.incident.index.identifierType",
+          id = None,
+          call = None
+        )
+    }
 
-  def coordinatesRow: Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some("coordinates"), // TODO: Pull from incident data
-    formatAnswer = formatAsText,
-    prefix = "departure.notification.incident.index.coordinates",
-    id = None,
-    call = None
-  )
+  def coordinatesRow: Option[SummaryListRow] =
+    buildRowFromAnswer[GNSSType](
+      answer = data.Location.GNSS,
+      formatAnswer = formatAsCoordinates,
+      prefix = "departure.notification.incident.index.coordinates",
+      id = None,
+      call = None
+    )
 
   def addressRow: Option[SummaryListRow] =
     data.Location.Address.flatMap {
@@ -101,14 +111,16 @@ class IncidentP5Helper(
 
   def incidentInformationSection: Future[StaticSection] =
     for {
-      countryRowOption <- countryRow
+      country         <- countryRow
+      incidentCodeRow <- incidentCodeRow
+      identification  <- identifierTypeRow
     } yield StaticSection(
       sectionTitle = None,
       rows = Seq(
         incidentCodeRow,
-        descriptionRow,
-        countryRowOption,
-        identifierTypeRow,
+        incidentDescriptionRow,
+        identification,
+        country,
         coordinatesRow,
         unLocodeRow,
         addressRow

@@ -19,10 +19,11 @@ package helper
 import base.SpecBase
 import generated.{AddressType18, GNSSType}
 import generators.Generators
-import models.{Country, RichAddressType18}
+import models.{Country, IncidentCode, QualifierOfIdentification, RichAddressType18}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -47,26 +48,45 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
     val incidentType03 = arbitraryIncidentType03.arbitrary.sample.value
 
     "rows" - {
+
       "incidentCodeRow" - {
         "must return a row" in {
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
-          val result = helper.incidentCodeRow.value
+          forAll(Gen.alphaNumStr) {
+            value =>
+              val incidentCode = IncidentCode(
+                "1",
+                "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+              )
 
-          result.key.value mustBe "Incident code"
-          result.value.value mustBe "code"
-          result.actions must not be defined
+              val incidentType = incidentType03.copy(code = value)
+
+              when(refDataService.getIncidentCode(any())(any(), any()))
+                .thenReturn(Future.successful(incidentCode))
+
+              val helper = new IncidentP5Helper(incidentType, refDataService)
+              val result = helper.incidentCodeRow.futureValue.value
+
+              result.key.value mustBe "Incident code"
+              result.value.value mustBe
+                "1 - The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+              result.actions must not be defined
+          }
         }
       }
 
-      "descriptionRow" - {
+      "incidentDescriptionRow" - {
         "must return a row" in {
+          forAll(Gen.alphaNumStr) {
+            value =>
+              val incidentType = incidentType03.copy(text = value)
 
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
-          val result = helper.descriptionRow.value
+              val helper = new IncidentP5Helper(incidentType, refDataService)
+              val result = helper.incidentDescriptionRow.value
 
-          result.key.value mustBe "Description"
-          result.value.value mustBe "description"
-          result.actions must not be defined
+              result.key.value mustBe "Description"
+              result.value.value mustBe value
+              result.actions must not be defined
+          }
         }
       }
 
@@ -97,12 +117,26 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
       }
 
       "identifierTypeRow" - {
-        "must return a row" in {
+        "must return a row with description when ref data look up is successful" in {
+          when(refDataService.getQualifierOfIdentification(any())(any(), any()))
+            .thenReturn(Future.successful(Right(QualifierOfIdentification(incidentType03.Location.qualifierOfIdentification, "description"))))
 
           val helper = new IncidentP5Helper(incidentType03, refDataService)
-          val result = helper.identifierTypeRow.value
+          val result = helper.identifierTypeRow.futureValue.value
 
-          result.key.value mustBe "Identifier Type"
+          result.key.value mustBe "Identifier type"
+          result.value.value mustBe "description"
+          result.actions must not be defined
+        }
+
+        "must return a row with description when ref data look up cannot find description" in {
+          when(refDataService.getQualifierOfIdentification(any())(any(), any()))
+            .thenReturn(Future.successful(Left(incidentType03.Location.qualifierOfIdentification)))
+
+          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val result = helper.identifierTypeRow.futureValue.value
+
+          result.key.value mustBe "Identifier type"
           result.value.value mustBe incidentType03.Location.qualifierOfIdentification
           result.actions must not be defined
         }
@@ -110,12 +144,13 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "coordinatesRow" - {
         "must return a row" in {
+          val locationType = arbitraryLocationType02.arbitrary.sample.value.copy(GNSS = Some(GNSSType("90.1", "90.2")))
 
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val helper = new IncidentP5Helper(incidentType03.copy(Location = locationType), refDataService)
           val result = helper.coordinatesRow.value
 
           result.key.value mustBe "Coordinates"
-          result.value.value mustBe "coordinates"
+          result.value.value mustBe "(90.1, 90.2)"
           result.actions must not be defined
         }
       }
@@ -138,11 +173,17 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
       "unLocodeRow" - {
         "must return a row" in {
 
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val incidentType = incidentType03.copy(
+            Location = incidentType03.Location.copy(
+              UNLocode = Some("UNLocode")
+            )
+          )
+
+          val helper = new IncidentP5Helper(incidentType, refDataService)
           val result = helper.unLocodeRow.value
 
           result.key.value mustBe "UN/LOCODE"
-          result.value.value mustBe incidentType03.Location.UNLocode.get
+          result.value.value mustBe "UNLocode"
           result.actions must not be defined
         }
       }
@@ -151,11 +192,20 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
     "sections" - {
       "incidentInformationSection" - {
         "must return a static section" in {
+
+          val country      = Country("code", "description")
+          val incidentCode = IncidentCode("code", "text")
+
           val location = arbitraryLocationType02.arbitrary.sample.value.copy(
             UNLocode = Some("unlocode"),
             GNSS = Some(GNSSType("50.1", "50.2")),
             Address = Some(AddressType18("streetAndNumber", None, "city"))
           )
+
+          when(refDataService.getCountry(any())(any(), any()))
+            .thenReturn(Future.successful(Right(country)))
+          when(refDataService.getIncidentCode(any())(any(), any()))
+            .thenReturn(Future.successful(incidentCode))
 
           val incident = incidentType03.copy(Location = location)
           val helper   = new IncidentP5Helper(incident, refDataService)

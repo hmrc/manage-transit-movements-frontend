@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, 
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
-import models.{Country, IdentificationType, IncidentCode, Nationality}
+import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
@@ -121,6 +121,30 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
         "should handle client and server errors for customs offices" in {
           checkErrorResponse(url, connector.getCountries(queryParams))
+        }
+      }
+
+      "getQualifierOfIdentifications" - {
+
+        val url = s"$baseUrl/lists/QualifierOfTheIdentification?foo=bar"
+
+        "should handle a 200 response for identifications" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(okJson(qualifierOfIdentificationResponseJson))
+          )
+
+          val expectedResult = NonEmptySet.of(QualifierOfIdentification("U", "UN/LOCODE"), QualifierOfIdentification("Z", "Address"))
+
+          connector.getQualifierOfIdentifications(queryParams).futureValue mustBe expectedResult
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, connector.getQualifierOfIdentifications(queryParams))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getQualifierOfIdentifications(queryParams))
         }
       }
 
@@ -329,6 +353,22 @@ object ReferenceDataConnectorSpec {
        |  ]
        |}
        |""".stripMargin
+
+  private val qualifierOfIdentificationResponseJson: String =
+    """
+      |{
+      |  "data": [
+      |    {
+      |      "qualifier": "U",
+      |      "description": "UN/LOCODE"
+      |    },
+      |    {
+      |      "qualifier": "Z",
+      |      "description": "Address"
+      |    }
+      |  ]
+      |}
+      |""".stripMargin
 
   private val countriesResponseJson: String =
     s"""

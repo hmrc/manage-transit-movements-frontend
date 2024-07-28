@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
-import models.{Country, IdentificationType, IncidentCode, Nationality}
+import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -75,6 +75,18 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
       }
   }
 
+  def getQualifierOfIdentification(qualifier: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, QualifierOfIdentification]] = {
+    val queryParams: (String, String) = "data.qualifier" -> qualifier
+    connector
+      .getQualifierOfIdentifications(queryParams)
+      .map(
+        identifications => Right(identifications.head)
+      )
+      .recover {
+        case _: NoReferenceDataFoundException => Left(qualifier)
+      }
+  }
+
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
     val queryParams: (String, String) = "data.code" -> code
     connector.getControlTypes(queryParams).map(_.head)
@@ -104,6 +116,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
 trait ReferenceDataService {
   def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]]
 
+  def getQualifierOfIdentification(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, QualifierOfIdentification]]
   def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, Country]]
 
   def getNationality(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, Nationality]]

@@ -17,6 +17,7 @@
 package models.departureP5
 
 import generated.CC056CType
+import play.api.libs.json.{JsString, Writes}
 
 sealed trait BusinessRejectionType {
   val value: String
@@ -36,6 +37,10 @@ object BusinessRejectionType {
 
     def apply(ie056: CC056CType): DepartureBusinessRejectionType =
       DepartureBusinessRejectionType.apply(ie056.TransitOperation.businessRejectionType)
+
+    implicit val writes: Writes[DepartureBusinessRejectionType] = Writes {
+      x => JsString(x.value)
+    }
   }
 
   case object AmendmentRejection extends DepartureBusinessRejectionType {

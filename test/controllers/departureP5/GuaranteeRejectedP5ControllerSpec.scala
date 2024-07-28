@@ -91,9 +91,9 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
       }
     }
 
-    "onAmend" - {
+    "onSubmit" - {
 
-      lazy val controller = routes.GuaranteeRejectedP5Controller.onAmend(departureIdP5, messageId).url
+      lazy val controller = routes.GuaranteeRejectedP5Controller.onSubmit(departureIdP5, messageId).url
 
       "must redirect to NewLocalReferenceNumber page on success" in {
         forAll(arbitrary[CC055CType]) {
@@ -104,14 +104,15 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
               .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-            when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(true)
+            when(mockDepartureCacheConnector.handleErrors(any(), any())(any()))
+              .thenReturn(Future.successful(httpResponse(OK)))
 
             val request = FakeRequest(POST, controller)
 
             val result = route(app, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustBe frontendAppConfig.departureGuaranteeAmendmentUrl(lrn.value, departureIdP5)
+            redirectLocation(result).value mustBe frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
         }
       }
 
@@ -124,7 +125,8 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
               .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-            when(mockDepartureCacheConnector.handleGuaranteeRejection(any())(any())) thenReturn Future.successful(false)
+            when(mockDepartureCacheConnector.handleErrors(any(), any())(any()))
+              .thenReturn(Future.successful(httpResponse(INTERNAL_SERVER_ERROR)))
 
             val request = FakeRequest(POST, controller)
 
