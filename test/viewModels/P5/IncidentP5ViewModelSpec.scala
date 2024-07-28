@@ -24,7 +24,7 @@ import models.referenceData.CustomsOffice
 import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.Arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
