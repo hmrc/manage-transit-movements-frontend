@@ -127,52 +127,6 @@ class IncidentP5Helper(
       ).flatten
     )
 
-  def endorsementDateRow: Option[SummaryListRow] =
-    buildRowFromAnswer[String](
-      answer = data.Endorsement.map(_.date.toString),
-      formatAnswer = formatAsText,
-      prefix = "departure.notification.incident.index.endorsement",
-      id = None,
-      call = None
-    )
-
-  def authorityRow: Option[SummaryListRow] =
-    buildRowFromAnswer[String](
-      answer = data.Endorsement.map(_.authority),
-      formatAnswer = formatAsText,
-      prefix = "departure.notification.incident.index.authority",
-      id = None,
-      call = None
-    )
-
-  def endorsementCountryRow: Option[SummaryListRow] =
-    buildRowFromAnswer[String](
-      answer = data.Endorsement.map(_.country),
-      formatAnswer = formatAsText,
-      prefix = "departure.notification.incident.index.endorsementCountry",
-      id = None,
-      call = None
-    )
-
-  def locationRow: Option[SummaryListRow] =
-    buildRowFromAnswer[String](
-      answer = data.Endorsement.map(_.place),
-      formatAnswer = formatAsText,
-      prefix = "departure.notification.incident.index.location",
-      id = None,
-      call = None
-    )
-
-  def endorsementSection: StaticSection = StaticSection(
-    sectionTitle = Some(messages("departure.notification.incident.index.endorsement.section.title")),
-    rows = Seq(
-      endorsementDateRow,
-      authorityRow,
-      endorsementCountryRow,
-      locationRow
-    ).flatten
-  )
-
   def transportEquipmentsSection: StaticSection = {
     val transportEquipmentsSections = data.TransportEquipment.map {
       transportEquipment =>
