@@ -17,6 +17,7 @@
 package generators
 
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
+import models.departureP5.GuaranteeReferenceTable
 import models.{DeparturesSummary, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -26,9 +27,15 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Content
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.P5.departure.{DepartureDeclarationErrorsP5ViewModel, RejectionMessageP5ViewModel, ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
+import viewModels.P5.departure.{
+  DepartureDeclarationErrorsP5ViewModel,
+  GuaranteeRejectedP5ViewModel,
+  RejectionMessageP5ViewModel,
+  ViewAllDepartureMovementsP5ViewModel,
+  ViewDepartureP5
+}
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination.{ListPaginationViewModel, MetaData}
@@ -36,6 +43,7 @@ import viewModels.sections.Section
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 import java.time.{LocalDate, LocalTime}
+import javax.xml.datatype.XMLGregorianCalendar
 
 trait ViewModelGenerators {
   self: Generators =>
@@ -235,6 +243,16 @@ trait ViewModelGenerators {
       } yield RejectionMessageP5ViewModel(tableRows, lrn, multipleErrors, businessRejectionType)
     }
 
+  implicit val arbitraryGuaranteeRejectedP5ViewModel: Arbitrary[GuaranteeRejectedP5ViewModel] =
+    Arbitrary {
+      for {
+        tables         <- arbitrary[Seq[GuaranteeReferenceTable]]
+        lrn            <- nonEmptyString
+        mrn            <- nonEmptyString
+        acceptanceDate <- arbitrary[XMLGregorianCalendar]
+      } yield GuaranteeRejectedP5ViewModel(tables, lrn, mrn, acceptanceDate)
+    }
+
   implicit lazy val arbitraryText: Arbitrary[Text] = Arbitrary {
     for {
       content <- nonEmptyString
@@ -281,6 +299,17 @@ trait ViewModelGenerators {
         val sectionTitles = sections.map(_.sectionTitle)
         sectionTitles.distinct.size == sectionTitles.size
     }
+  }
+
+  implicit lazy val arbitraryTable: Arbitrary[Table] = Arbitrary {
+    for {
+      rows              <- arbitrary[Seq[Seq[TableRow]]]
+      head              <- Gen.option(arbitrary[Seq[HeadCell]])
+      caption           <- Gen.option(arbitrary[String])
+      captionClasses    <- nonEmptyString
+      firstCellIsHeader <- arbitrary[Boolean]
+      classes           <- nonEmptyString
+    } yield Table(rows, head, caption, captionClasses, firstCellIsHeader, classes, Map.empty)
   }
 
   implicit lazy val arbitraryTableRow: Arbitrary[TableRow] = Arbitrary {

@@ -331,6 +331,15 @@ trait ModelGenerators {
       } yield models.departureP5.FunctionalError(s"/CC015C/$errorPointer", errorCode, errorReason, originalAttributeValue)
     }
 
+  implicit lazy val arbitraryGuaranteeReferenceTable: Arbitrary[models.departureP5.GuaranteeReferenceTable] =
+    Arbitrary {
+      for {
+        title <- nonEmptyString
+        grn   <- nonEmptyString
+        table <- arbitraryTable.arbitrary
+      } yield models.departureP5.GuaranteeReferenceTable(title, grn, table)
+    }
+
   implicit lazy val arbitraryDepartureMessageType: Arbitrary[models.departureP5.DepartureMessageType] =
     Arbitrary {
       Gen.oneOf(models.departureP5.DepartureMessageType.values)

@@ -14,13 +14,12 @@
  * limitations under the License.
  *@
 
-@import models.departureP5.GuaranteeReferenceTable
 @import views.html.components.TableDetail
 
 @this(tableDetail: TableDetail)
 
-@(tables: Seq[GuaranteeReferenceTable])
+@(tables: Seq[(String, String, Table)])
 
-@for((tables, index) <- tables.zipWithIndex) {
-  @tableDetail(tables.title, tables.grn, tables.table, index == 0)
+@for(((title, grn, table), index) <- tables.zipWithIndex) {
+  @tableDetail(title, grn, table, index == 0)
 }

@@ -31,19 +31,22 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
+import viewModels.P5.departure.GuaranteeRejectedP5ViewModel.GuaranteeRejectedP5ViewModelProvider
 import views.html.departureP5.GuaranteeRejectedP5View
 
 import scala.concurrent.Future
 
 class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockDepartureP5MessageService = mock[DepartureP5MessageService]
-  private val mockDepartureCacheConnector   = mock[DepartureCacheConnector]
+  private val mockDepartureP5MessageService             = mock[DepartureP5MessageService]
+  private val mockDepartureCacheConnector               = mock[DepartureCacheConnector]
+  private val mockGuaranteeRejectionP5ViewModelProvider = mock[GuaranteeRejectedP5ViewModelProvider]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
     reset(mockDepartureCacheConnector)
+    reset(mockGuaranteeRejectionP5ViewModelProvider)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -51,6 +54,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
       .p5GuiceApplicationBuilder()
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockDepartureCacheConnector))
+      .overrides(bind[GuaranteeRejectedP5ViewModelProvider].toInstance(mockGuaranteeRejectionP5ViewModelProvider))
 
   "GuaranteeRejected" - {
 
@@ -59,8 +63,8 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
     "onPageLoad" - {
       "when declaration exists" - {
         "must return OK and the correct view for a GET" in {
-          forAll(arbitrary[CC055CType]) {
-            message =>
+          forAll(arbitrary[CC055CType], arbitrary[GuaranteeRejectedP5ViewModel]) {
+            (message, viewModel) =>
               when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(message))
 
@@ -69,12 +73,8 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
               when(mockDepartureCacheConnector.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
 
-              val viewModel = GuaranteeRejectedP5ViewModel(
-                guaranteeReferences = message.GuaranteeReference,
-                lrn = lrn.value,
-                mrn = message.TransitOperation.MRN,
-                acceptanceDate = message.TransitOperation.declarationAcceptanceDate
-              )
+              when(mockGuaranteeRejectionP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(viewModel))
 
               val request = FakeRequest(GET, controller)
 

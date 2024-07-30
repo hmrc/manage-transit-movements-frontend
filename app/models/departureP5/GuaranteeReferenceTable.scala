@@ -1,5 +1,5 @@
-@*
- * Copyright 2023 HM Revenue & Customs
+/*
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import models.departureP5.GuaranteeReferenceTable
-@import views.html.components.TableDetail
+package models.departureP5
 
-@this(tableDetail: TableDetail)
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 
-@(tables: Seq[GuaranteeReferenceTable])
-
-@for((tables, index) <- tables.zipWithIndex) {
-  @tableDetail(tables.title, tables.grn, tables.table, index == 0)
-}
+case class GuaranteeReferenceTable(
+  title: String,
+  grn: String,
+  table: Table
+)

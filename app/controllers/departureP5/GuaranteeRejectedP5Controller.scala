@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.AmendmentService
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
+import viewModels.P5.departure.GuaranteeRejectedP5ViewModel.GuaranteeRejectedP5ViewModelProvider
 import views.html.departureP5.GuaranteeRejectedP5View
 
 import javax.inject.Inject
@@ -37,6 +37,7 @@ class GuaranteeRejectedP5Controller @Inject() (
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   view: GuaranteeRejectedP5View,
+  viewModelProvider: GuaranteeRejectedP5ViewModelProvider,
   service: AmendmentService,
   frontendAppConfig: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext)
@@ -47,21 +48,20 @@ class GuaranteeRejectedP5Controller @Inject() (
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
         val lrn = request.referenceNumbers.localReferenceNumber
-        service.doesDeclarationExist(lrn).map {
-          isAmendable =>
-            if (isAmendable) {
-              val viewModel: GuaranteeRejectedP5ViewModel = GuaranteeRejectedP5ViewModel(
-                request.messageData.GuaranteeReference,
-                lrn,
-                request.messageData.TransitOperation.MRN,
-                request.messageData.TransitOperation.declarationAcceptanceDate
-              )
-
-              Ok(view(viewModel, departureId, messageId))
-            } else {
-              Redirect(controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller.onPageLoad(departureId, messageId).url)
-            }
-        }
+        for {
+          isAmendable <- service.doesDeclarationExist(lrn)
+          viewModel <- viewModelProvider.apply(
+            request.messageData.GuaranteeReference,
+            lrn,
+            request.messageData.TransitOperation.MRN,
+            request.messageData.TransitOperation.declarationAcceptanceDate
+          )
+        } yield
+          if (isAmendable) {
+            Ok(view(viewModel, departureId, messageId))
+          } else {
+            Redirect(controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller.onPageLoad(departureId, messageId).url)
+          }
     }
 
   def onSubmit(departureId: String, messageId: String): Action[AnyContent] =

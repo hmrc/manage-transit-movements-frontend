@@ -17,35 +17,53 @@
 package utils
 
 import generated.GuaranteeReferenceType08
+import models.departureP5.GuaranteeReferenceTable
 import play.api.i18n.Messages
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
+import uk.gov.hmrc.http.HeaderCarrier
 
-class GuaranteeRejectedP5Helper(guaranteeReferences: Seq[GuaranteeReferenceType08])(implicit messages: Messages) extends DeparturesP5MessageHelper {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def toTables: Seq[(String, String, Table)] =
-    guaranteeReferences.zipWithIndex.map {
-      case (guaranteeReference, index) =>
-        val title = messages("guarantee.rejected.message.guaranteeReference", index + 1)
+class GuaranteeRejectedP5Helper(guaranteeReferences: Seq[GuaranteeReferenceType08], referenceDataService: ReferenceDataService)(implicit
+  messages: Messages,
+  hc: HeaderCarrier,
+  ec: ExecutionContext
+) extends DeparturesP5MessageHelper {
 
-        val rows: Seq[Seq[TableRow]] = guaranteeReference.InvalidGuaranteeReason.map {
-          x =>
-            Seq(
-              TableRow(x.code.toText),
-              TableRow(x.text.getOrElse("").toText)
-            )
-        }
+  val tables: Future[Seq[GuaranteeReferenceTable]] =
+    Future.sequence {
+      guaranteeReferences.zipWithIndex.map {
+        case (guaranteeReference, index) =>
+          val title = messages("guarantee.rejected.message.guaranteeReference", index + 1)
 
-        val table = Table(
-          rows,
-          Some(
-            Seq(
-              HeadCell(messages("guarantee.rejected.message.error").toText),
-              HeadCell(messages("guarantee.rejected.message.furtherInformation").toText)
-            )
-          )
-        )
+          Future
+            .sequence {
+              guaranteeReference.InvalidGuaranteeReason.map {
+                x =>
+                  for {
+                    y <- referenceDataService.getInvalidGuaranteeReason(x.code)
+                  } yield Seq(
+                    TableRow(y.toString.toText),
+                    TableRow(x.text.getOrElse("").toText)
+                  )
+              }
+            }
+            .map {
+              rows =>
+                val table = Table(
+                  rows,
+                  Some(
+                    Seq(
+                      HeadCell(messages("guarantee.rejected.message.error").toText),
+                      HeadCell(messages("guarantee.rejected.message.furtherInformation").toText)
+                    )
+                  )
+                )
 
-        (title, guaranteeReference.GRN, table)
+                GuaranteeReferenceTable(title, guaranteeReference.GRN, table)
+            }
+      }
     }
 }
