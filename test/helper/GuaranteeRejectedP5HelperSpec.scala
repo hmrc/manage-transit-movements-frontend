@@ -19,6 +19,7 @@ package helper
 import base.SpecBase
 import generated._
 import generators.Generators
+import models.departureP5.GuaranteeReferenceTable
 import models.referenceData.InvalidGuaranteeReason
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
@@ -28,7 +29,7 @@ import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import utils.GuaranteeRejectedP5Helper
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,46 +44,84 @@ class GuaranteeRejectedP5HelperSpec extends SpecBase with ScalaCheckPropertyChec
       .guiceApplicationBuilder()
       .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
-  "RejectionMessageP5MessageHelper" - {
+  "GuaranteeRejectedP5Helper" - {
 
     "buildErrorCodeRow" - {
 
       "must return SummaryListRow" - {
 
-        "when description present in reference data" in {
-          forAll(arbitraryGuaranteeReferenceType08.arbitrary.sample.value, arbitraryInvalidGuaranteeReasonType01.arbitrary.sample.value, nonEmptyString) {
-            (guaranteeReference, invalidReason, description) =>
+        "using the description present in reference data" in {
+          forAll(arbitraryGuaranteeReferenceType08.arbitrary.sample.value, nonEmptyString) {
+            (guaranteeReference, text) =>
+              val invalidReason1 = InvalidGuaranteeReasonType01("1", "G02", Some(text))
+              val invalidReason2 = InvalidGuaranteeReasonType01("2", "G03", Some(text))
               forAll(arbitrary[CC055CType].map {
                 _.copy(GuaranteeReference =
                   Seq(
                     GuaranteeReferenceType08(
                       GRN = guaranteeReference.GRN,
                       sequenceNumber = guaranteeReference.sequenceNumber,
-                      InvalidGuaranteeReason = Seq(
-                        InvalidGuaranteeReasonType01(
-                          sequenceNumber = invalidReason.sequenceNumber,
-                          code = invalidReason.code,
-                          text = invalidReason.text
-                        )
-                      )
+                      InvalidGuaranteeReason = Seq(invalidReason1, invalidReason2)
+                    ),
+                    GuaranteeReferenceType08(
+                      GRN = guaranteeReference.GRN,
+                      sequenceNumber = guaranteeReference.sequenceNumber,
+                      InvalidGuaranteeReason = Seq(invalidReason1, invalidReason2)
                     )
                   )
                 )
               }) {
                 message =>
-                  val invalidGuaranteeReason = InvalidGuaranteeReason(invalidReason.toString, description)
+                  val invalidGuaranteeReason1 = InvalidGuaranteeReason(invalidReason1.code, "Guarantee exists, but not valid")
+                  val invalidGuaranteeReason2 = InvalidGuaranteeReason(invalidReason2.code, "Access code not valid")
 
-                  when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo(invalidReason.toString))(any(), any()))
-                    .thenReturn(Future.successful(invalidGuaranteeReason))
+                  when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo(invalidReason1.code))(any(), any()))
+                    .thenReturn(Future.successful(invalidGuaranteeReason1))
+
+                  when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo(invalidReason2.code))(any(), any()))
+                    .thenReturn(Future.successful(invalidGuaranteeReason2))
 
                   val helper = new GuaranteeRejectedP5Helper(message.GuaranteeReference, mockReferenceDataService)
 
                   val result = helper.tables.futureValue
 
-                  result mustBe Seq(
+                  result.head mustBe a[GuaranteeReferenceTable]
+                  result.head.title mustBe "Guarantee reference 1"
+                  result.head.grn mustBe guaranteeReference.GRN
+                  result.head.table.head mustBe Some(
                     Seq(
-                      TableRow(Text(s"${invalidReason.toString} - $description")),
-                      TableRow(Text(s"${invalidReason.text}"))
+                      HeadCell(Text("Error")),
+                      HeadCell(Text("Further information"))
+                    )
+                  )
+                  result.head.table.rows mustBe Seq(
+                    Seq(
+                      TableRow(Text(s"${invalidGuaranteeReason1.toString}")),
+                      TableRow(Text(text))
+                    ),
+                    Seq(
+                      TableRow(Text(s"${invalidGuaranteeReason2.toString}")),
+                      TableRow(Text(text))
+                    )
+                  )
+
+                  result(1) mustBe a[GuaranteeReferenceTable]
+                  result(1).title mustBe "Guarantee reference 2"
+                  result(1).grn mustBe guaranteeReference.GRN
+                  result(1).table.head mustBe Some(
+                    Seq(
+                      HeadCell(Text("Error")),
+                      HeadCell(Text("Further information"))
+                    )
+                  )
+                  result(1).table.rows mustBe Seq(
+                    Seq(
+                      TableRow(Text(s"${invalidGuaranteeReason1.toString}")),
+                      TableRow(Text(text))
+                    ),
+                    Seq(
+                      TableRow(Text(s"${invalidGuaranteeReason2.toString}")),
+                      TableRow(Text(text))
                     )
                   )
               }

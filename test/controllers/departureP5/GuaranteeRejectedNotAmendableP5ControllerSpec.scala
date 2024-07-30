@@ -17,7 +17,6 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.DepartureCacheConnector
 import generated.CC055CType
 import generators.Generators
 import models.departureP5._
