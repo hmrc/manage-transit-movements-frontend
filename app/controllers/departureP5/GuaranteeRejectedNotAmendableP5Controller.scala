@@ -21,7 +21,7 @@ import generated.CC055CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.GuaranteeRejectedNotAmendableP5ViewModel
+import viewModels.P5.departure.GuaranteeRejectedNotAmendableP5ViewModel.GuaranteeRejectedNotAmendableP5ViewModelProvider
 import views.html.departureP5.GuaranteeRejectedNotAmendableP5View
 
 import javax.inject.Inject
@@ -32,24 +32,25 @@ class GuaranteeRejectedNotAmendableP5Controller @Inject() (
   actions: Actions,
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
-  view: GuaranteeRejectedNotAmendableP5View
+  view: GuaranteeRejectedNotAmendableP5View,
+  viewModelProvider: GuaranteeRejectedNotAmendableP5ViewModelProvider
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)) {
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
         val lrn = request.referenceNumbers.localReferenceNumber
 
-        val viewModel: GuaranteeRejectedNotAmendableP5ViewModel = GuaranteeRejectedNotAmendableP5ViewModel(
-          request.messageData.GuaranteeReference,
-          lrn,
-          request.messageData.TransitOperation.MRN,
-          request.messageData.TransitOperation.declarationAcceptanceDate
-        )
-
-        Ok(view(viewModel, departureId, messageId))
+        for {
+          viewModel <- viewModelProvider.apply(
+            request.messageData.GuaranteeReference,
+            lrn,
+            request.messageData.TransitOperation.MRN,
+            request.messageData.TransitOperation.declarationAcceptanceDate
+          )
+        } yield Ok(view(viewModel, departureId, messageId))
     }
 
 }

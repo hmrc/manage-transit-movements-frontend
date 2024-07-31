@@ -30,13 +30,15 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.DepartureP5MessageService
 import viewModels.P5.departure.GuaranteeRejectedNotAmendableP5ViewModel
+import viewModels.P5.departure.GuaranteeRejectedNotAmendableP5ViewModel.GuaranteeRejectedNotAmendableP5ViewModelProvider
 import views.html.departureP5.GuaranteeRejectedNotAmendableP5View
 
 import scala.concurrent.Future
 
 class GuaranteeRejectedNotAmendableP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockDepartureP5MessageService = mock[DepartureP5MessageService]
+  private val mockDepartureP5MessageService                        = mock[DepartureP5MessageService]
+  private val mockGuaranteeRejectedNotAmendableP5ViewModelProvider = mock[GuaranteeRejectedNotAmendableP5ViewModelProvider]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -46,6 +48,7 @@ class GuaranteeRejectedNotAmendableP5ControllerSpec extends SpecBase with AppWit
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .p5GuiceApplicationBuilder()
+      .overrides(bind[GuaranteeRejectedNotAmendableP5ViewModelProvider].toInstance(mockGuaranteeRejectedNotAmendableP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
   "GuaranteeRejectedNotAmendable" - {
@@ -55,20 +58,16 @@ class GuaranteeRejectedNotAmendableP5ControllerSpec extends SpecBase with AppWit
     "onPageLoad" - {
 
       "must return OK and the correct view for a GET" in {
-        forAll(arbitrary[CC055CType]) {
-          message =>
+        forAll(arbitrary[CC055CType], arbitrary[GuaranteeRejectedNotAmendableP5ViewModel]) {
+          (message, viewModel) =>
             when(mockDepartureP5MessageService.getMessage[CC055CType](any(), any())(any(), any(), any()))
               .thenReturn(Future.successful(message))
 
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
               .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-            val viewModel = GuaranteeRejectedNotAmendableP5ViewModel(
-              guaranteeReferences = message.GuaranteeReference,
-              lrn = lrn.value,
-              mrn = message.TransitOperation.MRN,
-              acceptanceDate = message.TransitOperation.declarationAcceptanceDate
-            )
+            when(mockGuaranteeRejectedNotAmendableP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(viewModel))
 
             val request = FakeRequest(GET, controller)
 

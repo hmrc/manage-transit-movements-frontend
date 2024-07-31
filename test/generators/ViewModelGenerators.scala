@@ -31,6 +31,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableR
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.P5.departure.{
   DepartureDeclarationErrorsP5ViewModel,
+  GuaranteeRejectedNotAmendableP5ViewModel,
   GuaranteeRejectedP5ViewModel,
   RejectionMessageP5ViewModel,
   ViewAllDepartureMovementsP5ViewModel,
@@ -251,6 +252,16 @@ trait ViewModelGenerators {
         mrn            <- nonEmptyString
         acceptanceDate <- arbitrary[XMLGregorianCalendar]
       } yield GuaranteeRejectedP5ViewModel(tables, lrn, mrn, acceptanceDate)
+    }
+
+  implicit val arbitraryGuaranteeRejectedNotAmendableP5ViewModel: Arbitrary[GuaranteeRejectedNotAmendableP5ViewModel] =
+    Arbitrary {
+      for {
+        tables         <- arbitrary[Seq[GuaranteeReferenceTable]]
+        lrn            <- nonEmptyString
+        mrn            <- nonEmptyString
+        acceptanceDate <- arbitrary[XMLGregorianCalendar]
+      } yield GuaranteeRejectedNotAmendableP5ViewModel(tables, lrn, mrn, acceptanceDate)
     }
 
   implicit lazy val arbitraryText: Arbitrary[Text] = Arbitrary {

@@ -16,31 +16,32 @@
 
 package views.departureP5
 
-import generated._
 import generators.Generators
+import models.departureP5.GuaranteeReferenceTable
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import play.twirl.api.HtmlFormat
 import scalaxb.XMLCalendar
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.departure.GuaranteeRejectedNotAmendableP5ViewModel
-import views.behaviours.ViewBehaviours
+import views.behaviours.TableViewBehaviours
 import views.html.departureP5.GuaranteeRejectedNotAmendableP5View
 
-import scala.jdk.CollectionConverters._
+class GuaranteeRejectedNotAmendableP5ViewSpec extends TableViewBehaviours with Generators {
 
-class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Generators {
+  override val headCells: Seq[HeadCell] =
+    Seq(HeadCell(Text("Error")), HeadCell(Text("Further information")))
+
+  override val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
 
   override val prefix: String = "guarantee.rejected.message.notAmendable"
 
-  private val guaranteeReferences: Seq[GuaranteeReferenceType08] =
-    Gen.nonEmptyListOf(arbitrary[GuaranteeReferenceType08]).sample.value
+  private val table = arbitrary[GuaranteeReferenceTable].sample.value.table.copy(rows = Seq(tableRows), head = Some(headCells))
 
-  val defaultViewModel: GuaranteeRejectedNotAmendableP5ViewModel = GuaranteeRejectedNotAmendableP5ViewModel(
-    guaranteeReferences = guaranteeReferences,
-    lrn = lrn.value,
-    mrn = mrn,
-    acceptanceDate = XMLCalendar("2022-07-15")
-  )
+  private val tables = Seq(GuaranteeReferenceTable("title", "grn", table))
+
+  private val defaultViewModel: GuaranteeRejectedNotAmendableP5ViewModel =
+    new GuaranteeRejectedNotAmendableP5ViewModel(tables, lrn.toString, mrn, XMLCalendar("2022-07-15"))
 
   override def view: HtmlFormat.Appendable = injector
     .instanceOf[GuaranteeRejectedNotAmendableP5View]
@@ -51,6 +52,8 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Genera
   behave like pageWithBackLink()
 
   behave like pageWithHeading()
+
+  behave like pageWithTable()
 
   behave like pageWithoutSubmitButton()
 
@@ -65,9 +68,9 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Genera
     "when there is only one guarantee reference with one error" - {
 
       val viewModel = defaultViewModel
-        .copy(guaranteeReferences =
+        .copy(tables =
           Seq(
-            GuaranteeReferenceType08("1", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None)))
+            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows)))
           )
         )
 
@@ -87,16 +90,9 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Genera
     "when there is only one guarantee reference with multiple errors" - {
 
       val viewModel = defaultViewModel
-        .copy(guaranteeReferences =
+        .copy(tables =
           Seq(
-            GuaranteeReferenceType08(
-              "1",
-              "GRN",
-              Seq(
-                InvalidGuaranteeReasonType01("1", "test", None),
-                InvalidGuaranteeReasonType01("2", "test2", None)
-              )
-            )
+            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows, tableRows)))
           )
         )
 
@@ -116,10 +112,10 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Genera
     "when there is multiple guarantee references with only one error each" - {
 
       val viewModel = defaultViewModel
-        .copy(guaranteeReferences =
+        .copy(tables =
           Seq(
-            GuaranteeReferenceType08("1", "GRN1", Seq(InvalidGuaranteeReasonType01("1", "test1", None))),
-            GuaranteeReferenceType08("2", "GRN2", Seq(InvalidGuaranteeReasonType01("1", "test2", None)))
+            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows))),
+            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows)))
           )
         )
 
@@ -139,24 +135,10 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Genera
     "when there is multiple guarantee references with multiple errors each" - {
 
       val viewModel = defaultViewModel
-        .copy(guaranteeReferences =
+        .copy(tables =
           Seq(
-            GuaranteeReferenceType08(
-              "1",
-              "GRN1",
-              Seq(
-                InvalidGuaranteeReasonType01("1", "test1", None),
-                InvalidGuaranteeReasonType01("2", "test2", None)
-              )
-            ),
-            GuaranteeReferenceType08(
-              "2",
-              "GRN2",
-              Seq(
-                InvalidGuaranteeReasonType01("1", "test3", None),
-                InvalidGuaranteeReasonType01("2", "test4", None)
-              )
-            )
+            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows, tableRows))),
+            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows, tableRows)))
           )
         )
 
@@ -180,9 +162,9 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Genera
     "when there is only one reference with one error" - {
 
       val viewModel = defaultViewModel
-        .copy(guaranteeReferences =
+        .copy(tables =
           Seq(
-            GuaranteeReferenceType08("1", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None)))
+            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows)))
           )
         )
 
@@ -198,10 +180,10 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Genera
     "when there is multiple references or errors" - {
 
       val viewModel = defaultViewModel
-        .copy(guaranteeReferences =
+        .copy(tables =
           Seq(
-            GuaranteeReferenceType08("1", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None))),
-            GuaranteeReferenceType08("2", "GRN", Seq(InvalidGuaranteeReasonType01("1", "test", None)))
+            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows))),
+            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows)))
           )
         )
 
@@ -219,40 +201,6 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends ViewBehaviours with Genera
       val getElement = doc.getElementById("contact")
 
       assertElementContainsHref(getElement, frontendAppConfig.nctsEnquiriesUrl)
-    }
-
-  }
-
-  "must render summary titles" in {
-
-    val renderSummaryLists = doc.getElementsByClass("summary-text").asScala
-
-    guaranteeReferences.zipWithIndex.map {
-      case (reference, index) =>
-        renderSummaryLists(index).getElementsByClass("summary-title").text() mustBe s"Guarantee reference ${index + 1}"
-        renderSummaryLists(index).getElementsByClass("summary-title-secondary").text() mustBe s"GRN: ${reference.GRN}"
-
-    }
-
-  }
-
-  "must render summary tables" in {
-
-    val renderTables = doc.getElementsByClass("govuk-table").asScala
-
-    guaranteeReferences.zipWithIndex.map {
-      case (reference, tableIndex) =>
-        renderTables(tableIndex).getElementsByClass("govuk-table__header").asScala.head.text mustBe "Error"
-        renderTables(tableIndex).getElementsByClass("govuk-table__header").asScala(1).text mustBe "Further information"
-
-        reference.InvalidGuaranteeReason.zipWithIndex.map {
-          case (invalidReason, rowIndex) =>
-            val row = renderTables(tableIndex).getElementsByClass("govuk-table__row").asScala.tail(rowIndex)
-
-            row.getElementsByClass("govuk-table__cell").asScala.head.text mustBe invalidReason.code
-            row.getElementsByClass("govuk-table__cell").asScala(1).text mustBe invalidReason.text.getOrElse("")
-
-        }
     }
 
   }
