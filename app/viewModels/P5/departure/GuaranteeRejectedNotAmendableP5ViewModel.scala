@@ -67,7 +67,7 @@ case class GuaranteeRejectedNotAmendableP5ViewModel(
   }
 
   def link(implicit messages: Messages): String =
-    messages("guarantee.rejected.message.notAmendable.notAmendable.makeAnotherDeparture")
+    messages("guarantee.rejected.message.notAmendable.makeAnotherDeparture")
 }
 
 object GuaranteeRejectedNotAmendableP5ViewModel {
