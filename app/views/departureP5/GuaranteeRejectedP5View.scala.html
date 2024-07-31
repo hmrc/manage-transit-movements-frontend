@@ -59,11 +59,11 @@
     @formHelper(action = routes.GuaranteeRejectedP5Controller.onSubmit(departureId, messageId), Symbol("autoComplete") -> "off") {
         @button(
             attributes = Map("id" -> "submit"),
-            messageKey = messages("site.amendErrors")
+            messageKey = messages(viewModel.buttonContent)
         )
     }
 
     <div class="govuk-body">
-        <a class="govuk-link" href=@config.p5Departure id="makeNewDeparture">@messages("guarantee.rejected.message.makeAnotherDeparture")</a>
+        <a class="govuk-link" href=@config.p5Departure id="makeNewDeparture">@messages(viewModel.link)</a>
     </div>
 }
