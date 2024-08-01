@@ -603,7 +603,6 @@ guarantee.rejected.message.notAmendable.title = Review guarantee errors
 guarantee.rejected.message.notAmendable.heading = Review guarantee errors
 guarantee.rejected.message.notAmendable.paragraph1.singular = There is a problem with the guarantee in this declaration. Review the error and make a new declaration with the right information.
 guarantee.rejected.message.notAmendable.paragraph1.singularGuaranteePluralReference = There is a problem with the guarantee in this declaration. Review the errors and make a new declaration with the right information.
-guarantee.rejected.message.notAmendable.paragraph1.pluralGuaranteeSingularReference = There is a problem with the guarantees in this declaration. Review the error and make a new declaration with the right information.
 guarantee.rejected.message.notAmendable.paragraph1.pluralGuaranteePluralReference = There is a problem with the guarantees in this declaration. Review the errors and make a new declaration with the right information.
 guarantee.rejected.message.notAmendable.guaranteeReference = Guarantee reference {0}
 guarantee.rejected.message.notAmendable.error = Error

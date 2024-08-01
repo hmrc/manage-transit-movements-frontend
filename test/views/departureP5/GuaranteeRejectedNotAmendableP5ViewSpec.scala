@@ -109,29 +109,6 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends TableViewBehaviours with G
       )
     }
 
-    "when there is multiple guarantee references with only one error each" - {
-
-      val viewModel = defaultViewModel
-        .copy(tables =
-          Seq(
-            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows))),
-            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows)))
-          )
-        )
-
-      val document = parseView(
-        injector
-          .instanceOf[GuaranteeRejectedNotAmendableP5View]
-          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
-      )
-
-      behave like pageWithContent(
-        document,
-        "p",
-        "There is a problem with the guarantees in this declaration. Review the error and make a new declaration with the right information."
-      )
-    }
-
     "when there is multiple guarantee references with multiple errors each" - {
 
       val viewModel = defaultViewModel
