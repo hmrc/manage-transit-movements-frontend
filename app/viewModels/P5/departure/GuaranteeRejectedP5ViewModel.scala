@@ -35,13 +35,6 @@ case class GuaranteeRejectedP5ViewModel(
   acceptanceDate: XMLGregorianCalendar
 ) {
 
-  private val multipleGuaranteesOneReference: Boolean = {
-    val multipleGuarantee = tables.length > 1
-    val oneReference      = tables.forall(_.table.rows.length == 1)
-
-    multipleGuarantee && oneReference
-  }
-
   // TODO - refactor
   def formatDateTime: String = {
     val date      = acceptanceDate.toGregorianCalendar.getTime
@@ -54,8 +47,6 @@ case class GuaranteeRejectedP5ViewModel(
       messages("guarantee.rejected.message.paragraph1.singular")
     } else if (tables.length == 1 && tables.head.table.rows.length > 1) {
       messages("guarantee.rejected.message.paragraph1.singularGuaranteePluralReference")
-    } else if (multipleGuaranteesOneReference) {
-      messages("guarantee.rejected.message.paragraph1.pluralGuaranteeSingularReference")
     } else {
       messages("guarantee.rejected.message.paragraph1.pluralGuaranteePluralReference")
     }

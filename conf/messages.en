@@ -586,7 +586,6 @@ guarantee.rejected.message.title = Amend guarantee errors
 guarantee.rejected.message.heading = Amend guarantee errors
 guarantee.rejected.message.paragraph1.singular = There is a problem with the guarantee in this declaration. Amend the error and resend the declaration.
 guarantee.rejected.message.paragraph1.singularGuaranteePluralReference = There is a problem with the guarantee in this declaration. Amend the errors and resend the declaration.
-guarantee.rejected.message.paragraph1.pluralGuaranteeSingularReference = There is a problem with the guarantees in this declaration. Amend the error and resend the declaration.
 guarantee.rejected.message.paragraph1.pluralGuaranteePluralReference = There is a problem with the guarantees in this declaration. Amend the errors and resend the declaration.
 guarantee.rejected.message.guaranteeReference = Guarantee reference {0}
 guarantee.rejected.message.error = Error
