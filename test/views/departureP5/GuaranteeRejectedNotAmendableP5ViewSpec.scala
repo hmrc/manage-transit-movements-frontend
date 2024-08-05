@@ -23,27 +23,28 @@ import play.twirl.api.HtmlFormat
 import scalaxb.XMLCalendar
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
-import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
+import viewModels.P5.departure.GuaranteeRejectedNotAmendableP5ViewModel
 import views.behaviours.TableViewBehaviours
-import views.html.departureP5.GuaranteeRejectedP5View
+import views.html.departureP5.GuaranteeRejectedNotAmendableP5View
 
-class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
+class GuaranteeRejectedNotAmendableP5ViewSpec extends TableViewBehaviours with Generators {
 
   override val headCells: Seq[HeadCell] =
     Seq(HeadCell(Text("Error")), HeadCell(Text("Further information")))
 
   override val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
 
-  override val prefix: String = "guarantee.rejected.message"
+  override val prefix: String = "guarantee.rejected.message.notAmendable"
 
   private val table = arbitrary[GuaranteeReferenceTable].sample.value.table.copy(rows = Seq(tableRows), head = Some(headCells))
 
   private val tables = Seq(GuaranteeReferenceTable("title", "grn", table))
 
-  private val defaultViewModel: GuaranteeRejectedP5ViewModel = new GuaranteeRejectedP5ViewModel(tables, lrn.toString, mrn, XMLCalendar("2022-07-15"))
+  private val defaultViewModel: GuaranteeRejectedNotAmendableP5ViewModel =
+    new GuaranteeRejectedNotAmendableP5ViewModel(tables, lrn.toString, mrn, XMLCalendar("2022-07-15"))
 
   override def view: HtmlFormat.Appendable = injector
-    .instanceOf[GuaranteeRejectedP5View]
+    .instanceOf[GuaranteeRejectedNotAmendableP5View]
     .apply(defaultViewModel, departureIdP5, messageId)(fakeRequest, messages)
 
   behave like pageWithTitle()
@@ -54,7 +55,7 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
   behave like pageWithTable()
 
-  behave like pageWithSubmitButton("Amend errors")
+  behave like pageWithoutSubmitButton()
 
   behave like pageWithLink(
     "makeNewDeparture",
@@ -75,11 +76,15 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
-      behave like pageWithContent(document, "p", "There is a problem with the guarantee in this declaration. Amend the error and resend the declaration.")
+      behave like pageWithContent(
+        document,
+        "p",
+        "There is a problem with the guarantee in this declaration. Review the error and make a new declaration with the right information."
+      )
     }
 
     "when there is only one guarantee reference with multiple errors" - {
@@ -93,11 +98,15 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
-      behave like pageWithContent(document, "p", "There is a problem with the guarantee in this declaration. Amend the errors and resend the declaration.")
+      behave like pageWithContent(
+        document,
+        "p",
+        "There is a problem with the guarantee in this declaration. Review the errors and make a new declaration with the right information."
+      )
     }
 
     "when there is multiple guarantee references with multiple errors each" - {
@@ -112,11 +121,15 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
-      behave like pageWithContent(document, "p", "There is a problem with the guarantees in this declaration. Amend the errors and resend the declaration.")
+      behave like pageWithContent(
+        document,
+        "p",
+        "There is a problem with the guarantees in this declaration. Review the errors and make a new declaration with the right information."
+      )
     }
 
   }
@@ -134,7 +147,7 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
@@ -153,7 +166,7 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
       val document = parseView(
         injector
-          .instanceOf[GuaranteeRejectedP5View]
+          .instanceOf[GuaranteeRejectedNotAmendableP5View]
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 

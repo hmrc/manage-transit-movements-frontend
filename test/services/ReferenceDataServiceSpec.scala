@@ -20,7 +20,7 @@ import base.SpecBase
 import cats.data.NonEmptySet
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
 import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
@@ -77,6 +77,11 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val functionalError1    = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
   private val functionalError2    = FunctionalErrorWithDesc("2", "FE2")
   private val functionalErrors    = NonEmptySet.of(functionalError1, functionalError2)
+
+  private val invalidGuaranteeReasonCode = "G02"
+  private val invalidGuaranteeReason1    = InvalidGuaranteeReason(functionalErrorCode, "Guarantee exists, but not valid")
+  private val invalidGuaranteeReason2    = InvalidGuaranteeReason("G03", "Access code not valid")
+  private val invalidGuaranteeReasons    = NonEmptySet.of(invalidGuaranteeReason1, invalidGuaranteeReason2)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -281,6 +286,22 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
         service.getFunctionalError(functionalErrorCode).futureValue mustBe functionalError1
 
         verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams): _*)(any(), any())
+      }
+
+    }
+
+    "getInvalidGuaranteeReason" - {
+
+      val expectedQueryParams = Seq("data.code" -> invalidGuaranteeReasonCode)
+
+      "should return a invalid guarantee reason" in {
+        when(mockConnector.getInvalidGuaranteeReasons(any())(any(), any())).thenReturn(Future.successful(invalidGuaranteeReasons))
+
+        val service = new ReferenceDataServiceImpl(mockConnector)
+
+        service.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue mustBe invalidGuaranteeReason1
+
+        verify(mockConnector).getInvalidGuaranteeReasons(eqTo(expectedQueryParams): _*)(any(), any())
       }
 
     }

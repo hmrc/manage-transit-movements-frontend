@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import models.departureP5.GuaranteeReferenceTable
-@import views.html.components.TableDetail
+package models.referenceData
 
-@this(tableDetail: TableDetail)
+import cats.Order
+import play.api.libs.json.{Format, Json}
 
-@(tables: Seq[GuaranteeReferenceTable])
+case class InvalidGuaranteeReason(code: String, description: String) {
 
-@for((tables, index) <- tables.zipWithIndex) {
-  @tableDetail(tables.title, tables.grn, tables.table, index == 0)
+  override def toString: String =
+    description match {
+      case "" => code
+      case _  => s"$code - $description"
+    }
+}
+
+object InvalidGuaranteeReason {
+
+  implicit val format: Format[InvalidGuaranteeReason] = Json.format[InvalidGuaranteeReason]
+
+  implicit val order: Order[InvalidGuaranteeReason] = (x: InvalidGuaranteeReason, y: InvalidGuaranteeReason) => (x, y).compareBy(_.code)
+
 }

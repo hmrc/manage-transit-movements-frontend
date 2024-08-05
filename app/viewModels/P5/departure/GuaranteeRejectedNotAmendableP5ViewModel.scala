@@ -21,14 +21,14 @@ import models.departureP5.GuaranteeReferenceTable
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.GuaranteeRejectedP5Helper
+import utils.GuaranteeRejectedNotAmendableP5Helper
 
 import java.text.SimpleDateFormat
 import javax.inject.Inject
 import javax.xml.datatype.XMLGregorianCalendar
 import scala.concurrent.{ExecutionContext, Future}
 
-case class GuaranteeRejectedP5ViewModel(
+case class GuaranteeRejectedNotAmendableP5ViewModel(
   tables: Seq[GuaranteeReferenceTable],
   lrn: String,
   mrn: String,
@@ -44,40 +44,37 @@ case class GuaranteeRejectedP5ViewModel(
 
   def paragraph1(implicit messages: Messages): String =
     if (tables.length == 1 && tables.head.table.rows.length == 1) {
-      messages("guarantee.rejected.message.paragraph1.singular")
+      messages("guarantee.rejected.message.notAmendable.paragraph1.singular")
     } else if (tables.length == 1 && tables.head.table.rows.length > 1) {
-      messages("guarantee.rejected.message.paragraph1.singularGuaranteePluralReference")
+      messages("guarantee.rejected.message.notAmendable.paragraph1.singularGuaranteePluralReference")
     } else {
-      messages("guarantee.rejected.message.paragraph1.pluralGuaranteePluralReference")
+      messages("guarantee.rejected.message.notAmendable.paragraph1.pluralGuaranteePluralReference")
     }
 
   def paragraph2(implicit messages: Messages): String = if (tables.length == 1 && tables.head.table.rows.length == 1) {
-    messages("guarantee.rejected.message.contact.singular")
+    messages("guarantee.rejected.message.notAmendable.contact.singular")
   } else {
-    messages("guarantee.rejected.message.contact.plural")
+    messages("guarantee.rejected.message.notAmendable.contact.plural")
   }
 
-  def buttonContent(implicit messages: Messages): String =
-    messages("guarantee.rejected.message.amendErrors")
-
   def link(implicit messages: Messages): String =
-    messages("guarantee.rejected.message.makeAnotherDeparture")
+    messages("guarantee.rejected.message.notAmendable.makeAnotherDeparture")
 }
 
-object GuaranteeRejectedP5ViewModel {
+object GuaranteeRejectedNotAmendableP5ViewModel {
 
-  class GuaranteeRejectedP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class GuaranteeRejectedNotAmendableP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
       guaranteeReferences: Seq[GuaranteeReferenceType08],
       lrn: String,
       mrn: String,
       acceptanceDate: XMLGregorianCalendar
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[GuaranteeRejectedP5ViewModel] = {
+    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[GuaranteeRejectedNotAmendableP5ViewModel] = {
 
-      val helper = new GuaranteeRejectedP5Helper(guaranteeReferences, referenceDataService)
+      val helper = new GuaranteeRejectedNotAmendableP5Helper(guaranteeReferences, referenceDataService)
 
-      helper.tables.map(GuaranteeRejectedP5ViewModel(_, lrn, mrn, acceptanceDate))
+      helper.tables.map(GuaranteeRejectedNotAmendableP5ViewModel(_, lrn, mrn, acceptanceDate))
     }
   }
 }

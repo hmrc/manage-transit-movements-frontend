@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GuaranteeRejectedP5Helper(guaranteeReferences: Seq[GuaranteeReferenceType08], referenceDataService: ReferenceDataService)(implicit
+class GuaranteeRejectedNotAmendableP5Helper(guaranteeReferences: Seq[GuaranteeReferenceType08], referenceDataService: ReferenceDataService)(implicit
   messages: Messages,
   hc: HeaderCarrier,
   ec: ExecutionContext
@@ -36,7 +36,7 @@ class GuaranteeRejectedP5Helper(guaranteeReferences: Seq[GuaranteeReferenceType0
     Future.sequence {
       guaranteeReferences.zipWithIndex.map {
         case (guaranteeReference, index) =>
-          val title = messages("guarantee.rejected.message.guaranteeReference", index + 1)
+          val title = messages("guarantee.rejected.message.notAmendable.guaranteeReference", index + 1)
 
           Future
             .sequence {
@@ -56,8 +56,8 @@ class GuaranteeRejectedP5Helper(guaranteeReferences: Seq[GuaranteeReferenceType0
                   rows,
                   Some(
                     Seq(
-                      HeadCell(messages("guarantee.rejected.message.error").toText),
-                      HeadCell(messages("guarantee.rejected.message.furtherInformation").toText)
+                      HeadCell(messages("guarantee.rejected.message.notAmendable.error").toText),
+                      HeadCell(messages("guarantee.rejected.message.notAmendable.furtherInformation").toText)
                     )
                   )
                 )

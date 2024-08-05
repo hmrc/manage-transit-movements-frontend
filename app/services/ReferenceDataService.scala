@@ -19,7 +19,7 @@ package services
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
 import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -111,6 +111,16 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
     connector.getFunctionalErrors().map(_.toSeq).recover {
       case _ => Seq.empty
     }
+
+  def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason] = {
+    val queryParams: (String, String) = "data.code" -> code
+    connector.getInvalidGuaranteeReasons(queryParams).map(_.head)
+  }
+
+  def getInvalidGuaranteeReasons()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[InvalidGuaranteeReason]] =
+    connector.getInvalidGuaranteeReasons().map(_.toSeq).recover {
+      case _ => Seq.empty
+    }
 }
 
 trait ReferenceDataService {
@@ -126,4 +136,6 @@ trait ReferenceDataService {
   def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType]
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]
   def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]]
+  def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason]
+  def getInvalidGuaranteeReasons()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[InvalidGuaranteeReason]]
 }

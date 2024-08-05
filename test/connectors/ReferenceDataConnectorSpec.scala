@@ -21,7 +21,7 @@ import cats.data.NonEmptySet
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec._
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, RequestedDocumentType}
+import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
 import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -327,17 +327,69 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
           }
         }
       }
+
+      "getInvalidGuaranteeReasons" - {
+
+        "when filtering" - {
+
+          val url = s"$baseUrl/lists/InvalidGuaranteeReason?foo=bar"
+
+          "should handle a 200 response for invalid guarantee reasons" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(okJson(invalidGuaranteeReasonsResponseJson))
+            )
+
+            val expectedResult = NonEmptySet.of(InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid"))
+
+            connector.getInvalidGuaranteeReasons(queryParams).futureValue mustBe expectedResult
+          }
+
+          "should throw a NoReferenceDataFoundException for an empty response" in {
+            checkNoReferenceDataFoundResponse(url, connector.getInvalidGuaranteeReasons(queryParams))
+          }
+
+          "should handle client and server errors for invalid guarantee reasons" in {
+            checkErrorResponse(url, connector.getInvalidGuaranteeReasons(queryParams))
+          }
+        }
+
+        "when not filtering" - {
+
+          val url = s"$baseUrl/lists/InvalidGuaranteeReason"
+
+          "should handle a 200 response for invalid guarantee reasons" in {
+            server.stubFor(
+              get(urlEqualTo(url))
+                .willReturn(okJson(invalidGuaranteeReasonsResponseJson))
+            )
+
+            val expectedResult = NonEmptySet.of(InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid"))
+
+            connector.getInvalidGuaranteeReasons().futureValue mustBe expectedResult
+          }
+
+          "should throw a NoReferenceDataFoundException for an empty response" in {
+            checkNoReferenceDataFoundResponse(url, connector.getInvalidGuaranteeReasons())
+          }
+
+          "should handle client and server errors for invalid guarantee reasons" in {
+            checkErrorResponse(url, connector.getInvalidGuaranteeReasons())
+          }
+        }
+      }
     }
   }
 }
 
 object ReferenceDataConnectorSpec {
 
-  private val code                  = "GB00001"
-  private val typeOfControl         = "44"
-  private val incidentCodeCode      = "1"
-  private val requestedDocumentType = "C620"
-  private val functionalError       = "14"
+  private val code                       = "GB00001"
+  private val typeOfControl              = "44"
+  private val incidentCodeCode           = "1"
+  private val requestedDocumentType      = "C620"
+  private val functionalError            = "14"
+  private val invalidGuaranteeReasonCode = "G02"
 
   private val baseUrl = "/customs-reference-data/test-only"
 
@@ -485,6 +537,18 @@ object ReferenceDataConnectorSpec {
        |    {
        |      "code": "$functionalError",
        |      "description": "Rule violation"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin
+
+  private val invalidGuaranteeReasonsResponseJson: String =
+    s"""
+       |{
+       |  "data": [
+       |    {
+       |      "code": "$invalidGuaranteeReasonCode",
+       |      "description": "Guarantee exists, but not valid"
        |    }
        |  ]
        |}
