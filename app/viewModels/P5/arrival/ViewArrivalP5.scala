@@ -18,6 +18,7 @@ package viewModels.P5.arrival
 
 import config.FrontendAppConfig
 import models.arrivalP5.ArrivalMovementAndMessage
+import models.RichLocalDateTime
 import viewModels.{ViewMovement, ViewMovementAction}
 
 import java.time._
@@ -35,11 +36,11 @@ final case class ViewArrivalP5(
 
 object ViewArrivalP5 {
 
-  def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ViewArrivalP5 = {
+  def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewArrivalP5 = {
 
     val arrivalStatus: ArrivalStatusP5ViewModel = ArrivalStatusP5ViewModel(movementAndMessage)
 
-    val systemTime = movementAndMessage.arrivalMovement.updated
+    val systemTime = movementAndMessage.arrivalMovement.updated.toSystemDefaultTime
 
     ViewArrivalP5(
       updatedDate = systemTime.toLocalDate,

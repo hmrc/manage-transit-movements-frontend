@@ -31,6 +31,7 @@ import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepart
 import viewModels.pagination.ListPaginationViewModel
 import views.html.departureP5.ViewAllDeparturesP5View
 
+import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,7 +42,7 @@ class ViewAllDeparturesP5Controller @Inject() (
   departureP5MessageService: DepartureP5MessageService,
   departureMovementP5Connector: DepartureMovementP5Connector,
   view: ViewAllDeparturesP5View
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, paginationConfig: PaginationAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, paginationConfig: PaginationAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 

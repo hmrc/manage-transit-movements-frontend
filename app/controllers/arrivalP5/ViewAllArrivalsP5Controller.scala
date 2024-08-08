@@ -31,6 +31,7 @@ import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
 import viewModels.pagination.ListPaginationViewModel
 import views.html.arrivalP5.ViewAllArrivalsP5View
 
+import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,7 +42,7 @@ class ViewAllArrivalsP5Controller @Inject() (
   arrivalMovementP5Connector: ArrivalMovementP5Connector,
   formProvider: ArrivalsSearchFormProvider,
   view: ViewAllArrivalsP5View
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, paginationConfig: PaginationAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, paginationConfig: PaginationAppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 
