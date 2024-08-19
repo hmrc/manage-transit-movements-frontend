@@ -17,7 +17,9 @@
 package models.referenceData
 
 import cats.Order
-import play.api.libs.json.{Json, OFormat}
+import forms.mappings.RichSeq
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
   def nameAndCode: String = s"${this.name} (${this.id})"
@@ -29,4 +31,32 @@ object CustomsOffice {
 
   implicit val order: Order[CustomsOffice] = (x: CustomsOffice, y: CustomsOffice) => (x, y).compareBy(_.name, _.id)
 
+  implicit val listReads: Reads[List[CustomsOffice]] = {
+
+    case class TempCustomsOffice(customsOffice: CustomsOffice, languageCode: String)
+
+    implicit val reads: Reads[TempCustomsOffice] = (
+      __.read[CustomsOffice] and
+        (__ \ "languageCode").read[String]
+    )(TempCustomsOffice.apply _)
+
+    Reads {
+      case JsArray(customsOffices) =>
+        JsSuccess {
+          customsOffices
+            .flatMap(_.asOpt[TempCustomsOffice])
+            .toSeq
+            .groupByPreserveOrder(_.customsOffice.id)
+            .flatMap {
+              case (_, customsOffices) =>
+                customsOffices
+                  .find(_.languageCode == "EN")
+                  .orElse(customsOffices.headOption)
+            }
+            .map(_.customsOffice)
+            .toList
+        }
+      case _ => JsError("Expected customs offices to be in a JsArray")
+    }
+  }
 }

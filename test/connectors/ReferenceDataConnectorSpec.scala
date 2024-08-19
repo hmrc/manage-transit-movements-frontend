@@ -400,6 +400,7 @@ object ReferenceDataConnectorSpec {
        |    {
        |      "id": "$code",
        |      "name": "NAME001",
+       |      "languageCode": "EN",
        |      "phoneNumber": "004412323232345"
        |    }
        |  ]
