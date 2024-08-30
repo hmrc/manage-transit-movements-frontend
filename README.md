@@ -32,8 +32,8 @@ sm2 --start CTC_TRADERS_P5_ACCEPTANCE
 
 We have dedicated modules for handling the phase 5 transition and phase 5 final phases. This is configured through the `play.additional.module` key in `application.conf`.
 
-* `config.TransitionModule` will ensure that any requests to the `transit-movements-trader-manage-documents` service will have a 'transition' (`application/vnd.hmrc.transition+pdf`) Accept header.
-* Conversely, `config.PostTransitionModule` will ensure those requests have a 'final' (`application/vnd.hmrc.final+pdf`) Accept header.
+* `config.TransitionModule` will ensure that any requests to the `transit-movements-trader-manage-documents` service will have a 2.0 APIVersion header.
+* Conversely, `config.PostTransitionModule` will ensure those requests have a 2.1 APIVersion header.
 
 This service uses switches defined in `application.conf` that toggle between Phase 4 and Phase 5 frontends/journeys.
 

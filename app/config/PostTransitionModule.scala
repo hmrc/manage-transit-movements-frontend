@@ -16,6 +16,8 @@
 
 package config
 
+import config.PhaseConfig.PostTransitionConfig
+
 class PostTransitionModule extends Module {
 
   override def configure(): Unit = {

@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import models.Availability
 import models.arrivalP5.{ArrivalMovements, LatestArrivalMessage}
 import play.api.http.Status.{NOT_FOUND, OK}
@@ -31,7 +31,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.XML
 
-class ArrivalMovementP5Connector @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends MovementP5Connector {
+class ArrivalMovementP5Connector @Inject() (
+  config: FrontendAppConfig,
+  override val phaseConfig: PhaseConfig,
+  http: HttpClientV2
+)(implicit ec: ExecutionContext)
+    extends MovementP5Connector {
 
   def getAllMovements()(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] =
     getMovements(Seq.empty)

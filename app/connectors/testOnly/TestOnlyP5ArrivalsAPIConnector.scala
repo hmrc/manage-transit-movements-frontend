@@ -16,7 +16,7 @@
 
 package connectors.testOnly
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, PhaseConfig}
 import connectors.MovementP5Connector
 import play.api.libs.json.JsValue
 import play.api.mvc.Headers
@@ -28,7 +28,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
-class TestOnlyP5ArrivalsAPIConnector @Inject() (val http: HttpClientV2, config: FrontendAppConfig)(implicit ec: ExecutionContext) extends MovementP5Connector {
+class TestOnlyP5ArrivalsAPIConnector @Inject() (
+  http: HttpClientV2,
+  config: FrontendAppConfig,
+  override val phaseConfig: PhaseConfig
+)(implicit ec: ExecutionContext)
+    extends MovementP5Connector {
 
   def arrivalOutbound(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
