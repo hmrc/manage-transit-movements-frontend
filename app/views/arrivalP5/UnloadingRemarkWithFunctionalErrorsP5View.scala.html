@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
+@import controllers.arrivalP5.routes
 @import config.FrontendAppConfig
 @import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 @import viewModels.pagination.ListPaginationViewModel
+@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
 
 @this(
     mainTemplate: MainTemplate,
@@ -29,7 +30,7 @@
     helpdeskLink: HelpdeskLink
 )
 
-@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, messageId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,
@@ -52,6 +53,13 @@
         viewModel.paragraph2Link,
         viewModel.paragraph2Suffix
     )
+
+    @formHelper(action = routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onSubmit(arrivalId, messageId), Symbol("autoComplete") -> "off") {
+        @button(
+            messageKey = "site.makeUnloadingRemarks",
+            attributes = Map("id" -> "submit")
+        )
+    }
 
     <p class="govuk-body">
         <a id="arrival-link" class="govuk-link" href="@controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)">@viewModel.hyperlink</a>

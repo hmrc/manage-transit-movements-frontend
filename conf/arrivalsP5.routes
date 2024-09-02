@@ -6,8 +6,10 @@ POST       /view-arrival-notifications                                          
 GET        /:arrivalId/notification-errors/:messageId                                controllers.arrivalP5.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String, messageId: String)
 
 GET        /:arrivalId/unloading-remarks-errors/:messageId                           controllers.arrivalP5.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String, messageId: String)
+POST       /:arrivalId/unloading-remarks-errors/:messageId                           controllers.arrivalP5.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onSubmit(arrivalId: String, messageId: String)
 
 GET        /:arrivalId/review-unloading-remarks-errors/:messageId                    controllers.arrivalP5.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String, messageId: String)
+POST       /:arrivalId/review-unloading-remarks-errors/:messageId                    controllers.arrivalP5.UnloadingRemarkWithFunctionalErrorsP5Controller.onSubmit(arrivalId: String, messageId: String)
 
 GET        /:arrivalId/review-arrival-notification-errors/:messageId                 controllers.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(page: Option[Int], arrivalId: String, messageId: String)
 

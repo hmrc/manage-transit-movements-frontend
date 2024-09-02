@@ -58,7 +58,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
-      .apply(viewModel, arrivalIdP5, paginationViewModel)(fakeRequest, messages)
+      .apply(viewModel, arrivalIdP5, messageId, paginationViewModel)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable = applyView(viewModel, paginationViewModel)
 
@@ -109,6 +109,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
     "New Computerised Transit System helpdesk",
     frontendAppConfig.nctsEnquiriesUrl
   )
+
+  behave like pageWithSubmitButton("Make unloading remarks")
 
   behave like pageWithLink(
     "arrival-link",

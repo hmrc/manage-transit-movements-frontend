@@ -42,7 +42,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
   private val mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider = mock[UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider]
   private val mockArrivalP5MessageService                              = mock[ArrivalP5MessageService]
 
-  lazy val controller: String = controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
+  lazy val controller: String = controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url
   val sections: Seq[Section]  = arbitrarySections.arbitrary.sample.value
   val tableRow: TableRow      = arbitraryTableRow.arbitrary.sample.value
 
@@ -89,7 +89,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
               val view = injector.instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
 
               contentAsString(result) mustEqual
-                view(rejectionMessageP5ViewModel, departureIdP5, paginationViewModel)(request, messages).toString
+                view(rejectionMessageP5ViewModel, arrivalIdP5, messageId, paginationViewModel)(request, messages).toString
           }
       }
     }
@@ -108,6 +108,21 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+      }
+    }
+
+    "must redirect to unloading remarks for a POST" in {
+      forAll(arbitrary[CC057CType]) {
+        message =>
+          when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(message))
+
+          val request = FakeRequest(POST, controller)
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual frontendAppConfig.p5UnloadingStart(arrivalIdP5, messageId)
       }
     }
   }

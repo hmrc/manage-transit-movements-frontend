@@ -11,6 +11,7 @@ site.yes = Yes
 site.continue = Continue
 site.youMust = You must
 site.search = Search
+site.makeUnloadingRemarks = Make unloading remarks
 site.service_name = Manage your transit movements
 site.section = This section is
 site.amendErrors = Amend errors

@@ -16,6 +16,7 @@
 
 package controllers.arrivalP5
 
+import config.FrontendAppConfig
 import controllers.actions._
 import generated.CC057CType
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,7 +36,8 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
   messageRetrievalAction: ArrivalMessageRetrievalActionProvider,
   viewModelProvider: UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider,
   view: UnloadingRemarkWithoutFunctionalErrorsP5View,
-  referenceDataService: ReferenceDataService
+  referenceDataService: ReferenceDataService,
+  config: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -54,12 +56,19 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
                   viewModelProvider.apply(
                     request.messageData.TransitOperation.MRN,
                     customsOffice
-                  )
+                  ),
+                  arrivalId,
+                  messageId
                 )
               )
           }
         } else {
           Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
         }
+    }
+
+  def onSubmit(arrivalId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)) {
+      _ => Redirect(config.p5UnloadingStart(arrivalId, messageId))
     }
 }

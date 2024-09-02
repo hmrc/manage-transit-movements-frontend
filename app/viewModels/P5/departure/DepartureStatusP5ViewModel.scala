@@ -156,6 +156,7 @@ object DepartureStatusP5ViewModel {
       DepartureStatusP5ViewModel("movement.status.P5.prelodgedDeclarationSent", actions = Nil)
   }
 
+  // TODO - Action URL doesn't exist. Where should this go? Or should there be an action at all?
   private def movementNotArrivedResponseSent(implicit
     frontendAppConfig: FrontendAppConfig
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
@@ -171,6 +172,7 @@ object DepartureStatusP5ViewModel {
       )
   }
 
+  // TODO - Action URL doesn't exist. Where should this go? Or should there be an action at all?
   private def movementNotArrived(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == MovementNotArrived =>
       DepartureStatusP5ViewModel(
