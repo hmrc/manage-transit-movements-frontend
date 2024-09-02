@@ -16,14 +16,37 @@
 
 package config
 
+import com.typesafe.config.Config
+import config.PhaseConfig.Values
+import play.api.{ConfigLoader, Configuration}
+
+import javax.inject.Inject
+
 trait PhaseConfig {
-  val manageDocumentsAcceptHeader: String
+  val values: Values
 }
 
-class TransitionConfig() extends PhaseConfig {
-  override val manageDocumentsAcceptHeader: String = "application/vnd.hmrc.transition+pdf"
-}
+object PhaseConfig {
 
-class PostTransitionConfig() extends PhaseConfig {
-  override val manageDocumentsAcceptHeader: String = "application/vnd.hmrc.final+pdf"
+  class TransitionConfig @Inject() (configuration: Configuration) extends PhaseConfig {
+    override val values: Values = configuration.get[Values]("phase.transitional")
+  }
+
+  class PostTransitionConfig @Inject() (configuration: Configuration) extends PhaseConfig {
+    override val values: Values = configuration.get[Values]("phase.final")
+  }
+
+  // TODO - manageDocumentsAcceptHeader can be removed once changes deployed
+  case class Values(apiVersion: Double, manageDocumentsAcceptHeader: String)
+
+  object Values {
+
+    implicit val configLoader: ConfigLoader[Values] = (config: Config, path: String) =>
+      config.getConfig(path) match {
+        case phase =>
+          val apiVersion                  = phase.getDouble("apiVersion")
+          val manageDocumentsAcceptHeader = phase.getString("manageDocumentsAcceptHeader")
+          Values(apiVersion, manageDocumentsAcceptHeader)
+      }
+  }
 }
