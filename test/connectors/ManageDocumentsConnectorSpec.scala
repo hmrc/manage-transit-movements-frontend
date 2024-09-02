@@ -54,7 +54,6 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
             val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
             server.stubFor(
               get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                .withHeader(ACCEPT, equalTo("application/vnd.hmrc.transition+pdf"))
                 .withHeader("APIVersion", equalTo("2.0"))
                 .willReturn(
                   aResponse()
@@ -76,7 +75,6 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
             server.stubFor(
               get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                .withHeader(ACCEPT, equalTo("application/vnd.hmrc.transition+pdf"))
                 .withHeader("APIVersion", equalTo("2.0"))
                 .willReturn(
                   aResponse()
@@ -99,7 +97,6 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
             val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
             server.stubFor(
               get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                .withHeader(ACCEPT, equalTo("application/vnd.hmrc.final+pdf"))
                 .withHeader("APIVersion", equalTo("2.1"))
                 .willReturn(
                   aResponse()
@@ -121,7 +118,6 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
             server.stubFor(
               get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                .withHeader(ACCEPT, equalTo("application/vnd.hmrc.final+pdf"))
                 .withHeader("APIVersion", equalTo("2.1"))
                 .willReturn(
                   aResponse()

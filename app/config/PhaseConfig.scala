@@ -36,17 +36,15 @@ object PhaseConfig {
     override val values: Values = configuration.get[Values]("phase.final")
   }
 
-  // TODO - manageDocumentsAcceptHeader can be removed once changes deployed
-  case class Values(apiVersion: Double, manageDocumentsAcceptHeader: String)
+  case class Values(apiVersion: Double)
 
   object Values {
 
     implicit val configLoader: ConfigLoader[Values] = (config: Config, path: String) =>
       config.getConfig(path) match {
         case phase =>
-          val apiVersion                  = phase.getDouble("apiVersion")
-          val manageDocumentsAcceptHeader = phase.getString("manageDocumentsAcceptHeader")
-          Values(apiVersion, manageDocumentsAcceptHeader)
+          val apiVersion = phase.getDouble("apiVersion")
+          Values(apiVersion)
       }
   }
 }

@@ -41,7 +41,6 @@ class ManageDocumentsConnector @Inject() (
     val url: URL = url"${appConfig.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
     http
       .get(url)
-      .setHeader(ACCEPT -> phaseConfig.values.manageDocumentsAcceptHeader)
       .setHeader(headers: _*)
       .stream
   }
