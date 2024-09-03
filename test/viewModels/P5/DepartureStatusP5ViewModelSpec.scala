@@ -113,12 +113,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.movementNotArrivedResponseSent",
-        Seq(
-          ViewMovementAction(
-            s"${frontendAppConfig.p5Unloading}",
-            "movement.status.P5.action.movementNotArrivedResponseSent.viewErrors"
-          )
-        )
+        Nil
       )
 
       result mustBe expectedResult
@@ -132,12 +127,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.movementNotArrived",
-        Seq(
-          ViewMovementAction(
-            s"${frontendAppConfig.p5Unloading}",
-            "movement.status.P5.action.movementNotArrived.respond"
-          )
-        )
+        Nil
       )
 
       result mustBe expectedResult

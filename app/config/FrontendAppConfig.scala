@@ -54,7 +54,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val p4Unloading: String = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
 
-  val p5Unloading: String                                            = configuration.get[String]("urls.manageTransitMovementsUnloadingFrontend")
+  private val p5Unloading: String                                    = configuration.get[String]("urls.manageTransitMovementsUnloadingFrontend")
   def p5UnloadingStart(arrivalId: String, messageId: String): String = s"$p5Unloading/$arrivalId/unloading-remarks/$messageId"
 
   def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$p4Arrival/${arrivalId.index}/arrival-rejection"
