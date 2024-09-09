@@ -156,28 +156,19 @@ object DepartureStatusP5ViewModel {
       DepartureStatusP5ViewModel("movement.status.P5.prelodgedDeclarationSent", actions = Nil)
   }
 
-  private def movementNotArrivedResponseSent(implicit
-    frontendAppConfig: FrontendAppConfig
-  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def movementNotArrivedResponseSent: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == MovementNotArrivedResponseSent =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.movementNotArrivedResponseSent",
-        actions = Seq(
-          ViewMovementAction(
-            s"${frontendAppConfig.p5Unloading}",
-            "movement.status.P5.action.movementNotArrivedResponseSent.viewErrors"
-          )
-        )
+        actions = Nil
       )
   }
 
-  private def movementNotArrived(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def movementNotArrived: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == MovementNotArrived =>
       DepartureStatusP5ViewModel(
         "movement.status.P5.movementNotArrived",
-        actions = Seq(
-          ViewMovementAction(s"${frontendAppConfig.p5Unloading}", "movement.status.P5.action.movementNotArrived.respond")
-        )
+        actions = Nil
       )
   }
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import controllers.arrivalP5.routes
 @import views.html.components.{Button, Heading, AnswerSections}
 @import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
 
@@ -25,21 +26,28 @@
     formHelper: FormWithCSRF
 )
 
-@(viewModel: UnloadingRemarkWithoutFunctionalErrorsP5ViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: UnloadingRemarkWithoutFunctionalErrorsP5ViewModel, arrivalId: String, messageId: String)(implicit request: Request[_], messages: Messages)
 
-    @mainTemplate(
-        title = viewModel.title,
-        showBackLink = true
-    ) {
+@mainTemplate(
+    title = viewModel.title,
+    showBackLink = true
+) {
 
-        @heading(
-            heading = viewModel.heading,
-            caption = Some(messages("arrival.messages.caption", viewModel.mrn))
+    @heading(
+        heading = viewModel.heading,
+        caption = Some(messages("arrival.messages.caption", viewModel.mrn))
+    )
+
+    <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
+
+    <p class="govuk-body" id="what-happens-next">@viewModel.customsOfficeContent</p>
+
+    @formHelper(action = routes.UnloadingRemarkWithoutFunctionalErrorsP5Controller.onSubmit(arrivalId, messageId), Symbol("autoComplete") -> "off") {
+        @button(
+            messageKey = "site.makeUnloadingRemarks",
+            attributes = Map("id" -> "submit")
         )
-
-        <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
-
-        <p class="govuk-body" id="what-happens-next">@viewModel.customsOfficeContent</p>
-
-        <p id="view-arrival-notification" class="govuk-body"><a id="arrival-link" class="govuk-link" href="@controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)">@viewModel.hyperlink</a></p>
     }
+
+    <p id="view-arrival-notification" class="govuk-body"><a id="arrival-link" class="govuk-link" href="@controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)">@viewModel.hyperlink</a></p>
+}

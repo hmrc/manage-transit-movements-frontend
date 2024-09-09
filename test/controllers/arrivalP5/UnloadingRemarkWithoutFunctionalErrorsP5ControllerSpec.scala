@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.arrival.testOnly
+package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated._
@@ -76,7 +76,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
           val view = injector.instanceOf[UnloadingRemarkWithoutFunctionalErrorsP5View]
 
           contentAsString(result) mustEqual
-            view(unloadingNotificationErrorsP5ViewModel)(request, messages).toString
+            view(unloadingNotificationErrorsP5ViewModel, arrivalIdP5, messageId)(request, messages).toString
       }
     }
 
@@ -98,6 +98,21 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
               status(result) mustEqual SEE_OTHER
               redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
           }
+      }
+    }
+
+    "must redirect to unloading remarks for a POST" in {
+      forAll(arbitrary[CC057CType]) {
+        message =>
+          when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(message))
+
+          val request = FakeRequest(POST, unloadingRemarkWithErrorsController)
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual frontendAppConfig.p5UnloadingStart(arrivalIdP5, messageId)
       }
     }
   }

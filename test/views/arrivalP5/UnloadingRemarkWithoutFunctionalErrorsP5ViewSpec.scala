@@ -29,7 +29,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewSpec extends ViewBehaviours {
   override def view: HtmlFormat.Appendable =
     injector
       .instanceOf[UnloadingRemarkWithoutFunctionalErrorsP5View]
-      .apply(unloadingNotificationErrorsP5ViewModel)(fakeRequest, messages)
+      .apply(unloadingNotificationErrorsP5ViewModel, arrivalIdP5, messageId)(fakeRequest, messages)
 
   override val prefix: String = "arrival.notification.unloading.errors.message"
 
@@ -44,6 +44,8 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewSpec extends ViewBehaviours {
   behave like pageWithContent("p", "There are one or more errors with the unloading remarks for this notification.")
 
   behave like pageWithContent("p", "Try making the unloading remarks again. Or for more information, contact Customs office CD123.")
+
+  behave like pageWithSubmitButton("Make unloading remarks")
 
   behave like pageWithLink(
     id = "arrival-link",

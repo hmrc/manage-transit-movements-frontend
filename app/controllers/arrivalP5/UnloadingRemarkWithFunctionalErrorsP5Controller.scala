@@ -16,7 +16,7 @@
 
 package controllers.arrivalP5
 
-import config.PaginationAppConfig
+import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions._
 import generated.CC057CType
 import models.RichCC057CType
@@ -36,7 +36,8 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
   messageRetrievalAction: ArrivalMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider,
-  view: UnloadingRemarkWithFunctionalErrorsP5View
+  view: UnloadingRemarkWithFunctionalErrorsP5View,
+  config: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
@@ -61,10 +62,15 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
         rejectionMessageP5ViewModel.map(
           viewModel =>
             if (request.messageData.FunctionalError.nonEmpty) {
-              Ok(view(viewModel, arrivalId, paginationViewModel))
+              Ok(view(viewModel, arrivalId, messageId, paginationViewModel))
             } else {
               Redirect(controllers.routes.ErrorController.technicalDifficulties())
             }
         )
+    }
+
+  def onSubmit(arrivalId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)) {
+      _ => Redirect(config.p5UnloadingStart(arrivalId, messageId))
     }
 }
