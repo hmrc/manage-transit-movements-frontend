@@ -28,7 +28,7 @@ import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
-import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
+import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalMovementsP5, ViewArrivalP5}
 import viewModels.P5.departure._
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
@@ -153,6 +153,20 @@ trait ViewModelGenerators {
         status  <- nonEmptyString
         actions <- listWithMaxLength[ViewMovementAction]()
       } yield ViewDepartureP5(date, time, lrn, status, actions)
+    }
+
+  implicit val arbitraryViewArrivalMovementsP5: Arbitrary[ViewArrivalMovementsP5] =
+    Arbitrary {
+      for {
+        seqOfViewMovements <- listWithMaxLength[ViewArrivalP5]()
+      } yield ViewArrivalMovementsP5(seqOfViewMovements)
+    }
+
+  implicit val arbitraryViewDepartureMovements: Arbitrary[ViewDepartureMovementsP5] =
+    Arbitrary {
+      for {
+        seqOfViewDepartureMovements <- listWithMaxLength[ViewDepartureP5]()
+      } yield ViewDepartureMovementsP5(seqOfViewDepartureMovements)
     }
 
   implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
