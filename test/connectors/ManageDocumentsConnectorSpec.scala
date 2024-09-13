@@ -23,7 +23,7 @@ import helper.WireMockServerHandler
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers.running
+import play.api.test.Helpers.{running, ACCEPT}
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future

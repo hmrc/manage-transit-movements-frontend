@@ -31,7 +31,7 @@
 @links(row: ViewMovement) = {
   @row.actions.map { action =>
     <div>
-      <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link" data-module="button" role="button" data-prevent-double-click="true">@messages(action.key)
+      <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link">@messages(action.key)
         <span class="govuk-visually-hidden">@messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)</span>
       </a>
     </div>
