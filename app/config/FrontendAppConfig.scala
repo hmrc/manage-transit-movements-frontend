@@ -17,7 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import models.{ArrivalId, DepartureId, Enrolment}
+import models.Enrolment
 import play.api.Configuration
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -34,29 +34,14 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val signOutUrl: String = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
 
-  def declareUnloadingRemarksUrl(arrivalId: ArrivalId) = s"$p4Unloading/${arrivalId.index}"
-
-  val p4Arrival: String      = configuration.get[String]("urls.declareTransitMovementArrivalFrontend")
-  val p4ArrivalStart: String = s"$p4Arrival/movement-reference-number"
-
   val p5Arrival: String = configuration.get[String]("urls.manageTransitMovementsArrivalFrontend")
-
-  val p4Departure: String      = configuration.get[String]("urls.declareTransitMovementDepartureFrontend")
-  val p4DepartureStart: String = s"$p4Departure/local-reference-number"
 
   val p5Departure: String = configuration.get[String]("urls.manageTransitMovementsDepartureFrontend")
 
-  val p4Cancellation: String = configuration.get[String]("urls.declareTransitMovementCancellationFrontend")
-
   val p5Cancellation: String = configuration.get[String]("urls.manageTransitMovementsCancellationFrontend")
-
-  val p4Unloading: String = configuration.get[String]("urls.declareTransitMovementUnloadingFrontend")
 
   private val p5Unloading: String                                    = configuration.get[String]("urls.manageTransitMovementsUnloadingFrontend")
   def p5UnloadingStart(arrivalId: String, messageId: String): String = s"$p5Unloading/$arrivalId/unloading-remarks/$messageId"
-
-  def arrivalFrontendRejectedUrl(arrivalId: ArrivalId)  = s"$p4Arrival/${arrivalId.index}/arrival-rejection"
-  def unloadingRemarksRejectedUrl(arrivalId: ArrivalId) = s"$p4Unloading/${arrivalId.index}/unloading-rejection"
 
   private val guaranteeBalanceUrlBase    = configuration.get[String]("urls.guaranteeBalanceFrontend")
   def checkGuaranteeBalanceUrl           = s"$guaranteeBalanceUrlBase/start?referral=ncts"
@@ -66,15 +51,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val loginContinueUrl: String                  = configuration.get[String]("urls.loginContinue")
   lazy val eccEnrolmentSplashPage: String            = configuration.get[String]("urls.eccEnrolmentSplashPage")
   lazy val enrolmentGuidancePage: String             = configuration.get[String]("urls.enrolmentGuidance")
-  lazy val departureBaseUrl: String                  = configuration.get[Service]("microservice.services.departure").baseUrl
-  lazy val departureUrl: String                      = configuration.get[Service]("microservice.services.departure").fullServiceUrl
-  lazy val testSupportUrl: String                    = configuration.get[Service]("microservice.services.common-transit-convention-traders-test-support").baseUrl
-  lazy val destinationBaseUrl: String                = configuration.get[Service]("microservice.services.destination").baseUrl
-  lazy val destinationUrl: String                    = configuration.get[Service]("microservice.services.destination").fullServiceUrl
-  lazy val routerUrl: String                         = configuration.get[Service]("microservice.services.transit-movements-trader-router").fullServiceUrl
   lazy val enrolmentProxyUrl: String                 = configuration.get[Service]("microservice.services.enrolment-store-proxy").fullServiceUrl
   lazy val enrolments: Seq[Enrolment]                = configuration.get[Seq[Enrolment]]("enrolments")
-  lazy val manageService: String                     = configuration.get[String]("appName")
   lazy val commonTransitConventionTradersUrl: String = configuration.get[Service]("microservice.services.common-transit-convention-traders").fullServiceUrl
   lazy val transitMovementsUrl: String               = configuration.get[Service]("microservice.services.transit-movements").fullServiceUrl
 
@@ -89,17 +67,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val manageDocumentsUrl: String = configuration.get[Service]("microservice.services.transit-movements-trader-manage-documents").fullServiceUrl
 
-  def departureFrontendTaskListUrl(lrn: String)                     = s"$p5Departure/$lrn/declaration-summary"
-  def departureNewLocalReferenceNumberUrl(lrn: String)              = s"$p5Departure/$lrn/new-local-reference-number"
-  def departureFrontendRejectedUrl(departureId: DepartureId)        = s"$p4Departure/${departureId.index}/guarantee-rejection"
-  def departureFrontendDeclarationFailUrl(departureId: DepartureId) = s"$p4Departure/${departureId.index}/departure-declaration-fail"
-  def presentationNotificationFrontendUrl(departureId: String)      = s"$presentationNotificationFrontend/$departureId"
-
-  def departureFrontendCancellationDecisionUrl(departureId: DepartureId): String =
-    s"$p4Departure/${departureId.index}/cancellation-decision-update"
-
-  def departureFrontendConfirmCancellationUrl(departureId: DepartureId): String =
-    s"$p4Cancellation/${departureId.index}/confirm-cancellation"
+  def departureFrontendTaskListUrl(lrn: String)                = s"$p5Departure/$lrn/declaration-summary"
+  def departureNewLocalReferenceNumberUrl(lrn: String)         = s"$p5Departure/$lrn/new-local-reference-number"
+  def presentationNotificationFrontendUrl(departureId: String) = s"$presentationNotificationFrontend/$departureId"
 
   val isTraderTest: Boolean = configuration.get[Boolean]("trader-test.enabled")
   val feedbackEmail: String = configuration.get[String]("trader-test.feedback.email")
