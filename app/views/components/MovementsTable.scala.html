@@ -32,7 +32,7 @@
   @row.actions.map { action =>
     <div>
       <a id="@action.id(row.referenceNumber)" href="@action.href" class="govuk-link">@messages(action.key)
-        <span class="govuk-visually-hidden">@messages("viewArrivalNotifications.table.action.hidden", row.referenceNumber)</span>
+        <span class="govuk-visually-hidden">@messages("viewMovements.table.action.hidden", row.referenceNumber)</span>
       </a>
     </div>
   }
