@@ -25,8 +25,6 @@ import play.api.mvc.Request
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
-  val phase4Enabled: Boolean  = configuration.get[Boolean]("microservice.services.features.isPhase4Enabled")
-  val phase5Enabled: Boolean  = configuration.get[Boolean]("microservice.services.features.isPhase5Enabled")
   val isIE182Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isIE182Enabled")
 
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
@@ -70,10 +68,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val enrolmentGuidancePage: String             = configuration.get[String]("urls.enrolmentGuidance")
   lazy val departureBaseUrl: String                  = configuration.get[Service]("microservice.services.departure").baseUrl
   lazy val departureUrl: String                      = configuration.get[Service]("microservice.services.departure").fullServiceUrl
-  lazy val testSupportUrl: String                    = configuration.get[Service]("microservice.services.test-support").baseUrl
+  lazy val testSupportUrl: String                    = configuration.get[Service]("microservice.services.common-transit-convention-traders-test-support").baseUrl
   lazy val destinationBaseUrl: String                = configuration.get[Service]("microservice.services.destination").baseUrl
   lazy val destinationUrl: String                    = configuration.get[Service]("microservice.services.destination").fullServiceUrl
-  lazy val routerUrl: String                         = configuration.get[Service]("microservice.services.testOnly-router").fullServiceUrl
+  lazy val routerUrl: String                         = configuration.get[Service]("microservice.services.transit-movements-trader-router").fullServiceUrl
   lazy val enrolmentProxyUrl: String                 = configuration.get[Service]("microservice.services.enrolment-store-proxy").fullServiceUrl
   lazy val enrolments: Seq[Enrolment]                = configuration.get[Seq[Enrolment]]("enrolments")
   lazy val manageService: String                     = configuration.get[String]("appName")

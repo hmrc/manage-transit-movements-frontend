@@ -18,7 +18,8 @@ package models
 
 import base.SpecBase
 import generators.Generators
-import org.scalacheck.Arbitrary.arbitrary
+import models.arrivalP5.ArrivalMovement
+import models.departureP5.DepartureMovement
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class AvailabilitySpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -27,16 +28,16 @@ class AvailabilitySpec extends SpecBase with ScalaCheckPropertyChecks with Gener
 
     "must return NonEmpty" - {
       "when non-empty list of departures" in {
-        forAll(arbitrary[Departures]) {
+        forAll(listWithMaxLength[Seq[DepartureMovement]]()) {
           departures =>
-            Availability.apply(Some(departures.departures)) mustBe Availability.NonEmpty
+            Availability.apply(Some(departures)) mustBe Availability.NonEmpty
         }
       }
 
       "when non-empty list of arrivals" in {
-        forAll(arbitrary[Arrivals]) {
+        forAll(listWithMaxLength[Seq[ArrivalMovement]]()) {
           arrivals =>
-            Availability.apply(Some(arrivals.arrivals)) mustBe Availability.NonEmpty
+            Availability.apply(Some(arrivals)) mustBe Availability.NonEmpty
         }
       }
     }

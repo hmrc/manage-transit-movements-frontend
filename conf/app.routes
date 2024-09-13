@@ -1,7 +1,5 @@
 # microservice specific routes
 
-->         /                                                                  arrivals.Routes
-->         /                                                                  departures.Routes
 ->         /                                                                  arrivalsP5.Routes
 ->         /                                                                  departuresP5.Routes
 ->         /                                                                  departures.drafts.Routes

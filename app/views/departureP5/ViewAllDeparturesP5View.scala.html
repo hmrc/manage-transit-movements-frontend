@@ -15,8 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import controllers.routes._
-@import controllers.arrival.routes._
+@import controllers.departureP5.routes
 @import viewModels.P5.departure.ViewAllDepartureMovementsP5ViewModel
 @import views.html.components.{Heading, MovementsTable, Pagination, Search, Status}
 
@@ -51,7 +50,7 @@
 
     @search(
         form = form,
-        action = controllers.departureP5.routes.ViewAllDeparturesP5Controller.onSubmit(),
+        action = routes.ViewAllDeparturesP5Controller.onSubmit(),
         label = "viewDepartureDeclarationsP5.search.title"
     )
 

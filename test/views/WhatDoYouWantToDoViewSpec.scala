@@ -20,20 +20,12 @@ import generators.Generators
 import models.{Availability, Feature, Features}
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.WhatDoYouWantToDoView
 
 class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
-
-  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
-    super
-      .guiceApplicationBuilder()
-      .configure(
-        "microservice.services.features.isPhase5Enabled" -> false
-      )
 
   private val arrivalsFeatures        = arbitrary[Features].sample.value
   private val departuresFeatures      = arbitrary[Features].sample.value
@@ -42,8 +34,6 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
   private val arrivalsAvailability   = arbitrary[Availability].sample.value
   private val departuresAvailability = arbitrary[Availability].sample.value
 
-  private val p4ArrivalsHref      = nonEmptyString.sample.value
-  private val p4DeparturesHref    = nonEmptyString.sample.value
   private val p5ArrivalsHref      = nonEmptyString.sample.value
   private val p5DeparturesHref    = nonEmptyString.sample.value
   private val draftDeparturesHref = nonEmptyString.sample.value
@@ -74,548 +64,155 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
 
   behave like pageWithContent("h2", "Departures")
 
-  "phase 4 enabled and phase 5 disabled" - {
-    val isPhase4Enabled     = true
-    val isPhase5Enabled     = false
-    val isOnLegacyEnrolment = false
+  "phase 5 enabled" - {
+    val isOnLegacyEnrolment = true
 
-    val app = super
-      .guiceApplicationBuilder()
-      .configure(
-        "microservice.services.features.isPhase4Enabled" -> isPhase4Enabled,
-        "microservice.services.features.isPhase5Enabled" -> isPhase5Enabled
-      )
-      .build()
+    val arrivalsFeatures = Features(
+      phase4 = None,
+      phase5 = Some(Feature(arrivalsAvailability, enabled = true, p5ArrivalsHref))
+    )
 
-    running(app) {
+    val departuresFeatures = Features(
+      phase4 = None,
+      phase5 = Some(Feature(departuresAvailability, enabled = true, p5DeparturesHref))
+    )
 
-      val arrivalsFeatures = Features(
-        phase4 = Some(Feature(arrivalsAvailability, isPhase4Enabled, p4ArrivalsHref)),
-        phase5 = None
-      )
+    val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
 
-      val departuresFeatures = Features(
-        phase4 = Some(Feature(departuresAvailability, isPhase4Enabled, p4DeparturesHref)),
-        phase5 = None
-      )
+    behave like pageWithLink(
+      doc,
+      "make-arrival-notification",
+      "Make an arrival notification",
+      "http://localhost:10121/manage-transit-movements/arrivals"
+    )
 
-      val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
+    behave like pageWithLink(
+      doc,
+      "make-departure-declaration",
+      "Make a departure declaration",
+      "http://localhost:10120/manage-transit-movements/departures"
+    )
 
-      behave like pageWithLink(
-        doc,
-        "make-arrival-notification",
-        "Make an arrival notification",
-        "http://localhost:9483/manage-transit-movements-arrivals/movement-reference-number"
-      )
-
-      behave like pageWithLink(
-        doc,
-        "make-departure-declaration",
-        "Make a departure declaration",
-        "http://localhost:9489/manage-transit-movements-departures/local-reference-number"
-      )
-
-      "arrivals" - {
-        "unavailable" - {
-          val arrivalsFeatures = Features(
-            phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4ArrivalsHref)),
-            phase5 = None
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "View arrival notifications is currently unavailable")
-        }
-
-        "none" - {
-          val arrivalsFeatures = Features(
-            phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4ArrivalsHref)),
-            phase5 = None
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "You have no arrival notifications")
-        }
-
-        "available" - {
-          val arrivalsFeatures = Features(
-            phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4ArrivalsHref)),
-            phase5 = None
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithLink(
-            doc,
-            "view-arrival-notifications",
-            "View arrival notifications",
-            p4ArrivalsHref
-          )
-        }
-      }
-
-      "departures" - {
-        "unavailable" - {
-          val departuresFeatures = Features(
-            phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4DeparturesHref)),
-            phase5 = None
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "View departure declarations is currently unavailable")
-        }
-
-        "none" - {
-          val departuresFeatures = Features(
-            phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4DeparturesHref)),
-            phase5 = None
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "You have no departure declarations")
-        }
-
-        "available" - {
-          val departuresFeatures = Features(
-            phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4DeparturesHref)),
-            phase5 = None
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithLink(
-            doc,
-            "view-departure-declarations",
-            "View departure declarations",
-            p4DeparturesHref
-          )
-        }
-      }
-
-      "draft departures" - {
-        val draftDeparturesFeatures = Features(
+    "arrivals" - {
+      "unavailable" - {
+        val arrivalsFeatures = Features(
           phase4 = None,
-          phase5 = None
+          phase5 = Some(Feature(Availability.Unavailable, enabled = true, p5ArrivalsHref))
         )
 
         val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
 
-        behave like pageWithoutLink(
+        behave like pageWithContent(doc, "p", "View arrival notifications is currently unavailable")
+      }
+
+      "none" - {
+        val arrivalsFeatures = Features(
+          phase4 = None,
+          phase5 = Some(Feature(Availability.Empty, enabled = true, p5ArrivalsHref))
+        )
+
+        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
+
+        behave like pageWithContent(doc, "p", "You have no arrival notifications")
+      }
+
+      "available" - {
+        val arrivalsFeatures = Features(
+          phase4 = None,
+          phase5 = Some(Feature(Availability.NonEmpty, enabled = true, p5ArrivalsHref))
+        )
+
+        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
+
+        behave like pageWithLink(
           doc,
-          "view-draft-departures"
+          "view-arrival-notifications",
+          "View arrival notifications",
+          p5ArrivalsHref
         )
       }
     }
-  }
 
-  "phase 4 disabled and phase 5 enabled" - {
-    val isPhase4Enabled     = false
-    val isPhase5Enabled     = true
-    val isOnLegacyEnrolment = true
+    "departures" - {
+      "unavailable" - {
+        val departuresFeatures = Features(
+          phase4 = None,
+          phase5 = Some(Feature(Availability.Unavailable, enabled = true, p5DeparturesHref))
+        )
 
-    val app = super
-      .guiceApplicationBuilder()
-      .configure(
-        "microservice.services.features.isPhase4Enabled" -> isPhase4Enabled,
-        "microservice.services.features.isPhase5Enabled" -> isPhase5Enabled
-      )
-      .build()
+        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
 
-    running(app) {
-
-      val arrivalsFeatures = Features(
-        phase4 = Some(Feature(arrivalsAvailability, isPhase4Enabled, p4ArrivalsHref)),
-        phase5 = Some(Feature(arrivalsAvailability, isPhase5Enabled, p5ArrivalsHref))
-      )
-
-      val departuresFeatures = Features(
-        phase4 = Some(Feature(departuresAvailability, isPhase4Enabled, p4DeparturesHref)),
-        phase5 = Some(Feature(departuresAvailability, isPhase5Enabled, p5DeparturesHref))
-      )
-
-      val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-      behave like pageWithLink(
-        doc,
-        "make-arrival-notification",
-        "Make an arrival notification",
-        "http://localhost:10121/manage-transit-movements/arrivals"
-      )
-
-      behave like pageWithLink(
-        doc,
-        "make-departure-declaration",
-        "Make a departure declaration",
-        "http://localhost:10120/manage-transit-movements/departures"
-      )
-
-      "arrivals" - {
-        "unavailable" - {
-          val arrivalsFeatures = Features(
-            phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4ArrivalsHref)),
-            phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, p5ArrivalsHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "View NCTS 4 arrival notifications is currently unavailable")
-          behave like pageWithContent(doc, "p", "View NCTS 5 arrival notifications is currently unavailable")
-        }
-
-        "none" - {
-          val arrivalsFeatures = Features(
-            phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4ArrivalsHref)),
-            phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, p5ArrivalsHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "You have no NCTS 4 arrival notifications")
-          behave like pageWithContent(doc, "p", "You have no NCTS 5 arrival notifications")
-        }
-
-        "available" - {
-          val arrivalsFeatures = Features(
-            phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4ArrivalsHref)),
-            phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, p5ArrivalsHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithLink(
-            doc,
-            "view-ncts-4-arrival-notifications",
-            "View NCTS 4 arrival notifications",
-            p4ArrivalsHref
-          )
-
-          behave like pageWithLink(
-            doc,
-            "view-ncts-5-arrival-notifications",
-            "View NCTS 5 arrival notifications",
-            p5ArrivalsHref
-          )
-        }
+        behave like pageWithContent(doc, "p", "View departure declarations is currently unavailable")
       }
 
-      "departures" - {
-        "unavailable" - {
-          val departuresFeatures = Features(
-            phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4DeparturesHref)),
-            phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, p5DeparturesHref))
-          )
+      "none" - {
+        val departuresFeatures = Features(
+          phase4 = None,
+          phase5 = Some(Feature(Availability.Empty, enabled = true, p5DeparturesHref))
+        )
 
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
+        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
 
-          behave like pageWithContent(doc, "p", "View NCTS 4 departure declarations is currently unavailable")
-          behave like pageWithContent(doc, "p", "View NCTS 5 departure declarations is currently unavailable")
-        }
-
-        "none" - {
-          val departuresFeatures = Features(
-            phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4DeparturesHref)),
-            phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, p5DeparturesHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "You have no NCTS 4 departure declarations")
-          behave like pageWithContent(doc, "p", "You have no NCTS 5 departure declarations")
-        }
-
-        "available" - {
-          val departuresFeatures = Features(
-            phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4DeparturesHref)),
-            phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, p5DeparturesHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithLink(
-            doc,
-            "view-ncts-4-departure-declarations",
-            "View NCTS 4 departure declarations",
-            p4DeparturesHref
-          )
-
-          behave like pageWithLink(
-            doc,
-            "view-ncts-5-departure-declarations",
-            "View NCTS 5 departure declarations",
-            p5DeparturesHref
-          )
-        }
+        behave like pageWithContent(doc, "p", "You have no departure declarations")
       }
 
-      "draft departures" - {
-        val enabled = true
+      "available" - {
+        val departuresFeatures = Features(
+          phase4 = None,
+          phase5 = Some(Feature(Availability.NonEmpty, enabled = true, p5DeparturesHref))
+        )
 
-        "unavailable" - {
-          val draftDeparturesFeatures = Features(
-            phase4 = None,
-            phase5 = Some(Feature(Availability.Unavailable, enabled, draftDeparturesHref))
-          )
+        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
 
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "Draft departure declarations unavailable")
-        }
-
-        "none" - {
-          val draftDeparturesFeatures = Features(
-            phase4 = None,
-            phase5 = Some(Feature(Availability.Empty, enabled, draftDeparturesHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "You have no draft departure declarations")
-        }
-
-        "available" - {
-          val draftDeparturesFeatures = Features(
-            phase4 = None,
-            phase5 = Some(Feature(Availability.NonEmpty, enabled, draftDeparturesHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithLink(
-            doc,
-            "view-draft-departures",
-            "View draft departure declarations",
-            draftDeparturesHref
-          )
-        }
+        behave like pageWithLink(
+          doc,
+          "view-departure-declarations",
+          "View departure declarations",
+          p5DeparturesHref
+        )
       }
     }
-  }
 
-  "phase 4 enabled and phase 5 enabled" - {
-    val isPhase4Enabled = true
-    val isPhase5Enabled = true
+    "draft departures" - {
+      val enabled = true
 
-    val app = super
-      .guiceApplicationBuilder()
-      .configure(
-        "microservice.services.features.isPhase4Enabled" -> isPhase4Enabled,
-        "microservice.services.features.isPhase5Enabled" -> isPhase5Enabled
-      )
-      .build()
+      "unavailable" - {
+        val draftDeparturesFeatures = Features(
+          phase4 = None,
+          phase5 = Some(Feature(Availability.Unavailable, enabled, draftDeparturesHref))
+        )
 
-    running(app) {
+        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
 
-      val arrivalsFeatures = Features(
-        phase4 = Some(Feature(arrivalsAvailability, isPhase4Enabled, p4ArrivalsHref)),
-        phase5 = Some(Feature(arrivalsAvailability, isPhase5Enabled, p5ArrivalsHref))
-      )
-
-      val departuresFeatures = Features(
-        phase4 = Some(Feature(departuresAvailability, isPhase4Enabled, p4DeparturesHref)),
-        phase5 = Some(Feature(departuresAvailability, isPhase5Enabled, p5DeparturesHref))
-      )
-
-      val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-      behave like pageWithLink(
-        doc,
-        "make-ncts-4-arrival-notification",
-        "Make a GB arrival notification (NCTS 4)",
-        "http://localhost:9483/manage-transit-movements-arrivals/movement-reference-number"
-      )
-
-      behave like pageWithLink(
-        doc,
-        "make-ncts-5-arrival-notification",
-        "Make an XI arrival notification (NCTS 5)",
-        "http://localhost:10121/manage-transit-movements/arrivals"
-      )
-
-      behave like pageWithLink(
-        doc,
-        "make-ncts-4-departure-declaration",
-        "Make a GB departure declaration (NCTS 4)",
-        "http://localhost:9489/manage-transit-movements-departures/local-reference-number"
-      )
-
-      behave like pageWithLink(
-        doc,
-        "make-ncts-5-departure-declaration",
-        "Make an XI departure declaration (NCTS 5)",
-        "http://localhost:10120/manage-transit-movements/departures"
-      )
-
-      "arrivals" - {
-        "unavailable" - {
-          val arrivalsFeatures = Features(
-            phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4ArrivalsHref)),
-            phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, p5ArrivalsHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "View NCTS 4 arrival notifications is currently unavailable")
-          behave like pageWithContent(doc, "p", "View NCTS 5 arrival notifications is currently unavailable")
-        }
-
-        "none" - {
-          val arrivalsFeatures = Features(
-            phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4ArrivalsHref)),
-            phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, p5ArrivalsHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "You have no NCTS 4 arrival notifications")
-          behave like pageWithContent(doc, "p", "You have no NCTS 5 arrival notifications")
-        }
-
-        "available" - {
-          val arrivalsFeatures = Features(
-            phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4ArrivalsHref)),
-            phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, p5ArrivalsHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithLink(
-            doc,
-            "view-ncts-4-arrival-notifications",
-            "View NCTS 4 arrival notifications",
-            p4ArrivalsHref
-          )
-
-          behave like pageWithLink(
-            doc,
-            "view-ncts-5-arrival-notifications",
-            "View NCTS 5 arrival notifications",
-            p5ArrivalsHref
-          )
-        }
+        behave like pageWithContent(doc, "p", "Draft departure declarations unavailable")
       }
 
-      "departures" - {
-        "unavailable" - {
-          val departuresFeatures = Features(
-            phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, p4DeparturesHref)),
-            phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, p5DeparturesHref))
-          )
+      "none" - {
+        val draftDeparturesFeatures = Features(
+          phase4 = None,
+          phase5 = Some(Feature(Availability.Empty, enabled, draftDeparturesHref))
+        )
 
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
+        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
 
-          behave like pageWithContent(doc, "p", "View NCTS 4 departure declarations is currently unavailable")
-          behave like pageWithContent(doc, "p", "View NCTS 5 departure declarations is currently unavailable")
-        }
-
-        "none" - {
-          val departuresFeatures = Features(
-            phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, p4DeparturesHref)),
-            phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, p5DeparturesHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "You have no NCTS 4 departure declarations")
-          behave like pageWithContent(doc, "p", "You have no NCTS 5 departure declarations")
-        }
-
-        "available" - {
-          val departuresFeatures = Features(
-            phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, p4DeparturesHref)),
-            phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, p5DeparturesHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithLink(
-            doc,
-            "view-ncts-4-departure-declarations",
-            "View NCTS 4 departure declarations",
-            p4DeparturesHref
-          )
-
-          behave like pageWithLink(
-            doc,
-            "view-ncts-5-departure-declarations",
-            "View NCTS 5 departure declarations",
-            p5DeparturesHref
-          )
-        }
+        behave like pageWithContent(doc, "p", "You have no draft departure declarations")
       }
 
-      "draft departures" - {
-        "unavailable" - {
-          val draftDeparturesFeatures = Features(
-            phase4 = Some(Feature(Availability.Unavailable, isPhase4Enabled, draftDeparturesHref)),
-            phase5 = Some(Feature(Availability.Unavailable, isPhase5Enabled, draftDeparturesHref))
-          )
+      "available" - {
+        val draftDeparturesFeatures = Features(
+          phase4 = None,
+          phase5 = Some(Feature(Availability.NonEmpty, enabled, draftDeparturesHref))
+        )
 
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
+        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
 
-          behave like pageWithContent(doc, "p", "Draft departure declarations unavailable")
-        }
-
-        "none" - {
-          val draftDeparturesFeatures = Features(
-            phase4 = Some(Feature(Availability.Empty, isPhase4Enabled, draftDeparturesHref)),
-            phase5 = Some(Feature(Availability.Empty, isPhase5Enabled, draftDeparturesHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "p", "You have no draft departure declarations")
-        }
-
-        "available" - {
-          val draftDeparturesFeatures = Features(
-            phase4 = Some(Feature(Availability.NonEmpty, isPhase4Enabled, draftDeparturesHref)),
-            phase5 = Some(Feature(Availability.NonEmpty, isPhase5Enabled, draftDeparturesHref))
-          )
-
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithLink(
-            doc,
-            "view-draft-departures",
-            "View draft departure declarations",
-            draftDeparturesHref
-          )
-        }
+        behave like pageWithLink(
+          doc,
+          "view-draft-departures",
+          "View draft departure declarations",
+          draftDeparturesHref
+        )
       }
-    }
-  }
-
-  "phase 4 disabled and phase 5 disabled" - {
-    val isPhase4Enabled = false
-    val isPhase5Enabled = false
-
-    val app = super
-      .guiceApplicationBuilder()
-      .configure(
-        "microservice.services.features.isPhase4Enabled" -> isPhase4Enabled,
-        "microservice.services.features.isPhase5Enabled" -> isPhase5Enabled
-      )
-      .build()
-
-    running(app) {
-
-      val arrivalsFeatures = Features(
-        phase4 = None,
-        phase5 = None
-      )
-
-      val departuresFeatures = Features(
-        phase4 = None,
-        phase5 = None
-      )
-
-      val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-      behave like pageWithContent(doc, "p", "View arrival notifications is currently unavailable")
-      behave like pageWithContent(doc, "p", "View departure declarations is currently unavailable")
     }
   }
 
@@ -626,75 +223,34 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     val href = "http://localhost:9462/check-transit-guarantee-balance/start?referral=ncts"
 
     "when enabled" - {
-      "and phase 4 enabled and phase 5 enabled" - {
-        val app = super
-          .guiceApplicationBuilder()
-          .configure(
-            "microservice.services.features.isGuaranteeBalanceEnabled" -> true,
-            "microservice.services.features.isPhase4Enabled"           -> true,
-            "microservice.services.features.isPhase5Enabled"           -> true
-          )
-          .build()
+      val app = super
+        .guiceApplicationBuilder()
+        .configure(
+          "microservice.services.features.isGuaranteeBalanceEnabled" -> true
+        )
+        .build()
 
-        running(app) {
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
+      running(app) {
+        val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
 
-          behave like pageWithContent(doc, "h2", "Guarantees")
+        behave like pageWithContent(doc, "h2", "Guarantees")
 
-          behave like pageWithLink(
-            doc,
-            "check-guarantee-balance",
-            "Check your guarantee balance for GB declarations",
-            href
-          )
+        behave like pageWithLink(
+          doc,
+          "check-guarantee-balance",
+          "Check your guarantee balance",
+          href
+        )
 
-          behave like pageWithContent(doc, "p", paragraph)
-        }
-      }
-
-      "and otherwise" - {
-        val (isPhase4Enabled, isPhase5Enabled) = arbitrary[(Boolean, Boolean)]
-          .retryUntil {
-            case (x, y) => !(x && y)
-          }
-          .sample
-          .value
-
-        val app = super
-          .guiceApplicationBuilder()
-          .configure(
-            "microservice.services.features.isGuaranteeBalanceEnabled" -> true,
-            "microservice.services.features.isPhase4Enabled"           -> isPhase4Enabled,
-            "microservice.services.features.isPhase5Enabled"           -> isPhase5Enabled
-          )
-          .build()
-
-        running(app) {
-          val doc = parseView(applyView(app, arrivalsFeatures, departuresFeatures, draftDeparturesFeatures, isOnLegacyEnrolment))
-
-          behave like pageWithContent(doc, "h2", "Guarantees")
-
-          behave like pageWithLink(
-            doc,
-            "check-guarantee-balance",
-            "Check your guarantee balance",
-            href
-          )
-
-          behave like pageWithoutContent(doc, "p", paragraph)
-        }
+        behave like pageWithoutContent(doc, "p", paragraph)
       }
     }
 
     "when disabled" - {
-      val (isPhase4Enabled, isPhase5Enabled) = arbitrary[(Boolean, Boolean)].sample.value
-
       val app = super
         .guiceApplicationBuilder()
         .configure(
-          "microservice.services.features.isGuaranteeBalanceEnabled" -> false,
-          "microservice.services.features.isPhase4Enabled"           -> isPhase4Enabled,
-          "microservice.services.features.isPhase5Enabled"           -> isPhase5Enabled
+          "microservice.services.features.isGuaranteeBalanceEnabled" -> false
         )
         .build()
 

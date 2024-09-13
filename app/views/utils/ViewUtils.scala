@@ -16,8 +16,6 @@
 
 package views.utils
 
-import models.departure.{ControlDecision, NoReleaseForTransitMessage}
-import models.{FunctionalError, LocalReferenceNumber}
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.twirl.api.Html
@@ -25,7 +23,6 @@ import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.implicits.RichRadiosSupport
 import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
-import utils.Format
 
 object ViewUtils {
 
@@ -47,134 +44,6 @@ object ViewUtils {
           ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))
       }
     ).withFormField(field)
-  }
-
-  implicit class RichFunctionalError(functionalError: FunctionalError) {
-
-    def toSummaryList(implicit messages: Messages): SummaryList =
-      SummaryList(
-        rows = Seq(
-          Some(
-            SummaryListRow(
-              key = messages("xmlNegativeAcknowledgement.errorType").toKey,
-              value = Value(functionalError.errorType.toString.toText)
-            )
-          ),
-          Some(
-            SummaryListRow(
-              key = messages("xmlNegativeAcknowledgement.errorPointer").toKey,
-              value = Value(functionalError.pointer.value.toText)
-            )
-          ),
-          functionalError.reason.map {
-            reason =>
-              SummaryListRow(
-                key = messages("xmlNegativeAcknowledgement.errorReason").toKey,
-                value = Value(reason.toText)
-              )
-          },
-          functionalError.originalAttributeValue.map {
-            originalAttributeValue =>
-              SummaryListRow(
-                key = messages("xmlNegativeAcknowledgement.originalAttributeValue").toKey,
-                value = Value(originalAttributeValue.toText)
-              )
-          }
-        ).flatten
-      )
-  }
-
-  implicit class RichNoReleaseForTransitMessage(message: NoReleaseForTransitMessage) {
-
-    // scalastyle:off method.length
-    def toSummaryLists(implicit messages: Messages): Seq[SummaryList] = {
-      val firstSummaryList = SummaryList(
-        rows = Seq(
-          message.noReleaseMotivation.map {
-            noReleaseMotivation =>
-              SummaryListRow(
-                key = messages("noReleaseForTransit.noReleaseMotivation").toKey,
-                value = Value(noReleaseMotivation.toText)
-              )
-          },
-          Some(
-            SummaryListRow(
-              key = messages("noReleaseForTransit.mrn").toKey,
-              value = Value(message.mrn.toText)
-            )
-          ),
-          Some(
-            SummaryListRow(
-              key = messages("noReleaseForTransit.totalNumberOfItems").toKey,
-              value = Value(message.totalNumberOfItems.toString.toText)
-            )
-          ),
-          Some(
-            SummaryListRow(
-              key = messages("noReleaseForTransit.officeOfDepartureRefNumber").toKey,
-              value = Value(message.officeOfDepartureRefNumber.toText)
-            )
-          )
-        ).flatten
-      )
-
-      val secondSummaryList = SummaryList(
-        rows = message.resultsOfControl.fold[Seq[SummaryListRow]](Nil)(_.flatMap {
-          resultsOfControl =>
-            Seq(
-              Some(
-                SummaryListRow(
-                  key = messages("noReleaseForTransit.resultsOfControlIndicator").toKey,
-                  value = Value(resultsOfControl.controlIndicator.toText)
-                )
-              ),
-              resultsOfControl.description.map {
-                description =>
-                  SummaryListRow(
-                    key = messages("noReleaseForTransit.resultsOfControlDescription").toKey,
-                    value = Value(description.toText)
-                  )
-              }
-            ).flatten
-        })
-      )
-
-      Seq(firstSummaryList, secondSummaryList)
-    }
-  }
-
-  implicit class RichControlDecision(controlDecision: ControlDecision) {
-
-    def toSummaryList(lrn: LocalReferenceNumber)(implicit messages: Messages): SummaryList =
-      SummaryList(
-        rows = Seq(
-          SummaryListRow(
-            key = messages("controlDecision.mrn").toKey,
-            value = Value(controlDecision.movementReferenceNumber.toText)
-          ),
-          SummaryListRow(
-            key = messages("controlDecision.lrn").toKey,
-            value = Value(lrn.value.toText)
-          ),
-          controlDecision.principleEori match {
-            case Some(principleEori) =>
-              SummaryListRow(
-                key = messages("controlDecision.principalEoriNumber").toKey,
-                value = Value(principleEori.toText)
-              )
-            case _ =>
-              SummaryListRow(
-                key = messages("controlDecision.principalTraderName").toKey,
-                value = Value(controlDecision.principleTraderName.toText)
-              )
-          },
-          SummaryListRow(
-            key = messages("controlDecision.dateOfControl").toKey,
-            value = Value(Format.controlDecisionDateFormatted(controlDecision.dateOfControl).toText)
-          )
-        )
-      )
-    // scalastyle:on method.length
   }
 
   implicit class RadiosImplicits(radios: Radios)(implicit messages: Messages) extends RichRadiosSupport {

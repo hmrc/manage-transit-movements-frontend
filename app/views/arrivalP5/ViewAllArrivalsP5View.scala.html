@@ -15,8 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import controllers.routes._
-@import controllers.arrival.routes._
+@import controllers.arrivalP5.routes
 @import viewModels.P5.arrival.ViewAllArrivalMovementsP5ViewModel
 @import views.html.components.{Heading, MovementsTable, Pagination, Search, Status}
 
@@ -51,7 +50,7 @@
 
     @search(
         form = form,
-        action = controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onSubmit(),
+        action = routes.ViewAllArrivalsP5Controller.onSubmit(),
         label = "viewArrivalNotificationsP5.search.title"
     )
 

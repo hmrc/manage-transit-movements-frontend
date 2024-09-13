@@ -85,7 +85,7 @@ class ViewAllArrivalsP5ViewSpec
 
   behave like pageWithMovementSearch("Search by Movement Reference Number (MRN)")
 
-  behave like pageWithPagination(controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None).url)
+  behave like pageWithPagination(controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
 
   behave like pageWithMovementsData()
 

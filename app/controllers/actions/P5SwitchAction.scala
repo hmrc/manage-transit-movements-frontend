@@ -18,7 +18,6 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
@@ -36,14 +35,10 @@ class P5SwitchAction(config: FrontendAppConfig)(implicit val executionContext: E
 
   override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
     Future.successful {
-      if (config.phase5Enabled) {
-        if (request.isOnLegacyEnrolment) {
-          Some(Redirect(config.enrolmentGuidancePage))
-        } else {
-          None
-        }
+      if (request.isOnLegacyEnrolment) {
+        Some(Redirect(config.enrolmentGuidancePage))
       } else {
-        Some(Redirect(routes.ErrorController.notFound()))
+        None
       }
     }
 }
