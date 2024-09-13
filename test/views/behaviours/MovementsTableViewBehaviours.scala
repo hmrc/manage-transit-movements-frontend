@@ -107,6 +107,12 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
                       "must have correct href" in {
                         link.attr("href") mustBe action.href
                       }
+
+                      "must have 'prevent double click' attribute" in {
+                        link.attr("data-module") mustBe "button"
+                        link.attr("role") mustBe "button"
+                        link.attr("data-prevent-double-click") mustBe "true"
+                      }
                     }
                 }
               }
