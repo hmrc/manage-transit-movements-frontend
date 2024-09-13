@@ -54,7 +54,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider].toInstance(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider))
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
 

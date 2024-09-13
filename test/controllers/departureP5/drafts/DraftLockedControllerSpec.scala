@@ -27,7 +27,7 @@ class DraftLockedControllerSpec extends SpecBase with AppWithDefaultMockFixtures
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
 
   "Draft Locked Controller" - {
 

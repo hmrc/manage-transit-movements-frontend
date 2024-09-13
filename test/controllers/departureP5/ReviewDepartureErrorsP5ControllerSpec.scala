@@ -60,7 +60,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[ReviewDepartureErrorsP5ViewModelProvider].toInstance(mockReviewDepartureErrorMessageP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))

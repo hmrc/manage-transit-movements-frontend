@@ -55,7 +55,7 @@ class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaul
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[IncidentsDuringTransitP5ViewModelProvider].toInstance(mockIncidentsDuringTransitP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))

@@ -47,7 +47,7 @@ class GuaranteeRejectedNotAmendableP5ControllerSpec extends SpecBase with AppWit
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[GuaranteeRejectedNotAmendableP5ViewModelProvider].toInstance(mockGuaranteeRejectedNotAmendableP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 

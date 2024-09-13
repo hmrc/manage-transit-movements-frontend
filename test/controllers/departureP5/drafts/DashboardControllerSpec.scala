@@ -46,7 +46,7 @@ class DashboardControllerSpec extends SpecBase {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(
         bind[DraftDepartureService].toInstance(draftDepartureService)
       )

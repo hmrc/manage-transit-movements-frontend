@@ -55,7 +55,7 @@ class IncidentP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[IncidentP5ViewModelProvider].toInstance(mockIncidentP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))

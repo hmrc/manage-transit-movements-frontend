@@ -51,7 +51,7 @@ class DepartureNotCancelledP5ControllerSpec extends SpecBase with AppWithDefault
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[DepartureNotCancelledP5ViewModelProvider].toInstance(mockDepartureNotCancelledP5ViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 

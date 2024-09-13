@@ -51,7 +51,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))

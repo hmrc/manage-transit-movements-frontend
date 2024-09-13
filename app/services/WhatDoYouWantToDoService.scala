@@ -16,42 +16,31 @@
 
 package services
 
-import config.FrontendAppConfig
 import connectors._
-import models.{Feature, Features}
+import models.Feature
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatDoYouWantToDoService @Inject() (
-  appConfig: FrontendAppConfig,
   departuresMovementP5Connector: DepartureMovementP5Connector,
   departureDraftsP5Connector: DeparturesDraftsP5Connector,
   arrivalMovementsP5Connector: ArrivalMovementP5Connector
 ) {
 
-  def fetchArrivalsAvailability()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Features] =
+  def fetchArrivalsFeature()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Feature] =
     for {
       availability <- arrivalMovementsP5Connector.getAvailability()
-    } yield Features(
-      None,
-      Some(Feature(availability, enabled = true, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url))
-    )
+    } yield Feature(availability, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
 
-  def fetchDeparturesAvailability()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Features] =
+  def fetchDeparturesFeature()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Feature] =
     for {
       availability <- departuresMovementP5Connector.getAvailability()
-    } yield Features(
-      None,
-      Some(Feature(availability, enabled = true, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url))
-    )
+    } yield Feature(availability, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
 
-  def fetchDraftDepartureAvailability()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Features] =
+  def fetchDraftDepartureFeature()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Feature] =
     for {
       draftsAvailability <- departureDraftsP5Connector.getDraftDeparturesAvailability()
-    } yield Features(
-      None,
-      Some(Feature(draftsAvailability, enabled = true, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url))
-    )
+    } yield Feature(draftsAvailability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
 }

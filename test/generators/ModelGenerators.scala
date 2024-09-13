@@ -99,17 +99,8 @@ trait ModelGenerators {
     Arbitrary {
       for {
         availability <- arbitrary[Availability]
-        enabled      <- arbitrary[Boolean]
         href         <- nonEmptyString
-      } yield Feature(availability, enabled, href)
-    }
-
-  implicit lazy val arbitraryFeatures: Arbitrary[Features] =
-    Arbitrary {
-      for {
-        phase4 <- Gen.option(arbitrary[Feature])
-        phase5 <- Gen.option(arbitrary[Feature])
-      } yield Features(phase4, phase5)
+      } yield Feature(availability, href)
     }
 
   implicit lazy val arbitraryArrivalMovement: Arbitrary[ArrivalMovement] =

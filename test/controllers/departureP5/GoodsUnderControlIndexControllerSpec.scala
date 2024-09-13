@@ -46,7 +46,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 

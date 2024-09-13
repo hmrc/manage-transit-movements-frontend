@@ -56,7 +56,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(
         bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService),
         bind[DepartureCacheConnector].toInstance(mockCacheService),
