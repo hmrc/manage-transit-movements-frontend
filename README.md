@@ -35,29 +35,11 @@ We have dedicated modules for handling the phase 5 transition and phase 5 final 
 * `config.TransitionModule` will ensure that any requests to the `transit-movements-trader-manage-documents` service will have a 2.0 APIVersion header.
 * Conversely, `config.PostTransitionModule` will ensure those requests have a 2.1 APIVersion header.
 
-This service uses switches defined in `application.conf` that toggle between Phase 4 and Phase 5 frontends/journeys.
+The above features are covered by two service-manager-config definitions:
 
-Phase 4 and Phase 5 features can co-exist by setting both feature flags to `true`. This will allow users to access any in-flight P4 movements, with the links for new movements pointing to the P5 frontends.
-
-```yaml
-microservice.services.features {
-  isPhase4Enabled = true
-  isPhase5Enabled = true
-}
-```
-
-The above features are covered by several service-manager-config definitions:
-
-1. `MANAGE_TRANSIT_MOVEMENTS_FRONTEND`
-   * `microservice.services.features.isPhase4Enabled = true`
-   * `microservice.services.features.isPhase5Enabled = false`
-2. `MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5`
-   * `microservice.services.features.isPhase4Enabled = false`
-   * `microservice.services.features.isPhase5Enabled = true`
+1. `MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5`
    * `play.additional.module=config.PostTransitionModule`
-3. `MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5_TRANSITION`
-   * `microservice.services.features.isPhase4Enabled = false`
-   * `microservice.services.features.isPhase5Enabled = true`
+2. `MANAGE_TRANSIT_MOVEMENTS_FRONTEND_P5_TRANSITION`
    * `play.additional.module=config.TransitionModule`
 
 

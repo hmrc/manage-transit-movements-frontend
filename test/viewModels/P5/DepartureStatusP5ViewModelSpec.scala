@@ -823,7 +823,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
     "when given Message with head of incidentDuringTransit" - {
       "and IE182 is enabled" - {
 
-        val app = p5GuiceApplicationBuilder()
+        val app = guiceApplicationBuilder()
           .configure("microservice.services.features.isIE182Enabled" -> true)
           .build()
 
@@ -895,7 +895,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "and IE182 is disabled" in {
 
-        val app = p5GuiceApplicationBuilder()
+        val app = guiceApplicationBuilder()
           .configure("microservice.services.features.isIE182Enabled" -> false)
           .build()
 

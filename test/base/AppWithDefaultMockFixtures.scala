@@ -43,11 +43,6 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
 
   def guiceApplicationBuilder(): GuiceApplicationBuilder =
     defaultApplicationBuilder()
-      .configure("microservice.services.features.isPhase5Enabled" -> false)
-
-  def p5GuiceApplicationBuilder(): GuiceApplicationBuilder =
-    defaultApplicationBuilder()
-      .configure("microservice.services.features.isPhase5Enabled" -> true)
 
   protected def transitionApplicationBuilder(): GuiceApplicationBuilder =
     guiceApplicationBuilder()

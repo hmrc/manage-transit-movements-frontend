@@ -16,9 +16,9 @@
 
 package generators
 
+import models.DeparturesSummary
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.GuaranteeReferenceTable
-import models.{DeparturesSummary, LocalReferenceNumber}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
@@ -28,15 +28,8 @@ import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
-import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.P5.departure.{
-  DepartureDeclarationErrorsP5ViewModel,
-  GuaranteeRejectedNotAmendableP5ViewModel,
-  GuaranteeRejectedP5ViewModel,
-  RejectionMessageP5ViewModel,
-  ViewAllDepartureMovementsP5ViewModel,
-  ViewDepartureP5
-}
+import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalMovementsP5, ViewArrivalP5}
+import viewModels.P5.departure._
 import viewModels._
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination.{ListPaginationViewModel, MetaData}
@@ -84,14 +77,6 @@ trait ViewModelGenerators {
     distinctListWithMaxLength[AccordionSection, Option[String]]()(_.sectionTitle)
   }
 
-  implicit lazy val arbitraryViewAllArrivalMovementsViewModel: Arbitrary[ViewAllArrivalMovementsViewModel] =
-    Arbitrary {
-      for {
-        viewArrivals        <- distinctListWithMaxLength[ViewArrival, LocalDate]()(_.updatedDate)
-        paginationViewModel <- arbitrary[ListPaginationViewModel]
-      } yield ViewAllArrivalMovementsViewModel(viewArrivals, paginationViewModel)
-    }
-
   implicit lazy val arbitraryViewAllArrivalMovementsP5ViewModel: Arbitrary[ViewAllArrivalMovementsP5ViewModel] =
     Arbitrary {
       for {
@@ -106,14 +91,6 @@ trait ViewModelGenerators {
         viewArrivals        <- distinctListWithMaxLength[ViewDepartureP5, LocalDate]()(_.updatedDate)
         paginationViewModel <- arbitrary[ListPaginationViewModel]
       } yield ViewAllDepartureMovementsP5ViewModel(viewArrivals, paginationViewModel, None)
-    }
-
-  implicit lazy val arbitraryViewAllDepartureMovementsViewModel: Arbitrary[ViewAllDepartureMovementsViewModel] =
-    Arbitrary {
-      for {
-        viewDepartures      <- distinctListWithMaxLength[ViewDeparture, LocalDate]()(_.updatedDate)
-        paginationViewModel <- arbitrary[ListPaginationViewModel]
-      } yield ViewAllDepartureMovementsViewModel(viewDepartures, paginationViewModel)
     }
 
   implicit lazy val arbitraryPaginationViewModel: Arbitrary[ListPaginationViewModel] =
@@ -156,17 +133,6 @@ trait ViewModelGenerators {
       } yield ViewMovementAction(href, key)
     }
 
-  implicit val arbitraryViewArrival: Arbitrary[ViewArrival] =
-    Arbitrary {
-      for {
-        date    <- arbitrary[LocalDate]
-        time    <- arbitrary[LocalTime]
-        mrn     <- stringsWithMaxLength(17: Int)
-        status  <- nonEmptyString
-        actions <- listWithMaxLength[ViewMovementAction]()
-      } yield ViewArrival(date, time, mrn, status, actions)
-    }
-
   implicit val arbitraryViewArrivalP5: Arbitrary[ViewArrivalP5] =
     Arbitrary {
       for {
@@ -189,29 +155,18 @@ trait ViewModelGenerators {
       } yield ViewDepartureP5(date, time, lrn, status, actions)
     }
 
-  implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =
+  implicit val arbitraryViewArrivalMovementsP5: Arbitrary[ViewArrivalMovementsP5] =
     Arbitrary {
       for {
-        updatedDate          <- arbitrary[LocalDate]
-        updatedTime          <- arbitrary[LocalTime]
-        localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        status               <- nonEmptyString
-        actions              <- listWithMaxLength[ViewMovementAction]()
-      } yield new ViewDeparture(updatedDate, updatedTime, localReferenceNumber, status, actions)
+        seqOfViewMovements <- listWithMaxLength[ViewArrivalP5]()
+      } yield ViewArrivalMovementsP5(seqOfViewMovements)
     }
 
-  implicit val arbitraryViewArrivalMovements: Arbitrary[ViewArrivalMovements] =
+  implicit val arbitraryViewDepartureMovements: Arbitrary[ViewDepartureMovementsP5] =
     Arbitrary {
       for {
-        seqOfViewMovements <- listWithMaxLength[ViewArrival]()
-      } yield ViewArrivalMovements(seqOfViewMovements)
-    }
-
-  implicit val arbitraryViewDepartureMovements: Arbitrary[ViewDepartureMovements] =
-    Arbitrary {
-      for {
-        seqOfViewDepartureMovements <- listWithMaxLength[ViewDeparture]()
-      } yield ViewDepartureMovements(seqOfViewDepartureMovements)
+        seqOfViewDepartureMovements <- listWithMaxLength[ViewDepartureP5]()
+      } yield ViewDepartureMovementsP5(seqOfViewDepartureMovements)
     }
 
   implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =

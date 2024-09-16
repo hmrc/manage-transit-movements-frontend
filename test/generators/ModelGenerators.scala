@@ -16,16 +16,13 @@
 
 package generators
 
-import models.ErrorType.GenericError
 import models._
-import models.arrival.{ArrivalStatus, XMLSubmissionNegativeAcknowledgementMessage}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
-import models.departure._
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.{BusinessRejectionType, DepartureMovement, DepartureMovements}
 import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.{alphaNumStr, choose, listOfN, numChar, posNum}
+import org.scalacheck.Gen.{choose, listOfN, numChar, posNum}
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
 
@@ -34,16 +31,6 @@ import java.time._
 // scalastyle:off magic.number
 trait ModelGenerators {
   self: Generators =>
-
-  implicit val arbitraryControlDecision: Arbitrary[ControlDecision] =
-    Arbitrary {
-      for {
-        mrn                 <- Gen.alphaNumStr
-        dateOfControl       <- arbitrary[LocalDate]
-        principleTraderName <- Gen.alphaNumStr
-        principleTraderEori <- Gen.option(Gen.alphaNumStr)
-      } yield ControlDecision(mrn, dateOfControl, principleTraderName, principleTraderEori)
-    }
 
   implicit val arbitraryLocalDate: Arbitrary[LocalDate] =
     Arbitrary {
@@ -96,112 +83,11 @@ trait ModelGenerators {
       } yield DepartureId(listOfCharNum.mkString.toInt)
     }
 
-  implicit val arbitraryArrival: Arbitrary[Arrival] =
-    Arbitrary {
-      for {
-        arrivalId <- arbitrary[ArrivalId]
-        date      <- arbitrary[LocalDateTime]
-        time      <- arbitrary[LocalDateTime]
-        mrn       <- stringsWithMaxLength(17)
-        status    <- arbitrary[ArrivalStatus]
-      } yield Arrival(arrivalId, date, time, mrn, status)
-    }
-
-  implicit val arbitraryDeparture: Arbitrary[Departure] =
-    Arbitrary {
-      for {
-        departureID          <- arbitrary[DepartureId]
-        updated              <- arbitrary[LocalDateTime]
-        localReferenceNumber <- arbitrary[LocalReferenceNumber]
-        status               <- arbitrary[DepartureStatus]
-      } yield Departure(departureID, updated, localReferenceNumber, status)
-    }
-
-  implicit val arbitraryDepartureStatus: Arbitrary[DepartureStatus] =
-    Arbitrary {
-      Gen.oneOf(DepartureStatus.values)
-    }
-
-  implicit val arbitraryArrivalStatus: Arbitrary[ArrivalStatus] =
-    Arbitrary {
-      Gen.oneOf(ArrivalStatus.values)
-    }
-
   implicit lazy val arbitraryLocalReferenceNumber: Arbitrary[LocalReferenceNumber] =
     Arbitrary {
       for {
         lrn <- alphaNumericWithMaxLength(22)
       } yield new LocalReferenceNumber(lrn)
-    }
-
-  implicit lazy val arbitraryControlResult: Arbitrary[ControlResult] =
-    Arbitrary {
-      for {
-        dateLimit <- localDateGen
-        code      <- stringsWithMaxLength(2)
-      } yield ControlResult(dateLimit, code)
-    }
-
-  implicit lazy val arbitraryResultsOfControl: Arbitrary[ResultsOfControl] =
-    Arbitrary {
-      for {
-        indicator   <- stringsWithMaxLength(2)
-        description <- Gen.option(alphaNumStr)
-      } yield ResultsOfControl(indicator, description)
-    }
-
-  implicit lazy val arbitraryNoReleaseForTransitMessage: Arbitrary[NoReleaseForTransitMessage] = Arbitrary {
-    for {
-      mrn                        <- nonEmptyString
-      noReleaseMotivation        <- Gen.option(nonEmptyString)
-      totalNumberOfItems         <- arbitrary[Int]
-      officeOfDepartureRefNumber <- Gen.alphaNumStr
-      controlResult              <- arbitrary[ControlResult]
-      resultsOfControl           <- Gen.option(arbitrary[Seq[ResultsOfControl]])
-    } yield new NoReleaseForTransitMessage(
-      mrn = mrn,
-      noReleaseMotivation = noReleaseMotivation,
-      totalNumberOfItems = totalNumberOfItems,
-      officeOfDepartureRefNumber = officeOfDepartureRefNumber,
-      controlResult = controlResult,
-      resultsOfControl = resultsOfControl
-    )
-  }
-
-  implicit lazy val arbitraryResultsOfControlList: Arbitrary[Seq[ResultsOfControl]] = Arbitrary {
-    listWithMaxLength[ResultsOfControl](ResultsOfControl.maxResultsOfControl)
-  }
-
-  implicit lazy val genericErrorType: Arbitrary[GenericError] =
-    Arbitrary {
-      Gen.oneOf(ErrorType.genericValues)
-    }
-
-  implicit lazy val arbitraryErrorType: Arbitrary[ErrorType] =
-    Arbitrary {
-      for {
-        genericError <- arbitrary[GenericError]
-        errorType    <- Gen.oneOf(Seq(genericError))
-      } yield errorType
-    }
-
-  implicit lazy val arbitraryRejectionError: Arbitrary[FunctionalError] =
-    Arbitrary {
-      for {
-        errorType     <- arbitrary[ErrorType]
-        pointer       <- Gen.alphaNumStr
-        reason        <- Gen.option(Gen.alphaNumStr)
-        originalValue <- Gen.option(Gen.alphaNumStr)
-      } yield FunctionalError(errorType, ErrorPointer(pointer), reason, originalValue)
-    }
-
-  implicit lazy val arbitraryXMLSubmissionNegativeAcknowledgementMessage: Arbitrary[XMLSubmissionNegativeAcknowledgementMessage] =
-    Arbitrary {
-      for {
-        mrn   <- Gen.option(nonEmptyString)
-        lrn   <- Gen.option(nonEmptyString)
-        error <- arbitrary[FunctionalError]
-      } yield XMLSubmissionNegativeAcknowledgementMessage(mrn, lrn, error)
     }
 
   implicit lazy val arbitraryAvailability: Arbitrary[Availability] =
@@ -213,27 +99,8 @@ trait ModelGenerators {
     Arbitrary {
       for {
         availability <- arbitrary[Availability]
-        enabled      <- arbitrary[Boolean]
         href         <- nonEmptyString
-      } yield Feature(availability, enabled, href)
-    }
-
-  implicit lazy val arbitraryFeatures: Arbitrary[Features] =
-    Arbitrary {
-      for {
-        phase4 <- Gen.option(arbitrary[Feature])
-        phase5 <- Gen.option(arbitrary[Feature])
-      } yield Features(phase4, phase5)
-    }
-
-  implicit lazy val arbitraryArrivals: Arbitrary[Arrivals] =
-    Arbitrary {
-      for {
-        retrievedArrivals <- arbitrary[Int]
-        totalArrivals     <- arbitrary[Int]
-        totalMatched      <- arbitrary[Option[Int]]
-        arrivals          <- listWithMaxLength[Arrival]()
-      } yield Arrivals(retrievedArrivals, totalArrivals, totalMatched, arrivals)
+      } yield Feature(availability, href)
     }
 
   implicit lazy val arbitraryArrivalMovement: Arbitrary[ArrivalMovement] =
@@ -278,16 +145,6 @@ trait ModelGenerators {
         name        <- arbitrary[String]
         phoneNumber <- arbitrary[Option[String]]
       } yield CustomsOffice(id, name, phoneNumber)
-    }
-
-  implicit lazy val arbitraryDepartures: Arbitrary[Departures] =
-    Arbitrary {
-      for {
-        retrievedDepartures <- arbitrary[Int]
-        totalDepartures     <- arbitrary[Int]
-        totalMatched        <- arbitrary[Option[Int]]
-        departures          <- listWithMaxLength[Departure]()
-      } yield Departures(retrievedDepartures, totalDepartures, totalMatched, departures)
     }
 
   implicit lazy val arbitraryCall: Arbitrary[Call] =

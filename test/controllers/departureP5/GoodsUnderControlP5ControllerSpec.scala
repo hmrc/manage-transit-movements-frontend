@@ -53,7 +53,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[GoodsUnderControlP5ViewModelProvider].toInstance(mockGoodsUnderControlP5ViewModelProvider))
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))

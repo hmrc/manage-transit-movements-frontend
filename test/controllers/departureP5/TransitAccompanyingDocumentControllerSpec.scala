@@ -46,7 +46,7 @@ class TransitAccompanyingDocumentControllerSpec extends SpecBase with Generators
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(
         bind[ManageDocumentsConnector].toInstance(mockManageDocumentsConnector)
       )

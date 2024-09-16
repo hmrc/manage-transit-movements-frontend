@@ -53,7 +53,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[IntentionToControlP5ViewModelProvider].toInstance(mockIntentionToControlP5ViewModelProvider))
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))

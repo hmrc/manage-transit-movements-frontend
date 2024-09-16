@@ -53,21 +53,21 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with ScalaCheckPropertyCh
     "must return OK and the correct view for a GET" in {
 
       forAll(
-        arbitrary[Features],
-        arbitrary[Features],
-        arbitrary[Features]
+        arbitrary[Feature],
+        arbitrary[Feature],
+        arbitrary[Feature]
       ) {
-        (arrivalsAvailability, departuresAvailability, draftDeparturesAvailability) =>
+        (arrivalsFeature, departuresFeature, draftDeparturesFeature) =>
           beforeEach()
 
-          when(mockWhatDoYouWantToDoService.fetchArrivalsAvailability()(any(), any()))
-            .thenReturn(Future.successful(arrivalsAvailability))
+          when(mockWhatDoYouWantToDoService.fetchArrivalsFeature()(any(), any()))
+            .thenReturn(Future.successful(arrivalsFeature))
 
-          when(mockWhatDoYouWantToDoService.fetchDeparturesAvailability()(any(), any()))
-            .thenReturn(Future.successful(departuresAvailability))
+          when(mockWhatDoYouWantToDoService.fetchDeparturesFeature()(any(), any()))
+            .thenReturn(Future.successful(departuresFeature))
 
-          when(mockWhatDoYouWantToDoService.fetchDraftDepartureAvailability()(any(), any()))
-            .thenReturn(Future.successful(draftDeparturesAvailability))
+          when(mockWhatDoYouWantToDoService.fetchDraftDepartureFeature()(any(), any()))
+            .thenReturn(Future.successful(draftDeparturesFeature))
 
           val request = FakeRequest(GET, routes.WhatDoYouWantToDoController.onPageLoad().url)
           val result  = route(app, request).value
@@ -78,13 +78,13 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with ScalaCheckPropertyCh
 
           contentAsString(result) mustEqual
             view(
-              arrivalsAvailability,
-              departuresAvailability,
-              draftDeparturesAvailability,
+              arrivalsFeature,
+              departuresFeature,
+              draftDeparturesFeature,
               isOnLegacyEnrolment
             )(request, messages).toString
 
-          verify(mockWhatDoYouWantToDoService).fetchDraftDepartureAvailability()(any(), any())
+          verify(mockWhatDoYouWantToDoService).fetchDraftDepartureFeature()(any(), any())
       }
     }
   }

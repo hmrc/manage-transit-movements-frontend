@@ -54,7 +54,6 @@ lazy val root = (project in file("."))
       "-Wconf:src=src_managed/.*:s"
     ),
     libraryDependencies ++= AppDependencies(),
-    dependencyOverrides ++= AppDependencies.overrides,
     retrieveManaged := true,
     resolvers ++= Seq(
       Resolver.jcenterRepo

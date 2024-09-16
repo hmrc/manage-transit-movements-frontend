@@ -12,24 +12,6 @@
 # Test routes
 
 + nocsrf
-POST        /manage-transit-movements/test-only/arrival/submit                                                          controllers.testOnly.TestOnlyArrivalsRouterController.arrivalNotificationMessageToCore()
-
-+ nocsrf
-PUT         /manage-transit-movements/test-only/arrival/resubmit                                                        controllers.testOnly.TestOnlyArrivalsRouterController.resubmitArrivalNotificationMessageToCore()
-
-+ nocsrf
-POST        /manage-transit-movements/test-only/arrival/message                                                         controllers.testOnly.TestOnlyArrivalsRouterController.messageToCore()
-
-+ nocsrf
-POST        /manage-transit-movements/test-only/message                                                                 controllers.testOnly.TestOnlyRouterController.fromCoreMessage()
-
-+ nocsrf
-POST        /manage-transit-movements/test-only/departure/submit                                                        controllers.testOnly.TestOnlyDeparturesRouterController.declarationMessageToCore()
-
-+ nocsrf
-POST        /manage-transit-movements/test-only/departure/message                                                       controllers.testOnly.TestOnlyDeparturesRouterController.messageToCore()
-
-+ nocsrf
 POST        /manage-transit-movements/test-only/departure-outbound                                                      controllers.testOnly.TestOnlyP5DeparturesAPIController.outboundDepartureMessage()
 
 + nocsrf
@@ -43,9 +25,6 @@ GET         /manage-transit-movements/test-only/departures/:departureId/messages
 
 + nocsrf
 GET         /manage-transit-movements/test-only/arrivals/:arrivalId/messages/:messageId                                 controllers.testOnly.TestOnlyP5ArrivalsAPIController.getMessage(arrivalId: String, messageId: String)
-
-+ nocsrf
-POST        /manage-transit-movements/test-only/cancellation/submit                                                     controllers.testOnly.TestOnlyDeparturesRouterController.declarationCancellationMessageToCore()
 
 + nocsrf
 POST        /manage-transit-movements/test-only/arrival-outbound                                                        controllers.testOnly.TestOnlyP5ArrivalsAPIController.outboundArrivalMessage()

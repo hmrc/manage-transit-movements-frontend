@@ -16,7 +16,6 @@
 
 @import views.html.components.{Heading, ViewMovements, Warning}
 @import config.FrontendAppConfig
-@import models.Features
 
 @this(
     mainTemplate: MainTemplate,
@@ -26,7 +25,7 @@
     warning: Warning
 )
 
-@(arrivalsAvailability: Features, departuresAvailability: Features, draftDepartureAvailability: Features, isOnLegacyEnrolment: Boolean)(implicit request: Request[_], messages: Messages)
+@(arrivalsFeature: Feature, departuresFeature: Feature, draftDepartureFeature: Feature, isOnLegacyEnrolment: Boolean)(implicit request: Request[_], messages: Messages)
 
 @warningHtml = {
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.warning.1")</h2>
@@ -45,72 +44,19 @@
     }
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.arrival")</h2>
-
-    @arrivalsAvailability match {
-        case Features(Some(phase4), None) => {
-            <p class="govuk-body"><a href=@config.p4ArrivalStart class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
-            @viewMovements(phase4, "arrival", "view-arrival-notifications")
-        }
-        case Features(Some(phase4), Some(phase5)) if phase4.enabled => {
-            <p class="govuk-body"><a href=@config.p4ArrivalStart class="govuk-link" id="make-ncts-4-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.p4.make")</a></p>
-            <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-ncts-5-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.p5.make")</a></p>
-            @viewMovements(phase4, "arrival.p4", "view-ncts-4-arrival-notifications")
-            @viewMovements(phase5, "arrival.p5", "view-ncts-5-arrival-notifications")
-        }
-        case Features(Some(phase4), Some(phase5)) => {
-            <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
-            @viewMovements(phase4, "arrival.p4", "view-ncts-4-arrival-notifications")
-            @viewMovements(phase5, "arrival.p5", "view-ncts-5-arrival-notifications")
-        }
-        case _ => {
-            <p class="govuk-body">@messages(s"whatDoYouWantToDo.arrival.unavailable")</p>
-        }
-    }
+    <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
+    @viewMovements(arrivalsFeature, "arrival", "view-arrival-notifications")
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.departure")</h2>
-
-    @departuresAvailability match {
-        case Features(Some(phase4), None) => {
-            <p class="govuk-body"><a href=@config.p4DepartureStart class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
-            @viewMovements(phase4, "departure", "view-departure-declarations")
-        }
-        case Features(Some(phase4), Some(phase5)) if phase4.enabled => {
-            <p class="govuk-body"><a href=@config.p4DepartureStart class="govuk-link" id="make-ncts-4-departure-declaration">@messages("whatDoYouWantToDo.link.departure.p4.make")</a></p>
-            <p class="govuk-body"><a href=@config.p5Departure class="govuk-link" id="make-ncts-5-departure-declaration">@messages("whatDoYouWantToDo.link.departure.p5.make")</a></p>
-            @viewMovements(phase4, "departure.p4", "view-ncts-4-departure-declarations")
-            @viewMovements(phase5, "departure.p5", "view-ncts-5-departure-declarations")
-        }
-        case Features(Some(phase4), Some(phase5)) => {
-            <p class="govuk-body"><a href=@config.p5Departure class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
-            @viewMovements(phase4, "departure.p4", "view-ncts-4-departure-declarations")
-            @viewMovements(phase5, "departure.p5", "view-ncts-5-departure-declarations")
-        }
-        case _ => {
-            <p class="govuk-body">@messages(s"whatDoYouWantToDo.departure.unavailable")</p>
-        }
-    }
-
-    @draftDepartureAvailability match {
-        case Features(_, Some(phase5)) => {
-            @viewMovements(phase5, "departure.drafts", "view-draft-departures")
-        }
-        case _ => {}
-    }
+    <p class="govuk-body"><a href=@config.p5Departure class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
+    @viewMovements(departuresFeature, "departure", "view-departure-declarations")
+    @viewMovements(draftDepartureFeature, "departure.drafts", "view-draft-departures")
 
     @if(config.isGuaranteeBalanceEnabled) {
         <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.guarantee")</h2>
 
-        @if(config.phase4Enabled && config.phase5Enabled) {
-            <p class="govuk-body">
-                <a href=@config.checkGuaranteeBalanceUrl class="govuk-link" id="check-guarantee-balance">@messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance.crossover")</a>
-            </p>
-            <p class="govuk-body">
-                @messages("whatDoYouWantToDo.guarantee.checkGuaranteeBalance.crossover.paragraph")
-            </p>
-        } else {
-            <p class="govuk-body">
-                <a href=@config.checkGuaranteeBalanceUrl class="govuk-link" id="check-guarantee-balance">@messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance")</a>
-            </p>
-        }
+        <p class="govuk-body">
+            <a href=@config.checkGuaranteeBalanceUrl class="govuk-link" id="check-guarantee-balance">@messages("whatDoYouWantToDo.link.guarantee.checkGuaranteeBalance")</a>
+        </p>
     }
 }

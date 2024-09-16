@@ -51,7 +51,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
 
   "ArrivalNotificationWithoutFunctionalErrorsP5" - {

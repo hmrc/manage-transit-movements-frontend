@@ -49,7 +49,7 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
-      .p5GuiceApplicationBuilder()
+      .guiceApplicationBuilder()
       .overrides(bind[RecoveryNotificationViewModelProvider].toInstance(mockRecoveryNotificationViewModelProvider))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 

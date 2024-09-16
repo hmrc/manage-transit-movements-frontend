@@ -18,7 +18,8 @@ package components
 
 import a11ySpecBase.A11ySpecBase
 import org.scalacheck.Arbitrary.arbitrary
-import viewModels.{ViewArrivalMovements, ViewDepartureMovements}
+import viewModels.P5.arrival.ViewArrivalMovementsP5
+import viewModels.P5.departure.ViewDepartureMovementsP5
 import views.html.components.MovementsTable
 import views.html.templates.MainTemplate
 
@@ -38,7 +39,7 @@ class MovementsTableSpec extends A11ySpecBase {
     "pass accessibility checks" when {
 
       "departure movements" in {
-        val dataRows = arbitrary[ViewDepartureMovements].map(_.dataRows).sample.value
+        val dataRows = arbitrary[ViewDepartureMovementsP5].map(_.dataRows).sample.value
         val content = template.apply(title) {
           component.apply(dataRows, visuallyHiddenHeader, rowHeadingUpdated, rowHeadingReferenceNumber, rowHeadingStatus, rowHeadingAction).withHeading(title)
         }
@@ -46,7 +47,7 @@ class MovementsTableSpec extends A11ySpecBase {
       }
 
       "arrival movements" in {
-        val dataRows = arbitrary[ViewArrivalMovements].map(_.dataRows).sample.value
+        val dataRows = arbitrary[ViewArrivalMovementsP5].map(_.dataRows).sample.value
         val content = template.apply(title) {
           component.apply(dataRows, visuallyHiddenHeader, rowHeadingUpdated, rowHeadingReferenceNumber, rowHeadingStatus, rowHeadingAction).withHeading(title)
         }
