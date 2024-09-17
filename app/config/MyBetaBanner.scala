@@ -26,4 +26,5 @@ class MyBetaBanner @Inject() (config: FrontendAppConfig) extends StandardBetaBan
 
   override def apply(url: String)(implicit messages: Messages): Aliases.PhaseBanner =
     if (config.isTraderTest) super.apply(config.feedbackForm) else super.apply(url)
+
 }

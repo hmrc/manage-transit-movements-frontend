@@ -44,4 +44,5 @@ object LatestDepartureMessage {
 
           LatestDepartureMessage(sortedList.head, ie015Message.messageId)
       }
+
 }

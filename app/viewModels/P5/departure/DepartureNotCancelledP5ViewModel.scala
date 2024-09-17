@@ -45,6 +45,7 @@ case class DepartureNotCancelledP5ViewModel(
 
   def tryAgainUrl(implicit config: FrontendAppConfig): String =
     s"${config.p5Cancellation}/$departureId/index/$lrn"
+
 }
 
 object DepartureNotCancelledP5ViewModel {
@@ -63,5 +64,7 @@ object DepartureNotCancelledP5ViewModel {
           new DepartureNotCancelledP5ViewModel(Seq(section), departureId, lrn)
       }
     }
+
   }
+
 }

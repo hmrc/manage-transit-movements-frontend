@@ -32,4 +32,5 @@ class Module extends AbstractModule {
     bind(classOf[DraftDepartureService]).to(classOf[MongoDraftDepartureService])
     bind(classOf[ReferenceDataService]).to(classOf[ReferenceDataServiceImpl]).asEagerSingleton()
   }
+
 }

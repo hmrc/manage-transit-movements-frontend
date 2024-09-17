@@ -30,4 +30,5 @@ class Actions @Inject() (
 
   def checkP5Switch(): ActionFunction[Request, IdentifierRequest] =
     identify() andThen p5SwitchAction()
+
 }

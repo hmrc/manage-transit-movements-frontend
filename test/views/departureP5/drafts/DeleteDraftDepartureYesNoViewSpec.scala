@@ -45,10 +45,11 @@ class DeleteDraftDepartureYesNoViewSpec extends YesNoViewBehaviours with ScalaCh
 
   "must display table with local reference number label and correct LRN" in {
     def elementWithVisibleText(element: Element, text: String): Unit =
-      element.ownText() mustBe text
+      element.ownText() `mustBe` text
 
     val lrnLabel = doc.getElementsByClass("govuk-inset-text").head
 
     behave like elementWithVisibleText(lrnLabel, s"Local Reference Number (LRN) ${lrn.toString}")
   }
+
 }

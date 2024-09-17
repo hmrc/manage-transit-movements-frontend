@@ -30,6 +30,7 @@ object ArrivalMessageMetaData {
       (__ \ "received").read[LocalDateTime] and
         (__ \ "type").read[ArrivalMessageType] and
         (__ \ "_links" \ "self" \ "href").read[String].map(_.replace("/customs/transits/", ""))
-    )(ArrivalMessageMetaData.apply _)
+    )(ArrivalMessageMetaData.apply)
   }
+
 }

@@ -59,11 +59,11 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
       val result            = viewModelProvider.apply(guaranteeErrors, lrn.toString, mrn, acceptanceDate).futureValue
 
       "must return correct number of guarantees" in {
-        result.tables.length mustBe 1
+        result.tables.length `mustBe` 1
       }
 
       "must return correct number of errors in guarantee" in {
-        result.tables.head.table.rows.length mustBe 1
+        result.tables.head.table.rows.length `mustBe` 1
       }
 
       "must return correct paragraph 1" in {
@@ -72,11 +72,11 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
       }
 
       "must return correct paragraph 2" in {
-        result.paragraph2 mustBe "for help understanding the error (opens in a new tab)."
+        result.paragraph2 `mustBe` "for help understanding the error (opens in a new tab)."
       }
 
       "must return link content" in {
-        result.link mustBe "Make another departure declaration"
+        result.link `mustBe` "Make another departure declaration"
       }
     }
 
@@ -96,11 +96,11 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
       val result            = viewModelProvider.apply(guaranteeErrors, lrn.toString, mrn, acceptanceDate).futureValue
 
       "must return correct number of guarantees" in {
-        result.tables.length mustBe 1
+        result.tables.length `mustBe` 1
       }
 
       "must return correct number of errors in guarantee" in {
-        result.tables.head.table.rows.length mustBe 2
+        result.tables.head.table.rows.length `mustBe` 2
       }
 
       "must return correct paragraph 1" in {
@@ -109,11 +109,11 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
       }
 
       "must return correct paragraph 2" in {
-        result.paragraph2 mustBe "for help understanding the errors (opens in a new tab)."
+        result.paragraph2 `mustBe` "for help understanding the errors (opens in a new tab)."
       }
 
       "must return link content" in {
-        result.link mustBe "Make another departure declaration"
+        result.link `mustBe` "Make another departure declaration"
       }
     }
 
@@ -132,11 +132,11 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
     val result            = viewModelProvider.apply(guaranteeErrors, lrn.toString, mrn, acceptanceDate).futureValue
 
     "must return correct number of guarantees" in {
-      result.tables.length mustBe 2
+      result.tables.length `mustBe` 2
     }
 
     "must return correct number of errors in guarantee" in {
-      result.tables.head.table.rows.length mustBe 2
+      result.tables.head.table.rows.length `mustBe` 2
     }
 
     "must return correct paragraph 1" in {
@@ -145,11 +145,12 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
     }
 
     "must return correct paragraph 2" in {
-      result.paragraph2 mustBe "for help understanding the errors (opens in a new tab)."
+      result.paragraph2 `mustBe` "for help understanding the errors (opens in a new tab)."
     }
 
     "must return link content" in {
-      result.link mustBe "Make another departure declaration"
+      result.link `mustBe` "Make another departure declaration"
     }
   }
+
 }

@@ -26,6 +26,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import generated.Generated_CC025CTypeFormat
+import generated.Generated_CC057CTypeFormat
 
 class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMovementP5Connector) {
 
@@ -65,4 +67,5 @@ class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMove
     messageId: String
   )(implicit hc: HeaderCarrier, ec: ExecutionContext, format: XMLFormat[T]): Future[T] =
     arrivalMovementP5Connector.getMessage(arrivalId, messageId)
+
 }

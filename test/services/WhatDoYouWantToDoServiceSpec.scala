@@ -99,4 +99,5 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
       }
     }
   }
+
 }

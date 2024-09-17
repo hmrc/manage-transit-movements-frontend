@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
+import play.api.libs.ws.XMLBodyWritables._
 
 class TestOnlyP5ArrivalsAPIConnector @Inject() (
   http: HttpClientV2,
@@ -42,7 +43,7 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (
     val headerSeq = headers.get("Authorization").map(authorizationHeader).foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader))(_ :+ _)
     http
       .post(serviceUrl)
-      .setHeader(headerSeq: _*)
+      .setHeader(headerSeq*)
       .withBody(requestData)
       .execute[HttpResponse]
   }
@@ -58,7 +59,7 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (
         .foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader, messageTypeHeader(headers.get("X-Message-Type"))))(_ :+ _)
     http
       .post(serviceUrl)
-      .setHeader(headerSeq: _*)
+      .setHeader(headerSeq*)
       .withBody(requestData)
       .execute[HttpResponse]
   }
@@ -73,7 +74,7 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (
         .foldLeft(Seq(xmlContentTypeHeader, jsonAcceptHeader, messageTypeHeader(headers.get("X-Message-Type"))))(_ :+ _)
     http
       .post(serviceUrl)
-      .setHeader(headerSeq: _*)
+      .setHeader(headerSeq*)
       .withBody(requestData)
       .execute[HttpResponse]
   }
@@ -89,7 +90,8 @@ class TestOnlyP5ArrivalsAPIConnector @Inject() (
         .foldLeft(Seq(jsonAcceptHeader))(_ :+ _)
     http
       .get(serviceUrl)
-      .setHeader(headerSeq: _*)
+      .setHeader(headerSeq*)
       .execute[JsValue]
   }
+
 }

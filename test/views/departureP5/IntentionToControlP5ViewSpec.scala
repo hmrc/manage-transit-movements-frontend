@@ -94,4 +94,5 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
   "must not render what happens next section" in {
     assertNotRenderedById(doc, "what-happens-next")
   }
+
 }

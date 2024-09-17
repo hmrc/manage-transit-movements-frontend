@@ -92,4 +92,5 @@ object PaginationViewModel {
 
     f(results, previous, next, items)
   }
+
 }

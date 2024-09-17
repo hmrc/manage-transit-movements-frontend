@@ -70,7 +70,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-              when(mockAmendmentService.doesDeclarationExist(any())(any())) thenReturn Future.successful(true)
+              when(mockAmendmentService.doesDeclarationExist(any())(any())) `thenReturn` Future.successful(true)
 
               when(mockGuaranteeRejectionP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(viewModel))
@@ -99,7 +99,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-              when(mockAmendmentService.doesDeclarationExist(any())(any())) thenReturn Future.successful(false)
+              when(mockAmendmentService.doesDeclarationExist(any())(any())) `thenReturn` Future.successful(false)
 
               when(mockGuaranteeRejectionP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(viewModel))
@@ -109,7 +109,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               val result = route(app, request).value
 
               status(result) mustEqual SEE_OTHER
-              redirectLocation(result).value mustBe controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller
+              redirectLocation(result).value `mustBe` controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller
                 .onPageLoad(departureIdP5, messageId)
                 .url
           }
@@ -138,7 +138,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
             val result = route(app, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustBe frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
+            redirectLocation(result).value `mustBe` frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
         }
       }
 
@@ -159,9 +159,10 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
             val result = route(app, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustBe controllers.routes.ErrorController.technicalDifficulties().url
+            redirectLocation(result).value `mustBe` controllers.routes.ErrorController.technicalDifficulties().url
         }
       }
     }
   }
+
 }

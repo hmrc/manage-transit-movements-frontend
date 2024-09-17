@@ -63,12 +63,12 @@ trait DetailsListViewBehaviours extends ViewBehaviours with Generators {
 
                   "must contain a key" in {
                     val key = renderedRow.getElementsByClass("govuk-summary-list__key").text()
-                    Text(key) mustBe row.key.content
+                    Text(key) `mustBe` row.key.content
                   }
 
                   "must contain a value" in {
                     val value = renderedRow.getElementsByClass("govuk-summary-list__value").text()
-                    Text(value) mustBe row.value.content
+                    Text(value) `mustBe` row.value.content
                   }
 
                   row.actions match {
@@ -102,4 +102,5 @@ trait DetailsListViewBehaviours extends ViewBehaviours with Generators {
       }
     }
   // scalastyle:on method.length
+
 }

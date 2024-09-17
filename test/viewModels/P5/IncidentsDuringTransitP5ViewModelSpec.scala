@@ -94,20 +94,20 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
 
           val sections = modifiedViewModel.sections
 
-          sections.length mustBe 2
+          sections.length `mustBe` 2
       }
     }
 
     "when multiple incident" - {
       "title" - {
         "must return correct message" in {
-          viewModel().title mustBe "Incidents during transit"
+          viewModel().title `mustBe` "Incidents during transit"
         }
       }
 
       "heading" - {
         "must return correct message" in {
-          viewModel().title mustBe "Incidents during transit"
+          viewModel().title `mustBe` "Incidents during transit"
         }
       }
 
@@ -120,8 +120,8 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
 
       "paragraph2" - {
         "must return correct message" in {
-          viewModel().paragraph2HyperLink mustBe "Check your departure declarations"
-          viewModel().paragraph2End mustBe "for further updates."
+          viewModel().paragraph2HyperLink `mustBe` "Check your departure declarations"
+          viewModel().paragraph2End `mustBe` "for further updates."
         }
       }
     }
@@ -129,13 +129,13 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
     "when 1 incident" - {
       "title" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).title mustBe "Incident during transit"
+          viewModel(isMultipleIncidents = false).title `mustBe` "Incident during transit"
         }
       }
 
       "heading" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).title mustBe "Incident during transit"
+          viewModel(isMultipleIncidents = false).title `mustBe` "Incident during transit"
         }
       }
 
@@ -148,14 +148,14 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
 
       "paragraph2" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).paragraph2HyperLink mustBe "Check your departure declarations"
-          viewModel(isMultipleIncidents = false).paragraph2End mustBe "for further updates."
+          viewModel(isMultipleIncidents = false).paragraph2HyperLink `mustBe` "Check your departure declarations"
+          viewModel(isMultipleIncidents = false).paragraph2End `mustBe` "for further updates."
         }
       }
     }
 
     "must have correct message for what happens next section" in {
-      viewModel().whatHappensNextHeader mustBe "What happens next"
+      viewModel().whatHappensNextHeader `mustBe` "What happens next"
     }
 
     "customsOfficeContent" - {
@@ -173,7 +173,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
-          result mustBe s"For further help, contact the carrier or Customs at $customsOfficeName on ${telephoneNo.get}."
+          result `mustBe` s"For further help, contact the carrier or Customs at $customsOfficeName on ${telephoneNo.get}."
         }
       }
 
@@ -182,7 +182,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
           val customsOfficeName = "custName"
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
-          result mustBe s"For further help, contact Customs at $customsOfficeName."
+          result `mustBe` s"For further help, contact Customs at $customsOfficeName."
         }
       }
 
@@ -192,7 +192,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
-          result mustBe s"For further help, contact Customs office $customsReferenceId on ${telephoneNo.get}."
+          result `mustBe` s"For further help, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
       }
 
@@ -201,9 +201,10 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
           val customsOfficeName = ""
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
-          result mustBe s"For further help, contact Customs office $customsReferenceId."
+          result `mustBe` s"For further help, contact Customs office $customsReferenceId."
         }
       }
     }
   }
+
 }

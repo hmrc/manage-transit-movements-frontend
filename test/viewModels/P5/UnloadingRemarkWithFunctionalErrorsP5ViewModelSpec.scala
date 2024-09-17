@@ -57,25 +57,25 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
       val result            = viewModelProvider.apply(functionalErrors, mrnString).futureValue
 
       "must return correct section length" in {
-        result.tableRows.length mustBe 1
+        result.tableRows.length `mustBe` 1
       }
       "must return correct title" in {
-        result.title mustBe "Review unloading remarks errors"
+        result.title `mustBe` "Review unloading remarks errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Review unloading remarks errors"
+        result.heading `mustBe` "Review unloading remarks errors"
       }
       "must return correct paragraph 1" in {
         result.paragraph1 mustBe
           s"There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix mustBe "Contact the"
-        result.paragraph2Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
+        result.paragraph2Prefix `mustBe` "Contact the"
+        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
+        result.paragraph2Suffix `mustBe` "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "View arrival notifications"
+        result.hyperlink `mustBe` "View arrival notifications"
       }
     }
 
@@ -93,26 +93,27 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
       val result            = viewModelProvider.apply(functionalErrors, mrnString).futureValue
 
       "must return correct section length" in {
-        result.tableRows.length mustBe 2
+        result.tableRows.length `mustBe` 2
       }
       "must return correct title" in {
-        result.title mustBe "Review unloading remarks errors"
+        result.title `mustBe` "Review unloading remarks errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Review unloading remarks errors"
+        result.heading `mustBe` "Review unloading remarks errors"
       }
       "must return correct paragraph 1" in {
         result.paragraph1 mustBe
           s"There is a problem with the unloading remarks for this notification. Review the errors and try making the unloading remarks again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix mustBe "Contact the"
-        result.paragraph2Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
+        result.paragraph2Prefix `mustBe` "Contact the"
+        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
+        result.paragraph2Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "View arrival notifications"
+        result.hyperlink `mustBe` "View arrival notifications"
       }
     }
   }
+
 }

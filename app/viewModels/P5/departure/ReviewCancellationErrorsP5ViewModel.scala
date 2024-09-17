@@ -80,5 +80,7 @@ object ReviewCancellationErrorsP5ViewModel {
       helper.tableRows().map(ReviewCancellationErrorsP5ViewModel(_, lrn, multipleErrors))
 
     }
+
   }
+
 }

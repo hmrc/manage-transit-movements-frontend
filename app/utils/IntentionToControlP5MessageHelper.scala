@@ -85,4 +85,5 @@ class IntentionToControlP5MessageHelper(ie060: CC060CType)(implicit
     val rows               = lrnRow ++ mrnRow ++ dateTimeControlRow
     StaticSection(None, rows)
   }
+
 }

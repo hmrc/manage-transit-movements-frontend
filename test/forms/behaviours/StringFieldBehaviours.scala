@@ -22,7 +22,7 @@ import wolfendale.scalacheck.regexp.RegexpGen
 
 trait StringFieldBehaviours extends FieldBehaviours {
 
-  def fieldWithMaxLength(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError): Unit =
+  def fieldWithMaxLength(form: Form[?], fieldName: String, maxLength: Int, lengthError: FormError): Unit =
     s"must not bind strings longer than $maxLength characters" in {
 
       forAll(stringsLongerThan(maxLength) -> "longString") {
@@ -32,7 +32,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
       }
     }
 
-  def fieldWithInvalidCharacters(form: Form[_], fieldName: String, error: FormError, length: Int = 100): Unit =
+  def fieldWithInvalidCharacters(form: Form[?], fieldName: String, error: FormError, length: Int = 100): Unit =
     "must not bind strings with invalid characters" in {
 
       val generator: Gen[String] = RegexpGen.from(s"[!£^*(){}_+=:;|`~<>,±üçñèé]{$length}")
@@ -43,4 +43,5 @@ trait StringFieldBehaviours extends FieldBehaviours {
           result.errors must contain(error)
       }
     }
+
 }

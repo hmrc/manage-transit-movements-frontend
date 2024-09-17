@@ -27,6 +27,7 @@ import views.html.departureP5.DepartureNotCancelledP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import generated.Generated_CC009CTypeFormat
 
 class DepartureNotCancelledP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -49,8 +50,9 @@ class DepartureNotCancelledP5Controller @Inject() (
     ie009: CC009CType,
     departureId: String,
     lrn: String
-  )(implicit request: Request[_]): Future[Result] =
+  )(implicit request: Request[?]): Future[Result] =
     viewModelProvider.apply(ie009, departureId, lrn).map {
       viewModel => Ok(view(viewModel))
     }
+
 }

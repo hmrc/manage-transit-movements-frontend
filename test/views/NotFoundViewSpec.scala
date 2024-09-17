@@ -43,4 +43,5 @@ class NotFoundViewSpec extends ViewBehaviours {
     "Contact the New Computerised Transit System (NCTS) helpdesk if you need to speak to someone about your transit movements (opens in a new tab)",
     contactUrl
   )
+
 }

@@ -28,6 +28,7 @@ class FakeIdentifierAction(isOnLegacyEnrolment: Boolean) extends IdentifierActio
 
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
+
 }
 
 object FakeIdentifierAction {

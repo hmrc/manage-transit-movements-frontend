@@ -27,4 +27,5 @@ object Constants {
   object AdditionalDeclarationType {
     val PreLodged = "D"
   }
+
 }

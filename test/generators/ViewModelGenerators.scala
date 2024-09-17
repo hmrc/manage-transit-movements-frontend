@@ -297,4 +297,5 @@ trait ViewModelGenerators {
   implicit lazy val arbitraryHeadCells: Arbitrary[List[HeadCell]] = Arbitrary {
     listWithMaxLength[HeadCell]()
   }
+
 }

@@ -82,4 +82,5 @@ class DepartureNotCancelledP5ControllerSpec extends SpecBase with AppWithDefault
       }
     }
   }
+
 }

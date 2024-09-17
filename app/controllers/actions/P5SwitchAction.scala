@@ -29,6 +29,7 @@ class P5SwitchActionProvider @Inject() (config: FrontendAppConfig)(implicit ec: 
 
   def apply(): ActionFilter[IdentifierRequest] =
     new P5SwitchAction(config)
+
 }
 
 class P5SwitchAction(config: FrontendAppConfig)(implicit val executionContext: ExecutionContext) extends ActionFilter[IdentifierRequest] with Logging {
@@ -41,4 +42,5 @@ class P5SwitchAction(config: FrontendAppConfig)(implicit val executionContext: E
         None
       }
     }
+
 }

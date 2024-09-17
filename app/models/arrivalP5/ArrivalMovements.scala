@@ -31,5 +31,6 @@ object ArrivalMovements {
   implicit lazy val reads: Reads[ArrivalMovements] = (
     (__ \ "arrivals").read[Seq[ArrivalMovement]] and
       (__ \ "totalCount").read[Int]
-  )(ArrivalMovements.apply _)
+  )(ArrivalMovements.apply)
+
 }

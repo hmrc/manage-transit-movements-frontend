@@ -31,6 +31,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
 
   override val headCells: Seq[HeadCell] =
     Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+
   val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
 
   override val prefix: String        = "arrival.ie057.review.notification.message"
@@ -38,6 +39,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
 
   override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
     ListPaginationViewModel(_, _, _, _)
+
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
   val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
@@ -121,4 +123,5 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
     val element = doc.getElementById(id)
     assertElementContainsText(element, expectedText)
   }
+
 }

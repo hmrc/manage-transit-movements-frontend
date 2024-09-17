@@ -110,4 +110,5 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
       }
     }
   }
+
 }

@@ -36,8 +36,9 @@ trait DocumentController {
         val headers       = header(CONTENT_DISPOSITION).toSeq
 
         Ok.sendEntity(HttpEntity.Streamed(response.bodyAsSource, contentLength, contentType))
-          .withHeaders(headers: _*)
+          .withHeaders(headers*)
       case _ =>
         Redirect(routes.ErrorController.technicalDifficulties())
     }
+
 }

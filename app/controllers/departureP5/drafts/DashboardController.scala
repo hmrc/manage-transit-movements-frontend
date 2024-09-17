@@ -80,7 +80,7 @@ class DashboardController @Inject() (
     sortParams: Option[Sort] = None
   )(
     block: HtmlFormat.Appendable => Result
-  )(implicit request: IdentifierRequest[_]): Future[Result] = {
+  )(implicit request: IdentifierRequest[?]): Future[Result] = {
 
     val limit = Limit(pageSize)
     val page  = pageNumber.getOrElse(1)

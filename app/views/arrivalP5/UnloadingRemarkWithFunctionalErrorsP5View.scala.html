@@ -30,7 +30,7 @@
     helpdeskLink: HelpdeskLink
 )
 
-@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, messageId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, messageId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,

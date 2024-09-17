@@ -53,8 +53,8 @@ class IncidentEndorsementP5HelperSpec extends SpecBase with ScalaCheckPropertyCh
           val helper = new IncidentEndorsementP5Helper(endorsement, refDataService)
           val result = helper.endorsementDateRow.value
 
-          result.key.value mustBe "Endorsement date"
-          result.value.value mustBe "15 July 2022"
+          result.key.value `mustBe` "Endorsement date"
+          result.value.value `mustBe` "15 July 2022"
           result.actions must not be defined
         }
       }
@@ -66,8 +66,8 @@ class IncidentEndorsementP5HelperSpec extends SpecBase with ScalaCheckPropertyCh
           val helper = new IncidentEndorsementP5Helper(endorsement, refDataService)
           val result = helper.authorityRow.value
 
-          result.key.value mustBe "Authority"
-          result.value.value mustBe "authority"
+          result.key.value `mustBe` "Authority"
+          result.value.value `mustBe` "authority"
           result.actions must not be defined
         }
       }
@@ -82,8 +82,8 @@ class IncidentEndorsementP5HelperSpec extends SpecBase with ScalaCheckPropertyCh
           val helper = new IncidentEndorsementP5Helper(endorsement, refDataService)
           val result = helper.endorsementCountryRow.futureValue.value
 
-          result.key.value mustBe "Country"
-          result.value.value mustBe "United Kingdom"
+          result.key.value `mustBe` "Country"
+          result.value.value `mustBe` "United Kingdom"
           result.actions must not be defined
         }
       }
@@ -95,8 +95,8 @@ class IncidentEndorsementP5HelperSpec extends SpecBase with ScalaCheckPropertyCh
           val helper = new IncidentEndorsementP5Helper(endorsement, refDataService)
           val result = helper.locationRow.value
 
-          result.key.value mustBe "Location"
-          result.value.value mustBe "location"
+          result.key.value `mustBe` "Location"
+          result.value.value `mustBe` "location"
           result.actions must not be defined
         }
       }
@@ -111,10 +111,11 @@ class IncidentEndorsementP5HelperSpec extends SpecBase with ScalaCheckPropertyCh
           val helper = new IncidentEndorsementP5Helper(endorsement, refDataService)
           val result = helper.endorsementSection.futureValue
 
-          result mustBe a[StaticSection]
-          result.rows.size mustBe 4
+          result `mustBe` a[StaticSection]
+          result.rows.size `mustBe` 4
         }
       }
     }
   }
+
 }

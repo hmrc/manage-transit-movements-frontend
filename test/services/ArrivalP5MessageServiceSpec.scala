@@ -101,8 +101,9 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
       }
     }
   }
+
 }

@@ -102,7 +102,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
       val sections = modifiedViewModel.sections
 
-      sections.length mustBe 4
+      sections.length `mustBe` 4
     }
 
     "viewModel must not have transhipment section if incident doesn't have it" in {
@@ -111,19 +111,19 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
       val sections = vewModel.sections
 
-      sections.length mustBe 3
+      sections.length `mustBe` 3
       sections.flatMap(_.sectionTitle) must not contain "Replacement means of transport"
     }
 
     "title" - {
       "must return correct message" in {
-        viewModel().title mustBe "Incident 1"
+        viewModel().title `mustBe` "Incident 1"
       }
     }
 
     "heading" - {
       "must return correct message" in {
-        viewModel().heading mustBe "Incident 1"
+        viewModel().heading `mustBe` "Incident 1"
       }
     }
 
@@ -145,4 +145,5 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       }
     }
   }
+
 }

@@ -53,7 +53,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
         val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.arrivalNotificationSubmitted", Nil)
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
       }
 
       "when given Message with head of UnloadingRemarks" in {
@@ -64,7 +64,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
         val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.unloadingRemarksSubmitted", Nil)
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
       }
 
       "when given Message with head of UnloadingPermission" in {
@@ -89,7 +89,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
           )
         )
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
       }
 
       "when given Message with head of GoodsReleasedNotification" - {
@@ -111,7 +111,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.goodsReleased", Nil)
 
-          result mustBe expectedResult
+          result `mustBe` expectedResult
         }
 
         "when goods are not released" in {
@@ -122,7 +122,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.arrival.goodsNotReleased", Nil)
 
-          result mustBe expectedResult
+          result `mustBe` expectedResult
         }
       }
 
@@ -152,7 +152,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
             )
           )
 
-          result mustBe expectedResult
+          result `mustBe` expectedResult
         }
 
         "and there are functional errors" in {
@@ -189,7 +189,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
             )
           )
 
-          result mustBe expectedResult
+          result `mustBe` expectedResult
         }
       }
 
@@ -227,7 +227,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
             )
           )
 
-          result mustBe expectedResult
+          result `mustBe` expectedResult
         }
 
         "and there are no functional errors" in {
@@ -255,7 +255,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
             )
           )
 
-          result mustBe expectedResult
+          result `mustBe` expectedResult
         }
       }
 
@@ -270,7 +270,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
           Nil
         )
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
       }
 
       "when errors are more than one " - {
@@ -279,7 +279,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
         val result = ArrivalStatusP5ViewModel.errorsActionText(2)
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
 
       }
 
@@ -289,9 +289,10 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
         val result = ArrivalStatusP5ViewModel.errorsActionText(1)
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
 
       }
     }
   }
+
 }

@@ -38,4 +38,5 @@ class UnauthorisedControllerSpec extends SpecBase {
       contentAsString(result) mustEqual view()(request, messages).toString
     }
   }
+
 }

@@ -43,7 +43,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http
       .get(url)
       .setHeader(version2Header)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .execute[NonEmptySet[CustomsOffice]]
   }
 
@@ -53,7 +53,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     val url = url"${config.customsReferenceDataUrl}/lists/CountryCodesFullList"
     http
       .get(url)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .setHeader(version2Header)
       .execute[NonEmptySet[Country]]
   }
@@ -64,7 +64,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     val url = url"${config.customsReferenceDataUrl}/lists/QualifierOfTheIdentification"
     http
       .get(url)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .setHeader(version2Header)
       .execute[NonEmptySet[QualifierOfIdentification]]
   }
@@ -75,7 +75,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     val url = url"${config.customsReferenceDataUrl}/lists/TypeOfIdentificationOfMeansOfTransport"
     http
       .get(url)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .setHeader(version2Header)
       .execute[NonEmptySet[IdentificationType]]
   }
@@ -86,7 +86,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     val url = url"${config.customsReferenceDataUrl}/lists/Nationality"
     http
       .get(url)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .setHeader(version2Header)
       .execute[NonEmptySet[Nationality]]
   }
@@ -98,7 +98,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http
       .get(url)
       .setHeader(version2Header)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .execute[NonEmptySet[IncidentCode]]
   }
 
@@ -107,7 +107,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http
       .get(url)
       .setHeader(version2Header)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .execute[NonEmptySet[ControlType]]
   }
 
@@ -116,7 +116,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http
       .get(url)
       .setHeader(version2Header)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .execute[NonEmptySet[RequestedDocumentType]]
   }
 
@@ -125,7 +125,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http
       .get(url)
       .setHeader(version2Header)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .execute[NonEmptySet[FunctionalErrorWithDesc]]
   }
 
@@ -134,7 +134,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     http
       .get(url)
       .setHeader(version2Header)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .execute[NonEmptySet[InvalidGuaranteeReason]]
   }
 
@@ -142,14 +142,14 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     HeaderNames.Accept -> "application/vnd.hmrc.2.0+json"
 
   implicit def responseHandlerGeneric[A](implicit reads: Reads[List[A]], order: Order[A]): HttpReads[NonEmptySet[A]] =
-    (_: String, url: String, response: HttpResponse) => {
+    (_: String, url: String, response: HttpResponse) =>
       response.status match {
         case OK =>
           (response.json \ "data").validate[List[A]] match {
             case JsSuccess(Nil, _) =>
               throw new NoReferenceDataFoundException(url)
             case JsSuccess(head :: tail, _) =>
-              NonEmptySet.of(head, tail: _*)
+              NonEmptySet.of(head, tail*)
             case JsError(errors) =>
               throw JsResultException(errors)
           }
@@ -157,7 +157,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
           logger.warn(s"[ReferenceDataConnector][responseHandlerGeneric] Reference data call returned $e")
           throw new Exception(s"[ReferenceDataConnector][responseHandlerGeneric] $e - ${response.body}")
       }
-    }
+
 }
 
 object ReferenceDataConnector {

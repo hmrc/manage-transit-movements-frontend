@@ -54,28 +54,29 @@ class ArrivalNotificationWithoutFunctionalErrorP5ViewModelSpec extends SpecBase 
       val result            = viewModelProvider.apply(mrnString)
 
       "must return correct title" in {
-        result.title mustBe "Notification errors"
+        result.title `mustBe` "Notification errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Notification errors"
+        result.heading `mustBe` "Notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe "There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
+        result.paragraph1 `mustBe` "There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
       }
       "must return correct paragraph 2" in {
-        result.paragraph2 mustBe "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+        result.paragraph2 `mustBe` "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
       }
       "must return correct paragraph 3" in {
-        result.paragraph3 mustBe s"Make a new arrival notification with the right information."
+        result.paragraph3 `mustBe` s"Make a new arrival notification with the right information."
       }
       "must return correct paragraph 3 prefix, link and suffix" in {
-        result.paragraph3Prefix mustBe "Contact the"
-        result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph3Suffix mustBe "for help understanding the errors (opens in a new tab)."
+        result.paragraph3Prefix `mustBe` "Contact the"
+        result.paragraph3Link `mustBe` "New Computerised Transit System helpdesk"
+        result.paragraph3Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another arrival notification"
+        result.hyperlink `mustBe` "Make another arrival notification"
       }
     }
   }
+
 }

@@ -35,4 +35,5 @@ class KeepAliveController @Inject() (
       _ =>
         Future.successful(NoContent)
     }
+
 }

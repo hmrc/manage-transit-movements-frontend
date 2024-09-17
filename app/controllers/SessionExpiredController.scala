@@ -38,4 +38,5 @@ class SessionExpiredController @Inject() (
     _ =>
       Redirect(routes.WhatDoYouWantToDoController.onPageLoad()).withNewSession
   }
+
 }

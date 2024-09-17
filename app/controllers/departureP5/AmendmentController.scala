@@ -49,4 +49,5 @@ class AmendmentController @Inject() (
             Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
     }
+
 }

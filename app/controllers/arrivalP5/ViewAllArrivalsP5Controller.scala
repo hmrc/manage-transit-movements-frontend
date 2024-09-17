@@ -72,7 +72,7 @@ class ViewAllArrivalsP5Controller @Inject() (
 
   private def buildView(form: Form[String], page: Option[Int], searchParam: Option[String])(
     block: HtmlFormat.Appendable => Result
-  )(implicit request: IdentifierRequest[_]): Future[Result] = {
+  )(implicit request: IdentifierRequest[?]): Future[Result] = {
     val currentPage = page.getOrElse(1)
     arrivalMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.arrivalsNumberOfMovements, searchParam).flatMap {
       case Some(movements) =>

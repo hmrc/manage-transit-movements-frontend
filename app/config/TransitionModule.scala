@@ -25,4 +25,5 @@ class TransitionModule extends Module {
 
     bind(classOf[PhaseConfig]).to(classOf[TransitionConfig])
   }
+
 }

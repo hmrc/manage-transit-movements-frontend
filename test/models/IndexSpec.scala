@@ -42,4 +42,5 @@ class IndexSpec extends AnyFreeSpec with Matchers with OptionValues {
       binder.unbind(key, Index(0)) mustEqual "1"
     }
   }
+
 }

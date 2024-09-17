@@ -65,4 +65,5 @@ object GroupEnrolmentResponse {
         case _                      => Other(response.status, response.body)
       }
     }
+
 }

@@ -27,6 +27,6 @@ object DepartureReferenceNumbers {
     (
       (__ \ "localReferenceNumber").read[String] and
         (__ \ "movementReferenceNumber").readNullable[String]
-    )(DepartureReferenceNumbers.apply _)
+    )(DepartureReferenceNumbers.apply)
 
 }

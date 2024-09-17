@@ -38,4 +38,5 @@ class ErrorSummarySpec extends A11ySpecBase {
       content.toString() must passAccessibilityChecks
     }
   }
+
 }

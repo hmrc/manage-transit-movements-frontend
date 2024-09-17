@@ -28,6 +28,7 @@ import views.html.departureP5.DepartureCancelledP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import generated.Generated_CC009CTypeFormat
 
 class DepartureCancelledP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -50,7 +51,7 @@ class DepartureCancelledP5Controller @Inject() (
   private def buildView(
     ie009: CC009CType,
     lrn: String
-  )(implicit request: Request[_]): Future[Result] = {
+  )(implicit request: Request[?]): Future[Result] = {
     val customsOfficeReferenceNumber = ie009.CustomsOfficeOfDeparture.referenceNumber
 
     referenceDataService.getCustomsOffice(customsOfficeReferenceNumber).flatMap {
@@ -60,4 +61,5 @@ class DepartureCancelledP5Controller @Inject() (
         }
     }
   }
+
 }

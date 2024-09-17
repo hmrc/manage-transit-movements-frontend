@@ -81,4 +81,5 @@ class RecoveryNotificationControllerSpec extends SpecBase with AppWithDefaultMoc
       }
     }
   }
+
 }

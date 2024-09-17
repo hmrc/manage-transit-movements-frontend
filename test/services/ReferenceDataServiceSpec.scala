@@ -95,13 +95,13 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       val expectedQueryParams = Seq("data.id" -> customsOfficeId)
 
       "should return customs office" in {
-        when(mockConnector.getCustomsOffices(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(customsOffices))
+        when(mockConnector.getCustomsOffices(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(customsOffices))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getCustomsOffice(customsOfficeId).futureValue mustBe Right(customsOffice1)
+        service.getCustomsOffice(customsOfficeId).futureValue `mustBe` Right(customsOffice1)
 
-        verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams)*)(any(), any())
       }
 
       "should return Left" - {
@@ -110,9 +110,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getCustomsOffice(customsOfficeId).futureValue mustBe Left(customsOfficeId)
+          service.getCustomsOffice(customsOfficeId).futureValue `mustBe` Left(customsOfficeId)
 
-          verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams): _*)(any(), any())
+          verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams)*)(any(), any())
         }
       }
     }
@@ -122,13 +122,13 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       val expectedQueryParams = Seq("data.code" -> countryCode1)
 
       "should return countries" in {
-        when(mockConnector.getCountries(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(countries))
+        when(mockConnector.getCountries(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(countries))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getCountry(countryCode1).futureValue mustBe Right(country1)
+        service.getCountry(countryCode1).futureValue `mustBe` Right(country1)
 
-        verify(mockConnector).getCountries(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getCountries(eqTo(expectedQueryParams)*)(any(), any())
       }
 
       "should return Left" - {
@@ -137,9 +137,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getCountry(countryCode1).futureValue mustBe Left(countryCode1)
+          service.getCountry(countryCode1).futureValue `mustBe` Left(countryCode1)
 
-          verify(mockConnector).getCountries(eqTo(expectedQueryParams): _*)(any(), any())
+          verify(mockConnector).getCountries(eqTo(expectedQueryParams)*)(any(), any())
         }
       }
     }
@@ -149,13 +149,13 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       val expectedQueryParams = Seq("data.qualifier" -> identificationCode)
 
       "should return countries" in {
-        when(mockConnector.getQualifierOfIdentifications(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(identifications))
+        when(mockConnector.getQualifierOfIdentifications(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(identifications))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getQualifierOfIdentification(identificationCode).futureValue mustBe Right(identification)
+        service.getQualifierOfIdentification(identificationCode).futureValue `mustBe` Right(identification)
 
-        verify(mockConnector).getQualifierOfIdentifications(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getQualifierOfIdentifications(eqTo(expectedQueryParams)*)(any(), any())
       }
 
       "should return Left" - {
@@ -164,9 +164,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getQualifierOfIdentification(identificationCode).futureValue mustBe Left(identificationCode)
+          service.getQualifierOfIdentification(identificationCode).futureValue `mustBe` Left(identificationCode)
 
-          verify(mockConnector).getQualifierOfIdentifications(eqTo(expectedQueryParams): _*)(any(), any())
+          verify(mockConnector).getQualifierOfIdentifications(eqTo(expectedQueryParams)*)(any(), any())
         }
       }
     }
@@ -176,13 +176,13 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       val expectedQueryParams = Seq("data.type" -> identificationTypeCode)
 
       "should return identification type" in {
-        when(mockConnector.getIdentificationTypes(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(identificationTypes))
+        when(mockConnector.getIdentificationTypes(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(identificationTypes))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getIdentificationType(identificationTypeCode).futureValue mustBe Right(identificationType)
+        service.getIdentificationType(identificationTypeCode).futureValue `mustBe` Right(identificationType)
 
-        verify(mockConnector).getIdentificationTypes(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getIdentificationTypes(eqTo(expectedQueryParams)*)(any(), any())
       }
 
       "should return Left" - {
@@ -191,9 +191,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getIdentificationType(identificationTypeCode).futureValue mustBe Left(identificationTypeCode)
+          service.getIdentificationType(identificationTypeCode).futureValue `mustBe` Left(identificationTypeCode)
 
-          verify(mockConnector).getIdentificationTypes(eqTo(expectedQueryParams): _*)(any(), any())
+          verify(mockConnector).getIdentificationTypes(eqTo(expectedQueryParams)*)(any(), any())
         }
       }
     }
@@ -203,13 +203,13 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       val expectedQueryParams = Seq("data.code" -> nationalityCode)
 
       "should return nationalities" in {
-        when(mockConnector.getNationalities(eqTo(expectedQueryParams): _*)(any(), any())).thenReturn(Future.successful(nationalities))
+        when(mockConnector.getNationalities(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(nationalities))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getNationality(nationalityCode).futureValue mustBe Right(nationality)
+        service.getNationality(nationalityCode).futureValue `mustBe` Right(nationality)
 
-        verify(mockConnector).getNationalities(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getNationalities(eqTo(expectedQueryParams)*)(any(), any())
       }
 
       "should return Left" - {
@@ -218,9 +218,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
           val service = new ReferenceDataServiceImpl(mockConnector)
 
-          service.getNationality(nationalityCode).futureValue mustBe Left(nationalityCode)
+          service.getNationality(nationalityCode).futureValue `mustBe` Left(nationalityCode)
 
-          verify(mockConnector).getNationalities(eqTo(expectedQueryParams): _*)(any(), any())
+          verify(mockConnector).getNationalities(eqTo(expectedQueryParams)*)(any(), any())
         }
       }
     }
@@ -234,9 +234,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getControlType(controlTypeCode).futureValue mustBe controlType1
+        service.getControlType(controlTypeCode).futureValue `mustBe` controlType1
 
-        verify(mockConnector).getControlTypes(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getControlTypes(eqTo(expectedQueryParams)*)(any(), any())
       }
     }
 
@@ -251,9 +251,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getIncidentCode(incidentCodeCode).futureValue mustBe incidentCode
+        service.getIncidentCode(incidentCodeCode).futureValue `mustBe` incidentCode
 
-        verify(mockConnector).getIncidentCodes(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getIncidentCodes(eqTo(expectedQueryParams)*)(any(), any())
       }
     }
 
@@ -268,9 +268,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue mustBe requestedDocumentType1
+        service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue `mustBe` requestedDocumentType1
 
-        verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams)*)(any(), any())
       }
     }
 
@@ -283,9 +283,9 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getFunctionalError(functionalErrorCode).futureValue mustBe functionalError1
+        service.getFunctionalError(functionalErrorCode).futureValue `mustBe` functionalError1
 
-        verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams)*)(any(), any())
       }
 
     }
@@ -299,11 +299,12 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue mustBe invalidGuaranteeReason1
+        service.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue `mustBe` invalidGuaranteeReason1
 
-        verify(mockConnector).getInvalidGuaranteeReasons(eqTo(expectedQueryParams): _*)(any(), any())
+        verify(mockConnector).getInvalidGuaranteeReasons(eqTo(expectedQueryParams)*)(any(), any())
       }
 
     }
   }
+
 }

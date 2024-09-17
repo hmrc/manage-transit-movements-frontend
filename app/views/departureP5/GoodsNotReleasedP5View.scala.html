@@ -26,7 +26,7 @@ button: Button,
 formHelper: FormWithCSRF
 )
 
-@(goodsNotReleasedP5ViewModel: GoodsNotReleasedP5ViewModel)(implicit request: Request[_], messages: Messages, frontendAppConfig: FrontendAppConfig)
+@(goodsNotReleasedP5ViewModel: GoodsNotReleasedP5ViewModel)(implicit request: Request[?], messages: Messages, frontendAppConfig: FrontendAppConfig)
 
     @mainTemplate(
         title = goodsNotReleasedP5ViewModel.titleAndHeading,

@@ -36,4 +36,5 @@ object DepartureId {
     override def unbind(key: String, value: DepartureId): String =
       value.index.toString
   }
+
 }

@@ -30,9 +30,9 @@
 )
 
 @(
-    form: Form[_],
+    form: Form[?],
     viewModel: AllDraftDeparturesViewModel
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,

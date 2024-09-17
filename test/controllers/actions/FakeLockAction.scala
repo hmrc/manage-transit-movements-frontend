@@ -27,4 +27,5 @@ class FakeLockAction(lrn: String, service: DraftDepartureService) extends LockAc
 
   override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
     Future.successful(None)
+
 }

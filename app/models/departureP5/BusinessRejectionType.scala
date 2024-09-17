@@ -41,6 +41,7 @@ object BusinessRejectionType {
     implicit val writes: Writes[DepartureBusinessRejectionType] = Writes {
       x => JsString(x.value)
     }
+
   }
 
   case object AmendmentRejection extends DepartureBusinessRejectionType {
@@ -66,4 +67,5 @@ object BusinessRejectionType {
 
   def apply(ie056: CC056CType): BusinessRejectionType =
     BusinessRejectionType.apply(ie056.TransitOperation.businessRejectionType)
+
 }

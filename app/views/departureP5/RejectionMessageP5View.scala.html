@@ -29,7 +29,7 @@
     pagination: Pagination,
     helpdeskLink: HelpdeskLink
 )
-@(viewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel, mrn: Option[String])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(viewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel, mrn: Option[String])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
     title = viewModel.title,
