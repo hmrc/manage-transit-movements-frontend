@@ -21,15 +21,15 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeIdentifierAction(isOnLegacyEnrolment: Boolean) extends IdentifierAction {
+class FakeIdentifierAction extends IdentifierAction {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(request, "id", isOnLegacyEnrolment))
+    block(IdentifierRequest(request, "id"))
 
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 }
 
 object FakeIdentifierAction {
-  def apply(isOnLegacyEnrolment: Boolean): FakeIdentifierAction = new FakeIdentifierAction(isOnLegacyEnrolment)
+  def apply(): FakeIdentifierAction = new FakeIdentifierAction()
 }

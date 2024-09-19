@@ -54,13 +54,13 @@ class DashboardController @Inject() (
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
   def onPageLoad(pageNumber: Option[Int], lrn: Option[String], sortParams: Option[String]): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch()).async {
+    (Action andThen actions.identify()).async {
       implicit request =>
         buildView(form, pageNumber, lrn, Sort(sortParams))(Ok(_))
     }
 
   def onSubmit(sortParams: Option[String]): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch()).async {
+    (Action andThen actions.identify()).async {
       implicit request =>
         form
           .bindFromRequest()

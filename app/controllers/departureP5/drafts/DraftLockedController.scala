@@ -32,7 +32,7 @@ class DraftLockedController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (Action andThen actions.checkP5Switch()) {
+  def onPageLoad(): Action[AnyContent] = (Action andThen actions.identify()) {
     implicit request =>
       Ok(view())
   }

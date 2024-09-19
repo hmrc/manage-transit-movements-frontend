@@ -41,7 +41,7 @@ class CancellationNotificationErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
         val functionalErrors       = request.messageData.FunctionalError
         val customsOfficeReference = request.messageData.CustomsOfficeOfDeparture.referenceNumber

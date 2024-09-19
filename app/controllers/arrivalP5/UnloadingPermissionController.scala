@@ -35,7 +35,7 @@ class UnloadingPermissionController @Inject() (
     with DocumentController
     with I18nSupport {
 
-  def getUnloadingPermissionDocument(arrivalId: String, messageId: String): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
+  def getUnloadingPermissionDocument(arrivalId: String, messageId: String): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
       connector.getUnloadingPermission(arrivalId, messageId).map(stream)
   }

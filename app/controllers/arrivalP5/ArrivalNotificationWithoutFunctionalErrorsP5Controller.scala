@@ -40,7 +40,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(arrivalId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)) {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)) {
       implicit request =>
         if (request.messageData.FunctionalError.isEmpty) {
           Ok(view(viewModelProvider.apply(request.messageData.TransitOperation.MRN)))

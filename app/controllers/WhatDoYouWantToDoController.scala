@@ -42,7 +42,7 @@ class WhatDoYouWantToDoController @Inject() (
         departuresAvailability      <- whatDoYouWantToDoService.fetchDeparturesFeature()
         draftDeparturesAvailability <- whatDoYouWantToDoService.fetchDraftDepartureFeature()
       } yield Ok(
-        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, request.isOnLegacyEnrolment)
+        view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability)
       )
   }
 }

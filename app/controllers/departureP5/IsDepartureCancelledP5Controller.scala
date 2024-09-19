@@ -36,7 +36,7 @@ class IsDepartureCancelledP5Controller @Inject() (
     with I18nSupport {
 
   def isDeclarationCancelled(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC009CType](departureId, messageId)) {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC009CType](departureId, messageId)) {
       implicit request =>
         val isCancelled: Boolean = request.messageData.Invalidation.decision.exists(_.toBoolean)
         if (isCancelled) {

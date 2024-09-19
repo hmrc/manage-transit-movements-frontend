@@ -39,7 +39,7 @@ class AmendmentController @Inject() (
     with I18nSupport {
 
   def prepareForAmendment(departureId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen departureRetrievalAction(departureId)).async {
+    (Action andThen actions.identify() andThen departureRetrievalAction(departureId)).async {
       implicit request =>
         val lrn = request.referenceNumbers.localReferenceNumber
         service.prepareForAmendment(lrn, departureId).map {

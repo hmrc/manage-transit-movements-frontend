@@ -49,7 +49,7 @@ class RejectionMessageP5Controller @Inject() (
     with Logging {
 
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
         val lrn    = request.referenceNumbers.localReferenceNumber
         val xPaths = request.messageData.xPaths
@@ -90,7 +90,7 @@ class RejectionMessageP5Controller @Inject() (
     }
 
   def onSubmit(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
         val businessRejectionType = DepartureBusinessRejectionType(request.messageData)
         val lrn                   = request.referenceNumbers.localReferenceNumber
