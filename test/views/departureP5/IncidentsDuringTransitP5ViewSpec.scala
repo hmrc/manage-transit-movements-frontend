@@ -46,10 +46,15 @@ class IncidentsDuringTransitP5ViewSpec extends DetailsListViewBehaviours with Ge
   behave like pageWithContent(
     "p",
     if (isMultipleIncidents) {
-      "Multiple incidents have been reported by the customs office of incident. Review the incident details and contact the carrier for more information."
+      "Multiple incidents have been reported by the customs office of incident."
     } else {
-      "An incident has been reported by the customs office of incident. Review the incident details and contact the carrier for more information."
+      "An incident has been reported by the customs office of incident."
     }
+  )
+
+  behave like pageWithContent(
+    "p",
+    "This information is just for your reference - you do not need to take any further action. If you have any questions, you can contact the carrier for more information."
   )
 
   behave like pageWithContent("h2", "What happens next")

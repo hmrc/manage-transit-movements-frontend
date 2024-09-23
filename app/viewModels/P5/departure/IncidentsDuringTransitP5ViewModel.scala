@@ -56,9 +56,15 @@ case class IncidentsDuringTransitP5ViewModel(
     messages("departure.notification.incident.paragraph1")
   }
 
-  def paragraph2HyperLink(implicit messages: Messages): String = messages("departure.notification.incidents.paragraph2.hyperlink")
+  def paragraph2(implicit messages: Messages): String = if (isMultipleIncidents) {
+    messages("departure.notification.incidents.paragraph2")
+  } else {
+    messages("departure.notification.incident.paragraph2")
+  }
 
-  def paragraph2End(implicit messages: Messages): String = messages("departure.notification.incidents.paragraph2.end")
+  def paragraph3HyperLink(implicit messages: Messages): String = messages("departure.notification.incidents.paragraph3.hyperlink")
+
+  def paragraph3End(implicit messages: Messages): String = messages("departure.notification.incidents.paragraph3.end")
 
   def whatHappensNextHeader(implicit messages: Messages): String = messages("departure.notification.incidents.whatHappensNextHeader")
 
