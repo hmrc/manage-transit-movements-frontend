@@ -28,7 +28,5 @@ case class QualifierOfIdentification(qualifier: String, description: String) {
 object QualifierOfIdentification {
   implicit val format: Format[QualifierOfIdentification] = Json.format[QualifierOfIdentification]
 
-  implicit val order: Order[QualifierOfIdentification] = (x: QualifierOfIdentification, y: QualifierOfIdentification) => {
-    (x, y).compareBy(_.qualifier)
-  }
+  implicit val order: Order[QualifierOfIdentification] = (x: QualifierOfIdentification, y: QualifierOfIdentification) => (x, y).compareBy(_.qualifier)
 }

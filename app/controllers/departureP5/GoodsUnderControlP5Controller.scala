@@ -28,6 +28,7 @@ import views.html.departureP5.GoodsUnderControlP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC060CTypeFormat
 
 class GoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,

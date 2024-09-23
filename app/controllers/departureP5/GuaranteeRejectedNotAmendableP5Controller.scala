@@ -26,6 +26,7 @@ import views.html.departureP5.GuaranteeRejectedNotAmendableP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC055CTypeFormat
 
 class GuaranteeRejectedNotAmendableP5Controller @Inject() (
   override val messagesApi: MessagesApi,

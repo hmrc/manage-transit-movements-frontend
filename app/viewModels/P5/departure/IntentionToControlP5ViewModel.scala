@@ -77,5 +77,7 @@ object IntentionToControlP5ViewModel {
 
       new IntentionToControlP5ViewModel(sections, requestedDocuments, lrn)
     }
+
   }
+
 }

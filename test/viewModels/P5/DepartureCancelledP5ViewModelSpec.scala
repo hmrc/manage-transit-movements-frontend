@@ -77,28 +77,28 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
       val result = viewModel(Left(customsReferenceId))
 
       "return correct section" in {
-        result.sections.head.sectionTitle mustBe None
-        result.sections.head.rows.size mustBe 5
+        result.sections.head.sectionTitle `mustBe` None
+        result.sections.head.rows.size `mustBe` 5
       }
 
       "return correct title" in {
-        result.title mustBe "Declaration cancelled"
+        result.title `mustBe` "Declaration cancelled"
       }
 
       "return correct heading" in {
-        result.heading mustBe "Declaration cancelled"
+        result.heading `mustBe` "Declaration cancelled"
       }
 
       "return correct paragraph" in {
-        result.paragraph mustBe s"The office of departure cancelled the declaration for LRN $lrn as requested."
+        result.paragraph `mustBe` s"The office of departure cancelled the declaration for LRN $lrn as requested."
       }
 
       "return correct hyperlink" in {
-        result.hyperlink mustBe "Make another departure declaration"
+        result.hyperlink `mustBe` "Make another departure declaration"
       }
 
       "must return correct customs office content" in {
-        result.customsOfficeContent mustBe s"If you have any questions, contact Customs office $customsReferenceId."
+        result.customsOfficeContent `mustBe` s"If you have any questions, contact Customs office $customsReferenceId."
       }
     }
 
@@ -110,7 +110,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
-          result mustBe s"If you have any questions, contact Customs at $customsOfficeName on ${telephoneNo.get}."
+          result `mustBe` s"If you have any questions, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
       }
 
@@ -119,7 +119,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
           val customsOfficeName = "custName"
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
-          result mustBe s"If you have any questions, contact Customs at $customsOfficeName."
+          result `mustBe` s"If you have any questions, contact Customs at $customsOfficeName."
         }
       }
 
@@ -129,7 +129,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
-          result mustBe s"If you have any questions, contact Customs office $customsReferenceId on ${telephoneNo.get}."
+          result `mustBe` s"If you have any questions, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
       }
 
@@ -138,9 +138,10 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
           val customsOfficeName = ""
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
-          result mustBe s"If you have any questions, contact Customs office $customsReferenceId."
+          result `mustBe` s"If you have any questions, contact Customs office $customsReferenceId."
         }
       }
     }
   }
+
 }

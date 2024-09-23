@@ -56,6 +56,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.apply("value").value.value mustEqual "foobar"
     }
   }
+
   "boolean" - {
 
     val testForm: Form[Boolean] =
@@ -93,4 +94,5 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.apply("value").value.value mustEqual "true"
     }
   }
+
 }

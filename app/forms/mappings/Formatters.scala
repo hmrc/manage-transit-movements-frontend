@@ -49,4 +49,5 @@ trait Formatters {
 
       def unbind(key: String, value: Boolean): Map[String, String] = Map(key -> value.toString)
     }
+
 }

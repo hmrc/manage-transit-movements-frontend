@@ -28,6 +28,7 @@ import views.html.departureP5.IntentionToControlP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC060CTypeFormat
 
 class IntentionToControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,

@@ -44,4 +44,5 @@ object ListPaginationViewModel {
     ) {
       new ListPaginationViewModel(_, _, _, _, currentPage)
     }
+
 }

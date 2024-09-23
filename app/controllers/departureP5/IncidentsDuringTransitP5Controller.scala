@@ -28,6 +28,7 @@ import views.html.departureP5.IncidentsDuringTransitP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC182CTypeFormat
 
 class IncidentsDuringTransitP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -63,4 +64,5 @@ class IncidentsDuringTransitP5Controller @Inject() (
             }
         }
     }
+
 }

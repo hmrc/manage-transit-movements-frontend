@@ -24,29 +24,29 @@ import play.api.data.{Form, FormError}
 
 trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Generators {
 
-  def fieldThatBindsValidData(form: Form[_], fieldName: String, validDataGenerator: Gen[String]): Unit =
+  def fieldThatBindsValidData(form: Form[?], fieldName: String, validDataGenerator: Gen[String]): Unit =
     "must bind valid data" in {
 
       forAll(validDataGenerator -> "validDataItem") {
-        dataItem: String =>
+        (dataItem: String) =>
           val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-          result.value.value mustBe dataItem
+          result.value.value `mustBe` dataItem
       }
     }
 
-  def allowsHyphensAndUnderscores(form: Form[_], fieldName: String): Unit =
+  def allowsHyphensAndUnderscores(form: Form[?], fieldName: String): Unit =
     "must bind hyphens and underscores" in {
       val result = form.bind(Map(fieldName -> "-_")).apply(fieldName)
-      result.value.value mustBe "-_"
+      result.value.value `mustBe` "-_"
     }
 
-  def nonMandatoryField(form: Form[_], fieldName: String): Unit =
+  def nonMandatoryField(form: Form[?], fieldName: String): Unit =
     "must bind blank data" in {
       val result = form.bind(Map(fieldName -> "")).apply(fieldName)
-      result.value.value mustBe ""
+      result.value.value `mustBe` ""
     }
 
-  def mandatoryField(form: Form[_], fieldName: String, requiredError: FormError): Unit = {
+  def mandatoryField(form: Form[?], fieldName: String, requiredError: FormError): Unit = {
 
     "must not bind when key is not present at all" in {
 

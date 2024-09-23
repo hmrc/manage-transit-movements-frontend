@@ -24,6 +24,7 @@ package object utils {
       case Number0 => false
       case Number1 => true
     }
+
   }
 
   implicit class RichInt(value: Int) {

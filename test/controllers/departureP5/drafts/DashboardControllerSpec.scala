@@ -502,4 +502,5 @@ class DashboardControllerSpec extends SpecBase {
 
     }
   }
+
 }

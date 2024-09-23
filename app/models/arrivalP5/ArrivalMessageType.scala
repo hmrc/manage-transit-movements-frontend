@@ -43,9 +43,10 @@ object ArrivalMessageType {
 
   implicit val enumerable: Enumerable[ArrivalMessageType] =
     Enumerable(
-      values.map(
-        v => v.toString -> v
-      ): _*
+      values
+        .map(
+          v => v.toString -> v
+        )*
     )
 
   implicit val reads: Reads[ArrivalMessageType] =
@@ -58,4 +59,5 @@ object ArrivalMessageType {
       case x =>
         JsError(s"Expected JsString but got $x")
     }
+
 }

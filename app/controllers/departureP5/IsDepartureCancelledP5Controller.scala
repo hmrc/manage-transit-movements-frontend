@@ -25,6 +25,7 @@ import utils.RichFlag
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC009CTypeFormat
 
 class IsDepartureCancelledP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -45,4 +46,5 @@ class IsDepartureCancelledP5Controller @Inject() (
           Redirect(controllers.departureP5.routes.DepartureNotCancelledP5Controller.onPageLoad(departureId, messageId))
         }
     }
+
 }

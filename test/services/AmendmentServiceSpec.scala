@@ -62,7 +62,7 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
                 .thenReturn(Future.successful(true))
 
               val result = service.isDeclarationAmendable(lrn.value, xPaths).futureValue
-              result mustBe true
+              result `mustBe` true
 
               verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
           }
@@ -81,7 +81,7 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
                 .thenReturn(Future.successful(false))
 
               val result = service.isDeclarationAmendable(lrn.value, xPaths).futureValue
-              result mustBe false
+              result `mustBe` false
 
               verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
           }
@@ -103,7 +103,7 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
             val rejection = Rejection(departureIdP5)
 
             val result = service.handleErrors(lrn.value, rejection).futureValue
-            result.status mustBe OK
+            result.status `mustBe` OK
 
             verify(mockCacheConnector).handleErrors(eqTo(lrn.value), eqTo(rejection))(any())
         }
@@ -122,7 +122,7 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
               .thenReturn(Future.successful(httpResponse(OK)))
 
             val result = service.prepareForAmendment(lrn.value, departureIdP5).futureValue
-            result.status mustBe OK
+            result.status `mustBe` OK
 
             verify(mockCacheConnector).prepareForAmendment(eqTo(lrn.value), eqTo(departureIdP5))(any())
         }
@@ -140,7 +140,7 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
               val result = service.nextPage(AmendmentRejection, lrn.value, mrn)
 
-              result mustBe s"http://localhost:10120/manage-transit-movements/departures/$lrn/declaration-summary"
+              result `mustBe` s"http://localhost:10120/manage-transit-movements/departures/$lrn/declaration-summary"
           }
         }
 
@@ -154,7 +154,7 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
                 val result = service.nextPage(DeclarationRejection, lrn.value, Some(mrn))
 
-                result mustBe s"http://localhost:10120/manage-transit-movements/departures/$lrn/new-local-reference-number"
+                result `mustBe` s"http://localhost:10120/manage-transit-movements/departures/$lrn/new-local-reference-number"
             }
           }
 
@@ -167,11 +167,12 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
                 val result = service.nextPage(DeclarationRejection, lrn.value, None)
 
-                result mustBe s"http://localhost:10120/manage-transit-movements/departures/$lrn/declaration-summary"
+                result `mustBe` s"http://localhost:10120/manage-transit-movements/departures/$lrn/declaration-summary"
             }
           }
         }
       }
     }
   }
+
 }

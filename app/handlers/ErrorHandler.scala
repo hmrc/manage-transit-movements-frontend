@@ -69,4 +69,5 @@ class ErrorHandler @Inject() (val messagesApi: MessagesApi) extends HttpErrorHan
       ),
       ex
     )
+
 }

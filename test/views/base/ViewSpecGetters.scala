@@ -38,4 +38,5 @@ trait ViewSpecGetters {
 
   def getElementHref(element: Element): String =
     element.attr("href")
+
 }

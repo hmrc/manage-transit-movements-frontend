@@ -56,4 +56,5 @@ class AmendmentService @Inject() (
       case _ =>
         config.departureFrontendTaskListUrl(lrn)
     }
+
 }

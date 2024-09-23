@@ -44,4 +44,5 @@ class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalErrorType0
           TableRow(Text(error.originalAttributeValue.getOrElse("N/A")), classes = "text-wrap")
         )
     }
+
 }

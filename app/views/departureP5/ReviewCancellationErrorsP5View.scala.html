@@ -29,7 +29,7 @@
     helpdeskLink: HelpdeskLink
 )
 
-@(reviewCancellationErrorsP5ViewModel: ReviewCancellationErrorsP5ViewModel, departureId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[_], messages: Messages)
+@(reviewCancellationErrorsP5ViewModel: ReviewCancellationErrorsP5ViewModel, departureId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = reviewCancellationErrorsP5ViewModel.title,

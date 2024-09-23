@@ -44,4 +44,5 @@ object LatestArrivalMessage {
 
           LatestArrivalMessage(sortedList.head, ie007Message.messageId)
       }
+
 }

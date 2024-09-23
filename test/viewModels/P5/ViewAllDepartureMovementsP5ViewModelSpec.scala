@@ -31,13 +31,13 @@ class ViewAllDepartureMovementsP5ViewModelSpec extends SpecBase with Generators 
     "When searchParam provided" in {
       val viewModel = new ViewAllDepartureMovementsP5ViewModel(Seq.empty, paginationViewModel, Some("LRN123"))
 
-      viewModel.pageTitle mustBe "Search results for ‘LRN123’ - Departure declarations"
+      viewModel.pageTitle `mustBe` "Search results for ‘LRN123’ - Departure declarations"
     }
 
     "When searchParam not provided" in {
       val viewModel = new ViewAllDepartureMovementsP5ViewModel(Seq.empty, paginationViewModel, None)
 
-      viewModel.pageTitle mustBe "Departure declarations"
+      viewModel.pageTitle `mustBe` "Departure declarations"
     }
 
   }
@@ -47,14 +47,15 @@ class ViewAllDepartureMovementsP5ViewModelSpec extends SpecBase with Generators 
     "When searchParam provided" in {
       val viewModel = new ViewAllDepartureMovementsP5ViewModel(Seq.empty, paginationViewModel, Some("LRN123"))
 
-      viewModel.pageHeading mustBe "Search results for ‘LRN123’ - Departure declarations"
+      viewModel.pageHeading `mustBe` "Search results for ‘LRN123’ - Departure declarations"
     }
 
     "When searchParam not provided" in {
       val viewModel = new ViewAllDepartureMovementsP5ViewModel(Seq.empty, paginationViewModel, None)
 
-      viewModel.pageTitle mustBe "Departure declarations"
+      viewModel.pageTitle `mustBe` "Departure declarations"
     }
 
   }
+
 }

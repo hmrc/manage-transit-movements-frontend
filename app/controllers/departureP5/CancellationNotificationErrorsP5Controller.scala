@@ -27,6 +27,7 @@ import views.html.departureP5.CancellationNotificationErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import generated.Generated_CC056CTypeFormat
 
 class CancellationNotificationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -55,4 +56,5 @@ class CancellationNotificationErrorsP5Controller @Inject() (
           Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
         }
     }
+
 }

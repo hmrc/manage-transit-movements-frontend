@@ -33,4 +33,5 @@ class MessageRetrievalRequestProvider[B] {
     eoriNumber: String,
     messageData: B
   ) extends WrappedRequest[A](request)
+
 }

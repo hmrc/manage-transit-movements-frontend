@@ -30,6 +30,7 @@ import views.html.departureP5.ReviewDepartureErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC056CTypeFormat
 
 class ReviewDepartureErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -64,4 +65,5 @@ class ReviewDepartureErrorsP5Controller @Inject() (
           viewModel => Ok(view(viewModel, departureId, paginationViewModel, request.referenceNumbers.movementReferenceNumber))
         )
     }
+
 }

@@ -104,8 +104,8 @@ class ViewAllArrivalsP5ViewSpec
         val filledForm          = form.fill(searchParam)
         val doc: Document       = parseView(viewWithSpecificPagination(filledForm, arrivals, paginationViewModel, Some(searchParam)))
         val p                   = doc.getElementById("results-count")
-        p.text() mustBe "Showing 1 result matching LRN123"
-        boldWords(p) mustBe Seq("1")
+        p.text() `mustBe` "Showing 1 result matching LRN123"
+        boldWords(p) `mustBe` Seq("1")
       }
 
       "when search param not provided" in {
@@ -113,8 +113,8 @@ class ViewAllArrivalsP5ViewSpec
         val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
         val doc: Document       = parseView(viewWithSpecificPagination(form, arrivals, paginationViewModel, None))
         val p                   = doc.getElementById("results-count")
-        p.text() mustBe "Showing 1 result"
-        boldWords(p) mustBe Seq("1")
+        p.text() `mustBe` "Showing 1 result"
+        boldWords(p) `mustBe` Seq("1")
       }
     }
 
@@ -122,7 +122,8 @@ class ViewAllArrivalsP5ViewSpec
       val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
       val doc: Document       = parseView(viewWithSpecificPagination(form, Nil, paginationViewModel, None))
       val p                   = doc.getElementById("no-results-found")
-      p.text() mustBe "No results found"
+      p.text() `mustBe` "No results found"
     }
   }
+
 }

@@ -45,11 +45,13 @@ class DepartureNotCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours wit
   )
 
   behave like pageWithPartialContent("p", "Contact the ")
+
   behave like pageWithLink(
     id = "contact",
     expectedText = "New Computerised Transit System helpdesk",
     expectedHref = frontendAppConfig.nctsEnquiriesUrl
   )
+
   behave like pageWithPartialContent("p", " for help understanding the error (opens in a new tab).")
 
   behave like pageWithLink(
@@ -57,4 +59,5 @@ class DepartureNotCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours wit
     expectedText = "Make another departure declaration",
     expectedHref = frontendAppConfig.p5Departure
   )
+
 }

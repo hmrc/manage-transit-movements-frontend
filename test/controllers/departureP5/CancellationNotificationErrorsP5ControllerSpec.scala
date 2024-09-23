@@ -99,4 +99,5 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
       }
     }
   }
+
 }

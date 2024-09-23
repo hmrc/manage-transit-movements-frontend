@@ -30,6 +30,7 @@ final case class Service(host: String, port: String, protocol: String, startUrl:
 
   override def toString: String =
     fullServiceUrl
+
 }
 
 object Service {
@@ -46,4 +47,5 @@ object Service {
 
   implicit def convertToString(service: Service): String =
     service.fullServiceUrl
+
 }

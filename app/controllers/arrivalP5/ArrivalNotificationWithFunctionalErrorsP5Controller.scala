@@ -29,6 +29,7 @@ import views.html.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC057CTypeFormat
 
 class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -67,4 +68,5 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
             }
         )
     }
+
 }

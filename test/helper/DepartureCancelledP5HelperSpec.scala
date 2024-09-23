@@ -59,7 +59,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
             val result = helper.buildMRNRow
 
-            result mustBe None
+            result `mustBe` None
         }
       }
 
@@ -94,7 +94,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
             val result = helper.buildDateTimeDecisionRow
 
-            result mustBe None
+            result `mustBe` None
         }
       }
 
@@ -204,7 +204,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
             val result = helper.buildCommentsRow
 
-            result mustBe None
+            result `mustBe` None
         }
       }
 
@@ -252,13 +252,14 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
 
             result.sectionTitle must not be defined
 
-            result.rows.head mustBe SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText))
-            result.rows(1) mustBe SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText))
-            result.rows(2) mustBe SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText))
-            result.rows(3) mustBe SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText))
-            result.rows(4) mustBe SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText))
+            result.rows.head `mustBe` SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText))
+            result.rows(1) `mustBe` SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText))
+            result.rows(2) `mustBe` SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText))
+            result.rows(3) `mustBe` SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText))
+            result.rows(4) `mustBe` SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText))
         }
       }
     }
   }
+
 }

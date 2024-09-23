@@ -30,6 +30,7 @@ import views.html.departureP5.GuaranteeRejectedP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC055CTypeFormat
 
 class GuaranteeRejectedP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -75,4 +76,5 @@ class GuaranteeRejectedP5Controller @Inject() (
             Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
     }
+
 }

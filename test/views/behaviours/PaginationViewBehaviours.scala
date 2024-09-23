@@ -42,7 +42,7 @@ trait PaginationViewBehaviours[T <: PaginationViewModel] extends ViewBehaviours 
         val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
 
         val element = doc.select("""[rel="prev"]""").headOption
-        element.value.attr("href") mustBe s"$href?page=1"
+        element.value.attr("href") `mustBe` s"$href?page=1"
       }
 
       "must not display previous button when on the first page" in {
@@ -58,7 +58,7 @@ trait PaginationViewBehaviours[T <: PaginationViewModel] extends ViewBehaviours 
         val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
 
         val element = doc.select("""[rel="next"]""").headOption
-        element.value.attr("href") mustBe s"$href?page=2"
+        element.value.attr("href") `mustBe` s"$href?page=2"
       }
 
       "must not display next button when on the last page" in {
@@ -76,17 +76,17 @@ trait PaginationViewBehaviours[T <: PaginationViewModel] extends ViewBehaviours 
         // should look like 1 … 3 [4] 5 … 12
 
         val current = doc.getElementsByClass("govuk-pagination__item--current").head
-        current.getElementsByClass("govuk-pagination__link").text() mustBe "4"
+        current.getElementsByClass("govuk-pagination__link").text() `mustBe` "4"
 
         val items = doc.getElementsByClass("govuk-pagination__item").toList
-        items.length mustBe 7
-        items.head.getElementsByClass("govuk-pagination__link").text() mustBe "1"
-        items(1).text() mustBe "⋯"
-        items(2).getElementsByClass("govuk-pagination__link").text() mustBe "3"
-        items(3).getElementsByClass("govuk-pagination__link").text() mustBe "4"
-        items(4).getElementsByClass("govuk-pagination__link").text() mustBe "5"
-        items(5).text() mustBe "⋯"
-        items(6).getElementsByClass("govuk-pagination__link").text() mustBe "12"
+        items.length `mustBe` 7
+        items.head.getElementsByClass("govuk-pagination__link").text() `mustBe` "1"
+        items(1).text() `mustBe` "⋯"
+        items(2).getElementsByClass("govuk-pagination__link").text() `mustBe` "3"
+        items(3).getElementsByClass("govuk-pagination__link").text() `mustBe` "4"
+        items(4).getElementsByClass("govuk-pagination__link").text() `mustBe` "5"
+        items(5).text() `mustBe` "⋯"
+        items(6).getElementsByClass("govuk-pagination__link").text() `mustBe` "12"
       }
 
       "must display correct count" - {
@@ -96,8 +96,8 @@ trait PaginationViewBehaviours[T <: PaginationViewModel] extends ViewBehaviours 
             val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
             val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
             val p                   = doc.getElementById("results-count")
-            p.text() mustBe "Showing 1 result"
-            boldWords(p) mustBe Seq("1")
+            p.text() `mustBe` "Showing 1 result"
+            boldWords(p) `mustBe` Seq("1")
           }
 
           "when multiple movements" in {
@@ -106,8 +106,8 @@ trait PaginationViewBehaviours[T <: PaginationViewModel] extends ViewBehaviours 
                 val paginationViewModel = buildViewModel(numberOfMovements, 1, movementsPerPage, "")
                 val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
                 val p                   = doc.getElementById("results-count")
-                p.text() mustBe s"Showing $numberOfMovements results"
-                boldWords(p) mustBe Seq(numberOfMovements.toString)
+                p.text() `mustBe` s"Showing $numberOfMovements results"
+                boldWords(p) `mustBe` Seq(numberOfMovements.toString)
             }
           }
         }
@@ -123,8 +123,8 @@ trait PaginationViewBehaviours[T <: PaginationViewModel] extends ViewBehaviours 
                   val paginationViewModel = buildViewModel(numberOfMovements, currentPage, movementsPerPage, "")
                   val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
                   val p                   = doc.getElementById("paginated-results-count")
-                  p.text() mustBe s"Showing $from to $to of $numberOfMovements results"
-                  boldWords(p) mustBe Seq(from.toString, to.toString, numberOfMovements.toString)
+                  p.text() `mustBe` s"Showing $from to $to of $numberOfMovements results"
+                  boldWords(p) `mustBe` Seq(from.toString, to.toString, numberOfMovements.toString)
               }
           }
         }
@@ -132,5 +132,6 @@ trait PaginationViewBehaviours[T <: PaginationViewModel] extends ViewBehaviours 
     }
 
 }
+
 // scalastyle:on method.length
 // scalastyle:on magic.number

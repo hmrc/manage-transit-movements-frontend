@@ -26,6 +26,7 @@ case class RequestedDocumentType(code: String, description: String) {
       case "" => code
       case _  => s"$code - $description"
     }
+
 }
 
 object RequestedDocumentType {

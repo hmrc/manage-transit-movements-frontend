@@ -37,7 +37,7 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
 
     http
       .get(url)
-      .transform(_.withQueryStringParameters(queryParams :+ ("state" -> "notSubmitted"): _*))
+      .transform(_.withQueryStringParameters(queryParams :+ ("state" -> "notSubmitted")*))
       .execute[DeparturesSummary]
       .map(Some(_))
       .recover {

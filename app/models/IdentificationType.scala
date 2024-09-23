@@ -27,7 +27,5 @@ case class IdentificationType(`type`: String, description: String) {
 object IdentificationType {
   implicit val format: OFormat[IdentificationType] = Json.format[IdentificationType]
 
-  implicit val order: Order[IdentificationType] = (x: IdentificationType, y: IdentificationType) => {
-    (x, y).compareBy(_.description, _.`type`)
-  }
+  implicit val order: Order[IdentificationType] = (x: IdentificationType, y: IdentificationType) => (x, y).compareBy(_.description, _.`type`)
 }

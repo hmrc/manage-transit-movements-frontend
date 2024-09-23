@@ -123,4 +123,5 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
       }
     }
   }
+
 }

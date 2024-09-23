@@ -37,4 +37,5 @@ object InputYesNoViewModel {
   case class YesNoWithLegend(
     legend: String
   ) extends InputYesNoViewModel
+
 }

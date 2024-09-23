@@ -130,7 +130,7 @@ class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) mustBe true
+        await(result) `mustBe` true
       }
 
       "return false when no NCTS enrolment is present" in {
@@ -141,27 +141,27 @@ class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) mustBe false
+        await(result) `mustBe` false
       }
 
       "return false when the API call returns a no content" in {
-        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
+        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) `willReturn` {
           aResponse().withStatus(NO_CONTENT)
         })
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) mustBe false
+        await(result) `mustBe` false
       }
 
       "return false when the API call returns 404 NOT_FOUND" in {
-        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
+        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) `willReturn` {
           aResponse().withStatus(NOT_FOUND)
         })
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) mustBe false
+        await(result) `mustBe` false
       }
 
       "return false when the API call returns 400 BAD_REQUEST with message INVALID_GROUP_ID" in {
@@ -172,32 +172,32 @@ class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
             |}
             |""".stripMargin)
 
-        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
+        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) `willReturn` {
           aResponse().withStatus(BAD_REQUEST).withBody(Json.stringify(body))
         })
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) mustBe false
+        await(result) `mustBe` false
       }
 
       "throw exception when the API call returns another 4xx/5xx" in {
         forAll(Gen.choose(400, 599).retryUntil(_ != 404)) {
           status =>
             server.stubFor(
-              get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
+              get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) `willReturn` {
                 aResponse().withStatus(status)
               }
             )
 
             val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-            an[Exception] mustBe thrownBy(result.futureValue)
+            an[Exception] `mustBe` thrownBy(result.futureValue)
         }
       }
 
       "throw exception when the API call returns 200 and invalid JSON" in {
-        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) willReturn {
+        server.stubFor(get(urlEqualTo(s"/enrolment-store-proxy/enrolment-store/groups/$groupId/enrolments?type=principal&service=$enrolmentKey")) `willReturn` {
           val response = aResponse().withStatus(OK)
           response.withBody("""
                               | {
@@ -209,7 +209,7 @@ class EnrolmentStoreConnectorSpec extends SpecBase with WireMockServerHandler {
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        an[Exception] mustBe thrownBy(result.futureValue)
+        an[Exception] `mustBe` thrownBy(result.futureValue)
       }
     }
   }

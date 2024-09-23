@@ -53,7 +53,7 @@ class MessagesForMovementSpec extends SpecBase {
           NonEmptyList(currentMessage, List(previousMessage, lastMessage))
         )
 
-        messagesForMovement.messageBeforeLatest mustBe Some(previousMessage)
+        messagesForMovement.messageBeforeLatest `mustBe` Some(previousMessage)
 
       }
 
@@ -69,7 +69,7 @@ class MessagesForMovementSpec extends SpecBase {
           NonEmptyList(currentMessage, List.empty)
         )
 
-        messagesForMovement.messageBeforeLatest mustBe None
+        messagesForMovement.messageBeforeLatest `mustBe` None
       }
 
     }
@@ -133,7 +133,7 @@ class MessagesForMovementSpec extends SpecBase {
 
       val result: MessagesForArrivalMovement = json.validate[MessagesForArrivalMovement].asOpt.value
 
-      result mustBe expectedResult
+      result `mustBe` expectedResult
     }
 
     "must deserialize and sort by date and time" in {
@@ -195,7 +195,7 @@ class MessagesForMovementSpec extends SpecBase {
 
       val result: MessagesForArrivalMovement = json.validate[MessagesForArrivalMovement].asOpt.value
 
-      result mustBe expectedResult
+      result `mustBe` expectedResult
     }
 
   }

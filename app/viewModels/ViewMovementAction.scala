@@ -22,4 +22,5 @@ case class ViewMovementAction(href: String, key: String) {
 
   def id(referenceNumber: String)(implicit messages: Messages): String =
     s"${messages(key).replaceAll(" ", "-")}-$referenceNumber"
+
 }

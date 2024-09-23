@@ -87,4 +87,5 @@ class WhatDoYouWantToDoControllerSpec extends SpecBase with ScalaCheckPropertyCh
       }
     }
   }
+
 }

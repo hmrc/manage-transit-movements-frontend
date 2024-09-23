@@ -31,4 +31,5 @@ class RedirectControllerSpec extends SpecBase {
     status(result) mustEqual SEE_OTHER
     redirectLocation(result).value mustEqual routes.WhatDoYouWantToDoController.onPageLoad().url
   }
+
 }

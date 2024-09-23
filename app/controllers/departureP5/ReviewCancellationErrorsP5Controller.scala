@@ -29,6 +29,7 @@ import views.html.departureP5.ReviewCancellationErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC056CTypeFormat
 
 class ReviewCancellationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -61,4 +62,5 @@ class ReviewCancellationErrorsP5Controller @Inject() (
           viewModel => Ok(view(viewModel, departureId, paginationViewModel))
         )
     }
+
 }

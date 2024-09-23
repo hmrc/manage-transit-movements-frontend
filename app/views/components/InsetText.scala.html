@@ -16,13 +16,14 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.components.Heading
+@import uk.gov.hmrc.govukfrontend.views.html.components.{InsetText => HInsetText}
 
 @this(govukInsetText: GovukInsetText)
 
 @(text: String)
 
 @govukInsetText(
-    InsetText(
+ HInsetText(
         content = Text(text)
     )
 )

@@ -62,4 +62,5 @@ class PaginationSpec extends A11ySpecBase {
       }
     }
   }
+
 }

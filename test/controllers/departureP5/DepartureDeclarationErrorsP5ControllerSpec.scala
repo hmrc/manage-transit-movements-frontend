@@ -115,4 +115,5 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
       }
     }
   }
+
 }

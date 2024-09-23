@@ -91,11 +91,11 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
   "must have visually hidden text on table headers" in {
     val tableHeaders = doc.getElementsByTag("th").toList
 
-    tableHeaders.size mustBe 3
+    tableHeaders.size `mustBe` 3
 
     def check(th: Element, expectedVisuallyHiddenText: String): Assertion = {
       val visuallyHiddenText = th.getElementsByClass("govuk-visually-hidden").text()
-      visuallyHiddenText mustBe expectedVisuallyHiddenText
+      visuallyHiddenText `mustBe` expectedVisuallyHiddenText
     }
 
     check(tableHeaders.head, viewAllDepartureMovementsViewModel.sortHiddenTextLRN)
@@ -111,12 +111,12 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
         s"when row ${rowIndex + 1}" - {
 
           def elementWithVisibleText(element: Element, text: String): Unit =
-            element.ownText() mustBe text
+            element.ownText() `mustBe` text
 
           def elementWithHiddenText(element: Element, text: String): Unit = {
             val heading = element.getElementsByClass("responsive-table__heading").head
-            heading.attr("aria-hidden").toBoolean mustBe true
-            heading.text() mustBe text
+            heading.attr("aria-hidden").toBoolean `mustBe` true
+            heading.text() `mustBe` text
           }
 
           "Local reference number" - {
@@ -131,7 +131,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
             "must have correct href" in {
 
               val redirectLink = s"${frontendAppConfig.p5Departure}/drafts/${draft.lrn}"
-              lrnLink.attr("href") mustBe redirectLink
+              lrnLink.attr("href") `mustBe` redirectLink
             }
           }
 
@@ -150,7 +150,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
             "must display correct text" in {
               behave like elementWithVisibleText(deleteLink, s"${messages(s"$prefix.table.action.delete")}")
               val hiddenText = deleteLink.getElementsByClass("govuk-visually-hidden").head
-              hiddenText.text() mustBe s"Local Reference Number (LRN) ${draft.lrn}"
+              hiddenText.text() `mustBe` s"Local Reference Number (LRN) ${draft.lrn}"
             }
 
             "must have correct href" in {
@@ -160,7 +160,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
                   .onPageLoad(draft.lrn, 1, rows.toList.length, None)
                   .url
 
-              deleteLink.attr("href") mustBe redirectLink
+              deleteLink.attr("href") `mustBe` redirectLink
             }
           }
         }
@@ -178,7 +178,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
 
       val doc = Jsoup.parse(view.toString())
 
-      doc.getElementById("no-search-results-found").text() mustBe "This LRN does not exist."
+      doc.getElementById("no-search-results-found").text() `mustBe` "This LRN does not exist."
     }
 
     "must not render when there are data rows" in {
@@ -197,7 +197,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
 
       val doc = Jsoup.parse(view.toString())
 
-      doc.getElementById("no-results-found").text() mustBe "You have no draft departure declarations."
+      doc.getElementById("no-results-found").text() `mustBe` "You have no draft departure declarations."
     }
 
     "must not render when there are data rows" in {
@@ -222,18 +222,19 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
     }
 
     "must render correct header" in {
-      panel.head.getElementsByClass("govuk-heading-m").text() mustBe "Make a new departure declaration"
+      panel.head.getElementsByClass("govuk-heading-m").text() `mustBe` "Make a new departure declaration"
     }
 
     "must render correct text" in {
       panel.head
         .getElementsByClass("govuk-body")
-        .text() mustBe "You have 30 days from starting a declaration to complete it."
+        .text() `mustBe` "You have 30 days from starting a declaration to complete it."
     }
 
     "must render href button" in {
-      panel.head.getElementsByClass("govuk-button").text() mustBe "Start now"
-      panel.head.getElementsByClass("govuk-button").attr("href") mustBe frontendAppConfig.p5Departure
+      panel.head.getElementsByClass("govuk-button").text() `mustBe` "Start now"
+      panel.head.getElementsByClass("govuk-button").attr("href") `mustBe` frontendAppConfig.p5Departure
     }
   }
+
 }

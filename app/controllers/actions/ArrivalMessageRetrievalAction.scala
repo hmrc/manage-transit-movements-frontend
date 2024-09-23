@@ -34,11 +34,12 @@ class ArrivalMessageRetrievalActionProvider @Inject() (arrivalP5MessageService: 
     format: XMLFormat[B]
   ): ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#ArrivalMessageRetrievalRequest] =
     new ArrivalMessageRetrievalAction(arrivalId, messageId, arrivalP5MessageService)
+
 }
 
-class ArrivalMessageRetrievalAction[B](arrivalId: String, messageId: String, arrivalP5MessageService: ArrivalP5MessageService)(
-  implicit protected val executionContext: ExecutionContext,
-  implicit protected val format: XMLFormat[B]
+class ArrivalMessageRetrievalAction[B](arrivalId: String, messageId: String, arrivalP5MessageService: ArrivalP5MessageService)(implicit
+  protected val executionContext: ExecutionContext,
+  protected val format: XMLFormat[B]
 ) extends ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#ArrivalMessageRetrievalRequest] {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[MessageRetrievalRequestProvider[B]#ArrivalMessageRetrievalRequest[A]] = {
@@ -54,4 +55,5 @@ class ArrivalMessageRetrievalAction[B](arrivalId: String, messageId: String, arr
         )
     }
   }
+
 }

@@ -28,6 +28,7 @@ import views.html.departureP5.DepartureDeclarationErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC056CTypeFormat
 
 class DepartureDeclarationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -57,4 +58,5 @@ class DepartureDeclarationErrorsP5Controller @Inject() (
           Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }
     }
+
 }

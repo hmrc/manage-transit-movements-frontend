@@ -26,16 +26,17 @@ case class Enrolment(key: String, identifierKey: String) {
 
   def toPredicate: Predicate =
     auth.core.Enrolment.apply(key)
+
 }
 
 object Enrolment {
 
-  implicit val configLoader: ConfigLoader[Seq[Enrolment]] = (config: Config, path: String) => {
+  implicit val configLoader: ConfigLoader[Seq[Enrolment]] = (config: Config, path: String) =>
     config.getConfigList(path).toList.map {
       enrolment =>
         val key           = enrolment.getString("key")
         val identifierKey = enrolment.getString("identifierKey")
         Enrolment(key, identifierKey)
     }
-  }
+
 }

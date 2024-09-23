@@ -45,4 +45,5 @@ class DraftLockedControllerSpec extends SpecBase with AppWithDefaultMockFixtures
         view()(request, messages).toString
     }
   }
+
 }

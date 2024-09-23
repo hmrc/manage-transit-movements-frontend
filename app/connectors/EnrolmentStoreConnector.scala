@@ -46,4 +46,5 @@ class EnrolmentStoreConnector @Inject() (
           throw new Exception(s"Call to enrolment store failed: $e")
       }
   }
+
 }

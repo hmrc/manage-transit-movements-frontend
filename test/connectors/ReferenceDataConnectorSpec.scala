@@ -40,18 +40,18 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
   private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
 
-  private def checkNoReferenceDataFoundResponse(url: String, result: => Future[_]): Assertion = {
+  private def checkNoReferenceDataFoundResponse(url: String, result: => Future[?]): Assertion = {
     server.stubFor(
       get(urlEqualTo(url))
         .willReturn(okJson(emptyResponseJson))
     )
 
     whenReady[Throwable, Assertion](result.failed) {
-      _ mustBe a[NoReferenceDataFoundException]
+      _ `mustBe` a[NoReferenceDataFoundException]
     }
   }
 
-  private def checkErrorResponse(url: String, result: => Future[_]): Assertion = {
+  private def checkErrorResponse(url: String, result: => Future[?]): Assertion = {
     val errorResponses: Gen[Int] = Gen.chooseNum(400: Int, 599: Int)
 
     forAll(errorResponses) {
@@ -65,7 +65,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
         )
 
         whenReady[Throwable, Assertion](result.failed) {
-          _ mustBe an[Exception]
+          _ `mustBe` an[Exception]
         }
     }
   }
@@ -88,7 +88,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
           val expectedResult = NonEmptySet.of(CustomsOffice(code, "NAME001", Some("004412323232345")))
 
-          connector.getCustomsOffices(queryParams).futureValue mustBe expectedResult
+          connector.getCustomsOffices(queryParams).futureValue `mustBe` expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -112,7 +112,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
           val expectedResult = NonEmptySet.of(Country("GB", "United Kingdom"), Country("AD", "Andorra"))
 
-          connector.getCountries(queryParams).futureValue mustBe expectedResult
+          connector.getCountries(queryParams).futureValue `mustBe` expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -136,7 +136,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
           val expectedResult = NonEmptySet.of(QualifierOfIdentification("U", "UN/LOCODE"), QualifierOfIdentification("Z", "Address"))
 
-          connector.getQualifierOfIdentifications(queryParams).futureValue mustBe expectedResult
+          connector.getQualifierOfIdentifications(queryParams).futureValue `mustBe` expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -163,7 +163,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
             IdentificationType("11", "Name of the sea-going vessel")
           )
 
-          connector.getIdentificationTypes(queryParams).futureValue mustBe expectedResult
+          connector.getIdentificationTypes(queryParams).futureValue `mustBe` expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -187,7 +187,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
           val expectedResult = NonEmptySet.of(Nationality("AR", "Argentina"), Nationality("AU", "Australia"))
 
-          connector.getNationalities(queryParams).futureValue mustBe expectedResult
+          connector.getNationalities(queryParams).futureValue `mustBe` expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -211,7 +211,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
           val expectedResult = NonEmptySet.of(ControlType(typeOfControl, "Intrusive"))
 
-          connector.getControlTypes(queryParams).futureValue mustBe expectedResult
+          connector.getControlTypes(queryParams).futureValue `mustBe` expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -241,7 +241,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
               )
             )
 
-          connector.getIncidentCodes(queryParams).futureValue mustBe expectedResult
+          connector.getIncidentCodes(queryParams).futureValue `mustBe` expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -265,7 +265,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
           val expectedResult = NonEmptySet.of(RequestedDocumentType("C620", "T2FL document"))
 
-          connector.getRequestedDocumentTypes(queryParams).futureValue mustBe expectedResult
+          connector.getRequestedDocumentTypes(queryParams).futureValue `mustBe` expectedResult
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -291,7 +291,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
             val expectedResult = NonEmptySet.of(FunctionalErrorWithDesc(functionalError, "Rule violation"))
 
-            connector.getFunctionalErrors(queryParams).futureValue mustBe expectedResult
+            connector.getFunctionalErrors(queryParams).futureValue `mustBe` expectedResult
           }
 
           "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -315,7 +315,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
             val expectedResult = NonEmptySet.of(FunctionalErrorWithDesc(functionalError, "Rule violation"))
 
-            connector.getFunctionalErrors().futureValue mustBe expectedResult
+            connector.getFunctionalErrors().futureValue `mustBe` expectedResult
           }
 
           "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -342,7 +342,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
             val expectedResult = NonEmptySet.of(InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid"))
 
-            connector.getInvalidGuaranteeReasons(queryParams).futureValue mustBe expectedResult
+            connector.getInvalidGuaranteeReasons(queryParams).futureValue `mustBe` expectedResult
           }
 
           "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -366,7 +366,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
 
             val expectedResult = NonEmptySet.of(InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid"))
 
-            connector.getInvalidGuaranteeReasons().futureValue mustBe expectedResult
+            connector.getInvalidGuaranteeReasons().futureValue `mustBe` expectedResult
           }
 
           "should throw a NoReferenceDataFoundException for an empty response" in {
@@ -380,6 +380,7 @@ class ReferenceDataConnectorSpec extends SpecBase with AppWithDefaultMockFixture
       }
     }
   }
+
 }
 
 object ReferenceDataConnectorSpec {
@@ -561,4 +562,5 @@ object ReferenceDataConnectorSpec {
       |  "data": []
       |}
       |""".stripMargin
+
 }

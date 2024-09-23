@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.ws.JsonBodyWritables._
 
 class DepartureCacheConnector @Inject() (
   config: FrontendAppConfig,
@@ -76,4 +77,5 @@ class DepartureCacheConnector @Inject() (
       .withBody(Json.toJson(departureId))
       .execute[HttpResponse]
   }
+
 }

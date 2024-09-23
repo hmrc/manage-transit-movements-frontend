@@ -189,13 +189,14 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
 
             result.sectionTitle must not be defined
 
-            result.rows.head mustBe SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText))
-            result.rows(1) mustBe SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText))
-            result.rows(2) mustBe SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText))
-            result.rows(3) mustBe SummaryListRow(key = Key("Further information".toText), value = Value("text".toText))
-            result.rows(4) mustBe SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText))
+            result.rows.head `mustBe` SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText))
+            result.rows(1) `mustBe` SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText))
+            result.rows(2) `mustBe` SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText))
+            result.rows(3) `mustBe` SummaryListRow(key = Key("Further information".toText), value = Value("text".toText))
+            result.rows(4) `mustBe` SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText))
         }
       }
     }
   }
+
 }

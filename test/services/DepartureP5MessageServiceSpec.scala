@@ -109,7 +109,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
       }
 
       "must return PrelodgedMovementAndMessage when AllocatedMRN or DeclarationAmendmentAccepted" in {
@@ -159,7 +159,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
       }
 
       "must return IncidentMovementAndMessage when IncidentDuringTransit" in {
@@ -207,7 +207,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        result mustBe expectedResult
+        result `mustBe` expectedResult
       }
 
       "must return OtherMovementAndMessage for any other message" in {
@@ -266,9 +266,10 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
                 )
               )
 
-              result mustBe expectedResult
+              result `mustBe` expectedResult
           }
       }
     }
   }
+
 }

@@ -27,6 +27,7 @@ import views.html.departureP5.GoodsNotReleasedP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC051CTypeFormat
 
 class GoodsNotReleasedP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -46,4 +47,5 @@ class GoodsNotReleasedP5Controller @Inject() (
           view(viewModelProvider.apply(request.messageData, request.referenceNumbers.localReferenceNumber))
         )
     }
+
 }

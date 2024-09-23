@@ -55,4 +55,5 @@ class MovementsTableSpec extends A11ySpecBase {
       }
     }
   }
+
 }

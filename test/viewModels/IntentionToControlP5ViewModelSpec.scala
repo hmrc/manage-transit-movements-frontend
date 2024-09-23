@@ -63,21 +63,21 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       val result            = viewModelProvider.apply(message)
 
       "must return correct section length" in {
-        result.sections.length mustBe 1
+        result.sections.length `mustBe` 1
       }
 
       "must return correct title and heading" in {
-        result.titleAndHeading mustBe messages("departure.ie060.message.prelodged.titleAndHeading")
+        result.titleAndHeading `mustBe` messages("departure.ie060.message.prelodged.titleAndHeading")
       }
       "must return correct paragraphs" in {
-        result.paragraph1 mustBe messages("departure.ie060.message.prelodged.paragraph1")
-        result.paragraph2 mustBe messages("departure.ie060.message.prelodged.paragraph2")
-        result.paragraph3 mustBe messages("departure.ie060.message.prelodged.paragraph3")
+        result.paragraph1 `mustBe` messages("departure.ie060.message.prelodged.paragraph1")
+        result.paragraph2 `mustBe` messages("departure.ie060.message.prelodged.paragraph2")
+        result.paragraph3 `mustBe` messages("departure.ie060.message.prelodged.paragraph3")
       }
       "must return correct end paragraph" in {
-        result.type0LinkPrefix mustBe messages("departure.ie060.message.paragraph4.prefix")
-        result.type0LinkText mustBe messages("departure.ie060.message.paragraph4.linkText")
-        result.type0LinkTextSuffix mustBe messages("departure.ie060.message.paragraph4.suffix")
+        result.type0LinkPrefix `mustBe` messages("departure.ie060.message.paragraph4.prefix")
+        result.type0LinkText `mustBe` messages("departure.ie060.message.paragraph4.linkText")
+        result.type0LinkTextSuffix `mustBe` messages("departure.ie060.message.paragraph4.suffix")
       }
     }
 
@@ -96,21 +96,22 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       val result            = viewModelProvider.apply(message)
 
       "must not render type of control if present" in {
-        result.sections.length mustBe 2
+        result.sections.length `mustBe` 2
 
-        result.sections(1).rows.size mustBe 2
-        result.sections(1).sectionTitle.value mustBe "Control information 1"
+        result.sections(1).rows.size `mustBe` 2
+        result.sections(1).sectionTitle.value `mustBe` "Control information 1"
       }
 
       "must return correct title and heading" in {
-        result.titleAndHeading mustBe messages("departure.ie060.message.prelodged.requestedDocuments.titleAndHeading")
+        result.titleAndHeading `mustBe` messages("departure.ie060.message.prelodged.requestedDocuments.titleAndHeading")
       }
 
       "must return correct paragraphs" in {
-        result.paragraph1 mustBe messages("departure.ie060.message.requestedDocuments.prelodged.paragraph1")
-        result.paragraph2 mustBe messages("departure.ie060.message.requestedDocuments.prelodged.paragraph2")
-        result.paragraph3 mustBe messages("departure.ie060.message.requestedDocuments.prelodged.paragraph3")
+        result.paragraph1 `mustBe` messages("departure.ie060.message.requestedDocuments.prelodged.paragraph1")
+        result.paragraph2 `mustBe` messages("departure.ie060.message.requestedDocuments.prelodged.paragraph2")
+        result.paragraph3 `mustBe` messages("departure.ie060.message.requestedDocuments.prelodged.paragraph3")
       }
     }
   }
+
 }

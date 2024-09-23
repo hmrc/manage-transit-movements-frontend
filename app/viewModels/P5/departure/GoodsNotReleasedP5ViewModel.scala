@@ -49,5 +49,7 @@ object GoodsNotReleasedP5ViewModel {
 
       new GoodsNotReleasedP5ViewModel(Seq(helper.buildDetailsSection), lrn)
     }
+
   }
+
 }

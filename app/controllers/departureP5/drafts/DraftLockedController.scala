@@ -36,4 +36,5 @@ class DraftLockedController @Inject() (
     implicit request =>
       Ok(view())
   }
+
 }

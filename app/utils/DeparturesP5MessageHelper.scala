@@ -38,7 +38,8 @@ class DeparturesP5MessageHelper(implicit messages: Messages) extends SummaryList
           answer = formatAnswer(ans),
           id = id,
           call = call,
-          args = args: _*
+          args = args*
         )
     )
+
 }
