@@ -57,7 +57,7 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
       val result            = viewModelProvider.apply(lrnString, mrnString, BusinessRejectionType.AmendmentRejection)
 
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe "There are one or more errors in this declaration that cannot be amended. Contact the helpdesk to discuss further."
+        result.paragraph1 `mustBe` "There are one or more errors in this declaration that cannot be amended. Contact the helpdesk to discuss further."
       }
     }
 
@@ -70,22 +70,23 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
       val result            = viewModelProvider.apply(lrnString, mrnString, BusinessRejectionType.DeclarationRejection)
 
       "must return correct title" in {
-        result.title mustBe "Declaration errors"
+        result.title `mustBe` "Declaration errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Declaration errors"
+        result.heading `mustBe` "Declaration errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe "There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
+        result.paragraph1 `mustBe` "There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
       }
       "must return correct paragraph 3 prefix, link and suffix" in {
-        result.paragraph3Prefix mustBe "Contact the"
-        result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph3Suffix mustBe "for help understanding the errors (opens in a new tab)."
+        result.paragraph3Prefix `mustBe` "Contact the"
+        result.paragraph3Link `mustBe` "New Computerised Transit System helpdesk"
+        result.paragraph3Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink.value mustBe "Make another departure declaration"
+        result.hyperlink.value `mustBe` "Make another departure declaration"
       }
     }
   }
+
 }

@@ -41,13 +41,13 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
           val viewModel = AllDraftDeparturesViewModel(draftDeparture, 1, None, frontendAppConfig.p5Departure, paginationViewModel)
 
-          viewModel.dataRows.length mustBe draftDeparture.userAnswers.length
+          viewModel.dataRows.length `mustBe` draftDeparture.userAnswers.length
 
-          viewModel.dataRows.head.lrn mustBe draftDeparture.userAnswers.head.lrn.toString
-          viewModel.dataRows(1).lrn mustBe draftDeparture.userAnswers(1).lrn.toString
+          viewModel.dataRows.head.lrn `mustBe` draftDeparture.userAnswers.head.lrn.toString
+          viewModel.dataRows(1).lrn `mustBe` draftDeparture.userAnswers(1).lrn.toString
 
-          viewModel.dataRows.head.daysRemaining mustBe draftDeparture.userAnswers.head.expiresInDays
-          viewModel.dataRows(1).daysRemaining mustBe draftDeparture.userAnswers(1).expiresInDays
+          viewModel.dataRows.head.daysRemaining `mustBe` draftDeparture.userAnswers.head.expiresInDays
+          viewModel.dataRows(1).daysRemaining `mustBe` draftDeparture.userAnswers(1).expiresInDays
       }
     }
 
@@ -68,7 +68,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
             paginationViewModel
           )
 
-        viewModel.tooManyResults mustBe true
+        viewModel.tooManyResults `mustBe` true
       }
 
       "must return false when departure size is less than or equal to page size" in {
@@ -82,7 +82,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
             paginationViewModel
           )
 
-        viewModel.tooManyResults mustBe false
+        viewModel.tooManyResults `mustBe` false
       }
     }
 
@@ -103,7 +103,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
             paginationViewModel
           )
 
-        viewModel.isSearch mustBe true
+        viewModel.isSearch `mustBe` true
       }
 
       "must return false when LRN is not defined" in {
@@ -116,7 +116,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           paginationViewModel
         )
 
-        viewModel.isSearch mustBe false
+        viewModel.isSearch `mustBe` false
       }
 
     }
@@ -137,7 +137,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           paginationViewModel
         )
 
-        viewModel.resultsFound mustBe true
+        viewModel.resultsFound `mustBe` true
       }
 
       "must return false when data rows is empty" in {
@@ -153,7 +153,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           paginationViewModel
         )
 
-        viewModel.resultsFound mustBe false
+        viewModel.resultsFound `mustBe` false
       }
     }
 
@@ -174,7 +174,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
             paginationViewModel
           )
 
-        viewModel.searchResultsFound mustBe true
+        viewModel.searchResultsFound `mustBe` true
       }
 
       "must return false when LRN is not defined" in {
@@ -191,7 +191,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           paginationViewModel
         )
 
-        viewModel.searchResultsFound mustBe false
+        viewModel.searchResultsFound `mustBe` false
       }
 
       "must return false when rows are empty" in {
@@ -207,7 +207,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           paginationViewModel
         )
 
-        viewModel.searchResultsFound mustBe false
+        viewModel.searchResultsFound `mustBe` false
       }
     }
 
@@ -226,7 +226,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           paginationViewModel
         )
 
-        viewModel.noSearchResultsFound mustBe true
+        viewModel.noSearchResultsFound `mustBe` true
       }
 
       "must return false when search results found" in {
@@ -243,7 +243,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           paginationViewModel
         )
 
-        viewModel.noResultsFound mustBe false
+        viewModel.noResultsFound `mustBe` false
       }
     }
 
@@ -262,7 +262,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           paginationViewModel
         )
 
-        viewModel.noResultsFound mustBe true
+        viewModel.noResultsFound `mustBe` true
       }
 
       "must return false when results found" in {
@@ -279,7 +279,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           paginationViewModel
         )
 
-        viewModel.noResultsFound mustBe false
+        viewModel.noResultsFound `mustBe` false
       }
     }
 
@@ -290,56 +290,57 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "when sortParams is SortByLRNAsc" in {
         val sortParams = SortByLRNAsc
         val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
-        viewModel.sortLrn mustBe "ascending"
-        viewModel.sortCreatedAt mustBe "none"
-        viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
-        viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in descending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in descending order"
+        viewModel.sortLrn `mustBe` "ascending"
+        viewModel.sortCreatedAt `mustBe` "none"
+        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
+        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in descending order"
+        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in descending order"
       }
 
       "when sortParams is SortByLRNDesc" in {
         val sortParams = SortByLRNDesc
         val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
-        viewModel.sortLrn mustBe "descending"
-        viewModel.sortCreatedAt mustBe "none"
-        viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in descending order"
+        viewModel.sortLrn `mustBe` "descending"
+        viewModel.sortCreatedAt `mustBe` "none"
+        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in descending order"
       }
 
       "when sortParams is SortByCreatedAtAsc" in {
         val sortParams = SortByCreatedAtAsc
         val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
-        viewModel.sortCreatedAt mustBe "ascending"
-        viewModel.sortLrn mustBe "none"
-        viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in descending order"
+        viewModel.sortCreatedAt `mustBe` "ascending"
+        viewModel.sortLrn `mustBe` "none"
+        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in descending order"
       }
 
       "when sortParams is SortByCreatedAtDesc" in {
         val sortParams = SortByCreatedAtDesc
         val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
-        viewModel.sortCreatedAt mustBe "descending"
-        viewModel.sortLrn mustBe "none"
-        viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in ascending order"
+        viewModel.sortCreatedAt `mustBe` "descending"
+        viewModel.sortLrn `mustBe` "none"
+        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
+        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in ascending order"
       }
 
       "when sortParams is None" in {
         val viewModel = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel)
-        viewModel.sortCreatedAt mustBe "descending"
-        viewModel.sortLrn mustBe "none"
-        viewModel.sortLRNHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() mustBe routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
-        viewModel.sortHiddenTextLRN mustBe "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete mustBe "Sort days to complete in ascending order"
+        viewModel.sortCreatedAt `mustBe` "descending"
+        viewModel.sortLrn `mustBe` "none"
+        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
+        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in ascending order"
       }
     }
   }
+
 }

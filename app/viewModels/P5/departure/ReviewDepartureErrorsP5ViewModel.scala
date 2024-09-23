@@ -103,5 +103,7 @@ object ReviewDepartureErrorsP5ViewModel {
       val multipleErrors = functionalErrors.length > 1
       helper.tableRows().map(ReviewDepartureErrorsP5ViewModel(_, lrn, multipleErrors, businessRejectionType))
     }
+
   }
+
 }

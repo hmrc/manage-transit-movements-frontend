@@ -26,11 +26,12 @@ case class Enrolment(key: String, identifierKey: String, legacy: Boolean) {
 
   def toPredicate: Predicate =
     auth.core.Enrolment.apply(key)
+
 }
 
 object Enrolment {
 
-  implicit val configLoader: ConfigLoader[Seq[Enrolment]] = (config: Config, path: String) => {
+  implicit val configLoader: ConfigLoader[Seq[Enrolment]] = (config: Config, path: String) =>
     config.getConfigList(path).toList.map {
       enrolment =>
         val key           = enrolment.getString("key")
@@ -38,5 +39,5 @@ object Enrolment {
         val legacy        = enrolment.getBoolean("legacy")
         Enrolment(key, identifierKey, legacy)
     }
-  }
+
 }

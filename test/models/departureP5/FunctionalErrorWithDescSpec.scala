@@ -34,7 +34,8 @@ class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks
             |    }
             |""".stripMargin)
 
-      json.as[FunctionalErrorWithDesc] mustBe FunctionalErrorWithDesc("12", "Invalid MRN")
+      json.as[FunctionalErrorWithDesc] `mustBe` FunctionalErrorWithDesc("12", "Invalid MRN")
     }
   }
+
 }

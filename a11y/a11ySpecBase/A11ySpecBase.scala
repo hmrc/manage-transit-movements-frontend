@@ -55,5 +55,7 @@ trait A11ySpecBase extends AnyWordSpec with Matchers with GuiceOneAppPerSuite wi
         Html(html.toString())
       )
     )
+
   }
+
 }

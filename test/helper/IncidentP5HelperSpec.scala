@@ -66,7 +66,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
               val helper = new IncidentP5Helper(incidentType, refDataService)
               val result = helper.incidentCodeRow.futureValue.value
 
-              result.key.value mustBe "Incident code"
+              result.key.value `mustBe` "Incident code"
               result.value.value mustBe
                 "1 - The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
               result.actions must not be defined
@@ -83,8 +83,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
               val helper = new IncidentP5Helper(incidentType, refDataService)
               val result = helper.incidentDescriptionRow.value
 
-              result.key.value mustBe "Description"
-              result.value.value mustBe value
+              result.key.value `mustBe` "Description"
+              result.value.value `mustBe` value
               result.actions must not be defined
           }
         }
@@ -98,8 +98,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.countryRow.futureValue.value
 
-          result.key.value mustBe "Country"
-          result.value.value mustBe "description"
+          result.key.value `mustBe` "Country"
+          result.value.value `mustBe` "description"
           result.actions must not be defined
         }
 
@@ -110,8 +110,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.countryRow.futureValue.value
 
-          result.key.value mustBe "Country"
-          result.value.value mustBe incidentType03.Location.country
+          result.key.value `mustBe` "Country"
+          result.value.value `mustBe` incidentType03.Location.country
           result.actions must not be defined
         }
       }
@@ -124,8 +124,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.identifierTypeRow.futureValue.value
 
-          result.key.value mustBe "Identifier type"
-          result.value.value mustBe "description"
+          result.key.value `mustBe` "Identifier type"
+          result.value.value `mustBe` "description"
           result.actions must not be defined
         }
 
@@ -136,8 +136,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.identifierTypeRow.futureValue.value
 
-          result.key.value mustBe "Identifier type"
-          result.value.value mustBe incidentType03.Location.qualifierOfIdentification
+          result.key.value `mustBe` "Identifier type"
+          result.value.value `mustBe` incidentType03.Location.qualifierOfIdentification
           result.actions must not be defined
         }
       }
@@ -149,8 +149,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val helper = new IncidentP5Helper(incidentType03.copy(Location = locationType), refDataService)
           val result = helper.coordinatesRow.value
 
-          result.key.value mustBe "Coordinates"
-          result.value.value mustBe "(90.1, 90.2)"
+          result.key.value `mustBe` "Coordinates"
+          result.value.value `mustBe` "(90.1, 90.2)"
           result.actions must not be defined
         }
       }
@@ -163,8 +163,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
               val helper                 = new IncidentP5Helper(modifiedIncidentType03, refDataService)
               val result                 = helper.addressRow.value
 
-              result.key.value mustBe "Address"
-              result.value.value mustBe address.toDynamicAddress.toString
+              result.key.value `mustBe` "Address"
+              result.value.value `mustBe` address.toDynamicAddress.toString
               result.actions must not be defined
           }
         }
@@ -182,8 +182,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val helper = new IncidentP5Helper(incidentType, refDataService)
           val result = helper.unLocodeRow.value
 
-          result.key.value mustBe "UN/LOCODE"
-          result.value.value mustBe "UNLocode"
+          result.key.value `mustBe` "UN/LOCODE"
+          result.value.value `mustBe` "UNLocode"
           result.actions must not be defined
         }
       }
@@ -211,8 +211,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val helper   = new IncidentP5Helper(incident, refDataService)
           val result   = helper.incidentInformationSection.futureValue
 
-          result mustBe a[StaticSection]
-          result.rows.size mustBe 7
+          result `mustBe` a[StaticSection]
+          result.rows.size `mustBe` 7
         }
       }
 
@@ -224,19 +224,20 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val helper              = new IncidentP5Helper(incidentType03.copy(TransportEquipment = transportEquipments), refDataService)
           val result              = helper.transportEquipmentsSection
 
-          result mustBe a[StaticSection]
-          result.rows.size mustBe 0
-          result.children.size mustBe 2
+          result `mustBe` a[StaticSection]
+          result.rows.size `mustBe` 0
+          result.children.size `mustBe` 2
 
-          result.children.head mustBe a[AccordionSection]
-          result.children.head.sectionTitle mustBe Some("Transport equipment 1")
-          result.children.head.isOpen mustBe true
+          result.children.head `mustBe` a[AccordionSection]
+          result.children.head.sectionTitle `mustBe` Some("Transport equipment 1")
+          result.children.head.isOpen `mustBe` true
 
-          result.children(1) mustBe a[AccordionSection]
-          result.children(1).sectionTitle mustBe Some("Transport equipment 2")
-          result.children(1).isOpen mustBe false
+          result.children(1) `mustBe` a[AccordionSection]
+          result.children(1).sectionTitle `mustBe` Some("Transport equipment 2")
+          result.children(1).isOpen `mustBe` false
         }
       }
     }
   }
+
 }

@@ -36,6 +36,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   override val headCells: Seq[HeadCell] =
     Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+
   override val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
 
   override val prefix: String = "departure.ie056.message"
@@ -181,4 +182,5 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
       }
     }
   }
+
 }

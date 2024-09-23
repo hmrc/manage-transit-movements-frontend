@@ -20,7 +20,7 @@ sealed trait Availability
 
 object Availability {
 
-  def apply(ts: Option[Seq[_]]): Availability = ts match {
+  def apply(ts: Option[Seq[?]]): Availability = ts match {
     case Some(value) if value.nonEmpty => NonEmpty
     case Some(_)                       => Empty
     case None                          => Unavailable

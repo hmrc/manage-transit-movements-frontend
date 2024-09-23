@@ -34,11 +34,12 @@ class DepartureMessageRetrievalActionProvider @Inject() (departureP5MessageServi
     format: XMLFormat[B]
   ): ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest] =
     new DepartureMessageRetrievalAction(departureId, messageId, departureP5MessageService)
+
 }
 
-class DepartureMessageRetrievalAction[B](departureId: String, messageId: String, departureP5MessageService: DepartureP5MessageService)(
-  implicit protected val executionContext: ExecutionContext,
-  implicit protected val format: XMLFormat[B]
+class DepartureMessageRetrievalAction[B](departureId: String, messageId: String, departureP5MessageService: DepartureP5MessageService)(implicit
+  protected val executionContext: ExecutionContext,
+  protected val format: XMLFormat[B]
 ) extends ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest] {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest[A]] = {
@@ -55,4 +56,5 @@ class DepartureMessageRetrievalAction[B](departureId: String, messageId: String,
       refNumbers
     )
   }
+
 }

@@ -24,7 +24,7 @@
         button: Button
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("departure.drafts.dashboard.draftLocked.title"),

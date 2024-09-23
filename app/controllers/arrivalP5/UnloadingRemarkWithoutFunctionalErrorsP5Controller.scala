@@ -28,6 +28,7 @@ import views.html.arrivalP5.UnloadingRemarkWithoutFunctionalErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import generated.Generated_CC057CTypeFormat
 
 class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -71,4 +72,5 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)) {
       _ => Redirect(config.p5UnloadingStart(arrivalId, messageId))
     }
+
 }

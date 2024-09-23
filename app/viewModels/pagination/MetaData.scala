@@ -40,4 +40,5 @@ object MetaData {
 
     MetaData(from, to, totalNumberOfMovements, currentPage, totalNumberOfPages)
   }
+
 }

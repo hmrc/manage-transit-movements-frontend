@@ -181,4 +181,5 @@ class GuaranteeRejectedNotAmendableP5ViewSpec extends TableViewBehaviours with G
     }
 
   }
+
 }

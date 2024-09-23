@@ -47,6 +47,7 @@ object CancellationNotificationErrorsP5ViewModel {
       customsOffice: Either[String, CustomsOffice]
     ): CancellationNotificationErrorsP5ViewModel =
       CancellationNotificationErrorsP5ViewModel(lrn, customsOffice)
+
   }
 
 }

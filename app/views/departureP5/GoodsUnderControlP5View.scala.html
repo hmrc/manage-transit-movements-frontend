@@ -29,7 +29,7 @@ button: Button,
 formHelper: FormWithCSRF
 )
 
-@(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[_], messages: Messages)
+@(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[?], messages: Messages)
 
     @mainTemplate(
         title = goodsUnderControlP5ViewModel.title,

@@ -47,4 +47,5 @@ object ViewDepartureP5 {
       actions = departureStatus.actions
     )
   }
+
 }

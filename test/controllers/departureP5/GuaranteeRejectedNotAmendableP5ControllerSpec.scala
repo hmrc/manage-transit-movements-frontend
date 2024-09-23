@@ -83,4 +83,5 @@ class GuaranteeRejectedNotAmendableP5ControllerSpec extends SpecBase with AppWit
       }
     }
   }
+
 }

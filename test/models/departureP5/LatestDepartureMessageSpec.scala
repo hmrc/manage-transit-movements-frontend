@@ -77,7 +77,7 @@ class LatestDepartureMessageSpec extends SpecBase {
 
       val result = json.validate[LatestDepartureMessage].asOpt.value
 
-      result mustBe expectedResult
+      result `mustBe` expectedResult
     }
 
     "must deserialize and sort by date and time" in {
@@ -131,7 +131,7 @@ class LatestDepartureMessageSpec extends SpecBase {
 
       val result = json.validate[LatestDepartureMessage].asOpt.value
 
-      result mustBe expectedResult
+      result `mustBe` expectedResult
     }
 
     "must not deserialize when empty list" in {
@@ -145,9 +145,9 @@ class LatestDepartureMessageSpec extends SpecBase {
              |""".stripMargin
         )
 
-      val result = json.validate[LatestDepartureMessage].leftSideValue
+      val result = json.validate[LatestDepartureMessage].leftSide
 
-      result.isError mustBe true
+      result.isError `mustBe` true
     }
 
     "must not deserialize when no IE015 is found" in {
@@ -182,9 +182,10 @@ class LatestDepartureMessageSpec extends SpecBase {
              |""".stripMargin
         )
 
-      val result = json.validate[LatestDepartureMessage].leftSideValue
+      val result = json.validate[LatestDepartureMessage].leftSide
 
-      result.isError mustBe true
+      result.isError `mustBe` true
     }
   }
+
 }

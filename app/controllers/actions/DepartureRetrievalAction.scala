@@ -31,6 +31,7 @@ class DepartureRetrievalActionProvider @Inject() (
 
   def apply(departureId: String): ActionTransformer[IdentifierRequest, DepartureRetrievalRequest] =
     new DepartureRetrievalAction(departureId, departureP5MessageService)
+
 }
 
 class DepartureRetrievalAction(departureId: String, departureP5MessageService: DepartureP5MessageService)(implicit
@@ -44,4 +45,5 @@ class DepartureRetrievalAction(departureId: String, departureP5MessageService: D
       .getDepartureReferenceNumbers(departureId)
       .map(DepartureRetrievalRequest(request, request.eoriNumber, _))
   }
+
 }

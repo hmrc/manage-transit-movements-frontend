@@ -45,4 +45,5 @@ class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with G
     expectedText = "Make another departure declaration",
     expectedHref = frontendAppConfig.p5Departure
   )
+
 }

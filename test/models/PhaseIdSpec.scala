@@ -28,19 +28,20 @@ class PhaseIdSpec extends SpecBase {
       "when NCTS5.1" - {
         "with a space" in {
           val result = PhaseIDtype.fromString(" NCTS5.1", namespaceBinding)
-          result mustBe NCTS5u461
+          result `mustBe` NCTS5u461
         }
 
         "without a space" in {
           val result = PhaseIDtype.fromString("NCTS5.1", namespaceBinding)
-          result mustBe NCTS5u461Value
+          result `mustBe` NCTS5u461Value
         }
       }
 
       "when NCTS5.0" in {
         val result = PhaseIDtype.fromString("NCTS5.0", namespaceBinding)
-        result mustBe NCTS5u460
+        result `mustBe` NCTS5u460
       }
     }
   }
+
 }

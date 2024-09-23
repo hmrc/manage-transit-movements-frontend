@@ -50,4 +50,5 @@ object ViewArrivalP5 {
       actions = arrivalStatus.actions
     )
   }
+
 }

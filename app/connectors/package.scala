@@ -22,6 +22,7 @@ package object connectors {
 
     implicit val rawHttpResponseHttpReads: HttpReads[HttpResponse] =
       (_: String, _: String, response: HttpResponse) => response
+
   }
 
 }

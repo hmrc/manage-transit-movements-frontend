@@ -63,7 +63,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
             val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-            result.futureValue.status mustBe 200
+            result.futureValue.status `mustBe` 200
           }
         }
 
@@ -84,7 +84,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
             val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-            result.futureValue.status mustBe genErrorResponse
+            result.futureValue.status `mustBe` genErrorResponse
           }
         }
       }
@@ -106,7 +106,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
             val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-            result.futureValue.status mustBe 200
+            result.futureValue.status `mustBe` 200
           }
         }
 
@@ -127,7 +127,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
             val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-            result.futureValue.status mustBe genErrorResponse
+            result.futureValue.status `mustBe` genErrorResponse
           }
         }
       }
@@ -153,7 +153,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
               val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-              result.futureValue.status mustBe 200
+              result.futureValue.status `mustBe` 200
             }
           }
 
@@ -174,7 +174,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
               val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-              result.futureValue.status mustBe genErrorResponse
+              result.futureValue.status `mustBe` genErrorResponse
             }
           }
         }
@@ -195,7 +195,7 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
               val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-              result.futureValue.status mustBe 200
+              result.futureValue.status `mustBe` 200
             }
           }
 
@@ -216,11 +216,12 @@ class ManageDocumentsConnectorSpec extends SpecBase with WireMockServerHandler w
 
               val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-              result.futureValue.status mustBe genErrorResponse
+              result.futureValue.status `mustBe` genErrorResponse
             }
           }
         }
       }
     }
   }
+
 }

@@ -26,7 +26,7 @@
     formHelper: FormWithCSRF
 )
 
-@(viewModel: DepartureNotCancelledP5ViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(viewModel: DepartureNotCancelledP5ViewModel)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
     @mainTemplate(
         title = viewModel.title,

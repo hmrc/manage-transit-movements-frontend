@@ -35,6 +35,7 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
 
   override val headCells: Seq[HeadCell] =
     Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+
   val tableRows: Seq[TableRow]       = arbitrary[Seq[TableRow]].sample.value
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
@@ -138,4 +139,5 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
     val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, Some("mrn")))
     assertRenderedById(doc, "mrn")
   }
+
 }

@@ -235,5 +235,7 @@ trait ModelGenerators {
       )
     }
   }
+
 }
+
 // scalastyle:on magic.number

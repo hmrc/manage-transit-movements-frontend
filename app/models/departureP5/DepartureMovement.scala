@@ -37,6 +37,7 @@ object DepartureMovement {
         (__ \ "movementReferenceNumber").readNullable[String] and
         (__ \ "localReferenceNumber").read[String] and
         (__ \ "updated").read[LocalDateTime]
-    )(DepartureMovement.apply _)
+    )(DepartureMovement.apply)
   }
+
 }

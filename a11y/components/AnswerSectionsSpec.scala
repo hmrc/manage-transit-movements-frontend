@@ -39,4 +39,5 @@ class AnswerSectionsSpec extends A11ySpecBase {
       content.toString() must passAccessibilityChecks
     }
   }
+
 }

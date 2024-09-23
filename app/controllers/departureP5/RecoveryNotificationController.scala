@@ -26,6 +26,7 @@ import views.html.departureP5.RecoveryNotificationView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC035CTypeFormat
 
 class RecoveryNotificationController @Inject() (
   override val messagesApi: MessagesApi,
@@ -43,4 +44,5 @@ class RecoveryNotificationController @Inject() (
       implicit request =>
         Ok(view(viewModelProvider.apply(request.messageData), request.referenceNumbers.localReferenceNumber))
     }
+
 }

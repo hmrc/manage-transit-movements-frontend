@@ -29,7 +29,7 @@
     helpdeskLink: HelpdeskLink
 )
 
-@(viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel, arrivalId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel, arrivalId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
     title = viewModel.title,

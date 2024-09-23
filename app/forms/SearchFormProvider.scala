@@ -36,6 +36,7 @@ trait SearchFormProvider extends Mappings {
           regexp(regex.toString(), s"$prefix.search.form.value.invalid")
         )
     )
+
 }
 
 class DeparturesSearchFormProvider extends SearchFormProvider {

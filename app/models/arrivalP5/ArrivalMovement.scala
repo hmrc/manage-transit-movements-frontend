@@ -31,6 +31,7 @@ object ArrivalMovement {
       (__ \ "id").read[String] and
         (__ \ "movementReferenceNumber").read[String] and
         (__ \ "updated").read[LocalDateTime]
-    )(ArrivalMovement.apply _)
+    )(ArrivalMovement.apply)
   }
+
 }

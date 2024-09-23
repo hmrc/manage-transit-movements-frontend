@@ -51,7 +51,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
             val result = helper.buildLRNRow
 
-            result mustBe None
+            result `mustBe` None
         }
       }
 
@@ -85,7 +85,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
             val result = helper.buildMRNRow
 
-            result mustBe None
+            result `mustBe` None
         }
       }
 
@@ -139,7 +139,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
             val result = helper.documentSection()
 
-            result mustBe Seq.empty
+            result `mustBe` Seq.empty
         }
       }
 
@@ -173,9 +173,10 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
             val seqSummaryRow = Seq(StaticSection(Some("Control information 1"), firstRow), StaticSection(Some("Control information 2"), secondRow))
 
-            result mustBe seqSummaryRow
+            result `mustBe` seqSummaryRow
         }
       }
     }
   }
+
 }

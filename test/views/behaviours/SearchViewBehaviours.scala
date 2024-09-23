@@ -52,14 +52,14 @@ trait SearchViewBehaviours[T <: ViewMovement] extends InputTextViewBehaviours[St
         "when there are no results" in {
           val doc = parseView(viewWithSpecificSearchResults(Nil, 0, tooManyResults = false))
           val p   = doc.getElementById("no-results-found")
-          p.text() mustBe "No results found"
+          p.text() `mustBe` "No results found"
         }
 
         "when there is a single result" in {
           val doc = parseView(viewWithSpecificSearchResults(dataRows, 1, tooManyResults = false))
           val p   = doc.getElementById("results-found")
-          p.text() mustBe s"Showing 1 result matching $referenceNumber."
-          boldWords(p) mustBe Seq("1")
+          p.text() `mustBe` s"Showing 1 result matching $referenceNumber."
+          boldWords(p) `mustBe` Seq("1")
         }
 
         "when there are multiple results" in {
@@ -67,8 +67,8 @@ trait SearchViewBehaviours[T <: ViewMovement] extends InputTextViewBehaviours[St
             retrieved =>
               val doc = parseView(viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults = false))
               val p   = doc.getElementById("results-found")
-              p.text() mustBe s"Showing $retrieved results matching $referenceNumber."
-              boldWords(p) mustBe Seq(retrieved.toString)
+              p.text() `mustBe` s"Showing $retrieved results matching $referenceNumber."
+              boldWords(p) `mustBe` Seq(retrieved.toString)
           }
         }
 
@@ -77,8 +77,8 @@ trait SearchViewBehaviours[T <: ViewMovement] extends InputTextViewBehaviours[St
             retrieved =>
               val doc = parseView(viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults = true))
               val p   = doc.getElementById("results-found")
-              p.text() mustBe s"Showing $retrieved results matching $referenceNumber. There are too many results. Please refine your search."
-              boldWords(p) mustBe Seq(retrieved.toString)
+              p.text() `mustBe` s"Showing $retrieved results matching $referenceNumber. There are too many results. Please refine your search."
+              boldWords(p) `mustBe` Seq(retrieved.toString)
           }
         }
       }

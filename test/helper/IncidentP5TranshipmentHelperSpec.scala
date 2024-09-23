@@ -53,8 +53,8 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
           val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.registeredCountryRow.futureValue.value
 
-          result.key.value mustBe "Registered country"
-          result.value.value mustBe "description"
+          result.key.value `mustBe` "Registered country"
+          result.value.value `mustBe` "description"
           result.actions must not be defined
         }
 
@@ -65,8 +65,8 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
           val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.registeredCountryRow.futureValue.value
 
-          result.key.value mustBe "Registered country"
-          result.value.value mustBe transhipment.TransportMeans.nationality
+          result.key.value `mustBe` "Registered country"
+          result.value.value `mustBe` transhipment.TransportMeans.nationality
           result.actions must not be defined
         }
       }
@@ -79,8 +79,8 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
           val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.identificationTypeRow.futureValue.value
 
-          result.key.value mustBe "Identification type"
-          result.value.value mustBe "description"
+          result.key.value `mustBe` "Identification type"
+          result.value.value `mustBe` "description"
           result.actions must not be defined
         }
 
@@ -91,8 +91,8 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
           val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.identificationTypeRow.futureValue.value
 
-          result.key.value mustBe "Identification type"
-          result.value.value mustBe transhipment.TransportMeans.typeOfIdentification
+          result.key.value `mustBe` "Identification type"
+          result.value.value `mustBe` transhipment.TransportMeans.typeOfIdentification
           result.actions must not be defined
         }
       }
@@ -101,8 +101,8 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
         val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
         val result = helper.identificationRow.value
 
-        result.key.value mustBe "Identification"
-        result.value.value mustBe transhipment.TransportMeans.identificationNumber
+        result.key.value `mustBe` "Identification"
+        result.value.value `mustBe` transhipment.TransportMeans.identificationNumber
         result.actions must not be defined
       }
 
@@ -114,12 +114,13 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
           val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.replacementMeansOfTransportSection.futureValue
 
-          result mustBe a[StaticSection]
-          result.sectionTitle.get mustBe "Replacement means of transport"
-          result.rows.size mustBe 3
+          result `mustBe` a[StaticSection]
+          result.sectionTitle.get `mustBe` "Replacement means of transport"
+          result.rows.size `mustBe` 3
         }
       }
 
     }
   }
+
 }

@@ -43,6 +43,7 @@ object UnloadingRemarkWithoutFunctionalErrorsP5ViewModel {
 
     def apply(mrn: String, customsOffice: Either[String, CustomsOffice]): UnloadingRemarkWithoutFunctionalErrorsP5ViewModel =
       UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(mrn, customsOffice)
+
   }
 
 }

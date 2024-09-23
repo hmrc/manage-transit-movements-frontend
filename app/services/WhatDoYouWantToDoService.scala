@@ -43,4 +43,5 @@ class WhatDoYouWantToDoService @Inject() (
     for {
       draftsAvailability <- departureDraftsP5Connector.getDraftDeparturesAvailability()
     } yield Feature(draftsAvailability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
+
 }

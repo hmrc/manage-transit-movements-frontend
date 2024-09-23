@@ -43,4 +43,5 @@ class SessionExpiredControllerSpec extends SpecBase {
       redirectLocation(result).value mustEqual routes.WhatDoYouWantToDoController.onPageLoad().url
     }
   }
+
 }

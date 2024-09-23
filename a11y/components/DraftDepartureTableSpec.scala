@@ -41,4 +41,5 @@ class DraftDepartureTableSpec extends A11ySpecBase {
       }
     }
   }
+
 }

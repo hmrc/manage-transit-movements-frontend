@@ -29,6 +29,7 @@ import views.html.arrivalP5.UnloadingRemarkWithFunctionalErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import generated.Generated_CC057CTypeFormat
 
 class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -73,4 +74,5 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
     (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)) {
       _ => Redirect(config.p5UnloadingStart(arrivalId, messageId))
     }
+
 }

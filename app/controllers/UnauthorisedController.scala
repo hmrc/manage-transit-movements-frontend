@@ -32,4 +32,5 @@ class UnauthorisedController @Inject() (
     implicit request =>
       Ok(view())
   }
+
 }

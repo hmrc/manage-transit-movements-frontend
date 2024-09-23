@@ -145,4 +145,5 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
       }
     }
   }
+
 }

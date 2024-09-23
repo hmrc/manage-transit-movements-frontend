@@ -168,7 +168,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
           totalCount = 2
         )
 
-        connector.getAllMovements().futureValue mustBe Some(expectedResult)
+        connector.getAllMovements().futureValue `mustBe` Some(expectedResult)
       }
 
       "must return empty DepartureMovements when 404 is returned" in {
@@ -178,7 +178,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             .willReturn(aResponse().withStatus(404))
         )
 
-        connector.getAllMovements().futureValue mustBe Some(DepartureMovements(Seq.empty, 0))
+        connector.getAllMovements().futureValue `mustBe` Some(DepartureMovements(Seq.empty, 0))
       }
 
       "must return None when an error is returned" in {
@@ -189,7 +189,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                 .willReturn(aResponse().withStatus(error))
             )
 
-            connector.getAllMovements().futureValue mustBe None
+            connector.getAllMovements().futureValue `mustBe` None
         }
       }
     }
@@ -245,7 +245,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             totalCount = 1
           )
 
-          connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue mustBe Some(expectedResult)
+          connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue `mustBe` Some(expectedResult)
         }
       }
 
@@ -268,7 +268,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
             totalCount = 1
           )
 
-          connector.getAllMovementsForSearchQuery(1, 20, None).futureValue mustBe Some(expectedResult)
+          connector.getAllMovementsForSearchQuery(1, 20, None).futureValue `mustBe` Some(expectedResult)
         }
       }
     }
@@ -311,7 +311,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getAvailability().futureValue mustBe Availability.NonEmpty
+          connector.getAvailability().futureValue `mustBe` Availability.NonEmpty
         }
       }
 
@@ -334,7 +334,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getAvailability().futureValue mustBe Availability.Empty
+          connector.getAvailability().futureValue `mustBe` Availability.Empty
         }
       }
 
@@ -347,7 +347,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
                   .willReturn(aResponse().withStatus(error))
               )
 
-              connector.getAvailability().futureValue mustBe Availability.Unavailable
+              connector.getAvailability().futureValue `mustBe` Availability.Unavailable
           }
         }
       }
@@ -378,7 +378,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         val expectedResult = DepartureReferenceNumbers("DEF456", Some("ABC123"))
 
-        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustBe expectedResult
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue `mustBe` expectedResult
       }
 
       "must return departure reference numbers when MRN is not defined" in {
@@ -403,7 +403,7 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
 
         val expectedResult = DepartureReferenceNumbers("DEF456", None)
 
-        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustBe expectedResult
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue `mustBe` expectedResult
       }
     }
 

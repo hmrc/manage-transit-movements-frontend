@@ -50,4 +50,5 @@ class LocalReferenceNumberSpec extends AnyFreeSpec with Generators with Matchers
       }
     }
   }
+
 }

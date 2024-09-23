@@ -44,7 +44,7 @@ class DepartureMessageSpec extends SpecBase {
           |}
           |""".stripMargin)
 
-    json.as[DepartureMessage] mustBe DepartureMessage(
+    json.as[DepartureMessage] `mustBe` DepartureMessage(
       messageId = "6445005176e4e834",
       received = LocalDateTime.of(2023, 4, 23, 9, 54, 25),
       messageType = DepartureMessageType.RejectedByOfficeOfDeparture

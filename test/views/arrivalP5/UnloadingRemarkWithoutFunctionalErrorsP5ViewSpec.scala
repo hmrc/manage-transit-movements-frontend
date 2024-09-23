@@ -52,4 +52,5 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewSpec extends ViewBehaviours {
     expectedText = "View arrival notifications",
     expectedHref = controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
   )
+
 }

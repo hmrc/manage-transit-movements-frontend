@@ -76,5 +76,7 @@ object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
       val multipleErrors = functionalErrors.length > 1
       helper.tableRows().map(UnloadingRemarkWithFunctionalErrorsP5ViewModel(_, mrn, multipleErrors))
     }
+
   }
+
 }

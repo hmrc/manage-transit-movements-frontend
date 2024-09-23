@@ -40,4 +40,5 @@ trait QuestionViewBehaviours[T] extends ViewBehaviours with ErrorSummaryViewBeha
       title must startWith("Error: ")
     }
   }
+
 }

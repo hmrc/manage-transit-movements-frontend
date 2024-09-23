@@ -96,4 +96,5 @@ class IsDepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultM
       }
     }
   }
+
 }

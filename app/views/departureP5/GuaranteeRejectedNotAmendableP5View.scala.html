@@ -31,7 +31,7 @@
     button: Button
 )
 
-@(viewModel: GuaranteeRejectedNotAmendableP5ViewModel, departureId: String, messageId: String)(implicit request: Request[_], messages: Messages)
+@(viewModel: GuaranteeRejectedNotAmendableP5ViewModel, departureId: String, messageId: String)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("guarantee.rejected.message.notAmendable.title"),

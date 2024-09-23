@@ -26,10 +26,10 @@
 )
 
 @(
-    form: Form[_],
+    form: Form[?],
     action: Call,
     label: String
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @formHelper(action = action, Symbol("autoComplete") -> "off") {
 

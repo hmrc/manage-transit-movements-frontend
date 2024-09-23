@@ -56,6 +56,7 @@ object Sort {
       case Ascending  => Descending
       case Descending => Ascending
     }
+
   }
 
   object Order {
@@ -71,6 +72,7 @@ object Sort {
       override def arg(implicit messages: Messages): String = messages("site.descending")
       override def toString: String                         = "dsc"
     }
+
   }
 
   sealed trait Field {
@@ -91,6 +93,7 @@ object Sort {
       override def toString: String                                = "createdAt"
       override def sortHeader(implicit messages: Messages): String = messages("departure.drafts.dashboard.table.daysToComplete.hidden")
     }
+
   }
 
   case object SortByLRNAsc extends Sort {

@@ -71,4 +71,5 @@ class IncidentP5ViewSpec extends DetailsListViewBehaviours with Generators {
         behave like pageWithContent("span", sectionTitle)
     })
   }
+
 }

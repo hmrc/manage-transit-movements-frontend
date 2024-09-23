@@ -168,4 +168,5 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
     }
 
   }
+
 }

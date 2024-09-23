@@ -33,6 +33,7 @@ package object models {
 
     def removeObject(path: JsPath): JsResult[JsObject] =
       jsObject.remove(path).flatMap(_.validate[JsObject])
+
   }
 
   implicit class RichJsValue(jsValue: JsValue) {
@@ -105,7 +106,6 @@ package object models {
           val updatedJsArray = valueToRemoveFrom.value.slice(0, index) ++ valueToRemoveFrom.value.slice(index + 1, valueToRemoveFrom.value.size)
           JsSuccess(JsArray(updatedJsArray))
         case valueToRemoveFrom: JsArray => JsError(s"array index out of bounds: $index, $valueToRemoveFrom")
-        case _                          => JsError(s"cannot set an index on $valueToRemoveFrom")
       }
     }
 
@@ -121,7 +121,6 @@ package object models {
       }
     }
 
-    @nowarn("msg=Exhaustivity analysis reached max recursion depth, not all missing cases are reported.")
     @nowarn("msg=match may not be exhaustive")
     // scalastyle:off cyclomatic.complexity
     def remove(path: JsPath): JsResult[JsValue] =
@@ -136,7 +135,7 @@ package object models {
             .optionNoError(Reads.at[JsValue](JsPath(first :: Nil)))
             .reads(oldValue)
             .flatMap {
-              opt: Option[JsValue] =>
+              (opt: Option[JsValue]) =>
                 opt
                   .map(JsSuccess(_))
                   .getOrElse {
@@ -158,19 +157,22 @@ package object models {
             }
       }
     // scalastyle:on cyclomatic.complexity
+
   }
 
   implicit class RichLocalDateTime(localDateTime: LocalDateTime) {
 
-    /**
-      * Converts a UTC time to the time at the system default time zone
-      * @param clock implicitly bound as `systemDefaultZone()` in Module
-      * @return the time at the time zone as set by `clock`
+    /** Converts a UTC time to the time at the system default time zone
+      * @param clock
+      *   implicitly bound as `systemDefaultZone()` in Module
+      * @return
+      *   the time at the time zone as set by `clock`
       */
     def toSystemDefaultTime(implicit clock: Clock): LocalDateTime = {
       val utcTime = localDateTime.atZone(ZoneId.of("UTC"))
       utcTime.withZoneSameInstant(clock.getZone).toLocalDateTime
     }
+
   }
 
   implicit def nonEmptyListReads[A: Reads]: Reads[NonEmptyList[A]] =
@@ -187,6 +189,7 @@ package object models {
     def informationRequested: Boolean =
       value.RequestedDocument.nonEmpty ||
         value.TransitOperation.notificationType == AdditionalDocumentsRequest
+
   }
 
   implicit class RichCC056CType(value: CC056CType) {
@@ -196,12 +199,14 @@ package object models {
 
     def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] =
       value.FunctionalError.pagedFunctionalErrors(page, paginationAppConfig.departuresNumberOfErrorsPerPage)
+
   }
 
   implicit class RichCC057CType(value: CC057CType) {
 
     def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] =
       value.FunctionalError.pagedFunctionalErrors(page, paginationAppConfig.arrivalsNumberOfErrorsPerPage)
+
   }
 
   implicit class RichFunctionalErrors(value: Seq[FunctionalErrorType04]) {
@@ -212,6 +217,7 @@ package object models {
         .sortBy(_.errorCode.toString)
         .slice(start, start + numberOfErrorsPerPage)
     }
+
   }
 
   implicit class RichCC015Type(value: CC015CType) {
@@ -231,5 +237,7 @@ package object models {
       city = value.city,
       postalCode = value.postcode
     )
+
   }
+
 }

@@ -111,4 +111,5 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
       }
     }
   }
+
 }

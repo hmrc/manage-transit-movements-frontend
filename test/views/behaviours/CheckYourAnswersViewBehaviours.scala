@@ -60,4 +60,5 @@ trait CheckYourAnswersViewBehaviours extends SummaryListViewBehaviours with Gene
       }
     }
   }
+
 }

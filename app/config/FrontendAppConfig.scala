@@ -77,7 +77,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val apiResults: Long = configuration.get[Long]("microservice.services.common-transit-convention-traders.count")
 
-  def mailto(implicit request: Request[_], messages: Messages): String = {
+  def mailto(implicit request: Request[?], messages: Messages): String = {
     val subject = messages("site.email.subject")
     val body = {
       val newLine      = "%0D%0A"
@@ -95,4 +95,5 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
     s"mailto:$feedbackEmail?subject=$subject&body=$body"
   }
+
 }

@@ -42,16 +42,16 @@ trait ViewSpecAssertions extends ViewSpecGetters {
   }
 
   def assertElementContainsText(element: Element, expectedText: String): Assertion =
-    element.text() mustBe expectedText
+    element.text() `mustBe` expectedText
 
   def assertElementIncludesText(element: Element, expectedText: String): Assertion =
     element.text() must include(expectedText)
 
   def assertElementContainsHref(element: Element, expectedHref: String): Assertion =
-    getElementHref(element) mustBe expectedHref
+    getElementHref(element) `mustBe` expectedHref
 
   def assertElementContainsId(element: Element, expectedId: String): Assertion =
-    element.id() mustBe expectedId
+    element.id() `mustBe` expectedId
 
   def assertElementExists(elements: Elements, condition: Element => Boolean): Assertion =
     assert(elements.toList.exists(condition))
@@ -72,4 +72,5 @@ trait ViewSpecAssertions extends ViewSpecGetters {
     val element = doc.getElementById(id)
     assertElementContainsText(element, expectedText)
   }
+
 }

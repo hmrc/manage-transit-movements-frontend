@@ -15,6 +15,7 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Table => HTable}
 
 @this(govukTable: GovukTable)
 
@@ -23,7 +24,7 @@
     headCells: Seq[HeadCell]
 )
 
-@govukTable(Table(
+@govukTable(HTable(
     rows = rows,
     head = Some(headCells)
 ))

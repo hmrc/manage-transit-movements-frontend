@@ -50,4 +50,5 @@ class CancellationNotificationErrorsP5ViewSpec extends ViewBehaviours {
     expectedText = "View departure declarations",
     expectedHref = controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
   )
+
 }

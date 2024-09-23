@@ -108,6 +108,7 @@ object IncidentP5ViewModel {
       }
 
     }
+
   }
 
 }

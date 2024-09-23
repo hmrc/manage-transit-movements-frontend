@@ -46,5 +46,7 @@ object Enumerable {
       Writes(
         value => JsString(value.toString)
       )
+
   }
+
 }

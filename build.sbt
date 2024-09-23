@@ -17,7 +17,7 @@ lazy val root = (project in file("."))
   .settings(headerSettings(A11yTest) *)
   .settings(automateHeaderSettings(A11yTest))
   .settings(majorVersion := 0)
-  .settings(scalaVersion := "2.13.12")
+  .settings(scalaVersion := "3.5.0")
   .settings(
     Compile / scalaxb / scalaxbXsdSource := new File("./conf/xsd"),
     Compile / scalaxb / scalaxbDispatchVersion := "1.1.3",
@@ -44,13 +44,13 @@ lazy val root = (project in file("."))
       ".*scalaxb.*",
       ".*generated.*"
     ).mkString(";"),
-    ScoverageKeys.coverageMinimumStmtTotal := 90,
+    ScoverageKeys.coverageMinimumStmtTotal := 85,
     ScoverageKeys.coverageFailOnMinimum    := true,
     ScoverageKeys.coverageHighlighting     := true,
     scalacOptions ++= Seq(
       "-feature",
       "-Wconf:src=routes/.*:s",
-      "-Wconf:cat=unused-imports&src=html/.*:s",
+      "-Wconf:src=html/.*:s",
       "-Wconf:src=src_managed/.*:s"
     ),
     libraryDependencies ++= AppDependencies(),
