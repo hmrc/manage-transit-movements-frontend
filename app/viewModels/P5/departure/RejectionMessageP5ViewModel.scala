@@ -71,6 +71,7 @@ case class RejectionMessageP5ViewModel(
     HeadCell(Text(messages("error.table.pointer"))),
     HeadCell(Text(messages("error.table.attributeValue")))
   )
+
 }
 
 object RejectionMessageP5ViewModel {
@@ -88,5 +89,7 @@ object RejectionMessageP5ViewModel {
 
       helper.tableRows().map(RejectionMessageP5ViewModel(_, lrn, multipleErrors, businessRejectionType))
     }
+
   }
+
 }

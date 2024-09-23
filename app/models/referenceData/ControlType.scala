@@ -26,6 +26,7 @@ case class ControlType(code: String, description: String) {
       case "" => code
       case _  => s"$code - $description"
     }
+
 }
 
 object ControlType {

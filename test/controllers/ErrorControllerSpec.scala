@@ -72,4 +72,5 @@ class ErrorControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
       }
     }
   }
+
 }

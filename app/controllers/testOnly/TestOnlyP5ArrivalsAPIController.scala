@@ -71,4 +71,5 @@ class TestOnlyP5ArrivalsAPIController @Inject() (
         .getMessage(arrivalId, messageId, request.headers)
         .map(Ok(_))
   }
+
 }

@@ -63,5 +63,7 @@ object DepartureCancelledP5ViewModel {
           new DepartureCancelledP5ViewModel(Seq(section), lrn, customsOffice)
       }
     }
+
   }
+
 }

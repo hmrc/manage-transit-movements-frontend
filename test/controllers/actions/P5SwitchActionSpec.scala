@@ -32,6 +32,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with S
     ) {
       _ => Results.Ok
     }
+
   }
 
   "P5 Enabled Action" - {
@@ -43,7 +44,7 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with S
         val controller = new Harness(actionProvider, isOnLegacyEnrolment = false)
         val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe OK
+        status(result) `mustBe` OK
       }
     }
 
@@ -54,9 +55,10 @@ class P5SwitchActionSpec extends SpecBase with AppWithDefaultMockFixtures with S
         val controller = new Harness(actionProvider, isOnLegacyEnrolment = true)
         val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe frontendAppConfig.enrolmentGuidancePage
+        status(result) `mustBe` SEE_OTHER
+        redirectLocation(result).value `mustBe` frontendAppConfig.enrolmentGuidancePage
       }
     }
   }
+
 }

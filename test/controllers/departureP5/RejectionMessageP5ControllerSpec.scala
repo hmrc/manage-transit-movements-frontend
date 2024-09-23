@@ -178,4 +178,5 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       }
     }
   }
+
 }

@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import java.net.URL
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.client.readStreamHttpResponse
 
 class ManageDocumentsConnector @Inject() (
   appConfig: FrontendAppConfig,
@@ -40,7 +41,7 @@ class ManageDocumentsConnector @Inject() (
     val url: URL = url"${appConfig.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
     http
       .get(url)
-      .setHeader(headers: _*)
+      .setHeader(headers*)
       .stream
   }
 
@@ -48,7 +49,8 @@ class ManageDocumentsConnector @Inject() (
     val url: URL = url"${appConfig.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
     http
       .get(url)
-      .setHeader(headers: _*)
+      .setHeader(headers*)
       .stream
   }
+
 }

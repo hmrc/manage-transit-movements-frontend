@@ -48,6 +48,7 @@ object DepartureDeclarationErrorsP5ViewModel {
 
     def apply(lrn: String, mrn: Option[String], businessRejectionType: DepartureBusinessRejectionType): DepartureDeclarationErrorsP5ViewModel =
       DepartureDeclarationErrorsP5ViewModel(lrn, mrn, businessRejectionType)
+
   }
 
 }

@@ -46,4 +46,5 @@ class GoodsNotReleasedP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
     expectedText = "New Computerised Transit System helpdesk",
     expectedHref = frontendAppConfig.nctsHelpdeskUrl
   )
+
 }

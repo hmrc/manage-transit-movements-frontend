@@ -35,7 +35,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
 
         val result: String = viewModelProvider.customsOfficeContent
 
-        result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover on 00443243543."
+        result `mustBe` "You must share the requested documentation with the office of destination. Contact Customs at Dover on 00443243543."
       }
       "When Customs Office name not available and telephone exists" in {
 
@@ -44,7 +44,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
 
         val result: String = viewModelProvider.customsOfficeContent
 
-        result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001 on 00443243543."
+        result `mustBe` "You must share the requested documentation with the office of destination. Contact Customs office ID001 on 00443243543."
       }
       "When Customs Office name available and telephone does not exist" in {
 
@@ -53,7 +53,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
 
         val result: String = viewModelProvider.customsOfficeContent
 
-        result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover."
+        result `mustBe` "You must share the requested documentation with the office of destination. Contact Customs at Dover."
       }
       "When Customs Office name available and telephone is None" in {
 
@@ -62,7 +62,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
 
         val result: String = viewModelProvider.customsOfficeContent
 
-        result mustBe "You must share the requested documentation with the office of destination. Contact Customs at Dover."
+        result `mustBe` "You must share the requested documentation with the office of destination. Contact Customs at Dover."
       }
       "When Customs Office name not available and telephone does not exist" in {
 
@@ -71,7 +71,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
 
         val result: String = viewModelProvider.customsOfficeContent
 
-        result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001."
+        result `mustBe` "You must share the requested documentation with the office of destination. Contact Customs office ID001."
       }
       "When Customs Office name not available and telephone is None" in {
 
@@ -80,7 +80,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
 
         val result: String = viewModelProvider.customsOfficeContent
 
-        result mustBe "You must share the requested documentation with the office of destination. Contact Customs office ID001."
+        result `mustBe` "You must share the requested documentation with the office of destination. Contact Customs office ID001."
       }
       "When Customs Office not fetched from reference data service" in {
 
@@ -88,10 +88,11 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
 
         val result: String = viewModelProvider.customsOfficeContent
 
-        result mustBe "You must share the requested documentation with the office of destination. Contact Customs office GB000060."
+        result `mustBe` "You must share the requested documentation with the office of destination. Contact Customs office GB000060."
       }
 
     }
 
   }
+
 }

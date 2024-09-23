@@ -37,7 +37,7 @@ trait TableViewBehaviours extends ViewBehaviours {
               "must contain correct header " in {
                 val value: String        = headerRow.text()
                 val expectedText: String = headCells(headerIndex).content.asHtml.toString()
-                value mustBe expectedText
+                value `mustBe` expectedText
               }
             }
         }
@@ -50,11 +50,12 @@ trait TableViewBehaviours extends ViewBehaviours {
               "must contain correct row " in {
                 val value: String        = tableRow.text()
                 val expectedText: String = tableRows(tableRowIndex).content.asHtml.toString()
-                value mustBe expectedText
+                value `mustBe` expectedText
               }
             }
         }
 
       }
     }
+
 }

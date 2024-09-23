@@ -39,4 +39,5 @@ class DashboardViewSpec extends A11ySpecBase {
       }
     }
   }
+
 }

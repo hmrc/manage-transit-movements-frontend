@@ -38,11 +38,11 @@ trait RadioViewBehaviours[T] extends QuestionViewBehaviours[T] {
 
         "must contain a legend for the question" in {
           val legends = getElementsByTag(doc, "legend")
-          legends.size mustBe 1
+          legends.size `mustBe` 1
           if (legendIsHeading) {
-            assertElementIncludesText(legends.first(), messages(s"$prefix.heading", args: _*))
+            assertElementIncludesText(legends.first(), messages(s"$prefix.heading", args*))
           } else {
-            assertElementIncludesText(legends.first(), messages(s"$prefix.label", args: _*))
+            assertElementIncludesText(legends.first(), messages(s"$prefix.label", args*))
             assert(legends.first().hasClass("govuk-visually-hidden") != legendIsVisible)
           }
 
@@ -120,4 +120,5 @@ trait RadioViewBehaviours[T] extends QuestionViewBehaviours[T] {
         assertElementDoesNotExist(doc, "govuk-hint")
       }
     }
+
 }

@@ -96,6 +96,7 @@ object IncidentsDuringTransitP5ViewModel {
         sections
       )
     }
+
   }
 
 }

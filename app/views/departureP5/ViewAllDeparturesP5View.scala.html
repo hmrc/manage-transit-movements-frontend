@@ -18,6 +18,7 @@
 @import controllers.departureP5.routes
 @import viewModels.P5.departure.ViewAllDepartureMovementsP5ViewModel
 @import views.html.components.{Heading, MovementsTable, Pagination, Search, Status}
+@import controllers.routes.{WhatDoYouWantToDoController => WDYWTDController}
 
 @this(
     mainTemplate: MainTemplate,
@@ -32,7 +33,7 @@
 @(
     form: Form[String],
     viewModel: ViewAllDepartureMovementsP5ViewModel
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = viewModel.pageTitle,
@@ -70,7 +71,7 @@
     }
 
     <p class="govuk-body govuk-!-margin-top-3">
-        <a id="go-to-manage-transit-movements" class="govuk-link" href=@WhatDoYouWantToDoController.onPageLoad()>
+        <a id="go-to-manage-transit-movements" class="govuk-link" href=@WDYWTDController.onPageLoad()>
             @messages("viewDepartureDeclarationsP5.link.manage")
         </a>
     </p>

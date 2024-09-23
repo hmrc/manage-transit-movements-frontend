@@ -25,4 +25,5 @@ trait Movements {
     case Some(matched) if matched > 0 => retrieved < matched
     case _                            => false
   }
+
 }

@@ -45,4 +45,5 @@ class WhatDoYouWantToDoController @Inject() (
         view(arrivalsAvailability, departuresAvailability, draftDeparturesAvailability, request.isOnLegacyEnrolment)
       )
   }
+
 }

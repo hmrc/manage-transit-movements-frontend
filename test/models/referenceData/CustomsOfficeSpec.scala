@@ -19,14 +19,38 @@ package models.referenceData
 import base.SpecBase
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsError, Json}
+import play.api.libs.json.{JsError, JsSuccess, Json}
 
 class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "CustomsOffice" - {
 
+    "serialize to JSON" in {
+      val customsOffice = CustomsOffice("ID123", "Customs Office Name", Some("123456789"))
+      val expectedJson = Json.obj(
+        "id"          -> "ID123",
+        "name"        -> "Customs Office Name",
+        "phoneNumber" -> "123456789"
+      )
+
+      val json = Json.toJson(customsOffice)
+      json mustBe expectedJson
+    }
+
+    "deserialize from JSON" in {
+      val json = Json.obj(
+        "id"          -> "ID123",
+        "name"        -> "Customs Office Name",
+        "phoneNumber" -> "123456789"
+      )
+
+      val expectedCustomsOffice = CustomsOffice("ID123", "Customs Office Name", Some("123456789"))
+
+      json.validate[CustomsOffice] mustBe JsSuccess(expectedCustomsOffice)
+    }
+
     "nameAndCode must return correct string" in {
-      CustomsOffice("GB00006", "BOSTON", None).nameAndCode mustBe "BOSTON (GB00006)"
+      CustomsOffice("GB00006", "BOSTON", None).nameAndCode `mustBe` "BOSTON (GB00006)"
     }
 
     "must deserialise" - {
@@ -40,7 +64,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
               |    }
               |""".stripMargin)
 
-          json.as[CustomsOffice] mustBe CustomsOffice("GB00006", "BOSTON", Some("01234567890"))
+          json.as[CustomsOffice] `mustBe` CustomsOffice("GB00006", "BOSTON", Some("01234567890"))
         }
         "without a phone number" in {
           val json = Json.parse("""
@@ -50,7 +74,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
               |    }
               |""".stripMargin)
 
-          json.as[CustomsOffice] mustBe CustomsOffice("GB00006", "BOSTON", None)
+          json.as[CustomsOffice] `mustBe` CustomsOffice("GB00006", "BOSTON", None)
         }
       }
     }
@@ -83,7 +107,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
 
           val result = json.as[List[CustomsOffice]]
 
-          result mustBe List(
+          result `mustBe` List(
             CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", None),
             CustomsOffice("AD000002", "DCNJ PORTA", None),
             CustomsOffice("IT261101", "PASSO NUOVO", None)
@@ -140,7 +164,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
 
           val result = json.as[List[CustomsOffice]]
 
-          result mustBe List(
+          result `mustBe` List(
             CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", None),
             CustomsOffice("AD000002", "DCNJ PORTA", None),
             CustomsOffice("IT261101", "PASSO NUOVO", None)
@@ -158,9 +182,10 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
 
           val result = json.validate[List[CustomsOffice]]
 
-          result mustBe JsError("Expected customs offices to be in a JsArray")
+          result `mustBe` JsError("Expected customs offices to be in a JsArray")
         }
       }
     }
   }
+
 }

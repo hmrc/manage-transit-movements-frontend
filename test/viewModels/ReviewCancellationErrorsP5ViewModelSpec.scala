@@ -57,28 +57,28 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
       val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
       "must return correct section length" in {
-        result.tableRows.length mustBe 1
+        result.tableRows.length `mustBe` 1
       }
       "must return correct title" in {
-        result.title mustBe "Review cancellation errors"
+        result.title `mustBe` "Review cancellation errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Review cancellation errors"
+        result.heading `mustBe` "Review cancellation errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again."
+        result.paragraph1 `mustBe` s"The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix mustBe "Contact the"
-        result.paragraph2Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix mustBe "for help understanding the error (opens in a new tab)."
+        result.paragraph2Prefix `mustBe` "Contact the"
+        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
+        result.paragraph2Suffix `mustBe` "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "View departure declarations"
+        result.hyperlink `mustBe` "View departure declarations"
       }
 
       "must return correct url" in {
-        result.viewDeparturesLink mustBe controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+        result.viewDeparturesLink `mustBe` controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
       }
     }
 
@@ -96,29 +96,30 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
       val result            = viewModelProvider.apply(functionalErrors, lrnString).futureValue
 
       "must return correct rows size" in {
-        result.tableRows.length mustBe 2
+        result.tableRows.length `mustBe` 2
       }
       "must return correct title" in {
-        result.title mustBe "Review cancellation errors"
+        result.title `mustBe` "Review cancellation errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Review cancellation errors"
+        result.heading `mustBe` "Review cancellation errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe s"The office of departure was not able to cancel this declaration. Review the errors - then if you still want to cancel the declaration, try cancelling it again."
+        result.paragraph1 `mustBe` s"The office of departure was not able to cancel this declaration. Review the errors - then if you still want to cancel the declaration, try cancelling it again."
       }
       "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix mustBe "Contact the"
-        result.paragraph2Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix mustBe "for help understanding the errors (opens in a new tab)."
+        result.paragraph2Prefix `mustBe` "Contact the"
+        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
+        result.paragraph2Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "View departure declarations"
+        result.hyperlink `mustBe` "View departure declarations"
       }
 
       "must return correct url" in {
-        result.viewDeparturesLink mustBe controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+        result.viewDeparturesLink `mustBe` controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
       }
     }
   }
+
 }

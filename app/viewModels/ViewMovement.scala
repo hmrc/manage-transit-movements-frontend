@@ -29,4 +29,5 @@ trait ViewMovement {
   val updated: String = updatedTime
     .format(DateTimeFormatter.ofPattern("h:mma"))
     .toLowerCase
+
 }

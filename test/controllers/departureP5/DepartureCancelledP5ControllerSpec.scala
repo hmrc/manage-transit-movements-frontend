@@ -86,4 +86,5 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       }
     }
   }
+
 }

@@ -121,6 +121,7 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
     connector.getInvalidGuaranteeReasons().map(_.toSeq).recover {
       case _ => Seq.empty
     }
+
 }
 
 trait ReferenceDataService {

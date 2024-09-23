@@ -78,10 +78,10 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
           connector.sortDraftDepartures(sortParams = SortByLRNAsc, limit = Limit(limit), skip = Skip(skip))
         val resultsDeparturesUserAnswers: Seq[DepartureUserAnswerSummary] = result.futureValue.value.userAnswers
 
-        resultsDeparturesUserAnswers.head mustBe departuresUserAnswers.head
-        resultsDeparturesUserAnswers(1) mustBe departuresUserAnswers(1)
-        resultsDeparturesUserAnswers(2) mustBe departuresUserAnswers(2)
-        resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
+        resultsDeparturesUserAnswers.head `mustBe` departuresUserAnswers.head
+        resultsDeparturesUserAnswers(1) `mustBe` departuresUserAnswers(1)
+        resultsDeparturesUserAnswers(2) `mustBe` departuresUserAnswers(2)
+        resultsDeparturesUserAnswers(3) `mustBe` departuresUserAnswers(3)
       }
       "must return Departure Summary sorted by LRN descending when given successful response" in {
 
@@ -106,10 +106,10 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
           connector.sortDraftDepartures(SortByLRNDesc, limit = Limit(limit), skip = Skip(skip))
         val resultsDeparturesUserAnswers: Seq[DepartureUserAnswerSummary] = result.futureValue.value.userAnswers
 
-        resultsDeparturesUserAnswers.head mustBe departuresUserAnswers.head
-        resultsDeparturesUserAnswers(1) mustBe departuresUserAnswers(1)
-        resultsDeparturesUserAnswers(2) mustBe departuresUserAnswers(2)
-        resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
+        resultsDeparturesUserAnswers.head `mustBe` departuresUserAnswers.head
+        resultsDeparturesUserAnswers(1) `mustBe` departuresUserAnswers(1)
+        resultsDeparturesUserAnswers(2) `mustBe` departuresUserAnswers(2)
+        resultsDeparturesUserAnswers(3) `mustBe` departuresUserAnswers(3)
       }
       "must return Departure Summary sorted by CreatedAT ascending when given successful response" in {
 
@@ -135,10 +135,10 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
           connector.sortDraftDepartures(SortByCreatedAtAsc, limit = Limit(limit), skip = Skip(skip))
         val resultsDeparturesUserAnswers: Seq[DepartureUserAnswerSummary] = result.futureValue.value.userAnswers
 
-        resultsDeparturesUserAnswers.head mustBe departuresUserAnswers.head
-        resultsDeparturesUserAnswers(1) mustBe departuresUserAnswers(1)
-        resultsDeparturesUserAnswers(2) mustBe departuresUserAnswers(2)
-        resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
+        resultsDeparturesUserAnswers.head `mustBe` departuresUserAnswers.head
+        resultsDeparturesUserAnswers(1) `mustBe` departuresUserAnswers(1)
+        resultsDeparturesUserAnswers(2) `mustBe` departuresUserAnswers(2)
+        resultsDeparturesUserAnswers(3) `mustBe` departuresUserAnswers(3)
       }
       "must return Departure Summary sorted by createdAt descending when given successful response" in {
 
@@ -163,10 +163,10 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
           connector.sortDraftDepartures(SortByCreatedAtDesc, limit = Limit(limit), skip = Skip(skip))
         val resultsDeparturesUserAnswers: Seq[DepartureUserAnswerSummary] = result.futureValue.value.userAnswers
 
-        resultsDeparturesUserAnswers.head mustBe departuresUserAnswers.head
-        resultsDeparturesUserAnswers(1) mustBe departuresUserAnswers(1)
-        resultsDeparturesUserAnswers(2) mustBe departuresUserAnswers(2)
-        resultsDeparturesUserAnswers(3) mustBe departuresUserAnswers(3)
+        resultsDeparturesUserAnswers.head `mustBe` departuresUserAnswers.head
+        resultsDeparturesUserAnswers(1) `mustBe` departuresUserAnswers(1)
+        resultsDeparturesUserAnswers(2) `mustBe` departuresUserAnswers(2)
+        resultsDeparturesUserAnswers(3) `mustBe` departuresUserAnswers(3)
       }
 
       "must return none for 4xx/5xx" in {
@@ -181,7 +181,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
             )
 
             val expectedResult = None
-            connector.sortDraftDepartures(SortByLRNAsc, limit = Limit(limit), skip = Skip(skip)).futureValue mustBe expectedResult
+            connector.sortDraftDepartures(SortByLRNAsc, limit = Limit(limit), skip = Skip(skip)).futureValue `mustBe` expectedResult
         }
       }
     }
@@ -207,7 +207,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
-        connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustBe expectedResult
+        connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value `mustBe` expectedResult
       }
 
       "must return none for 4xx/5xx response" in {
@@ -222,7 +222,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
             )
 
             val expectedResult = None
-            connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue mustBe expectedResult
+            connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue `mustBe` expectedResult
         }
       }
     }
@@ -240,7 +240,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
             )
         )
 
-        connector.deleteDraftDeparture(lrn).futureValue.status mustBe 200
+        connector.deleteDraftDeparture(lrn).futureValue.status `mustBe` 200
       }
 
       "must return 500 on a failed deletion" in {
@@ -252,7 +252,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
             )
         )
 
-        connector.deleteDraftDeparture(lrn).futureValue.status mustBe 500
+        connector.deleteDraftDeparture(lrn).futureValue.status `mustBe` 500
       }
     }
 
@@ -274,7 +274,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
-        connector.getDraftDeparturesAvailability().futureValue mustBe Availability.NonEmpty
+        connector.getDraftDeparturesAvailability().futureValue `mustBe` Availability.NonEmpty
       }
 
       "must return Empty when given a not found response" in {
@@ -286,7 +286,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
-        connector.getDraftDeparturesAvailability().futureValue mustBe Availability.Empty
+        connector.getDraftDeparturesAvailability().futureValue `mustBe` Availability.Empty
       }
 
       "must return unavailable for 4xx/5xx response" in {
@@ -300,7 +300,7 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
                 )
             )
 
-            connector.getDraftDeparturesAvailability().futureValue mustBe Availability.Unavailable
+            connector.getDraftDeparturesAvailability().futureValue `mustBe` Availability.Unavailable
         }
       }
     }
@@ -309,32 +309,33 @@ class DeparturesDraftsP5ConnectorSpec extends SpecBase with WireMockServerHandle
       val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn/lock"
 
       "must return Unlocked when status is Ok (200)" in {
-        server.stubFor(get(urlEqualTo(url)) willReturn aResponse().withStatus(OK))
+        server.stubFor(get(urlEqualTo(url)) `willReturn` aResponse().withStatus(OK))
 
         val result: LockCheck = connector.checkLock(lrn.value).futureValue
 
-        result mustBe LockCheck.Unlocked
+        result `mustBe` LockCheck.Unlocked
       }
 
       "must return Locked when status is Locked (423)" in {
-        server.stubFor(get(urlEqualTo(url)) willReturn aResponse().withStatus(LOCKED))
+        server.stubFor(get(urlEqualTo(url)) `willReturn` aResponse().withStatus(LOCKED))
 
         val result: LockCheck = connector.checkLock(lrn.value).futureValue
 
-        result mustBe LockCheck.Locked
+        result `mustBe` LockCheck.Locked
       }
 
       "return LockCheckFailure for other 4xx/5xx responses" in {
 
         forAll(Gen.choose(400: Int, 599: Int).retryUntil(_ != LOCKED)) {
           errorStatus =>
-            server.stubFor(get(urlEqualTo(url)) willReturn aResponse().withStatus(errorStatus))
+            server.stubFor(get(urlEqualTo(url)) `willReturn` aResponse().withStatus(errorStatus))
 
             val result: LockCheck = connector.checkLock(lrn.value).futureValue
 
-            result mustBe LockCheck.LockCheckFailure
+            result `mustBe` LockCheck.LockCheckFailure
         }
       }
     }
   }
+
 }

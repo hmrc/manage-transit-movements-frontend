@@ -29,7 +29,7 @@
     helpdeskLink: HelpdeskLink
 )
 
-@(viewModel: DepartureDeclarationErrorsP5ViewModel)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(viewModel: DepartureDeclarationErrorsP5ViewModel)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
     title = viewModel.title,

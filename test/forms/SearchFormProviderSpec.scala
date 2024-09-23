@@ -75,4 +75,5 @@ class SearchFormProviderSpec extends StringFieldBehaviours {
       error = FormError(fieldName, "arrivals.search.form.value.invalid", Seq(alphaNumericRegex.regex))
     )
   }
+
 }

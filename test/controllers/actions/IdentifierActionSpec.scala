@@ -45,6 +45,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
         f(request)
         Results.Ok
     }
+
   }
 
   private val mockAuthConnector: AuthConnector                     = mock[AuthConnector]
@@ -122,7 +123,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
+          status(result) `mustBe` SEE_OTHER
           redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
         }
       }
@@ -136,7 +137,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
+          status(result) `mustBe` SEE_OTHER
           redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
         }
       }
@@ -150,8 +151,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -164,8 +165,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -178,8 +179,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -192,8 +193,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -206,8 +207,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -232,8 +233,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -260,8 +261,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -287,8 +288,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedWithGroupAccessController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -314,8 +315,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedWithGroupAccessController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -341,8 +342,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedWithGroupAccessController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -368,8 +369,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedWithGroupAccessController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -388,8 +389,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedWithGroupAccessController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -408,8 +409,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` frontendAppConfig.eccEnrolmentSplashPage
 
           mockPredicateVerification()
         }
@@ -429,8 +430,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` frontendAppConfig.eccEnrolmentSplashPage
 
           mockPredicateVerification()
         }
@@ -457,12 +458,12 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val result = controller
             .onPageLoad {
               request =>
-                request.eoriNumber mustBe "999"
-                request.isOnLegacyEnrolment mustBe true
+                request.eoriNumber `mustBe` "999"
+                request.isOnLegacyEnrolment `mustBe` true
             }
             .apply(fakeRequest)
 
-          status(result) mustBe OK
+          status(result) `mustBe` OK
 
           mockPredicateVerification()
         }
@@ -485,12 +486,12 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val result = controller
             .onPageLoad {
               request =>
-                request.eoriNumber mustBe "456"
-                request.isOnLegacyEnrolment mustBe false
+                request.eoriNumber `mustBe` "456"
+                request.isOnLegacyEnrolment `mustBe` false
             }
             .apply(fakeRequest)
 
-          status(result) mustBe OK
+          status(result) `mustBe` OK
 
           mockPredicateVerification()
         }
@@ -513,12 +514,12 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val result = controller
             .onPageLoad {
               request =>
-                request.eoriNumber mustBe "123"
-                request.isOnLegacyEnrolment mustBe true
+                request.eoriNumber `mustBe` "123"
+                request.isOnLegacyEnrolment `mustBe` true
             }
             .apply(fakeRequest)
 
-          status(result) mustBe OK
+          status(result) `mustBe` OK
 
           mockPredicateVerification()
         }
@@ -541,12 +542,12 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val result = controller
             .onPageLoad {
               request =>
-                request.eoriNumber mustBe "456"
-                request.isOnLegacyEnrolment mustBe false
+                request.eoriNumber `mustBe` "456"
+                request.isOnLegacyEnrolment `mustBe` false
             }
             .apply(fakeRequest)
 
-          status(result) mustBe OK
+          status(result) `mustBe` OK
 
           mockPredicateVerification()
         }
@@ -571,8 +572,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -598,12 +599,12 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val result = controller
             .onPageLoad {
               request =>
-                request.eoriNumber mustBe "456"
-                request.isOnLegacyEnrolment mustBe false
+                request.eoriNumber `mustBe` "456"
+                request.isOnLegacyEnrolment `mustBe` false
             }
             .apply(fakeRequest)
 
-          status(result) mustBe OK
+          status(result) `mustBe` OK
 
           mockPredicateVerification()
         }
@@ -656,7 +657,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
+          status(result) `mustBe` SEE_OTHER
           redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
         }
       }
@@ -670,7 +671,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
+          status(result) `mustBe` SEE_OTHER
           redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
         }
       }
@@ -684,8 +685,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -698,8 +699,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -712,8 +713,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -726,8 +727,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -740,8 +741,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
         }
       }
 
@@ -766,8 +767,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` frontendAppConfig.eccEnrolmentSplashPage
 
           mockPredicateVerification()
         }
@@ -794,8 +795,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -821,8 +822,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedWithGroupAccessController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -848,8 +849,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` frontendAppConfig.eccEnrolmentSplashPage
 
           mockPredicateVerification()
         }
@@ -875,8 +876,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedWithGroupAccessController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -902,8 +903,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` frontendAppConfig.eccEnrolmentSplashPage
 
           mockPredicateVerification()
         }
@@ -922,8 +923,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedWithGroupAccessController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedWithGroupAccessController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -942,8 +943,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` frontendAppConfig.eccEnrolmentSplashPage
 
           mockPredicateVerification()
         }
@@ -963,8 +964,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` frontendAppConfig.eccEnrolmentSplashPage
 
           mockPredicateVerification()
         }
@@ -992,8 +993,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe frontendAppConfig.eccEnrolmentSplashPage
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` frontendAppConfig.eccEnrolmentSplashPage
 
           mockPredicateVerification()
         }
@@ -1016,12 +1017,12 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val result = controller
             .onPageLoad {
               request =>
-                request.eoriNumber mustBe "456"
-                request.isOnLegacyEnrolment mustBe false
+                request.eoriNumber `mustBe` "456"
+                request.isOnLegacyEnrolment `mustBe` false
             }
             .apply(fakeRequest)
 
-          status(result) mustBe OK
+          status(result) `mustBe` OK
 
           mockPredicateVerification()
         }
@@ -1045,8 +1046,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -1069,12 +1070,12 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val result = controller
             .onPageLoad {
               request =>
-                request.eoriNumber mustBe "456"
-                request.isOnLegacyEnrolment mustBe false
+                request.eoriNumber `mustBe` "456"
+                request.isOnLegacyEnrolment `mustBe` false
             }
             .apply(fakeRequest)
 
-          status(result) mustBe OK
+          status(result) `mustBe` OK
 
           mockPredicateVerification()
         }
@@ -1099,8 +1100,8 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
             _ => ()
           )(fakeRequest)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          status(result) `mustBe` SEE_OTHER
+          redirectLocation(result).value `mustBe` routes.UnauthorisedController.onPageLoad().url
 
           mockPredicateVerification()
         }
@@ -1126,12 +1127,12 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
           val result = controller
             .onPageLoad {
               request =>
-                request.eoriNumber mustBe "456"
-                request.isOnLegacyEnrolment mustBe false
+                request.eoriNumber `mustBe` "456"
+                request.isOnLegacyEnrolment `mustBe` false
             }
             .apply(fakeRequest)
 
-          status(result) mustBe OK
+          status(result) `mustBe` OK
 
           mockPredicateVerification()
         }
@@ -1144,6 +1145,7 @@ class IdentifierActionSpec extends SpecBase with AppWithDefaultMockFixtures {
     reset(mockAuthConnector)
     reset(mockEnrolmentStoreConnector)
   }
+
 }
 
 object AuthActionSpec {
@@ -1159,4 +1161,5 @@ class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends 
 
   override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
     Future.failed(exceptionToReturn)
+
 }

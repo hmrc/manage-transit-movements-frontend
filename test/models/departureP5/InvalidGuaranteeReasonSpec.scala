@@ -34,7 +34,8 @@ class InvalidGuaranteeReasonSpec extends SpecBase with ScalaCheckPropertyChecks 
             |    }
             |""".stripMargin)
 
-      json.as[InvalidGuaranteeReason] mustBe InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
+      json.as[InvalidGuaranteeReason] `mustBe` InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
     }
   }
+
 }

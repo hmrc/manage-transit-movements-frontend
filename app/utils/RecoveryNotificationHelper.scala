@@ -80,4 +80,5 @@ class RecoveryNotificationHelper(ie035: CC035CType)(implicit
 
     StaticSection(None, rows)
   }
+
 }

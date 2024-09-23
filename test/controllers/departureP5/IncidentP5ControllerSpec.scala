@@ -102,4 +102,5 @@ class IncidentP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
       redirectLocation(result).value mustEqual routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url
     }
   }
+
 }

@@ -45,25 +45,25 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
       "must return true when response body contains true" in {
         server.stubFor(
           post(urlEqualTo(url))
-            .withRequestBody(equalToJson(Json.stringify(JsArray(xPaths.map(JsString)))))
+            .withRequestBody(equalToJson(Json.stringify(JsArray(xPaths.map(JsString.apply)))))
             .willReturn(okJson(Json.stringify(JsBoolean(true))))
         )
 
         val result: Boolean = await(connector.isDeclarationAmendable(lrn.toString, xPaths))
 
-        result mustBe true
+        result `mustBe` true
       }
 
       "must return false when response body contains false" in {
         server.stubFor(
           post(urlEqualTo(url))
-            .withRequestBody(equalToJson(Json.stringify(JsArray(xPaths.map(JsString)))))
+            .withRequestBody(equalToJson(Json.stringify(JsArray(xPaths.map(JsString.apply)))))
             .willReturn(okJson(Json.stringify(JsBoolean(false))))
         )
 
         val result: Boolean = await(connector.isDeclarationAmendable(lrn.toString, xPaths))
 
-        result mustBe false
+        result `mustBe` false
       }
     }
 
@@ -79,7 +79,7 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
 
         val result: Boolean = await(connector.doesDeclarationExist(lrn.toString))
 
-        result mustBe true
+        result `mustBe` true
       }
 
       "must return false when response is NOT_FOUND" in {
@@ -90,7 +90,7 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
 
         val result: Boolean = await(connector.doesDeclarationExist(lrn.toString))
 
-        result mustBe false
+        result `mustBe` false
       }
     }
 
@@ -110,7 +110,7 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
 
         val result: HttpResponse = await(connector.handleErrors(lrn.toString, rejection))
 
-        result.status mustBe OK
+        result.status `mustBe` OK
       }
     }
 
@@ -126,8 +126,9 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
 
         val result: HttpResponse = await(connector.prepareForAmendment(lrn.toString, departureIdP5))
 
-        result.status mustBe OK
+        result.status `mustBe` OK
       }
     }
   }
+
 }

@@ -27,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
+import generated.Generated_CC060CTypeFormat
 
 class GoodsUnderControlIndexController @Inject() (
   actions: Actions,

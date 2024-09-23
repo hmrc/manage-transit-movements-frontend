@@ -85,16 +85,16 @@ class GuaranteeRejectedP5HelperSpec extends SpecBase with ScalaCheckPropertyChec
 
                   val result = helper.tables.futureValue
 
-                  result.head mustBe a[GuaranteeReferenceTable]
-                  result.head.title mustBe "Guarantee reference 1"
-                  result.head.grn mustBe guaranteeReference.GRN
-                  result.head.table.head mustBe Some(
+                  result.head `mustBe` a[GuaranteeReferenceTable]
+                  result.head.title `mustBe` "Guarantee reference 1"
+                  result.head.grn `mustBe` guaranteeReference.GRN
+                  result.head.table.head `mustBe` Some(
                     Seq(
                       HeadCell(Text("Error")),
                       HeadCell(Text("Further information"))
                     )
                   )
-                  result.head.table.rows mustBe Seq(
+                  result.head.table.rows `mustBe` Seq(
                     Seq(
                       TableRow(Text(s"${invalidGuaranteeReason1.toString}")),
                       TableRow(Text(text))
@@ -105,16 +105,16 @@ class GuaranteeRejectedP5HelperSpec extends SpecBase with ScalaCheckPropertyChec
                     )
                   )
 
-                  result(1) mustBe a[GuaranteeReferenceTable]
-                  result(1).title mustBe "Guarantee reference 2"
-                  result(1).grn mustBe guaranteeReference.GRN
-                  result(1).table.head mustBe Some(
+                  result(1) `mustBe` a[GuaranteeReferenceTable]
+                  result(1).title `mustBe` "Guarantee reference 2"
+                  result(1).grn `mustBe` guaranteeReference.GRN
+                  result(1).table.head `mustBe` Some(
                     Seq(
                       HeadCell(Text("Error")),
                       HeadCell(Text("Further information"))
                     )
                   )
-                  result(1).table.rows mustBe Seq(
+                  result(1).table.rows `mustBe` Seq(
                     Seq(
                       TableRow(Text(s"${invalidGuaranteeReason1.toString}")),
                       TableRow(Text(text))
@@ -130,4 +130,5 @@ class GuaranteeRejectedP5HelperSpec extends SpecBase with ScalaCheckPropertyChec
       }
     }
   }
+
 }

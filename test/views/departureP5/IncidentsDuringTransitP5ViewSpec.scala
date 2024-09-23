@@ -75,4 +75,5 @@ class IncidentsDuringTransitP5ViewSpec extends DetailsListViewBehaviours with Ge
         behave like pageWithContent("span", sectionTitle)
     })
   }
+
 }

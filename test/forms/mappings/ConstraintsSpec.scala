@@ -36,4 +36,5 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       result mustEqual Invalid("error.invalid", """^\d+$""")
     }
   }
+
 }

@@ -38,4 +38,5 @@ class UnauthorisedWithGroupAccessControllerSpec extends SpecBase with AppWithDef
       contentAsString(result) mustEqual view()(request, messages).toString
     }
   }
+
 }

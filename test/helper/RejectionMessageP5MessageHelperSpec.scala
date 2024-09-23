@@ -75,7 +75,7 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
 
                   val result = helper.tableRows().futureValue
 
-                  result mustBe Seq(
+                  result `mustBe` Seq(
                     Seq(
                       TableRow(Text(s"${errorCode.toString} - $errorDescription")),
                       TableRow(Text("MRN incorrect")),
@@ -89,4 +89,5 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
       }
     }
   }
+
 }

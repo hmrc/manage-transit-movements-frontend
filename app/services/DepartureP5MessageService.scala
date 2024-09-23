@@ -33,6 +33,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import generated.Generated_CC056CTypeFormat
+import generated.Generated_CC015CTypeFormat
+import generated.Generated_CC182CTypeFormat
 
 class DepartureP5MessageService @Inject() (
   departureMovementP5Connector: DepartureMovementP5Connector,
@@ -117,4 +120,5 @@ class DepartureP5MessageService @Inject() (
 
   def getDepartureReferenceNumbers(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureReferenceNumbers] =
     departureMovementP5Connector.getDepartureReferenceNumbers(departureId)
+
 }

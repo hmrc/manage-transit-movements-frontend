@@ -57,27 +57,27 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
       val result            = viewModelProvider.apply(functionalErrors, mrnString).futureValue
 
       "must return correct section length" in {
-        result.tableRows.length mustBe 1
+        result.tableRows.length `mustBe` 1
       }
       "must return correct title" in {
-        result.title mustBe "Review notification errors"
+        result.title `mustBe` "Review notification errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Review notification errors"
+        result.heading `mustBe` "Review notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe "There is a problem with this notification. Review the error and make a new notification with the right information."
+        result.paragraph1 `mustBe` "There is a problem with this notification. Review the error and make a new notification with the right information."
       }
       "must return correct paragraph 2" in {
-        result.paragraph2 mustBe "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+        result.paragraph2 `mustBe` "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
       }
       "must return correct paragraph 3 prefix, link and suffix" in {
-        result.paragraph3Prefix mustBe "Contact the"
-        result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph3Suffix mustBe "for help understanding the error (opens in a new tab)."
+        result.paragraph3Prefix `mustBe` "Contact the"
+        result.paragraph3Link `mustBe` "New Computerised Transit System helpdesk"
+        result.paragraph3Suffix `mustBe` "for help understanding the error (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another arrival notification"
+        result.hyperlink `mustBe` "Make another arrival notification"
       }
     }
 
@@ -95,28 +95,29 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
       val result            = viewModelProvider.apply(functionalErrors, mrnString).futureValue
 
       "must return correct section length" in {
-        result.tableRows.length mustBe 2
+        result.tableRows.length `mustBe` 2
       }
       "must return correct title" in {
-        result.title mustBe "Review notification errors"
+        result.title `mustBe` "Review notification errors"
       }
       "must return correct heading" in {
-        result.heading mustBe "Review notification errors"
+        result.heading `mustBe` "Review notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe "There is a problem with this notification. Review the errors and make a new notification with the right information."
+        result.paragraph1 `mustBe` "There is a problem with this notification. Review the errors and make a new notification with the right information."
       }
       "must return correct paragraph 2" in {
-        result.paragraph2 mustBe "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+        result.paragraph2 `mustBe` "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
       }
       "must return correct paragraph 3 prefix, link and suffix" in {
-        result.paragraph3Prefix mustBe "Contact the"
-        result.paragraph3Link mustBe "New Computerised Transit System helpdesk"
-        result.paragraph3Suffix mustBe "for help understanding the errors (opens in a new tab)."
+        result.paragraph3Prefix `mustBe` "Contact the"
+        result.paragraph3Link `mustBe` "New Computerised Transit System helpdesk"
+        result.paragraph3Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
       }
       "must return correct hyperlink text" in {
-        result.hyperlink mustBe "Make another arrival notification"
+        result.hyperlink `mustBe` "Make another arrival notification"
       }
     }
   }
+
 }

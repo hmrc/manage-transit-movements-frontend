@@ -30,4 +30,5 @@ class WithNameSpec extends AnyFreeSpec with Matchers {
       Foo.toString mustEqual "bar"
     }
   }
+
 }

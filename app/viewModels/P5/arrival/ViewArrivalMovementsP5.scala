@@ -28,4 +28,5 @@ object ViewArrivalMovementsP5 extends ViewMovements {
     movements: Seq[ViewArrivalP5]
   )(implicit d: DummyImplicit): ViewArrivalMovementsP5 =
     ViewArrivalMovementsP5(format(movements))
+
 }

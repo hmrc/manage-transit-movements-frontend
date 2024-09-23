@@ -52,5 +52,7 @@ object RecoveryNotificationViewModel {
       new RecoveryNotificationViewModel(Seq(helper.buildRecoveryNotificationSection))
 
     }
+
   }
+
 }

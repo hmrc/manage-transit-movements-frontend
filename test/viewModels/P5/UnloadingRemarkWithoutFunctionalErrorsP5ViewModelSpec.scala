@@ -37,19 +37,19 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
 
     "title" - {
       "must return correct message" in {
-        viewModel().title mustBe "Unloading remarks errors"
+        viewModel().title `mustBe` "Unloading remarks errors"
       }
     }
 
     "heading" - {
       "must return correct message" in {
-        viewModel().title mustBe "Unloading remarks errors"
+        viewModel().title `mustBe` "Unloading remarks errors"
       }
     }
 
     "paragraph1" - {
       "must return correct message" in {
-        viewModel().paragraph1 mustBe s"There are one or more errors with the unloading remarks for this notification."
+        viewModel().paragraph1 `mustBe` s"There are one or more errors with the unloading remarks for this notification."
       }
     }
 
@@ -68,7 +68,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
-          result mustBe s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
+          result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
       }
 
@@ -77,7 +77,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
           val customsOfficeName = "custName"
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
-          result mustBe s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName."
+          result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName."
         }
       }
 
@@ -87,7 +87,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
-          result mustBe s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
+          result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
       }
 
@@ -96,15 +96,16 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
           val customsOfficeName = ""
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
-          result mustBe s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId."
+          result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId."
         }
       }
     }
 
     "hyperlink" - {
       "must return correct message" in {
-        viewModel().hyperlink mustBe "View arrival notifications"
+        viewModel().hyperlink `mustBe` "View arrival notifications"
       }
     }
   }
+
 }

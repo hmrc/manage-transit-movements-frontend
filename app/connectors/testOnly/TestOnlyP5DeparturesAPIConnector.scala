@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
+import play.api.libs.ws.XMLBodyWritables._
 
 class TestOnlyP5DeparturesAPIConnector @Inject() (
   http: HttpClientV2,
@@ -42,7 +43,7 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (
 
     http
       .post(serviceUrl)
-      .setHeader(headerSeq: _*)
+      .setHeader(headerSeq*)
       .withBody(requestData)
       .execute[HttpResponse]
 
@@ -59,7 +60,7 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (
 
     http
       .post(serviceUrl)
-      .setHeader(headerSeq: _*)
+      .setHeader(headerSeq*)
       .withBody(requestData)
       .execute[HttpResponse]
   }
@@ -75,7 +76,7 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (
 
     http
       .post(serviceUrl)
-      .setHeader(headerSeq: _*)
+      .setHeader(headerSeq*)
       .withBody(requestData)
       .execute[HttpResponse]
   }
@@ -91,7 +92,8 @@ class TestOnlyP5DeparturesAPIConnector @Inject() (
 
     http
       .get(serviceUrl)
-      .setHeader(headerSeq: _*)
+      .setHeader(headerSeq*)
       .execute[JsValue]
   }
+
 }

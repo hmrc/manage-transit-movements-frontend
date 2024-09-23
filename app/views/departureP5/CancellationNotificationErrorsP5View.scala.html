@@ -25,7 +25,7 @@
         button: Button,
         formHelper: FormWithCSRF
 )
-@(cancellationNotificationErrorsP5ViewModel: CancellationNotificationErrorsP5ViewModel)(implicit request: Request[_], messages: Messages)
+@(cancellationNotificationErrorsP5ViewModel: CancellationNotificationErrorsP5ViewModel)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = cancellationNotificationErrorsP5ViewModel.title,

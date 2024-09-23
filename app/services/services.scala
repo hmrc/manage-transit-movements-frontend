@@ -21,4 +21,5 @@ package object services {
   implicit class RichNonEmptySet[T](value: NonEmptySet[T]) {
     def toSeq: Seq[T] = value.toNonEmptyList.toList
   }
+
 }

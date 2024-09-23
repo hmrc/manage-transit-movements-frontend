@@ -236,4 +236,5 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
       }
     }
   }
+
 }

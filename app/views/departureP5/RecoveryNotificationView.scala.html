@@ -25,7 +25,7 @@
     formHelper: FormWithCSRF
 )
 
-@(recoveryNotificationViewModel: RecoveryNotificationViewModel, lrn: String)(implicit request: Request[_], messages: Messages)
+@(recoveryNotificationViewModel: RecoveryNotificationViewModel, lrn: String)(implicit request: Request[?], messages: Messages)
 
     @mainTemplate(
         title = recoveryNotificationViewModel.title,

@@ -31,7 +31,7 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             |[]
             |""".stripMargin)
 
-        json.as[Seq[FunctionalError]] mustBe Nil
+        json.as[Seq[FunctionalError]] `mustBe` Nil
       }
 
       "when there is one functional error" in {
@@ -45,7 +45,7 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             |]
             |""".stripMargin)
 
-        json.as[Seq[FunctionalError]] mustBe Seq(
+        json.as[Seq[FunctionalError]] `mustBe` Seq(
           FunctionalError("/CC014C", "12", "N/A", None)
         )
       }
@@ -67,7 +67,7 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             |]
             |""".stripMargin)
 
-        json.as[Seq[FunctionalError]] mustBe Seq(
+        json.as[Seq[FunctionalError]] `mustBe` Seq(
           FunctionalError("/CC014C", "12", "N/A", None),
           FunctionalError("/CC015C/Authorisation[1]/referenceNumber", "14", "G0033", Some("XIDEP01"))
         )

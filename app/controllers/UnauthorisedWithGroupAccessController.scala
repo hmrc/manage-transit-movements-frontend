@@ -32,4 +32,5 @@ class UnauthorisedWithGroupAccessController @Inject() (
     implicit request =>
       Unauthorized(view())
   }
+
 }

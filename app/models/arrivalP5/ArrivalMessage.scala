@@ -30,6 +30,7 @@ object ArrivalMessage {
       (__ \ "id").read[String] and
         (__ \ "received").read[LocalDateTime] and
         (__ \ "type").read[ArrivalMessageType]
-    )(ArrivalMessage.apply _)
+    )(ArrivalMessage.apply)
   }
+
 }

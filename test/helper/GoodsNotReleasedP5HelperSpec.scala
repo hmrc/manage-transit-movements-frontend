@@ -54,7 +54,7 @@ class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyCheck
 
           val result = helper.buildDetailsSection
 
-          result mustBe StaticSection(
+          result `mustBe` StaticSection(
             sectionTitle = None,
             rows = List(
               SummaryListRow(Key(Text("Movement Reference Number (MRN)")), Value(Text("someMRN"))),
@@ -66,4 +66,5 @@ class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyCheck
       }
     }
   }
+
 }

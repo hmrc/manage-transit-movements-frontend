@@ -28,7 +28,7 @@
     insetText : InsetText,
 )
 
-@(form: Form[Boolean], lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String])(implicit request: Request[?], messages: Messages)
 
 @html = {
     <p class="govuk-body">@messages("departure.drafts.deleteDraftDepartureYesNo.paragraph")</p>

@@ -31,7 +31,7 @@ formHelper: FormWithCSRF,
 config: FrontendAppConfig
 )
 
-@(intentionToControlP5ViewModel: IntentionToControlP5ViewModel, departureId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[_], messages: Messages)
+@(intentionToControlP5ViewModel: IntentionToControlP5ViewModel, departureId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[?], messages: Messages)
 
     @mainTemplate(
         title = intentionToControlP5ViewModel.titleAndHeading,

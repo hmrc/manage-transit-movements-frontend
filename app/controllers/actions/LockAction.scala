@@ -33,6 +33,7 @@ class LockActionProvider @Inject() (service: DraftDepartureService)(implicit ec:
 
   def apply(lrn: String): ActionFilter[IdentifierRequest] =
     new LockAction(lrn, service)
+
 }
 
 class LockAction(lrn: String, service: DraftDepartureService)(implicit val executionContext: ExecutionContext)
@@ -47,4 +48,5 @@ class LockAction(lrn: String, service: DraftDepartureService)(implicit val execu
       case LockCheckFailure => Some(Redirect(routes.ErrorController.technicalDifficulties()))
     }
   }
+
 }

@@ -68,7 +68,7 @@ class ArrivalMovementP5Connector @Inject() (
     http
       .get(url)
       .setHeader(jsonAcceptHeader)
-      .transform(_.withQueryStringParameters(queryParams: _*))
+      .transform(_.withQueryStringParameters(queryParams*))
       .execute[HttpResponse]
       .map {
         response =>

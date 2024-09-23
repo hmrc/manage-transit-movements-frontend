@@ -33,4 +33,5 @@ class KeepAliveControllerSpec extends SpecBase {
       status(result) mustEqual NO_CONTENT
     }
   }
+
 }

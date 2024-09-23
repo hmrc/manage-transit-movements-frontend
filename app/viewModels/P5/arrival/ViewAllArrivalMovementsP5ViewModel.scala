@@ -40,6 +40,7 @@ case class ViewAllArrivalMovementsP5ViewModel(
       case None =>
         messages("viewArrivalNotificationsP5.title")
     }
+
 }
 
 object ViewAllArrivalMovementsP5ViewModel {

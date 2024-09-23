@@ -22,6 +22,7 @@ object Field {
 
   def apply(name: String, errors: (FieldErrorType, String)*): Field =
     Field(name, errors.toMap)
+
 }
 
 sealed trait FieldErrorType

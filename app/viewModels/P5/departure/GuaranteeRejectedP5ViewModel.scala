@@ -62,6 +62,7 @@ case class GuaranteeRejectedP5ViewModel(
 
   def link(implicit messages: Messages): String =
     messages("guarantee.rejected.message.makeAnotherDeparture")
+
 }
 
 object GuaranteeRejectedP5ViewModel {
@@ -79,5 +80,7 @@ object GuaranteeRejectedP5ViewModel {
 
       helper.tables.map(GuaranteeRejectedP5ViewModel(_, lrn, mrn, acceptanceDate))
     }
+
   }
+
 }

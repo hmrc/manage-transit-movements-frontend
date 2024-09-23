@@ -43,7 +43,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
 
         elements.forEach {
           element =>
-            element.text().matches(dateRegex) mustBe true
+            element.text().matches(dateRegex) `mustBe` true
         }
       }
 
@@ -61,12 +61,12 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
             s"when row ${rowIndex + 1}" - {
 
               def elementWithVisibleText(element: Element, text: String): Unit =
-                element.ownText() mustBe text
+                element.ownText() `mustBe` text
 
               "must display time" in {
                 val updated   = row.getElementsByClass("govuk-table__cell").first()
                 val timeRegex = "^(([1-9])|([1][0-2])):(([0][0-9])|([1-5][0-9]))(am|pm)$"
-                updated.ownText().matches(timeRegex) mustBe true
+                updated.ownText().matches(timeRegex) `mustBe` true
               }
 
               "must display correct reference number" in {
@@ -92,20 +92,20 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
                     s"when action ${linkIndex + 1}" - {
 
                       "must display correct text" in {
-                        link.text() mustBe s"${action.key} for ${viewMovement.referenceNumber}"
+                        link.text() `mustBe` s"${action.key} for ${viewMovement.referenceNumber}"
 
                         behave like elementWithVisibleText(link, s"${action.key}")
 
                         val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
-                        hiddenText.text() mustBe s"for ${viewMovement.referenceNumber}"
+                        hiddenText.text() `mustBe` s"for ${viewMovement.referenceNumber}"
                       }
 
                       "must have correct id" in {
-                        link.attr("id") mustBe s"${action.key}-${viewMovement.referenceNumber}"
+                        link.attr("id") `mustBe` s"${action.key}-${viewMovement.referenceNumber}"
                       }
 
                       "must have correct href" in {
-                        link.attr("href") mustBe action.href
+                        link.attr("href") `mustBe` action.href
                       }
                     }
                 }
@@ -116,5 +116,6 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours wit
     }
 
 }
+
 // scalastyle:on method.length
 // scalastyle:on magic.number

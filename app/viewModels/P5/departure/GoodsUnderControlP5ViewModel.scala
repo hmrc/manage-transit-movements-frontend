@@ -89,5 +89,7 @@ object GoodsUnderControlP5ViewModel {
         new GoodsUnderControlP5ViewModel(sections, ie060.informationRequested, ie060.TransitOperation.LRN)
       }
     }
+
   }
+
 }

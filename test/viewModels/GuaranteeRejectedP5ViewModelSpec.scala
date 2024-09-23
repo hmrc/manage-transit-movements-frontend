@@ -59,27 +59,27 @@ class GuaranteeRejectedP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val result            = viewModelProvider.apply(guaranteeErrors, lrn.toString, mrn, acceptanceDate).futureValue
 
       "must return correct number of guarantees" in {
-        result.tables.length mustBe 1
+        result.tables.length `mustBe` 1
       }
 
       "must return correct number of errors in guarantee" in {
-        result.tables.head.table.rows.length mustBe 1
+        result.tables.head.table.rows.length `mustBe` 1
       }
 
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe "There is a problem with the guarantee in this declaration. Amend the error and resend the declaration."
+        result.paragraph1 `mustBe` "There is a problem with the guarantee in this declaration. Amend the error and resend the declaration."
       }
 
       "must return correct paragraph 2" in {
-        result.paragraph2 mustBe "for help understanding the error (opens in a new tab)."
+        result.paragraph2 `mustBe` "for help understanding the error (opens in a new tab)."
       }
 
       "must return correct button content" in {
-        result.buttonContent mustBe "Amend errors"
+        result.buttonContent `mustBe` "Amend errors"
       }
 
       "must return link content" in {
-        result.link mustBe "Make another departure declaration"
+        result.link `mustBe` "Make another departure declaration"
       }
     }
 
@@ -99,27 +99,27 @@ class GuaranteeRejectedP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val result            = viewModelProvider.apply(guaranteeErrors, lrn.toString, mrn, acceptanceDate).futureValue
 
       "must return correct number of guarantees" in {
-        result.tables.length mustBe 1
+        result.tables.length `mustBe` 1
       }
 
       "must return correct number of errors in guarantee" in {
-        result.tables.head.table.rows.length mustBe 2
+        result.tables.head.table.rows.length `mustBe` 2
       }
 
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe "There is a problem with the guarantee in this declaration. Amend the errors and resend the declaration."
+        result.paragraph1 `mustBe` "There is a problem with the guarantee in this declaration. Amend the errors and resend the declaration."
       }
 
       "must return correct paragraph 2" in {
-        result.paragraph2 mustBe "for help understanding the errors (opens in a new tab)."
+        result.paragraph2 `mustBe` "for help understanding the errors (opens in a new tab)."
       }
 
       "must return correct button content" in {
-        result.buttonContent mustBe "Amend errors"
+        result.buttonContent `mustBe` "Amend errors"
       }
 
       "must return link content" in {
-        result.link mustBe "Make another departure declaration"
+        result.link `mustBe` "Make another departure declaration"
       }
     }
 
@@ -138,27 +138,28 @@ class GuaranteeRejectedP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
     val result            = viewModelProvider.apply(guaranteeErrors, lrn.toString, mrn, acceptanceDate).futureValue
 
     "must return correct number of guarantees" in {
-      result.tables.length mustBe 2
+      result.tables.length `mustBe` 2
     }
 
     "must return correct number of errors in guarantee" in {
-      result.tables.head.table.rows.length mustBe 2
+      result.tables.head.table.rows.length `mustBe` 2
     }
 
     "must return correct paragraph 1" in {
-      result.paragraph1 mustBe "There is a problem with the guarantees in this declaration. Amend the errors and resend the declaration."
+      result.paragraph1 `mustBe` "There is a problem with the guarantees in this declaration. Amend the errors and resend the declaration."
     }
 
     "must return correct paragraph 2" in {
-      result.paragraph2 mustBe "for help understanding the errors (opens in a new tab)."
+      result.paragraph2 `mustBe` "for help understanding the errors (opens in a new tab)."
     }
 
     "must return correct button content" in {
-      result.buttonContent mustBe "Amend errors"
+      result.buttonContent `mustBe` "Amend errors"
     }
 
     "must return link content" in {
-      result.link mustBe "Make another departure declaration"
+      result.link `mustBe` "Make another departure declaration"
     }
   }
+
 }

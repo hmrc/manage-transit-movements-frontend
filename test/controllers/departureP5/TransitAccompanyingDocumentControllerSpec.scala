@@ -24,8 +24,6 @@ import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.http.HeaderNames.{CONTENT_LENGTH, CONTENT_TYPE}
-import play.api.http.Status.OK
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
@@ -86,7 +84,7 @@ class TransitAccompanyingDocumentControllerSpec extends SpecBase with Generators
         status(result) mustEqual OK
         contentType(result).value mustEqual thisContentType
         contentLength(result).value mustEqual thisContentLength
-        headers(result).get(CONTENT_DISPOSITION).value mustBe thisContentDisposition
+        headers(result).get(CONTENT_DISPOSITION).value `mustBe` thisContentDisposition
 
         verify(mockManageDocumentsConnector).getTAD(eqTo(departureIdP5), eqTo(messageId))(any())
       }
@@ -106,4 +104,5 @@ class TransitAccompanyingDocumentControllerSpec extends SpecBase with Generators
       }
     }
   }
+
 }

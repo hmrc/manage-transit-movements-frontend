@@ -115,4 +115,5 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
         assertElementWithIdContainsText(doc, "mrn", s"MRN: $mrn")
     }
   }
+
 }
