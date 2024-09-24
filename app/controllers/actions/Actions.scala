@@ -16,19 +16,11 @@
 
 package controllers.actions
 
-import models.requests.IdentifierRequest
-import play.api.mvc.{ActionFunction, Request}
-
 import javax.inject.Inject
 
 class Actions @Inject() (
-  identifierAction: IdentifierAction,
-  p5SwitchAction: P5SwitchActionProvider
+  identifierAction: IdentifierAction
 ) {
 
   def identify(): IdentifierAction = identifierAction
-
-  def checkP5Switch(): ActionFunction[Request, IdentifierRequest] =
-    identify() andThen p5SwitchAction()
-
 }

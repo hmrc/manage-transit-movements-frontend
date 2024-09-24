@@ -35,7 +35,7 @@ class TransitAccompanyingDocumentController @Inject() (
     with DocumentController
     with I18nSupport {
 
-  def getTAD(departureID: String, messageId: String): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
+  def getTAD(departureID: String, messageId: String): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
       connector.getTAD(departureID, messageId).map(stream)
   }

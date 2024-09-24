@@ -40,7 +40,7 @@ class RecoveryNotificationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC035CType](departureId, messageId)) {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC035CType](departureId, messageId)) {
       implicit request =>
         Ok(view(viewModelProvider.apply(request.messageData), request.referenceNumbers.localReferenceNumber))
     }

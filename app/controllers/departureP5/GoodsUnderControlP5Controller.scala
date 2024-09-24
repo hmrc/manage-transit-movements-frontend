@@ -43,7 +43,7 @@ class GoodsUnderControlP5Controller @Inject() (
     with I18nSupport {
 
   private def goodsUnderControlOnPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC060CType](departureId, messageId)).async {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC060CType](departureId, messageId)).async {
       implicit request =>
         val customsOfficeId = request.messageData.CustomsOfficeOfDeparture.referenceNumber
 

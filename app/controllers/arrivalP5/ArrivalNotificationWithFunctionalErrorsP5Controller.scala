@@ -43,7 +43,7 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(page: Option[Int], arrivalId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)).async {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)).async {
       implicit request =>
         val currentPage = page.getOrElse(1)
 

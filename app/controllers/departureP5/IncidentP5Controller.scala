@@ -43,7 +43,7 @@ class IncidentP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, incidentIndex: Index, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC182CType](departureId, messageId)).async {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC182CType](departureId, messageId)).async {
       implicit request =>
         val customsOfficeId = request.messageData.CustomsOfficeOfDeparture.referenceNumber
 

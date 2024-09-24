@@ -25,23 +25,12 @@
     warning: Warning
 )
 
-@(arrivalsFeature: Feature, departuresFeature: Feature, draftDepartureFeature: Feature, isOnLegacyEnrolment: Boolean)(implicit request: Request[?], messages: Messages)
-
-@warningHtml = {
-    <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.warning.1")</h2>
-    <p class="govuk-body">
-        <strong>@messages("whatDoYouWantToDo.warning.2") <a class="govuk-link" href="@config.enrolmentGuidancePage">@messages("whatDoYouWantToDo.warning.3")</a></strong>.
-    </p>
-}
+@(arrivalsFeature: Feature, departuresFeature: Feature, draftDepartureFeature: Feature)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("whatDoYouWantToDo.title")
 ) {
     @heading(messages("whatDoYouWantToDo.heading"))
-
-    @if(isOnLegacyEnrolment) {
-        @warning(warningHtml)
-    }
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.arrival")</h2>
     <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>

@@ -45,9 +45,6 @@ checkYourAnswers.heading = Check your answers
 
 whatDoYouWantToDo.title = Manage your transit movements
 whatDoYouWantToDo.heading = Manage your transit movements
-whatDoYouWantToDo.warning.1 = You need to upgrade your NCTS subscription
-whatDoYouWantToDo.warning.2 = Phase 5 of NCTS went live on 1 July 2024. To continue using NCTS, you need to
-whatDoYouWantToDo.warning.3 = upgrade your subscription from Phase 4 to Phase 5
 whatDoYouWantToDo.subHeading.arrival = Arrivals
 whatDoYouWantToDo.link.arrival.make = Make an arrival notification
 whatDoYouWantToDo.link.arrival.view = View arrival notifications

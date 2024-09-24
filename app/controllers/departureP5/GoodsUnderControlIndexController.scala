@@ -38,7 +38,7 @@ class GoodsUnderControlIndexController @Inject() (
     with Logging {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC060CType](departureId, messageId)) {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC060CType](departureId, messageId)) {
       implicit request =>
         val call = request.messageData.TransitOperation.notificationType match {
           case DecisionToControl =>

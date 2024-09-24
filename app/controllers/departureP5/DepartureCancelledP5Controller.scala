@@ -43,7 +43,7 @@ class DepartureCancelledP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC009CType](departureId, messageId)).async {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC009CType](departureId, messageId)).async {
       implicit request =>
         buildView(request.messageData, request.referenceNumbers.localReferenceNumber)
     }

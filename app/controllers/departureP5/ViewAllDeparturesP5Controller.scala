@@ -48,7 +48,7 @@ class ViewAllDeparturesP5Controller @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(page: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
+  def onPageLoad(page: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
       val preparedForm = lrn match {
         case Some(value) => form.fill(value)
@@ -57,7 +57,7 @@ class ViewAllDeparturesP5Controller @Inject() (
       buildView(preparedForm, page, lrn)(Ok(_))
   }
 
-  def onSubmit(): Action[AnyContent] = (Action andThen actions.checkP5Switch()).async {
+  def onSubmit(): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
       form
         .bindFromRequest()

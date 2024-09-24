@@ -46,7 +46,7 @@ class GuaranteeRejectedP5Controller @Inject() (
     with I18nSupport {
 
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
         val lrn = request.referenceNumbers.localReferenceNumber
         for {
@@ -66,7 +66,7 @@ class GuaranteeRejectedP5Controller @Inject() (
     }
 
   def onSubmit(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
         val lrn = request.referenceNumbers.localReferenceNumber
         service.handleErrors(lrn, Rejection(departureId)).map {

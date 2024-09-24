@@ -39,15 +39,14 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     application: Application,
     arrivalsFeature: Feature,
     departuresFeature: Feature,
-    draftDeparturesFeature: Feature,
-    isOnLegacyEnrolment: Boolean
+    draftDeparturesFeature: Feature
   ): HtmlFormat.Appendable =
     application.injector
       .instanceOf[WhatDoYouWantToDoView]
-      .apply(arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment)(fakeRequest, messages)
+      .apply(arrivalsFeature, departuresFeature, draftDeparturesFeature)(fakeRequest, messages)
 
   override def view: HtmlFormat.Appendable =
-    applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment)
+    applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature)
 
   override val prefix: String = "whatDoYouWantToDo"
 
@@ -79,7 +78,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "unavailable" - {
       val arrivalsFeature = Feature(Availability.Unavailable, arrivalsHref)
 
-      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
       behave like pageWithContent(doc, "p", "View arrival notifications is currently unavailable")
     }
@@ -87,7 +86,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "none" - {
       val arrivalsFeature = Feature(Availability.Empty, arrivalsHref)
 
-      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
       behave like pageWithContent(doc, "p", "You have no arrival notifications")
     }
@@ -95,7 +94,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "available" - {
       val arrivalsFeature = Feature(Availability.NonEmpty, arrivalsHref)
 
-      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
       behave like pageWithLink(
         doc,
@@ -110,7 +109,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "unavailable" - {
       val departuresFeature = Feature(Availability.Unavailable, departuresHref)
 
-      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
       behave like pageWithContent(doc, "p", "View departure declarations is currently unavailable")
     }
@@ -118,7 +117,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "none" - {
       val departuresFeature = Feature(Availability.Empty, departuresHref)
 
-      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
       behave like pageWithContent(doc, "p", "You have no departure declarations")
     }
@@ -126,7 +125,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "available" - {
       val departuresFeature = Feature(Availability.NonEmpty, departuresHref)
 
-      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
       behave like pageWithLink(
         doc,
@@ -141,7 +140,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "unavailable" - {
       val draftDeparturesFeature = Feature(Availability.Unavailable, draftDeparturesHref)
 
-      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
       behave like pageWithContent(doc, "p", "Draft departure declarations unavailable")
     }
@@ -149,7 +148,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "none" - {
       val draftDeparturesFeature = Feature(Availability.Empty, draftDeparturesHref)
 
-      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
       behave like pageWithContent(doc, "p", "You have no draft departure declarations")
     }
@@ -157,7 +156,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
     "available" - {
       val draftDeparturesFeature = Feature(Availability.NonEmpty, draftDeparturesHref)
 
-      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+      val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
       behave like pageWithLink(
         doc,
@@ -183,7 +182,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
         .build()
 
       running(app) {
-        val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+        val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
         behave like pageWithContent(doc, "h2", "Guarantees")
 
@@ -207,7 +206,7 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
         .build()
 
       running(app) {
-        val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment))
+        val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature))
 
         behave like pageWithoutContent(doc, "h2", "Guarantees")
         behave like pageWithoutLink(doc, "check-guarantee-balance")
@@ -215,26 +214,4 @@ class WhatDoYouWantToDoViewSpec extends ViewBehaviours with Generators {
       }
     }
   }
-
-  "warning text" - {
-    "must render" - {
-      "when on legacy enrolment" - {
-        val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment = true))
-
-        behave like pageWithWarningText(
-          doc,
-          "You need to upgrade your NCTS subscription Phase 5 of NCTS went live on 1 July 2024. To continue using NCTS, you need to upgrade your subscription from Phase 4 to Phase 5."
-        )
-      }
-    }
-
-    "must not render" - {
-      "when not on legacy enrolment" - {
-        val doc = parseView(applyView(app, arrivalsFeature, departuresFeature, draftDeparturesFeature, isOnLegacyEnrolment = false))
-
-        behave like pageWithoutWarningText(doc)
-      }
-    }
-  }
-
 }

@@ -33,7 +33,7 @@ class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   class Harness(authAction: LockActionProvider) {
 
-    def onPageLoad(): Action[AnyContent] = (stubControllerComponents().actionBuilder andThen FakeIdentifierAction(true) andThen authAction(lrn.toString)) {
+    def onPageLoad(): Action[AnyContent] = (stubControllerComponents().actionBuilder andThen FakeIdentifierAction() andThen authAction(lrn.toString)) {
       _ =>
         Results.Ok
     }

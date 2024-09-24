@@ -28,8 +28,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar {
   self: TestSuite =>
 
-  val isOnLegacyEnrolment: Boolean = false
-
   override def fakeApplication(): Application =
     guiceApplicationBuilder()
       .build()
@@ -38,7 +36,7 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
   private def defaultApplicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        bind[IdentifierAction].toInstance(FakeIdentifierAction(isOnLegacyEnrolment))
+        bind[IdentifierAction].toInstance(FakeIdentifierAction())
       )
 
   def guiceApplicationBuilder(): GuiceApplicationBuilder =

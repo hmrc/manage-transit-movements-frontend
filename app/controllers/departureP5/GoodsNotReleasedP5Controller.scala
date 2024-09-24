@@ -41,7 +41,7 @@ class GoodsNotReleasedP5Controller @Inject() (
     with I18nSupport {
 
   def goodsNotReleased(departureId: String, messageId: String): Action[AnyContent] =
-    (Action andThen actions.checkP5Switch() andThen messageRetrievalAction[CC051CType](departureId, messageId)) {
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC051CType](departureId, messageId)) {
       implicit request =>
         Ok(
           view(viewModelProvider.apply(request.messageData, request.referenceNumbers.localReferenceNumber))
