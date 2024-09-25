@@ -114,14 +114,21 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       "paragraph1" - {
         "must return correct message" in {
           viewModel().paragraph1 mustBe
-            "Multiple incidents have been reported by the customs office of incident. Review the incident details and contact the carrier for more information."
+            "Multiple incidents have been reported by the customs office of incident."
         }
       }
 
       "paragraph2" - {
         "must return correct message" in {
-          viewModel().paragraph2HyperLink `mustBe` "Check your departure declarations"
-          viewModel().paragraph2End `mustBe` "for further updates."
+          viewModel().paragraph2 mustBe
+            "This information is just for your reference - you do not need to take any further action. If you have any questions, you can contact the carrier for more information."
+        }
+      }
+
+      "paragraph3" - {
+        "must return correct message" in {
+          viewModel().paragraph3HyperLink `mustBe` "Check your departure declarations"
+          viewModel().paragraph3End `mustBe` "for further updates."
         }
       }
     }
@@ -142,14 +149,21 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       "paragraph1" - {
         "must return correct message" in {
           viewModel(isMultipleIncidents = false).paragraph1 mustBe
-            "An incident has been reported by the customs office of incident. Review the incident details and contact the carrier for more information."
+            "An incident has been reported by the customs office of incident."
         }
       }
 
       "paragraph2" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).paragraph2HyperLink `mustBe` "Check your departure declarations"
-          viewModel(isMultipleIncidents = false).paragraph2End `mustBe` "for further updates."
+          viewModel(isMultipleIncidents = false).paragraph2 mustBe
+            "This information is just for your reference - you do not need to take any further action. If you have any questions, you can contact the carrier for more information."
+        }
+      }
+
+      "paragraph3" - {
+        "must return correct message" in {
+          viewModel(isMultipleIncidents = false).paragraph3HyperLink `mustBe` "Check your departure declarations"
+          viewModel(isMultipleIncidents = false).paragraph3End `mustBe` "for further updates."
         }
       }
     }

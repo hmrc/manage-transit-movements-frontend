@@ -41,10 +41,12 @@ formHelper: FormWithCSRF
 
     <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
+    <p id="paragraph-2" class="govuk-body">@viewModel.paragraph2</p>
+
     @answerSections(viewModel.sections)
 
     <h2 class="govuk-heading-m" id="what-happens-next-heading">@viewModel.whatHappensNextHeader</h2>
     <p class="govuk-body" id="what-happens-next-body">@viewModel.customsOfficeContent</p>
 
-    <p id="view-departures" class="govuk-body"><a id="departures-link" class="govuk-link" href="@controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None)">@viewModel.paragraph2HyperLink</a> @viewModel.paragraph2End</p>
+    <p id="view-departures" class="govuk-body"><a id="departures-link" class="govuk-link" href="@controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None)">@viewModel.paragraph3HyperLink</a> @viewModel.paragraph3End</p>
 }
