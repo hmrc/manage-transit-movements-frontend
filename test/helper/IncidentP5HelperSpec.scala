@@ -218,8 +218,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "transportEquipmentsSection" - {
         "must return a static section" in {
-          val transportEquipment1 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = "1")
-          val transportEquipment2 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = "2")
+          val transportEquipment1 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = 1)
+          val transportEquipment2 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = 2)
           val transportEquipments = Seq(transportEquipment1, transportEquipment2)
           val helper              = new IncidentP5Helper(incidentType03.copy(TransportEquipment = transportEquipments), refDataService)
           val result              = helper.transportEquipmentsSection

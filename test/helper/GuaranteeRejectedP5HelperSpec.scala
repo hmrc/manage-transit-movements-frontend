@@ -53,8 +53,8 @@ class GuaranteeRejectedP5HelperSpec extends SpecBase with ScalaCheckPropertyChec
         "using the description present in reference data" in {
           forAll(arbitraryGuaranteeReferenceType08.arbitrary.sample.value, nonEmptyString) {
             (guaranteeReference, text) =>
-              val invalidReason1 = InvalidGuaranteeReasonType01("1", "G02", Some(text))
-              val invalidReason2 = InvalidGuaranteeReasonType01("2", "G03", Some(text))
+              val invalidReason1 = InvalidGuaranteeReasonType01(1, "G02", Some(text))
+              val invalidReason2 = InvalidGuaranteeReasonType01(2, "G03", Some(text))
               forAll(arbitrary[CC055CType].map {
                 _.copy(GuaranteeReference =
                   Seq(

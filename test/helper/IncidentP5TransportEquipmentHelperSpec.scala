@@ -47,7 +47,7 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
 
           forAll(nonEmptyString) {
             sealId =>
-              val seal = SealType04("1", sealId)
+              val seal = SealType04(1, sealId)
               val transportEquipment =
                 arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
                   Seal = Seq(seal)
@@ -68,7 +68,7 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
 
           forAll(arbitrary[BigInt]) {
             referenceNumber =>
-              val goodsReference = GoodsReferenceType01("1", referenceNumber)
+              val goodsReference = GoodsReferenceType01(1, referenceNumber)
               val transportEquipment =
                 arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
                   GoodsReference = Seq(goodsReference)
@@ -91,10 +91,10 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
         "must return an accordion section with correct children" in {
           val transportEquipment =
             arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
-              sequenceNumber = "1",
+              sequenceNumber = 1,
               containerIdentificationNumber = Some("12345"),
-              Seal = Seq(SealType04("1", "id1"), SealType04("2", "id2")),
-              GoodsReference = Seq(GoodsReferenceType01("1", 1), GoodsReferenceType01("2", 2))
+              Seal = Seq(SealType04(1, "id1"), SealType04(2, "id2")),
+              GoodsReference = Seq(GoodsReferenceType01(1, 1), GoodsReferenceType01(2, 2))
             )
 
           val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
@@ -117,7 +117,7 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
       "sealSection" - {
         "must return a accordion section with seal rows" in {
           val transportEquipment = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
-            Seal = Seq(SealType04("1", "id1"), SealType04("2", "id2"))
+            Seal = Seq(SealType04(1, "id1"), SealType04(2, "id2"))
           )
 
           val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
@@ -132,7 +132,7 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
       "goodsReferenceSection" - {
         "must return a accordion section with goodsReference rows" in {
           val transportEquipment = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
-            GoodsReference = Seq(GoodsReferenceType01("1", 1), GoodsReferenceType01("2", 2))
+            GoodsReference = Seq(GoodsReferenceType01(1, 1), GoodsReferenceType01(2, 2))
           )
 
           val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)

@@ -145,8 +145,8 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
       "must return Sequence of Sections" in {
         val requestedDocuments = Seq(
-          RequestedDocumentType("1", "44", None),
-          RequestedDocumentType("2", "45", Some("Desc1"))
+          RequestedDocumentType(1, "44", None),
+          RequestedDocumentType(2, "45", Some("Desc1"))
         )
 
         forAll(arbitrary[CC060CType].map {

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ncts.dgtaxud.ec" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://ncts.dgtaxud.ec" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="51.8.2" vc:minVersion="1.1">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ncts.dgtaxud.ec" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://ncts.dgtaxud.ec" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="51.8.6" vc:minVersion="1.1">
     <!--================================================================================-->
-    <!--===== IE057: E_DES_REJ                                                                -->
-    <!--===== REJECTION FROM OFFICE OF DESTINATION                                            -->
+    <!--===== IE060: E_CTR_DEC                                                                -->
+    <!--===== CONTROL DECISION NOTIFICATION                                                   -->
     <!--===== NCTS P5 Phase Definition                                                        -->
-    <!--===== XSD Version 51.8.2                                                              -->
+    <!--===== XSD Version 51.8.6                                                              -->
     <!--================================================================================-->
     <!--================================================================================-->
     <!--===== Includes                                                                        -->
@@ -14,14 +14,14 @@
     <!--================================================================================-->
     <!--===== Root Element                                                                    -->
     <!--================================================================================-->
-    <xs:element name="CC057C" type="CC057CType" />
+    <xs:element name="CC060C" type="CC060CType" />
     <!--================================================================================-->
     <!--===== Root Element Content                                                            -->
     <!--================================================================================-->
-    <xs:complexType name="CC057CType">
+    <xs:complexType name="CC060CType">
         <xs:sequence>
             <xs:group ref="MESSAGE" />
-            <xs:element name="TransitOperation" type="TransitOperationType21">
+            <xs:element name="TransitOperation" type="TransitOperationType22">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="TRANSIT OPERATION" />
@@ -29,27 +29,43 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="CustomsOfficeOfDestinationActual" type="CustomsOfficeOfDestinationActualType03">
+            <xs:element name="CustomsOfficeOfDeparture" type="CustomsOfficeOfDepartureType03">
                 <xs:annotation>
                     <xs:documentation>
-                        <description value="CUSTOMS OFFICE OF DESTINATION (ACTUAL)" />
+                        <description value="CUSTOMS OFFICE OF DEPARTURE" />
                         <optionality value="R" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="TraderAtDestination" type="TraderAtDestinationType03">
+            <xs:element name="HolderOfTheTransitProcedure" type="HolderOfTheTransitProcedureType13">
                 <xs:annotation>
                     <xs:documentation>
-                        <description value="TRADER AT DESTINATION" />
+                        <description value="HOLDER OF THE TRANSIT PROCEDURE" />
                         <optionality value="R" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="FunctionalError" minOccurs="0" maxOccurs="9999" type="FunctionalErrorType04">
+            <xs:element name="Representative" minOccurs="0" type="RepresentativeType04">
                 <xs:annotation>
                     <xs:documentation>
-                        <description value="FUNCTIONAL ERROR" />
+                        <description value="REPRESENTATIVE" />
                         <optionality value="O" />
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="TypeOfControls" minOccurs="0" maxOccurs="99" type="TypeOfControlsType">
+                <xs:annotation>
+                    <xs:documentation>
+                        <description value="TYPE OF CONTROLS" />
+                        <optionality value="D" />
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="RequestedDocument" minOccurs="0" maxOccurs="99" type="RequestedDocumentType">
+                <xs:annotation>
+                    <xs:documentation>
+                        <description value="REQUESTED DOCUMENT" />
+                        <optionality value="D" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>

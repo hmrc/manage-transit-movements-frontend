@@ -91,7 +91,7 @@ class IncidentP5TransportEquipmentHelper(
         sealSection,
         goodsReferenceSection
       ),
-      isOpen = sequenceNumber == "1"
+      isOpen = sequenceNumber == 1
     )
 
 }
