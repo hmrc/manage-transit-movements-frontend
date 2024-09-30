@@ -19,8 +19,8 @@ package viewModels.P5
 import base.SpecBase
 import cats.data.NonEmptyList
 import generators.Generators
-import models.arrivalP5.ArrivalMessageType._
-import models.arrivalP5._
+import models.arrivalP5.*
+import models.arrivalP5.ArrivalMessageType.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.arrival.ArrivalStatusP5ViewModel
 import viewModels.ViewMovementAction
@@ -267,6 +267,20 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
         val expectedResult = ArrivalStatusP5ViewModel(
           "movement.status.P5.movementEnded",
+          Nil
+        )
+
+        result `mustBe` expectedResult
+      }
+
+      "when given Message with head of UnknownMessageType" in {
+
+        val movementAndMessage = movementAndMessagesOther(UnknownMessageType("foo"))
+
+        val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = ArrivalStatusP5ViewModel(
+          "",
           Nil
         )
 

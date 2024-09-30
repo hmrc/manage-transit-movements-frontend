@@ -1033,6 +1033,20 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result `mustBe` expectedResult
     }
 
+    "when given Message with head of UnknownMessageType" in {
+
+      val movementAndMessage = otherMovementAndMessage(UnknownMessageType("foo"))
+
+      val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+      val expectedResult = DepartureStatusP5ViewModel(
+        "",
+        Nil
+      )
+
+      result `mustBe` expectedResult
+    }
+
     "when errors are more than one " in {
 
       val expectedResult = "viewErrors"
