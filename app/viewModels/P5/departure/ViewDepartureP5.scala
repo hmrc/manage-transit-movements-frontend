@@ -33,19 +33,18 @@ final case class ViewDepartureP5(
 
 object ViewDepartureP5 {
 
-  def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewDepartureP5 = {
+  def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): Option[ViewDepartureP5] =
+    DepartureStatusP5ViewModel(movementAndMessage).map {
+      departureStatus =>
+        val systemTime = movementAndMessage.updated.toSystemDefaultTime
 
-    val departureStatus: DepartureStatusP5ViewModel = DepartureStatusP5ViewModel(movementAndMessage)
-
-    val systemTime = movementAndMessage.updated.toSystemDefaultTime
-
-    ViewDepartureP5(
-      updatedDate = systemTime.toLocalDate,
-      updatedTime = systemTime.toLocalTime,
-      referenceNumber = movementAndMessage.localReferenceNumber,
-      status = departureStatus.status,
-      actions = departureStatus.actions
-    )
-  }
+        ViewDepartureP5(
+          updatedDate = systemTime.toLocalDate,
+          updatedTime = systemTime.toLocalTime,
+          referenceNumber = movementAndMessage.localReferenceNumber,
+          status = departureStatus.status,
+          actions = departureStatus.actions
+        )
+    }
 
 }

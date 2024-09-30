@@ -78,7 +78,7 @@ class ViewAllDeparturesP5Controller @Inject() (
       case Some(movements) =>
         departureP5MessageService.getLatestMessagesForMovement(movements).map {
           movementsAndMessages =>
-            val viewDepartureP5: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
+            val viewDepartureP5: Seq[ViewDepartureP5] = movementsAndMessages.flatMap(ViewDepartureP5(_))
 
             val paginationViewModel = ListPaginationViewModel(
               totalNumberOfItems = movements.totalCount,

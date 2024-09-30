@@ -26,20 +26,20 @@ case class DepartureStatusP5ViewModel(status: String, actions: Seq[ViewMovementA
 
 object DepartureStatusP5ViewModel {
 
-  def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
+  def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): Option[DepartureStatusP5ViewModel] =
     movementAndMessage match {
       case DepartureMovementAndMessage(departureId, localReferenceNumber, _, message, isPrelodged) =>
         preLodgeStatus(departureId, message.latestMessage.messageId, localReferenceNumber, isPrelodged)
-          .apply(message.latestMessage)
+          .lift(message.latestMessage)
       case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
         rejectedStatus(departureId, message.latestMessage.messageId, rejectionType, isDeclarationAmendable, xPaths)
-          .apply(message.latestMessage)
+          .lift(message.latestMessage)
       case IncidentMovementAndMessage(departureId, _, _, message, hasMultipleIncidents) =>
         incidentDuringTransit(departureId, message.latestMessage.messageId, hasMultipleIncidents)
-          .apply(message.latestMessage)
+          .lift(message.latestMessage)
       case OtherMovementAndMessage(departureId, localReferenceNumber, _, message) =>
         currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber)
-          .apply(message.latestMessage)
+          .lift(message.latestMessage)
     }
 
   private def rejectedStatus(
