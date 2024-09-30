@@ -25,8 +25,8 @@ case class ArrivalStatusP5ViewModel(status: String, actions: Seq[ViewMovementAct
 
 object ArrivalStatusP5ViewModel {
 
-  def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): Option[ArrivalStatusP5ViewModel] =
-    movementAndMessage match {
+  def apply(movementAndMessage: ArrivalMovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): ArrivalStatusP5ViewModel =
+    (movementAndMessage match {
       case GoodsReleasedMovementAndMessage(_, message, indicator) =>
         goodsReleasedStatus(indicator)
           .lift(message.latestMessage)
@@ -36,7 +36,7 @@ object ArrivalStatusP5ViewModel {
       case OtherMovementAndMessage(arrivalMovement, message) =>
         otherStatus(arrivalMovement.arrivalId)
           .lift(message.latestMessage)
-    }
+    }).getOrElse(ArrivalStatusP5ViewModel("", Seq.empty))
 
   def otherStatus(arrivalId: String)(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
     Seq(
