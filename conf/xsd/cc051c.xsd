@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ncts.dgtaxud.ec" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://ncts.dgtaxud.ec" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="51.8.6" vc:minVersion="1.1">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ncts.dgtaxud.ec" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://ncts.dgtaxud.ec" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="51.8.2" vc:minVersion="1.1">
     <!--================================================================================-->
-    <!--===== IE055: E_GUA_INV                                                                -->
-    <!--===== GUARANTEE NOT VALID                                                             -->
+    <!--===== IE051: E_REL_NOT                                                                -->
+    <!--===== NO RELEASE FOR TRANSIT                                                          -->
     <!--===== NCTS P5 Phase Definition                                                        -->
-    <!--===== XSD Version 51.8.6                                                              -->
+    <!--===== XSD Version 51.8.2                                                              -->
     <!--================================================================================-->
     <!--================================================================================-->
     <!--===== Includes                                                                        -->
@@ -14,14 +14,14 @@
     <!--================================================================================-->
     <!--===== Root Element                                                                    -->
     <!--================================================================================-->
-    <xs:element name="CC055C" type="CC055CType" />
+    <xs:element name="CC051C" type="CC051CType" />
     <!--================================================================================-->
     <!--===== Root Element Content                                                            -->
     <!--================================================================================-->
-    <xs:complexType name="CC055CType">
+    <xs:complexType name="CC051CType">
         <xs:sequence>
             <xs:group ref="MESSAGE" />
-            <xs:element name="TransitOperation" type="TransitOperationType48">
+            <xs:element name="TransitOperation" type="TransitOperationType18">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="TRANSIT OPERATION" />
@@ -37,7 +37,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="HolderOfTheTransitProcedure" type="HolderOfTheTransitProcedureType07">
+            <xs:element name="HolderOfTheTransitProcedure" type="HolderOfTheTransitProcedureType15">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="HOLDER OF THE TRANSIT PROCEDURE" />
@@ -45,11 +45,11 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="GuaranteeReference" maxOccurs="99" type="GuaranteeReferenceType08">
+            <xs:element name="Representative" minOccurs="0" type="RepresentativeType03">
                 <xs:annotation>
                     <xs:documentation>
-                        <description value="GUARANTEE REFERENCE" />
-                        <optionality value="R" />
+                        <description value="REPRESENTATIVE" />
+                        <optionality value="O" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>

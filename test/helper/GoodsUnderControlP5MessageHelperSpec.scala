@@ -199,8 +199,8 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val controlType45 = ControlType("45", "")
 
         val typeOfControls = Seq(
-          TypeOfControlsType(1, "44", None),
-          TypeOfControlsType(2, "45", Some("Desc1"))
+          TypeOfControlsType("1", "44", None),
+          TypeOfControlsType("2", "45", Some("Desc1"))
         )
 
         when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
@@ -234,8 +234,8 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val controlType45 = ControlType("45", "")
 
         val typeOfControls = Seq(
-          TypeOfControlsType(1, "44", None),
-          TypeOfControlsType(2, "45", Some("Desc1"))
+          TypeOfControlsType("1", "44", None),
+          TypeOfControlsType("2", "45", Some("Desc1"))
         )
 
         when(mockReferenceDataService.getControlType("44")).thenReturn(Future.successful(controlType44))
@@ -286,8 +286,8 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val requestedDocument2: RequestedDocumentTypeRef = RequestedDocumentTypeRef("C620", "T2LF document")
 
         val requestedDocuments = Seq(
-          RequestedDocumentType(1, "C605", None),
-          RequestedDocumentType(2, "C620", Some("Desc1"))
+          RequestedDocumentType("1", "C605", None),
+          RequestedDocumentType("2", "C620", Some("Desc1"))
         )
 
         when(mockReferenceDataService.getRequestedDocumentType("C605")).thenReturn(Future.successful(requestedDocument1))
@@ -322,8 +322,8 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
         val requestedDocument2: RequestedDocumentTypeRef = RequestedDocumentTypeRef("C620", "")
 
         val requestedDocuments = Seq(
-          RequestedDocumentType(1, "C605", None),
-          RequestedDocumentType(2, "C620", Some("Desc1"))
+          RequestedDocumentType("1", "C605", None),
+          RequestedDocumentType("2", "C620", Some("Desc1"))
         )
 
         when(mockReferenceDataService.getRequestedDocumentType("C605")).thenReturn(Future.successful(requestedDocument1))
