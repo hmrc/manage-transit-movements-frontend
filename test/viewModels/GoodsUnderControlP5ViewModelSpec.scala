@@ -47,14 +47,14 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
   "GoodsUnderControlP5ViewModel" - {
 
     val typeOfControls = Seq(
-      TypeOfControlsType(1, "44", None),
-      TypeOfControlsType(2, "45", Some("Desc1"))
+      TypeOfControlsType("1", "44", None),
+      TypeOfControlsType("2", "45", Some("Desc1"))
     )
 
     val controlType44 = ControlType("44", "")
 
     val requestedDocuments = Seq(
-      RequestedDocumentType(1, "C620", None)
+      RequestedDocumentType("1", "C620", None)
     )
 
     val requestedDocumentType = RequestedDocumentTypeRef("C620", "")

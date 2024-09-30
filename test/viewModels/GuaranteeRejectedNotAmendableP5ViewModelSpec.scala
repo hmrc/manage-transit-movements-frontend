@@ -48,9 +48,9 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
 
     "when there is one guarantee with one error" - {
 
-      val invalidGuaranteeReasons = Seq(InvalidGuaranteeReasonType01(1, "G02", Some("text")))
+      val invalidGuaranteeReasons = Seq(InvalidGuaranteeReasonType01("1", "G02", Some("text")))
 
-      val guaranteeErrors: Seq[GuaranteeReferenceType08] = Seq(GuaranteeReferenceType08(1, "GRN", invalidGuaranteeReasons))
+      val guaranteeErrors: Seq[GuaranteeReferenceType08] = Seq(GuaranteeReferenceType08("1", "GRN", invalidGuaranteeReasons))
 
       when(mockReferenceDataService.getInvalidGuaranteeReason(any())(any(), any()))
         .thenReturn(Future.successful(InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")))
@@ -82,9 +82,9 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
 
     "when there is one guarantee with multiple errors" - {
 
-      val invalidGuaranteeReasons = Seq(InvalidGuaranteeReasonType01(1, "G02", Some("text")), InvalidGuaranteeReasonType01(1, "G03", Some("text")))
+      val invalidGuaranteeReasons = Seq(InvalidGuaranteeReasonType01("1", "G02", Some("text")), InvalidGuaranteeReasonType01("1", "G03", Some("text")))
 
-      val guaranteeErrors: Seq[GuaranteeReferenceType08] = Seq(GuaranteeReferenceType08(1, "GRN", invalidGuaranteeReasons))
+      val guaranteeErrors: Seq[GuaranteeReferenceType08] = Seq(GuaranteeReferenceType08("1", "GRN", invalidGuaranteeReasons))
 
       when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("G02"))(any(), any()))
         .thenReturn(Future.successful(InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")))
@@ -117,10 +117,10 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
       }
     }
 
-    val invalidGuaranteeReasons = Seq(InvalidGuaranteeReasonType01(1, "G02", Some("text")), InvalidGuaranteeReasonType01(1, "G03", Some("text")))
+    val invalidGuaranteeReasons = Seq(InvalidGuaranteeReasonType01("1", "G02", Some("text")), InvalidGuaranteeReasonType01("1", "G03", Some("text")))
 
     val guaranteeErrors: Seq[GuaranteeReferenceType08] =
-      Seq(GuaranteeReferenceType08(1, "GRN", invalidGuaranteeReasons), GuaranteeReferenceType08(2, "GRN2", invalidGuaranteeReasons))
+      Seq(GuaranteeReferenceType08("1", "GRN", invalidGuaranteeReasons), GuaranteeReferenceType08("2", "GRN2", invalidGuaranteeReasons))
 
     when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("G02"))(any(), any()))
       .thenReturn(Future.successful(InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")))
