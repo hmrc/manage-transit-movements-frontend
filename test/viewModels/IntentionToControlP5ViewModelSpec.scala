@@ -44,9 +44,9 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
   "IntentionToControlP5ViewModel" - {
 
-    val typeOfControls    = Seq(TypeOfControlsType("1", "44", None))
+    val typeOfControls    = Seq(TypeOfControlsType(1, "44", None))
     val controlType44     = ControlType("44", "")
-    val requestedDocument = Seq(RequestedDocumentType("1", "44", None))
+    val requestedDocument = Seq(RequestedDocumentType(1, "44", None))
 
     "when no requested documents" - {
 
