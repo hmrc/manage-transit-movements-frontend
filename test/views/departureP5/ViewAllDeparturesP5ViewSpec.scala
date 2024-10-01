@@ -77,6 +77,8 @@ class ViewAllDeparturesP5ViewSpec
 
   behave like pageWithHeading()
 
+  behave like pageWithInsetText("Reload this page for the latest status updates.")
+
   behave like pageWithLink(
     id = "make-departure-declaration",
     expectedText = "Make a departure declaration",

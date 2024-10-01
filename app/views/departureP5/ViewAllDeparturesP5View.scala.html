@@ -54,8 +54,9 @@
         form = form,
         action = routes.ViewAllDeparturesP5Controller.onSubmit(),
         label = "viewDepartureDeclarationsP5.search.title",
-        additionalHtml = Some(inset(messages("viewDepartureDeclarationsP5.search.inset"), "search-inset-text"))
     )
+
+    @inset(messages("viewDepartureDeclarationsP5.search.inset"), "search-inset-text")
 
     @pagination(viewModel.paginationViewModel, form.value)
 
