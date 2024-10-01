@@ -28,7 +28,8 @@
 @(
     form: Form[?],
     action: Call,
-    label: String
+    label: String,
+    additionalHtml: Option[Html] = None
 )(implicit request: Request[?], messages: Messages)
 
 @formHelper(action = action, Symbol("autoComplete") -> "off") {
@@ -43,5 +44,9 @@
             messageKey = "site.search",
             attributes = Map("id" -> "submit")
         )
+
+        @if(additionalHtml.isDefined) {
+            @additionalHtml
+        }
     </div>
 }
