@@ -17,7 +17,7 @@
 @import config.FrontendAppConfig
 @import controllers.departureP5.routes
 @import viewModels.P5.departure.ViewAllDepartureMovementsP5ViewModel
-@import views.html.components.{Heading, MovementsTable, Pagination, Search, Status}
+@import views.html.components.{Heading, MovementsTable, Pagination, Search, Status, InsetText}
 @import controllers.routes.{WhatDoYouWantToDoController => WDYWTDController}
 
 @this(
@@ -27,7 +27,8 @@
     movementsTable: MovementsTable,
     search: Search,
     status: Status,
-    config: FrontendAppConfig
+    config: FrontendAppConfig,
+    inset: InsetText,
 )
 
 @(
@@ -54,6 +55,8 @@
         action = routes.ViewAllDeparturesP5Controller.onSubmit(),
         label = "viewDepartureDeclarationsP5.search.title"
     )
+
+    @inset(messages("viewDepartureDeclarationsP5.search.inset"))
 
     @pagination(viewModel.paginationViewModel, form.value)
 

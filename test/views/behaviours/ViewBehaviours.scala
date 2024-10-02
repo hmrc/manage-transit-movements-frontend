@@ -250,6 +250,15 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
       assert(doc.getElementsByClass("govuk-grid-column-full").size() == 1)
     }
 
+  def pageWithInsetText(expectedText: String): Unit =
+    pageWithInsetText(doc, expectedText)
+
+  def pageWithInsetText(doc: Document, expectedText: String): Unit =
+    "must render inset text" in {
+      val insetText = getElementByClass(doc, "govuk-inset-text")
+      assertElementContainsText(insetText, expectedText)
+    }
+
   def boldWords(p: Element): Seq[String] = p.getElementsByTag("b").toList.map(_.text())
 
   def pageWithButton(expectedText: String)(additionalAssertions: Element => Assertion*): Unit =

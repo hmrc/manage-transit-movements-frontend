@@ -115,6 +115,7 @@ viewDepartureDeclarationsP5.table.lrn                        = Local Reference N
 viewDepartureDeclarationsP5.table.status                     = Status
 viewDepartureDeclarationsP5.table.action                     = Actions
 viewDepartureDeclarationsP5.link.manage                      = Manage your transit movements
+viewDepartureDeclarationsP5.search.inset                     = Reload this page for the latest status updates.
 
 movement.status.P5.arrivalNotificationSubmitted                         = Arrival notification sent
 movement.status.P5.unloadingRemarksSubmitted                            = Unloading remarks sent
