@@ -20,11 +20,10 @@
 
 @this(govukInsetText: GovukInsetText)
 
-@(text: String, classes: String = "")
+@(text: String)
 
 @govukInsetText(
  HInsetText(
-        classes = classes,
         content = Text(text)
     )
 )

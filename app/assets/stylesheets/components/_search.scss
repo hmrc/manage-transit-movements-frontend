@@ -37,8 +37,3 @@
     display: inline-block;
   }
 }
-
-.search-inset-text {
-  @include govuk-responsive-margin(0, "top");
-  @include govuk-responsive-margin(6, "bottom");
-}
