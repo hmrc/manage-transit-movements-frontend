@@ -73,7 +73,7 @@ class ViewAllArrivalsP5ViewSpec
 
   behave like pageWithTitle()
 
-  behave like pageWithoutBackLink()
+  behave like pageWithBackLink()
 
   behave like pageWithHeading()
 
