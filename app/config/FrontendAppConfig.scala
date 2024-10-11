@@ -38,7 +38,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val p5Departure: String = configuration.get[String]("urls.manageTransitMovementsDepartureFrontend")
 
-  val p5Cancellation: String = configuration.get[String]("urls.manageTransitMovementsCancellationFrontend")
+  val p5Cancellation: String                                        = configuration.get[String]("urls.manageTransitMovementsCancellationFrontend")
+  def p5CancellationStart(departureId: String, lrn: String): String = s"$p5Cancellation/$departureId/index/$lrn"
 
   private val p5Unloading: String                                    = configuration.get[String]("urls.manageTransitMovementsUnloadingFrontend")
   def p5UnloadingStart(arrivalId: String, messageId: String): String = s"$p5Unloading/$arrivalId/unloading-remarks/$messageId"

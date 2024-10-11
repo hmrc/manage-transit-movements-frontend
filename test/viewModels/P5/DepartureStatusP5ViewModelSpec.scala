@@ -20,9 +20,9 @@ import base.SpecBase
 import config.FrontendAppConfig
 import generators.Generators
 import models.MessageStatus
+import models.departureP5.*
 import models.departureP5.BusinessRejectionType.*
 import models.departureP5.DepartureMessageType.*
-import models.departureP5.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.test.Helpers.running
@@ -35,7 +35,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
   "DepartureStatusP5ViewModel" - {
 
-    def otherMovementAndMessage(messageType: DepartureMessageType): OtherMovementAndMessage =
+    def otherMovementAndMessage(messageType: DepartureMessageType, status: MessageStatus = MessageStatus.Success): OtherMovementAndMessage =
       OtherMovementAndMessage(
         departureIdP5,
         lrn.value,
@@ -45,7 +45,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             messageId,
             LocalDateTime.now(),
             messageType,
-            MessageStatus.Success
+            status
           ),
           "ie015MessageId"
         )
@@ -65,6 +65,25 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result `mustBe` expectedResult
     }
 
+    "when given Message with head is Failed DepartureDeclaration" in {
+
+      val movementAndMessage = otherMovementAndMessage(DepartureNotification, MessageStatus.Failed)
+
+      val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.departureNotificationFailed",
+        Seq(
+          ViewMovementAction(
+            frontendAppConfig.p5Departure,
+            "movement.status.P5.resendDepartureNotification"
+          )
+        )
+      )
+
+      result `mustBe` expectedResult
+    }
+
     "when given Message with head of CancellationRequested" in {
 
       val movementAndMessage = otherMovementAndMessage(CancellationRequested)
@@ -74,6 +93,25 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.cancellationSubmitted",
         Nil
+      )
+
+      result `mustBe` expectedResult
+    }
+
+    "when given Message with head of Failed CancellationRequested" in {
+
+      val movementAndMessage = otherMovementAndMessage(CancellationRequested, MessageStatus.Failed)
+
+      val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.cancellationFailed",
+        Seq(
+          ViewMovementAction(
+            frontendAppConfig.p5CancellationStart(departureIdP5, lrn.value),
+            "movement.status.P5.resendCancellation"
+          )
+        )
       )
 
       result `mustBe` expectedResult
@@ -93,7 +131,26 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       result `mustBe` expectedResult
     }
 
-    "when given Message with head of prelodgedDeclarationSent" in {
+    "when given Message with head of Failed AmendmentSubmitted" in {
+
+      val movementAndMessage = otherMovementAndMessage(AmendmentSubmitted, MessageStatus.Failed)
+
+      val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.amendmentFailed",
+        Seq(
+          ViewMovementAction(
+            frontendAppConfig.departureFrontendTaskListUrl(lrn.value),
+            "movement.status.P5.resendAmendment"
+          )
+        )
+      )
+
+      result `mustBe` expectedResult
+    }
+
+    "when given Message with head of PrelodgedDeclarationSent" in {
 
       val movementAndMessage = otherMovementAndMessage(PrelodgedDeclarationSent)
 
@@ -102,6 +159,25 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       val expectedResult = DepartureStatusP5ViewModel(
         "movement.status.P5.prelodgedDeclarationSent",
         Nil
+      )
+
+      result `mustBe` expectedResult
+    }
+
+    "when given Message with head of Failed PrelodgedDeclarationSent" in {
+
+      val movementAndMessage = otherMovementAndMessage(PrelodgedDeclarationSent, MessageStatus.Failed)
+
+      val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+      val expectedResult = DepartureStatusP5ViewModel(
+        "movement.status.P5.prelodgedDeclarationFailed",
+        Seq(
+          ViewMovementAction(
+            frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5),
+            "movement.status.P5.resendPrelodgedDeclaration"
+          )
+        )
       )
 
       result `mustBe` expectedResult

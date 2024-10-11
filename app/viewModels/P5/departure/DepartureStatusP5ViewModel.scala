@@ -17,9 +17,9 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.departureP5.BusinessRejectionType._
-import models.departureP5.DepartureMessageType._
-import models.departureP5._
+import models.departureP5.*
+import models.departureP5.BusinessRejectionType.*
+import models.departureP5.DepartureMessageType.*
 import viewModels.ViewMovementAction
 
 case class DepartureStatusP5ViewModel(status: String, actions: Seq[ViewMovementAction])
@@ -68,9 +68,9 @@ object DepartureStatusP5ViewModel {
     Seq(
       departureNotification,
       allocatedMRN(departureId, localReferenceNumber),
-      cancellationRequested,
-      amendmentSubmitted,
-      prelodgedDeclarationSent,
+      cancellationRequested(departureId, localReferenceNumber),
+      amendmentSubmitted(localReferenceNumber),
+      prelodgedDeclarationSent(departureId),
       movementNotArrivedResponseSent,
       movementNotArrived,
       cancellationDecision(departureId, messageId),
@@ -94,7 +94,7 @@ object DepartureStatusP5ViewModel {
             "movement.status.P5.action.declarationAmendmentAccepted.completeDeclaration"
           ),
           ViewMovementAction(
-            s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
+            s"${frontendAppConfig.p5CancellationStart(departureId, lrn)}",
             "movement.status.P5.action.declarationAmendmentAccepted.cancelDeclaration"
           )
         )
@@ -126,34 +126,96 @@ object DepartureStatusP5ViewModel {
             "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
           ),
           ViewMovementAction(
-            s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
+            s"${frontendAppConfig.p5CancellationStart(departureId, lrn)}",
             "movement.status.P5.action.allocatedMRN.cancelDeclaration"
           )
         )
       )
   }
 
-  private def departureNotification: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def departureNotification(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == DepartureNotification =>
-      DepartureStatusP5ViewModel(
-        "movement.status.P5.departureNotificationSubmitted",
-        actions = Nil
-      )
+      if (message.status.failed) {
+        DepartureStatusP5ViewModel(
+          status = "movement.status.P5.departureNotificationFailed",
+          actions = Seq(
+            ViewMovementAction(
+              href = frontendAppConfig.p5Departure,
+              key = "movement.status.P5.resendDepartureNotification"
+            )
+          )
+        )
+      } else {
+        DepartureStatusP5ViewModel(
+          status = "movement.status.P5.departureNotificationSubmitted",
+          actions = Nil
+        )
+      }
   }
 
-  private def cancellationRequested: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def cancellationRequested(
+    departureId: String,
+    lrn: String
+  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == CancellationRequested =>
-      DepartureStatusP5ViewModel("movement.status.P5.cancellationSubmitted", actions = Nil)
+      if (message.status.failed) {
+        DepartureStatusP5ViewModel(
+          status = "movement.status.P5.cancellationFailed",
+          actions = Seq(
+            ViewMovementAction(
+              frontendAppConfig.p5CancellationStart(departureId, lrn),
+              "movement.status.P5.resendCancellation"
+            )
+          )
+        )
+      } else {
+        DepartureStatusP5ViewModel(
+          status = "movement.status.P5.cancellationSubmitted",
+          actions = Nil
+        )
+      }
   }
 
-  private def amendmentSubmitted: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def amendmentSubmitted(lrn: String)(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == AmendmentSubmitted =>
-      DepartureStatusP5ViewModel("movement.status.P5.amendmentSubmitted", actions = Nil)
+      if (message.status.failed) {
+        DepartureStatusP5ViewModel(
+          status = "movement.status.P5.amendmentFailed",
+          actions = Seq(
+            ViewMovementAction(
+              frontendAppConfig.departureFrontendTaskListUrl(lrn),
+              "movement.status.P5.resendAmendment"
+            )
+          )
+        )
+      } else {
+        DepartureStatusP5ViewModel(
+          status = "movement.status.P5.amendmentSubmitted",
+          actions = Nil
+        )
+      }
   }
 
-  private def prelodgedDeclarationSent: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+  private def prelodgedDeclarationSent(
+    departureId: String
+  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == PrelodgedDeclarationSent =>
-      DepartureStatusP5ViewModel("movement.status.P5.prelodgedDeclarationSent", actions = Nil)
+      if (message.status.failed) {
+        DepartureStatusP5ViewModel(
+          status = "movement.status.P5.prelodgedDeclarationFailed",
+          actions = Seq(
+            ViewMovementAction(
+              href = frontendAppConfig.presentationNotificationFrontendUrl(departureId),
+              key = "movement.status.P5.resendPrelodgedDeclaration"
+            )
+          )
+        )
+      } else {
+        DepartureStatusP5ViewModel(
+          status = "movement.status.P5.prelodgedDeclarationSent",
+          actions = Nil
+        )
+      }
   }
 
   private def movementNotArrivedResponseSent: PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
@@ -242,7 +304,7 @@ object DepartureStatusP5ViewModel {
             "movement.status.P5.action.guaranteeRejected.viewErrors"
           ),
           ViewMovementAction(
-            s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
+            s"${frontendAppConfig.p5CancellationStart(departureId, lrn)}",
             "movement.status.P5.action.guaranteeRejected.cancelDeclaration"
           )
         )
@@ -316,7 +378,7 @@ object DepartureStatusP5ViewModel {
         actions = Seq(
           goodsUnderControlAction,
           ViewMovementAction(
-            s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
+            s"${frontendAppConfig.p5CancellationStart(departureId, lrn)}",
             "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
           )
         ) ++ prelodgeAction
@@ -363,7 +425,7 @@ object DepartureStatusP5ViewModel {
               "movement.status.P5.action.declarationAmendmentAccepted.amendDeclaration"
             ),
             ViewMovementAction(
-              s"${frontendAppConfig.p5Cancellation}/$departureId/index/$lrn",
+              s"${frontendAppConfig.p5CancellationStart(departureId, lrn)}",
               "movement.status.P5.action.declarationSent.cancelDeclaration"
             ),
             ViewMovementAction(
