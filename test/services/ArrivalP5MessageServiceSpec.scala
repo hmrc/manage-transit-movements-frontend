@@ -45,7 +45,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
 
   "ArrivalP5MessageService" - {
 
-    "getLatestMessagesForMovement" - {
+    "getLatestMessagesForMovements" - {
 
       "must return RejectedMovementAndMessage when RejectedByOfficeOfDestination" in {
 
@@ -88,7 +88,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
         when(mockConnector.getMessage[CC057CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(ie057))
         when(mockConnector.getLatestMessageForMovement(any())(any())).thenReturn(Future.successful(latestArrivalMessage))
 
-        val result: Seq[ArrivalMovementAndMessage] = arrivalP5MessageService.getLatestMessagesForMovement(arrivalMovements).futureValue
+        val result: Seq[ArrivalMovementAndMessage] = arrivalP5MessageService.getLatestMessagesForMovements(arrivalMovements).futureValue
 
         val expectedResult: Seq[RejectedMovementAndMessage] = Seq(
           RejectedMovementAndMessage(

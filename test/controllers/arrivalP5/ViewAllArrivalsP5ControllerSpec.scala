@@ -56,7 +56,7 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with AppWithDefaultMockFi
       val arrivalMovement = ArrivalMovement("arrivialId", "mrn", LocalDateTime.now())
       when(arrivalMovementP5Connector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
         .thenReturn(Future.successful(Some(ArrivalMovements(Seq(arrivalMovement), 1))))
-      when(arrivalP5MessageService.getLatestMessagesForMovement(any())(any(), any()))
+      when(arrivalP5MessageService.getLatestMessagesForMovements(any())(any(), any()))
         .thenReturn(
           Future.successful(
             Seq(
