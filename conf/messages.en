@@ -118,7 +118,10 @@ viewDepartureDeclarationsP5.link.manage                      = Manage your trans
 viewDepartureDeclarationsP5.search.inset                     = Reload this page for the latest status updates.
 
 movement.status.P5.arrivalNotificationSubmitted                         = Arrival notification sent
+movement.status.P5.arrivalNotificationFailed                            = Arrival notification failed to send
+movement.status.P5.resendArrivalNotification                            = Resend arrival notification
 movement.status.P5.unloadingRemarksSubmitted                            = Unloading remarks sent
+movement.status.P5.unloadingRemarksFailed                               = Unloading remarks failed to send
 movement.status.P5.goodsReleasedReceived                                = Goods released
 movement.status.P5.unloadingPermissionReceived                          = Unloading permission granted
 movement.status.P5.rejectionFromOfficeOfDestinationReceived.unloading   = Unloading Rejected
@@ -150,6 +153,7 @@ movement.status.P5.goodsReleased                                        = Goods 
 movement.status.P5.discrepancies                                        = Goods not released - discrepancies
 
 movement.status.P5.action.unloadingPermission.unloadingRemarks = Make unloading remarks
+movement.status.P5.action.unloadingPermission.resendUnloadingRemarks = Resend unloading remarks
 movement.status.P5.action.unloadingPermission.pdf              = Unloading Permission PDF
 movement.status.P5.action.viewErrors = View errors
 movement.status.P5.action.viewError = View error

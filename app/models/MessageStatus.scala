@@ -18,7 +18,10 @@ package models
 
 import play.api.libs.json.*
 
-sealed trait MessageStatus
+sealed trait MessageStatus {
+
+  def failed: Boolean = this == MessageStatus.Failed
+}
 
 object MessageStatus {
 
