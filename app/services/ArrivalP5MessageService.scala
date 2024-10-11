@@ -31,7 +31,7 @@ import generated.Generated_CC057CTypeFormat
 
 class ArrivalP5MessageService @Inject() (arrivalMovementP5Connector: ArrivalMovementP5Connector) {
 
-  def getLatestMessagesForMovement(
+  def getLatestMessagesForMovements(
     arrivalMovements: ArrivalMovements
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ArrivalMovementAndMessage]] =
     arrivalMovements.arrivalMovements.traverse {

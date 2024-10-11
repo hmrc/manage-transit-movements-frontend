@@ -17,8 +17,8 @@
 package viewModels.P5.arrival
 
 import config.FrontendAppConfig
-import models.arrivalP5.ArrivalMessageType._
-import models.arrivalP5._
+import models.arrivalP5.*
+import models.arrivalP5.ArrivalMessageType.*
 import viewModels.ViewMovementAction
 
 case class ArrivalStatusP5ViewModel(status: String, actions: Seq[ViewMovementAction])
@@ -38,11 +38,11 @@ object ArrivalStatusP5ViewModel {
           .lift(message.latestMessage)
     }).getOrElse(ArrivalStatusP5ViewModel("", Seq.empty))
 
-  def otherStatus(arrivalId: String)(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
+  private def otherStatus(arrivalId: String)(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] =
     Seq(
       arrivalNotification,
-      unloadingRemarks,
       unloadingPermission(arrivalId),
+      unloadingRemarks(arrivalId),
       movementEnded
     ).reduce(_ orElse _)
 
@@ -61,14 +61,46 @@ object ArrivalStatusP5ViewModel {
       rejectionFromOfficeOfDestinationUnloading(arrivalId, functionalErrorCount, rejectionType)
     ).reduce(_ orElse _)
 
-  private def arrivalNotification: PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
+  private def arrivalNotification(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == ArrivalNotification =>
-      ArrivalStatusP5ViewModel("movement.status.P5.arrivalNotificationSubmitted", actions = Nil)
+      if (message.status.failed) {
+        ArrivalStatusP5ViewModel(
+          status = "movement.status.P5.arrivalNotificationFailed",
+          actions = Seq(
+            ViewMovementAction(
+              href = frontendAppConfig.p5Arrival,
+              key = "movement.status.P5.resendArrivalNotification"
+            )
+          )
+        )
+      } else {
+        ArrivalStatusP5ViewModel(
+          status = "movement.status.P5.arrivalNotificationSubmitted",
+          actions = Nil
+        )
+      }
   }
 
-  private def unloadingRemarks: PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
+  private def unloadingRemarks(
+    arrivalId: String
+  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[ArrivalMessage, ArrivalStatusP5ViewModel] = {
     case message if message.messageType == UnloadingRemarks =>
-      ArrivalStatusP5ViewModel("movement.status.P5.unloadingRemarksSubmitted", actions = Nil)
+      if (message.status.failed) {
+        ArrivalStatusP5ViewModel(
+          status = "movement.status.P5.unloadingRemarksFailed",
+          actions = Seq(
+            ViewMovementAction(
+              frontendAppConfig.p5UnloadingStart(arrivalId, message.messageId),
+              "movement.status.P5.action.unloadingPermission.resendUnloadingRemarks"
+            )
+          )
+        )
+      } else {
+        ArrivalStatusP5ViewModel(
+          status = "movement.status.P5.unloadingRemarksSubmitted",
+          actions = Nil
+        )
+      }
   }
 
   private def unloadingPermission(

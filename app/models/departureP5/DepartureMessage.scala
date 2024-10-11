@@ -16,20 +16,22 @@
 
 package models.departureP5
 
+import models.MessageStatus
 import play.api.libs.json.{__, Reads}
 
 import java.time.LocalDateTime
 
-case class DepartureMessage(messageId: String, received: LocalDateTime, messageType: DepartureMessageType)
+case class DepartureMessage(messageId: String, received: LocalDateTime, messageType: DepartureMessageType, status: MessageStatus)
 
 object DepartureMessage {
 
   implicit lazy val reads: Reads[DepartureMessage] = {
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
     (
       (__ \ "id").read[String] and
         (__ \ "received").read[LocalDateTime] and
-        (__ \ "type").read[DepartureMessageType]
+        (__ \ "type").read[DepartureMessageType] and
+        (__ \ "status").read[MessageStatus]
     )(DepartureMessage.apply)
   }
 

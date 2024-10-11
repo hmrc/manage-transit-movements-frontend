@@ -18,6 +18,7 @@ package models.departureP5
 
 import base.SpecBase
 import cats.data.NonEmptyList
+import models.MessageStatus
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime
@@ -34,19 +35,22 @@ class MessagesForDepartureMovementSpec extends SpecBase {
         val currentMessage = DepartureMessage(
           "messageId1",
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.ReleasedForTransit
+          DepartureMessageType.ReleasedForTransit,
+          MessageStatus.Success
         )
 
         val previousMessage = DepartureMessage(
           "messageId2",
           LocalDateTime.parse("2022-11-12T12:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.DepartureNotification
+          DepartureMessageType.DepartureNotification,
+          MessageStatus.Success
         )
 
         val lastMessage = DepartureMessage(
           "messageId3",
           LocalDateTime.parse("2022-11-11T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.RejectedByOfficeOfDeparture
+          DepartureMessageType.RejectedByOfficeOfDeparture,
+          MessageStatus.Success
         )
 
         val messagesForMovement = MessagesForDepartureMovement(
@@ -62,7 +66,8 @@ class MessagesForDepartureMovementSpec extends SpecBase {
         val currentMessage = DepartureMessage(
           "messageId1",
           LocalDateTime.parse("2022-11-12T13:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-          DepartureMessageType.ReleasedForTransit
+          DepartureMessageType.ReleasedForTransit,
+          MessageStatus.Success
         )
 
         val messagesForMovement = MessagesForDepartureMovement(
@@ -88,7 +93,8 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |         },
             |         "id":"messageId1",
             |         "received":"2022-11-10T11:32:51.459Z",
-            |         "type":"IE015"
+            |         "type":"IE015",
+            |         "status" : "Success"
             |      },
             |      {
             |       "_links":{
@@ -98,7 +104,8 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |         },
             |         "id":"messageId2",
             |         "received":"2022-11-10T10:32:51.459Z",
-            |         "type":"IE028"
+            |         "type":"IE028",
+            |         "status" : "Success"
             |      },
             |      {
             |        "_links":{
@@ -108,7 +115,8 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |         },
             |         "id":"messageId3",
             |         "received":"2022-11-10T12:32:52.459Z",
-            |         "type":"IE029"
+            |         "type":"IE029",
+            |         "status" : "Success"
             |      }
             |   ]
             |}
@@ -119,18 +127,21 @@ class MessagesForDepartureMovementSpec extends SpecBase {
           DepartureMessage(
             "messageId3",
             LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-            DepartureMessageType.ReleasedForTransit
+            DepartureMessageType.ReleasedForTransit,
+            MessageStatus.Success
           ),
           List(
             DepartureMessage(
               "messageId1",
               LocalDateTime.parse("2022-11-10T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.DepartureNotification
+              DepartureMessageType.DepartureNotification,
+              MessageStatus.Success
             ),
             DepartureMessage(
               "messageId2",
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.AllocatedMRN
+              DepartureMessageType.AllocatedMRN,
+              MessageStatus.Success
             )
           )
         )
@@ -155,7 +166,8 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |         },
             |         "id":"messageId1",
             |         "received":"2022-11-10T11:32:51.459Z",
-            |         "type":"IE015"
+            |         "type":"IE015",
+            |         "status" : "Success"
             |      },
             |      {
             |        "_links":{
@@ -165,7 +177,8 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |         },
             |         "id":"messageId2",
             |         "received":"2022-11-10T10:32:51.459Z",
-            |         "type":"IE028"
+            |         "type":"IE028",
+            |         "status" : "Success"
             |      },
             |      {
             |         "_links":{
@@ -175,7 +188,8 @@ class MessagesForDepartureMovementSpec extends SpecBase {
             |         },
             |         "id":"messageId3",
             |         "received":"2022-11-10T12:32:52.459Z",
-            |         "type":"IE029"
+            |         "type":"IE029",
+            |         "status" : "Success"
             |      }
             |   ]
             |}
@@ -186,18 +200,21 @@ class MessagesForDepartureMovementSpec extends SpecBase {
           DepartureMessage(
             "messageId3",
             LocalDateTime.parse("2022-11-10T12:32:52.459Z", DateTimeFormatter.ISO_DATE_TIME),
-            DepartureMessageType.ReleasedForTransit
+            DepartureMessageType.ReleasedForTransit,
+            MessageStatus.Success
           ),
           List(
             DepartureMessage(
               "messageId1",
               LocalDateTime.parse("2022-11-10T11:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.DepartureNotification
+              DepartureMessageType.DepartureNotification,
+              MessageStatus.Success
             ),
             DepartureMessage(
               "messageId2",
               LocalDateTime.parse("2022-11-10T10:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-              DepartureMessageType.AllocatedMRN
+              DepartureMessageType.AllocatedMRN,
+              MessageStatus.Success
             )
           )
         )

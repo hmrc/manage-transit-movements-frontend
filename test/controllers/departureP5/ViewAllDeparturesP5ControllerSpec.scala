@@ -19,6 +19,7 @@ package controllers.departureP5
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureMovementP5Connector
 import generators.Generators
+import models.MessageStatus
 import models.departureP5.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -55,7 +56,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with AppWithDefaultMock
       val movement = DepartureMovement("id", Some("mrn"), "ref", LocalDateTime.now())
       when(departureMovementP5Connector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
         .thenReturn(Future.successful(Some(DepartureMovements(Seq(movement), 1))))
-      when(departureP5MessageService.getLatestMessagesForMovement(any())(any(), any()))
+      when(departureP5MessageService.getLatestMessagesForMovements(any())(any(), any()))
         .thenReturn(
           Future.successful(
             Seq(
@@ -63,7 +64,15 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with AppWithDefaultMock
                 "id",
                 "ref",
                 LocalDateTime.now(),
-                LatestDepartureMessage(DepartureMessage("messageId", LocalDateTime.now(), DepartureMessageType.DepartureNotification), "id")
+                LatestDepartureMessage(
+                  DepartureMessage(
+                    "messageId",
+                    LocalDateTime.now(),
+                    DepartureMessageType.DepartureNotification,
+                    MessageStatus.Success
+                  ),
+                  "id"
+                )
               )
             )
           )

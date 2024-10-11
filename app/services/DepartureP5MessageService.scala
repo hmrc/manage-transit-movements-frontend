@@ -54,7 +54,7 @@ class DepartureP5MessageService @Inject() (
       isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn, xPaths.filter(_.nonEmpty))
     } yield (rejectionType, isDeclarationAmendable, xPaths)
 
-  def getLatestMessagesForMovement(
+  def getLatestMessagesForMovements(
     departureMovements: DepartureMovements
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[MovementAndMessage]] =
     departureMovements.departureMovements.traverse {

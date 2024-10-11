@@ -17,6 +17,7 @@
 package models.arrivalP5
 
 import base.SpecBase
+import models.MessageStatus
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime
@@ -44,7 +45,8 @@ class MessageSpec extends SpecBase {
               |   "id":"343ffafafaaf",
               |   "arrivalId":"63498209a2d89ad8",
               |   "received":"2022-11-10T15:32:51.459Z",
-              |   "type": "${messageType.toString}"
+              |   "type": "${messageType.toString}",
+              |   "status": "Success"
               |}
               |""".stripMargin
           )
@@ -52,7 +54,8 @@ class MessageSpec extends SpecBase {
           val expectedResult = ArrivalMessage(
             messageId,
             LocalDateTime.parse("2022-11-10T15:32:51.459Z", DateTimeFormatter.ISO_DATE_TIME),
-            messageType
+            messageType,
+            MessageStatus.Success
           )
 
           val result: ArrivalMessage = json.validate[ArrivalMessage].asOpt.value

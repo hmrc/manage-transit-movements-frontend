@@ -19,6 +19,7 @@ package viewModels.P5
 import base.SpecBase
 import cats.data.NonEmptyList
 import generators.Generators
+import models.MessageStatus
 import models.arrivalP5.*
 import models.arrivalP5.ArrivalMessageType.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -35,14 +36,14 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
     "must return correct ArrivalStatusP5ViewModel" - {
 
-      def movementAndMessagesOther(headMessage: ArrivalMessageType): ArrivalMovementAndMessage =
+      def movementAndMessagesOther(headMessage: ArrivalMessageType, status: MessageStatus = MessageStatus.Success): ArrivalMovementAndMessage =
         OtherMovementAndMessage(
           ArrivalMovement(
             "arrivalID",
             "mrn",
             LocalDateTime.now()
           ),
-          LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5)
+          LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage, status), arrivalIdP5)
         )
 
       "when given Message with head of ArrivalNotification" in {
@@ -56,6 +57,25 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
         result `mustBe` expectedResult
       }
 
+      "when given Message with head of Failed ArrivalNotification" in {
+
+        val movementAndMessage = movementAndMessagesOther(ArrivalNotification, MessageStatus.Failed)
+
+        val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = ArrivalStatusP5ViewModel(
+          "movement.status.P5.arrivalNotificationFailed",
+          Seq(
+            ViewMovementAction(
+              frontendAppConfig.p5Arrival,
+              "movement.status.P5.resendArrivalNotification"
+            )
+          )
+        )
+
+        result `mustBe` expectedResult
+      }
+
       "when given Message with head of UnloadingRemarks" in {
 
         val movementAndMessage = movementAndMessagesOther(UnloadingRemarks)
@@ -63,6 +83,25 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
         val result = ArrivalStatusP5ViewModel(movementAndMessage)
 
         val expectedResult = ArrivalStatusP5ViewModel("movement.status.P5.unloadingRemarksSubmitted", Nil)
+
+        result `mustBe` expectedResult
+      }
+
+      "when given Message with head of Failed UnloadingRemarks" in {
+
+        val movementAndMessage = movementAndMessagesOther(UnloadingRemarks, MessageStatus.Failed)
+
+        val result = ArrivalStatusP5ViewModel(movementAndMessage)
+
+        val expectedResult = ArrivalStatusP5ViewModel(
+          "movement.status.P5.unloadingRemarksFailed",
+          Seq(
+            ViewMovementAction(
+              frontendAppConfig.p5UnloadingStart(movementAndMessage.arrivalMovement.arrivalId, messageId),
+              "movement.status.P5.action.unloadingPermission.resendUnloadingRemarks"
+            )
+          )
+        )
 
         result `mustBe` expectedResult
       }
@@ -100,7 +139,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
               "mrn",
               LocalDateTime.now()
             ),
-            LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, GoodsReleasedNotification), arrivalIdP5),
+            LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, GoodsReleasedNotification, MessageStatus.Success), arrivalIdP5),
             goodsReleased
           )
         "when goods are released" in {
@@ -136,7 +175,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 mrn,
                 LocalDateTime.now()
               ),
-              LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5),
+              LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage, MessageStatus.Success), arrivalIdP5),
               functionalErrorCount = 0,
               "044"
             )
@@ -159,9 +198,9 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val messages = MessagesForArrivalMovement(
             NonEmptyList(
-              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination),
+              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination, MessageStatus.Success),
               List(
-                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks)
+                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks, MessageStatus.Success)
               )
             )
           )
@@ -199,9 +238,9 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val messages = MessagesForArrivalMovement(
             NonEmptyList(
-              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination),
+              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination, MessageStatus.Success),
               List(
-                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks)
+                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks, MessageStatus.Success)
               )
             )
           )
@@ -238,7 +277,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 "mrn",
                 LocalDateTime.now()
               ),
-              LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5),
+              LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage, MessageStatus.Success), arrivalIdP5),
               functionalErrorCount = 0,
               "007"
             )

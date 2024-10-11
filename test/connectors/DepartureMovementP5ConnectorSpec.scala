@@ -20,8 +20,8 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import helper.WireMockServerHandler
-import models.Availability
-import models.departureP5._
+import models.{Availability, MessageStatus}
+import models.departureP5.*
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -453,7 +453,8 @@ class DepartureMovementP5ConnectorSpec extends SpecBase with WireMockServerHandl
               latestMessage = DepartureMessage(
                 messageId = messageId,
                 received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
-                messageType = DepartureMessageType.DepartureNotification
+                messageType = DepartureMessageType.DepartureNotification,
+                status = MessageStatus.Success
               ),
               ie015MessageId = messageId
             )

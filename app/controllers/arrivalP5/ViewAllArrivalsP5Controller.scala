@@ -76,7 +76,7 @@ class ViewAllArrivalsP5Controller @Inject() (
     val currentPage = page.getOrElse(1)
     arrivalMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.arrivalsNumberOfMovements, searchParam).flatMap {
       case Some(movements) =>
-        arrivalP5MessageService.getLatestMessagesForMovement(movements).map {
+        arrivalP5MessageService.getLatestMessagesForMovements(movements).map {
           movementsAndMessages =>
             val viewArrivalP5: Seq[ViewArrivalP5] = movementsAndMessages.map(ViewArrivalP5(_))
 
