@@ -208,7 +208,19 @@ trait ModelGenerators {
         messageId   <- nonEmptyString
         received    <- arbitrary[LocalDateTime]
         messageType <- arbitrary[models.departureP5.DepartureMessageType]
-      } yield models.departureP5.DepartureMessage(messageId, received, messageType)
+        status      <- arbitrary[MessageStatus]
+      } yield models.departureP5.DepartureMessage(messageId, received, messageType, status)
+    }
+
+  implicit lazy val arbitraryMessageStatus: Arbitrary[MessageStatus] =
+    Arbitrary {
+      Gen.oneOf(
+        MessageStatus.Received,
+        MessageStatus.Pending,
+        MessageStatus.Processing,
+        MessageStatus.Success,
+        MessageStatus.Failed
+      )
     }
 
   implicit lazy val arbitraryBusinessRejectionType: Arbitrary[BusinessRejectionType] = {

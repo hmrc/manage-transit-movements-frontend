@@ -18,10 +18,11 @@ package services
 
 import base.SpecBase
 import connectors.ArrivalMovementP5Connector
-import generated._
+import generated.*
 import generators.Generators
+import models.MessageStatus
 import models.arrivalP5.ArrivalMessageType.RejectionFromOfficeOfDestination
-import models.arrivalP5._
+import models.arrivalP5.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -56,7 +57,8 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
           ArrivalMessage(
             messageId = "messageId1",
             received = dateTimeNow,
-            messageType = RejectionFromOfficeOfDestination
+            messageType = RejectionFromOfficeOfDestination,
+            status = MessageStatus.Success
           ),
           arrivalIdP5
         )

@@ -18,11 +18,11 @@ package services
 
 import base.SpecBase
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import generated._
+import generated.*
 import generators.Generators
-import models.departureP5.DepartureMessageType._
-import models.departureP5._
-import models.{LocalReferenceNumber, RichCC015Type, RichCC182Type}
+import models.departureP5.DepartureMessageType.*
+import models.departureP5.*
+import models.{LocalReferenceNumber, MessageStatus, RichCC015Type, RichCC182Type}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -60,7 +60,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           DepartureMessage(
             "messageId1",
             dateTimeNow,
-            RejectedByOfficeOfDeparture
+            RejectedByOfficeOfDeparture,
+            MessageStatus.Success
           ),
           "messageId2"
         )
@@ -120,7 +121,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           DepartureMessage(
             "messageId1",
             dateTimeNow,
-            genStatus
+            genStatus,
+            MessageStatus.Success
           ),
           "messageId2"
         )
@@ -168,7 +170,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           DepartureMessage(
             "messageId",
             dateTimeNow,
-            IncidentDuringTransit
+            IncidentDuringTransit,
+            MessageStatus.Success
           ),
           "messageId"
         )
@@ -223,12 +226,13 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           )
           .map {
 
-            status =>
+            messageType =>
               val latestDepartureMessage = LatestDepartureMessage(
                 DepartureMessage(
                   "messageId1",
                   dateTimeNow,
-                  status
+                  messageType,
+                  MessageStatus.Success
                 ),
                 "messageId2"
               )

@@ -19,6 +19,7 @@ package controllers.arrivalP5
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ArrivalMovementP5Connector
 import generators.Generators
+import models.MessageStatus
 import models.arrivalP5.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -59,8 +60,17 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with AppWithDefaultMockFi
         .thenReturn(
           Future.successful(
             Seq(
-              OtherMovementAndMessage(arrivalMovement,
-                                      LatestArrivalMessage(ArrivalMessage("messageId", LocalDateTime.now(), ArrivalMessageType.ArrivalNotification), "id")
+              OtherMovementAndMessage(
+                arrivalMovement,
+                LatestArrivalMessage(
+                  ArrivalMessage(
+                    "messageId",
+                    LocalDateTime.now(),
+                    ArrivalMessageType.ArrivalNotification,
+                    MessageStatus.Success
+                  ),
+                  "id"
+                )
               )
             )
           )

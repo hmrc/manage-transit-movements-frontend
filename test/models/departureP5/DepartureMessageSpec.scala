@@ -17,6 +17,7 @@
 package models.departureP5
 
 import base.SpecBase
+import models.MessageStatus
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime
@@ -38,6 +39,7 @@ class DepartureMessageSpec extends SpecBase {
           |    "id": "6445005176e4e834",
           |    "received": "2023-04-23T09:54:25.000Z",
           |    "type": "IE056",
+          |    "status" : "Success",
           |    "body": {
           |        "n1:CC056C": {}
           |    }
@@ -47,7 +49,8 @@ class DepartureMessageSpec extends SpecBase {
     json.as[DepartureMessage] `mustBe` DepartureMessage(
       messageId = "6445005176e4e834",
       received = LocalDateTime.of(2023, 4, 23, 9, 54, 25),
-      messageType = DepartureMessageType.RejectedByOfficeOfDeparture
+      messageType = DepartureMessageType.RejectedByOfficeOfDeparture,
+      status = MessageStatus.Success
     )
   }
 

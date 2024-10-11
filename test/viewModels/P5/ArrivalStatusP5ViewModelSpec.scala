@@ -19,6 +19,7 @@ package viewModels.P5
 import base.SpecBase
 import cats.data.NonEmptyList
 import generators.Generators
+import models.MessageStatus
 import models.arrivalP5.*
 import models.arrivalP5.ArrivalMessageType.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -42,7 +43,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
             "mrn",
             LocalDateTime.now()
           ),
-          LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5)
+          LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage, MessageStatus.Success), arrivalIdP5)
         )
 
       "when given Message with head of ArrivalNotification" in {
@@ -100,7 +101,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
               "mrn",
               LocalDateTime.now()
             ),
-            LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, GoodsReleasedNotification), arrivalIdP5),
+            LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, GoodsReleasedNotification, MessageStatus.Success), arrivalIdP5),
             goodsReleased
           )
         "when goods are released" in {
@@ -136,7 +137,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 mrn,
                 LocalDateTime.now()
               ),
-              LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5),
+              LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage, MessageStatus.Success), arrivalIdP5),
               functionalErrorCount = 0,
               "044"
             )
@@ -159,9 +160,9 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val messages = MessagesForArrivalMovement(
             NonEmptyList(
-              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination),
+              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination, MessageStatus.Success),
               List(
-                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks)
+                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks, MessageStatus.Success)
               )
             )
           )
@@ -199,9 +200,9 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
           val messages = MessagesForArrivalMovement(
             NonEmptyList(
-              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination),
+              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination, MessageStatus.Success),
               List(
-                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks)
+                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks, MessageStatus.Success)
               )
             )
           )
@@ -238,7 +239,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 "mrn",
                 LocalDateTime.now()
               ),
-              LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage), arrivalIdP5),
+              LatestArrivalMessage(ArrivalMessage(messageId, dateTimeNow, headMessage, MessageStatus.Success), arrivalIdP5),
               functionalErrorCount = 0,
               "007"
             )
