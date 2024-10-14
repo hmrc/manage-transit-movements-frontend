@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import controllers.arrivalP5.routes
 @import viewModels.P5.arrival.ViewAllArrivalMovementsP5ViewModel
+@import viewModels.pagination.PaginationViewModel
 @import views.html.components.{Heading, MovementsTable, Pagination, Search, Status}
 @import controllers.routes.{WhatDoYouWantToDoController => WDYWTDController}
 
@@ -33,7 +34,8 @@
 
 @(
     form: Form[String],
-    viewModel: ViewAllArrivalMovementsP5ViewModel
+    viewModel: ViewAllArrivalMovementsP5ViewModel,
+    paginationViewModel: PaginationViewModel
 )(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
@@ -56,7 +58,7 @@
         label = "viewArrivalNotificationsP5.search.title"
     )
 
-    @pagination(viewModel.paginationViewModel, form.value)
+    @pagination(paginationViewModel, form.value)
 
     @if(viewModel.dataRows.nonEmpty) {
         @movementsTable(

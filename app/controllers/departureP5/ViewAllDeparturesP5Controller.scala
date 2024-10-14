@@ -80,6 +80,8 @@ class ViewAllDeparturesP5Controller @Inject() (
           movementsAndMessages =>
             val viewDepartureP5: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
 
+            val viewModel = ViewAllDepartureMovementsP5ViewModel(viewDepartureP5, searchParam)
+
             val paginationViewModel = ListPaginationViewModel(
               totalNumberOfItems = movements.totalCount,
               currentPage = currentPage,
@@ -87,13 +89,15 @@ class ViewAllDeparturesP5Controller @Inject() (
               href = controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url,
               additionalParams = Seq(
                 searchParam.map("lrn" -> _)
-              ).flatten
+              ).flatten,
+              navigationHiddenText = Some(viewModel.pageHeading)
             )
 
             block(
               view(
                 form = form,
-                viewModel = ViewAllDepartureMovementsP5ViewModel(viewDepartureP5, paginationViewModel, searchParam)
+                viewModel = viewModel,
+                paginationViewModel = paginationViewModel
               )
             )
         }

@@ -102,19 +102,24 @@ class DashboardController @Inject() (
     }
   }
 
-  private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String], sortParams: Sort): AllDraftDeparturesViewModel = {
+  private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String], sortParams: Sort)(implicit
+    request: IdentifierRequest[?]
+  ): AllDraftDeparturesViewModel = {
 
     val additionalParams = Seq(
       lrn.map(("lrn", _)),
       Some(("sortParams", sortParams.toString))
     ).flatten
 
+    val messages = request2Messages(request)
+
     val pvm = ListPaginationViewModel(
       totalNumberOfItems = drafts.totalMatchingMovements,
       currentPage = page,
       numberOfItemsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
       href = routes.DashboardController.onSubmit(None).url,
-      additionalParams = additionalParams
+      additionalParams = additionalParams,
+      navigationHiddenText = Some(messages("departure.drafts.dashboard.heading"))
     )
 
     AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.p5Departure, pvm, sortParams)

@@ -20,22 +20,19 @@ import base.SpecBase
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.arrival.ViewAllArrivalMovementsP5ViewModel
-import viewModels.pagination._
 
 class ViewAllArrivalMovementsP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  private val paginationViewModel: PaginationViewModel = ListPaginationViewModel(1, 1, 10, "")
 
   "Display correct title" - {
 
     "When searchParam provided" in {
-      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, paginationViewModel, Some("LRN123"))
+      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, Some("LRN123"))
 
       viewModel.pageTitle `mustBe` "Search results for ‘LRN123’ - Arrival notifications"
     }
 
     "When searchParam not provided" in {
-      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, paginationViewModel, None)
+      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, None)
 
       viewModel.pageTitle `mustBe` "Arrival notifications"
     }
@@ -45,13 +42,13 @@ class ViewAllArrivalMovementsP5ViewModelSpec extends SpecBase with Generators wi
   "Display correct heading" - {
 
     "When searchParam provided" in {
-      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, paginationViewModel, Some("LRN123"))
+      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, Some("LRN123"))
 
       viewModel.pageHeading `mustBe` "Search results for ‘LRN123’ - Arrival notifications"
     }
 
     "When searchParam not provided" in {
-      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, paginationViewModel, None)
+      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, None)
 
       viewModel.pageTitle `mustBe` "Arrival notifications"
     }

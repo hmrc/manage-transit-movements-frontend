@@ -48,19 +48,20 @@ class ReviewCancellationErrorsP5Controller @Inject() (
         val currentPage      = page.getOrElse(1)
         val functionalErrors = request.messageData.FunctionalError
 
-        val paginationViewModel = ListPaginationViewModel(
-          totalNumberOfItems = functionalErrors.length,
-          currentPage = currentPage,
-          numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-          href = controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId).url
-        )
-
         val rejectionMessageP5ViewModel =
           viewModelProvider.apply(request.messageData.pagedFunctionalErrors(currentPage), request.referenceNumbers.localReferenceNumber)
 
-        rejectionMessageP5ViewModel.map(
-          viewModel => Ok(view(viewModel, departureId, paginationViewModel))
-        )
+        rejectionMessageP5ViewModel.map {
+          viewModel =>
+            val paginationViewModel = ListPaginationViewModel(
+              totalNumberOfItems = functionalErrors.length,
+              currentPage = currentPage,
+              numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+              href = controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId).url,
+              navigationHiddenText = Some(viewModel.heading)
+            )
+            Ok(view(viewModel, departureId, paginationViewModel))
+        }
     }
 
 }
