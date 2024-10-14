@@ -60,7 +60,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val departureCacheUrl: String = configuration.get[Service]("microservice.services.manage-transit-movements-departure-cache").fullServiceUrl
 
   lazy val nctsEnquiriesUrl: String = configuration.get[String]("urls.nctsEnquiries")
-  lazy val nctsHelpdeskUrl: String  = configuration.get[String]("urls.nctsHelpdesk")
   lazy val timeoutSeconds: Int      = configuration.get[Int]("session.timeoutSeconds")
   lazy val countdownSeconds: Int    = configuration.get[Int]("session.countdownSeconds")
 

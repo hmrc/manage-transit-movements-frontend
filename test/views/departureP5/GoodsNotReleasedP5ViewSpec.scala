@@ -42,9 +42,9 @@ class GoodsNotReleasedP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
   )
 
   behave like pageWithLink(
-    id = "contact-helpdesk",
-    expectedText = "New Computerised Transit System helpdesk",
-    expectedHref = frontendAppConfig.nctsHelpdeskUrl
+    id = "helpdesk-link",
+    expectedText = "Contact the New Computerised Transit System helpdesk for further help (opens in a new tab)",
+    expectedHref = frontendAppConfig.nctsEnquiriesUrl
   )
 
 }

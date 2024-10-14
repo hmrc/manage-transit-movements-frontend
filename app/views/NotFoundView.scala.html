@@ -14,13 +14,14 @@
  * limitations under the License.
  *@
 
-@import views.html.components.Heading
+@import views.html.components.{Heading, HelpdeskLink}
 @import config.FrontendAppConfig
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    config: FrontendAppConfig
+    config: FrontendAppConfig,
+    helpdeskLink: HelpdeskLink
 )
 
 @()(implicit request: Request[?], messages: Messages)
@@ -33,7 +34,6 @@
 
     <p class="govuk-body">@messages("pageNotFound.paragraph1")</p>
     <p class="govuk-body">@messages("pageNotFound.paragraph2")</p>
-    <p class="govuk-body">
-        <a rel="noreferrer noopener" href=@config.nctsHelpdeskUrl target="_blank" class="govuk-link" id="contact">@messages("pageNotFound.contactLink")</a>.
-    </p>
+
+    @helpdeskLink(messages("pageNotFound.contactLink"))
 }

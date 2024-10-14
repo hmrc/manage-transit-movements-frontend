@@ -14,38 +14,39 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Button, Heading, AnswerSections}
+@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink}
 @import viewModels.P5.departure.GoodsNotReleasedP5ViewModel
 @import config.FrontendAppConfig
 
 @this(
-mainTemplate: MainTemplate,
-heading: Heading,
-answerSections: AnswerSections,
-button: Button,
-formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    answerSections: AnswerSections,
+    button: Button,
+    formHelper: FormWithCSRF,
+    helpdeskLink: HelpdeskLink
 )
 
-@(goodsNotReleasedP5ViewModel: GoodsNotReleasedP5ViewModel)(implicit request: Request[?], messages: Messages, frontendAppConfig: FrontendAppConfig)
+@(viewModel: GoodsNotReleasedP5ViewModel)(implicit request: Request[?], messages: Messages, frontendAppConfig: FrontendAppConfig)
 
-    @mainTemplate(
-        title = goodsNotReleasedP5ViewModel.titleAndHeading,
-        showBackLink = true
-    ) {
+@mainTemplate(
+    title = viewModel.titleAndHeading,
+    showBackLink = true
+) {
 
     @heading(
-        heading = goodsNotReleasedP5ViewModel.titleAndHeading,
-        caption = Some(goodsNotReleasedP5ViewModel.caption)
+        heading = viewModel.titleAndHeading,
+        caption = Some(viewModel.caption)
     )
 
-    <p class="govuk-body" id="paragraph">@goodsNotReleasedP5ViewModel.paragraph</p>
+    <p class="govuk-body" id="paragraph">@viewModel.paragraph</p>
 
-    @answerSections(goodsNotReleasedP5ViewModel.sections)
+    @answerSections(viewModel.sections)
 
-    <h2 class="govuk-heading-m">@goodsNotReleasedP5ViewModel.heading2</h2>
+    <h2 class="govuk-heading-m">@viewModel.heading2</h2>
 
-    <p class="govuk-body" id="link-text">@goodsNotReleasedP5ViewModel.linkPrefix <a rel="noreferrer noopener" target="_blank" id="contact-helpdesk" href="@frontendAppConfig.nctsHelpdeskUrl">@goodsNotReleasedP5ViewModel.linkText</a> @goodsNotReleasedP5ViewModel.linkSuffix</p>
+    @helpdeskLink(viewModel.link)
 
-    <p><a id="link" class="govuk-body govuk-link" href="@frontendAppConfig.p5Departure">@goodsNotReleasedP5ViewModel.hyperlink</a></p>
+    <p><a id="link" class="govuk-body govuk-link" href="@frontendAppConfig.p5Departure">@viewModel.hyperlink</a></p>
 
 }

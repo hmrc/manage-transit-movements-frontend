@@ -44,15 +44,11 @@ class DepartureNotCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours wit
     expectedHref = s"http://localhost:10122/manage-transit-movements/cancellation/$departureIdP5/index/AB123"
   )
 
-  behave like pageWithPartialContent("p", "Contact the ")
-
   behave like pageWithLink(
-    id = "contact",
-    expectedText = "New Computerised Transit System helpdesk",
+    id = "helpdesk-link",
+    expectedText = "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
     expectedHref = frontendAppConfig.nctsEnquiriesUrl
   )
-
-  behave like pageWithPartialContent("p", " for help understanding the error (opens in a new tab).")
 
   behave like pageWithLink(
     id = "link",
