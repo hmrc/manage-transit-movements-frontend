@@ -68,10 +68,8 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
       "must return correct paragraph 1" in {
         result.paragraph1 `mustBe` s"The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again."
       }
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix `mustBe` "Contact the"
-        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix `mustBe` "for help understanding the error (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)"
       }
       "must return correct hyperlink text" in {
         result.hyperlink `mustBe` "View departure declarations"
@@ -107,10 +105,8 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with AppWithDefau
       "must return correct paragraph 1" in {
         result.paragraph1 `mustBe` s"The office of departure was not able to cancel this declaration. Review the errors - then if you still want to cancel the declaration, try cancelling it again."
       }
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix `mustBe` "Contact the"
-        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
       }
       "must return correct hyperlink text" in {
         result.hyperlink `mustBe` "View departure declarations"

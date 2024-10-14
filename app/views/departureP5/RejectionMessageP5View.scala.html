@@ -51,11 +51,7 @@
         @table(viewModel.tableRows, viewModel.tableHeadCells)
     }
 
-    @helpdeskLink(
-        viewModel.paragraph2Prefix,
-        viewModel.paragraph2Link,
-        viewModel.paragraph2Suffix
-    )
+    @helpdeskLink(viewModel.paragraph2)
 
     @formHelper(action = routes.RejectionMessageP5Controller.onSubmit(departureId, messageId), Symbol("autoComplete") -> "off") {
         @button(

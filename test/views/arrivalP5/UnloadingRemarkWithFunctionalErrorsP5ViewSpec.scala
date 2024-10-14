@@ -82,32 +82,14 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   behave like pageWithCaption(s"MRN: $mrn")
 
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
-
-  "must render correct paragraph1 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-1",
-      s"There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
-    )
-  }
-
-  "must render correct paragraph2 content" in {
-    assertSpecificElementContainsText(
-      "helpdesk",
-      "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
-    )
-    assertSpecificElementContainsText(
-      "helpdesk-link",
-      "New Computerised Transit System helpdesk"
-    )
-  }
+  behave like pageWithSpecificContent(
+    "paragraph-1",
+    "There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
+  )
 
   behave like pageWithLink(
     "helpdesk-link",
-    "New Computerised Transit System helpdesk",
+    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
     frontendAppConfig.nctsEnquiriesUrl
   )
 

@@ -63,33 +63,30 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
     })
   }
 
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
+  behave like pageWithSpecificContent(
+    "subheading",
+    "What happens next"
+  )
 
-  "must render subheading" in {
-    assertSpecificElementContainsText("subheading", "What happens next")
-  }
+  behave like pageWithSpecificContent(
+    "paragraph1",
+    "Customs are intending to place this declaration under control while they carry out further checks. This is because of a possible risk to health and safety."
+  )
 
-  "must render correct paragraph content" in {
-    assertSpecificElementContainsText(
-      "paragraph1",
-      "Customs are intending to place this declaration under control while they carry out further checks. This is because of a possible risk to health and safety."
-    )
-    assertSpecificElementContainsText(
-      "paragraph2",
-      "While under control, the goods will remain under supervision at the office of destination."
-    )
-    assertSpecificElementContainsText(
-      "paragraph3",
-      "Once Customs have completed their checks, they will notify you with the outcome."
-    )
-  }
+  behave like pageWithSpecificContent(
+    "paragraph2",
+    "While under control, the goods will remain under supervision at the office of destination."
+  )
 
-  "must render correct link text" in {
-    assertSpecificElementContainsText("link-text", "You must wait for the outcome of Customs’ checks. Check your departure declarations for further updates.")
-  }
+  behave like pageWithSpecificContent(
+    "paragraph3",
+    "Once Customs have completed their checks, they will notify you with the outcome."
+  )
+
+  behave like pageWithSpecificContent(
+    "link-text",
+    "You must wait for the outcome of Customs’ checks. Check your departure declarations for further updates."
+  )
 
   "must not render what happens next section" in {
     assertNotRenderedById(doc, "what-happens-next")

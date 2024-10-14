@@ -69,10 +69,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         result.paragraph1 mustBe
           s"There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
       }
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix `mustBe` "Contact the"
-        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix `mustBe` "for help understanding the error (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)"
       }
       "must return correct hyperlink text" in {
         result.hyperlink `mustBe` "View arrival notifications"
@@ -105,10 +103,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         result.paragraph1 mustBe
           s"There is a problem with the unloading remarks for this notification. Review the errors and try making the unloading remarks again."
       }
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix `mustBe` "Contact the"
-        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
       }
       "must return correct hyperlink text" in {
         result.hyperlink `mustBe` "View arrival notifications"

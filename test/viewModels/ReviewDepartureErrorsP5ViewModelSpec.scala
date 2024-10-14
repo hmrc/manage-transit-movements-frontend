@@ -69,10 +69,8 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       "must return correct paragraph 1" in {
         result.paragraph1Prefix `mustBe` s"There is a problem with departure declaration $lrnString."
       }
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix `mustBe` "Contact the"
-        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix `mustBe` "for help understanding the error (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)"
       }
       "must return correct hyperlink text" in {
         result.hyperlink.value `mustBe` "Make another departure declaration"
@@ -143,10 +141,8 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
       "must return correct paragraph 1" in {
         result.paragraph1Prefix `mustBe` s"There is a problem with departure declaration $lrnString."
       }
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix `mustBe` "Contact the"
-        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
       }
       "must return correct hyperlink text" in {
         result.hyperlink.value `mustBe` "Make another departure declaration"

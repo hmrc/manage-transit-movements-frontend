@@ -78,10 +78,8 @@ class DepartureDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDef
       "must return correct paragraph 1" in {
         result.paragraph1 `mustBe` "There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
       }
-      "must return correct paragraph 3 prefix, link and suffix" in {
-        result.paragraph3Prefix `mustBe` "Contact the"
-        result.paragraph3Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph3Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
+      "must return correct paragraph 3" in {
+        result.paragraph3 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
       }
       "must return correct hyperlink text" in {
         result.hyperlink.value `mustBe` "Make another departure declaration"

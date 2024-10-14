@@ -44,43 +44,24 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ViewSpec extends CheckYourAnsw
 
   behave like pageWithCaption(s"MRN: $mrnString")
 
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
+  behave like pageWithSpecificContent(
+    "paragraph-1",
+    "There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
+  )
 
-  "must render correct paragraph1 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-1",
-      s"There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
-    )
-  }
+  behave like pageWithSpecificContent(
+    "paragraph-2",
+    "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+  )
 
-  "must render correct paragraph2 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-2",
-      s"We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
-    )
-  }
-
-  "must render correct paragraph3 content" in {
-    assertSpecificElementContainsText(
-      "helpdesk",
-      "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
-    )
-    assertSpecificElementContainsText(
-      "helpdesk-link",
-      "New Computerised Transit System helpdesk"
-    )
-  }
-
-  "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-arrival-notification", "Make another arrival notification")
-  }
+  behave like pageWithSpecificContent(
+    "create-another-arrival-notification",
+    "Make another arrival notification"
+  )
 
   behave like pageWithLink(
     "helpdesk-link",
-    "New Computerised Transit System helpdesk",
+    "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)",
     frontendAppConfig.nctsEnquiriesUrl
   )
 

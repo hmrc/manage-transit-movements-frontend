@@ -24,15 +24,12 @@ case class ArrivalNotificationWithoutFunctionalErrorP5ViewModel(mrn: String) {
   def heading(implicit messages: Messages): String = messages("arrival.notification.errors.message.heading")
 
   def paragraph1(implicit messages: Messages): String = messages(s"arrival.notification.errors.message.noerrors")
+
   def paragraph2(implicit messages: Messages): String = messages(s"arrival.notification.errors.message.paragraph2")
 
-  def paragraph3(implicit messages: Messages): String = messages("arrival.notification.errors.message.paragraph3")
+  def link1(implicit messages: Messages): String = messages("arrival.notification.errors.message.link1")
 
-  def paragraph3Prefix(implicit messages: Messages): String = messages("arrival.notification.errors.message.paragraph3.prefix")
-  def paragraph3Suffix(implicit messages: Messages): String = messages("arrival.notification.errors.message.paragraph3.suffix")
-  def paragraph3Link(implicit messages: Messages): String   = messages("arrival.notification.errors.message.paragraph3.link")
-
-  def hyperlink(implicit messages: Messages): String = messages("arrival.notification.errors.message.hyperlink")
+  def link2(implicit messages: Messages): String = messages("arrival.notification.errors.message.link2")
 
 }
 

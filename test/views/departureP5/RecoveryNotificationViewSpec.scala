@@ -60,28 +60,24 @@ class RecoveryNotificationViewSpec extends CheckYourAnswersViewBehaviours with G
     })
   }
 
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
+  behave like pageWithSpecificContent(
+    "subheading",
+    "What happens next"
+  )
 
-  "must render subheading" in {
-    assertSpecificElementContainsText("subheading", "What happens next")
-  }
+  behave like pageWithSpecificContent(
+    "paragraph1",
+    "There was an issue with this movement during its transit. The goods are now being recovered to a customs office by a local authority."
+  )
 
-  "must render correct paragraph content" in {
-    assertSpecificElementContainsText(
-      "paragraph1",
-      "There was an issue with this movement during its transit. The goods are now being recovered to a customs office by a local authority."
-    )
-    assertSpecificElementContainsText(
-      "paragraph2",
-      "Review the recovery information and wait for the customs office to contact you."
-    )
-    assertSpecificElementContainsText(
-      "paragraph3",
-      "Customs will contact you to discuss the issue further."
-    )
-  }
+  behave like pageWithSpecificContent(
+    "paragraph2",
+    "Review the recovery information and wait for the customs office to contact you."
+  )
+
+  behave like pageWithSpecificContent(
+    "paragraph3",
+    "Customs will contact you to discuss the issue further."
+  )
 
 }

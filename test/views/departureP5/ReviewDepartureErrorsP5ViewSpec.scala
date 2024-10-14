@@ -87,32 +87,14 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[ListPagin
 
   behave like pageWithTable()
 
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
-
-  "must render correct paragraph1 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-1-prefix",
-      s"There is a problem with this declaration. Review the error and make a new declaration with the right information."
-    )
-  }
-
-  "must render correct paragraph2 content" in {
-    assertSpecificElementContainsText(
-      "helpdesk",
-      "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
-    )
-    assertSpecificElementContainsText(
-      "helpdesk-link",
-      "New Computerised Transit System helpdesk"
-    )
-  }
+  behave like pageWithSpecificContent(
+    "paragraph-1-prefix",
+    "There is a problem with this declaration. Review the error and make a new declaration with the right information."
+  )
 
   behave like pageWithLink(
     "helpdesk-link",
-    "New Computerised Transit System helpdesk",
+    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
     frontendAppConfig.nctsEnquiriesUrl
   )
 

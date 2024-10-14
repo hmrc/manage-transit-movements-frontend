@@ -74,32 +74,14 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
 
   behave like pageWithTable()
 
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
-
-  "must render correct paragraph1 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-1",
-      s"The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again."
-    )
-  }
-
-  "must render correct paragraph2 content" in {
-    assertSpecificElementContainsText(
-      "helpdesk",
-      "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
-    )
-    assertSpecificElementContainsText(
-      "helpdesk-link",
-      "New Computerised Transit System helpdesk"
-    )
-  }
+  behave like pageWithSpecificContent(
+    "paragraph-1",
+    "The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again."
+  )
 
   behave like pageWithLink(
     "helpdesk-link",
-    "New Computerised Transit System helpdesk",
+    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
     frontendAppConfig.nctsEnquiriesUrl
   )
 

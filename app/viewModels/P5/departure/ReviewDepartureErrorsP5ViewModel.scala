@@ -66,13 +66,10 @@ case class ReviewDepartureErrorsP5ViewModel(
     )
   }
 
-  def paragraph2Prefix(implicit messages: Messages): String = messages("departure.ie056.review.message.paragraph2.prefix")
-  def paragraph2Link(implicit messages: Messages): String   = messages("departure.ie056.review.message.paragraph2.link")
-
-  def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors) {
-    messages("departure.ie056.review.message.paragraph2.plural.suffix")
+  def paragraph2(implicit messages: Messages): String = if (multipleErrors) {
+    messages("departure.ie056.review.message.paragraph2.plural")
   } else {
-    messages("departure.ie056.review.message.paragraph2.singular.suffix")
+    messages("departure.ie056.review.message.paragraph2.singular")
   }
 
   def hyperlink(implicit messages: Messages): Option[String] = businessRejectionType match {

@@ -48,11 +48,7 @@
 
     @table(viewModel.tableRows, viewModel.tableHeadCells)
 
-    @helpdeskLink(
-        viewModel.paragraph2Prefix,
-        viewModel.paragraph2Link,
-        viewModel.paragraph2Suffix
-    )
+    @helpdeskLink(viewModel.paragraph2)
 
     @formHelper(action = routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onSubmit(arrivalId, messageId), Symbol("autoComplete") -> "off") {
         @button(
