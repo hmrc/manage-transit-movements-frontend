@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Button, Heading, AnswerSections}
+@import views.html.components.{Button, Heading, HelpdeskLink, AnswerSections}
 @import viewModels.P5.departure.DepartureNotCancelledP5ViewModel
 @import config.FrontendAppConfig
 
@@ -23,7 +23,8 @@
     heading: Heading,
     answerSections: AnswerSections,
     button: Button,
-    formHelper: FormWithCSRF
+    formHelper: FormWithCSRF,
+    helpdeskLink: HelpdeskLink
 )
 
 @(viewModel: DepartureNotCancelledP5ViewModel)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
@@ -46,12 +47,7 @@
         <a id="try-again" class="govuk-link" href="@viewModel.tryAgainUrl">@messages("departure.notCancelled.tryAgain")</a>
     </p>
 
-    <p class="govuk-body">@messages("departure.notCancelled.contact.start")
-        <a class="govuk-link" rel="noreferrer noopener" href=@config.nctsEnquiriesUrl target="_blank" id="contact">
-            @messages("departure.notCancelled.contact.link")
-        </a>
-        @messages("departure.notCancelled.contact.end")
-    </p>
+    @helpdeskLink(messages("departure.notCancelled.contact"))
 
     <p class="govuk-body">
         <a id="link" class="govuk-link" href="@config.p5Departure">@messages("departure.notCancelled.hyperlink")</a>

@@ -82,34 +82,19 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
 
   behave like pageWithoutSubmitButton()
 
-  "must render correct paragraph1 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-1",
-      s"There is a problem with this notification. Review the error and make a new notification with the right information."
-    )
-  }
+  behave like pageWithSpecificContent(
+    "paragraph-1",
+    "There is a problem with this notification. Review the error and make a new notification with the right information."
+  )
 
-  "must render correct paragraph2 content" in {
-    assertSpecificElementContainsText(
-      "paragraph-2",
-      s"We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
-    )
-  }
-
-  "must render correct paragraph3 content" in {
-    assertSpecificElementContainsText(
-      "helpdesk",
-      "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
-    )
-    assertSpecificElementContainsText(
-      "helpdesk-link",
-      "New Computerised Transit System helpdesk"
-    )
-  }
+  behave like pageWithSpecificContent(
+    "paragraph-2",
+    "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+  )
 
   behave like pageWithLink(
     "helpdesk-link",
-    "New Computerised Transit System helpdesk",
+    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
     frontendAppConfig.nctsEnquiriesUrl
   )
 
@@ -118,10 +103,5 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
     "Make another arrival notification",
     frontendAppConfig.p5Arrival
   )
-
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
 
 }

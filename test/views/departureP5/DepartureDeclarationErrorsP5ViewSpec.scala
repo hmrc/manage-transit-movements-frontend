@@ -63,26 +63,13 @@ class DepartureDeclarationErrorsP5ViewSpec extends CheckYourAnswersViewBehaviour
     )
   }
 
-  "must render correct paragraph2 content" in {
-    assertElementWithIdContainsText(
-      doc,
-      "helpdesk",
-      "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
-    )
-    assertElementWithIdContainsText(
-      doc,
-      "helpdesk-link",
-      "New Computerised Transit System helpdesk"
-    )
-  }
-
   "must render correct link text" in {
     assertElementWithIdContainsText(doc, "create-another-declaration", "Make another departure declaration")
   }
 
   behave like pageWithLink(
     "helpdesk-link",
-    "New Computerised Transit System helpdesk",
+    "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)",
     frontendAppConfig.nctsEnquiriesUrl
   )
 

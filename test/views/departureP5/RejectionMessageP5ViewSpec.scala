@@ -90,33 +90,19 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   behave like pageWithTable()
 
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
+  behave like pageWithSpecificContent(
+    "paragraph-1",
+    "There is a problem with this declaration. Amend the error and resend the declaration."
+  )
 
-  "must render correct paragraph1 content" in {
-    assertSpecificElementContainsText("paragraph-1", s"There is a problem with this declaration. Amend the error and resend the declaration.")
-  }
-
-  "must render correct paragraph2 content" in {
-    assertSpecificElementContainsText(
-      "helpdesk",
-      "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
-    )
-    assertSpecificElementContainsText(
-      "helpdesk-link",
-      "New Computerised Transit System helpdesk"
-    )
-  }
-
-  "must render correct link text" in {
-    assertSpecificElementContainsText("create-another-declaration", "Make another departure declaration")
-  }
+  behave like pageWithSpecificContent(
+    "create-another-declaration",
+    "Make another departure declaration"
+  )
 
   behave like pageWithLink(
     "helpdesk-link",
-    "New Computerised Transit System helpdesk",
+    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
     frontendAppConfig.nctsEnquiriesUrl
   )
 

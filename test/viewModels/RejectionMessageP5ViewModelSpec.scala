@@ -70,10 +70,8 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         result.paragraph1 `mustBe` s"There is a problem with this declaration. Amend the error and resend the declaration."
       }
 
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix `mustBe` "Contact the"
-        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix `mustBe` "for help understanding the error (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)"
       }
       "must return correct hyperlink text" in {
         result.hyperlink.value `mustBe` "Make another departure declaration"
@@ -108,10 +106,8 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
       "must return correct paragraph 1" in {
         result.paragraph1 `mustBe` s"There is a problem with this declaration. Amend the errors and resend the declaration."
       }
-      "must return correct paragraph 2 prefix, link and suffix" in {
-        result.paragraph2Prefix `mustBe` "Contact the"
-        result.paragraph2Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph2Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
+      "must return correct paragraph 2" in {
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
       }
       "must return correct hyperlink text" in {
         result.hyperlink `mustBe` None

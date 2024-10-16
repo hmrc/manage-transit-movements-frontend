@@ -275,4 +275,10 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
       assertElementDoesNotExist(doc, "govuk-warning-text")
     }
 
+  def pageWithSpecificContent(id: String, expectedText: String): Unit =
+    s"must render correct $id content" in {
+      val element = doc.getElementById(id)
+      assertElementContainsText(element, expectedText)
+    }
+
 }

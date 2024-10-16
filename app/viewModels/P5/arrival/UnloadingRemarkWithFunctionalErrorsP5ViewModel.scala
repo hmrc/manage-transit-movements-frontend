@@ -34,22 +34,15 @@ case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(tableRows: Seq[Seq[Tab
   def heading(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.heading", mrn)
 
   def paragraph1(implicit messages: Messages): String = if (multipleErrors) {
-    messages(
-      "arrival.ie057.review.unloading.message.paragraph1.plural"
-    )
+    messages("arrival.ie057.review.unloading.message.paragraph1.plural")
   } else {
-    messages(
-      "arrival.ie057.review.unloading.message.paragraph1.singular"
-    )
+    messages("arrival.ie057.review.unloading.message.paragraph1.singular")
   }
 
-  def paragraph2Prefix(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.paragraph2.prefix")
-  def paragraph2Link(implicit messages: Messages): String   = messages("arrival.ie057.review.unloading.message.paragraph2.link")
-
-  def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors) {
-    messages("arrival.ie057.review.unloading.message.paragraph2.plural.suffix")
+  def paragraph2(implicit messages: Messages): String = if (multipleErrors) {
+    messages("arrival.ie057.review.unloading.message.paragraph2.plural")
   } else {
-    messages("arrival.ie057.review.unloading.message.paragraph2.singular.suffix")
+    messages("arrival.ie057.review.unloading.message.paragraph2.singular")
   }
 
   def hyperlink(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.hyperlink")

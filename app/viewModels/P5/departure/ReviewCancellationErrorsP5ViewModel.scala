@@ -34,22 +34,15 @@ case class ReviewCancellationErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], lr
   def heading(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.heading")
 
   def paragraph1(implicit messages: Messages): String = if (multipleErrors) {
-    messages(
-      "departure.ie056.review.cancellation.message.paragraph1.plural"
-    )
+    messages("departure.ie056.review.cancellation.message.paragraph1.plural")
   } else {
-    messages(
-      "departure.ie056.review.cancellation.message.paragraph1.singular"
-    )
+    messages("departure.ie056.review.cancellation.message.paragraph1.singular")
   }
 
-  def paragraph2Prefix(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.paragraph2.prefix")
-  def paragraph2Link(implicit messages: Messages): String   = messages("departure.ie056.review.cancellation.message.paragraph2.link")
-
-  def paragraph2Suffix(implicit messages: Messages): String = if (multipleErrors) {
-    messages("departure.ie056.review.cancellation.message.paragraph2.plural.suffix")
+  def paragraph2(implicit messages: Messages): String = if (multipleErrors) {
+    messages("departure.ie056.review.cancellation.message.paragraph2.plural")
   } else {
-    messages("departure.ie056.review.cancellation.message.paragraph2.singular.suffix")
+    messages("departure.ie056.review.cancellation.message.paragraph2.singular")
   }
 
   def hyperlink(implicit messages: Messages): String = messages("departure.ie056.review.cancellation.message.hyperlink")

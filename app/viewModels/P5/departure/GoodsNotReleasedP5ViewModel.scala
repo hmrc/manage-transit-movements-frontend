@@ -30,9 +30,7 @@ case class GoodsNotReleasedP5ViewModel(
   def paragraph(implicit messages: Messages): String       = messages("departure.notReleased.paragraph", lrn)
   def hyperlink(implicit messages: Messages): String       = messages("departure.notReleased.anotherDeparture.hyperlink")
   def caption(implicit messages: Messages): String         = messages("departure.messages.caption", lrn)
-  def linkPrefix(implicit messages: Messages): String      = messages("departure.notReleased.linkPrefix")
-  def linkSuffix(implicit messages: Messages): String      = messages("departure.notReleased.linkSuffix")
-  def linkText(implicit messages: Messages): String        = messages("departure.notReleased.linkText")
+  def link(implicit messages: Messages): String            = messages("departure.notReleased.link")
   def heading2(implicit messages: Messages): String        = messages("departure.notReleased.whatHappensNext")
 
 }

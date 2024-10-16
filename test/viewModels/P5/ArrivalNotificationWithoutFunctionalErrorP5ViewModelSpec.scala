@@ -65,16 +65,11 @@ class ArrivalNotificationWithoutFunctionalErrorP5ViewModelSpec extends SpecBase 
       "must return correct paragraph 2" in {
         result.paragraph2 `mustBe` "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
       }
-      "must return correct paragraph 3" in {
-        result.paragraph3 `mustBe` s"Make a new arrival notification with the right information."
+      "must return correct link 1 text" in {
+        result.link1 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
       }
-      "must return correct paragraph 3 prefix, link and suffix" in {
-        result.paragraph3Prefix `mustBe` "Contact the"
-        result.paragraph3Link `mustBe` "New Computerised Transit System helpdesk"
-        result.paragraph3Suffix `mustBe` "for help understanding the errors (opens in a new tab)."
-      }
-      "must return correct hyperlink text" in {
-        result.hyperlink `mustBe` "Make another arrival notification"
+      "must return correct link 2 text" in {
+        result.link2 `mustBe` "Make another arrival notification"
       }
     }
   }

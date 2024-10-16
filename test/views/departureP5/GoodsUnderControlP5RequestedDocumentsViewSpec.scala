@@ -65,29 +65,25 @@ class GoodsUnderControlP5RequestedDocumentsViewSpec extends CheckYourAnswersView
     })
   }
 
-  private def assertSpecificElementContainsText(id: String, expectedText: String): Unit = {
-    val element = doc.getElementById(id)
-    assertElementContainsText(element, expectedText)
-  }
+  behave like pageWithSpecificContent(
+    "subheading",
+    "What happens next"
+  )
 
-  "must render subheading" in {
-    assertSpecificElementContainsText("subheading", "What happens next")
-  }
+  behave like pageWithSpecificContent(
+    "paragraph1",
+    "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
+  )
 
-  "must render correct paragraph content" in {
-    assertSpecificElementContainsText(
-      "paragraph1",
-      "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
-    )
-    assertSpecificElementContainsText(
-      "paragraph2",
-      "While awaiting the documentation, the goods will remain under supervision at the office of destination."
-    )
-    assertSpecificElementContainsText(
-      "paragraph3",
-      "You must contact the office of destination directly to share the requested documentation."
-    )
-  }
+  behave like pageWithSpecificContent(
+    "paragraph2",
+    "While awaiting the documentation, the goods will remain under supervision at the office of destination."
+  )
+
+  behave like pageWithSpecificContent(
+    "paragraph3",
+    "You must contact the office of destination directly to share the requested documentation."
+  )
 
   "must render what happens next" in {
     assertRenderedById(doc, "what-happens-next")

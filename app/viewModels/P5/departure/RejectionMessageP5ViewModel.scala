@@ -51,13 +51,10 @@ case class RejectionMessageP5ViewModel(
     messages("departure.ie056.message.paragraph1.singular")
   }
 
-  def paragraph2Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph2.prefix")
-  def paragraph2Link(implicit messages: Messages): String   = messages("departure.ie056.message.paragraph2.link")
-
-  def paragraph2Suffix(implicit messages: Messages): String = if (plural) {
-    messages("departure.ie056.message.paragraph2.plural.suffix")
+  def paragraph2(implicit messages: Messages): String = if (plural) {
+    messages("departure.ie056.message.paragraph2.plural")
   } else {
-    messages("departure.ie056.message.paragraph2.singular.suffix")
+    messages("departure.ie056.message.paragraph2.singular")
   }
 
   def hyperlink(implicit messages: Messages): Option[String] = businessRejectionType match {
