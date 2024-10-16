@@ -72,7 +72,7 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
       }
 
       "must return correct paragraph 2" in {
-        result.paragraph2 `mustBe` "for help understanding the error (opens in a new tab)."
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
       }
 
       "must return link content" in {
@@ -109,7 +109,7 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
       }
 
       "must return correct paragraph 2" in {
-        result.paragraph2 `mustBe` "for help understanding the errors (opens in a new tab)."
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
       }
 
       "must return link content" in {
@@ -145,7 +145,7 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
     }
 
     "must return correct paragraph 2" in {
-      result.paragraph2 `mustBe` "for help understanding the errors (opens in a new tab)."
+      result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
     }
 
     "must return link content" in {

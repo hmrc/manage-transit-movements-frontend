@@ -16,9 +16,7 @@
 
 @import controllers.departureP5.routes
 @import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
-@import views.html.components.Heading
-@import views.html.components.Button
-@import views.html.components.TableDetails
+@import views.html.components.{Button, Heading, HelpdeskLink, TableDetails}
 @import config.FrontendAppConfig
 
 @this(
@@ -28,7 +26,8 @@
     tableDetails: TableDetails,
     table: GovukTable,
     config: FrontendAppConfig,
-    button: Button
+    button: Button,
+    helpdeskLink: HelpdeskLink
 )
 
 @(viewModel: GuaranteeRejectedP5ViewModel, departureId: String, messageId: String)(implicit request: Request[?], messages: Messages)
@@ -51,10 +50,7 @@
 
     @tableDetails(viewModel.tables)
 
-    <p class="govuk-body" id="paragraph2">@messages("guarantee.rejected.message.contact.start")
-        <a class="govuk-link" rel="noreferrer noopener" href=@config.nctsEnquiriesUrl target="_blank" id="contact">@messages("guarantee.rejected.message.contact.link")</a>
-        @viewModel.paragraph2
-    </p>
+    @helpdeskLink(viewModel.paragraph2)
 
     @formHelper(action = routes.GuaranteeRejectedP5Controller.onSubmit(departureId, messageId), Symbol("autoComplete") -> "off") {
         @button(
