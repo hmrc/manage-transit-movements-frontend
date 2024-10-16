@@ -70,7 +70,7 @@ object PaginationViewModel {
           hrefWithParams(currentPage - 1),
           attributes = navigationHiddenText
             .map(
-              text => Map("aria-label" -> s"""${messages("govuk.pagination.previous")} page of ${text.toLowerCase}""")
+              text => Map("aria-label" -> messages("pagination.previous.hidden", text.toLowerCase))
             )
             .getOrElse(Map.empty)
         )
@@ -85,7 +85,7 @@ object PaginationViewModel {
           href = hrefWithParams(currentPage + 1),
           attributes = navigationHiddenText
             .map(
-              text => Map("aria-label" -> s"""${messages("govuk.pagination.next")} page of ${text.toLowerCase}""")
+              text => Map("aria-label" -> messages("pagination.next.hidden", text.toLowerCase))
             )
             .getOrElse(Map.empty)
         )
