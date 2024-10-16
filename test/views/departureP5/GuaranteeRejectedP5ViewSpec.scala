@@ -121,7 +121,7 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
   }
 
-  "must change paragraph 2 text" - {
+  "must change helpdesk link text" - {
 
     "when there is only one reference with one error" - {
 
@@ -138,7 +138,12 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
-      behave like pageWithContent(document, "p", "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab).")
+      behave like pageWithLink(
+        document,
+        "helpdesk-link",
+        "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab).",
+        frontendAppConfig.nctsEnquiriesUrl
+      )
     }
 
     "when there is multiple references or errors" - {
@@ -157,16 +162,13 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
           .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
       )
 
-      behave like pageWithContent(document, "p", "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab).")
+      behave like pageWithLink(
+        document,
+        "helpdesk-link",
+        "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab).",
+        frontendAppConfig.nctsEnquiriesUrl
+      )
     }
-
-    "must have correct link" in {
-
-      val getElement = doc.getElementById("contact")
-
-      assertElementContainsHref(getElement, frontendAppConfig.nctsEnquiriesUrl)
-    }
-
   }
 
 }
