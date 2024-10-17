@@ -49,6 +49,8 @@ case class AllDraftDeparturesViewModel(
 
   def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
 
+  def daysToCompleteHiddenHeader(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete.header.hidden")
+
   def searchResult(implicit messages: Messages): Option[String] =
     lrn.map {
       lrn =>

@@ -16,7 +16,8 @@
 
 package viewModels.pagination
 
-import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.*
 
 case class ListPaginationViewModel(
   results: MetaData,
@@ -33,14 +34,16 @@ object ListPaginationViewModel {
     currentPage: Int,
     numberOfItemsPerPage: Int,
     href: String,
-    additionalParams: Seq[(String, String)] = Seq.empty
-  ): ListPaginationViewModel =
+    additionalParams: Seq[(String, String)] = Seq.empty,
+    navigationHiddenText: Option[String] = None
+  )(implicit messages: Messages): ListPaginationViewModel =
     PaginationViewModel(
       totalNumberOfItems,
       currentPage,
       numberOfItemsPerPage,
       href,
-      additionalParams
+      additionalParams,
+      navigationHiddenText
     ) {
       new ListPaginationViewModel(_, _, _, _, currentPage)
     }

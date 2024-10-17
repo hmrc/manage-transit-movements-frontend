@@ -51,10 +51,11 @@ object PaginationViewModel {
     currentPage: Int,
     numberOfItemsPerPage: Int,
     href: String,
-    additionalParams: Seq[(String, String)]
+    additionalParams: Seq[(String, String)],
+    navigationHiddenText: Option[String] = None
   )(
     f: (MetaData, Option[PaginationLink], Option[PaginationLink], Seq[PaginationItem]) => T
-  ): T = {
+  )(implicit messages: Messages): T = {
 
     val results: MetaData = MetaData(totalNumberOfItems, numberOfItemsPerPage, currentPage)
 
@@ -64,13 +65,31 @@ object PaginationViewModel {
     }
 
     val previous: Option[PaginationLink] = if (currentPage > 1) {
-      Some(PaginationLink(hrefWithParams(currentPage - 1)))
+      Some(
+        PaginationLink(
+          hrefWithParams(currentPage - 1),
+          attributes = navigationHiddenText
+            .map(
+              text => Map("aria-label" -> messages("pagination.previous.hidden", text.toLowerCase))
+            )
+            .getOrElse(Map.empty)
+        )
+      )
     } else {
       None
     }
 
     val next: Option[PaginationLink] = if (currentPage < results.totalPages) {
-      Some(PaginationLink(hrefWithParams(currentPage + 1)))
+      Some(
+        PaginationLink(
+          href = hrefWithParams(currentPage + 1),
+          attributes = navigationHiddenText
+            .map(
+              text => Map("aria-label" -> messages("pagination.next.hidden", text.toLowerCase))
+            )
+            .getOrElse(Map.empty)
+        )
+      )
     } else {
       None
     }

@@ -22,15 +22,16 @@ import models.departureP5.GuaranteeReferenceTable
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
+import play.api.i18n.Messages
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Content
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
+import viewModels.*
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalMovementsP5, ViewArrivalP5}
-import viewModels.P5.departure._
-import viewModels._
+import viewModels.P5.departure.*
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination.{ListPaginationViewModel, MetaData}
 import viewModels.sections.Section
@@ -77,23 +78,21 @@ trait ViewModelGenerators {
     distinctListWithMaxLength[AccordionSection, Option[String]]()(_.sectionTitle)
   }
 
-  implicit lazy val arbitraryViewAllArrivalMovementsP5ViewModel: Arbitrary[ViewAllArrivalMovementsP5ViewModel] =
+  implicit def arbitraryViewAllArrivalMovementsP5ViewModel(implicit messages: Messages): Arbitrary[ViewAllArrivalMovementsP5ViewModel] =
     Arbitrary {
       for {
-        viewArrivals        <- distinctListWithMaxLength[ViewArrivalP5, LocalDate]()(_.updatedDate)
-        paginationViewModel <- arbitrary[ListPaginationViewModel]
-      } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, paginationViewModel, None)
+        viewArrivals <- distinctListWithMaxLength[ViewArrivalP5, LocalDate]()(_.updatedDate)
+      } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, None)
     }
 
-  implicit lazy val arbitraryViewAllDepartureMovementsP5ViewModel: Arbitrary[ViewAllDepartureMovementsP5ViewModel] =
+  implicit def arbitraryViewAllDepartureMovementsP5ViewModel(implicit messages: Messages): Arbitrary[ViewAllDepartureMovementsP5ViewModel] =
     Arbitrary {
       for {
-        viewArrivals        <- distinctListWithMaxLength[ViewDepartureP5, LocalDate]()(_.updatedDate)
-        paginationViewModel <- arbitrary[ListPaginationViewModel]
-      } yield ViewAllDepartureMovementsP5ViewModel(viewArrivals, paginationViewModel, None)
+        viewArrivals <- distinctListWithMaxLength[ViewDepartureP5, LocalDate]()(_.updatedDate)
+      } yield ViewAllDepartureMovementsP5ViewModel(viewArrivals, None)
     }
 
-  implicit lazy val arbitraryPaginationViewModel: Arbitrary[ListPaginationViewModel] =
+  implicit def arbitraryPaginationViewModel(implicit messages: Messages): Arbitrary[ListPaginationViewModel] =
     Arbitrary {
       for {
         totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)
@@ -169,7 +168,7 @@ trait ViewModelGenerators {
       } yield ViewDepartureMovementsP5(seqOfViewDepartureMovements)
     }
 
-  implicit val arbitraryAllDraftDeparturesViewModel: Arbitrary[AllDraftDeparturesViewModel] =
+  implicit def arbitraryAllDraftDeparturesViewModel(implicit messages: Messages): Arbitrary[AllDraftDeparturesViewModel] =
     Arbitrary {
       for {
         draftDepartures <- arbitrary[DeparturesSummary]
