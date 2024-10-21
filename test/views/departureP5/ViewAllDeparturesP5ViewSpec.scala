@@ -42,6 +42,8 @@ class ViewAllDeparturesP5ViewSpec
 
   private val viewAllDepartureMovementsP5ViewModel = arbitrary[ViewAllDepartureMovementsP5ViewModel].sample.value
 
+  private val paginationViewModel = arbitrary[ListPaginationViewModel].sample.value
+
   override val dataRows: Seq[(String, Seq[ViewDepartureP5])] = viewAllDepartureMovementsP5ViewModel.dataRows
 
   override val viewMovements: Seq[ViewDepartureP5] = dataRows.flatMap(_._2)
@@ -55,19 +57,20 @@ class ViewAllDeparturesP5ViewSpec
     paginationViewModel: ListPaginationViewModel,
     searchParam: Option[String]
   ): HtmlFormat.Appendable =
-    applyView(form, ViewAllDepartureMovementsP5ViewModel(departures, paginationViewModel, searchParam))
+    applyView(form, ViewAllDepartureMovementsP5ViewModel(departures, searchParam), paginationViewModel)
 
-  override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsP5ViewModel)
+  override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsP5ViewModel, paginationViewModel)
 
   override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel = ListPaginationViewModel(_, _, _, _)
 
   private def applyView(
     form: Form[String],
-    viewAllDepartureMovementsP5ViewModel: ViewAllDepartureMovementsP5ViewModel
+    viewAllDepartureMovementsP5ViewModel: ViewAllDepartureMovementsP5ViewModel,
+    paginationViewModel: ListPaginationViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ViewAllDeparturesP5View]
-      .apply(form, viewAllDepartureMovementsP5ViewModel)(fakeRequest, messages)
+      .apply(form, viewAllDepartureMovementsP5ViewModel, paginationViewModel)(fakeRequest, messages)
 
   behave like pageWithFullWidth()
 

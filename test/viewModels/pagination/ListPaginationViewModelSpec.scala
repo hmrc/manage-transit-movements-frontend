@@ -36,6 +36,22 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
           ListPaginationViewModel(10, 2, 2, "testHref").next.isDefined `mustBe` true
         }
 
+        "must pass aria label to next page attribute" in {
+          ListPaginationViewModel(10, 2, 2, "testHref", Seq.empty, Some("Heading")).next.get.attributes("aria-label") `mustBe` "Next page of heading"
+        }
+
+        "must not pass aria label to next page if template does not exist" in {
+          ListPaginationViewModel(10, 2, 2, "testHref", Seq.empty, None).next.get.attributes.get("aria-label") `mustBe` None
+        }
+
+        "must pass aria label to previous page attribute" in {
+          ListPaginationViewModel(10, 2, 2, "testHref", Seq.empty, Some("Heading")).previous.get.attributes("aria-label") `mustBe` "Previous page of heading"
+        }
+
+        "must not pass aria label to previous page if template does not exist" in {
+          ListPaginationViewModel(10, 2, 2, "testHref", Seq.empty, None).previous.get.attributes.get("aria-label") `mustBe` None
+        }
+
         "must return None when current page is not less than the total number of pages" in {
           ListPaginationViewModel(10, 5, 2, "testHref").next.isDefined `mustBe` false
         }

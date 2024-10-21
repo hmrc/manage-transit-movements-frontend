@@ -59,21 +59,22 @@ class RejectionMessageP5Controller @Inject() (
           case true =>
             val currentPage = page.getOrElse(1)
 
-            val paginationViewModel = ListPaginationViewModel(
-              totalNumberOfItems = xPaths.length,
-              currentPage = currentPage,
-              numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-              href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url
-            )
-
             val rejectionMessageP5ViewModel = viewModelProvider.apply(
               request.messageData.pagedFunctionalErrors(currentPage),
               lrn,
               DepartureBusinessRejectionType(request.messageData)
             )
 
-            rejectionMessageP5ViewModel.map(
+            rejectionMessageP5ViewModel.map {
               viewModel =>
+                val paginationViewModel = ListPaginationViewModel(
+                  totalNumberOfItems = xPaths.length,
+                  currentPage = currentPage,
+                  numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
+                  href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url,
+                  navigationHiddenText = Some(viewModel.heading)
+                )
+
                 Ok(
                   view(
                     viewModel,
@@ -83,7 +84,7 @@ class RejectionMessageP5Controller @Inject() (
                     request.referenceNumbers.movementReferenceNumber
                   )
                 )
-            )
+            }
           case _ =>
             logger.warn(s"[RejectionMessageP5Controller] Could not proceed with amending $departureId")
             Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))

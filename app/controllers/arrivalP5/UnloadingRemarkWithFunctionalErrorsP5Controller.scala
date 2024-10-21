@@ -48,13 +48,6 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
       implicit request =>
         val currentPage = page.getOrElse(1)
 
-        val paginationViewModel = ListPaginationViewModel(
-          totalNumberOfItems = request.messageData.FunctionalError.length,
-          currentPage = currentPage,
-          numberOfItemsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
-          href = controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, messageId).url
-        )
-
         val rejectionMessageP5ViewModel = viewModelProvider.apply(
           request.messageData.pagedFunctionalErrors(currentPage),
           request.messageData.TransitOperation.MRN
@@ -62,6 +55,13 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
 
         rejectionMessageP5ViewModel.map(
           viewModel =>
+            val paginationViewModel = ListPaginationViewModel(
+              totalNumberOfItems = request.messageData.FunctionalError.length,
+              currentPage = currentPage,
+              numberOfItemsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
+              href = controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, messageId).url,
+              navigationHiddenText = Some(viewModel.heading)
+            )
             if (request.messageData.FunctionalError.nonEmpty) {
               Ok(view(viewModel, arrivalId, messageId, paginationViewModel))
             } else {
