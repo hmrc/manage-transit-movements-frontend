@@ -19,11 +19,34 @@ package models.departureP5
 import base.SpecBase
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 
 class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "FunctionalError" - {
+
+    "serialize to JSON correctly" in {
+      val functionalError = FunctionalError(
+        errorPointer = "/path/to/element",
+        errorCode = "ERR001",
+        errorReason = "Invalid value",
+        originalAttributeValue = Some("123")
+      )
+
+      val expectedJson: JsValue = Json.parse(
+        """
+          |{
+          |  "errorPointer": "/path/to/element",
+          |  "errorCode": "ERR001",
+          |  "errorReason": "Invalid value",
+          |  "originalAttributeValue": "123"
+          |}
+          |""".stripMargin
+      )
+
+      val json = Json.toJson(functionalError)
+      json mustEqual expectedJson
+    }
 
     "must deserialise" - {
       "when there are no functional errors" in {
@@ -72,6 +95,28 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           FunctionalError("/CC015C/Authorisation[1]/referenceNumber", "14", "G0033", Some("XIDEP01"))
         )
       }
+    }
+
+    "handle missing optional field during deserialization" in {
+      val json: JsValue = Json.parse(
+        """
+          |{
+          |  "errorPointer": "/path/to/element",
+          |  "errorCode": "ERR001",
+          |  "errorReason": "Invalid value"
+          |}
+          |""".stripMargin
+      )
+
+      val expectedFunctionalError = FunctionalError(
+        errorPointer = "/path/to/element",
+        errorCode = "ERR001",
+        errorReason = "Invalid value",
+        originalAttributeValue = None
+      )
+
+      val result = json.as[FunctionalError]
+      result mustEqual expectedFunctionalError
     }
   }
 

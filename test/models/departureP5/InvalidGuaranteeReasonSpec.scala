@@ -17,6 +17,7 @@
 package models.departureP5
 
 import base.SpecBase
+import cats.Order
 import generators.Generators
 import models.referenceData.InvalidGuaranteeReason
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -36,6 +37,52 @@ class InvalidGuaranteeReasonSpec extends SpecBase with ScalaCheckPropertyChecks 
 
       json.as[InvalidGuaranteeReason] `mustBe` InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
     }
+  }
+
+  "serialize to JSON correctly" in {
+    val invalidGuaranteeReason = InvalidGuaranteeReason(
+      code = "G002",
+      description = "Insufficient funds"
+    )
+
+    val expectedJson = Json.parse(
+      """
+        |{
+        |  "code": "G002",
+        |  "description": "Insufficient funds"
+        |}
+        |""".stripMargin
+    )
+
+    val json = Json.toJson(invalidGuaranteeReason)
+    json must be(expectedJson)
+  }
+
+  "correctly apply custom toString when description is non-empty" in {
+    val invalidGuaranteeReason = InvalidGuaranteeReason(
+      code = "G002",
+      description = "Insufficient funds"
+    )
+
+    invalidGuaranteeReason.toString mustEqual "G002 - Insufficient funds"
+  }
+
+  "correctly apply custom toString when description is empty" in {
+    val invalidGuaranteeReason = InvalidGuaranteeReason(
+      code = "G002",
+      description = ""
+    )
+
+    invalidGuaranteeReason.toString mustEqual "G002"
+  }
+
+  "order InvalidGuaranteeReason instances by code" in {
+    val reason1 = InvalidGuaranteeReason("G001", "Insufficient funds")
+    val reason2 = InvalidGuaranteeReason("G002", "Guarantee expired")
+
+    Order[InvalidGuaranteeReason].compare(reason1, reason2) must be(-1)
+    Order[InvalidGuaranteeReason].compare(reason2, reason1) must be(1)
+    Order[InvalidGuaranteeReason].compare(reason1, reason1) mustEqual 0
   }
 
 }

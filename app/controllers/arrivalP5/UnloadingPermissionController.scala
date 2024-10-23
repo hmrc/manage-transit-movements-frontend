@@ -20,11 +20,11 @@ import connectors.ManageDocumentsConnector
 import controllers.DocumentController
 import controllers.actions.Actions
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class UnloadingPermissionController @Inject() (
   actions: Actions,
@@ -37,7 +37,9 @@ class UnloadingPermissionController @Inject() (
 
   def getUnloadingPermissionDocument(arrivalId: String, messageId: String): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
-      connector.getUnloadingPermission(arrivalId, messageId).map(stream)
+      val eventualResponse               = connector.getUnloadingPermission(arrivalId, messageId)
+      val eventualResult: Future[Result] = eventualResponse.map(stream)
+      eventualResult
   }
 
 }

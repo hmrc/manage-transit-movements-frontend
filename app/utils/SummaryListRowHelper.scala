@@ -111,49 +111,4 @@ class SummaryListRowHelper(implicit messages: Messages) {
           )
       }
     )
-
-  protected def buildRow(
-    prefix: String,
-    answer: Content,
-    id: Option[String],
-    call: Call,
-    args: Any*
-  ): SummaryListRow =
-    buildSimpleRow(
-      prefix = prefix,
-      label = messages(s"$prefix", args*),
-      answer = answer,
-      id = id,
-      call = Some(call),
-      args = args*
-    )
-
-  protected def buildSimpleRow(
-    prefix: String,
-    label: String,
-    answer: Content,
-    id: Option[String],
-    call: Option[Call],
-    args: Any*
-  ): SummaryListRow =
-    SummaryListRow(
-      key = label.toKey,
-      value = Value(answer),
-      actions = call.map {
-        route =>
-          Actions(
-            items = List(
-              ActionItem(
-                content = messages("site.edit").toText,
-                href = route.url,
-                visuallyHiddenText = Some(messages(s"$prefix.change.hidden", args*)),
-                attributes = id.fold[Map[String, String]](Map.empty)(
-                  id => Map("id" -> id)
-                )
-              )
-            )
-          )
-      }
-    )
-
 }

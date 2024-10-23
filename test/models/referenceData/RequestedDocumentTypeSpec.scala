@@ -17,6 +17,7 @@
 package models.referenceData
 
 import base.SpecBase
+import cats.Order
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
@@ -45,6 +46,34 @@ class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks w
 
         json.as[RequestedDocumentType] `mustBe` RequestedDocumentType("C620", "T2LF document")
       }
+    }
+
+    "serialize to JSON correctly" in {
+      val requestedDocumentType = RequestedDocumentType(
+        code = "DOC001",
+        description = "Support doc"
+      )
+
+      val expectedJson = Json.parse(
+        """
+          |{
+          |  "code": "DOC001",
+          |  "description": "Support doc"
+          |}
+          |""".stripMargin
+      )
+
+      val json = Json.toJson(requestedDocumentType)
+      json mustEqual expectedJson
+    }
+
+    "order RequestedDocumentType instances by code" in {
+      val documentType1 = RequestedDocumentType("DOC001", "Support")
+      val documentType2 = RequestedDocumentType("DOC002", "Support")
+
+      Order[RequestedDocumentType].compare(documentType1, documentType2) must be(-1)
+      Order[RequestedDocumentType].compare(documentType2, documentType1) must be(1)
+      Order[RequestedDocumentType].compare(documentType1, documentType1) mustEqual 0
     }
   }
 

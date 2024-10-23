@@ -17,10 +17,11 @@
 package models.departureP5
 
 import base.SpecBase
+import cats.Order
 import generators.Generators
 import models.referenceData.FunctionalErrorWithDesc
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 
 class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -36,6 +37,52 @@ class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks
 
       json.as[FunctionalErrorWithDesc] `mustBe` FunctionalErrorWithDesc("12", "Invalid MRN")
     }
+  }
+
+  "serialize to JSON correctly" in {
+    val functionalError = FunctionalErrorWithDesc(
+      code = "ERR001",
+      description = "Invalid data format"
+    )
+
+    val expectedJson: JsValue = Json.parse(
+      """
+        |{
+        |  "code": "ERR001",
+        |  "description": "Invalid data format"
+        |}
+        |""".stripMargin
+    )
+
+    val json = Json.toJson(functionalError)
+    json mustEqual expectedJson
+  }
+
+  "correctly apply custom toString when description is non-empty" in {
+    val functionalError = FunctionalErrorWithDesc(
+      code = "ERR001",
+      description = "Invalid data format"
+    )
+
+    functionalError.toString mustEqual "ERR001 - Invalid data format"
+  }
+
+  "correctly apply custom toString when description is empty" in {
+    val functionalError = FunctionalErrorWithDesc(
+      code = "ERR002",
+      description = ""
+    )
+
+    functionalError.toString mustEqual "ERR002"
+  }
+
+  "order FunctionalErrorWithDesc instances by code" in {
+    val error1 = FunctionalErrorWithDesc("ERR001", "Invalid data format")
+    val error2 = FunctionalErrorWithDesc("ERR002", "Missing field")
+
+    Order[FunctionalErrorWithDesc].compare(error1, error2) must be(-1)
+    Order[FunctionalErrorWithDesc].compare(error2, error1) must be(1)
+    Order[FunctionalErrorWithDesc].compare(error1, error1) mustEqual 0
   }
 
 }
