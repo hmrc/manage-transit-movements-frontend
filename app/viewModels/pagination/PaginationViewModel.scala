@@ -62,34 +62,26 @@ object PaginationViewModel {
         href + s"&$key=$value"
     }
 
-    val previous: Option[PaginationLink] = if (currentPage > 1) {
-      Some(
-        PaginationLink(
-          hrefWithParams(currentPage - 1),
-          attributes = navigationHiddenText
-            .map(
-              text => Map("aria-label" -> messages("pagination.previous.hidden", text.toLowerCase))
-            )
-            .getOrElse(Map.empty)
-        )
+    val previous: Option[PaginationLink] = Option.when(currentPage > 1) {
+      PaginationLink(
+        hrefWithParams(currentPage - 1),
+        attributes = navigationHiddenText
+          .map(
+            text => Map("aria-label" -> messages("pagination.previous.hidden", text.toLowerCase))
+          )
+          .getOrElse(Map.empty)
       )
-    } else {
-      None
     }
 
-    val next: Option[PaginationLink] = if (currentPage < results.totalPages) {
-      Some(
-        PaginationLink(
-          href = hrefWithParams(currentPage + 1),
-          attributes = navigationHiddenText
-            .map(
-              text => Map("aria-label" -> messages("pagination.next.hidden", text.toLowerCase))
-            )
-            .getOrElse(Map.empty)
-        )
+    val next: Option[PaginationLink] = Option.when(currentPage < results.totalPages) {
+      PaginationLink(
+        href = hrefWithParams(currentPage + 1),
+        attributes = navigationHiddenText
+          .map(
+            text => Map("aria-label" -> messages("pagination.next.hidden", text.toLowerCase))
+          )
+          .getOrElse(Map.empty)
       )
-    } else {
-      None
     }
 
     val items = (1 to results.totalPages).foldLeft[Seq[PaginationItem]](Nil) {
