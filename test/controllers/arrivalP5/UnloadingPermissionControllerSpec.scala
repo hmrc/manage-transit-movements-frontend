@@ -19,16 +19,19 @@ package controllers.arrivalP5
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ManageDocumentsConnector
 import generators.Generators
+import org.apache.pekko.util.Timeout
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HttpResponse
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 
 class UnloadingPermissionControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   private val mockManageDocumentsConnector = mock[ManageDocumentsConnector]
@@ -45,10 +48,14 @@ class UnloadingPermissionControllerSpec extends SpecBase with AppWithDefaultMock
       .guiceApplicationBuilder()
       .overrides(bind[ManageDocumentsConnector].toInstance(mockManageDocumentsConnector))
 
+  private val cntntType        = "application/octet-stream"
+  private val cntntLength      = 100
+  private val cntntDisposition = "TAD_123"
+
   private val responseHeaders = Seq(
-    CONTENT_LENGTH      -> Seq(100.toString),
-    CONTENT_TYPE        -> Seq("application/octet-stream"),
-    CONTENT_DISPOSITION -> Seq("TAD_123")
+    CONTENT_LENGTH      -> Seq(cntntLength.toString),
+    CONTENT_TYPE        -> Seq(cntntType),
+    CONTENT_DISPOSITION -> Seq(cntntDisposition)
   ).toMap
 
   private val okResponse = HttpResponse(OK, "body", responseHeaders)
@@ -61,7 +68,27 @@ class UnloadingPermissionControllerSpec extends SpecBase with AppWithDefaultMock
 
       val result = route(app, request).value
 
+      def contentLength(of: Future[Result])(implicit timeout: Timeout): Option[Long] =
+        Await.result(of, timeout.duration).body.contentLength
+
       status(result) mustEqual OK
+      contentType(result).value mustEqual cntntType
+      contentLength(result).value mustEqual cntntLength
+      headers(result).get(CONTENT_DISPOSITION).value `mustBe` cntntDisposition
+    }
+
+    "must redirect to TechnicalDifficultiesController if connector returns error" in {
+      val errorCode     = Gen.oneOf(400, 599).sample.value
+      val errorResponse = HttpResponse(errorCode, "")
+
+      when(mockManageDocumentsConnector.getUnloadingPermission(any(), any())(any()))
+        .thenReturn(Future.successful(errorResponse))
+
+      val request = FakeRequest(GET, controller)
+      val result  = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
     }
   }
 }

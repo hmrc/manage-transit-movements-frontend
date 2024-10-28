@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import cats.Order
+import cats.data.NonEmptySet
 import play.api.libs.json.{JsValue, Json}
 
 class IdentificationTypeSpec extends SpecBase {
@@ -72,15 +72,24 @@ class IdentificationTypeSpec extends SpecBase {
     }
 
     "order IdentificationType instances by description and type" in {
-      val identificationType1 = IdentificationType("ID001", "Id")
-      val identificationType2 = IdentificationType("ID002", "Ttt")
-      val identificationType3 = IdentificationType("ID003", "Id")
+      val unorderedIdentifications = Seq(
+        IdentificationType("ID001", "Id"),
+        IdentificationType("ID002", "Ttt"),
+        IdentificationType("ID003", "Id")
+      )
 
-      // Order by description first, then by type
-      Order[IdentificationType].compare(identificationType1, identificationType2) < 0 must be(true)
-      Order[IdentificationType].compare(identificationType2, identificationType1) > 0 must be(true)
-      Order[IdentificationType].compare(identificationType1, identificationType3) < 0 must be(true) // "ID001" < "ID003" when descriptions are equal
-      Order[IdentificationType].compare(identificationType1, identificationType1) mustEqual 0
+      val orderedIdentifications = Seq(
+        IdentificationType("ID001", "Id"),
+        IdentificationType("ID003", "Id"),
+        IdentificationType("ID002", "Ttt")
+      )
+
+      val result = NonEmptySet
+        .of(unorderedIdentifications.head, unorderedIdentifications.tail*)
+        .toSortedSet
+        .toList
+
+      result.mustBe(orderedIdentifications)
     }
   }
 }
