@@ -28,7 +28,7 @@ import play.twirl.api.HtmlFormat
 import services.DepartureP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import views.html.departureP5.ViewAllDeparturesP5View
 
 import java.time.Clock
@@ -82,7 +82,7 @@ class ViewAllDeparturesP5Controller @Inject() (
 
             val viewModel = ViewAllDepartureMovementsP5ViewModel(viewDepartureP5, searchParam)
 
-            val paginationViewModel = ListPaginationViewModel(
+            val paginationViewModel = PaginationViewModel(
               totalNumberOfItems = movements.totalCount,
               currentPage = currentPage,
               numberOfItemsPerPage = paginationConfig.departuresNumberOfMovements,

@@ -33,7 +33,7 @@ import services.DepartureP5MessageService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import viewModels.sections.Section
 import views.html.departureP5.ReviewDepartureErrorsP5View
 
@@ -84,7 +84,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
               when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(rejectionMessageP5ViewModel))
 
-              val paginationViewModel = ListPaginationViewModel(
+              val paginationViewModel = PaginationViewModel(
                 totalNumberOfItems = message.FunctionalError.length,
                 currentPage = 1,
                 numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,

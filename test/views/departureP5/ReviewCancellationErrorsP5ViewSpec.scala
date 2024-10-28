@@ -22,11 +22,11 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departureP5.ReviewCancellationErrorsP5View
 
-class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
+class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[PaginationViewModel] with TableViewBehaviours with Generators {
 
   override val prefix: String = "departure.ie056.review.cancellation.message"
 
@@ -35,19 +35,19 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
 
   val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
 
-  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
-    ListPaginationViewModel(_, _, _, _)
+  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
+    PaginationViewModel(_, _, _, _)
 
   override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
 
-  private val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(2, 1, 2, "test")
+  private val paginationViewModel: PaginationViewModel = PaginationViewModel(2, 1, 2, "test")
 
   private val reviewRejectionMessageP5ViewModel: ReviewCancellationErrorsP5ViewModel =
     new ReviewCancellationErrorsP5ViewModel(Seq(tableRows), lrn.toString, false)
 
   private def applyView(
     reviewRejectionViewModel: ReviewCancellationErrorsP5ViewModel,
-    paginationViewModel: ListPaginationViewModel
+    paginationViewModel: PaginationViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewCancellationErrorsP5View]
@@ -55,7 +55,7 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[ListPa
 
   override def view: HtmlFormat.Appendable = applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
-  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
     applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
 
   behave like pageWithTitle()

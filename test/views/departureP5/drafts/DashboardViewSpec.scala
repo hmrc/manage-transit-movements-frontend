@@ -27,18 +27,18 @@ import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import views.behaviours.PaginationViewBehaviours
 import views.html.departureP5.drafts.DashboardView
 
-class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] {
+class DashboardViewSpec extends PaginationViewBehaviours[PaginationViewModel] {
 
-  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
-    ListPaginationViewModel(_, _, _, _)
+  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
+    PaginationViewModel(_, _, _, _)
 
   val departuresSummary: DeparturesSummary = arbitrary[DeparturesSummary].sample.value
 
-  val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(2, 1, 2, "test")
+  val paginationViewModel: PaginationViewModel = PaginationViewModel(2, 1, 2, "test")
 
   val viewAllDepartureMovementsViewModel: AllDraftDeparturesViewModel =
     AllDraftDeparturesViewModel(departuresSummary, 20, None, frontendAppConfig.p5Departure, paginationViewModel)
@@ -52,7 +52,7 @@ class DashboardViewSpec extends PaginationViewBehaviours[ListPaginationViewModel
 
   override val movementsPerPage: Int = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-  override def viewWithSpecificPagination(paginationViewModelP5: ListPaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModelP5: PaginationViewModel): HtmlFormat.Appendable =
     applyView(
       AllDraftDeparturesViewModel(
         arbitrary[DeparturesSummary].sample.value,

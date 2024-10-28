@@ -33,7 +33,7 @@ import services.DepartureP5MessageService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel.ReviewCancellationErrorsP5ViewModelProvider
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import viewModels.sections.Section
 import views.html.departureP5.ReviewCancellationErrorsP5View
 
@@ -82,7 +82,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
 
               val rejectionMessageP5ViewModel = new ReviewCancellationErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, true)
 
-              val paginationViewModel = ListPaginationViewModel(
+              val paginationViewModel = PaginationViewModel(
                 totalNumberOfItems = message.FunctionalError.length,
                 currentPage = 1,
                 numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,

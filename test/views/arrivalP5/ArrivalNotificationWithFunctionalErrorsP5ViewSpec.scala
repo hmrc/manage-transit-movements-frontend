@@ -22,12 +22,12 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5View
 
-class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
+class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[PaginationViewModel] with TableViewBehaviours with Generators {
 
   override val headCells: Seq[HeadCell] =
     Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
@@ -37,12 +37,12 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
   override val prefix: String        = "arrival.ie057.review.notification.message"
   override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
 
-  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
-    ListPaginationViewModel(_, _, _, _)
+  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
+    PaginationViewModel(_, _, _, _)
 
   private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
 
-  val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
+  val paginationViewModel: PaginationViewModel = PaginationViewModel(
     totalNumberOfItems = sections.length,
     currentPage = 1,
     numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
@@ -55,12 +55,12 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec extends PaginationViewBe
 
   override def view: HtmlFormat.Appendable = applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel)
 
-  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
     applyView(arrivalNotificationWithFunctionalErrorsP5ViewModel, paginationViewModel)
 
   private def applyView(
     viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel,
-    paginationViewModel: ListPaginationViewModel
+    paginationViewModel: PaginationViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]

@@ -23,55 +23,55 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.PaginationItem
 
-class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private def intGen: Gen[Int] = Gen.choose(2, 10: Int)
 
-  "ListPaginationViewModel" - {
+  "PaginationViewModel" - {
     "apply" - {
 
       "next" - {
 
         "must return some when current page is less than the total number of pages" in {
-          ListPaginationViewModel(10, 2, 2, "testHref").next.isDefined `mustBe` true
+          PaginationViewModel(10, 2, 2, "testHref").next.isDefined `mustBe` true
         }
 
         "must pass aria label to next page attribute" in {
-          ListPaginationViewModel(10, 2, 2, "testHref", Seq.empty, Some("Heading")).next.get.attributes("aria-label") `mustBe` "Next page of heading"
+          PaginationViewModel(10, 2, 2, "testHref", Seq.empty, Some("Heading")).next.get.attributes("aria-label") `mustBe` "Next page of heading"
         }
 
         "must not pass aria label to next page if template does not exist" in {
-          ListPaginationViewModel(10, 2, 2, "testHref", Seq.empty, None).next.get.attributes.get("aria-label") `mustBe` None
+          PaginationViewModel(10, 2, 2, "testHref", Seq.empty, None).next.get.attributes.get("aria-label") `mustBe` None
         }
 
         "must pass aria label to previous page attribute" in {
-          ListPaginationViewModel(10, 2, 2, "testHref", Seq.empty, Some("Heading")).previous.get.attributes("aria-label") `mustBe` "Previous page of heading"
+          PaginationViewModel(10, 2, 2, "testHref", Seq.empty, Some("Heading")).previous.get.attributes("aria-label") `mustBe` "Previous page of heading"
         }
 
         "must not pass aria label to previous page if template does not exist" in {
-          ListPaginationViewModel(10, 2, 2, "testHref", Seq.empty, None).previous.get.attributes.get("aria-label") `mustBe` None
+          PaginationViewModel(10, 2, 2, "testHref", Seq.empty, None).previous.get.attributes.get("aria-label") `mustBe` None
         }
 
         "must return None when current page is not less than the total number of pages" in {
-          ListPaginationViewModel(10, 5, 2, "testHref").next.isDefined `mustBe` false
+          PaginationViewModel(10, 5, 2, "testHref").next.isDefined `mustBe` false
         }
       }
 
       "previous" - {
 
         "must return some when current page is greater than 1" in {
-          ListPaginationViewModel(10, 2, 2, "testHref").previous.isDefined `mustBe` true
+          PaginationViewModel(10, 2, 2, "testHref").previous.isDefined `mustBe` true
         }
 
         "must return none when current page is not greater than 1" in {
-          ListPaginationViewModel(10, 1, 2, "testHref").previous.isDefined `mustBe` false
+          PaginationViewModel(10, 1, 2, "testHref").previous.isDefined `mustBe` false
         }
       }
 
       "items" - {
 
         "must return [1] 2 … 100 when on page 1 of 100" in {
-          val result = ListPaginationViewModel(1000, 1, 10, "href").items
+          val result = PaginationViewModel(1000, 1, 10, "href").items
 
           result `mustBe` Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(true)),
@@ -82,7 +82,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
         }
 
         "must return 1 [2] 3 … 100 when on page 2 of 100" in {
-          val result = ListPaginationViewModel(1000, 2, 10, "href").items
+          val result = PaginationViewModel(1000, 2, 10, "href").items
 
           result `mustBe` Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -94,7 +94,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
         }
 
         "must return 1 2 [3] 4 … 100 when on page 3 of 100" in {
-          val result = ListPaginationViewModel(1000, 3, 10, "href").items
+          val result = PaginationViewModel(1000, 3, 10, "href").items
 
           result `mustBe` Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -107,7 +107,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
         }
 
         "must return 1 … 3 [4] 5 … 100 when on page 4 of 100" in {
-          val result = ListPaginationViewModel(1000, 4, 10, "href").items
+          val result = PaginationViewModel(1000, 4, 10, "href").items
 
           result `mustBe` Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -121,7 +121,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
         }
 
         "must return 1 … 97 [98] 99 100 when on page 98 of 100" in {
-          val result = ListPaginationViewModel(1000, 98, 10, "href").items
+          val result = PaginationViewModel(1000, 98, 10, "href").items
 
           result `mustBe` Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -134,7 +134,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
         }
 
         "must return 1 … 98 [99] 100 when on page 99 of 100" in {
-          val result = ListPaginationViewModel(1000, 99, 10, "href").items
+          val result = PaginationViewModel(1000, 99, 10, "href").items
 
           result `mustBe` Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -146,7 +146,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
         }
 
         "must return 1 … 99 [100] when on page 100 of 100" in {
-          val result = ListPaginationViewModel(1000, 100, 10, "href").items
+          val result = PaginationViewModel(1000, 100, 10, "href").items
 
           result `mustBe` Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -157,7 +157,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
         }
 
         "must return 1 [2] 3 when on page 2 of 3" in {
-          val result = ListPaginationViewModel(30, 2, 10, "href").items
+          val result = PaginationViewModel(30, 2, 10, "href").items
 
           result `mustBe` Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
@@ -170,7 +170,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
       "searchResult" - {
         "must show how many results found" - {
           "when 1 result found" in {
-            forAll(arbitrary[ListPaginationViewModel]) {
+            forAll(arbitrary[PaginationViewModel]) {
               viewModel =>
                 val result = viewModel
                   .copy(results = viewModel.results.copy(count = 1))
@@ -181,7 +181,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
           }
 
           "when multiple results found" in {
-            forAll(arbitrary[ListPaginationViewModel], intGen) {
+            forAll(arbitrary[PaginationViewModel], intGen) {
               (viewModel, count) =>
                 val result = viewModel
                   .copy(results = viewModel.results.copy(count = count))
@@ -195,7 +195,7 @@ class ListPaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks
 
       "paginatedSearchResult" - {
         "must show how many results found" in {
-          forAll(arbitrary[ListPaginationViewModel], intGen, intGen, intGen) {
+          forAll(arbitrary[PaginationViewModel], intGen, intGen, intGen) {
             (viewModel, from, to, count) =>
               val result = viewModel
                 .copy(results = viewModel.results.copy(from = from, to = to, count = count))

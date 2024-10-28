@@ -31,7 +31,7 @@ import services.ArrivalP5MessageService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import views.html.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5View
 
 import scala.concurrent.Future
@@ -69,7 +69,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
               when(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
-              val paginationViewModel = ListPaginationViewModel(
+              val paginationViewModel = PaginationViewModel(
                 totalNumberOfItems = message.FunctionalError.length,
                 currentPage = 1,
                 numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,

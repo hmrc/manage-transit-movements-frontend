@@ -27,12 +27,12 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.departure.RejectionMessageP5ViewModel
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departureP5.RejectionMessageP5View
 
-class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
+class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[PaginationViewModel] with TableViewBehaviours with Generators {
 
   override val headCells: Seq[HeadCell] =
     Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
@@ -41,8 +41,8 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   override val prefix: String = "departure.ie056.message"
 
-  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
-    ListPaginationViewModel(_, _, _, _)
+  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
+    PaginationViewModel(_, _, _, _)
 
   override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
 
@@ -51,7 +51,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
   private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel =
     new RejectionMessageP5ViewModel(Seq(tableRows), lrn.toString, false, BusinessRejectionType.DeclarationRejection)
 
-  val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
+  val paginationViewModel: PaginationViewModel = PaginationViewModel(
     totalNumberOfItems = sections.length,
     currentPage = 1,
     numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
@@ -60,7 +60,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   private def applyView(
     viewModel: RejectionMessageP5ViewModel,
-    paginationViewModel: ListPaginationViewModel,
+    paginationViewModel: PaginationViewModel,
     mrn: Option[String]
   ): HtmlFormat.Appendable =
     injector
@@ -69,7 +69,7 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[ListPagination
 
   override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel, None)
 
-  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
     applyView(rejectionMessageP5ViewModel, paginationViewModel, None)
 
   behave like pageWithTitle()

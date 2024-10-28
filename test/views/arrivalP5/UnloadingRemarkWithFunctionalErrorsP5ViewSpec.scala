@@ -22,12 +22,12 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.arrivalP5.UnloadingRemarkWithFunctionalErrorsP5View
 
-class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[ListPaginationViewModel] with TableViewBehaviours with Generators {
+class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[PaginationViewModel] with TableViewBehaviours with Generators {
 
   override val prefix: String = "arrival.ie057.review.unloading.message"
 
@@ -42,10 +42,10 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
 
-  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel =
-    ListPaginationViewModel(_, _, _, _)
+  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
+    PaginationViewModel(_, _, _, _)
 
-  val paginationViewModel: ListPaginationViewModel = ListPaginationViewModel(
+  val paginationViewModel: PaginationViewModel = PaginationViewModel(
     totalNumberOfItems = sections.length,
     currentPage = 1,
     numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
@@ -55,7 +55,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   private def applyView(
     viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel,
-    paginationViewModel: ListPaginationViewModel
+    paginationViewModel: PaginationViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
@@ -63,7 +63,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   override def view: HtmlFormat.Appendable = applyView(viewModel, paginationViewModel)
 
-  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
     applyView(viewModel, paginationViewModel)
 
   behave like pageWithTitle()

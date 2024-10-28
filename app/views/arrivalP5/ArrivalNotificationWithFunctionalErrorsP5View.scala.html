@@ -17,7 +17,7 @@
 @import config.FrontendAppConfig
 @import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
 @import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
-@import viewModels.pagination.ListPaginationViewModel
+@import viewModels.pagination.PaginationViewModel
 
 @this(
     mainTemplate: MainTemplate,
@@ -29,7 +29,7 @@
     helpdeskLink: HelpdeskLink
 )
 
-@(viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel, arrivalId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+@(viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel, arrivalId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
     title = viewModel.title,
