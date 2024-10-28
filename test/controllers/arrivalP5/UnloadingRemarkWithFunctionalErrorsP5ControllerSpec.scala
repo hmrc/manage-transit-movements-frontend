@@ -31,7 +31,7 @@ import services.ArrivalP5MessageService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel.UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import viewModels.sections.Section
 import views.html.arrivalP5.UnloadingRemarkWithFunctionalErrorsP5View
 
@@ -70,7 +70,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
               when(mockReviewUnloadingRemarkErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
-              val paginationViewModel = ListPaginationViewModel(
+              val paginationViewModel = PaginationViewModel(
                 totalNumberOfItems = message.FunctionalError.length,
                 currentPage = 1,
                 numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,

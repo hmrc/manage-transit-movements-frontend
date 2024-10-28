@@ -32,7 +32,7 @@ import services.{AmendmentService, DepartureP5MessageService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 import viewModels.P5.departure.RejectionMessageP5ViewModel
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import viewModels.sections.Section
 import views.html.departureP5.RejectionMessageP5View
 
@@ -84,7 +84,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
               when(mockRejectionMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(viewModel))
 
-              val paginationViewModel = ListPaginationViewModel(
+              val paginationViewModel = PaginationViewModel(
                 totalNumberOfItems = message.FunctionalError.length,
                 currentPage = 1,
                 numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,

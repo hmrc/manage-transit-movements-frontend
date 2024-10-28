@@ -23,14 +23,14 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.departureP5.ViewAllDeparturesP5View
 
 class ViewAllDeparturesP5ViewSpec
     extends MovementsTableViewBehaviours[ViewDepartureP5]
     with SearchViewBehaviours[ViewDepartureP5]
-    with PaginationViewBehaviours[ListPaginationViewModel]
+    with PaginationViewBehaviours[PaginationViewModel]
     with Generators
     with ScalaCheckPropertyChecks {
 
@@ -42,31 +42,31 @@ class ViewAllDeparturesP5ViewSpec
 
   private val viewAllDepartureMovementsP5ViewModel = arbitrary[ViewAllDepartureMovementsP5ViewModel].sample.value
 
-  private val paginationViewModel = arbitrary[ListPaginationViewModel].sample.value
+  private val paginationViewModel = arbitrary[PaginationViewModel].sample.value
 
   override val dataRows: Seq[(String, Seq[ViewDepartureP5])] = viewAllDepartureMovementsP5ViewModel.dataRows
 
   override val viewMovements: Seq[ViewDepartureP5] = dataRows.flatMap(_._2)
 
-  override def viewWithSpecificPagination(paginationViewModel: ListPaginationViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
     viewWithSpecificPagination(form, Nil, paginationViewModel, None)
 
   private def viewWithSpecificPagination(
     form: Form[String],
     departures: Seq[ViewDepartureP5],
-    paginationViewModel: ListPaginationViewModel,
+    paginationViewModel: PaginationViewModel,
     searchParam: Option[String]
   ): HtmlFormat.Appendable =
     applyView(form, ViewAllDepartureMovementsP5ViewModel(departures, searchParam), paginationViewModel)
 
   override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllDepartureMovementsP5ViewModel, paginationViewModel)
 
-  override val buildViewModel: (Int, Int, Int, String) => ListPaginationViewModel = ListPaginationViewModel(_, _, _, _)
+  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel = PaginationViewModel(_, _, _, _)
 
   private def applyView(
     form: Form[String],
     viewAllDepartureMovementsP5ViewModel: ViewAllDepartureMovementsP5ViewModel,
-    paginationViewModel: ListPaginationViewModel
+    paginationViewModel: PaginationViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ViewAllDeparturesP5View]

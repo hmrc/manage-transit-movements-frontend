@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import views.html.departureP5.ReviewDepartureErrorsP5View
 
 import javax.inject.Inject
@@ -57,7 +57,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
           )
         rejectionMessageP5ViewModel.map {
           viewModel =>
-            val paginationViewModel = ListPaginationViewModel(
+            val paginationViewModel = PaginationViewModel(
               totalNumberOfItems = functionalErrors.length,
               currentPage = currentPage,
               numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,

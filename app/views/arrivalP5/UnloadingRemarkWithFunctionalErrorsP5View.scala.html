@@ -17,7 +17,7 @@
 @import controllers.arrivalP5.routes
 @import config.FrontendAppConfig
 @import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
-@import viewModels.pagination.ListPaginationViewModel
+@import viewModels.pagination.PaginationViewModel
 @import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
 
 @this(
@@ -30,7 +30,7 @@
     helpdeskLink: HelpdeskLink
 )
 
-@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, messageId: String, paginationViewModel: ListPaginationViewModel)(implicit request: Request[?], messages: Messages)
+@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, messageId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,

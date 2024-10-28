@@ -17,8 +17,8 @@
 package controllers.departureP5
 
 import config.{FrontendAppConfig, PaginationAppConfig}
-import controllers.actions._
-import generated.CC056CType
+import controllers.actions.*
+import generated.{CC056CType, Generated_CC056CTypeFormat}
 import models.RichCC056CType
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.Rejection
@@ -29,12 +29,11 @@ import services.AmendmentService
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
-import viewModels.pagination.ListPaginationViewModel
+import viewModels.pagination.PaginationViewModel
 import views.html.departureP5.RejectionMessageP5View
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import generated.Generated_CC056CTypeFormat
 
 class RejectionMessageP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -67,7 +66,7 @@ class RejectionMessageP5Controller @Inject() (
 
             rejectionMessageP5ViewModel.map {
               viewModel =>
-                val paginationViewModel = ListPaginationViewModel(
+                val paginationViewModel = PaginationViewModel(
                   totalNumberOfItems = xPaths.length,
                   currentPage = currentPage,
                   numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
