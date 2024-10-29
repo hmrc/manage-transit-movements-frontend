@@ -17,7 +17,7 @@
 package models.departureP5
 
 import base.SpecBase
-import cats.Order
+import cats.data.NonEmptySet
 import generators.Generators
 import models.referenceData.FunctionalErrorWithDesc
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -77,12 +77,24 @@ class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks
   }
 
   "order FunctionalErrorWithDesc instances by code" in {
-    val error1 = FunctionalErrorWithDesc("ERR001", "Invalid data format")
-    val error2 = FunctionalErrorWithDesc("ERR002", "Missing field")
+    val unorderedErrors = Seq(
+      FunctionalErrorWithDesc("ERR003", "Invalid field"),
+      FunctionalErrorWithDesc("ERR001", "Invalid data format"),
+      FunctionalErrorWithDesc("ERR002", "Missing field")
+    )
 
-    Order[FunctionalErrorWithDesc].compare(error1, error2) must be(-1)
-    Order[FunctionalErrorWithDesc].compare(error2, error1) must be(1)
-    Order[FunctionalErrorWithDesc].compare(error1, error1) mustEqual 0
+    val orderedErrors = Seq(
+      FunctionalErrorWithDesc("ERR001", "Invalid data format"),
+      FunctionalErrorWithDesc("ERR002", "Missing field"),
+      FunctionalErrorWithDesc("ERR003", "Invalid field")
+    )
+
+    val result = NonEmptySet
+      .of(unorderedErrors.head, unorderedErrors.tail*)
+      .toSortedSet
+      .toList
+
+    result.mustBe(orderedErrors)
   }
 
 }

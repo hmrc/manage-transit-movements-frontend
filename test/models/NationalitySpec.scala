@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import cats.Order
+import cats.data.NonEmptySet
 import play.api.libs.json.Json
 
 class NationalitySpec extends SpecBase {
@@ -72,14 +72,24 @@ class NationalitySpec extends SpecBase {
     }
 
     "order Nationality instances by description first, then code" in {
-      val nationality1 = Nationality("UK", "United Kingdom")
-      val nationality2 = Nationality("FR", "France")
-      val nationality3 = Nationality("UK", "France")
+      val unorderedNationalities = Seq(
+        Nationality("UK", "United Kingdom"),
+        Nationality("FR", "France"),
+        Nationality("UK", "France")
+      )
 
-      // Order by description first, then by code
-      Order[Nationality].compare(nationality1, nationality2) > 0 must be(true) // "United Kingdom" > "France" ;) :D :)
-      Order[Nationality].compare(nationality2, nationality1) < 0 must be(true)
-      Order[Nationality].compare(nationality2, nationality3) < 0 must be(true) // Same description, different code
+      val orderedNationalities = Seq(
+        Nationality("FR", "France"),
+        Nationality("UK", "France"),
+        Nationality("UK", "United Kingdom")
+      )
+
+      val result = NonEmptySet
+        .of(unorderedNationalities.head, unorderedNationalities.tail*)
+        .toSortedSet
+        .toList
+
+      result.mustBe(orderedNationalities)
     }
   }
 }

@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import cats.Order
+import cats.data.NonEmptySet
 import play.api.libs.json.{JsValue, Json}
 
 class QualifierOfIdentificationSpec extends SpecBase {
@@ -72,13 +72,24 @@ class QualifierOfIdentificationSpec extends SpecBase {
     }
 
     "order QualifierOfIdentification instances by qualifier" in {
-      val qualifier1 = QualifierOfIdentification("Q1", "First Qualifier")
-      val qualifier2 = QualifierOfIdentification("Q2", "Second Qualifier")
-      val qualifier3 = QualifierOfIdentification("Q1", "Different Qualifier")
+      val unorderedQualifiers = Seq(
+        QualifierOfIdentification("Q3", "Different Qualifier"),
+        QualifierOfIdentification("Q1", "First Qualifier"),
+        QualifierOfIdentification("Q2", "Second Qualifier")
+      )
 
-      Order[QualifierOfIdentification].compare(qualifier1, qualifier2) < 0 must be(true) // "Q1" < "Q2"
-      Order[QualifierOfIdentification].compare(qualifier2, qualifier1) > 0 must be(true)
-      Order[QualifierOfIdentification].compare(qualifier1, qualifier3) mustEqual 0 // Same qualifier, different description
+      val orderedQualifiers = Seq(
+        QualifierOfIdentification("Q1", "First Qualifier"),
+        QualifierOfIdentification("Q2", "Second Qualifier"),
+        QualifierOfIdentification("Q3", "Different Qualifier")
+      )
+
+      val result = NonEmptySet
+        .of(unorderedQualifiers.head, unorderedQualifiers.tail*)
+        .toSortedSet
+        .toList
+
+      result.mustBe(orderedQualifiers)
     }
   }
 }

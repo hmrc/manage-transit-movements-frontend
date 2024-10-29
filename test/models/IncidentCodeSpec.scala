@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import cats.Order
+import cats.data.NonEmptySet
 import play.api.libs.json.Json
 
 class IncidentCodeSpec extends SpecBase {
@@ -72,12 +72,24 @@ class IncidentCodeSpec extends SpecBase {
     }
 
     "order IncidentCode instances by code" in {
-      val incidentCode1 = IncidentCode("IC001", "Accident")
-      val incidentCode2 = IncidentCode("IC002", "Breakdown")
+      val unorderedIncidents = Seq(
+        IncidentCode("IC002", "Breakdown"),
+        IncidentCode("IC003", "Id"),
+        IncidentCode("IC001", "Accident")
+      )
 
-      Order[IncidentCode].compare(incidentCode1, incidentCode2) must be(-1)
-      Order[IncidentCode].compare(incidentCode2, incidentCode1) must be(1)
-      Order[IncidentCode].compare(incidentCode1, incidentCode1) mustEqual 0
+      val orderedIncidents = Seq(
+        IncidentCode("IC001", "Accident"),
+        IncidentCode("IC002", "Breakdown"),
+        IncidentCode("IC003", "Id")
+      )
+
+      val result = NonEmptySet
+        .of(unorderedIncidents.head, unorderedIncidents.tail*)
+        .toSortedSet
+        .toList
+
+      result.mustBe(orderedIncidents)
     }
   }
 }

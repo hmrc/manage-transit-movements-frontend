@@ -17,7 +17,7 @@
 package models.referenceData
 
 import base.SpecBase
-import cats.Order
+import cats.data.NonEmptySet
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
@@ -68,12 +68,24 @@ class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks w
     }
 
     "order RequestedDocumentType instances by code" in {
-      val documentType1 = RequestedDocumentType("DOC001", "Support")
-      val documentType2 = RequestedDocumentType("DOC002", "Support")
+      val unorderedDocs = Seq(
+        RequestedDocumentType("DOC003", "Previous"),
+        RequestedDocumentType("DOC001", "Support"),
+        RequestedDocumentType("DOC002", "Support")
+      )
 
-      Order[RequestedDocumentType].compare(documentType1, documentType2) must be(-1)
-      Order[RequestedDocumentType].compare(documentType2, documentType1) must be(1)
-      Order[RequestedDocumentType].compare(documentType1, documentType1) mustEqual 0
+      val orderedDocs = Seq(
+        RequestedDocumentType("DOC001", "Support"),
+        RequestedDocumentType("DOC002", "Support"),
+        RequestedDocumentType("DOC003", "Previous")
+      )
+
+      val result = NonEmptySet
+        .of(unorderedDocs.head, unorderedDocs.tail*)
+        .toSortedSet
+        .toList
+
+      result.mustBe(orderedDocs)
     }
   }
 

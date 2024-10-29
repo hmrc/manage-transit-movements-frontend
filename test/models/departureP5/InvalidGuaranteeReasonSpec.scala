@@ -17,7 +17,7 @@
 package models.departureP5
 
 import base.SpecBase
-import cats.Order
+import cats.data.NonEmptySet
 import generators.Generators
 import models.referenceData.InvalidGuaranteeReason
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -77,12 +77,24 @@ class InvalidGuaranteeReasonSpec extends SpecBase with ScalaCheckPropertyChecks 
   }
 
   "order InvalidGuaranteeReason instances by code" in {
-    val reason1 = InvalidGuaranteeReason("G001", "Insufficient funds")
-    val reason2 = InvalidGuaranteeReason("G002", "Guarantee expired")
+    val unorderedReasons = Seq(
+      InvalidGuaranteeReason("G003", "Invalid guarantee"),
+      InvalidGuaranteeReason("G001", "Insufficient funds"),
+      InvalidGuaranteeReason("G002", "Guarantee expired")
+    )
 
-    Order[InvalidGuaranteeReason].compare(reason1, reason2) must be(-1)
-    Order[InvalidGuaranteeReason].compare(reason2, reason1) must be(1)
-    Order[InvalidGuaranteeReason].compare(reason1, reason1) mustEqual 0
+    val orderedReasons = Seq(
+      InvalidGuaranteeReason("G001", "Insufficient funds"),
+      InvalidGuaranteeReason("G002", "Guarantee expired"),
+      InvalidGuaranteeReason("G003", "Invalid guarantee")
+    )
+
+    val result = NonEmptySet
+      .of(unorderedReasons.head, unorderedReasons.tail*)
+      .toSortedSet
+      .toList
+
+    result.mustBe(orderedReasons)
   }
 
 }

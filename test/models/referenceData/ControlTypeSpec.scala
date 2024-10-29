@@ -17,7 +17,7 @@
 package models.referenceData
 
 import base.SpecBase
-import cats.Order
+import cats.data.NonEmptySet
 import play.api.libs.json.{JsValue, Json}
 
 class ControlTypeSpec extends SpecBase {
@@ -81,13 +81,24 @@ class ControlTypeSpec extends SpecBase {
     }
 
     "order ControlType instances by code" in {
-      val controlType1 = ControlType("CT001", "Customs Check")
-      val controlType2 = ControlType("CT002", "Security Check")
+      val unorderedControls = Seq(
+        ControlType("CT003", "Nature of Goods"),
+        ControlType("CT001", "Customs Check"),
+        ControlType("CT002", "Security Check")
+      )
 
-      // Using the implicit order provided by Order[ControlType]
-      Order[ControlType].compare(controlType1, controlType2) must be(-1)
-      Order[ControlType].compare(controlType2, controlType1) must be(1)
-      Order[ControlType].compare(controlType1, controlType1) mustEqual 0
+      val orderedControls = Seq(
+        ControlType("CT001", "Customs Check"),
+        ControlType("CT002", "Security Check"),
+        ControlType("CT003", "Nature of Goods")
+      )
+
+      val result = NonEmptySet
+        .of(unorderedControls.head, unorderedControls.tail*)
+        .toSortedSet
+        .toList
+
+      result.mustBe(orderedControls)
     }
   }
 }
