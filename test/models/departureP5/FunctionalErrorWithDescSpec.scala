@@ -17,10 +17,11 @@
 package models.departureP5
 
 import base.SpecBase
+import cats.data.NonEmptySet
 import generators.Generators
 import models.referenceData.FunctionalErrorWithDesc
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 
 class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -36,6 +37,64 @@ class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks
 
       json.as[FunctionalErrorWithDesc] `mustBe` FunctionalErrorWithDesc("12", "Invalid MRN")
     }
+  }
+
+  "serialize to JSON correctly" in {
+    val functionalError = FunctionalErrorWithDesc(
+      code = "ERR001",
+      description = "Invalid data format"
+    )
+
+    val expectedJson: JsValue = Json.parse(
+      """
+        |{
+        |  "code": "ERR001",
+        |  "description": "Invalid data format"
+        |}
+        |""".stripMargin
+    )
+
+    val json = Json.toJson(functionalError)
+    json mustEqual expectedJson
+  }
+
+  "correctly apply custom toString when description is non-empty" in {
+    val functionalError = FunctionalErrorWithDesc(
+      code = "ERR001",
+      description = "Invalid data format"
+    )
+
+    functionalError.toString mustEqual "ERR001 - Invalid data format"
+  }
+
+  "correctly apply custom toString when description is empty" in {
+    val functionalError = FunctionalErrorWithDesc(
+      code = "ERR002",
+      description = ""
+    )
+
+    functionalError.toString mustEqual "ERR002"
+  }
+
+  "order FunctionalErrorWithDesc instances by code" in {
+    val unorderedErrors = Seq(
+      FunctionalErrorWithDesc("ERR003", "Invalid field"),
+      FunctionalErrorWithDesc("ERR001", "Invalid data format"),
+      FunctionalErrorWithDesc("ERR002", "Missing field")
+    )
+
+    val orderedErrors = Seq(
+      FunctionalErrorWithDesc("ERR001", "Invalid data format"),
+      FunctionalErrorWithDesc("ERR002", "Missing field"),
+      FunctionalErrorWithDesc("ERR003", "Invalid field")
+    )
+
+    val result = NonEmptySet
+      .of(unorderedErrors.head, unorderedErrors.tail*)
+      .toSortedSet
+      .toList
+
+    result.mustBe(orderedErrors)
   }
 
 }

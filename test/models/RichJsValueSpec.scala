@@ -225,6 +225,65 @@ class RichJsValueSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     }
   }
 
+  "setObject" - {
+
+    "must return an error if the path is empty" in {
+
+      val value = Json.obj()
+
+      value.setObject(JsPath, Json.obj()) mustEqual JsError("path cannot be empty")
+    }
+
+    "must set a value on a JsObject" in {
+
+      val gen = for {
+        originalKey   <- nonEmptyAlphaStr
+        originalValue <- nonEmptyAlphaStr
+        pathKey       <- nonEmptyAlphaStr suchThat (_ != originalKey)
+        newValue      <- nonEmptyAlphaStr
+      } yield (originalKey, originalValue, pathKey, newValue)
+
+      forAll(gen) {
+        case (originalKey, originalValue, pathKey, newValue) =>
+          val value = Json.obj(originalKey -> originalValue)
+
+          val path = JsPath \ pathKey
+
+          value.setObject(path, JsString(newValue)) mustEqual JsSuccess(Json.obj(originalKey -> originalValue, pathKey -> newValue))
+      }
+    }
+  }
+
+  "removeObject" - {
+
+    "must remove a value given an index node and return the new object for one array" in {
+
+      val gen = for {
+        key    <- nonEmptyAlphaStr
+        values <- Gen.nonEmptyListOf(nonEmptyAlphaStr)
+        index  <- Gen.choose(0, values.size - 1)
+      } yield (key, values, index)
+
+      forAll(gen) {
+        case (key: String, values: List[String], indexToRemove: Int) =>
+          val valuesInArrays: Seq[JsValue] = values.map(Json.toJson[String])
+          val initialObj: JsObject         = buildJsObj(Seq(key), Seq(valuesInArrays))
+
+          val pathToRemove = JsPath \ key \ indexToRemove
+
+          val removed: JsResult[JsValue] = initialObj.removeObject(pathToRemove)
+
+          val expectedOutcome =
+            buildJsObj(
+              Seq(key),
+              Seq(valuesInArrays.slice(0, indexToRemove) ++ valuesInArrays.slice(indexToRemove + 1, values.length))
+            )
+
+          removed `mustBe` JsSuccess(expectedOutcome)
+      }
+    }
+  }
+
   "remove" - {
 
     "must return an error if the path is empty" in {

@@ -17,6 +17,7 @@
 package models.departureP5
 
 import base.SpecBase
+import cats.data.NonEmptySet
 import generators.Generators
 import models.referenceData.InvalidGuaranteeReason
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -36,6 +37,64 @@ class InvalidGuaranteeReasonSpec extends SpecBase with ScalaCheckPropertyChecks 
 
       json.as[InvalidGuaranteeReason] `mustBe` InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
     }
+  }
+
+  "serialize to JSON correctly" in {
+    val invalidGuaranteeReason = InvalidGuaranteeReason(
+      code = "G002",
+      description = "Insufficient funds"
+    )
+
+    val expectedJson = Json.parse(
+      """
+        |{
+        |  "code": "G002",
+        |  "description": "Insufficient funds"
+        |}
+        |""".stripMargin
+    )
+
+    val json = Json.toJson(invalidGuaranteeReason)
+    json must be(expectedJson)
+  }
+
+  "correctly apply custom toString when description is non-empty" in {
+    val invalidGuaranteeReason = InvalidGuaranteeReason(
+      code = "G002",
+      description = "Insufficient funds"
+    )
+
+    invalidGuaranteeReason.toString mustEqual "G002 - Insufficient funds"
+  }
+
+  "correctly apply custom toString when description is empty" in {
+    val invalidGuaranteeReason = InvalidGuaranteeReason(
+      code = "G002",
+      description = ""
+    )
+
+    invalidGuaranteeReason.toString mustEqual "G002"
+  }
+
+  "order InvalidGuaranteeReason instances by code" in {
+    val unorderedReasons = Seq(
+      InvalidGuaranteeReason("G003", "Invalid guarantee"),
+      InvalidGuaranteeReason("G001", "Insufficient funds"),
+      InvalidGuaranteeReason("G002", "Guarantee expired")
+    )
+
+    val orderedReasons = Seq(
+      InvalidGuaranteeReason("G001", "Insufficient funds"),
+      InvalidGuaranteeReason("G002", "Guarantee expired"),
+      InvalidGuaranteeReason("G003", "Invalid guarantee")
+    )
+
+    val result = NonEmptySet
+      .of(unorderedReasons.head, unorderedReasons.tail*)
+      .toSortedSet
+      .toList
+
+    result.mustBe(orderedReasons)
   }
 
 }
