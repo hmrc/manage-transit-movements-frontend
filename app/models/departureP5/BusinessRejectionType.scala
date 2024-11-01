@@ -56,13 +56,18 @@ object BusinessRejectionType {
     override val value: String = "015"
   }
 
+  case object PresentationNotificationRejection extends BusinessRejectionType {
+    override val value: String = "170"
+  }
+
   case class OtherBusinessRejectionType(value: String) extends BusinessRejectionType
 
   def apply(value: String): BusinessRejectionType = value match {
-    case AmendmentRejection.value    => AmendmentRejection
-    case InvalidationRejection.value => InvalidationRejection
-    case DeclarationRejection.value  => DeclarationRejection
-    case value                       => OtherBusinessRejectionType(value)
+    case AmendmentRejection.value                => AmendmentRejection
+    case InvalidationRejection.value             => InvalidationRejection
+    case DeclarationRejection.value              => DeclarationRejection
+    case PresentationNotificationRejection.value => PresentationNotificationRejection
+    case value                                   => OtherBusinessRejectionType(value)
   }
 
   def apply(ie056: CC056CType): BusinessRejectionType =

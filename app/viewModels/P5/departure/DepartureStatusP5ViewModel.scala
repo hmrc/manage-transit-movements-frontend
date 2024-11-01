@@ -338,6 +338,9 @@ object DepartureStatusP5ViewModel {
         case InvalidationRejection =>
           (errorsActionText(xPaths), controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
+        case PresentationNotificationRejection =>
+          (errorsActionText(xPaths), "#")
+
         case _ => ("", "")
       }
 
