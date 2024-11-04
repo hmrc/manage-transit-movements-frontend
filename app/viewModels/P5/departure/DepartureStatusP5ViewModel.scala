@@ -34,8 +34,8 @@ object DepartureStatusP5ViewModel {
       case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
         rejectedStatus(departureId, message.latestMessage.messageId, rejectionType, isDeclarationAmendable, xPaths)
           .lift(message.latestMessage)
-      case PrelodgeRejectedMovementAndMessage(departureId, _, _, message, rejectionType, xPaths) =>
-        prelodgeRejectedStatus(departureId, message.latestMessage.messageId, rejectionType, xPaths)
+      case PrelodgeRejectedMovementAndMessage(departureId, _, _, message, xPaths) =>
+        prelodgeRejectedStatus(departureId, message.latestMessage.messageId, xPaths)
           .lift(message.latestMessage)
       case IncidentMovementAndMessage(departureId, _, _, message, hasMultipleIncidents) =>
         incidentDuringTransit(departureId, message.latestMessage.messageId, hasMultipleIncidents)
@@ -59,11 +59,10 @@ object DepartureStatusP5ViewModel {
   private def prelodgeRejectedStatus(
     departureId: String,
     messageId: String,
-    rejectionType: BusinessRejectionType,
     xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
-      prelodgeRejected(departureId, messageId, rejectionType, xPaths)
+      prelodgeRejected(departureId, messageId, xPaths)
     ).reduce(_ orElse _)
 
   private def preLodgeStatus(departureId: String, messageId: String, localReferenceNumber: String, isPrelodge: Boolean)(implicit
@@ -366,20 +365,13 @@ object DepartureStatusP5ViewModel {
   private def prelodgeRejected(
     departureId: String,
     messageId: String,
-    rejectionType: BusinessRejectionType,
     xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
 
     case message if message.messageType == RejectedByOfficeOfDeparture =>
-      val (key, href) = rejectionType match {
+      val (key, href) = (errorsActionText(xPaths), "#")
 
-        case PresentationNotificationRejection =>
-          (errorsActionText(xPaths), "#")
-
-        case _ => ("", "")
-      }
-
-      val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
+      val keyFormatted = s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
       val actions      = Seq(ViewMovementAction(href, keyFormatted))
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",

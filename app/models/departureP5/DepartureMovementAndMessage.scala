@@ -40,7 +40,6 @@ case class PrelodgeRejectedMovementAndMessage(
   localReferenceNumber: String,
   updated: LocalDateTime,
   message: LatestDepartureMessage,
-  rejectionType: BusinessRejectionType,
   xPaths: Seq[String]
 ) extends MovementAndMessage
 

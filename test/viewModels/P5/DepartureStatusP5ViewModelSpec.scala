@@ -833,8 +833,6 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "and head of tail is IE170" - {
 
-        val rejectionType = PresentationNotificationRejection
-
         "with errors in range 2 to 10" in {
           val movementAndMessage = PrelodgeRejectedMovementAndMessage(
             departureIdP5,
@@ -849,7 +847,6 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ),
               "ie015MessageId"
             ),
-            rejectionType = rejectionType,
             Seq("body/path", "abc")
           )
 
@@ -882,7 +879,6 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ),
               "ie015MessageId"
             ),
-            rejectionType = rejectionType,
             Seq("body/path")
           )
 
@@ -915,7 +911,6 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               ),
               "ie015MessageId"
             ),
-            rejectionType = rejectionType,
             Seq.empty
           )
 

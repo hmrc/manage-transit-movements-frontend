@@ -43,16 +43,15 @@ class DepartureP5MessageService @Inject() (
   cacheConnector: DepartureCacheConnector
 ) {
 
-  private def isPrelodgeError(
+  private def getRejectionMessage(
     departureId: String,
     messageId: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, String, Seq[String])] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(String, Seq[String])] =
     for {
       message <- getMessage[CC056CType](departureId, messageId)
-      rejectionType   = message.TransitOperation.businessRejectionType
-      xPaths          = message.FunctionalError.map(_.errorPointer)
-      isPrelodgeError = rejectionType == PresentationNotificationRejection.value
-    } yield (isPrelodgeError, rejectionType, xPaths)
+      rejectionType = message.TransitOperation.businessRejectionType
+      xPaths        = message.FunctionalError.map(_.errorPointer)
+    } yield (rejectionType, xPaths)
 
   private def isErrorAmendable(
     rejectionType: String,
@@ -72,19 +71,18 @@ class DepartureP5MessageService @Inject() (
           message =>
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>
-                isPrelodgeError(movement.departureId, message.latestMessage.messageId).flatMap {
-                  case (true, rejectionType, xPaths) =>
-                    Future(
+                getRejectionMessage(movement.departureId, message.latestMessage.messageId).flatMap {
+                  case (PresentationNotificationRejection.value, xPaths) =>
+                    Future.successful(
                       PrelodgeRejectedMovementAndMessage(
                         movement.departureId,
                         movement.localReferenceNumber,
                         movement.updated,
                         message,
-                        BusinessRejectionType(rejectionType),
                         xPaths
                       )
                     )
-                  case (false, rejectionType, xPaths) =>
+                  case (rejectionType, xPaths) =>
                     isErrorAmendable(rejectionType, xPaths, movement.localReferenceNumber).map {
                       case (rejectionType, isDeclarationAmendable, xPaths) =>
                         RejectedMovementAndMessage(

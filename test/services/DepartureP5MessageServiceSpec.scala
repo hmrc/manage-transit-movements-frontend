@@ -25,7 +25,7 @@ import models.departureP5.*
 import models.departureP5.BusinessRejectionType.PresentationNotificationRejection
 import models.{LocalReferenceNumber, MessageStatus, RichCC015Type, RichCC182Type}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 
@@ -100,7 +100,6 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               "LRN",
               dateTimeNow,
               latestDepartureMessage,
-              rejectionType,
               xPaths = ie056.FunctionalError.map(_.errorPointer)
             )
           )
@@ -332,6 +331,22 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           }
       }
     }
-  }
 
+    "getDepartureReferenceNumbers" - {
+      "return DepartureReferenceNumbers when the connector call is successful" in {
+
+        val departureId              = "testDepartureId"
+        val expectedReferenceNumbers = DepartureReferenceNumbers("ref1", None)
+
+        when(mockMovementConnector.getDepartureReferenceNumbers(any())(any(), any()))
+          .thenReturn(Future.successful(expectedReferenceNumbers))
+
+        val result = departureP5MessageService.getDepartureReferenceNumbers(departureId).futureValue
+
+        result `mustBe` expectedReferenceNumbers
+
+        verify(mockMovementConnector).getDepartureReferenceNumbers(departureId)
+      }
+    }
+  }
 }
