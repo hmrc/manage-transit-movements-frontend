@@ -34,6 +34,9 @@ object DepartureStatusP5ViewModel {
       case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
         rejectedStatus(departureId, message.latestMessage.messageId, rejectionType, isDeclarationAmendable, xPaths)
           .lift(message.latestMessage)
+      case PrelodgeRejectedMovementAndMessage(departureId, _, _, message, rejectionType, xPaths) =>
+        prelodgeRejectedStatus(departureId, message.latestMessage.messageId, rejectionType, xPaths)
+          .lift(message.latestMessage)
       case IncidentMovementAndMessage(departureId, _, _, message, hasMultipleIncidents) =>
         incidentDuringTransit(departureId, message.latestMessage.messageId, hasMultipleIncidents)
           .lift(message.latestMessage)
@@ -51,6 +54,16 @@ object DepartureStatusP5ViewModel {
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
       rejectedByOfficeOfDeparture(departureId, messageId, rejectionType, isDeclarationAmendable, xPaths)
+    ).reduce(_ orElse _)
+
+  private def prelodgeRejectedStatus(
+    departureId: String,
+    messageId: String,
+    rejectionType: BusinessRejectionType,
+    xPaths: Seq[String]
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
+    Seq(
+      prelodgeRejected(departureId, messageId, rejectionType, xPaths)
     ).reduce(_ orElse _)
 
   private def preLodgeStatus(departureId: String, messageId: String, localReferenceNumber: String, isPrelodge: Boolean)(implicit
@@ -338,6 +351,28 @@ object DepartureStatusP5ViewModel {
         case InvalidationRejection =>
           (errorsActionText(xPaths), controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId).url)
 
+        case _ => ("", "")
+      }
+
+      val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
+      val actions      = Seq(ViewMovementAction(href, keyFormatted))
+      DepartureStatusP5ViewModel(
+        "movement.status.P5.rejectedByOfficeOfDeparture",
+        actions
+      )
+  }
+  // scalastyle:on cyclomatic.complexity
+
+  private def prelodgeRejected(
+    departureId: String,
+    messageId: String,
+    rejectionType: BusinessRejectionType,
+    xPaths: Seq[String]
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+
+    case message if message.messageType == RejectedByOfficeOfDeparture =>
+      val (key, href) = rejectionType match {
+
         case PresentationNotificationRejection =>
           (errorsActionText(xPaths), "#")
 
@@ -351,7 +386,6 @@ object DepartureStatusP5ViewModel {
         actions
       )
   }
-  // scalastyle:on cyclomatic.complexity
 
   private def goodsUnderControl(
     departureId: String,

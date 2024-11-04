@@ -16,7 +16,7 @@
 
 package services
 
-import cats.implicits._
+import cats.implicits.*
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated.{CC015CType, CC056CType, CC182CType}
 import models.{RichCC015Type, RichCC182Type}
@@ -27,7 +27,7 @@ import models.departureP5.DepartureMessageType.{
   IncidentDuringTransit,
   RejectedByOfficeOfDeparture
 }
-import models.departureP5._
+import models.departureP5.*
 import scalaxb.XMLFormat
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -36,21 +36,30 @@ import scala.concurrent.{ExecutionContext, Future}
 import generated.Generated_CC056CTypeFormat
 import generated.Generated_CC015CTypeFormat
 import generated.Generated_CC182CTypeFormat
+import models.departureP5.BusinessRejectionType.PresentationNotificationRejection
 
 class DepartureP5MessageService @Inject() (
   departureMovementP5Connector: DepartureMovementP5Connector,
   cacheConnector: DepartureCacheConnector
 ) {
 
-  private def isErrorAmendable(
+  private def isPrelodgeError(
     departureId: String,
-    messageId: String,
+    messageId: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, String, Seq[String])] =
+    for {
+      message <- getMessage[CC056CType](departureId, messageId)
+      rejectionType   = message.TransitOperation.businessRejectionType
+      xPaths          = message.FunctionalError.map(_.errorPointer)
+      isPrelodgeError = rejectionType == PresentationNotificationRejection.value
+    } yield (isPrelodgeError, rejectionType, xPaths)
+
+  private def isErrorAmendable(
+    rejectionType: String,
+    xPaths: Seq[String],
     lrn: String
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(String, Boolean, Seq[String])] =
     for {
-      message <- getMessage[CC056CType](departureId, messageId)
-      rejectionType = message.TransitOperation.businessRejectionType
-      xPaths        = message.FunctionalError.map(_.errorPointer)
       isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn, xPaths.filter(_.nonEmpty))
     } yield (rejectionType, isDeclarationAmendable, xPaths)
 
@@ -63,17 +72,31 @@ class DepartureP5MessageService @Inject() (
           message =>
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>
-                isErrorAmendable(movement.departureId, message.latestMessage.messageId, movement.localReferenceNumber).map {
-                  case (rejectionType, isDeclarationAmendable, xPaths) =>
-                    RejectedMovementAndMessage(
-                      movement.departureId,
-                      movement.localReferenceNumber,
-                      movement.updated,
-                      message,
-                      BusinessRejectionType(rejectionType),
-                      isDeclarationAmendable,
-                      xPaths
+                isPrelodgeError(movement.departureId, message.latestMessage.messageId).flatMap {
+                  case (true, rejectionType, xPaths) =>
+                    Future(
+                      PrelodgeRejectedMovementAndMessage(
+                        movement.departureId,
+                        movement.localReferenceNumber,
+                        movement.updated,
+                        message,
+                        BusinessRejectionType(rejectionType),
+                        xPaths
+                      )
                     )
+                  case (false, rejectionType, xPaths) =>
+                    isErrorAmendable(rejectionType, xPaths, movement.localReferenceNumber).map {
+                      case (rejectionType, isDeclarationAmendable, xPaths) =>
+                        RejectedMovementAndMessage(
+                          movement.departureId,
+                          movement.localReferenceNumber,
+                          movement.updated,
+                          message,
+                          BusinessRejectionType(rejectionType),
+                          isDeclarationAmendable,
+                          xPaths
+                        )
+                    }
                 }
               case DeclarationAmendmentAccepted | GoodsUnderControl | DeclarationSent =>
                 getMessage[CC015CType](movement.departureId, message.ie015MessageId).map {

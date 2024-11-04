@@ -831,6 +831,108 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       }
 
+      "and head of tail is IE170" - {
+
+        val rejectionType = PresentationNotificationRejection
+
+        "with errors in range 2 to 10" in {
+          val movementAndMessage = PrelodgeRejectedMovementAndMessage(
+            departureIdP5,
+            lrn.value,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                messageId,
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                MessageStatus.Success
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
+            Seq("body/path", "abc")
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                "#", // TODO: update with URL
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+
+          result `mustBe` expectedResult
+        }
+
+        "with one error " in {
+          val movementAndMessage = PrelodgeRejectedMovementAndMessage(
+            departureIdP5,
+            lrn.value,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                messageId,
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                MessageStatus.Success
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
+            Seq("body/path")
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                "#", // TODO: update with URL
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewError"
+              )
+            )
+          )
+
+          result `mustBe` expectedResult
+        }
+
+        "with no FunctionalErrors" in {
+          val movementAndMessage = PrelodgeRejectedMovementAndMessage(
+            departureIdP5,
+            lrn.value,
+            LocalDateTime.now(),
+            LatestDepartureMessage(
+              DepartureMessage(
+                messageId,
+                LocalDateTime.now(),
+                RejectedByOfficeOfDeparture,
+                MessageStatus.Success
+              ),
+              "ie015MessageId"
+            ),
+            rejectionType = rejectionType,
+            Seq.empty
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.rejectedByOfficeOfDeparture",
+            Seq(
+              ViewMovementAction(
+                "#", // TODO: update with URL
+                "movement.status.P5.action.rejectedByOfficeOfDeparture.viewErrors"
+              )
+            )
+          )
+          result `mustBe` expectedResult
+        }
+      }
     }
 
     "when given Message with head of goodsUnderControl" - {
