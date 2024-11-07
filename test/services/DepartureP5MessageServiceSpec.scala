@@ -22,9 +22,10 @@ import generated.*
 import generators.Generators
 import models.departureP5.DepartureMessageType.*
 import models.departureP5.*
+import models.departureP5.BusinessRejectionType.PresentationNotificationRejection
 import models.{LocalReferenceNumber, MessageStatus, RichCC015Type, RichCC182Type}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 
@@ -51,66 +52,122 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
       val dateTimeNow = LocalDateTime.now()
 
-      "must return RejectedMovementAndMessage when RejectedByOfficeOfDeparture" in {
+      "when RejectedByOfficeOfDeparture" - {
+        "must return PrelodgeRejectedMovementAndMessage when rejection type is IE170" in {
+          val rejectionType = PresentationNotificationRejection
 
-        val isDeclarationAmendable = arbitrary[Boolean].sample.value
-        val rejectionType          = arbitrary[BusinessRejectionType].sample.value
-
-        val latestDepartureMessage = LatestDepartureMessage(
-          DepartureMessage(
-            "messageId1",
-            dateTimeNow,
-            RejectedByOfficeOfDeparture,
-            MessageStatus.Success
-          ),
-          "messageId2"
-        )
-
-        val departureMovements = DepartureMovements(
-          departureMovements = Seq(
-            DepartureMovement(
-              "AB123",
-              Some("MRN"),
-              "LRN",
-              dateTimeNow
-            )
-          ),
-          totalCount = 1
-        )
-
-        val x = arbitrary[CC056CType].sample.value
-
-        val ie056 = x.copy(
-          TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType.value)
-        )
-
-        when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
-          Future.successful(latestDepartureMessage)
-        )
-
-        when(mockMovementConnector.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(
-          Future.successful(ie056)
-        )
-
-        when(mockCacheConnector.isDeclarationAmendable(any(), any())(any())).thenReturn(
-          Future.successful(isDeclarationAmendable)
-        )
-
-        val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
-
-        val expectedResult: Seq[MovementAndMessage] = Seq(
-          RejectedMovementAndMessage(
-            "AB123",
-            "LRN",
-            dateTimeNow,
-            latestDepartureMessage,
-            rejectionType,
-            isDeclarationAmendable = isDeclarationAmendable,
-            xPaths = ie056.FunctionalError.map(_.errorPointer)
+          val latestDepartureMessage = LatestDepartureMessage(
+            DepartureMessage(
+              "messageId1",
+              dateTimeNow,
+              RejectedByOfficeOfDeparture,
+              MessageStatus.Success
+            ),
+            "messageId2"
           )
-        )
 
-        result `mustBe` expectedResult
+          val departureMovements = DepartureMovements(
+            departureMovements = Seq(
+              DepartureMovement(
+                "AB123",
+                Some("MRN"),
+                "LRN",
+                dateTimeNow
+              )
+            ),
+            totalCount = 1
+          )
+
+          val x = arbitrary[CC056CType].sample.value
+
+          val ie056 = x.copy(
+            TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType.value)
+          )
+
+          when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+            Future.successful(latestDepartureMessage)
+          )
+
+          when(mockMovementConnector.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(
+            Future.successful(ie056)
+          )
+
+          val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
+
+          val expectedResult: Seq[MovementAndMessage] = Seq(
+            PrelodgeRejectedMovementAndMessage(
+              "AB123",
+              "LRN",
+              dateTimeNow,
+              latestDepartureMessage,
+              xPaths = ie056.FunctionalError.map(_.errorPointer)
+            )
+          )
+
+          result `mustBe` expectedResult
+        }
+
+        "must return RejectedMovementAndMessage when rejection type is not IE170" in {
+          val isDeclarationAmendable = arbitrary[Boolean].sample.value
+          val rejectionType          = arbitrary[BusinessRejectionType].sample.value
+
+          val latestDepartureMessage = LatestDepartureMessage(
+            DepartureMessage(
+              "messageId1",
+              dateTimeNow,
+              RejectedByOfficeOfDeparture,
+              MessageStatus.Success
+            ),
+            "messageId2"
+          )
+
+          val departureMovements = DepartureMovements(
+            departureMovements = Seq(
+              DepartureMovement(
+                "AB123",
+                Some("MRN"),
+                "LRN",
+                dateTimeNow
+              )
+            ),
+            totalCount = 1
+          )
+
+          val x = arbitrary[CC056CType].sample.value
+
+          val ie056 = x.copy(
+            TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType.value)
+          )
+
+          when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+            Future.successful(latestDepartureMessage)
+          )
+
+          when(mockMovementConnector.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(
+            Future.successful(ie056)
+          )
+
+          when(mockCacheConnector.isDeclarationAmendable(any(), any())(any())).thenReturn(
+            Future.successful(isDeclarationAmendable)
+          )
+
+          val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
+
+          val expectedResult: Seq[MovementAndMessage] = Seq(
+            RejectedMovementAndMessage(
+              "AB123",
+              "LRN",
+              dateTimeNow,
+              latestDepartureMessage,
+              rejectionType,
+              isDeclarationAmendable = isDeclarationAmendable,
+              xPaths = ie056.FunctionalError.map(_.errorPointer)
+            )
+          )
+
+          result `mustBe` expectedResult
+        }
+
       }
 
       "must return PrelodgedMovementAndMessage when AllocatedMRN or DeclarationAmendmentAccepted" in {
@@ -274,6 +331,22 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           }
       }
     }
-  }
 
+    "getDepartureReferenceNumbers" - {
+      "return DepartureReferenceNumbers when the connector call is successful" in {
+
+        val departureId              = "testDepartureId"
+        val expectedReferenceNumbers = DepartureReferenceNumbers("ref1", None)
+
+        when(mockMovementConnector.getDepartureReferenceNumbers(any())(any(), any()))
+          .thenReturn(Future.successful(expectedReferenceNumbers))
+
+        val result = departureP5MessageService.getDepartureReferenceNumbers(departureId).futureValue
+
+        result `mustBe` expectedReferenceNumbers
+
+        verify(mockMovementConnector).getDepartureReferenceNumbers(departureId)
+      }
+    }
+  }
 }

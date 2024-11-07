@@ -148,6 +148,23 @@ trait MessagesModelGenerators {
       )
     }
 
+  implicit lazy val arbitraryCC025CType: Arbitrary[CC025CType] =
+    Arbitrary {
+      for {
+        messageSequence1                 <- arbitrary[MESSAGESequence]
+        transitOperation                 <- arbitrary[TransitOperationType10]
+        customsOfficeOfDestinationActual <- arbitrary[CustomsOfficeOfDestinationActualType03]
+        traderAtDestination              <- arbitrary[TraderAtDestinationType03]
+      } yield CC025CType(
+        messageSequence1 = messageSequence1,
+        TransitOperation = transitOperation,
+        CustomsOfficeOfDestinationActual = customsOfficeOfDestinationActual,
+        TraderAtDestination = traderAtDestination,
+        Consignment = None,
+        attributes = Map.empty
+      )
+    }
+
   implicit lazy val arbitraryCC057CType: Arbitrary[CC057CType] =
     Arbitrary {
       for {
@@ -304,6 +321,19 @@ trait MessagesModelGenerators {
         communicationLanguageAtDeparture = None,
         bindingItinerary = bindingItinerary,
         limitDate = None
+      )
+    }
+
+  implicit lazy val arbitraryTransitOperationType10: Arbitrary[TransitOperationType10] =
+    Arbitrary {
+      for {
+        mrn              <- nonEmptyString
+        releaseDate      <- arbitrary[XMLGregorianCalendar]
+        releaseIndicator <- nonEmptyString
+      } yield TransitOperationType10(
+        MRN = mrn,
+        releaseDate = releaseDate,
+        releaseIndicator = releaseIndicator
       )
     }
 
