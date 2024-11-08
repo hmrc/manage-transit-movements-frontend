@@ -47,3 +47,5 @@ GET        /:departureId/incident-during-transit/:messageId                     
 
 GET        /:departureId/incident/:incidentIndex/:messageId                          controllers.departureP5.IncidentP5Controller.onPageLoad(departureId: String, incidentIndex: Index, messageId: String)
 POST       /:departureId/incident/:incidentIndex/:messageId                          controllers.departureP5.IncidentP5Controller.onSubmit(departureId: String, incidentIndex: Index, messageId: String)
+
+GET        /:departureId/pre-lodged-departure-declaration-errors/:messageId          controllers.departureP5.PreLodgedDeclarationErrorsController.onPageLoad(departureId: String, messageId: String)

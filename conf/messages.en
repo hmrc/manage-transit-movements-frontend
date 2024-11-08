@@ -370,6 +370,12 @@ departure.declaration.errors.message.paragraph3 = Contact the New Computerised T
 departure.declaration.errors.message.hyperlink = Make another departure declaration
 departure.declaration.errors.message.hyperlink.text = Make another departure declaration
 
+departure.prelodged.errors.title = Pre-lodged declaration errors
+departure.prelodged.errors.heading = Pre-lodged declaration errors
+departure.prelodged.errors.paragraph1 = There are one or more errors in this declaration that cannot be amended. Complete your pre-lodged declaration with the right information.
+departure.prelodged.errors.paragraph2 = Contact the New Computerised Transit System helpdesk for help understanding errors (opens in a new tab)
+departure.prelodged.errors.hyperlink = Complete pre-lodged declaration
+
 cancellation.notification.errors.message.title   = Cancellation errors
 cancellation.notification.errors.message.heading = Cancellation errors
 cancellation.notification.errors.message = There are one or more errors with the cancellation of this declaration.

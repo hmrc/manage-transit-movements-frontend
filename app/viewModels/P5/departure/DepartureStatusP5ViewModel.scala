@@ -367,12 +367,16 @@ object DepartureStatusP5ViewModel {
     messageId: String,
     xPaths: Seq[String]
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
-
     case message if message.messageType == RejectedByOfficeOfDeparture =>
-      val (key, href) = (errorsActionText(xPaths), "#")
+      val href = xPaths match {
+        case Nil =>
+          controllers.departureP5.routes.PreLodgedDeclarationErrorsController.onPageLoad(departureId, messageId).url
+        case _ =>
+          "#"
+      }
 
-      val keyFormatted = s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"
-      val actions      = Seq(ViewMovementAction(href, keyFormatted))
+      val key     = errorsActionText(xPaths)
+      val actions = Seq(ViewMovementAction(href, s"movement.status.P5.action.rejectedByOfficeOfDeparture.$key"))
       DepartureStatusP5ViewModel(
         "movement.status.P5.rejectedByOfficeOfDeparture",
         actions
