@@ -26,12 +26,12 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
-import viewModels.P5.departure.ReviewPrelodgeDepartureErrorsP5ViewModel.ReviewPrelodgeDepartureErrorsP5ViewModelProvider
+import viewModels.P5.departure.ReviewPrelodgedDeclarationErrorsP5ViewModel.ReviewPrelodgedDeclarationErrorsP5ViewModelProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReviewPrelodgeDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class ReviewPrelodgedDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -53,7 +53,7 @@ class ReviewPrelodgeDepartureErrorsP5ViewModelSpec extends SpecBase with AppWith
       when(mockReferenceDataService.getFunctionalError(any())(any(), any()))
         .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
-      val viewModelProvider = new ReviewPrelodgeDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
+      val viewModelProvider = new ReviewPrelodgedDeclarationErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(errors, lrnString).futureValue
 
       "must return correct section length" in {
@@ -86,7 +86,7 @@ class ReviewPrelodgeDepartureErrorsP5ViewModelSpec extends SpecBase with AppWith
         .thenReturn(Future.successful(FunctionalErrorWithDesc("12", "Codelist violation")))
         .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "Rule violation")))
 
-      val viewModelProvider = new ReviewPrelodgeDepartureErrorsP5ViewModelProvider(mockReferenceDataService)
+      val viewModelProvider = new ReviewPrelodgedDeclarationErrorsP5ViewModelProvider(mockReferenceDataService)
       val result            = viewModelProvider.apply(functionalErrors, lrnString).futureValue
 
       "must return correct section length" in {

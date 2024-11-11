@@ -17,7 +17,6 @@
 package views.departureP5
 
 import generators.Generators
-import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -59,8 +58,8 @@ class ReviewPrelodgedDeclarationErrorsP5ViewSpec extends PaginationViewBehaviour
     paginationViewModel: PaginationViewModel
   ): HtmlFormat.Appendable =
     injector
-      .instanceOf[ReviewPrelodgeDepartureErrorsP5View]
-      .apply(viewModel, departureId.toString, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
+      .instanceOf[ReviewPrelodgedDeclarationErrorsP5View]
+      .apply(viewModel, departureIdP5, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
 
   override def view: HtmlFormat.Appendable = applyView(reviewPrelodgeRejectionMessageP5ViewModel, paginationViewModel)
 
@@ -99,7 +98,6 @@ class ReviewPrelodgedDeclarationErrorsP5ViewSpec extends PaginationViewBehaviour
   behave like pageWithLink(
     "prelodge-declaration-link",
     "Complete pre-lodged declaration",
-    frontendAppConfig.presentationNotificationFrontend
+    frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)
   )
-
 }

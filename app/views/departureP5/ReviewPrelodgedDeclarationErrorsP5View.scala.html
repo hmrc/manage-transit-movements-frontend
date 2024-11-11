@@ -50,7 +50,9 @@
     @helpdeskLink(prelodgeRejectionMessageP5ViewModel.paragraph2)
 
     <p class="govuk-body">
-        <a id="prelodge-declaration-link" class="govuk-link" href="@config.presentationNotificationFrontend">@prelodgeRejectionMessageP5ViewModel.hyperlink</a>
+        <a id="prelodge-declaration-link" class="govuk-link" href=@config.presentationNotificationFrontendUrl(departureId)>
+            @prelodgeRejectionMessageP5ViewModel.hyperlink
+        </a>
     </p>
 
 }
