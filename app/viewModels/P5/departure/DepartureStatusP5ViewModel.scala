@@ -372,7 +372,7 @@ object DepartureStatusP5ViewModel {
         case Nil =>
           controllers.departureP5.routes.PreLodgedDeclarationErrorsController.onPageLoad(departureId, messageId).url
         case _ =>
-          "#"
+          controllers.departureP5.routes.ReviewPrelodgedDeclarationErrorsP5Controller.onPageLoad(None, departureId, messageId).url
       }
 
       val key     = errorsActionText(xPaths)

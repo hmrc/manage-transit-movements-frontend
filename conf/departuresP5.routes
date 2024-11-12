@@ -49,3 +49,5 @@ GET        /:departureId/incident/:incidentIndex/:messageId                     
 POST       /:departureId/incident/:incidentIndex/:messageId                          controllers.departureP5.IncidentP5Controller.onSubmit(departureId: String, incidentIndex: Index, messageId: String)
 
 GET        /:departureId/pre-lodged-departure-declaration-errors/:messageId          controllers.departureP5.PreLodgedDeclarationErrorsController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/review-pre-lodged-departure-declaration-errors/:messageId   controllers.departureP5.ReviewPrelodgedDeclarationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)

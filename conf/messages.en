@@ -350,6 +350,14 @@ departure.ie056.review.message.paragraph2.singular = Contact the New Computerise
 departure.ie056.review.message.paragraph2.plural = Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)
 departure.ie056.review.message.hyperlink = Make another departure declaration
 
+prelodged.declaration.ie056.review.message.title = Review pre-lodged declaration errors
+prelodged.declaration.ie056.review.message.heading = Review pre-lodged declaration errors
+prelodged.declaration.ie056.review.message.paragraph1.singular = There is a problem with this declaration. Review the error and complete your pre-lodged declaration with the right information.
+prelodged.declaration.ie056.review.message.paragraph1.plural = There is a problem with this declaration. Review the errors and complete your pre-lodged declaration with the right information.
+prelodged.declaration.ie056.review.message.paragraph2.singular = Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)
+prelodged.declaration.ie056.review.message.paragraph2.plural = Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)
+prelodged.declaration.ie056.review.message.hyperlink = Complete pre-lodged declaration
+
 departure.ie056.review.cancellation.message.title = Review cancellation errors
 departure.ie056.review.cancellation.message.heading = Review cancellation errors
 departure.ie056.review.cancellation.message.paragraph1.singular = The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again.
