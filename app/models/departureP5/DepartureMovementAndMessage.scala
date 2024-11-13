@@ -31,7 +31,7 @@ case class RejectedMovementAndMessage(
   updated: LocalDateTime,
   message: LatestDepartureMessage,
   rejectionType: BusinessRejectionType,
-  isDeclarationAmendable: Boolean,
+  isRejectionAmendable: Boolean,
   xPaths: Seq[String]
 ) extends MovementAndMessage
 

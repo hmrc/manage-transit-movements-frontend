@@ -19,7 +19,7 @@ package controllers.departureP5
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.CC055CType
 import generators.Generators
-import models.departureP5._
+import models.departureP5.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -27,7 +27,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{AmendmentService, DepartureP5MessageService}
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel.GuaranteeRejectedP5ViewModelProvider
@@ -60,7 +60,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
     lazy val controller = routes.GuaranteeRejectedP5Controller.onPageLoad(departureIdP5, messageId).url
 
     "onPageLoad" - {
-      "when declaration exists" - {
+      "when rejection is amendable" - {
         "must return OK and the correct view for a GET" in {
           forAll(arbitrary[CC055CType], arbitrary[GuaranteeRejectedP5ViewModel]) {
             (message, viewModel) =>
@@ -70,7 +70,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-              when(mockAmendmentService.doesDeclarationExist(any())(any())) `thenReturn` Future.successful(true)
+              when(mockAmendmentService.isRejectionAmendable(any(), any())(any())) `thenReturn` Future.successful(true)
 
               when(mockGuaranteeRejectionP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(viewModel))
@@ -89,7 +89,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
         }
       }
 
-      "when declaration does not exist" - {
+      "when rejection is not amendable" - {
         "must redirect to GuaranteeRejectedNotAmendableP5Controller" in {
           forAll(arbitrary[CC055CType], arbitrary[GuaranteeRejectedP5ViewModel]) {
             (message, viewModel) =>
@@ -99,7 +99,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-              when(mockAmendmentService.doesDeclarationExist(any())(any())) `thenReturn` Future.successful(false)
+              when(mockAmendmentService.isRejectionAmendable(any(), any())(any())) `thenReturn` Future.successful(false)
 
               when(mockGuaranteeRejectionP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(viewModel))
@@ -109,9 +109,9 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               val result = route(app, request).value
 
               status(result) mustEqual SEE_OTHER
-              redirectLocation(result).value `mustBe` controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller
-                .onPageLoad(departureIdP5, messageId)
-                .url
+
+              redirectLocation(result).value `mustBe`
+                controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller.onPageLoad(departureIdP5, messageId).url
           }
         }
       }

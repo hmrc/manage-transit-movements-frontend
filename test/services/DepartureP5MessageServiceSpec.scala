@@ -147,7 +147,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             Future.successful(ie056)
           )
 
-          when(mockCacheConnector.isDeclarationAmendable(any(), any())(any())).thenReturn(
+          when(mockCacheConnector.isRejectionAmendable(any(), any())(any())).thenReturn(
             Future.successful(isDeclarationAmendable)
           )
 
@@ -160,7 +160,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               dateTimeNow,
               latestDepartureMessage,
               rejectionType,
-              isDeclarationAmendable = isDeclarationAmendable,
+              isRejectionAmendable = isDeclarationAmendable,
               xPaths = ie056.FunctionalError.map(_.errorPointer)
             )
           )

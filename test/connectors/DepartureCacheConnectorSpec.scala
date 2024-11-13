@@ -17,13 +17,13 @@
 package connectors
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import helper.WireMockServerHandler
 import models.departureP5.BusinessRejectionType.AmendmentRejection
 import models.departureP5.Rejection
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsArray, JsBoolean, JsString, Json}
-import play.api.test.Helpers._
+import play.api.libs.json.{JsBoolean, Json}
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HttpResponse
 
 class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockServerHandler {
@@ -37,19 +37,19 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
 
   "DepartureCacheConnector" - {
 
-    "isDeclarationAmendable" - {
+    "isRejectionAmendable" - {
 
-      val url    = s"/manage-transit-movements-departure-cache/user-answers/$lrn/is-amendable"
-      val xPaths = Seq("foo", "bar")
+      val url       = s"/manage-transit-movements-departure-cache/user-answers/$lrn/amendable"
+      val rejection = Rejection(departureIdP5)
 
       "must return true when response body contains true" in {
         server.stubFor(
           post(urlEqualTo(url))
-            .withRequestBody(equalToJson(Json.stringify(JsArray(xPaths.map(JsString.apply)))))
+            .withRequestBody(equalToJson(Json.stringify(Json.toJson(rejection))))
             .willReturn(okJson(Json.stringify(JsBoolean(true))))
         )
 
-        val result: Boolean = await(connector.isDeclarationAmendable(lrn.toString, xPaths))
+        val result: Boolean = await(connector.isRejectionAmendable(lrn.toString, rejection))
 
         result `mustBe` true
       }
@@ -57,38 +57,11 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
       "must return false when response body contains false" in {
         server.stubFor(
           post(urlEqualTo(url))
-            .withRequestBody(equalToJson(Json.stringify(JsArray(xPaths.map(JsString.apply)))))
+            .withRequestBody(equalToJson(Json.stringify(Json.toJson(rejection))))
             .willReturn(okJson(Json.stringify(JsBoolean(false))))
         )
 
-        val result: Boolean = await(connector.isDeclarationAmendable(lrn.toString, xPaths))
-
-        result `mustBe` false
-      }
-    }
-
-    "doesDeclarationExist" - {
-
-      val url = s"/manage-transit-movements-departure-cache/user-answers/$lrn"
-
-      "must return true when response is OK" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(ok())
-        )
-
-        val result: Boolean = await(connector.doesDeclarationExist(lrn.toString))
-
-        result `mustBe` true
-      }
-
-      "must return false when response is NOT_FOUND" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(aResponse().withStatus(NOT_FOUND))
-        )
-
-        val result: Boolean = await(connector.doesDeclarationExist(lrn.toString))
+        val result: Boolean = await(connector.isRejectionAmendable(lrn.toString, rejection))
 
         result `mustBe` false
       }

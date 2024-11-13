@@ -50,7 +50,7 @@ class GuaranteeRejectedP5Controller @Inject() (
       implicit request =>
         val lrn = request.referenceNumbers.localReferenceNumber
         for {
-          isAmendable <- service.doesDeclarationExist(lrn)
+          isAmendable <- service.isRejectionAmendable(lrn, Rejection(departureId))
           viewModel <- viewModelProvider.apply(
             request.messageData.GuaranteeReference,
             lrn,

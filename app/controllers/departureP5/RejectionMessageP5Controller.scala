@@ -54,7 +54,7 @@ class RejectionMessageP5Controller @Inject() (
         val lrn    = request.referenceNumbers.localReferenceNumber
         val xPaths = request.messageData.xPaths
 
-        service.isDeclarationAmendable(lrn, xPaths).flatMap {
+        service.isRejectionAmendable(lrn, Rejection(departureId, request.messageData)).flatMap {
           case true =>
             val currentPage = page.getOrElse(1)
 

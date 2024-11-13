@@ -16,6 +16,7 @@
 
 package models.departureP5
 
+import generated.*
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import play.api.libs.json.{Json, Writes}
 
@@ -33,6 +34,13 @@ object Rejection {
 
   def apply(departureId: String, businessRejectionType: DepartureBusinessRejectionType, errorPointers: Seq[String]): Rejection =
     new Rejection(departureId, "IE056", Some(businessRejectionType), Some(errorPointers))
+
+  def apply(departureId: String, ie056: CC056CType): Rejection =
+    Rejection(
+      departureId,
+      DepartureBusinessRejectionType(ie056),
+      ie056.FunctionalError.map(_.errorPointer)
+    )
 
   implicit val writes: Writes[Rejection] = Json.writes[Rejection]
 }

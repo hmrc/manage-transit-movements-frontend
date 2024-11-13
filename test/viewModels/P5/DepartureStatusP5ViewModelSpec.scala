@@ -455,7 +455,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = true,
+            isRejectionAmendable = true,
             xPaths = Seq("body/path")
           )
 
@@ -490,7 +490,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = true,
+            isRejectionAmendable = true,
             xPaths = Nil
           )
 
@@ -525,7 +525,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = false,
+            isRejectionAmendable = false,
             xPaths = Nil
           )
 
@@ -560,7 +560,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = false,
+            isRejectionAmendable = false,
             xPaths = Seq("body/path")
           )
 
@@ -601,7 +601,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = true,
+            isRejectionAmendable = true,
             xPaths = Seq("body/path")
           )
 
@@ -635,7 +635,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = false,
+            isRejectionAmendable = false,
             Seq("body/path", "abc")
           )
 
@@ -669,7 +669,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = false,
+            isRejectionAmendable = false,
             Seq("body/path")
           )
 
@@ -703,7 +703,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = false,
+            isRejectionAmendable = false,
             Seq.empty
           )
 
@@ -742,7 +742,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = false,
+            isRejectionAmendable = false,
             Seq("body/path", "abc")
           )
 
@@ -776,7 +776,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = false,
+            isRejectionAmendable = false,
             Seq("body/path")
           )
 
@@ -810,7 +810,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               "ie015MessageId"
             ),
             rejectionType = rejectionType,
-            isDeclarationAmendable = false,
+            isRejectionAmendable = false,
             Seq.empty
           )
 

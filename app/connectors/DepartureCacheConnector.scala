@@ -19,15 +19,14 @@ package connectors
 import config.FrontendAppConfig
 import models.departureP5.Rejection
 import play.api.Logging
-import play.api.http.Status._
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.ws.JsonBodyWritables.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.libs.ws.JsonBodyWritables._
 
 class DepartureCacheConnector @Inject() (
   config: FrontendAppConfig,
@@ -37,27 +36,13 @@ class DepartureCacheConnector @Inject() (
 
   private val baseUrl = config.departureCacheUrl
 
-  def isDeclarationAmendable(lrn: String, xPaths: Seq[String])(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = url"$baseUrl/user-answers/$lrn/is-amendable"
+  def isRejectionAmendable(lrn: String, rejection: Rejection)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val url = url"$baseUrl/user-answers/$lrn/amendable"
 
     http
       .post(url)
-      .withBody(Json.toJson(xPaths))
+      .withBody(Json.toJson(rejection))
       .execute[Boolean]
-  }
-
-  def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = url"$baseUrl/user-answers/$lrn"
-
-    http
-      .get(url)
-      .execute[HttpResponse]
-      .map(_.status)
-      .map {
-        case OK        => true
-        case NOT_FOUND => false
-        case x         => throw new Exception(s"[DepartureCacheConnector][doesDeclarationExist] returned $x")
-      }
   }
 
   def handleErrors(lrn: String, rejection: Rejection)(implicit hc: HeaderCarrier): Future[HttpResponse] = {

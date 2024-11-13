@@ -76,7 +76,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
                 .thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
-              when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
+              when(mockCacheService.isRejectionAmendable(any(), any())(any())).thenReturn(Future.successful(true))
               when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(ReviewCancellationErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
 
