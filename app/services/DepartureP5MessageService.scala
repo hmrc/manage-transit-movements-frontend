@@ -20,7 +20,7 @@ import cats.implicits.*
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated.{CC015CType, CC056CType, CC182CType, Generated_CC015CTypeFormat, Generated_CC056CTypeFormat, Generated_CC182CTypeFormat}
 import models.departureP5.*
-import models.departureP5.BusinessRejectionType.PresentationNotificationRejection
+import models.departureP5.BusinessRejectionType.*
 import models.departureP5.DepartureMessageType.{
   DeclarationAmendmentAccepted,
   DeclarationSent,
@@ -28,6 +28,7 @@ import models.departureP5.DepartureMessageType.{
   IncidentDuringTransit,
   RejectedByOfficeOfDeparture
 }
+import models.departureP5.Rejection.IE056Rejection
 import models.{RichCC015Type, RichCC182Type}
 import scalaxb.XMLFormat
 import uk.gov.hmrc.http.HeaderCarrier
@@ -76,8 +77,20 @@ class DepartureP5MessageService @Inject() (
                 xPaths
               )
             )
+          case InvalidationRejection =>
+            Future.successful(
+              RejectedMovementAndMessage(
+                departureId,
+                movement.localReferenceNumber,
+                movement.updated,
+                message,
+                InvalidationRejection,
+                false,
+                xPaths
+              )
+            )
           case rejectionType =>
-            val rejection = Rejection(departureId, ie056)
+            val rejection = IE056Rejection(departureId, ie056)
             cacheConnector.isRejectionAmendable(movement.localReferenceNumber, rejection).map {
               isRejectionAmendable =>
                 RejectedMovementAndMessage(

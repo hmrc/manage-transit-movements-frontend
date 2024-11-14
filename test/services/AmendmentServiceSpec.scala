@@ -22,6 +22,7 @@ import generators.Generators
 import models.LocalReferenceNumber
 import models.departureP5.BusinessRejectionType.*
 import models.departureP5.Rejection
+import models.departureP5.Rejection.IE055Rejection
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -51,7 +52,7 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
     "isRejectionAmendable" - {
 
-      val rejection = Rejection(departureIdP5)
+      val rejection = IE055Rejection(departureIdP5)
 
       "must return true" - {
         "when rejection is amendable" in {
@@ -61,13 +62,13 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
               val service = app.injector.instanceOf[AmendmentService]
 
-              when(mockCacheConnector.isRejectionAmendable(any(), any())(any()))
+              when(mockCacheConnector.isRejectionAmendable(any(), any())(any(), any()))
                 .thenReturn(Future.successful(true))
 
               val result = service.isRejectionAmendable(lrn.value, rejection).futureValue
               result `mustBe` true
 
-              verify(mockCacheConnector).isRejectionAmendable(eqTo(lrn.value), eqTo(rejection))(any())
+              verify(mockCacheConnector).isRejectionAmendable(eqTo(lrn.value), eqTo(rejection))(any(), any())
           }
         }
       }
@@ -80,13 +81,13 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
               val service = app.injector.instanceOf[AmendmentService]
 
-              when(mockCacheConnector.isRejectionAmendable(any(), any())(any()))
+              when(mockCacheConnector.isRejectionAmendable(any(), any())(any(), any()))
                 .thenReturn(Future.successful(false))
 
               val result = service.isRejectionAmendable(lrn.value, rejection).futureValue
               result `mustBe` false
 
-              verify(mockCacheConnector).isRejectionAmendable(eqTo(lrn.value), eqTo(rejection))(any())
+              verify(mockCacheConnector).isRejectionAmendable(eqTo(lrn.value), eqTo(rejection))(any(), any())
           }
         }
       }
@@ -100,15 +101,15 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
             val service = app.injector.instanceOf[AmendmentService]
 
-            when(mockCacheConnector.handleErrors(any(), any())(any()))
+            when(mockCacheConnector.handleErrors(any(), any())(any(), any()))
               .thenReturn(Future.successful(httpResponse(OK)))
 
-            val rejection = Rejection(departureIdP5)
+            val rejection = IE055Rejection(departureIdP5)
 
             val result = service.handleErrors(lrn.value, rejection).futureValue
             result.status `mustBe` OK
 
-            verify(mockCacheConnector).handleErrors(eqTo(lrn.value), eqTo(rejection))(any())
+            verify(mockCacheConnector).handleErrors(eqTo(lrn.value), eqTo(rejection))(any(), any())
         }
       }
     }

@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.departureP5.Rejection
 import play.api.Logging
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.libs.ws.JsonBodyWritables.*
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -36,7 +36,7 @@ class DepartureCacheConnector @Inject() (
 
   private val baseUrl = config.departureCacheUrl
 
-  def isRejectionAmendable(lrn: String, rejection: Rejection)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def isRejectionAmendable[T <: Rejection](lrn: String, rejection: T)(implicit hc: HeaderCarrier, writes: Writes[T]): Future[Boolean] = {
     val url = url"$baseUrl/user-answers/$lrn/amendable"
 
     http
@@ -45,7 +45,7 @@ class DepartureCacheConnector @Inject() (
       .execute[Boolean]
   }
 
-  def handleErrors(lrn: String, rejection: Rejection)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def handleErrors[T <: Rejection](lrn: String, rejection: T)(implicit hc: HeaderCarrier, writes: Writes[T]): Future[HttpResponse] = {
     val url = url"$baseUrl/user-answers/$lrn/errors"
 
     http

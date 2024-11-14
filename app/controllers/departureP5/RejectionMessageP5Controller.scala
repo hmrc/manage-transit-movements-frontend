@@ -20,8 +20,8 @@ import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions.*
 import generated.{CC056CType, Generated_CC056CTypeFormat}
 import models.RichCC056CType
-import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.Rejection
+import models.departureP5.Rejection.IE056Rejection
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,23 +51,23 @@ class RejectionMessageP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val lrn    = request.referenceNumbers.localReferenceNumber
-        val xPaths = request.messageData.xPaths
+        val lrn       = request.referenceNumbers.localReferenceNumber
+        val rejection = IE056Rejection(departureId, request.messageData)
 
-        service.isRejectionAmendable(lrn, Rejection(departureId, request.messageData)).flatMap {
+        service.isRejectionAmendable(lrn, rejection).flatMap {
           case true =>
             val currentPage = page.getOrElse(1)
 
             val rejectionMessageP5ViewModel = viewModelProvider.apply(
               request.messageData.pagedFunctionalErrors(currentPage),
               lrn,
-              DepartureBusinessRejectionType(request.messageData)
+              rejection.businessRejectionType
             )
 
             rejectionMessageP5ViewModel.map {
               viewModel =>
                 val paginationViewModel = PaginationViewModel(
-                  totalNumberOfItems = xPaths.length,
+                  totalNumberOfItems = rejection.errorPointers.length,
                   currentPage = currentPage,
                   numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
                   href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url,
@@ -93,14 +93,13 @@ class RejectionMessageP5Controller @Inject() (
   def onSubmit(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val businessRejectionType = DepartureBusinessRejectionType(request.messageData)
-        val lrn                   = request.referenceNumbers.localReferenceNumber
-        val xPaths                = request.messageData.xPaths
-        val mrn                   = request.referenceNumbers.movementReferenceNumber
+        val lrn       = request.referenceNumbers.localReferenceNumber
+        val mrn       = request.referenceNumbers.movementReferenceNumber
+        val rejection = IE056Rejection(departureId, request.messageData)
 
-        service.handleErrors(lrn, Rejection(departureId, businessRejectionType, xPaths)).map {
+        service.handleErrors(lrn, rejection).map {
           case response if is2xx(response.status) =>
-            Redirect(service.nextPage(businessRejectionType, lrn, mrn))
+            Redirect(service.nextPage(rejection.businessRejectionType, lrn, mrn))
           case _ =>
             Redirect(controllers.routes.ErrorController.technicalDifficulties())
         }

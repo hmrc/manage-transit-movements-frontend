@@ -70,7 +70,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-              when(mockAmendmentService.isRejectionAmendable(any(), any())(any())) `thenReturn` Future.successful(true)
+              when(mockAmendmentService.isRejectionAmendable(any(), any())(any(), any())) `thenReturn` Future.successful(true)
 
               when(mockGuaranteeRejectionP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(viewModel))
@@ -99,7 +99,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-              when(mockAmendmentService.isRejectionAmendable(any(), any())(any())) `thenReturn` Future.successful(false)
+              when(mockAmendmentService.isRejectionAmendable(any(), any())(any(), any())) `thenReturn` Future.successful(false)
 
               when(mockGuaranteeRejectionP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(viewModel))
@@ -130,7 +130,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
               .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-            when(mockAmendmentService.handleErrors(any(), any())(any()))
+            when(mockAmendmentService.handleErrors(any(), any())(any(), any()))
               .thenReturn(Future.successful(httpResponse(OK)))
 
             val request = FakeRequest(POST, controller)
@@ -151,7 +151,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
             when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
               .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-            when(mockAmendmentService.handleErrors(any(), any())(any()))
+            when(mockAmendmentService.handleErrors(any(), any())(any(), any()))
               .thenReturn(Future.successful(httpResponse(INTERNAL_SERVER_ERROR)))
 
             val request = FakeRequest(POST, controller)

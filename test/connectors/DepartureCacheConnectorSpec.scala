@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import helper.WireMockServerHandler
 import models.departureP5.BusinessRejectionType.AmendmentRejection
 import models.departureP5.Rejection
+import models.departureP5.Rejection.{IE055Rejection, IE056Rejection}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsBoolean, Json}
 import play.api.test.Helpers.*
@@ -40,7 +41,7 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
     "isRejectionAmendable" - {
 
       val url       = s"/manage-transit-movements-departure-cache/user-answers/$lrn/amendable"
-      val rejection = Rejection(departureIdP5)
+      val rejection = IE055Rejection(departureIdP5)
 
       "must return true when response body contains true" in {
         server.stubFor(
@@ -79,7 +80,7 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
             .willReturn(ok())
         )
 
-        val rejection = Rejection(departureIdP5, AmendmentRejection, xPaths)
+        val rejection = IE056Rejection(departureIdP5, AmendmentRejection, xPaths)
 
         val result: HttpResponse = await(connector.handleErrors(lrn.toString, rejection))
 
