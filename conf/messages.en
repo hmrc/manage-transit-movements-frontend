@@ -98,6 +98,7 @@ viewArrivalNotificationsP5.table.action.viewHistory         = View history
 viewArrivalNotificationsP5.table.action.viewPDF             = Unloading Permission PDF
 viewArrivalNotificationsP5.table.action.hidden              = for {0}
 viewArrivalNotificationsP5.search.title                     = Search by Movement Reference Number (MRN)
+viewArrivalNotificationsP5.search.inset                     = Reload this page for the latest status updates.
 
 viewDepartureDeclarationsP5.title                            = Departure declarations
 viewDepartureDeclarationsP5.heading                          = Departure declarations
