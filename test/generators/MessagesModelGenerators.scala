@@ -283,7 +283,7 @@ trait MessagesModelGenerators {
   implicit lazy val arbitraryConsignmentType22: Arbitrary[ConsignmentType22] =
     Arbitrary {
       for {
-        incident <- arbitrary[Seq[IncidentType03]]
+        incident <- listWithMaxLength[IncidentType03]()
       } yield ConsignmentType22(
         Incident = incident
       )
