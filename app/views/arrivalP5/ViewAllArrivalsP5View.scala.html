@@ -18,7 +18,7 @@
 @import controllers.arrivalP5.routes
 @import viewModels.P5.arrival.ViewAllArrivalMovementsP5ViewModel
 @import viewModels.pagination.PaginationViewModel
-@import views.html.components.{Heading, MovementsTable, Pagination, Search, Status}
+@import views.html.components.{Heading, InsetText, MovementsTable, Pagination, Search, Status}
 @import controllers.routes.{WhatDoYouWantToDoController => WDYWTDController}
 
 
@@ -29,7 +29,8 @@
     movementsTable: MovementsTable,
     search: Search,
     status: Status,
-    config: FrontendAppConfig
+    config: FrontendAppConfig,
+    inset: InsetText
 )
 
 @(
@@ -57,6 +58,8 @@
         action = routes.ViewAllArrivalsP5Controller.onSubmit(),
         label = "viewArrivalNotificationsP5.search.title"
     )
+
+    @inset(messages("viewArrivalNotificationsP5.search.inset"))
 
     @pagination(paginationViewModel, form.value)
 

@@ -80,6 +80,8 @@ class ViewAllArrivalsP5ViewSpec
 
   behave like pageWithHeading()
 
+  behave like pageWithInsetText("Reload this page for the latest status updates.")
+
   behave like pageWithLink(
     id = "make-arrival-notification",
     expectedText = "Make an arrival notification",
