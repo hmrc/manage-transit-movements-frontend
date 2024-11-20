@@ -20,9 +20,10 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import generators.Generators
 import models.LocalReferenceNumber
-import models.departureP5.BusinessRejectionType._
+import models.departureP5.BusinessRejectionType.*
 import models.departureP5.Rejection
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import models.departureP5.Rejection.IE055Rejection
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -49,41 +50,44 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
   "AmendmentService" - {
 
-    "isDeclarationAmendable" - {
+    "isRejectionAmendable" - {
+
+      val rejection = IE055Rejection(departureIdP5)
+
       "must return true" - {
-        "when declaration is amendable" in {
-          forAll(arbitrary[LocalReferenceNumber], arbitrary[Seq[String]]) {
-            (lrn, xPaths) =>
+        "when rejection is amendable" in {
+          forAll(arbitrary[LocalReferenceNumber]) {
+            lrn =>
               beforeEach()
 
               val service = app.injector.instanceOf[AmendmentService]
 
-              when(mockCacheConnector.isDeclarationAmendable(any(), any())(any()))
+              when(mockCacheConnector.isRejectionAmendable(any(), any())(any(), any()))
                 .thenReturn(Future.successful(true))
 
-              val result = service.isDeclarationAmendable(lrn.value, xPaths).futureValue
+              val result = service.isRejectionAmendable(lrn.value, rejection).futureValue
               result `mustBe` true
 
-              verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
+              verify(mockCacheConnector).isRejectionAmendable(eqTo(lrn.value), eqTo(rejection))(any(), any())
           }
         }
       }
 
       "must return false" - {
-        "when declaration is not amendable" in {
-          forAll(arbitrary[LocalReferenceNumber], arbitrary[Seq[String]]) {
-            (lrn, xPaths) =>
+        "when rejection is not amendable" in {
+          forAll(arbitrary[LocalReferenceNumber]) {
+            lrn =>
               beforeEach()
 
               val service = app.injector.instanceOf[AmendmentService]
 
-              when(mockCacheConnector.isDeclarationAmendable(any(), any())(any()))
+              when(mockCacheConnector.isRejectionAmendable(any(), any())(any(), any()))
                 .thenReturn(Future.successful(false))
 
-              val result = service.isDeclarationAmendable(lrn.value, xPaths).futureValue
+              val result = service.isRejectionAmendable(lrn.value, rejection).futureValue
               result `mustBe` false
 
-              verify(mockCacheConnector).isDeclarationAmendable(eqTo(lrn.value), eqTo(xPaths))(any())
+              verify(mockCacheConnector).isRejectionAmendable(eqTo(lrn.value), eqTo(rejection))(any(), any())
           }
         }
       }
@@ -97,15 +101,15 @@ class AmendmentServiceSpec extends SpecBase with AppWithDefaultMockFixtures with
 
             val service = app.injector.instanceOf[AmendmentService]
 
-            when(mockCacheConnector.handleErrors(any(), any())(any()))
+            when(mockCacheConnector.handleErrors(any(), any())(any(), any()))
               .thenReturn(Future.successful(httpResponse(OK)))
 
-            val rejection = Rejection(departureIdP5)
+            val rejection = IE055Rejection(departureIdP5)
 
             val result = service.handleErrors(lrn.value, rejection).futureValue
             result.status `mustBe` OK
 
-            verify(mockCacheConnector).handleErrors(eqTo(lrn.value), eqTo(rejection))(any())
+            verify(mockCacheConnector).handleErrors(eqTo(lrn.value), eqTo(rejection))(any(), any())
         }
       }
     }

@@ -17,9 +17,10 @@
 package controllers.departureP5
 
 import config.FrontendAppConfig
-import controllers.actions._
-import generated.CC055CType
+import controllers.actions.*
+import generated.{CC055CType, Generated_CC055CTypeFormat}
 import models.departureP5.Rejection
+import models.departureP5.Rejection.IE055Rejection
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.AmendmentService
@@ -30,7 +31,6 @@ import views.html.departureP5.GuaranteeRejectedP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import generated.Generated_CC055CTypeFormat
 
 class GuaranteeRejectedP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -50,7 +50,7 @@ class GuaranteeRejectedP5Controller @Inject() (
       implicit request =>
         val lrn = request.referenceNumbers.localReferenceNumber
         for {
-          isAmendable <- service.doesDeclarationExist(lrn)
+          isAmendable <- service.isRejectionAmendable(lrn, IE055Rejection(departureId))
           viewModel <- viewModelProvider.apply(
             request.messageData.GuaranteeReference,
             lrn,
@@ -69,7 +69,7 @@ class GuaranteeRejectedP5Controller @Inject() (
     (Action andThen actions.identify() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
         val lrn = request.referenceNumbers.localReferenceNumber
-        service.handleErrors(lrn, Rejection(departureId)).map {
+        service.handleErrors(lrn, IE055Rejection(departureId)).map {
           case response if is2xx(response.status) =>
             Redirect(frontendAppConfig.departureFrontendTaskListUrl(lrn))
           case _ =>

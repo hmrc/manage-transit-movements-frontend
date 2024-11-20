@@ -16,23 +16,54 @@
 
 package models.departureP5
 
+import generated.*
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import play.api.libs.json.{Json, Writes}
 
-case class Rejection(
-  departureId: String,
-  `type`: String,
-  businessRejectionType: Option[DepartureBusinessRejectionType],
-  errorPointers: Option[Seq[String]]
-)
+sealed trait Rejection {
+  val departureId: String
+}
 
 object Rejection {
 
-  def apply(departureId: String): Rejection =
-    new Rejection(departureId, "IE055", None, None)
+  case class IE055Rejection(
+    departureId: String
+  ) extends Rejection
 
-  def apply(departureId: String, businessRejectionType: DepartureBusinessRejectionType, errorPointers: Seq[String]): Rejection =
-    new Rejection(departureId, "IE056", Some(businessRejectionType), Some(errorPointers))
+  object IE055Rejection {
 
-  implicit val writes: Writes[Rejection] = Json.writes[Rejection]
+    implicit val writes: Writes[IE055Rejection] = Writes {
+      rejection =>
+        Json.obj(
+          "type"        -> "IE055",
+          "departureId" -> rejection.departureId
+        )
+    }
+  }
+
+  case class IE056Rejection(
+    departureId: String,
+    businessRejectionType: DepartureBusinessRejectionType,
+    errorPointers: Seq[String]
+  ) extends Rejection
+
+  object IE056Rejection {
+
+    def apply(departureId: String, ie056: CC056CType): IE056Rejection =
+      new IE056Rejection(
+        departureId = departureId,
+        businessRejectionType = DepartureBusinessRejectionType(ie056),
+        errorPointers = ie056.FunctionalError.map(_.errorPointer)
+      )
+
+    implicit val writes: Writes[IE056Rejection] = Writes {
+      rejection =>
+        Json.obj(
+          "type"                  -> "IE056",
+          "departureId"           -> rejection.departureId,
+          "businessRejectionType" -> rejection.businessRejectionType,
+          "errorPointers"         -> rejection.errorPointers
+        )
+    }
+  }
 }

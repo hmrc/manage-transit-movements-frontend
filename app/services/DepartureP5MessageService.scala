@@ -18,8 +18,9 @@ package services
 
 import cats.implicits.*
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import generated.{CC015CType, CC056CType, CC182CType}
-import models.{RichCC015Type, RichCC182Type}
+import generated.{CC015CType, CC056CType, CC182CType, Generated_CC015CTypeFormat, Generated_CC056CTypeFormat, Generated_CC182CTypeFormat}
+import models.departureP5.*
+import models.departureP5.BusinessRejectionType.*
 import models.departureP5.DepartureMessageType.{
   DeclarationAmendmentAccepted,
   DeclarationSent,
@@ -27,40 +28,114 @@ import models.departureP5.DepartureMessageType.{
   IncidentDuringTransit,
   RejectedByOfficeOfDeparture
 }
-import models.departureP5.*
+import models.departureP5.Rejection.IE056Rejection
+import models.{RichCC015Type, RichCC182Type}
 import scalaxb.XMLFormat
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import generated.Generated_CC056CTypeFormat
-import generated.Generated_CC015CTypeFormat
-import generated.Generated_CC182CTypeFormat
-import models.departureP5.BusinessRejectionType.PresentationNotificationRejection
 
 class DepartureP5MessageService @Inject() (
   departureMovementP5Connector: DepartureMovementP5Connector,
   cacheConnector: DepartureCacheConnector
 ) {
 
-  private def getRejectionMessage(
-    departureId: String,
-    messageId: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(String, Seq[String])] =
-    for {
-      message <- getMessage[CC056CType](departureId, messageId)
-      rejectionType = message.TransitOperation.businessRejectionType
-      xPaths        = message.FunctionalError.map(_.errorPointer)
-    } yield (rejectionType, xPaths)
+  private def handleDepartureMovementAndMessage(
+    movement: DepartureMovement,
+    message: LatestDepartureMessage
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessage] = {
+    val departureId = movement.departureId
+    getMessage[CC015CType](departureId, message.ie015MessageId).map {
+      ie015 =>
+        DepartureMovementAndMessage(
+          departureId,
+          movement.localReferenceNumber,
+          movement.updated,
+          message,
+          ie015.isPreLodged
+        )
+    }
+  }
 
-  private def isErrorAmendable(
-    rejectionType: String,
-    xPaths: Seq[String],
-    lrn: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(String, Boolean, Seq[String])] =
-    for {
-      isDeclarationAmendable <- cacheConnector.isDeclarationAmendable(lrn, xPaths.filter(_.nonEmpty))
-    } yield (rejectionType, isDeclarationAmendable, xPaths)
+  private def handleRejectedMovementAndMessage(
+    movement: DepartureMovement,
+    message: LatestDepartureMessage
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessage] = {
+    val departureId = movement.departureId
+    getMessage[CC056CType](departureId, message.latestMessage.messageId).flatMap {
+      ie056 =>
+        val xPaths = ie056.FunctionalError.map(_.errorPointer)
+        BusinessRejectionType(ie056) match {
+          case PresentationNotificationRejection =>
+            Future.successful(
+              PrelodgeRejectedMovementAndMessage(
+                departureId,
+                movement.localReferenceNumber,
+                movement.updated,
+                message,
+                xPaths
+              )
+            )
+          case InvalidationRejection =>
+            Future.successful(
+              RejectedMovementAndMessage(
+                departureId,
+                movement.localReferenceNumber,
+                movement.updated,
+                message,
+                InvalidationRejection,
+                false,
+                xPaths
+              )
+            )
+          case rejectionType =>
+            val rejection = IE056Rejection(departureId, ie056)
+            cacheConnector.isRejectionAmendable(movement.localReferenceNumber, rejection).map {
+              isRejectionAmendable =>
+                RejectedMovementAndMessage(
+                  departureId,
+                  movement.localReferenceNumber,
+                  movement.updated,
+                  message,
+                  rejectionType,
+                  isRejectionAmendable,
+                  xPaths
+                )
+            }
+        }
+    }
+  }
+
+  private def handleIncidentMovementAndMessage(
+    movement: DepartureMovement,
+    message: LatestDepartureMessage
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessage] = {
+    val departureId = movement.departureId
+    getMessage[CC182CType](departureId, message.latestMessage.messageId).map {
+      ie182 =>
+        IncidentMovementAndMessage(
+          departureId,
+          movement.localReferenceNumber,
+          movement.updated,
+          message,
+          ie182.hasMultipleIncidents
+        )
+    }
+  }
+
+  private def handleOtherMovementAndMessage(
+    movement: DepartureMovement,
+    message: LatestDepartureMessage
+  ): Future[MovementAndMessage] =
+    Future.successful(
+      OtherMovementAndMessage(
+        movement.departureId,
+        movement.localReferenceNumber,
+        movement.updated,
+        message
+      )
+    )
 
   def getLatestMessagesForMovements(
     departureMovements: DepartureMovements
@@ -71,64 +146,13 @@ class DepartureP5MessageService @Inject() (
           message =>
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>
-                getRejectionMessage(movement.departureId, message.latestMessage.messageId).flatMap {
-                  case (PresentationNotificationRejection.value, xPaths) =>
-                    Future.successful(
-                      PrelodgeRejectedMovementAndMessage(
-                        movement.departureId,
-                        movement.localReferenceNumber,
-                        movement.updated,
-                        message,
-                        xPaths
-                      )
-                    )
-                  case (rejectionType, xPaths) =>
-                    isErrorAmendable(rejectionType, xPaths, movement.localReferenceNumber).map {
-                      case (rejectionType, isDeclarationAmendable, xPaths) =>
-                        RejectedMovementAndMessage(
-                          movement.departureId,
-                          movement.localReferenceNumber,
-                          movement.updated,
-                          message,
-                          BusinessRejectionType(rejectionType),
-                          isDeclarationAmendable,
-                          xPaths
-                        )
-                    }
-                }
+                handleRejectedMovementAndMessage(movement, message)
               case DeclarationAmendmentAccepted | GoodsUnderControl | DeclarationSent =>
-                getMessage[CC015CType](movement.departureId, message.ie015MessageId).map {
-                  ie015 =>
-                    DepartureMovementAndMessage(
-                      movement.departureId,
-                      movement.localReferenceNumber,
-                      movement.updated,
-                      message,
-                      ie015.isPreLodged
-                    )
-                }
-
+                handleDepartureMovementAndMessage(movement, message)
               case IncidentDuringTransit =>
-                getMessage[CC182CType](movement.departureId, message.latestMessage.messageId).map {
-                  ie182 =>
-                    IncidentMovementAndMessage(
-                      movement.departureId,
-                      movement.localReferenceNumber,
-                      movement.updated,
-                      message,
-                      ie182.hasMultipleIncidents
-                    )
-                }
-
+                handleIncidentMovementAndMessage(movement, message)
               case _ =>
-                Future.successful(
-                  OtherMovementAndMessage(
-                    movement.departureId,
-                    movement.localReferenceNumber,
-                    movement.updated,
-                    message
-                  )
-                )
+                handleOtherMovementAndMessage(movement, message)
             }
         }
     }

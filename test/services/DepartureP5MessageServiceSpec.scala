@@ -22,7 +22,7 @@ import generated.*
 import generators.Generators
 import models.departureP5.DepartureMessageType.*
 import models.departureP5.*
-import models.departureP5.BusinessRejectionType.PresentationNotificationRejection
+import models.departureP5.BusinessRejectionType.*
 import models.{LocalReferenceNumber, MessageStatus, RichCC015Type, RichCC182Type}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -53,7 +53,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
       val dateTimeNow = LocalDateTime.now()
 
       "when RejectedByOfficeOfDeparture" - {
-        "must return PrelodgeRejectedMovementAndMessage when rejection type is IE170" in {
+        "must return PrelodgeRejectedMovementAndMessage when rejection type is 170" in {
           val rejectionType = PresentationNotificationRejection
 
           val latestDepartureMessage = LatestDepartureMessage(
@@ -107,9 +107,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           result `mustBe` expectedResult
         }
 
-        "must return RejectedMovementAndMessage when rejection type is not IE170" in {
-          val isDeclarationAmendable = arbitrary[Boolean].sample.value
-          val rejectionType          = arbitrary[BusinessRejectionType].sample.value
+        "must return RejectedMovementAndMessage when rejection type is 014" in {
+          val rejectionType = InvalidationRejection
 
           val latestDepartureMessage = LatestDepartureMessage(
             DepartureMessage(
@@ -147,7 +146,64 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             Future.successful(ie056)
           )
 
-          when(mockCacheConnector.isDeclarationAmendable(any(), any())(any())).thenReturn(
+          val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
+
+          val expectedResult: Seq[MovementAndMessage] = Seq(
+            RejectedMovementAndMessage(
+              "AB123",
+              "LRN",
+              dateTimeNow,
+              latestDepartureMessage,
+              rejectionType,
+              isRejectionAmendable = false,
+              xPaths = ie056.FunctionalError.map(_.errorPointer)
+            )
+          )
+
+          result `mustBe` expectedResult
+        }
+
+        "must return RejectedMovementAndMessage when rejection type is 013 or 015" in {
+          val isDeclarationAmendable = arbitrary[Boolean].sample.value
+          val rejectionType          = arbitrary[DepartureBusinessRejectionType].sample.value
+
+          val latestDepartureMessage = LatestDepartureMessage(
+            DepartureMessage(
+              "messageId1",
+              dateTimeNow,
+              RejectedByOfficeOfDeparture,
+              MessageStatus.Success
+            ),
+            "messageId2"
+          )
+
+          val departureMovements = DepartureMovements(
+            departureMovements = Seq(
+              DepartureMovement(
+                "AB123",
+                Some("MRN"),
+                "LRN",
+                dateTimeNow
+              )
+            ),
+            totalCount = 1
+          )
+
+          val x = arbitrary[CC056CType].sample.value
+
+          val ie056 = x.copy(
+            TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType.value)
+          )
+
+          when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+            Future.successful(latestDepartureMessage)
+          )
+
+          when(mockMovementConnector.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(
+            Future.successful(ie056)
+          )
+
+          when(mockCacheConnector.isRejectionAmendable(any(), any())(any(), any())).thenReturn(
             Future.successful(isDeclarationAmendable)
           )
 
@@ -160,7 +216,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
               dateTimeNow,
               latestDepartureMessage,
               rejectionType,
-              isDeclarationAmendable = isDeclarationAmendable,
+              isRejectionAmendable = isDeclarationAmendable,
               xPaths = ie056.FunctionalError.map(_.errorPointer)
             )
           )

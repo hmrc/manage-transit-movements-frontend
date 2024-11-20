@@ -18,8 +18,9 @@ package services
 
 import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
-import models.departureP5.BusinessRejectionType._
+import models.departureP5.BusinessRejectionType.*
 import models.departureP5.Rejection
+import play.api.libs.json.Writes
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
@@ -30,16 +31,13 @@ class AmendmentService @Inject() (
   config: FrontendAppConfig
 ) {
 
-  def isDeclarationAmendable(
+  def isRejectionAmendable[T <: Rejection](
     lrn: String,
-    xPaths: Seq[String]
-  )(implicit hc: HeaderCarrier): Future[Boolean] =
-    cacheConnector.isDeclarationAmendable(lrn, xPaths)
+    rejection: T
+  )(implicit hc: HeaderCarrier, writes: Writes[T]): Future[Boolean] =
+    cacheConnector.isRejectionAmendable(lrn, rejection)
 
-  def doesDeclarationExist(lrn: String)(implicit hc: HeaderCarrier): Future[Boolean] =
-    cacheConnector.doesDeclarationExist(lrn)
-
-  def handleErrors(lrn: String, rejection: Rejection)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def handleErrors[T <: Rejection](lrn: String, rejection: T)(implicit hc: HeaderCarrier, writes: Writes[T]): Future[HttpResponse] =
     cacheConnector.handleErrors(lrn, rejection)
 
   def prepareForAmendment(lrn: String, departureId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =

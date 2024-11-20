@@ -65,7 +65,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
 
-  "ReviewDepartureErrorsP5Controller" - {
+  "ReviewCancellationErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
       forAll(listWithMaxLength[FunctionalErrorType04]()) {
@@ -76,7 +76,6 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
                 .thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
-              when(mockCacheService.isDeclarationAmendable(any(), any())(any())).thenReturn(Future.successful(true))
               when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
                 .thenReturn(Future.successful(ReviewCancellationErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true)))
 
