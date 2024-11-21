@@ -5,3 +5,4 @@ GET        /draft-declarations/:lrn/delete                      controllers.depa
 POST       /draft-declarations/:lrn/delete                      controllers.departureP5.drafts.DeleteDraftDepartureYesNoController.onSubmit(lrn: LocalReferenceNumber, page: Int, numberOfRows: Int, searchLrn: Option[String])
 
 GET        /draft-declarations/cannot-delete                    controllers.departureP5.drafts.DraftLockedController.onPageLoad()
+POST       /draft-declarations/cannot-delete                    controllers.departureP5.drafts.DraftLockedController.onSubmit()

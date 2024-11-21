@@ -31,18 +31,17 @@
     showBackLink = true,
 ) {
 
-    @heading(
-        heading = messages("departure.drafts.dashboard.draftLocked.heading"),
-    )
+    @formHelper(action = controllers.departureP5.drafts.routes.DraftLockedController.onSubmit(), Symbol("autoComplete") -> "off") {
+    
+        @heading(
+            heading = messages("departure.drafts.dashboard.draftLocked.heading"),
+        )
+    
+        <p class="govuk-body">@messages("departure.drafts.dashboard.draftLocked.paragraph")</p>
 
-    <p class="govuk-body">@messages("departure.drafts.dashboard.draftLocked.paragraph")</p>
-
-    <div>
-
-    @button(
-        messageKey = messages("departure.drafts.dashboard.draftLocked.button"),
-        href = Some(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
-    )
-    </div>
-
+        @button(
+            attributes = Map("id" -> "submit"),
+            messageKey = messages("departure.drafts.dashboard.draftLocked.button")
+        )
+    }
 }
