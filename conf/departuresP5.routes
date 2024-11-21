@@ -13,6 +13,8 @@ GET         /:departureId/intention-to-control/:messageId                       
 
 GET         /:departureId/intention-to-control-complete-prelodged-declaration/:messageId      controllers.departureP5.IntentionToControlP5Controller.informationRequested(departureId: String, messageId: String)
 
+POST        /:departureId/intention-to-control-complete-prelodged-declaration/:messageId      controllers.departureP5.IntentionToControlP5Controller.onSubmit(departureId: String, messageId: String)
+
 GET        /:departureId/amend-departure-declaration-errors/:messageId               controllers.departureP5.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 POST       /:departureId/amend-departure-declaration-errors/:messageId               controllers.departureP5.RejectionMessageP5Controller.onSubmit(departureId: String, messageId: String)
 
