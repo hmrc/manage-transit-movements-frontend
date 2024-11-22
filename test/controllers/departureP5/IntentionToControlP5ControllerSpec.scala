@@ -126,27 +126,21 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
     }
 
     "must redirect to Presentation notification frontend" in {
-      forAll(listWithMaxLength[RequestedDocumentType]()) {
-        requestedDocuments =>
-          forAll(arbitrary[CC060CType].map(_.copy(RequestedDocument = requestedDocuments))) {
-            message =>
-              val intentionToControlInformationRequestedController: String =
-                controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureIdP5, messageId).url
+      forAll(arbitrary[CC060CType]) {
+        message =>
+          val intentionToControlInformationRequestedController: String =
+            controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureIdP5, messageId).url
 
-              when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
-              when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
-              when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
-                .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString)))
+          when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-              val request = FakeRequest(POST, intentionToControlInformationRequestedController)
+          val request = FakeRequest(POST, intentionToControlInformationRequestedController)
 
-              val result = route(app, request).value
+          val result = route(app, request).value
 
-              status(result) mustEqual SEE_OTHER
-              redirectLocation(result).value mustEqual frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)
-          }
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)
       }
     }
   }
