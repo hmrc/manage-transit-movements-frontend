@@ -37,4 +37,7 @@ class DraftLockedController @Inject() (
       Ok(view())
   }
 
+  def onSubmit(): Action[AnyContent] = (Action andThen actions.identify()) {
+    Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None))
+  }
 }

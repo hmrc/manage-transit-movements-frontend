@@ -38,7 +38,7 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[IntentionToControlP5View]
-      .apply(intentionToControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(fakeRequest, messages)
+      .apply(intentionToControlP5ViewModel, departureIdP5, messageId, customsOfficeContactViewModel)(fakeRequest, messages)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)
@@ -92,4 +92,21 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
     assertNotRenderedById(doc, "what-happens-next")
   }
 
+  "when documents requested" - {
+
+    val viewModel = intentionToControlP5ViewModel
+      .copy(requestedDocuments = true)
+
+    val document = parseView(
+      injector
+        .instanceOf[IntentionToControlP5View]
+        .apply(viewModel, departureIdP5, messageId, customsOfficeContactViewModel)(fakeRequest, messages)
+    )
+
+    behave like pageWithSubmitButton(document, "Complete pre-lodged declaration")
+
+    "must render what happens next section" in {
+      assertRenderedById(document, "what-happens-next")
+    }
+  }
 }

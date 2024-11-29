@@ -16,7 +16,8 @@
 
 package controllers.departureP5
 
-import controllers.actions._
+import config.FrontendAppConfig
+import controllers.actions.*
 import generated.CC060CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,7 +38,8 @@ class IntentionToControlP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: IntentionToControlP5ViewModelProvider,
   view: IntentionToControlP5View,
-  referenceDataService: ReferenceDataService
+  referenceDataService: ReferenceDataService,
+  config: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -52,11 +54,18 @@ class IntentionToControlP5Controller @Inject() (
             val intentionToControlP5ViewModel = viewModelProvider.apply(request.messageData)
             val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
-            Ok(view(intentionToControlP5ViewModel, departureId, customsOfficeContactViewModel))
+            Ok(view(intentionToControlP5ViewModel, departureId, messageId, customsOfficeContactViewModel))
         }
     }
 
   def noInformationRequested(departureId: String, messageId: String): Action[AnyContent] = intentionToControlOnPageLoad(departureId, messageId)
 
   def informationRequested(departureId: String, messageId: String): Action[AnyContent] = intentionToControlOnPageLoad(departureId, messageId)
+
+  def onSubmit(departureId: String, messageId: String): Action[AnyContent] =
+    (Action andThen actions.identify() andThen messageRetrievalAction[CC060CType](departureId, messageId)) {
+      Redirect {
+        config.presentationNotificationFrontendUrl(departureId)
+      }
+    }
 }
