@@ -17,6 +17,8 @@
 package connectors
 
 import config.FrontendAppConfig
+import generated.FunctionalErrorType04
+import models.FunctionalError
 import models.departureP5.Rejection
 import play.api.Logging
 import play.api.libs.json.{Json, Writes}
@@ -38,7 +40,6 @@ class DepartureCacheConnector @Inject() (
 
   def isRejectionAmendable[T <: Rejection](lrn: String, rejection: T)(implicit hc: HeaderCarrier, writes: Writes[T]): Future[Boolean] = {
     val url = url"$baseUrl/user-answers/$lrn/amendable"
-
     http
       .post(url)
       .withBody(Json.toJson(rejection))
@@ -47,7 +48,6 @@ class DepartureCacheConnector @Inject() (
 
   def handleErrors[T <: Rejection](lrn: String, rejection: T)(implicit hc: HeaderCarrier, writes: Writes[T]): Future[HttpResponse] = {
     val url = url"$baseUrl/user-answers/$lrn/errors"
-
     http
       .post(url)
       .withBody(Json.toJson(rejection))
@@ -56,11 +56,19 @@ class DepartureCacheConnector @Inject() (
 
   def prepareForAmendment(lrn: String, departureId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url = url"$baseUrl/user-answers/$lrn"
-
     http
       .patch(url)
       .withBody(Json.toJson(departureId))
       .execute[HttpResponse]
   }
 
+  def convertErrors(errors: Seq[FunctionalErrorType04])(implicit hc: HeaderCarrier): Future[Seq[FunctionalError]] = {
+    import models.FunctionalError.writes
+
+    val url = url"$baseUrl/messages/rejection"
+    http
+      .post(url)
+      .withBody(Json.toJson(errors))
+      .execute[Seq[FunctionalError]]
+  }
 }

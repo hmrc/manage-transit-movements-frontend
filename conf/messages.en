@@ -503,8 +503,9 @@ departure.notReleased.row.label.description = Description
 
 error.table.errorCode = Error
 error.table.errorReason = Business rule ID
-error.table.attributeValue = Invalid answer
+error.table.section = Section
 error.table.pointer = Invalid data item
+error.table.attributeValue = Invalid answer
 
 departure.notification.incidents.title = Incidents during transit
 departure.notification.incidents.heading = Incidents during transit

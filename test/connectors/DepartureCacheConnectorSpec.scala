@@ -18,12 +18,14 @@ package connectors
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import generated.{FunctionalErrorType04, Number12}
 import helper.WireMockServerHandler
+import models.FunctionalError
 import models.departureP5.BusinessRejectionType.AmendmentRejection
 import models.departureP5.Rejection
 import models.departureP5.Rejection.{IE055Rejection, IE056Rejection}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsBoolean, Json}
+import play.api.libs.json.{JsArray, JsBoolean, Json}
 import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HttpResponse
 
@@ -101,6 +103,75 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
         val result: HttpResponse = await(connector.prepareForAmendment(lrn.toString, departureIdP5))
 
         result.status `mustBe` OK
+      }
+    }
+
+    "convertErrors" - {
+      import models.FunctionalError.writes
+
+      val url = s"/manage-transit-movements-departure-cache/messages/rejection"
+
+      val input = Seq(
+        FunctionalErrorType04(
+          errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          errorCode = Number12,
+          errorReason = "BR20004",
+          originalAttributeValue = Some("GB635733627000")
+        ),
+        FunctionalErrorType04(
+          errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          errorCode = Number12,
+          errorReason = "BR20005",
+          originalAttributeValue = None
+        )
+      )
+
+      val output = Json
+        .parse("""
+          |[
+          |  {
+          |    "error" : "12",
+          |    "businessRuleId" : "BR20004",
+          |    "section" : "Trader details",
+          |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          |    "invalidAnswer" : "GB635733627000"
+          |  },
+          |  {
+          |    "error" : "12",
+          |    "businessRuleId" : "BR20005",
+          |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber"
+          |  }
+          |]
+          |""".stripMargin)
+        .as[JsArray]
+
+      "must return converted errors" in {
+        server.stubFor(
+          post(urlEqualTo(url))
+            .withRequestBody(equalToJson(Json.stringify(Json.toJson(input))))
+            .willReturn(okJson(Json.stringify(output)))
+        )
+
+        val result: Seq[FunctionalError] = await(connector.convertErrors(input))
+
+        val expectedResult = Seq(
+          FunctionalError(
+            error = "12",
+            businessRuleId = "BR20004",
+            section = Some("Trader details"),
+            invalidDataItem = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            invalidAnswer = Some("GB635733627000")
+          ),
+          FunctionalError(
+            error = "12",
+            businessRuleId = "BR20005",
+            section = None,
+            invalidDataItem = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            invalidAnswer = None
+          )
+        )
+
+        result.mustBe(expectedResult)
       }
     }
   }
