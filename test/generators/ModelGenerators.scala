@@ -168,13 +168,20 @@ trait ModelGenerators {
     listWithMaxLength[DepartureUserAnswerSummary](9).map(DeparturesSummary(0, 0, _))
   }
 
+  implicit lazy val arbitraryInvalidDataItem: Arbitrary[InvalidDataItem] =
+    Arbitrary {
+      for {
+        value <- nonEmptyString
+      } yield models.InvalidDataItem(value)
+    }
+
   implicit lazy val arbitraryFunctionalError: Arbitrary[FunctionalError] =
     Arbitrary {
       for {
         error           <- nonEmptyString
         businessRuleId  <- nonEmptyString
         section         <- Gen.option(nonEmptyString)
-        invalidDataItem <- nonEmptyString
+        invalidDataItem <- arbitrary[InvalidDataItem]
         invalidAnswer   <- Gen.option(nonEmptyString)
       } yield models.FunctionalError(error, businessRuleId, section, invalidDataItem, invalidAnswer)
     }

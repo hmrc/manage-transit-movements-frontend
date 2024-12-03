@@ -16,22 +16,31 @@
 
 package services
 
+import connectors.DepartureCacheConnector
 import generated.FunctionalErrorType04
 import models.FunctionalError
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class FunctionalErrorsService @Inject() (
+  departureCacheConnector: DepartureCacheConnector,
   referenceDataService: ReferenceDataService
 ) {
 
-  // send all errors to cache
-  //  json writes for FunctionalErrorType04
-  //  functional error reads and writes in backend
-  //  convert errorPointer to section and invalidDataItem
-  // get all errors back
-  // call reference data for each one to update the FunctionalError.error
-  def toDepartureFunctionalErrors(functionalErrors: Seq[FunctionalErrorType04]): Future[Seq[FunctionalError]] =
-    ???
+  def convert(functionalErrors: Seq[FunctionalErrorType04])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[FunctionalError]] =
+    departureCacheConnector
+      .convertErrors(functionalErrors)
+      .flatMap {
+        errors =>
+          Future.sequence {
+            errors.map {
+              error =>
+                referenceDataService.getFunctionalError(error.error).map {
+                  errorWithDesc => error.copy(error = errorWithDesc.toString)
+                }
+            }
+          }
+      }
 }

@@ -44,7 +44,7 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           error = "12",
           businessRuleId = "BR20004",
           section = Some("Trader details"),
-          invalidDataItem = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
           invalidAnswer = Some("GB635733627000")
         )
 
@@ -66,7 +66,7 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           error = "12",
           businessRuleId = "BR20004",
           section = None,
-          invalidDataItem = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
           invalidAnswer = None
         )
 

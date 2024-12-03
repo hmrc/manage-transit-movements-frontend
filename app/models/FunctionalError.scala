@@ -21,11 +21,13 @@ import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 
+import scala.annotation.tailrec
+
 case class FunctionalError(
   error: String,
   businessRuleId: String,
   section: Option[String],
-  invalidDataItem: String,
+  invalidDataItem: InvalidDataItem,
   invalidAnswer: Option[String]
 ) {
   def toTableRow: Seq[TableRow] = ???

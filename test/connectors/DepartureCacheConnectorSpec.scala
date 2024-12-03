@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import generated.{FunctionalErrorType04, Number12}
 import helper.WireMockServerHandler
-import models.FunctionalError
+import models.{FunctionalError, InvalidDataItem}
 import models.departureP5.BusinessRejectionType.AmendmentRejection
 import models.departureP5.Rejection
 import models.departureP5.Rejection.{IE055Rejection, IE056Rejection}
@@ -159,14 +159,14 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
             error = "12",
             businessRuleId = "BR20004",
             section = Some("Trader details"),
-            invalidDataItem = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             invalidAnswer = Some("GB635733627000")
           ),
           FunctionalError(
             error = "12",
             businessRuleId = "BR20005",
             section = None,
-            invalidDataItem = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             invalidAnswer = None
           )
         )
