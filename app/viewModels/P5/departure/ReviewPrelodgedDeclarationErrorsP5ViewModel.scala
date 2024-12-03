@@ -70,9 +70,15 @@ object ReviewPrelodgedDeclarationErrorsP5ViewModel {
       lrn: String
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewPrelodgedDeclarationErrorsP5ViewModel] = {
 
-      val helper         = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
-      val multipleErrors = functionalErrors.length > 1
-      helper.tableRows().map(ReviewPrelodgedDeclarationErrorsP5ViewModel(_, lrn, multipleErrors))
+      val helper = new RejectionMessageP5MessageHelper(Nil) // TODO - fix
+
+      Future.successful {
+        new ReviewPrelodgedDeclarationErrorsP5ViewModel(
+          helper.tableRows(),
+          lrn,
+          functionalErrors.length > 1
+        )
+      }
     }
   }
 }

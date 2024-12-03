@@ -70,13 +70,15 @@ object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
       functionalErrors: Seq[FunctionalErrorType04],
       mrn: String
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ArrivalNotificationWithFunctionalErrorsP5ViewModel] = {
-      val helper = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
+      val helper = new RejectionMessageP5MessageHelper(Nil) // TODO - fix
 
-      val multipleErrors = functionalErrors.length > 1
-      helper.tableRows().map(ArrivalNotificationWithFunctionalErrorsP5ViewModel(_, mrn, multipleErrors))
-
+      Future.successful {
+        new ArrivalNotificationWithFunctionalErrorsP5ViewModel(
+          helper.tableRows(),
+          mrn,
+          functionalErrors.length > 1
+        )
+      }
     }
-
   }
-
 }

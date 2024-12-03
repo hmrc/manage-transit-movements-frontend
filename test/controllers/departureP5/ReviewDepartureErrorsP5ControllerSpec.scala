@@ -80,7 +80,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
               val rejectionMessageP5ViewModel =
                 ReviewDepartureErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, BusinessRejectionType.DeclarationRejection)
 
-              when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
+              when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any(), any())(any()))
                 .thenReturn(Future.successful(rejectionMessageP5ViewModel))
 
               val paginationViewModel = PaginationViewModel(

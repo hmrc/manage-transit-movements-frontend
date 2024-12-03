@@ -16,20 +16,15 @@
 
 package viewModels.P5.departure
 
-import generated.FunctionalErrorType04
-import models.departureP5.BusinessRejectionType._
+import models.FunctionalError
+import models.departureP5.BusinessRejectionType.*
 import play.api.i18n.Messages
-import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import utils.RejectionMessageP5MessageHelper
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-
 case class ReviewDepartureErrorsP5ViewModel(
-  tableRows: Seq[Seq[TableRow]],
+  table: Table,
   lrn: String,
   multipleErrors: Boolean,
   businessRejectionType: DepartureBusinessRejectionType
@@ -77,30 +72,30 @@ case class ReviewDepartureErrorsP5ViewModel(
     case DeclarationRejection => Some(messages("departure.ie056.review.message.hyperlink"))
   }
 
-  def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
-    HeadCell(Text(messages("error.table.errorCode"))),
-    HeadCell(Text(messages("error.table.errorReason"))),
-    HeadCell(Text(messages("error.table.pointer"))),
-    HeadCell(Text(messages("error.table.attributeValue")))
-  )
-
 }
 
 object ReviewDepartureErrorsP5ViewModel {
 
-  class ReviewDepartureErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  def apply(
+    functionalErrors: Seq[FunctionalError],
+    lrn: String,
+    businessRejectionType: DepartureBusinessRejectionType
+  )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel =
+    new ReviewDepartureErrorsP5ViewModel(
+      table = functionalErrors.toTableOfDepartureErrors,
+      lrn = lrn,
+      multipleErrors = functionalErrors.length > 1,
+      businessRejectionType = businessRejectionType
+    )
+
+  class ReviewDepartureErrorsP5ViewModelProvider {
 
     def apply(
-      functionalErrors: Seq[FunctionalErrorType04],
+      functionalErrors: Seq[FunctionalError],
       lrn: String,
       businessRejectionType: DepartureBusinessRejectionType
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewDepartureErrorsP5ViewModel] = {
-
-      val helper         = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
-      val multipleErrors = functionalErrors.length > 1
-      helper.tableRows().map(ReviewDepartureErrorsP5ViewModel(_, lrn, multipleErrors, businessRejectionType))
-    }
-
+    )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel =
+      ReviewDepartureErrorsP5ViewModel.apply(functionalErrors, lrn, businessRejectionType)
   }
 
 }

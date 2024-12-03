@@ -16,33 +16,16 @@
 
 package utils
 
-import generated.FunctionalErrorType04
+import models.FunctionalError
 import play.api.i18n.Messages
-import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+class RejectionMessageP5MessageHelper(
+  functionalErrors: Seq[FunctionalError]
+)(implicit messages: Messages)
+    extends DeparturesP5MessageHelper {
 
-class RejectionMessageP5MessageHelper(functionalErrors: Seq[FunctionalErrorType04], referenceDataService: ReferenceDataService)(implicit
-  messages: Messages,
-  hc: HeaderCarrier,
-  ec: ExecutionContext
-) extends DeparturesP5MessageHelper {
-
-  def tableRows(): Future[Seq[Seq[TableRow]]] =
-    Future.sequence(functionalErrors.map(buildTableRows))
-
-  private def buildTableRows(error: FunctionalErrorType04): Future[Seq[TableRow]] =
-    referenceDataService.getFunctionalError(error.errorCode.toString).map {
-      functionalError =>
-        Seq(
-          TableRow(Text(functionalError.toString)),
-          TableRow(Text(error.errorReason)),
-          TableRow(Text(error.errorPointer), classes = "text-wrap"),
-          TableRow(Text(error.originalAttributeValue.getOrElse("N/A")), classes = "text-wrap")
-        )
-    }
+  def tableRows(): Seq[Seq[TableRow]] = Nil // TODO - delete
 
 }

@@ -67,10 +67,15 @@ object ReviewCancellationErrorsP5ViewModel {
       lrn: String
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewCancellationErrorsP5ViewModel] = {
 
-      val helper: RejectionMessageP5MessageHelper = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
+      val helper: RejectionMessageP5MessageHelper = new RejectionMessageP5MessageHelper(Nil) // TODO - fix
 
-      val multipleErrors = functionalErrors.length > 1
-      helper.tableRows().map(ReviewCancellationErrorsP5ViewModel(_, lrn, multipleErrors))
+      Future.successful {
+        new ReviewCancellationErrorsP5ViewModel(
+          helper.tableRows(),
+          lrn,
+          functionalErrors.length > 1
+        )
+      }
 
     }
 

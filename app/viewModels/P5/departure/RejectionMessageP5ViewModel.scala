@@ -17,7 +17,7 @@
 package viewModels.P5.departure
 
 import generated.FunctionalErrorType04
-import models.departureP5.BusinessRejectionType._
+import models.departureP5.BusinessRejectionType.*
 import play.api.i18n.Messages
 import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -81,10 +81,16 @@ object RejectionMessageP5ViewModel {
       businessRejectionType: DepartureBusinessRejectionType
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[RejectionMessageP5ViewModel] = {
 
-      val helper         = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
-      val multipleErrors = functionalErrors.length > 1
+      val helper = new RejectionMessageP5MessageHelper(Nil) // TODO - fix
 
-      helper.tableRows().map(RejectionMessageP5ViewModel(_, lrn, multipleErrors, businessRejectionType))
+      Future.successful {
+        new RejectionMessageP5ViewModel(
+          helper.tableRows(),
+          lrn,
+          functionalErrors.length > 1,
+          businessRejectionType
+        )
+      }
     }
 
   }

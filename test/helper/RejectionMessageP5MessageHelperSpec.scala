@@ -71,9 +71,9 @@ class RejectionMessageP5MessageHelperSpec extends SpecBase with ScalaCheckProper
                   when(mockReferenceDataService.getFunctionalError(eqTo(errorCode.toString))(any(), any()))
                     .thenReturn(Future.successful(functionalError))
 
-                  val helper = new RejectionMessageP5MessageHelper(message.FunctionalError, mockReferenceDataService)
+                  val helper = new RejectionMessageP5MessageHelper(Nil) // TODO - fix
 
-                  val result = helper.tableRows().futureValue
+                  val result = helper.tableRows()
 
                   result `mustBe` Seq(
                     Seq(

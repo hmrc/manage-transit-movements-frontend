@@ -55,7 +55,13 @@ object InvalidDataItem {
     }
 
     def combine(str1: String, str2: String): String =
-      if (str1.isEmpty) str2 else s"$str1 $str2"
+      if (str1.isEmpty) {
+        str2
+      } else if (str1.endsWith(" ")) {
+        s"$str1$str2"
+      } else {
+        s"$str1 $str2"
+      }
 
     /** @param str
       *   the string to separate
@@ -63,21 +69,21 @@ object InvalidDataItem {
       *   the string broken up into a value that is easier to read by:
       *   - Capitalising the first letter
       *   - Retaining consecutive uppercase characters (i.e. acronyms like UCR)
-      *   - Replacing individual uppercase characters with a space and the character in lowercase (i.e. a new word)
+      *   - Replacing individual uppercase characters with a space and the character in lowercase (i.e. the start of a new word)
       */
     def separate(str: String): String = {
       @tailrec
       def rec(chars: List[Char], acc: String = ""): String = chars match {
-        case Nil                         => acc
-        case head :: tail if acc.isEmpty => rec(tail, head.toUpper.toString)
-        case head :: next :: tail if head.isUpper && next.isUpper =>
-          val f: Char => Boolean = _.isUpper
-          rec(tail.dropWhile(f), acc + " " + head + next + tail.takeWhile(f).mkString)
-        case head :: tail if head.isUpper => rec(tail, acc + " " + head.toLower)
-        case head :: tail                 => rec(tail, acc + head)
+        case Nil => acc
+        case head :: tail =>
+          tail.headOption match {
+            case Some(next) if head.isLower && next.isUpper => rec(tail, acc + head.toString + " ")
+            case Some(next) if head.isUpper && next.isLower => rec(tail, combine(acc, head.toLower.toString))
+            case _                                          => rec(tail, acc + head.toString)
+          }
       }
 
-      rec(str.toList)
+      rec(str.toList).capitalize
     }
 
     new InvalidDataItem(rec(errorPointer.split('/').toList))

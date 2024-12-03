@@ -90,6 +90,14 @@ class InvalidDataItemSpec extends SpecBase {
           result.value.mustBe("Authorisation 1: Reference number")
         }
       }
+
+      "when /CC015C/HolderOfTheTransitProcedure/TIRHolderIdentificationNumber" - {
+        "must return Holder of the transit procedure: TIR holder identification number" in {
+          val errorPointer = "/CC015C/HolderOfTheTransitProcedure/TIRHolderIdentificationNumber"
+          val result       = InvalidDataItem(errorPointer)
+          result.value.mustBe("Holder of the transit procedure: TIR holder identification number")
+        }
+      }
     }
   }
 }

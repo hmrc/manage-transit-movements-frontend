@@ -17,9 +17,12 @@
 package models
 
 import generated.FunctionalErrorType04
+import play.api.i18n.Messages
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.html.components.Table
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 
 import scala.annotation.tailrec
 
@@ -30,7 +33,21 @@ case class FunctionalError(
   invalidDataItem: InvalidDataItem,
   invalidAnswer: Option[String]
 ) {
-  def toTableRow: Seq[TableRow] = ???
+
+  def toTableRow: Seq[TableRow] = Seq(
+    TableRow(Text(error)),
+    TableRow(Text(businessRuleId)),
+    TableRow(Text(invalidDataItem.value)),
+    TableRow(Text(invalidAnswer.getOrElse("N/A")))
+  )
+
+  def toDepartureTableRow: Seq[TableRow] = Seq(
+    TableRow(Text(error)),
+    TableRow(Text(businessRuleId)),
+    TableRow(Text(section.getOrElse("N/A"))),
+    TableRow(Text(invalidDataItem.value)),
+    TableRow(Text(invalidAnswer.getOrElse("N/A")))
+  )
 }
 
 object FunctionalError {
@@ -45,4 +62,37 @@ object FunctionalError {
   )(
     functionalError => (functionalError.errorPointer, functionalError.errorCode.toString, functionalError.errorReason, functionalError.originalAttributeValue)
   )
+
+  implicit class RichFunctionalErrors(value: Seq[FunctionalError]) {
+
+    def paginate(page: Int, numberOfErrorsPerPage: Int): Seq[FunctionalError] = {
+      val start = (page - 1) * numberOfErrorsPerPage
+      value.slice(start, start + numberOfErrorsPerPage)
+    }
+
+    def toTableOfErrors(implicit messages: Messages): Table = Table(
+      rows = value.map(_.toTableRow),
+      head = Some(
+        Seq(
+          HeadCell(Text(messages("error.table.errorCode"))),
+          HeadCell(Text(messages("error.table.errorReason"))),
+          HeadCell(Text(messages("error.table.pointer"))),
+          HeadCell(Text(messages("error.table.attributeValue")))
+        )
+      )
+    )
+
+    def toTableOfDepartureErrors(implicit messages: Messages): Table = Table(
+      rows = value.map(_.toDepartureTableRow),
+      head = Some(
+        Seq(
+          HeadCell(Text(messages("error.table.errorCode"))),
+          HeadCell(Text(messages("error.table.errorReason"))),
+          HeadCell(Text(messages("error.table.section"))),
+          HeadCell(Text(messages("error.table.pointer"))),
+          HeadCell(Text(messages("error.table.attributeValue")))
+        )
+      )
+    )
+  }
 }
