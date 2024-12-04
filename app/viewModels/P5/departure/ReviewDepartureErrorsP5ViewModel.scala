@@ -21,7 +21,7 @@ import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.BusinessRejectionType.*
 import play.api.i18n.Messages
 import play.api.mvc.Call
-import viewModels.pagination.BarViewModel
+import viewModels.pagination.ErrorPaginationViewModel
 
 case class ReviewDepartureErrorsP5ViewModel(
   title: String,
@@ -34,7 +34,7 @@ case class ReviewDepartureErrorsP5ViewModel(
   currentPage: Int,
   numberOfItemsPerPage: Int,
   href: Call
-) extends BarViewModel[FunctionalErrorWithSection, FunctionalErrorsWithSection]
+) extends ErrorPaginationViewModel[FunctionalErrorWithSection, FunctionalErrorsWithSection]
 
 object ReviewDepartureErrorsP5ViewModel {
 

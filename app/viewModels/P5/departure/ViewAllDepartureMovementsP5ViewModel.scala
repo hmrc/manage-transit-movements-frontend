@@ -18,7 +18,7 @@ package viewModels.P5.departure
 
 import play.api.i18n.Messages
 import play.api.mvc.Call
-import viewModels.pagination.FooViewModel
+import viewModels.pagination.PaginationViewModel
 
 case class ViewAllDepartureMovementsP5ViewModel(
   heading: String,
@@ -28,7 +28,7 @@ case class ViewAllDepartureMovementsP5ViewModel(
   numberOfItemsPerPage: Int,
   href: Call,
   override val additionalParams: Seq[(String, String)]
-) extends FooViewModel[(String, Seq[ViewDepartureP5])]
+) extends PaginationViewModel[(String, Seq[ViewDepartureP5])]
 
 object ViewAllDepartureMovementsP5ViewModel {
 

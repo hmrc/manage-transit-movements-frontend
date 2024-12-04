@@ -19,7 +19,7 @@
 
 @this(govukPagination: GovukPagination, status: Status)
 
-@(viewModel: PaginationViewModel, searchParam: Option[String] = None)(implicit messages: Messages)
+@(viewModel: PaginationViewModel[?], searchParam: Option[String] = None)(implicit messages: Messages)
 
 @if(viewModel.results.totalPages == 1) {
     @status(id = "results-count", classes = "govuk-body", html = viewModel.searchResult(searchParam))

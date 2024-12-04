@@ -23,7 +23,7 @@ import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumb
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
-import viewModels.pagination.FooViewModel
+import viewModels.pagination.PaginationViewModel
 
 case class AllDraftDeparturesViewModel(
   title: String,
@@ -36,7 +36,7 @@ case class AllDraftDeparturesViewModel(
   override val additionalParams: Seq[(String, String)],
   departureFrontendUrl: String,
   href: Call
-) extends FooViewModel[DepartureUserAnswerSummary] {
+) extends PaginationViewModel[DepartureUserAnswerSummary] {
 
   override val items: Seq[DepartureUserAnswerSummary] = departures.userAnswers
 

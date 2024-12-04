@@ -17,7 +17,7 @@
 @import config.FrontendAppConfig
 @import controllers.departureP5.routes
 @import viewModels.P5.departure.RejectionMessageP5ViewModel
-@import views.html.components.{Button, Foo, Heading, HelpdeskLink, Pagination, Table}
+@import views.html.components.{Button, Heading, HelpdeskLink, Pagination, Table}
 
 @this(
     mainTemplate: MainTemplate,
@@ -25,7 +25,7 @@
     table: GovukTable,
     button: Button,
     formHelper: FormWithCSRF,
-    pagination: Foo,
+    pagination: Pagination,
     helpdeskLink: HelpdeskLink
 )
 @(viewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, mrn: Option[String])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)

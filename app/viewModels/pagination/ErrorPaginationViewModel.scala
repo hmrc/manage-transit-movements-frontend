@@ -20,7 +20,7 @@ import models.{FunctionalError, FunctionalErrors}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 
-trait BarViewModel[A <: FunctionalError, B <: FunctionalErrors[A]] extends FooViewModel[A] {
+trait ErrorPaginationViewModel[A <: FunctionalError, B <: FunctionalErrors[A]] extends PaginationViewModel[A] {
 
   val functionalErrors: B
 

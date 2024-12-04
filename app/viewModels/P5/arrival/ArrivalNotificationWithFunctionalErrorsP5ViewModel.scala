@@ -20,7 +20,7 @@ import models.FunctionalError.FunctionalErrorWithoutSection
 import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import play.api.i18n.Messages
 import play.api.mvc.Call
-import viewModels.pagination.BarViewModel
+import viewModels.pagination.ErrorPaginationViewModel
 
 import javax.inject.Inject
 
@@ -36,7 +36,7 @@ case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(
   currentPage: Int,
   numberOfItemsPerPage: Int,
   href: Call
-) extends BarViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
+) extends ErrorPaginationViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
 
 object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
 

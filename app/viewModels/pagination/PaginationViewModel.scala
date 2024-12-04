@@ -17,13 +17,18 @@
 package viewModels.pagination
 
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 
-case class PaginationViewModel(
-  results: MetaData,
-  pagination: Pagination,
-  pageNumber: Int
-) {
+trait PaginationViewModel[T] {
+  val items: Seq[T]
+  val currentPage: Int
+  val numberOfItemsPerPage: Int
+  val href: Call
+  val additionalParams: Seq[(String, String)] = Seq.empty
+  val heading: String
+
+  def results: MetaData = MetaData(items.length, numberOfItemsPerPage, currentPage)
 
   def searchResult(searchParam: Option[String] = None)(implicit messages: Messages): String =
     (searchParam, results.count) match {
@@ -38,35 +43,19 @@ case class PaginationViewModel(
       case Some(value) => messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", value)
       case None        => messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
     }
-}
 
-object PaginationViewModel {
-
-  def apply(
-    totalNumberOfItems: Int,
-    currentPage: Int,
-    numberOfItemsPerPage: Int,
-    href: String,
-    additionalParams: Seq[(String, String)] = Seq.empty,
-    navigationHiddenText: Option[String] = None
-  )(implicit messages: Messages): PaginationViewModel = {
-
-    val results: MetaData = MetaData(totalNumberOfItems, numberOfItemsPerPage, currentPage)
-
-    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"$href?page=$page") {
+  def pagination(implicit messages: Messages): Pagination = {
+    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"${href.url}?page=$page") {
       case (href, (key, value)) =>
         href + s"&$key=$value"
     }
 
-    def attributes(key: String) = navigationHiddenText
-      .map {
-        text => Map("aria-label" -> messages(key, text.toLowerCase))
-      }
-      .getOrElse(Map.empty)
+    def attributes(key: String) =
+      Map("aria-label" -> messages(key, heading.toLowerCase))
 
     val previous: Option[PaginationLink] = Option.when(currentPage > 1) {
       PaginationLink(
-        hrefWithParams(currentPage - 1),
+        href = hrefWithParams(currentPage - 1),
         attributes = attributes("pagination.previous.hidden")
       )
     }
@@ -93,9 +82,6 @@ object PaginationViewModel {
         }
     }
 
-    val pagination = Pagination(Some(items), previous, next)
-
-    new PaginationViewModel(results, pagination, currentPage)
+    Pagination(Some(items), previous, next)
   }
-
 }
