@@ -22,7 +22,7 @@
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    table: Table,
+    table: GovukTable,
     button: Button,
     pagination: Pagination,
     formHelper: FormWithCSRF,
@@ -38,7 +38,7 @@
 
     @heading(
         heading = viewModel.heading,
-        caption = Some(messages("arrival.messages.caption", viewModel.mrn))
+        caption = Some(viewModel.caption)
     )
 
     <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
@@ -47,7 +47,7 @@
 
     @pagination(paginationViewModel, None)
 
-    @table(viewModel.tableRows, viewModel.tableHeadCells)
+    @table(viewModel.table)
 
     @helpdeskLink(viewModel.paragraph3)
 

@@ -25,7 +25,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
-import viewModels.pagination.PaginationViewModel
 import views.html.departureP5.ReviewDepartureErrorsP5View
 
 import javax.inject.Inject
@@ -58,19 +57,11 @@ class ReviewDepartureErrorsP5Controller @Inject() (
               request.referenceNumbers.localReferenceNumber,
               DepartureBusinessRejectionType(request.messageData),
               currentPage,
-              paginationConfig.departuresNumberOfErrorsPerPage
+              paginationConfig.departuresNumberOfErrorsPerPage,
+              href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId)
             )
 
-            val paginationViewModel = PaginationViewModel(
-              totalNumberOfItems = functionalErrors.value.length,
-              currentPage = currentPage,
-              numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-              href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId).url,
-              navigationHiddenText = Some(rejectionViewModel.heading)
-            )
-
-            Ok(view(rejectionViewModel, departureId, paginationViewModel, request.referenceNumbers.movementReferenceNumber))
+            Ok(view(rejectionViewModel, departureId, request.referenceNumbers.movementReferenceNumber))
         }
     }
-
 }

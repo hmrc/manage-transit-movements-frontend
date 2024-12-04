@@ -16,10 +16,12 @@
 
 package viewModels.P5.departure
 
+import models.FunctionalError.FunctionalErrorWithSection
 import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.BusinessRejectionType.*
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+import play.api.mvc.Call
+import viewModels.pagination.BarViewModel
 
 case class ReviewDepartureErrorsP5ViewModel(
   title: String,
@@ -28,8 +30,11 @@ case class ReviewDepartureErrorsP5ViewModel(
   paragraph1: String,
   paragraph2: String,
   hyperlink: Option[String],
-  table: Table
-)
+  functionalErrors: FunctionalErrorsWithSection,
+  currentPage: Int,
+  numberOfItemsPerPage: Int,
+  href: Call
+) extends BarViewModel[FunctionalErrorWithSection, FunctionalErrorsWithSection]
 
 object ReviewDepartureErrorsP5ViewModel {
 
@@ -38,7 +43,8 @@ object ReviewDepartureErrorsP5ViewModel {
     lrn: String,
     businessRejectionType: DepartureBusinessRejectionType,
     currentPage: Int,
-    numberOfErrorsPerPage: Int
+    numberOfErrorsPerPage: Int,
+    href: Call
   )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel = {
 
     val multipleErrors: Boolean = functionalErrors.multipleErrors
@@ -78,7 +84,10 @@ object ReviewDepartureErrorsP5ViewModel {
       paragraph1 = paragraph1,
       paragraph2 = paragraph2,
       hyperlink = hyperlink,
-      table = functionalErrors.paginate(currentPage, numberOfErrorsPerPage).toTable
+      functionalErrors = functionalErrors,
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfErrorsPerPage,
+      href = href
     )
   }
 
@@ -89,14 +98,16 @@ object ReviewDepartureErrorsP5ViewModel {
       lrn: String,
       businessRejectionType: DepartureBusinessRejectionType,
       currentPage: Int,
-      numberOfErrorsPerPage: Int
+      numberOfErrorsPerPage: Int,
+      href: Call
     )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel =
       ReviewDepartureErrorsP5ViewModel.apply(
         functionalErrors,
         lrn,
         businessRejectionType,
         currentPage,
-        numberOfErrorsPerPage
+        numberOfErrorsPerPage,
+        href
       )
   }
 

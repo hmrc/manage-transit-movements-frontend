@@ -17,9 +17,8 @@
 package controllers.arrivalP5
 
 import config.{FrontendAppConfig, PaginationAppConfig}
-import controllers.actions._
+import controllers.actions.*
 import generated.CC057CType
-import models.RichCC057CType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -30,6 +29,7 @@ import views.html.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5View
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import generated.Generated_CC057CTypeFormat
+import services.FunctionalErrorsService
 
 class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -37,7 +37,8 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
   messageRetrievalAction: ArrivalMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   viewModelProvider: ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider,
-  view: ArrivalNotificationWithFunctionalErrorsP5View
+  view: ArrivalNotificationWithFunctionalErrorsP5View,
+  functionalErrorsService: FunctionalErrorsService
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
@@ -45,30 +46,30 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
   def onPageLoad(page: Option[Int], arrivalId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)).async {
       implicit request =>
-        val currentPage = page.getOrElse(1)
+        functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError).map {
+          functionalErrors =>
+            val currentPage = page.getOrElse(1)
 
-        val rejectionMessageP5ViewModel = viewModelProvider.apply(
-          request.messageData.pagedFunctionalErrors(currentPage),
-          request.messageData.TransitOperation.MRN
-        )
-
-        rejectionMessageP5ViewModel.map(
-          viewModel =>
+            val rejectionMessageP5ViewModel = viewModelProvider.apply(
+              functionalErrors,
+              request.messageData.TransitOperation.MRN,
+              currentPage,
+              paginationConfig.arrivalsNumberOfErrorsPerPage
+            )
 
             val paginationViewModel = PaginationViewModel(
               totalNumberOfItems = request.messageData.FunctionalError.length,
               currentPage = currentPage,
               numberOfItemsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
               href = controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, messageId).url,
-              navigationHiddenText = Some(viewModel.heading)
+              navigationHiddenText = Some(rejectionMessageP5ViewModel.heading)
             )
 
             if (request.messageData.FunctionalError.nonEmpty) {
-              Ok(view(viewModel, arrivalId, paginationViewModel))
+              Ok(view(rejectionMessageP5ViewModel, arrivalId, paginationViewModel))
             } else {
               Redirect(controllers.routes.ErrorController.technicalDifficulties())
             }
-        )
+        }
     }
-
 }
