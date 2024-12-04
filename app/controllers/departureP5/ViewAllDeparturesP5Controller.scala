@@ -28,7 +28,6 @@ import play.twirl.api.HtmlFormat
 import services.DepartureP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
-import viewModels.pagination.PaginationViewModel
 import views.html.departureP5.ViewAllDeparturesP5View
 
 import java.time.Clock
@@ -80,29 +79,18 @@ class ViewAllDeparturesP5Controller @Inject() (
           movementsAndMessages =>
             val departures: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
 
-            val viewModel = ViewAllDepartureMovementsP5ViewModel(departures, searchParam)
-
-            val paginationViewModel = PaginationViewModel(
-              totalNumberOfItems = movements.totalCount,
-              currentPage = currentPage,
-              numberOfItemsPerPage = paginationConfig.departuresNumberOfMovements,
-              href = controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url,
-              additionalParams = Seq(
-                searchParam.map("lrn" -> _)
-              ).flatten,
-              navigationHiddenText = Some(viewModel.pageHeading)
+            val viewModel = ViewAllDepartureMovementsP5ViewModel(
+              departures,
+              searchParam,
+              currentPage,
+              paginationConfig.departuresNumberOfMovements,
+              routes.ViewAllDeparturesP5Controller.onPageLoad(None, None),
+              Seq(searchParam.map("lrn" -> _)).flatten
             )
 
-            block(
-              view(
-                form = form,
-                viewModel = viewModel,
-                paginationViewModel = paginationViewModel
-              )
-            )
+            block(view(form, viewModel))
         }
       case None => Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
     }
   }
-
 }

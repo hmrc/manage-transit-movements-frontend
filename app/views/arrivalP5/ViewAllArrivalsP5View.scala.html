@@ -17,15 +17,14 @@
 @import config.FrontendAppConfig
 @import controllers.arrivalP5.routes
 @import viewModels.P5.arrival.ViewAllArrivalMovementsP5ViewModel
-@import viewModels.pagination.PaginationViewModel
-@import views.html.components.{Heading, InsetText, MovementsTable, Pagination, Search, Status}
+@import views.html.components.{Foo, Heading, InsetText, MovementsTable, Pagination, Search, Status}
 @import controllers.routes.{WhatDoYouWantToDoController => WDYWTDController}
 
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    pagination: Pagination,
+    pagination: Foo,
     movementsTable: MovementsTable,
     search: Search,
     status: Status,
@@ -35,17 +34,16 @@
 
 @(
     form: Form[String],
-    viewModel: ViewAllArrivalMovementsP5ViewModel,
-    paginationViewModel: PaginationViewModel
+    viewModel: ViewAllArrivalMovementsP5ViewModel
 )(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
-    title = viewModel.pageTitle,
+    title = viewModel.title,
     showBackLink = true,
     fullWidth = true
 ) {
 
-    @heading(viewModel.pageHeading)
+    @heading(viewModel.heading)
 
     <p class="govuk-body">
         <a id="make-arrival-notification" class="govuk-link" href=@config.p5Arrival>
@@ -61,11 +59,11 @@
 
     @inset(messages("viewArrivalNotificationsP5.search.inset"))
 
-    @pagination(paginationViewModel, form.value)
+    @pagination(viewModel, form.value)
 
-    @if(viewModel.dataRows.nonEmpty) {
+    @if(viewModel.items.nonEmpty) {
         @movementsTable(
-            dataRows = viewModel.dataRows,
+            dataRows = viewModel.items,
             visuallyHiddenHeader = messages("viewArrivalNotificationsP5.heading.hidden"),
             rowHeadingUpdated = messages("viewArrivalNotificationsP5.table.updated"),
             rowHeadingReferenceNumber = messages("viewArrivalNotificationsP5.table.mrn"),

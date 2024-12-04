@@ -17,39 +17,52 @@
 package viewModels.P5.departure
 
 import play.api.i18n.Messages
+import play.api.mvc.Call
+import viewModels.pagination.FooViewModel
 
 case class ViewAllDepartureMovementsP5ViewModel(
-  dataRows: Seq[(String, Seq[ViewDepartureP5])],
-  searchParam: Option[String]
-) {
-
-  def pageHeading(implicit messages: Messages): String =
-    searchParam match {
-      case Some(searchParam) =>
-        messages("viewDepartureDeclarationsP5.searchResult.heading", searchParam)
-      case None =>
-        messages("viewDepartureDeclarationsP5.heading")
-    }
-
-  def pageTitle(implicit messages: Messages): String =
-    searchParam match {
-      case Some(searchParam) =>
-        messages("viewDepartureDeclarationsP5.searchResult.title", searchParam)
-      case None =>
-        messages("viewDepartureDeclarationsP5.title")
-    }
-
-}
+  heading: String,
+  title: String,
+  items: Seq[(String, Seq[ViewDepartureP5])],
+  currentPage: Int,
+  numberOfItemsPerPage: Int,
+  href: Call,
+  override val additionalParams: Seq[(String, String)]
+) extends FooViewModel[(String, Seq[ViewDepartureP5])]
 
 object ViewAllDepartureMovementsP5ViewModel {
 
   def apply(
     movementsAndMessages: Seq[ViewDepartureP5],
-    searchParam: Option[String]
-  )(implicit d: DummyImplicit): ViewAllDepartureMovementsP5ViewModel =
+    searchParam: Option[String],
+    currentPage: Int,
+    numberOfItemsPerPage: Int,
+    href: Call,
+    additionalParams: Seq[(String, String)]
+  )(implicit messages: Messages): ViewAllDepartureMovementsP5ViewModel = {
+    val heading: String = searchParam match {
+      case Some(value) =>
+        messages("viewDepartureDeclarationsP5.searchResult.heading", value)
+      case None =>
+        messages("viewDepartureDeclarationsP5.heading")
+    }
+
+    val title: String = searchParam match {
+      case Some(value) =>
+        messages("viewDepartureDeclarationsP5.searchResult.title", value)
+      case None =>
+        messages("viewDepartureDeclarationsP5.title")
+    }
+
     new ViewAllDepartureMovementsP5ViewModel(
+      heading,
+      title,
       ViewDepartureMovementsP5(movementsAndMessages).dataRows,
-      searchParam
+      currentPage,
+      numberOfItemsPerPage,
+      href,
+      additionalParams
     )
+  }
 
 }

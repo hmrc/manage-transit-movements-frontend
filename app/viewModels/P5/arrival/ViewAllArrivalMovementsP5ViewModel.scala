@@ -17,39 +17,52 @@
 package viewModels.P5.arrival
 
 import play.api.i18n.Messages
+import play.api.mvc.Call
+import viewModels.pagination.FooViewModel
 
 case class ViewAllArrivalMovementsP5ViewModel(
-  dataRows: Seq[(String, Seq[ViewArrivalP5])],
-  searchParam: Option[String]
-) {
-
-  def pageHeading(implicit messages: Messages): String =
-    searchParam match {
-      case Some(searchParam) =>
-        messages("viewArrivalNotificationsP5.searchResult.heading", searchParam)
-      case None =>
-        messages("viewArrivalNotificationsP5.heading")
-    }
-
-  def pageTitle(implicit messages: Messages): String =
-    searchParam match {
-      case Some(searchParam) =>
-        messages("viewArrivalNotificationsP5.searchResult.title", searchParam)
-      case None =>
-        messages("viewArrivalNotificationsP5.title")
-    }
-
-}
+  heading: String,
+  title: String,
+  items: Seq[(String, Seq[ViewArrivalP5])],
+  currentPage: Int,
+  numberOfItemsPerPage: Int,
+  href: Call,
+  override val additionalParams: Seq[(String, String)]
+) extends FooViewModel[(String, Seq[ViewArrivalP5])]
 
 object ViewAllArrivalMovementsP5ViewModel {
 
   def apply(
     movementsAndMessages: Seq[ViewArrivalP5],
-    searchParam: Option[String]
-  )(implicit d: DummyImplicit): ViewAllArrivalMovementsP5ViewModel =
-    new ViewAllArrivalMovementsP5ViewModel(
-      ViewArrivalMovementsP5(movementsAndMessages).dataRows,
-      searchParam
-    )
+    searchParam: Option[String],
+    currentPage: Int,
+    numberOfItemsPerPage: Int,
+    href: Call,
+    additionalParams: Seq[(String, String)]
+  )(implicit messages: Messages): ViewAllArrivalMovementsP5ViewModel = {
 
+    val heading: String = searchParam match {
+      case Some(value) =>
+        messages("viewArrivalNotificationsP5.searchResult.heading", value)
+      case None =>
+        messages("viewArrivalNotificationsP5.heading")
+    }
+
+    val title: String = searchParam match {
+      case Some(value) =>
+        messages("viewArrivalNotificationsP5.searchResult.title", value)
+      case None =>
+        messages("viewArrivalNotificationsP5.title")
+    }
+
+    new ViewAllArrivalMovementsP5ViewModel(
+      heading,
+      title,
+      ViewArrivalMovementsP5(movementsAndMessages).dataRows,
+      currentPage,
+      numberOfItemsPerPage,
+      href,
+      additionalParams
+    )
+  }
 }
