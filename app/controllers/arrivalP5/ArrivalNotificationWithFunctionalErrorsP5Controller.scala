@@ -18,18 +18,16 @@ package controllers.arrivalP5
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions.*
-import generated.CC057CType
+import generated.{CC057CType, Generated_CC057CTypeFormat}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
-import viewModels.pagination.PaginationViewModel
 import views.html.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import generated.Generated_CC057CTypeFormat
-import services.FunctionalErrorsService
 
 class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -50,23 +48,16 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
           functionalErrors =>
             val currentPage = page.getOrElse(1)
 
-            val rejectionMessageP5ViewModel = viewModelProvider.apply(
-              functionalErrors,
-              request.messageData.TransitOperation.MRN,
-              currentPage,
-              paginationConfig.arrivalsNumberOfErrorsPerPage
-            )
-
-            val paginationViewModel = PaginationViewModel(
-              totalNumberOfItems = request.messageData.FunctionalError.length,
+            val viewModel = viewModelProvider.apply(
+              functionalErrors = functionalErrors,
+              mrn = request.messageData.TransitOperation.MRN,
               currentPage = currentPage,
-              numberOfItemsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
-              href = controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, messageId).url,
-              navigationHiddenText = Some(rejectionMessageP5ViewModel.heading)
+              numberOfErrorsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
+              href = controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, messageId)
             )
 
             if (request.messageData.FunctionalError.nonEmpty) {
-              Ok(view(rejectionMessageP5ViewModel, arrivalId, paginationViewModel))
+              Ok(view(viewModel, arrivalId))
             } else {
               Redirect(controllers.routes.ErrorController.technicalDifficulties())
             }

@@ -14,44 +14,43 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
+@import views.html.components.{AnswerSections, Button, Foo, Heading, HelpdeskLink, Pagination, Table}
 @import config.FrontendAppConfig
 @import viewModels.P5.departure.ReviewPrelodgedDeclarationErrorsP5ViewModel
-@import viewModels.pagination.PaginationViewModel
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    table: Table,
+    table: GovukTable,
     button: Button,
-    pagination: Pagination,
+    pagination: Foo,
     formHelper: FormWithCSRF,
     helpdeskLink: HelpdeskLink
 )
 
-@(prelodgeRejectionMessageP5ViewModel: ReviewPrelodgedDeclarationErrorsP5ViewModel, departureId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+@(viewModel: ReviewPrelodgedDeclarationErrorsP5ViewModel, departureId: String)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
-    title = prelodgeRejectionMessageP5ViewModel.title,
+    title = viewModel.title,
     showBackLink = true
 ) {
 
     @heading(
-        heading = prelodgeRejectionMessageP5ViewModel.heading,
-        caption = Some(messages("departure.messages.caption", prelodgeRejectionMessageP5ViewModel.lrn))
+        heading = viewModel.heading,
+        caption = Some(viewModel.caption)
     )
 
-    <p id="paragraph-1" class="govuk-body">@prelodgeRejectionMessageP5ViewModel.paragraph1</p>
+    <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
-    @pagination(paginationViewModel, None)
+    @pagination(viewModel, None)
 
-    @table(prelodgeRejectionMessageP5ViewModel.tableRows, prelodgeRejectionMessageP5ViewModel.tableHeadCells)
+    @table(viewModel.table)
 
-    @helpdeskLink(prelodgeRejectionMessageP5ViewModel.paragraph2)
+    @helpdeskLink(viewModel.paragraph2)
 
     <p class="govuk-body">
         <a id="prelodge-declaration-link" class="govuk-link" href=@config.presentationNotificationFrontendUrl(departureId)>
-            @prelodgeRejectionMessageP5ViewModel.hyperlink
+            @viewModel.hyperlink
         </a>
     </p>
 

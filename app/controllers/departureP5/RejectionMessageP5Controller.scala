@@ -19,17 +19,15 @@ package controllers.departureP5
 import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions.*
 import generated.{CC056CType, Generated_CC056CTypeFormat}
-import models.RichCC056CType
 import models.departureP5.Rejection
 import models.departureP5.Rejection.IE056Rejection
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.AmendmentService
+import services.{AmendmentService, FunctionalErrorsService}
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RejectionMessageP5ViewModel.RejectionMessageP5ViewModelProvider
-import viewModels.pagination.PaginationViewModel
 import views.html.departureP5.RejectionMessageP5View
 
 import javax.inject.Inject
@@ -42,7 +40,8 @@ class RejectionMessageP5Controller @Inject() (
   cc: MessagesControllerComponents,
   viewModelProvider: RejectionMessageP5ViewModelProvider,
   service: AmendmentService,
-  view: RejectionMessageP5View
+  view: RejectionMessageP5View,
+  functionalErrorsService: FunctionalErrorsService
 )(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport
@@ -56,22 +55,17 @@ class RejectionMessageP5Controller @Inject() (
 
         service.isRejectionAmendable(lrn, rejection).flatMap {
           case true =>
-            val currentPage = page.getOrElse(1)
+            functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError).map {
+              functionalErrors =>
+                val currentPage = page.getOrElse(1)
 
-            val rejectionMessageP5ViewModel = viewModelProvider.apply(
-              request.messageData.pagedFunctionalErrors(currentPage),
-              lrn,
-              rejection.businessRejectionType
-            )
-
-            rejectionMessageP5ViewModel.map {
-              viewModel =>
-                val paginationViewModel = PaginationViewModel(
-                  totalNumberOfItems = rejection.errorPointers.length,
+                val viewModel = viewModelProvider.apply(
+                  functionalErrors = functionalErrors,
+                  lrn = request.referenceNumbers.localReferenceNumber,
+                  businessRejectionType = rejection.businessRejectionType,
                   currentPage = currentPage,
-                  numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-                  href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId).url,
-                  navigationHiddenText = Some(viewModel.heading)
+                  numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
+                  href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId)
                 )
 
                 Ok(
@@ -79,7 +73,6 @@ class RejectionMessageP5Controller @Inject() (
                     viewModel,
                     departureId,
                     messageId,
-                    paginationViewModel,
                     request.referenceNumbers.movementReferenceNumber
                   )
                 )

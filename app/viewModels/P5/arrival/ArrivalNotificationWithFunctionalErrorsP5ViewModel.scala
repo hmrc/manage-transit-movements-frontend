@@ -16,9 +16,11 @@
 
 package viewModels.P5.arrival
 
+import models.FunctionalError.FunctionalErrorWithoutSection
 import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+import play.api.mvc.Call
+import viewModels.pagination.BarViewModel
 
 import javax.inject.Inject
 
@@ -30,8 +32,11 @@ case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(
   paragraph2: String,
   paragraph3: String,
   hyperlink: String,
-  table: Table
-)
+  functionalErrors: FunctionalErrorsWithoutSection,
+  currentPage: Int,
+  numberOfItemsPerPage: Int,
+  href: Call
+) extends BarViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
 
 object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
 
@@ -39,7 +44,8 @@ object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
     functionalErrors: FunctionalErrorsWithoutSection,
     mrn: String,
     currentPage: Int,
-    numberOfErrorsPerPage: Int
+    numberOfErrorsPerPage: Int,
+    href: Call
   )(implicit messages: Messages): ArrivalNotificationWithFunctionalErrorsP5ViewModel = {
 
     val multipleErrors: Boolean = functionalErrors.multipleErrors
@@ -64,7 +70,10 @@ object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
       paragraph2 = messages("arrival.ie057.review.notification.message.paragraph2"),
       paragraph3 = paragraph3,
       hyperlink = messages("arrival.ie057.review.notification.message.hyperlink"),
-      table = functionalErrors.paginate(currentPage, numberOfErrorsPerPage).toTable
+      functionalErrors = functionalErrors,
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfErrorsPerPage,
+      href = href
     )
   }
 
@@ -74,13 +83,15 @@ object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
       functionalErrors: FunctionalErrorsWithoutSection,
       mrn: String,
       currentPage: Int,
-      numberOfErrorsPerPage: Int
+      numberOfErrorsPerPage: Int,
+      href: Call
     )(implicit messages: Messages): ArrivalNotificationWithFunctionalErrorsP5ViewModel =
       ArrivalNotificationWithFunctionalErrorsP5ViewModel(
         functionalErrors,
         mrn,
-        currentPage: Int,
-        numberOfErrorsPerPage: Int
+        currentPage,
+        numberOfErrorsPerPage,
+        href
       )
   }
 }

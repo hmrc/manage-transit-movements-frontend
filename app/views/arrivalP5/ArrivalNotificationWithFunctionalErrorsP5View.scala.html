@@ -16,7 +16,7 @@
 
 @import config.FrontendAppConfig
 @import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
-@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
+@import views.html.components.{AnswerSections, Button, Foo, Heading, HelpdeskLink, Pagination, Table}
 @import viewModels.pagination.PaginationViewModel
 
 @this(
@@ -24,12 +24,12 @@
     heading: Heading,
     table: GovukTable,
     button: Button,
-    pagination: Pagination,
+    pagination: Foo,
     formHelper: FormWithCSRF,
     helpdeskLink: HelpdeskLink
 )
 
-@(viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel, arrivalId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+@(viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel, arrivalId: String)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
     title = viewModel.title,
@@ -45,7 +45,7 @@
 
     <p id="paragraph-2" class="govuk-body">@viewModel.paragraph2</p>
 
-    @pagination(paginationViewModel, None)
+    @pagination(viewModel, None)
 
     @table(viewModel.table)
 

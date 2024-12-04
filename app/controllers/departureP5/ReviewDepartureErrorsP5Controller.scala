@@ -47,21 +47,18 @@ class ReviewDepartureErrorsP5Controller @Inject() (
       implicit request =>
         functionalErrorsService.convertErrorsWithSection(request.messageData.FunctionalError).map {
           functionalErrors =>
-            val currentPage = page.getOrElse(1)
+            val currentPage = page.getOrElse(1) // TODO - can the getOrElse be moved to the view model?
 
-            // TODO - do we need two view models here? Pagination involved in both. Seems strange.
-            // TODO - can we consolidate some of the pagination config values into one?
-
-            val rejectionViewModel = viewModelProvider.apply(
-              functionalErrors,
-              request.referenceNumbers.localReferenceNumber,
-              DepartureBusinessRejectionType(request.messageData),
-              currentPage,
-              paginationConfig.departuresNumberOfErrorsPerPage,
+            val viewModel = viewModelProvider.apply(
+              functionalErrors = functionalErrors,
+              lrn = request.referenceNumbers.localReferenceNumber,
+              businessRejectionType = DepartureBusinessRejectionType(request.messageData),
+              currentPage = currentPage,
+              numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
               href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId)
             )
 
-            Ok(view(rejectionViewModel, departureId, request.referenceNumbers.movementReferenceNumber))
+            Ok(view(viewModel, departureId, request.referenceNumbers.movementReferenceNumber))
         }
     }
 }

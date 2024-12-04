@@ -18,19 +18,19 @@
 @import config.FrontendAppConfig
 @import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
 @import viewModels.pagination.PaginationViewModel
-@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
+@import views.html.components.{AnswerSections, Button, Foo, Heading, HelpdeskLink, Pagination, Table}
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    table: Table,
+    table: GovukTable,
     button: Button,
     formHelper: FormWithCSRF,
-    pagination: Pagination,
+    pagination: Foo,
     helpdeskLink: HelpdeskLink
 )
 
-@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, messageId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[?], messages: Messages)
+@(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel, arrivalId: String, messageId: String)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,
@@ -39,14 +39,14 @@
 
     @heading(
         heading = viewModel.heading,
-        caption = Some(messages("arrival.messages.caption", viewModel.mrn))
+        caption = Some(viewModel.caption)
     )
 
     <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
-    @pagination(paginationViewModel, None)
+    @pagination(viewModel, None)
 
-    @table(viewModel.tableRows, viewModel.tableHeadCells)
+    @table(viewModel.table)
 
     @helpdeskLink(viewModel.paragraph2)
 

@@ -17,19 +17,18 @@
 @import config.FrontendAppConfig
 @import controllers.departureP5.routes
 @import viewModels.P5.departure.RejectionMessageP5ViewModel
-@import views.html.components.{Button, Heading, HelpdeskLink, Pagination, Table}
-@import viewModels.pagination.PaginationViewModel
+@import views.html.components.{Button, Foo, Heading, HelpdeskLink, Pagination, Table}
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    table: Table,
+    table: GovukTable,
     button: Button,
     formHelper: FormWithCSRF,
-    pagination: Pagination,
+    pagination: Foo,
     helpdeskLink: HelpdeskLink
 )
-@(viewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, paginationViewModel: PaginationViewModel, mrn: Option[String])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+@(viewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, mrn: Option[String])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
 @mainTemplate(
     title = viewModel.title,
@@ -38,18 +37,16 @@
 
     @heading(
         heading = viewModel.heading,
-        caption = Some(messages("departure.messages.caption", viewModel.lrn))
+        caption = Some(viewModel.caption)
     )
 
     <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
     @mrn.map { mrn => <p id="mrn" class="govuk-body govuk-label--s">MRN: @mrn</p> }
 
-    @pagination(paginationViewModel, None)
+    @pagination(viewModel, None)
 
-    @if(viewModel.tableRows.nonEmpty) {
-        @table(viewModel.tableRows, viewModel.tableHeadCells)
-    }
+    @table(viewModel.table)
 
     @helpdeskLink(viewModel.paragraph2)
 

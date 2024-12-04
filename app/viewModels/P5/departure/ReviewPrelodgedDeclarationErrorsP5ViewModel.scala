@@ -16,69 +16,80 @@
 
 package viewModels.P5.departure
 
-import generated.FunctionalErrorType04
-import models.departureP5.BusinessRejectionType.*
+import models.FunctionalError.FunctionalErrorWithoutSection
+import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import play.api.i18n.Messages
-import services.ReferenceDataService
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.RejectionMessageP5MessageHelper
+import play.api.mvc.Call
+import viewModels.pagination.BarViewModel
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 case class ReviewPrelodgedDeclarationErrorsP5ViewModel(
-  tableRows: Seq[Seq[TableRow]],
-  lrn: String,
-  multipleErrors: Boolean
-) {
-
-  def title(implicit messages: Messages): String = messages("prelodged.declaration.ie056.review.message.title")
-
-  def heading(implicit messages: Messages): String = messages("prelodged.declaration.ie056.review.message.heading")
-
-  def paragraph1(implicit messages: Messages): String = if (multipleErrors) {
-    messages("prelodged.declaration.ie056.review.message.paragraph1.plural")
-  } else {
-    messages("prelodged.declaration.ie056.review.message.paragraph1.singular")
-  }
-
-  def paragraph2(implicit messages: Messages): String = if (multipleErrors) {
-    messages("prelodged.declaration.ie056.review.message.paragraph2.plural")
-  } else {
-    messages("prelodged.declaration.ie056.review.message.paragraph2.singular")
-  }
-
-  def hyperlink(implicit messages: Messages): String = messages("prelodged.declaration.ie056.review.message.hyperlink")
-
-  def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
-    HeadCell(Text(messages("error.table.errorCode"))),
-    HeadCell(Text(messages("error.table.errorReason"))),
-    HeadCell(Text(messages("error.table.pointer"))),
-    HeadCell(Text(messages("error.table.attributeValue")))
-  )
-
-}
+  title: String,
+  heading: String,
+  caption: String,
+  paragraph1: String,
+  paragraph2: String,
+  hyperlink: String,
+  functionalErrors: FunctionalErrorsWithoutSection,
+  currentPage: Int,
+  numberOfItemsPerPage: Int,
+  href: Call
+) extends BarViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
 
 object ReviewPrelodgedDeclarationErrorsP5ViewModel {
 
-  class ReviewPrelodgedDeclarationErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  def apply(
+    functionalErrors: FunctionalErrorsWithoutSection,
+    lrn: String,
+    currentPage: Int,
+    numberOfErrorsPerPage: Int,
+    href: Call
+  )(implicit messages: Messages): ReviewPrelodgedDeclarationErrorsP5ViewModel = {
+
+    val multipleErrors: Boolean = functionalErrors.multipleErrors
+
+    val paragraph1: String = if (multipleErrors) {
+      messages("prelodged.declaration.ie056.review.message.paragraph1.plural")
+    } else {
+      messages("prelodged.declaration.ie056.review.message.paragraph1.singular")
+    }
+
+    val paragraph2: String = if (multipleErrors) {
+      messages("prelodged.declaration.ie056.review.message.paragraph2.plural")
+    } else {
+      messages("prelodged.declaration.ie056.review.message.paragraph2.singular")
+    }
+
+    new ReviewPrelodgedDeclarationErrorsP5ViewModel(
+      title = messages("prelodged.declaration.ie056.review.message.title"),
+      heading = messages("prelodged.declaration.ie056.review.message.heading"),
+      caption = messages("departure.messages.caption", lrn),
+      paragraph1 = paragraph1,
+      paragraph2 = paragraph2,
+      hyperlink = messages("prelodged.declaration.ie056.review.message.hyperlink"),
+      functionalErrors = functionalErrors,
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfErrorsPerPage,
+      href = href
+    )
+  }
+
+  class ReviewPrelodgedDeclarationErrorsP5ViewModelProvider @Inject() {
 
     def apply(
-      functionalErrors: Seq[FunctionalErrorType04],
-      lrn: String
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ReviewPrelodgedDeclarationErrorsP5ViewModel] = {
-
-      val helper = new RejectionMessageP5MessageHelper(Nil) // TODO - fix
-
-      Future.successful {
-        new ReviewPrelodgedDeclarationErrorsP5ViewModel(
-          helper.tableRows(),
-          lrn,
-          functionalErrors.length > 1
-        )
-      }
-    }
+      functionalErrors: FunctionalErrorsWithoutSection,
+      lrn: String,
+      currentPage: Int,
+      numberOfErrorsPerPage: Int,
+      href: Call
+    )(implicit messages: Messages): ReviewPrelodgedDeclarationErrorsP5ViewModel =
+      ReviewPrelodgedDeclarationErrorsP5ViewModel(
+        functionalErrors,
+        lrn,
+        currentPage,
+        numberOfErrorsPerPage,
+        href
+      )
   }
 }

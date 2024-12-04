@@ -197,6 +197,7 @@ package object models {
     val xPaths: Seq[String] =
       value.FunctionalError.map(_.errorPointer)
 
+    // TODO - delete
     def pagedFunctionalErrors(page: Int)(implicit paginationAppConfig: PaginationAppConfig): Seq[FunctionalErrorType04] =
       value.FunctionalError.pagedFunctionalErrors(page, paginationAppConfig.departuresNumberOfErrorsPerPage)
 

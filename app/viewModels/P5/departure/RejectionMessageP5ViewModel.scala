@@ -16,83 +16,96 @@
 
 package viewModels.P5.departure
 
-import generated.FunctionalErrorType04
+import models.FunctionalError.FunctionalErrorWithoutSection
+import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import models.departureP5.BusinessRejectionType.*
 import play.api.i18n.Messages
-import services.ReferenceDataService
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.RejectionMessageP5MessageHelper
+import play.api.mvc.Call
+import viewModels.pagination.BarViewModel
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 case class RejectionMessageP5ViewModel(
-  tableRows: Seq[Seq[TableRow]],
-  lrn: String,
-  multipleErrors: Boolean,
-  businessRejectionType: DepartureBusinessRejectionType
-) {
-  def title(implicit messages: Messages): String = messages("departure.ie056.message.title")
-
-  def heading(implicit messages: Messages): String = messages("departure.ie056.message.heading")
-
-  def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.message.paragraph1.prefix", lrn)
-
-  private val plural: Boolean = businessRejectionType match {
-    case AmendmentRejection   => true
-    case DeclarationRejection => multipleErrors
-  }
-
-  def paragraph1(implicit messages: Messages): String = if (plural) {
-    messages("departure.ie056.message.paragraph1.plural")
-  } else {
-    messages("departure.ie056.message.paragraph1.singular")
-  }
-
-  def paragraph2(implicit messages: Messages): String = if (plural) {
-    messages("departure.ie056.message.paragraph2.plural")
-  } else {
-    messages("departure.ie056.message.paragraph2.singular")
-  }
-
-  def hyperlink(implicit messages: Messages): Option[String] = businessRejectionType match {
-    case AmendmentRejection   => None
-    case DeclarationRejection => Some(messages("departure.ie056.message.hyperlink"))
-  }
-
-  def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
-    HeadCell(Text(messages("error.table.errorCode"))),
-    HeadCell(Text(messages("error.table.errorReason"))),
-    HeadCell(Text(messages("error.table.pointer"))),
-    HeadCell(Text(messages("error.table.attributeValue")))
-  )
-
-}
+  title: String,
+  heading: String,
+  caption: String,
+  paragraph1Prefix: String,
+  paragraph1: String,
+  paragraph2: String,
+  hyperlink: Option[String],
+  functionalErrors: FunctionalErrorsWithoutSection,
+  currentPage: Int,
+  numberOfItemsPerPage: Int,
+  href: Call
+) extends BarViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
 
 object RejectionMessageP5ViewModel {
 
-  class RejectionMessageP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  def apply(
+    functionalErrors: FunctionalErrorsWithoutSection,
+    lrn: String,
+    businessRejectionType: DepartureBusinessRejectionType,
+    currentPage: Int,
+    numberOfErrorsPerPage: Int,
+    href: Call
+  )(implicit messages: Messages): RejectionMessageP5ViewModel = {
 
-    def apply(
-      functionalErrors: Seq[FunctionalErrorType04],
-      lrn: String,
-      businessRejectionType: DepartureBusinessRejectionType
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[RejectionMessageP5ViewModel] = {
+    val multipleErrors: Boolean = functionalErrors.multipleErrors
 
-      val helper = new RejectionMessageP5MessageHelper(Nil) // TODO - fix
-
-      Future.successful {
-        new RejectionMessageP5ViewModel(
-          helper.tableRows(),
-          lrn,
-          functionalErrors.length > 1,
-          businessRejectionType
-        )
-      }
+    val plural: Boolean = businessRejectionType match {
+      case AmendmentRejection   => true
+      case DeclarationRejection => multipleErrors
     }
 
+    val paragraph1: String = if (plural) {
+      messages("departure.ie056.message.paragraph1.plural")
+    } else {
+      messages("departure.ie056.message.paragraph1.singular")
+    }
+
+    val paragraph2: String = if (plural) {
+      messages("departure.ie056.message.paragraph2.plural")
+    } else {
+      messages("departure.ie056.message.paragraph2.singular")
+    }
+
+    val hyperlink: Option[String] = businessRejectionType match {
+      case AmendmentRejection   => None
+      case DeclarationRejection => Some(messages("departure.ie056.message.hyperlink"))
+    }
+
+    new RejectionMessageP5ViewModel(
+      title = messages("departure.ie056.message.title"),
+      heading = messages("departure.ie056.message.heading"),
+      caption = ???,
+      paragraph1Prefix = messages("departure.ie056.message.paragraph1.prefix", lrn),
+      paragraph1 = paragraph1,
+      paragraph2 = paragraph2,
+      hyperlink = hyperlink,
+      functionalErrors = functionalErrors,
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfErrorsPerPage,
+      href = href
+    )
   }
 
+  class RejectionMessageP5ViewModelProvider @Inject() {
+
+    def apply(
+      functionalErrors: FunctionalErrorsWithoutSection,
+      lrn: String,
+      businessRejectionType: DepartureBusinessRejectionType,
+      currentPage: Int,
+      numberOfErrorsPerPage: Int,
+      href: Call
+    )(implicit messages: Messages): RejectionMessageP5ViewModel =
+      RejectionMessageP5ViewModel(
+        functionalErrors,
+        lrn,
+        businessRejectionType,
+        currentPage,
+        numberOfErrorsPerPage,
+        href
+      )
+  }
 }

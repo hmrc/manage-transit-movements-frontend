@@ -101,7 +101,7 @@ object ReviewDepartureErrorsP5ViewModel {
       numberOfErrorsPerPage: Int,
       href: Call
     )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel =
-      ReviewDepartureErrorsP5ViewModel.apply(
+      ReviewDepartureErrorsP5ViewModel(
         functionalErrors,
         lrn,
         businessRejectionType,
@@ -110,5 +110,4 @@ object ReviewDepartureErrorsP5ViewModel {
         href
       )
   }
-
 }
