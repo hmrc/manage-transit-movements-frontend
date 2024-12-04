@@ -28,8 +28,6 @@ trait FooViewModel[T] {
   val additionalParams: Seq[(String, String)] = Seq.empty
   val heading: String
 
-  val pageNumber: Int = currentPage // TODO - delete
-
   def results: MetaData = MetaData(items.length, numberOfItemsPerPage, currentPage)
 
   def searchResult(searchParam: Option[String] = None)(implicit messages: Messages): String =

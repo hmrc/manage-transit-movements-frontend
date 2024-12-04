@@ -17,7 +17,7 @@
 package controllers.departureP5.drafts
 
 import config.{FrontendAppConfig, PaginationAppConfig}
-import controllers.actions._
+import controllers.actions.*
 import forms.DeparturesSearchFormProvider
 import models.Sort.SortByCreatedAtDesc
 import models.departure.drafts.{Limit, Skip}
@@ -30,7 +30,6 @@ import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.pagination.PaginationViewModel
 import views.html.departureP5.drafts.DashboardView
 
 import javax.inject.Inject
@@ -111,18 +110,16 @@ class DashboardController @Inject() (
       Some(("sortParams", sortParams.toString))
     ).flatten
 
-    val messages = request2Messages(request)
-
-    val pvm = PaginationViewModel(
-      totalNumberOfItems = drafts.totalMatchingMovements,
-      currentPage = page,
-      numberOfItemsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
-      href = routes.DashboardController.onSubmit(None).url,
-      additionalParams = additionalParams,
-      navigationHiddenText = Some(messages("departure.drafts.dashboard.heading"))
+    AllDraftDeparturesViewModel(
+      drafts,
+      lrn,
+      page,
+      pageSize,
+      routes.DashboardController.onSubmit(None),
+      sortParams,
+      additionalParams,
+      appConfig.p5Departure
     )
-
-    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.p5Departure, pvm, sortParams)
   }
 
 }
