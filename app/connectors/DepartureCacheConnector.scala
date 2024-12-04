@@ -18,7 +18,8 @@ package connectors
 
 import config.FrontendAppConfig
 import generated.FunctionalErrorType04
-import models.FunctionalError
+import models.{FunctionalError, FunctionalErrors}
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.Rejection
 import play.api.Logging
 import play.api.libs.json.{Json, Writes}
@@ -62,13 +63,13 @@ class DepartureCacheConnector @Inject() (
       .execute[HttpResponse]
   }
 
-  def convertErrors(errors: Seq[FunctionalErrorType04])(implicit hc: HeaderCarrier): Future[Seq[FunctionalError]] = {
+  def convertErrors(errors: Seq[FunctionalErrorType04])(implicit hc: HeaderCarrier): Future[FunctionalErrorsWithSection] = {
     import models.FunctionalError.writes
 
     val url = url"$baseUrl/messages/rejection"
     http
       .post(url)
       .withBody(Json.toJson(errors))
-      .execute[Seq[FunctionalError]]
+      .execute[FunctionalErrorsWithSection]
   }
 }

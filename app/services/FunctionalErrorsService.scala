@@ -19,6 +19,9 @@ package services
 import connectors.DepartureCacheConnector
 import generated.FunctionalErrorType04
 import models.FunctionalError
+import models.FunctionalError.*
+import models.FunctionalErrors
+import models.FunctionalErrors.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -29,18 +32,36 @@ class FunctionalErrorsService @Inject() (
   referenceDataService: ReferenceDataService
 ) {
 
-  def convert(functionalErrors: Seq[FunctionalErrorType04])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[FunctionalError]] =
+  def convertErrorsWithSection(
+    functionalErrors: Seq[FunctionalErrorType04]
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FunctionalErrorsWithSection] =
     departureCacheConnector
       .convertErrors(functionalErrors)
       .flatMap {
         errors =>
-          Future.sequence {
-            errors.map {
-              error =>
-                referenceDataService.getFunctionalError(error.error).map {
-                  errorWithDesc => error.copy(error = errorWithDesc.toString)
-                }
+          Future
+            .sequence {
+              errors.value.map {
+                error =>
+                  referenceDataService.getFunctionalError(error.error).map {
+                    errorWithDesc => error.copy(error = errorWithDesc.toString)
+                  }
+              }
             }
-          }
+            .map(FunctionalErrorsWithSection.apply)
       }
+
+  def convertErrorsWithoutSection(
+    functionalErrors: Seq[FunctionalErrorType04]
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FunctionalErrorsWithoutSection] =
+    Future
+      .sequence {
+        functionalErrors.map(FunctionalErrorWithoutSection.apply).map {
+          error =>
+            referenceDataService.getFunctionalError(error.error).map {
+              errorWithDesc => error.copy(error = errorWithDesc.toString)
+            }
+        }
+      }
+      .map(FunctionalErrorsWithoutSection.apply)
 }

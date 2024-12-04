@@ -21,9 +21,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, Pagina
 
 case class PaginationViewModel(
   results: MetaData,
-  previous: Option[PaginationLink],
-  next: Option[PaginationLink],
-  items: Seq[PaginationItem],
+  pagination: Pagination,
   pageNumber: Int
 ) {
 
@@ -40,8 +38,6 @@ case class PaginationViewModel(
       case Some(value) => messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", value)
       case None        => messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
     }
-
-  val pagination: Pagination = Pagination(Some(items), previous, next)
 }
 
 object PaginationViewModel {
@@ -62,25 +58,23 @@ object PaginationViewModel {
         href + s"&$key=$value"
     }
 
+    def attributes(key: String) = navigationHiddenText
+      .map {
+        text => Map("aria-label" -> messages(key, text.toLowerCase))
+      }
+      .getOrElse(Map.empty)
+
     val previous: Option[PaginationLink] = Option.when(currentPage > 1) {
       PaginationLink(
         hrefWithParams(currentPage - 1),
-        attributes = navigationHiddenText
-          .map(
-            text => Map("aria-label" -> messages("pagination.previous.hidden", text.toLowerCase))
-          )
-          .getOrElse(Map.empty)
+        attributes = attributes("pagination.previous.hidden")
       )
     }
 
     val next: Option[PaginationLink] = Option.when(currentPage < results.totalPages) {
       PaginationLink(
         href = hrefWithParams(currentPage + 1),
-        attributes = navigationHiddenText
-          .map(
-            text => Map("aria-label" -> messages("pagination.next.hidden", text.toLowerCase))
-          )
-          .getOrElse(Map.empty)
+        attributes = attributes("pagination.next.hidden")
       )
     }
 
@@ -99,7 +93,9 @@ object PaginationViewModel {
         }
     }
 
-    new PaginationViewModel(results, previous, next, items, currentPage)
+    val pagination = Pagination(Some(items), previous, next)
+
+    new PaginationViewModel(results, pagination, currentPage)
   }
 
 }

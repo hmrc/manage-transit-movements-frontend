@@ -17,42 +17,71 @@
 package models
 
 import generated.FunctionalErrorType04
-import play.api.i18n.Messages
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.html.components.Table
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 
 import scala.annotation.tailrec
 
-case class FunctionalError(
-  error: String,
-  businessRuleId: String,
-  section: Option[String],
-  invalidDataItem: InvalidDataItem,
-  invalidAnswer: Option[String]
-) {
+sealed trait FunctionalError {
+  val error: String
+  val businessRuleId: String
+  val invalidDataItem: InvalidDataItem
+  val invalidAnswer: Option[String]
 
-  def toTableRow: Seq[TableRow] = Seq(
-    TableRow(Text(error)),
-    TableRow(Text(businessRuleId)),
-    TableRow(Text(invalidDataItem.value)),
-    TableRow(Text(invalidAnswer.getOrElse("N/A")))
-  )
-
-  def toDepartureTableRow: Seq[TableRow] = Seq(
-    TableRow(Text(error)),
-    TableRow(Text(businessRuleId)),
-    TableRow(Text(section.getOrElse("N/A"))),
-    TableRow(Text(invalidDataItem.value)),
-    TableRow(Text(invalidAnswer.getOrElse("N/A")))
-  )
+  def toTableRow: Seq[TableRow]
 }
 
 object FunctionalError {
 
-  implicit val reads: Reads[FunctionalError] = Json.reads[FunctionalError]
+  case class FunctionalErrorWithSection(
+    error: String,
+    businessRuleId: String,
+    section: Option[String],
+    invalidDataItem: InvalidDataItem,
+    invalidAnswer: Option[String]
+  ) extends FunctionalError {
+
+    override def toTableRow: Seq[TableRow] = Seq(
+      TableRow(Text(error)),
+      TableRow(Text(businessRuleId)),
+      TableRow(Text(section.getOrElse("N/A"))),
+      TableRow(Text(invalidDataItem.value)),
+      TableRow(Text(invalidAnswer.getOrElse("N/A")))
+    )
+  }
+
+  object FunctionalErrorWithSection {
+
+    implicit val reads: Reads[FunctionalErrorWithSection] = Json.reads[FunctionalErrorWithSection]
+  }
+
+  case class FunctionalErrorWithoutSection(
+    error: String,
+    businessRuleId: String,
+    invalidDataItem: InvalidDataItem,
+    invalidAnswer: Option[String]
+  ) extends FunctionalError {
+
+    override def toTableRow: Seq[TableRow] = Seq(
+      TableRow(Text(error)),
+      TableRow(Text(businessRuleId)),
+      TableRow(Text(invalidDataItem.value)),
+      TableRow(Text(invalidAnswer.getOrElse("N/A")))
+    )
+  }
+
+  object FunctionalErrorWithoutSection {
+
+    def apply(error: FunctionalErrorType04): FunctionalErrorWithoutSection =
+      new FunctionalErrorWithoutSection(
+        error = error.errorCode.toString,
+        businessRuleId = error.errorReason,
+        invalidDataItem = InvalidDataItem(error.errorPointer),
+        invalidAnswer = error.originalAttributeValue
+      )
+  }
 
   implicit val writes: Writes[FunctionalErrorType04] = (
     (__ \ "errorPointer").write[String] and
@@ -62,37 +91,4 @@ object FunctionalError {
   )(
     functionalError => (functionalError.errorPointer, functionalError.errorCode.toString, functionalError.errorReason, functionalError.originalAttributeValue)
   )
-
-  implicit class RichFunctionalErrors(value: Seq[FunctionalError]) {
-
-    def paginate(page: Int, numberOfErrorsPerPage: Int): Seq[FunctionalError] = {
-      val start = (page - 1) * numberOfErrorsPerPage
-      value.slice(start, start + numberOfErrorsPerPage)
-    }
-
-    def toTableOfErrors(implicit messages: Messages): Table = Table(
-      rows = value.map(_.toTableRow),
-      head = Some(
-        Seq(
-          HeadCell(Text(messages("error.table.errorCode"))),
-          HeadCell(Text(messages("error.table.errorReason"))),
-          HeadCell(Text(messages("error.table.pointer"))),
-          HeadCell(Text(messages("error.table.attributeValue")))
-        )
-      )
-    )
-
-    def toTableOfDepartureErrors(implicit messages: Messages): Table = Table(
-      rows = value.map(_.toDepartureTableRow),
-      head = Some(
-        Seq(
-          HeadCell(Text(messages("error.table.errorCode"))),
-          HeadCell(Text(messages("error.table.errorReason"))),
-          HeadCell(Text(messages("error.table.section"))),
-          HeadCell(Text(messages("error.table.pointer"))),
-          HeadCell(Text(messages("error.table.attributeValue")))
-        )
-      )
-    )
-  }
 }

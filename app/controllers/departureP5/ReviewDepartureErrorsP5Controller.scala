@@ -46,7 +46,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        functionalErrorsService.convert(request.messageData.FunctionalError).map {
+        functionalErrorsService.convertErrorsWithSection(request.messageData.FunctionalError).map {
           functionalErrors =>
             val currentPage = page.getOrElse(1)
 
@@ -54,13 +54,15 @@ class ReviewDepartureErrorsP5Controller @Inject() (
             // TODO - can we consolidate some of the pagination config values into one?
 
             val rejectionViewModel = viewModelProvider.apply(
-              functionalErrors.paginate(currentPage, paginationConfig.departuresNumberOfErrorsPerPage),
+              functionalErrors,
               request.referenceNumbers.localReferenceNumber,
-              DepartureBusinessRejectionType(request.messageData)
+              DepartureBusinessRejectionType(request.messageData),
+              currentPage,
+              paginationConfig.departuresNumberOfErrorsPerPage
             )
 
             val paginationViewModel = PaginationViewModel(
-              totalNumberOfItems = functionalErrors.length,
+              totalNumberOfItems = functionalErrors.value.length,
               currentPage = currentPage,
               numberOfItemsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
               href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId).url,

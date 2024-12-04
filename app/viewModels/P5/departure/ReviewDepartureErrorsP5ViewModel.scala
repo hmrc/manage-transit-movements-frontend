@@ -16,86 +16,88 @@
 
 package viewModels.P5.departure
 
-import models.FunctionalError
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.BusinessRejectionType.*
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
-import utils.RejectionMessageP5MessageHelper
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 
 case class ReviewDepartureErrorsP5ViewModel(
-  table: Table,
-  lrn: String,
-  multipleErrors: Boolean,
-  businessRejectionType: DepartureBusinessRejectionType
-) {
-
-  def title(implicit messages: Messages): String = messages("departure.ie056.review.message.title")
-
-  def heading(implicit messages: Messages): String = messages("departure.ie056.review.message.heading")
-
-  def paragraph1Prefix(implicit messages: Messages): String = messages("departure.ie056.review.message.paragraph1.prefix", lrn)
-
-  def paragraph1(implicit messages: Messages): String = businessRejectionType match {
-    case AmendmentRejection   => paragraph1Amendment
-    case DeclarationRejection => paragraph1NoAmendment
-  }
-
-  def paragraph1NoAmendment(implicit messages: Messages): String = if (multipleErrors) {
-    messages(
-      "departure.ie056.review.message.paragraph1.plural"
-    )
-  } else {
-    messages(
-      "departure.ie056.review.message.paragraph1.singular"
-    )
-  }
-
-  def paragraph1Amendment(implicit messages: Messages): String = if (multipleErrors) {
-    messages(
-      "departure.ie056.review.message.paragraph1.amendment.plural"
-    )
-  } else {
-    messages(
-      "departure.ie056.review.message.paragraph1.amendment.singular"
-    )
-  }
-
-  def paragraph2(implicit messages: Messages): String = if (multipleErrors) {
-    messages("departure.ie056.review.message.paragraph2.plural")
-  } else {
-    messages("departure.ie056.review.message.paragraph2.singular")
-  }
-
-  def hyperlink(implicit messages: Messages): Option[String] = businessRejectionType match {
-    case AmendmentRejection   => None
-    case DeclarationRejection => Some(messages("departure.ie056.review.message.hyperlink"))
-  }
-
-}
+  title: String,
+  heading: String,
+  caption: String,
+  paragraph1: String,
+  paragraph2: String,
+  hyperlink: Option[String],
+  table: Table
+)
 
 object ReviewDepartureErrorsP5ViewModel {
 
   def apply(
-    functionalErrors: Seq[FunctionalError],
+    functionalErrors: FunctionalErrorsWithSection,
     lrn: String,
-    businessRejectionType: DepartureBusinessRejectionType
-  )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel =
+    businessRejectionType: DepartureBusinessRejectionType,
+    currentPage: Int,
+    numberOfErrorsPerPage: Int
+  )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel = {
+
+    val multipleErrors: Boolean = functionalErrors.multipleErrors
+
+    val heading: String = messages("departure.ie056.review.message.heading")
+
+    val paragraph1: String = businessRejectionType match {
+      case AmendmentRejection =>
+        if (multipleErrors) {
+          messages("departure.ie056.review.message.paragraph1.amendment.plural")
+        } else {
+          messages("departure.ie056.review.message.paragraph1.amendment.singular")
+        }
+      case DeclarationRejection =>
+        if (multipleErrors) {
+          messages("departure.ie056.review.message.paragraph1.plural")
+        } else {
+          messages("departure.ie056.review.message.paragraph1.singular")
+        }
+    }
+
+    val paragraph2: String = if (multipleErrors) {
+      messages("departure.ie056.review.message.paragraph2.plural")
+    } else {
+      messages("departure.ie056.review.message.paragraph2.singular")
+    }
+
+    val hyperlink: Option[String] = businessRejectionType match {
+      case AmendmentRejection   => None
+      case DeclarationRejection => Some(messages("departure.ie056.review.message.hyperlink"))
+    }
+
     new ReviewDepartureErrorsP5ViewModel(
-      table = functionalErrors.toTableOfDepartureErrors,
-      lrn = lrn,
-      multipleErrors = functionalErrors.length > 1,
-      businessRejectionType = businessRejectionType
+      title = messages("departure.ie056.review.message.title"),
+      heading = heading,
+      caption = messages("departure.messages.caption", lrn),
+      paragraph1 = paragraph1,
+      paragraph2 = paragraph2,
+      hyperlink = hyperlink,
+      table = functionalErrors.paginate(currentPage, numberOfErrorsPerPage).toTable
     )
+  }
 
   class ReviewDepartureErrorsP5ViewModelProvider {
 
     def apply(
-      functionalErrors: Seq[FunctionalError],
+      functionalErrors: FunctionalErrorsWithSection,
       lrn: String,
-      businessRejectionType: DepartureBusinessRejectionType
+      businessRejectionType: DepartureBusinessRejectionType,
+      currentPage: Int,
+      numberOfErrorsPerPage: Int
     )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel =
-      ReviewDepartureErrorsP5ViewModel.apply(functionalErrors, lrn, businessRejectionType)
+      ReviewDepartureErrorsP5ViewModel.apply(
+        functionalErrors,
+        lrn,
+        businessRejectionType,
+        currentPage,
+        numberOfErrorsPerPage
+      )
   }
 
 }

@@ -112,7 +112,7 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
         when(mockReferenceDataService.getFunctionalError(eqTo("14"))(any(), any()))
           .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "bar")))
 
-        val result = service.convert(input).futureValue
+        val result = service.convertErrorsWithSection(input).futureValue
 
         result mustBe expectedResult
       }

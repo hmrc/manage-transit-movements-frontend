@@ -342,7 +342,6 @@ departure.ie056.message.hyperlink = Make another departure declaration
 departure.ie056.review.message.title = Review declaration errors
 departure.ie056.review.message.heading = Review declaration errors
 
-departure.ie056.review.message.paragraph1.prefix = There is a problem with departure declaration {0}.
 departure.ie056.review.message.paragraph1.singular = There is a problem with this declaration. Review the error and make a new declaration with the right information.
 departure.ie056.review.message.paragraph1.plural = There is a problem with this declaration. Review the errors and make a new declaration with the right information.
 departure.ie056.review.message.paragraph1.amendment.singular = There is a problem with this declaration. Review the error and contact the helpdesk to discuss further.
