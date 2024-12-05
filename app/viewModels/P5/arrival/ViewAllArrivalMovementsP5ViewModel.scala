@@ -23,12 +23,12 @@ import viewModels.pagination.PaginationViewModel
 case class ViewAllArrivalMovementsP5ViewModel(
   heading: String,
   title: String,
-  items: Seq[(String, Seq[ViewArrivalP5])],
+  items: Seq[ViewArrivalP5],
   currentPage: Int,
   numberOfItemsPerPage: Int,
   href: Call,
   override val additionalParams: Seq[(String, String)]
-) extends PaginationViewModel[(String, Seq[ViewArrivalP5])]
+) extends PaginationViewModel[ViewArrivalP5]
 
 object ViewAllArrivalMovementsP5ViewModel {
 
@@ -58,7 +58,7 @@ object ViewAllArrivalMovementsP5ViewModel {
     new ViewAllArrivalMovementsP5ViewModel(
       heading,
       title,
-      ViewArrivalMovementsP5(movementsAndMessages).dataRows,
+      movementsAndMessages,
       currentPage,
       numberOfItemsPerPage,
       href,

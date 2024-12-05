@@ -82,6 +82,8 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         viewArrivals <- distinctListWithMaxLength[ViewArrivalP5, LocalDate]()(_.updatedDate)
+        searchParam  <- Gen.option(nonEmptyString)
+        currentPage  <- positiveBigDecimals
       } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, None)
     }
 
@@ -90,16 +92,6 @@ trait ViewModelGenerators {
       for {
         viewArrivals <- distinctListWithMaxLength[ViewDepartureP5, LocalDate]()(_.updatedDate)
       } yield ViewAllDepartureMovementsP5ViewModel(viewArrivals, None)
-    }
-
-  implicit def arbitraryPaginationViewModel(implicit messages: Messages): Arbitrary[PaginationViewModel] =
-    Arbitrary {
-      for {
-        totalNumberOfMovements   <- Gen.choose(0, Int.MaxValue)
-        numberOfMovementsPerPage <- Gen.choose(1, Int.MaxValue)
-        currentPage              <- Gen.choose(1, Int.MaxValue)
-        href                     <- nonEmptyString
-      } yield PaginationViewModel(totalNumberOfMovements, numberOfMovementsPerPage, currentPage, href)
     }
 
   implicit lazy val arbitraryMetaData: Arbitrary[MetaData] =

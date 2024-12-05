@@ -16,11 +16,12 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import viewModels.ViewMovement
+@import viewModels.ViewMovement.RichViewMovements
 
 @this(govukTable: GovukTable)
 
 @(
-  dataRows: Seq[(String, Seq[ViewMovement])],
+  movements: Seq[ViewMovement],
   visuallyHiddenHeader: String,
   rowHeadingUpdated: String,
   rowHeadingReferenceNumber: String,
@@ -38,7 +39,7 @@
   }
 }
 
-@for((date, rows) <- dataRows) {
+@for((date, rows) <- movements.groupByDate) {
 
   <h2 class="govuk-heading-m" data-testrole="movements-list_group-heading">@date</h2>
 
