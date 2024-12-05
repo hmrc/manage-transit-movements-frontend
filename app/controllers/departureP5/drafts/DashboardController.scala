@@ -16,7 +16,7 @@
 
 package controllers.departureP5.drafts
 
-import config.{FrontendAppConfig, PaginationAppConfig}
+import config.PaginationAppConfig
 import controllers.actions.*
 import forms.DeparturesSearchFormProvider
 import models.Sort.SortByCreatedAtDesc
@@ -42,8 +42,7 @@ class DashboardController @Inject() (
   draftDepartureService: DraftDepartureService,
   view: DashboardView,
   formProvider: DeparturesSearchFormProvider,
-  paginationAppConfig: PaginationAppConfig,
-  appConfig: FrontendAppConfig
+  paginationAppConfig: PaginationAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -117,9 +116,7 @@ class DashboardController @Inject() (
       pageSize,
       routes.DashboardController.onSubmit(None),
       sortParams,
-      additionalParams,
-      appConfig.p5Departure
+      additionalParams
     )
   }
-
 }

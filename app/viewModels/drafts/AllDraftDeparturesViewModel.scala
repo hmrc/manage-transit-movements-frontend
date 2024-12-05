@@ -34,68 +34,59 @@ case class AllDraftDeparturesViewModel(
   lrn: Option[String],
   sortParams: Sort = SortByCreatedAtDesc,
   override val additionalParams: Seq[(String, String)],
-  departureFrontendUrl: String,
   href: Call
 ) extends PaginationViewModel[DepartureUserAnswerSummary] {
 
   override val items: Seq[DepartureUserAnswerSummary] = departures.userAnswers
 
-  private val tableMessageKeyPrefix = "departure.drafts.dashboard.table"
+  private val numberOfItems: Int = items.length
 
-  val draftDepartures: Int = departures.userAnswers.length
-
-  def visuallyHiddenHeader(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.heading.hidden")
-
-  def referenceNumber(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.lrn")
-
-  def lrnRedirectLocation(lrn: String): String = s"$departureFrontendUrl/drafts/$lrn"
-
-  def daysToComplete(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete")
-
+  private val tableMessageKeyPrefix                                   = "departure.drafts.dashboard.table"
+  def visuallyHiddenHeader(implicit messages: Messages): String       = messages(s"$tableMessageKeyPrefix.heading.hidden")
+  def referenceNumber(implicit messages: Messages): String            = messages(s"$tableMessageKeyPrefix.lrn")
+  def daysToComplete(implicit messages: Messages): String             = messages(s"$tableMessageKeyPrefix.daysToComplete")
   def daysToCompleteHiddenHeader(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete.header.hidden")
 
   def searchResult(implicit messages: Messages): Option[String] =
     lrn.map {
-      lrn =>
-        draftDepartures match {
-          case 1 => messages("search.results.singular", "<b>1</b>", lrn)
-          case x => messages("search.results.plural", s"<b>$x</b>", lrn)
+      value =>
+        numberOfItems match {
+          case 1 => messages("search.results.singular", "<b>1</b>", value)
+          case x => messages("search.results.plural", s"<b>$x</b>", value)
         }
     }
 
-  def dataRows: Seq[DraftDepartureRow] = departures.userAnswers.map {
-    dd => DraftDepartureRow(dd.lrn.toString, dd.expiresInDays)
-  }
+  def dataRows: Seq[DraftDepartureRow] = items.map(DraftDepartureRow.apply)
 
-  def tooManyResults: Boolean = draftDepartures > numberOfItemsPerPage
-
-  def isSearch: Boolean = lrn.isDefined
-
-  def resultsFound: Boolean = dataRows.nonEmpty
-
-  def searchResultsFound: Boolean = resultsFound && isSearch
-
-  def noResultsFound: Boolean = departures.totalMovements == 0
-
-  def noSearchResultsFound: Boolean = departures.totalMatchingMovements == 0 && departures.totalMovements > 0
+  def tooManyResults: Boolean       = numberOfItems > numberOfItemsPerPage
+  def isSearch: Boolean             = lrn.isDefined
+  def resultsFound: Boolean         = numberOfItems > 0
+  def searchResultsFound: Boolean   = resultsFound && isSearch
+  def noResultsFound: Boolean       = departures.totalMovements == 0
+  def noSearchResultsFound: Boolean = departures.totalMatchingMovements == 0 && !noResultsFound
 
   def sortLrn: String       = sortParams.ariaSort(LRN)
   def sortCreatedAt: String = sortParams.ariaSort(CreatedAt)
 
-  def sortLRNHref(): Call       = sortParams.href(LRN, lrn)
-  def sortCreatedAtHref(): Call = sortParams.href(CreatedAt, lrn)
+  def sortLRNHref: Call       = sortParams.href(LRN, lrn)
+  def sortCreatedAtHref: Call = sortParams.href(CreatedAt, lrn)
 
   def sortHiddenTextLRN(implicit messages: Messages): String            = sortParams.hiddenText(LRN)
   def sortHiddenTextDaysToComplete(implicit messages: Messages): String = sortParams.hiddenText(CreatedAt)
 
   def deleteDraftUrl(draft: DraftDepartureRow): Call =
-    routes.DeleteDraftDepartureYesNoController.onPageLoad(LocalReferenceNumber(draft.lrn), currentPage, departures.userAnswers.length, lrn)
-
+    routes.DeleteDraftDepartureYesNoController.onPageLoad(LocalReferenceNumber(draft.lrn), currentPage, numberOfItems, lrn)
 }
 
 object AllDraftDeparturesViewModel {
 
   case class DraftDepartureRow(lrn: String, daysRemaining: Int)
+
+  object DraftDepartureRow {
+
+    def apply(value: DepartureUserAnswerSummary): DraftDepartureRow =
+      new DraftDepartureRow(value.lrn.toString, value.expiresInDays)
+  }
 
   def apply(
     departures: DeparturesSummary,
@@ -104,8 +95,7 @@ object AllDraftDeparturesViewModel {
     numberOfItemsPerPage: Int,
     href: Call,
     sortParams: Sort,
-    additionalParams: Seq[(String, String)],
-    departureFrontendUrl: String
+    additionalParams: Seq[(String, String)]
   )(implicit messages: Messages): AllDraftDeparturesViewModel = {
 
     val messageKeyPrefix = "departure.drafts.dashboard"
@@ -119,7 +109,6 @@ object AllDraftDeparturesViewModel {
       lrn,
       sortParams,
       additionalParams,
-      departureFrontendUrl,
       href
     )
   }

@@ -292,8 +292,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
         viewModel.sortLrn `mustBe` "ascending"
         viewModel.sortCreatedAt `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortLRNHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
+        viewModel.sortCreatedAtHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
         viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in descending order"
         viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in descending order"
       }
@@ -303,8 +303,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
         viewModel.sortLrn `mustBe` "descending"
         viewModel.sortCreatedAt `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortLRNHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
         viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
         viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in descending order"
       }
@@ -314,8 +314,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
         viewModel.sortCreatedAt `mustBe` "ascending"
         viewModel.sortLrn `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortLRNHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
         viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
         viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in descending order"
       }
@@ -325,8 +325,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
         viewModel.sortCreatedAt `mustBe` "descending"
         viewModel.sortLrn `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
+        viewModel.sortLRNHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
         viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
         viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in ascending order"
       }
@@ -335,8 +335,8 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
         val viewModel = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel)
         viewModel.sortCreatedAt `mustBe` "descending"
         viewModel.sortLrn `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
+        viewModel.sortLRNHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
         viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
         viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in ascending order"
       }
