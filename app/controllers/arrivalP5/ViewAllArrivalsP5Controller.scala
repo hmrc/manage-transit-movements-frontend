@@ -83,9 +83,7 @@ class ViewAllArrivalsP5Controller @Inject() (
               arrivals,
               searchParam,
               currentPage,
-              paginationConfig.arrivalsNumberOfMovements,
-              routes.ViewAllArrivalsP5Controller.onPageLoad(None, None),
-              Seq(searchParam.map("mrn" -> _)).flatten
+              paginationConfig.arrivalsNumberOfMovements
             )
 
             block(view(form, viewModel))

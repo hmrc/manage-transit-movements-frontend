@@ -20,9 +20,10 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import generated.{FunctionalErrorType04, Number12}
 import helper.WireMockServerHandler
-import models.{FunctionalError, InvalidDataItem}
+import models.FunctionalError.FunctionalErrorWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
+import models.InvalidDataItem
 import models.departureP5.BusinessRejectionType.AmendmentRejection
-import models.departureP5.Rejection
 import models.departureP5.Rejection.{IE055Rejection, IE056Rejection}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, JsBoolean, Json}
@@ -152,22 +153,24 @@ class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtur
             .willReturn(okJson(Json.stringify(output)))
         )
 
-        val result: Seq[FunctionalError] = await(connector.convertErrors(input))
+        val result: FunctionalErrorsWithSection = await(connector.convertErrors(input))
 
-        val expectedResult = Seq(
-          FunctionalError(
-            error = "12",
-            businessRuleId = "BR20004",
-            section = Some("Trader details"),
-            invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
-            invalidAnswer = Some("GB635733627000")
-          ),
-          FunctionalError(
-            error = "12",
-            businessRuleId = "BR20005",
-            section = None,
-            invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
-            invalidAnswer = None
+        val expectedResult = FunctionalErrorsWithSection(
+          Seq(
+            FunctionalErrorWithSection(
+              error = "12",
+              businessRuleId = "BR20004",
+              section = Some("Trader details"),
+              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidAnswer = Some("GB635733627000")
+            ),
+            FunctionalErrorWithSection(
+              error = "12",
+              businessRuleId = "BR20005",
+              section = None,
+              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidAnswer = None
+            )
           )
         )
 

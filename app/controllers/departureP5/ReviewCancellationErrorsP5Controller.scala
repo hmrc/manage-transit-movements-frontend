@@ -23,7 +23,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel.ReviewCancellationErrorsP5ViewModelProvider
+import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
 import views.html.departureP5.ReviewCancellationErrorsP5View
 
 import javax.inject.Inject
@@ -34,7 +34,6 @@ class ReviewCancellationErrorsP5Controller @Inject() (
   actions: Actions,
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: ReviewCancellationErrorsP5ViewModelProvider,
   view: ReviewCancellationErrorsP5View,
   functionalErrorsService: FunctionalErrorsService
 )(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
@@ -46,14 +45,12 @@ class ReviewCancellationErrorsP5Controller @Inject() (
       implicit request =>
         functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError).map {
           functionalErrors =>
-            val currentPage = page.getOrElse(1)
-
-            val viewModel = viewModelProvider.apply(
+            val viewModel = ReviewCancellationErrorsP5ViewModel(
               functionalErrors = functionalErrors,
               lrn = request.referenceNumbers.localReferenceNumber,
-              currentPage = currentPage,
+              currentPage = page,
               numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-              href = controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId)
+              href = routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId)
             )
 
             Ok(view(viewModel, departureId))

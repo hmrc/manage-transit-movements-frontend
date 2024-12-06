@@ -18,14 +18,25 @@ package viewModels.pagination
 
 import base.SpecBase
 import generators.Generators
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.PaginationItem
+import play.api.mvc.Call
+import play.api.test.Helpers.GET
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{PaginationItem, PaginationLink}
 
 class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   private def intGen: Gen[Int] = Gen.choose(2, 10: Int)
+
+  private class FakeViewModel(
+    override val items: Seq[String],
+    override val currentPage: Int,
+    override val numberOfItemsPerPage: Int
+  ) extends PaginationViewModel[String] {
+    override val href: Call                              = Call(GET, "href")
+    override val heading: String                         = "Example page heading"
+    override val additionalParams: Seq[(String, String)] = Seq("foo" -> "bar")
+  }
 
   "PaginationViewModel" - {
     "apply" - {
@@ -33,161 +44,200 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       "next" - {
 
         "must return some when current page is less than the total number of pages" in {
-          PaginationViewModel(10, 2, 2, "testHref").next.isDefined `mustBe` true
-        }
-
-        "must pass aria label to next page attribute" in {
-          PaginationViewModel(10, 2, 2, "testHref", Seq.empty, Some("Heading")).next.get.attributes("aria-label") `mustBe` "Next page of heading"
-        }
-
-        "must not pass aria label to next page if template does not exist" in {
-          PaginationViewModel(10, 2, 2, "testHref", Seq.empty, None).next.get.attributes.get("aria-label") `mustBe` None
-        }
-
-        "must pass aria label to previous page attribute" in {
-          PaginationViewModel(10, 2, 2, "testHref", Seq.empty, Some("Heading")).previous.get.attributes("aria-label") `mustBe` "Previous page of heading"
-        }
-
-        "must not pass aria label to previous page if template does not exist" in {
-          PaginationViewModel(10, 2, 2, "testHref", Seq.empty, None).previous.get.attributes.get("aria-label") `mustBe` None
+          val items     = Seq.fill(10: Int)("value")
+          val viewModel = new FakeViewModel(items, 2, 2)
+          val expectedResult = PaginationLink(
+            href = "href?page=3&foo=bar",
+            text = None,
+            labelText = None,
+            attributes = Map("aria-label" -> "Next page of example page heading")
+          )
+          val result = viewModel.pagination.next
+          result.value mustBe expectedResult
         }
 
         "must return None when current page is not less than the total number of pages" in {
-          PaginationViewModel(10, 5, 2, "testHref").next.isDefined `mustBe` false
+          val items     = Seq.fill(10: Int)("value")
+          val viewModel = new FakeViewModel(items, 5, 2)
+          val result    = viewModel.pagination.next
+          result mustBe None
         }
       }
 
       "previous" - {
 
         "must return some when current page is greater than 1" in {
-          PaginationViewModel(10, 2, 2, "testHref").previous.isDefined `mustBe` true
+          val items     = Seq.fill(10: Int)("value")
+          val viewModel = new FakeViewModel(items, 2, 2)
+          val expectedResult = PaginationLink(
+            href = "href?page=1&foo=bar",
+            text = None,
+            labelText = None,
+            attributes = Map("aria-label" -> "Previous page of example page heading")
+          )
+          val result = viewModel.pagination.previous
+          result.value mustBe expectedResult
         }
 
         "must return none when current page is not greater than 1" in {
-          PaginationViewModel(10, 1, 2, "testHref").previous.isDefined `mustBe` false
+          val items     = Seq.fill(10: Int)("value")
+          val viewModel = new FakeViewModel(items, 1, 2)
+          val result    = viewModel.pagination.previous
+          result mustBe None
         }
       }
 
       "items" - {
 
-        "must return [1] 2 … 100 when on page 1 of 100" in {
-          val result = PaginationViewModel(1000, 1, 10, "href").items
-
-          result `mustBe` Seq(
+        "must return [1] 2 … 10 when on page 1 of 10" in {
+          val items     = Seq.fill(100: Int)("value")
+          val viewModel = new FakeViewModel(items, 1, 10)
+          val expectedResult = Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(true)),
             PaginationItem(s"href?page=2", Some("2"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=100", Some("100"), current = Some(false))
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
+          val result = viewModel.pagination.items
+          result.value mustBe expectedResult
         }
 
-        "must return 1 [2] 3 … 100 when on page 2 of 100" in {
-          val result = PaginationViewModel(1000, 2, 10, "href").items
-
-          result `mustBe` Seq(
+        "must return 1 [2] 3 … 10 when on page 2 of 10" in {
+          val items     = Seq.fill(100: Int)("value")
+          val viewModel = new FakeViewModel(items, 2, 10)
+          val expectedResult = Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem(s"href?page=2", Some("2"), current = Some(true)),
             PaginationItem(s"href?page=3", Some("3"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=100", Some("100"), current = Some(false))
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
+          val result = viewModel.pagination.items
+          result.value mustBe expectedResult
         }
 
-        "must return 1 2 [3] 4 … 100 when on page 3 of 100" in {
-          val result = PaginationViewModel(1000, 3, 10, "href").items
-
-          result `mustBe` Seq(
+        "must return 1 2 [3] 4 … 10 when on page 3 of 10" in {
+          val items     = Seq.fill(100: Int)("value")
+          val viewModel = new FakeViewModel(items, 3, 10)
+          val expectedResult = Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem(s"href?page=2", Some("2"), current = Some(false)),
             PaginationItem(s"href?page=3", Some("3"), current = Some(true)),
             PaginationItem(s"href?page=4", Some("4"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=100", Some("100"), current = Some(false))
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
+          val result = viewModel.pagination.items
+          result.value mustBe expectedResult
         }
 
-        "must return 1 … 3 [4] 5 … 100 when on page 4 of 100" in {
-          val result = PaginationViewModel(1000, 4, 10, "href").items
-
-          result `mustBe` Seq(
+        "must return 1 … 3 [4] 5 … 10 when on page 4 of 10" in {
+          val items     = Seq.fill(100: Int)("value")
+          val viewModel = new FakeViewModel(items, 4, 10)
+          val expectedResult = Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
             PaginationItem(s"href?page=3", Some("3"), current = Some(false)),
             PaginationItem(s"href?page=4", Some("4"), current = Some(true)),
             PaginationItem(s"href?page=5", Some("5"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=100", Some("100"), current = Some(false))
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
+          val result = viewModel.pagination.items
+          result.value mustBe expectedResult
         }
 
-        "must return 1 … 97 [98] 99 100 when on page 98 of 100" in {
-          val result = PaginationViewModel(1000, 98, 10, "href").items
-
-          result `mustBe` Seq(
+        "must return 1 … 7 [8] 9 10 when on page 8 of 10" in {
+          val items     = Seq.fill(100: Int)("value")
+          val viewModel = new FakeViewModel(items, 8, 10)
+          val expectedResult = Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=97", Some("97"), current = Some(false)),
-            PaginationItem(s"href?page=98", Some("98"), current = Some(true)),
-            PaginationItem(s"href?page=99", Some("99"), current = Some(false)),
-            PaginationItem(s"href?page=100", Some("100"), current = Some(false))
+            PaginationItem(s"href?page=7", Some("7"), current = Some(false)),
+            PaginationItem(s"href?page=8", Some("8"), current = Some(true)),
+            PaginationItem(s"href?page=9", Some("9"), current = Some(false)),
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
+          val result = viewModel.pagination.items
+          result.value mustBe expectedResult
         }
 
-        "must return 1 … 98 [99] 100 when on page 99 of 100" in {
-          val result = PaginationViewModel(1000, 99, 10, "href").items
-
-          result `mustBe` Seq(
+        "must return 1 … 8 [9] 10 when on page 9 of 10" in {
+          val items     = Seq.fill(100: Int)("value")
+          val viewModel = new FakeViewModel(items, 9, 10)
+          val expectedResult = Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=98", Some("98"), current = Some(false)),
-            PaginationItem(s"href?page=99", Some("99"), current = Some(true)),
-            PaginationItem(s"href?page=100", Some("100"), current = Some(false))
+            PaginationItem(s"href?page=8", Some("8"), current = Some(false)),
+            PaginationItem(s"href?page=9", Some("9"), current = Some(true)),
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
+          val result = viewModel.pagination.items
+          result.value mustBe expectedResult
         }
 
-        "must return 1 … 99 [100] when on page 100 of 100" in {
-          val result = PaginationViewModel(1000, 100, 10, "href").items
-
-          result `mustBe` Seq(
+        "must return 1 … 9 [10] when on page 10 of 10" in {
+          val items     = Seq.fill(100: Int)("value")
+          val viewModel = new FakeViewModel(items, 10, 10)
+          val expectedResult = Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=99", Some("99"), current = Some(false)),
-            PaginationItem(s"href?page=100", Some("100"), current = Some(true))
+            PaginationItem(s"href?page=9", Some("9"), current = Some(false)),
+            PaginationItem(s"href?page=10", Some("10"), current = Some(true))
           )
+          val result = viewModel.pagination.items
+          result.value mustBe expectedResult
         }
 
         "must return 1 [2] 3 when on page 2 of 3" in {
-          val result = PaginationViewModel(30, 2, 10, "href").items
-
-          result `mustBe` Seq(
+          val items     = Seq.fill(30: Int)("value")
+          val viewModel = new FakeViewModel(items, 2, 10)
+          val expectedResult = Seq(
             PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem(s"href?page=2", Some("2"), current = Some(true)),
             PaginationItem(s"href?page=3", Some("3"), current = Some(false))
           )
+          val result = viewModel.pagination.items
+          result.value mustBe expectedResult
         }
       }
 
       "searchResult" - {
         "must show how many results found" - {
           "when 1 result found" in {
-            forAll(arbitrary[PaginationViewModel]) {
-              viewModel =>
-                val result = viewModel
-                  .copy(results = viewModel.results.copy(count = 1))
-                  .searchResult(None)
+            val items     = Seq("value")
+            val viewModel = new FakeViewModel(items, 1, 10)
+            val result    = viewModel.searchResult(None)
+            result mustBe "Showing <b>1</b> result"
+          }
 
-                result `mustBe` "Showing <b>1</b> result"
+          "when 1 search result found" in {
+            forAll(nonEmptyString) {
+              search =>
+                val items     = Seq("value")
+                val viewModel = new FakeViewModel(items, 1, 10)
+                val result    = viewModel.searchResult(Some(search))
+                result mustBe s"Showing <b>1</b> result matching $search"
             }
           }
 
           "when multiple results found" in {
-            forAll(arbitrary[PaginationViewModel], intGen) {
-              (viewModel, count) =>
-                val result = viewModel
-                  .copy(results = viewModel.results.copy(count = count))
-                  .searchResult(None)
+            forAll(intGen) {
+              count =>
+                val items     = Seq.fill(count)("value")
+                val viewModel = new FakeViewModel(items, 1, 10)
+                val result    = viewModel.searchResult(None)
+                result mustBe s"Showing <b>$count</b> results"
+            }
+          }
 
-                result `mustBe` s"Showing <b>$count</b> results"
+          "when multiple search results found" in {
+            forAll(intGen, nonEmptyString) {
+              (count, search) =>
+                val items     = Seq.fill(count)("value")
+                val viewModel = new FakeViewModel(items, 1, 10)
+                val result    = viewModel.searchResult(Some(search))
+                result mustBe s"Showing <b>$count</b> result matching $search"
             }
           }
         }
@@ -195,17 +245,22 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
       "paginatedSearchResult" - {
         "must show how many results found" in {
-          forAll(arbitrary[PaginationViewModel], intGen, intGen, intGen) {
-            (viewModel, from, to, count) =>
-              val result = viewModel
-                .copy(results = viewModel.results.copy(from = from, to = to, count = count))
-                .paginatedSearchResult(None)
+          val items     = Seq.fill(30: Int)("value")
+          val viewModel = new FakeViewModel(items, 2, 10)
+          val result    = viewModel.paginatedSearchResult(None)
+          result mustBe s"Showing <b>11</b> to <b>20</b> of <b>30</b> results"
+        }
 
-              result `mustBe` s"Showing <b>$from</b> to <b>$to</b> of <b>$count</b> results"
+        "must show how many search results found" in {
+          forAll(nonEmptyString) {
+            search =>
+              val items     = Seq.fill(30: Int)("value")
+              val viewModel = new FakeViewModel(items, 2, 10)
+              val result    = viewModel.paginatedSearchResult(Some(search))
+              result mustBe s"Showing <b>11</b> to <b>20</b> of <b>30</b> results matching $search"
           }
         }
       }
     }
   }
-
 }

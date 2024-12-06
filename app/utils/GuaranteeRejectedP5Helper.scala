@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
+// TODO - refactor
 class GuaranteeRejectedP5Helper(guaranteeReferences: Seq[GuaranteeReferenceType08], referenceDataService: ReferenceDataService)(implicit
   messages: Messages,
   hc: HeaderCarrier,

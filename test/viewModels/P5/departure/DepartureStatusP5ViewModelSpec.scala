@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.departure
 
 import base.SpecBase
 import config.FrontendAppConfig
@@ -26,7 +26,6 @@ import models.departureP5.DepartureMessageType.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.test.Helpers.running
-import viewModels.P5.departure.DepartureStatusP5ViewModel
 import viewModels.ViewMovementAction
 
 import java.time.LocalDateTime

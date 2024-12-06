@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.departure
 
 import base.SpecBase
 import generated.CC051CType
@@ -22,7 +22,6 @@ import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
-import viewModels.P5.departure.GoodsNotReleasedP5ViewModel
 import viewModels.P5.departure.GoodsNotReleasedP5ViewModel.GoodsNotReleasedP5ViewModelProvider
 
 class GoodsNotReleasedP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {

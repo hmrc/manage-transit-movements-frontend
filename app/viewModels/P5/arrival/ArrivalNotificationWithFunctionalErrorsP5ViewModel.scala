@@ -22,8 +22,6 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.pagination.ErrorPaginationViewModel
 
-import javax.inject.Inject
-
 case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(
   title: String,
   heading: String,
@@ -43,7 +41,7 @@ object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
   def apply(
     functionalErrors: FunctionalErrorsWithoutSection,
     mrn: String,
-    currentPage: Int,
+    currentPage: Option[Int],
     numberOfErrorsPerPage: Int,
     href: Call
   )(implicit messages: Messages): ArrivalNotificationWithFunctionalErrorsP5ViewModel = {
@@ -71,27 +69,9 @@ object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
       paragraph3 = paragraph3,
       hyperlink = messages("arrival.ie057.review.notification.message.hyperlink"),
       functionalErrors = functionalErrors,
-      currentPage = currentPage,
+      currentPage = currentPage.getOrElse(1),
       numberOfItemsPerPage = numberOfErrorsPerPage,
       href = href
     )
-  }
-
-  class ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider @Inject() {
-
-    def apply(
-      functionalErrors: FunctionalErrorsWithoutSection,
-      mrn: String,
-      currentPage: Int,
-      numberOfErrorsPerPage: Int,
-      href: Call
-    )(implicit messages: Messages): ArrivalNotificationWithFunctionalErrorsP5ViewModel =
-      ArrivalNotificationWithFunctionalErrorsP5ViewModel(
-        functionalErrors,
-        mrn,
-        currentPage,
-        numberOfErrorsPerPage,
-        href
-      )
   }
 }

@@ -83,9 +83,7 @@ class ViewAllDeparturesP5Controller @Inject() (
               departures,
               searchParam,
               currentPage,
-              paginationConfig.departuresNumberOfMovements,
-              routes.ViewAllDeparturesP5Controller.onPageLoad(None, None),
-              Seq(searchParam.map("lrn" -> _)).flatten
+              paginationConfig.departuresNumberOfMovements
             )
 
             block(view(form, viewModel))

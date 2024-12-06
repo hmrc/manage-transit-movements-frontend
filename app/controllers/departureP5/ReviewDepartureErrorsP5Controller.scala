@@ -16,7 +16,7 @@
 
 package controllers.departureP5
 
-import config.{FrontendAppConfig, PaginationAppConfig}
+import config.PaginationAppConfig
 import controllers.actions.*
 import generated.{CC056CType, Generated_CC056CTypeFormat}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
@@ -24,7 +24,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
+import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 import views.html.departureP5.ReviewDepartureErrorsP5View
 
 import javax.inject.Inject
@@ -35,10 +35,10 @@ class ReviewDepartureErrorsP5Controller @Inject() (
   actions: Actions,
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: ReviewDepartureErrorsP5ViewModelProvider,
   view: ReviewDepartureErrorsP5View,
-  functionalErrorsService: FunctionalErrorsService
-)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
+  functionalErrorsService: FunctionalErrorsService,
+  paginationConfig: PaginationAppConfig
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -47,15 +47,13 @@ class ReviewDepartureErrorsP5Controller @Inject() (
       implicit request =>
         functionalErrorsService.convertErrorsWithSection(request.messageData.FunctionalError).map {
           functionalErrors =>
-            val currentPage = page.getOrElse(1) // TODO - can the getOrElse be moved to the view model?
-
-            val viewModel = viewModelProvider.apply(
+            val viewModel = ReviewDepartureErrorsP5ViewModel(
               functionalErrors = functionalErrors,
               lrn = request.referenceNumbers.localReferenceNumber,
               businessRejectionType = DepartureBusinessRejectionType(request.messageData),
-              currentPage = currentPage,
+              currentPage = page,
               numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-              href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId)
+              href = routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId)
             )
 
             Ok(view(viewModel, departureId, request.referenceNumbers.movementReferenceNumber))

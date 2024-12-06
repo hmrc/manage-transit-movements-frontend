@@ -16,6 +16,7 @@
 
 package viewModels.P5.departure
 
+import controllers.departureP5.routes
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.pagination.PaginationViewModel
@@ -26,9 +27,11 @@ case class ViewAllDepartureMovementsP5ViewModel(
   items: Seq[ViewDepartureP5],
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  href: Call,
   override val additionalParams: Seq[(String, String)]
-) extends PaginationViewModel[ViewDepartureP5]
+) extends PaginationViewModel[ViewDepartureP5] {
+
+  override val href: Call = routes.ViewAllDeparturesP5Controller.onPageLoad(None, None)
+}
 
 object ViewAllDepartureMovementsP5ViewModel {
 
@@ -36,9 +39,7 @@ object ViewAllDepartureMovementsP5ViewModel {
     movementsAndMessages: Seq[ViewDepartureP5],
     searchParam: Option[String],
     currentPage: Int,
-    numberOfItemsPerPage: Int,
-    href: Call,
-    additionalParams: Seq[(String, String)]
+    numberOfItemsPerPage: Int
   )(implicit messages: Messages): ViewAllDepartureMovementsP5ViewModel = {
     val heading: String = searchParam match {
       case Some(value) =>
@@ -54,13 +55,14 @@ object ViewAllDepartureMovementsP5ViewModel {
         messages("viewDepartureDeclarationsP5.title")
     }
 
+    val additionalParams = Seq(searchParam.map("lrn" -> _)).flatten
+
     new ViewAllDepartureMovementsP5ViewModel(
       heading,
       title,
       movementsAndMessages,
       currentPage,
       numberOfItemsPerPage,
-      href,
       additionalParams
     )
   }

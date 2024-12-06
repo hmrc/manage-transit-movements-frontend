@@ -21,6 +21,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 
 trait PaginationViewModel[T] {
+
   val items: Seq[T]
   val currentPage: Int
   val numberOfItemsPerPage: Int
@@ -45,12 +46,13 @@ trait PaginationViewModel[T] {
     }
 
   def pagination(implicit messages: Messages): Pagination = {
+    // TODO - could we change href type to Int => Call and pass in the page?
     def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"${href.url}?page=$page") {
       case (href, (key, value)) =>
         href + s"&$key=$value"
     }
 
-    def attributes(key: String) =
+    def attributes(key: String): Map[String, String] =
       Map("aria-label" -> messages(key, heading.toLowerCase))
 
     val previous: Option[PaginationLink] = Option.when(currentPage > 1) {

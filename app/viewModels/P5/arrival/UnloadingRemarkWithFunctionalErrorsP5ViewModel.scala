@@ -22,8 +22,6 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.pagination.ErrorPaginationViewModel
 
-import javax.inject.Inject
-
 case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(
   title: String,
   heading: String,
@@ -42,7 +40,7 @@ object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
   def apply(
     functionalErrors: FunctionalErrorsWithoutSection,
     mrn: String,
-    currentPage: Int,
+    currentPage: Option[Int],
     numberOfErrorsPerPage: Int,
     href: Call
   )(implicit messages: Messages): UnloadingRemarkWithFunctionalErrorsP5ViewModel = {
@@ -69,27 +67,9 @@ object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
       paragraph2 = paragraph2,
       hyperlink = messages("arrival.ie057.review.unloading.message.hyperlink"),
       functionalErrors = functionalErrors,
-      currentPage = currentPage,
+      currentPage = currentPage.getOrElse(1),
       numberOfItemsPerPage = numberOfErrorsPerPage,
       href = href
     )
-  }
-
-  class UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider @Inject() {
-
-    def apply(
-      functionalErrors: FunctionalErrorsWithoutSection,
-      mrn: String,
-      currentPage: Int,
-      numberOfErrorsPerPage: Int,
-      href: Call
-    )(implicit messages: Messages): UnloadingRemarkWithFunctionalErrorsP5ViewModel =
-      UnloadingRemarkWithFunctionalErrorsP5ViewModel(
-        functionalErrors,
-        mrn,
-        currentPage,
-        numberOfErrorsPerPage,
-        href
-      )
   }
 }

@@ -23,8 +23,6 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.pagination.ErrorPaginationViewModel
 
-import javax.inject.Inject
-
 case class RejectionMessageP5ViewModel(
   title: String,
   heading: String,
@@ -45,7 +43,7 @@ object RejectionMessageP5ViewModel {
     functionalErrors: FunctionalErrorsWithoutSection,
     lrn: String,
     businessRejectionType: DepartureBusinessRejectionType,
-    currentPage: Int,
+    currentPage: Option[Int],
     numberOfErrorsPerPage: Int,
     href: Call
   )(implicit messages: Messages): RejectionMessageP5ViewModel = {
@@ -77,35 +75,15 @@ object RejectionMessageP5ViewModel {
     new RejectionMessageP5ViewModel(
       title = messages("departure.ie056.message.title"),
       heading = messages("departure.ie056.message.heading"),
-      caption = ???,
+      caption = messages("departure.messages.caption", lrn),
       paragraph1Prefix = messages("departure.ie056.message.paragraph1.prefix", lrn),
       paragraph1 = paragraph1,
       paragraph2 = paragraph2,
       hyperlink = hyperlink,
       functionalErrors = functionalErrors,
-      currentPage = currentPage,
+      currentPage = currentPage.getOrElse(1),
       numberOfItemsPerPage = numberOfErrorsPerPage,
       href = href
     )
-  }
-
-  class RejectionMessageP5ViewModelProvider @Inject() {
-
-    def apply(
-      functionalErrors: FunctionalErrorsWithoutSection,
-      lrn: String,
-      businessRejectionType: DepartureBusinessRejectionType,
-      currentPage: Int,
-      numberOfErrorsPerPage: Int,
-      href: Call
-    )(implicit messages: Messages): RejectionMessageP5ViewModel =
-      RejectionMessageP5ViewModel(
-        functionalErrors,
-        lrn,
-        businessRejectionType,
-        currentPage,
-        numberOfErrorsPerPage,
-        href
-      )
   }
 }

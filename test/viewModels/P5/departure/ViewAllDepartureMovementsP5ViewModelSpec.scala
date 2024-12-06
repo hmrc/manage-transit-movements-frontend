@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.departure
 
 import base.SpecBase
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.departure.ViewAllDepartureMovementsP5ViewModel
 
 class ViewAllDepartureMovementsP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "Display correct title" - {
 
     "When searchParam provided" in {
-      val viewModel = new ViewAllDepartureMovementsP5ViewModel(Seq.empty, Some("LRN123"))
+      val viewModel = ViewAllDepartureMovementsP5ViewModel(Seq.empty, Some("LRN123"), 1, 20)
 
-      viewModel.pageTitle `mustBe` "Search results for ‘LRN123’ - Departure declarations"
+      viewModel.title mustEqual "Search results for ‘LRN123’ - Departure declarations"
     }
 
     "When searchParam not provided" in {
-      val viewModel = new ViewAllDepartureMovementsP5ViewModel(Seq.empty, None)
+      val viewModel = ViewAllDepartureMovementsP5ViewModel(Seq.empty, None, 1, 20)
 
-      viewModel.pageTitle `mustBe` "Departure declarations"
+      viewModel.title mustEqual "Departure declarations"
     }
 
   }
@@ -42,17 +41,15 @@ class ViewAllDepartureMovementsP5ViewModelSpec extends SpecBase with Generators 
   "Display correct heading" - {
 
     "When searchParam provided" in {
-      val viewModel = new ViewAllDepartureMovementsP5ViewModel(Seq.empty, Some("LRN123"))
+      val viewModel = ViewAllDepartureMovementsP5ViewModel(Seq.empty, Some("LRN123"), 1, 20)
 
-      viewModel.pageHeading `mustBe` "Search results for ‘LRN123’ - Departure declarations"
+      viewModel.heading mustEqual "Search results for ‘LRN123’ - Departure declarations"
     }
 
     "When searchParam not provided" in {
-      val viewModel = new ViewAllDepartureMovementsP5ViewModel(Seq.empty, None)
+      val viewModel = ViewAllDepartureMovementsP5ViewModel(Seq.empty, None, 1, 20)
 
-      viewModel.pageTitle `mustBe` "Departure declarations"
+      viewModel.title mustEqual "Departure declarations"
     }
-
   }
-
 }

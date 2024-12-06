@@ -22,8 +22,6 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.pagination.ErrorPaginationViewModel
 
-import javax.inject.Inject
-
 case class ReviewPrelodgedDeclarationErrorsP5ViewModel(
   title: String,
   heading: String,
@@ -42,7 +40,7 @@ object ReviewPrelodgedDeclarationErrorsP5ViewModel {
   def apply(
     functionalErrors: FunctionalErrorsWithoutSection,
     lrn: String,
-    currentPage: Int,
+    currentPage: Option[Int],
     numberOfErrorsPerPage: Int,
     href: Call
   )(implicit messages: Messages): ReviewPrelodgedDeclarationErrorsP5ViewModel = {
@@ -69,27 +67,9 @@ object ReviewPrelodgedDeclarationErrorsP5ViewModel {
       paragraph2 = paragraph2,
       hyperlink = messages("prelodged.declaration.ie056.review.message.hyperlink"),
       functionalErrors = functionalErrors,
-      currentPage = currentPage,
+      currentPage = currentPage.getOrElse(1),
       numberOfItemsPerPage = numberOfErrorsPerPage,
       href = href
     )
-  }
-
-  class ReviewPrelodgedDeclarationErrorsP5ViewModelProvider @Inject() {
-
-    def apply(
-      functionalErrors: FunctionalErrorsWithoutSection,
-      lrn: String,
-      currentPage: Int,
-      numberOfErrorsPerPage: Int,
-      href: Call
-    )(implicit messages: Messages): ReviewPrelodgedDeclarationErrorsP5ViewModel =
-      ReviewPrelodgedDeclarationErrorsP5ViewModel(
-        functionalErrors,
-        lrn,
-        currentPage,
-        numberOfErrorsPerPage,
-        href
-      )
   }
 }

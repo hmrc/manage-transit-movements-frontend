@@ -14,42 +14,41 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.departure
 
 import base.SpecBase
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel
-import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel.UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider
+import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel.CancellationNotificationErrorsP5ViewModelProvider
 
-class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  "UnloadingRemarkWithoutFunctionalErrorsP5ViewModel" - {
+  "CancellationNotificationErrorsP5ViewModel" - {
 
-    val mrn                = "AB123"
+    val lrn                = "AB123"
     val customsReferenceId = "CD123"
 
-    val viewModelProvider = new UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider()
+    val viewModelProvider = new CancellationNotificationErrorsP5ViewModelProvider()
 
-    def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): UnloadingRemarkWithoutFunctionalErrorsP5ViewModel =
-      viewModelProvider.apply(mrn, customsOffice)
+    def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): CancellationNotificationErrorsP5ViewModel =
+      viewModelProvider.apply(lrn, customsOffice)
 
     "title" - {
       "must return correct message" in {
-        viewModel().title `mustBe` "Unloading remarks errors"
+        viewModel().title `mustBe` "Cancellation errors"
       }
     }
 
     "heading" - {
       "must return correct message" in {
-        viewModel().title `mustBe` "Unloading remarks errors"
+        viewModel().title `mustBe` "Cancellation errors"
       }
     }
 
     "paragraph1" - {
-      "must return correct message" in {
-        viewModel().paragraph1 `mustBe` s"There are one or more errors with the unloading remarks for this notification."
+      "must return correct message when no error" in {
+        viewModel().paragraph1 `mustBe` s"There are one or more errors with the cancellation of this declaration."
       }
     }
 
@@ -57,8 +56,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
 
       "when no customs office found" - {
         "must return correct message" in {
-          viewModel().customsOfficeContent mustBe
-            s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId."
+          viewModel().customsOfficeContent `mustBe` s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
         }
       }
 
@@ -68,7 +66,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
-          result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
+          result `mustBe` s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
       }
 
@@ -77,7 +75,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
           val customsOfficeName = "custName"
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
-          result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName."
+          result `mustBe` s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName."
         }
       }
 
@@ -87,7 +85,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
-          result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
+          result `mustBe` s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
       }
 
@@ -96,14 +94,14 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
           val customsOfficeName = ""
           val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
-          result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId."
+          result `mustBe` s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
         }
       }
     }
 
     "hyperlink" - {
       "must return correct message" in {
-        viewModel().hyperlink `mustBe` "View arrival notifications"
+        viewModel().hyperlink `mustBe` "View departure declarations"
       }
     }
   }

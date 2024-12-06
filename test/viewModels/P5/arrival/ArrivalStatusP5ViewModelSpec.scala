@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.arrival
 
 import base.SpecBase
 import cats.data.NonEmptyList
@@ -23,7 +23,6 @@ import models.MessageStatus
 import models.arrivalP5.*
 import models.arrivalP5.ArrivalMessageType.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.arrival.ArrivalStatusP5ViewModel
 import viewModels.ViewMovementAction
 
 import java.time.LocalDateTime

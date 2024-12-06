@@ -25,10 +25,11 @@
     button: Button,
     pagination: Pagination,
     formHelper: FormWithCSRF,
-    helpdeskLink: HelpdeskLink
+    helpdeskLink: HelpdeskLink,
+    config: FrontendAppConfig
 )
 
-@(viewModel: ReviewPrelodgedDeclarationErrorsP5ViewModel, departureId: String)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+@(viewModel: ReviewPrelodgedDeclarationErrorsP5ViewModel, departureId: String)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,

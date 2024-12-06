@@ -26,10 +26,9 @@ import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.DraftDepartureService
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.pagination.PaginationViewModel
 import views.html.departureP5.drafts.DashboardView
 
 import java.time.LocalDateTime
@@ -54,34 +53,33 @@ class DashboardControllerSpec extends SpecBase {
   "DraftDashboard Controller" - {
 
     "GET" - {
-      "must return OK and the correct view when a pagedDepartureSummary is returned" in {
+      "must return OK and the correct view" - {
+        "when no sort param is passed" in {
 
-        val draftDeparture =
-          DeparturesSummary(
-            2,
-            2,
-            List(
-              DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
-              DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+          val draftDeparture =
+            DeparturesSummary(
+              2,
+              2,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+                DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+              )
             )
-          )
 
-        when(draftDepartureService.getPagedDepartureSummary(Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
+          when(draftDepartureService.getPagedDepartureSummary(Limit(any()), Skip(any()))(any()))
+            .thenReturn(Future.successful(Option(draftDeparture)))
 
-        val request = FakeRequest(GET, draftDashboardGetRoute)
-        val result  = route(app, request).value
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
 
-        val view                = injector.instanceOf[DashboardView]
-        val paginationViewModel = PaginationViewModel(draftDeparture.userAnswers.length, 1, 2, "test")
-        val viewModel =
-          AllDraftDeparturesViewModel(draftDeparture, draftDeparture.userAnswers.length, None, frontendAppConfig.p5Departure, paginationViewModel)
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 2, None)
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(form, viewModel)(request, messages).toString
-      }
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form, viewModel)(request, messages).toString
+        }
 
-      "must return OK correct VIEW for a get" - {
         "when sortParam lrn.asc is passed" in {
           val sortParam = SortByLRNAsc
 
@@ -99,31 +97,20 @@ class DashboardControllerSpec extends SpecBase {
               )
             )
 
-          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
+          when(draftDepartureService.sortDraftDepartures(any(), Limit(any()), Skip(any()))(any()))
+            .thenReturn(Future.successful(Option(draftDeparture)))
 
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
-          val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = PaginationViewModel(draftDeparture.userAnswers.length,
-                                                        1,
-                                                        4,
-                                                        routes.DashboardController.onSubmit(None).url,
-                                                        Seq(("sortParams", sortParam.convertParams))
-          )
-          val viewModel =
-            AllDraftDeparturesViewModel(draftDeparture,
-                                        draftDeparture.userAnswers.length,
-                                        None,
-                                        frontendAppConfig.p5Departure,
-                                        paginationViewModel,
-                                        sortParams = sortParam
-            )
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
             view(form, viewModel)(request, messages).toString
         }
+
         "when sortParam lrn.desc is passed" in {
           val sortParam = SortByLRNDesc
 
@@ -146,21 +133,8 @@ class DashboardControllerSpec extends SpecBase {
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
-          val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = PaginationViewModel(draftDeparture.userAnswers.length,
-                                                        1,
-                                                        4,
-                                                        routes.DashboardController.onSubmit(None).url,
-                                                        Seq(("sortParams", sortParam.convertParams))
-          )
-          val viewModel =
-            AllDraftDeparturesViewModel(draftDeparture,
-                                        draftDeparture.userAnswers.length,
-                                        None,
-                                        frontendAppConfig.p5Departure,
-                                        paginationViewModel,
-                                        sortParams = sortParam
-            )
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -188,21 +162,8 @@ class DashboardControllerSpec extends SpecBase {
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
-          val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = PaginationViewModel(draftDeparture.userAnswers.length,
-                                                        1,
-                                                        4,
-                                                        routes.DashboardController.onSubmit(None).url,
-                                                        Seq(("sortParams", sortParam.convertParams))
-          )
-          val viewModel =
-            AllDraftDeparturesViewModel(draftDeparture,
-                                        draftDeparture.userAnswers.length,
-                                        None,
-                                        frontendAppConfig.p5Departure,
-                                        paginationViewModel,
-                                        sortParams = sortParam
-            )
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -230,21 +191,8 @@ class DashboardControllerSpec extends SpecBase {
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
-          val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = PaginationViewModel(draftDeparture.userAnswers.length,
-                                                        1,
-                                                        4,
-                                                        routes.DashboardController.onSubmit(None).url,
-                                                        Seq(("sortParams", sortParam.convertParams))
-          )
-          val viewModel =
-            AllDraftDeparturesViewModel(draftDeparture,
-                                        draftDeparture.userAnswers.length,
-                                        None,
-                                        frontendAppConfig.p5Departure,
-                                        paginationViewModel,
-                                        sortParams = sortParam
-            )
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -272,24 +220,8 @@ class DashboardControllerSpec extends SpecBase {
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
-          val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = PaginationViewModel(
-            draftDeparture.userAnswers.length,
-            1,
-            4,
-            routes.DashboardController.onSubmit(None).url,
-            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams))
-          )
-
-          val viewModel =
-            AllDraftDeparturesViewModel(
-              draftDeparture,
-              draftDeparture.userAnswers.length,
-              Some(lrn),
-              frontendAppConfig.p5Departure,
-              paginationViewModel,
-              sortParams = sortParam
-            )
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -316,24 +248,8 @@ class DashboardControllerSpec extends SpecBase {
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
-          val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = PaginationViewModel(
-            draftDeparture.userAnswers.length,
-            1,
-            4,
-            routes.DashboardController.onSubmit(None).url,
-            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams))
-          )
-
-          val viewModel =
-            AllDraftDeparturesViewModel(
-              draftDeparture,
-              draftDeparture.userAnswers.length,
-              Some(lrn),
-              frontendAppConfig.p5Departure,
-              paginationViewModel,
-              sortParams = sortParam
-            )
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -360,24 +276,8 @@ class DashboardControllerSpec extends SpecBase {
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
-          val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = PaginationViewModel(
-            draftDeparture.userAnswers.length,
-            1,
-            4,
-            routes.DashboardController.onSubmit(None).url,
-            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams))
-          )
-
-          val viewModel =
-            AllDraftDeparturesViewModel(
-              draftDeparture,
-              draftDeparture.userAnswers.length,
-              Some(lrn),
-              frontendAppConfig.p5Departure,
-              paginationViewModel,
-              sortParams = sortParam
-            )
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -404,103 +304,87 @@ class DashboardControllerSpec extends SpecBase {
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
-          val view = injector.instanceOf[DashboardView]
-          val paginationViewModel = PaginationViewModel(
-            draftDeparture.userAnswers.length,
-            1,
-            4,
-            routes.DashboardController.onSubmit(None).url,
-            Seq(("lrn", lrn), ("sortParams", sortParam.convertParams))
-          )
-
-          val viewModel =
-            AllDraftDeparturesViewModel(
-              draftDeparture,
-              draftDeparture.userAnswers.length,
-              Some(lrn),
-              frontendAppConfig.p5Departure,
-              paginationViewModel,
-              sortParams = sortParam
-            )
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
             view(form, viewModel)(request, messages).toString
         }
+
+        "must redirect to technical difficulties when there is an error" in {
+
+          when(draftDepartureService.getPagedDepartureSummary(Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(None))
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+        }
       }
 
-      "must redirect to technical difficulties when there is an error" in {
+      "POST" - {
 
-        when(draftDepartureService.getPagedDepartureSummary(Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(None))
+        "must return OK and the correct view when given a search LRN" in {
 
-        val request = FakeRequest(GET, draftDashboardGetRoute)
-        val result  = route(app, request).value
+          val draftDeparture =
+            DeparturesSummary(
+              0,
+              0,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+                DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+              )
+            )
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+          when(draftDepartureService.getLRNs(any(), Skip(any()), Limit(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(POST, draftDashboardPostRoute)
+            .withFormUrlEncodedBody(("value", "lrn"))
+
+          val result = route(app, request).value
+
+          status(result) mustEqual OK
+        }
+
+        "must return OK and the correct view when empty search" in {
+
+          val draftDeparture =
+            DeparturesSummary(
+              0,
+              0,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+                DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+              )
+            )
+
+          when(draftDepartureService.getPagedDepartureSummary(Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
+
+          val request = FakeRequest(POST, draftDashboardPostRoute)
+            .withFormUrlEncodedBody(("value", ""))
+
+          val result = route(app, request).value
+
+          status(result) mustEqual OK
+        }
+
+        "must redirect to technical difficulties when there is an error" in {
+
+          when(draftDepartureService.getLRNs(any(), Skip(any()), Limit(any()))(any())).thenReturn(Future.successful(None))
+
+          val request = FakeRequest(POST, draftDashboardPostRoute)
+            .withFormUrlEncodedBody(("value", "lrn"))
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+        }
+
       }
     }
 
-    "POST" - {
-
-      "must return OK and the correct view when given a search LRN" in {
-
-        val draftDeparture =
-          DeparturesSummary(
-            0,
-            0,
-            List(
-              DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
-              DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
-            )
-          )
-
-        when(draftDepartureService.getLRNs(any(), Skip(any()), Limit(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
-
-        val request = FakeRequest(POST, draftDashboardPostRoute)
-          .withFormUrlEncodedBody(("value", "lrn"))
-
-        val result = route(app, request).value
-
-        status(result) mustEqual OK
-      }
-
-      "must return OK and the correct view when empty search" in {
-
-        val draftDeparture =
-          DeparturesSummary(
-            0,
-            0,
-            List(
-              DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
-              DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
-            )
-          )
-
-        when(draftDepartureService.getPagedDepartureSummary(Limit(any()), Skip(any()))(any())).thenReturn(Future.successful(Option(draftDeparture)))
-
-        val request = FakeRequest(POST, draftDashboardPostRoute)
-          .withFormUrlEncodedBody(("value", ""))
-
-        val result = route(app, request).value
-
-        status(result) mustEqual OK
-      }
-
-      "must redirect to technical difficulties when there is an error" in {
-
-        when(draftDepartureService.getLRNs(any(), Skip(any()), Limit(any()))(any())).thenReturn(Future.successful(None))
-
-        val request = FakeRequest(POST, draftDashboardPostRoute)
-          .withFormUrlEncodedBody(("value", "lrn"))
-
-        val result = route(app, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
-      }
-
-    }
   }
-
 }

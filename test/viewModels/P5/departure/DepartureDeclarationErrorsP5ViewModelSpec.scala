@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels
+package viewModels.P5.departure
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators

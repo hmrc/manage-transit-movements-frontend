@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package viewModels
+package viewModels.P5.departure
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.departure.CustomsOfficeContactViewModel
 
 class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 

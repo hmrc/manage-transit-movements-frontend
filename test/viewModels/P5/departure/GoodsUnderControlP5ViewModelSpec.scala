@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package viewModels
+package viewModels.P5.departure
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import generated._
+import generated.*
 import generators.Generators
-import models.referenceData.ControlType
-import models.referenceData.{RequestedDocumentType => RequestedDocumentTypeRef}
+import models.referenceData.{ControlType, RequestedDocumentType as RequestedDocumentTypeRef}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary

@@ -32,12 +32,18 @@ case class AllDraftDeparturesViewModel(
   currentPage: Int,
   numberOfItemsPerPage: Int,
   lrn: Option[String],
-  sortParams: Sort = SortByCreatedAtDesc,
-  override val additionalParams: Seq[(String, String)],
-  href: Call
+  sortParams: Sort = SortByCreatedAtDesc
 ) extends PaginationViewModel[DepartureUserAnswerSummary] {
 
   override val items: Seq[DepartureUserAnswerSummary] = departures.userAnswers
+
+  override val additionalParams: Seq[(String, String)] = Seq(
+    lrn.map(("lrn", _)),
+    Some(("sortParams", sortParams.toString))
+  ).flatten
+
+  override val href: Call =
+    routes.DashboardController.onSubmit(None)
 
   private val numberOfItems: Int = items.length
 
@@ -93,9 +99,7 @@ object AllDraftDeparturesViewModel {
     lrn: Option[String],
     currentPage: Int,
     numberOfItemsPerPage: Int,
-    href: Call,
-    sortParams: Sort,
-    additionalParams: Seq[(String, String)]
+    sortParams: Option[Sort]
   )(implicit messages: Messages): AllDraftDeparturesViewModel = {
 
     val messageKeyPrefix = "departure.drafts.dashboard"
@@ -107,9 +111,7 @@ object AllDraftDeparturesViewModel {
       currentPage,
       numberOfItemsPerPage,
       lrn,
-      sortParams,
-      additionalParams,
-      href
+      sortParams.getOrElse(SortByCreatedAtDesc)
     )
   }
 }

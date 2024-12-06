@@ -17,79 +17,74 @@
 package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import generated.{CC057CType, FunctionalErrorType04}
+import generated.CC057CType
 import generators.Generators
+import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verifyNoInteractions, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import services.ArrivalP5MessageService
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
+import play.api.test.Helpers.*
+import services.{ArrivalP5MessageService, FunctionalErrorsService}
 import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel
-import viewModels.P5.arrival.ArrivalNotificationWithFunctionalErrorsP5ViewModel.ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider
-import viewModels.pagination.PaginationViewModel
 import views.html.arrivalP5.ArrivalNotificationWithFunctionalErrorsP5View
 
 import scala.concurrent.Future
 
 class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider = mock[ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider]
-  private val mockArrivalP5MessageService                                    = mock[ArrivalP5MessageService]
-  val tableRow: TableRow                                                     = arbitraryTableRow.arbitrary.sample.value
+  private val mockArrivalP5MessageService = mock[ArrivalP5MessageService]
+  private val mockFunctionalErrorsService = mock[FunctionalErrorsService]
 
-  lazy val rejectionMessageController: String =
-    controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url
+  private lazy val rejectionMessageController: String =
+    routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockArrivalP5MessageService)
-    reset(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider)
+    reset(mockFunctionalErrorsService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider].toInstance(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider))
-      .overrides(bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService))
+      .overrides(
+        bind[ArrivalP5MessageService].toInstance(mockArrivalP5MessageService),
+        bind[FunctionalErrorsService].toInstance(mockFunctionalErrorsService)
+      )
 
   "ArrivalNotificationWithFunctionalErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      forAll(listWithMaxLength[FunctionalErrorType04]()) {
-        functionalErrors =>
-          forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = functionalErrors))) {
-            message =>
-              when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
-                .thenReturn(Future.successful(message))
-              when(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-                .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
+      forAll(arbitrary[CC057CType], arbitrary[FunctionalErrorsWithoutSection]) {
+        (message, functionalErrors) =>
+          when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(message))
 
-              val paginationViewModel = PaginationViewModel(
-                totalNumberOfItems = message.FunctionalError.length,
-                currentPage = 1,
-                numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-                href = controllers.arrivalP5.routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url,
-                additionalParams = Seq()
-              )
+          when(mockFunctionalErrorsService.convertErrorsWithoutSection(any())(any(), any()))
+            .thenReturn(Future.successful(functionalErrors))
 
-              val rejectionMessageP5ViewModel = new ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, true)
+          val viewModel = ArrivalNotificationWithFunctionalErrorsP5ViewModel(
+            functionalErrors = functionalErrors,
+            mrn = mrn,
+            currentPage = None,
+            numberOfErrorsPerPage = paginationAppConfig.arrivalsNumberOfErrorsPerPage,
+            href = routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId)
+          )
 
-              val request = FakeRequest(GET, rejectionMessageController)
+          val request = FakeRequest(GET, rejectionMessageController)
 
-              val result = route(app, request).value
+          val view = injector.instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
 
-              status(result) mustEqual OK
+          val result = route(app, request).value
 
-              val view = injector.instanceOf[ArrivalNotificationWithFunctionalErrorsP5View]
+          status(result) mustEqual OK
 
-              contentAsString(result) mustEqual
-                view(rejectionMessageP5ViewModel, arrivalIdP5, paginationViewModel)(request, messages, frontendAppConfig).toString
-          }
+          contentAsString(result) mustEqual
+            view(viewModel, arrivalIdP5)(request, messages, frontendAppConfig).toString
       }
     }
 
@@ -98,17 +93,17 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
         message =>
           when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
-          when(mockArrivalNotificationWithFunctionalErrorsP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(ArrivalNotificationWithFunctionalErrorsP5ViewModel(Seq(Seq(tableRow)), mrn, multipleErrors = true)))
 
           val request = FakeRequest(GET, rejectionMessageController)
 
           val result = route(app, request).value
 
           status(result) mustEqual SEE_OTHER
+
           redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
+
+          verifyNoInteractions(mockFunctionalErrorsService)
       }
     }
   }
-
 }

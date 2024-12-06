@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.arrival
 
 import base.SpecBase
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.P5.arrival.ViewAllArrivalMovementsP5ViewModel
 
 class ViewAllArrivalMovementsP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "Display correct title" - {
 
     "When searchParam provided" in {
-      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, Some("LRN123"))
+      val viewModel = ViewAllArrivalMovementsP5ViewModel(Seq.empty, Some("LRN123"), 1, 20)
 
-      viewModel.pageTitle `mustBe` "Search results for ‘LRN123’ - Arrival notifications"
+      viewModel.title mustEqual "Search results for ‘LRN123’ - Arrival notifications"
     }
 
     "When searchParam not provided" in {
-      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, None)
+      val viewModel = ViewAllArrivalMovementsP5ViewModel(Seq.empty, None, 1, 20)
 
-      viewModel.pageTitle `mustBe` "Arrival notifications"
+      viewModel.title mustEqual "Arrival notifications"
     }
 
   }
@@ -42,17 +41,15 @@ class ViewAllArrivalMovementsP5ViewModelSpec extends SpecBase with Generators wi
   "Display correct heading" - {
 
     "When searchParam provided" in {
-      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, Some("LRN123"))
+      val viewModel = ViewAllArrivalMovementsP5ViewModel(Seq.empty, Some("LRN123"), 1, 20)
 
-      viewModel.pageHeading `mustBe` "Search results for ‘LRN123’ - Arrival notifications"
+      viewModel.heading mustEqual "Search results for ‘LRN123’ - Arrival notifications"
     }
 
     "When searchParam not provided" in {
-      val viewModel = new ViewAllArrivalMovementsP5ViewModel(Seq.empty, None)
+      val viewModel = ViewAllArrivalMovementsP5ViewModel(Seq.empty, None, 1, 20)
 
-      viewModel.pageTitle `mustBe` "Arrival notifications"
+      viewModel.heading mustEqual "Arrival notifications"
     }
-
   }
-
 }

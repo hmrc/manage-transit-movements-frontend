@@ -26,9 +26,10 @@
     button: Button,
     formHelper: FormWithCSRF,
     pagination: Pagination,
-    helpdeskLink: HelpdeskLink
+    helpdeskLink: HelpdeskLink,
+    config: FrontendAppConfig
 )
-@(viewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, mrn: Option[String])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+@(viewModel: RejectionMessageP5ViewModel, departureId: String, messageId: String, mrn: Option[String])(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = viewModel.title,

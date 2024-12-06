@@ -16,14 +16,14 @@
 
 package controllers.departureP5
 
-import config.{FrontendAppConfig, PaginationAppConfig}
+import config.PaginationAppConfig
 import controllers.actions.*
 import generated.{CC056CType, Generated_CC056CTypeFormat}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.ReviewPrelodgedDeclarationErrorsP5ViewModel.ReviewPrelodgedDeclarationErrorsP5ViewModelProvider
+import viewModels.P5.departure.ReviewPrelodgedDeclarationErrorsP5ViewModel
 import views.html.departureP5.ReviewPrelodgedDeclarationErrorsP5View
 
 import javax.inject.Inject
@@ -34,10 +34,9 @@ class ReviewPrelodgedDeclarationErrorsP5Controller @Inject() (
   actions: Actions,
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: ReviewPrelodgedDeclarationErrorsP5ViewModelProvider,
   view: ReviewPrelodgedDeclarationErrorsP5View,
   functionalErrorsService: FunctionalErrorsService
-)(implicit val executionContext: ExecutionContext, config: FrontendAppConfig, paginationConfig: PaginationAppConfig)
+)(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -46,14 +45,12 @@ class ReviewPrelodgedDeclarationErrorsP5Controller @Inject() (
       implicit request =>
         functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError).map {
           functionalErrors =>
-            val currentPage = page.getOrElse(1)
-
-            val viewModel = viewModelProvider.apply(
+            val viewModel = ReviewPrelodgedDeclarationErrorsP5ViewModel(
               functionalErrors = functionalErrors,
               lrn = request.referenceNumbers.localReferenceNumber,
-              currentPage = currentPage,
+              currentPage = page,
               numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-              href = controllers.departureP5.routes.ReviewPrelodgedDeclarationErrorsP5Controller.onPageLoad(None, departureId, messageId)
+              href = routes.ReviewPrelodgedDeclarationErrorsP5Controller.onPageLoad(None, departureId, messageId)
             )
 
             Ok(view(viewModel, departureId))

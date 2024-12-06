@@ -42,7 +42,7 @@ object ReviewDepartureErrorsP5ViewModel {
     functionalErrors: FunctionalErrorsWithSection,
     lrn: String,
     businessRejectionType: DepartureBusinessRejectionType,
-    currentPage: Int,
+    currentPage: Option[Int],
     numberOfErrorsPerPage: Int,
     href: Call
   )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel = {
@@ -85,29 +85,9 @@ object ReviewDepartureErrorsP5ViewModel {
       paragraph2 = paragraph2,
       hyperlink = hyperlink,
       functionalErrors = functionalErrors,
-      currentPage = currentPage,
+      currentPage = currentPage.getOrElse(1),
       numberOfItemsPerPage = numberOfErrorsPerPage,
       href = href
     )
-  }
-
-  class ReviewDepartureErrorsP5ViewModelProvider {
-
-    def apply(
-      functionalErrors: FunctionalErrorsWithSection,
-      lrn: String,
-      businessRejectionType: DepartureBusinessRejectionType,
-      currentPage: Int,
-      numberOfErrorsPerPage: Int,
-      href: Call
-    )(implicit messages: Messages): ReviewDepartureErrorsP5ViewModel =
-      ReviewDepartureErrorsP5ViewModel(
-        functionalErrors,
-        lrn,
-        businessRejectionType,
-        currentPage,
-        numberOfErrorsPerPage,
-        href
-      )
   }
 }

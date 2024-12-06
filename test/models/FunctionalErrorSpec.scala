@@ -19,8 +19,9 @@ package models
 import base.SpecBase
 import generated.{FunctionalErrorType04, Number12}
 import generators.Generators
+import models.FunctionalError.FunctionalErrorWithSection
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 
 class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -38,9 +39,9 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             |}
             |""".stripMargin)
 
-        val result = json.validate[FunctionalError]
+        val result = json.validate[FunctionalErrorWithSection]
 
-        val expectedResult = FunctionalError(
+        val expectedResult = FunctionalErrorWithSection(
           error = "12",
           businessRuleId = "BR20004",
           section = Some("Trader details"),
@@ -60,9 +61,9 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             |}
             |""".stripMargin)
 
-        val result = json.validate[FunctionalError]
+        val result = json.validate[FunctionalErrorWithSection]
 
-        val expectedResult = FunctionalError(
+        val expectedResult = FunctionalErrorWithSection(
           error = "12",
           businessRuleId = "BR20004",
           section = None,

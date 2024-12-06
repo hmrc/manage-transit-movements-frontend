@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewModels.P5
+package viewModels.P5.departure
 
 import base.SpecBase
 import generated.{CC009CType, CustomsOfficeOfDepartureType03}
@@ -27,7 +27,6 @@ import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import scalaxb.XMLCalendar
 import services.ReferenceDataService
-import viewModels.P5.departure.DepartureNotCancelledP5ViewModel
 import viewModels.P5.departure.DepartureNotCancelledP5ViewModel.DepartureNotCancelledP5ViewModelProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global

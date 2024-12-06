@@ -16,13 +16,14 @@
 
 package generators
 
-import models.DeparturesSummary
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.GuaranteeReferenceTable
+import models.{DeparturesSummary, Sort}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Content
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
@@ -146,29 +147,24 @@ trait ViewModelGenerators {
       } yield ViewDepartureP5(date, time, lrn, status, actions)
     }
 
-  implicit val arbitraryViewArrivalMovementsP5: Arbitrary[ViewArrivalMovementsP5] =
-    Arbitrary {
-      for {
-        seqOfViewMovements <- listWithMaxLength[ViewArrivalP5]()
-      } yield ViewArrivalMovementsP5(seqOfViewMovements)
-    }
-
-  implicit val arbitraryViewDepartureMovements: Arbitrary[ViewDepartureMovementsP5] =
-    Arbitrary {
-      for {
-        seqOfViewDepartureMovements <- listWithMaxLength[ViewDepartureP5]()
-      } yield ViewDepartureMovementsP5(seqOfViewDepartureMovements)
-    }
-
   implicit def arbitraryAllDraftDeparturesViewModel(implicit messages: Messages): Arbitrary[AllDraftDeparturesViewModel] =
     Arbitrary {
       for {
-        draftDepartures <- arbitrary[DeparturesSummary]
-        pageSize        <- arbitrary[Int]
-        lrn             <- Gen.option(nonEmptyString)
-        url             <- nonEmptyString
-        pagination      <- arbitrary[PaginationViewModel]
-      } yield AllDraftDeparturesViewModel(draftDepartures, pageSize, lrn, url, pagination)
+        draftDepartures      <- arbitrary[DeparturesSummary]
+        lrn                  <- Gen.option(nonEmptyString)
+        currentPage          <- arbitrary[Int]
+        numberOfItemsPerPage <- arbitrary[Int]
+        href                 <- arbitrary[Call]
+        sortParams           <- arbitrary[Sort]
+      } yield AllDraftDeparturesViewModel(
+        draftDepartures = draftDepartures,
+        lrn = lrn,
+        currentPage = currentPage,
+        numberOfItemsPerPage = numberOfItemsPerPage,
+        href = href,
+        sortParams = sortParams,
+        additionalParams = Nil
+      )
     }
 
   implicit val arbitraryDepartureDeclarationErrorsP5ViewModel: Arbitrary[DepartureDeclarationErrorsP5ViewModel] =

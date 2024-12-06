@@ -17,6 +17,8 @@
 package generators
 
 import models.*
+import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithoutSection}
+import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.{BusinessRejectionType, DepartureMovement, DepartureMovements}
@@ -175,7 +177,7 @@ trait ModelGenerators {
       } yield models.InvalidDataItem(value)
     }
 
-  implicit lazy val arbitraryFunctionalError: Arbitrary[FunctionalError] =
+  implicit lazy val arbitraryFunctionalErrorWithSection: Arbitrary[FunctionalErrorWithSection] =
     Arbitrary {
       for {
         error           <- nonEmptyString
@@ -183,7 +185,31 @@ trait ModelGenerators {
         section         <- Gen.option(nonEmptyString)
         invalidDataItem <- arbitrary[InvalidDataItem]
         invalidAnswer   <- Gen.option(nonEmptyString)
-      } yield models.FunctionalError(error, businessRuleId, section, invalidDataItem, invalidAnswer)
+      } yield FunctionalErrorWithSection(error, businessRuleId, section, invalidDataItem, invalidAnswer)
+    }
+
+  implicit lazy val arbitraryFunctionalErrorWithoutSection: Arbitrary[FunctionalErrorWithoutSection] =
+    Arbitrary {
+      for {
+        error           <- nonEmptyString
+        businessRuleId  <- nonEmptyString
+        invalidDataItem <- arbitrary[InvalidDataItem]
+        invalidAnswer   <- Gen.option(nonEmptyString)
+      } yield FunctionalErrorWithoutSection(error, businessRuleId, invalidDataItem, invalidAnswer)
+    }
+
+  implicit lazy val arbitraryFunctionalErrorsWithSection: Arbitrary[FunctionalErrorsWithSection] =
+    Arbitrary {
+      for {
+        value <- listWithMaxLength[FunctionalErrorWithSection]()
+      } yield FunctionalErrorsWithSection(value)
+    }
+
+  implicit lazy val arbitraryFunctionalErrorsWithoutSection: Arbitrary[FunctionalErrorsWithoutSection] =
+    Arbitrary {
+      for {
+        value <- listWithMaxLength[FunctionalErrorWithoutSection]()
+      } yield FunctionalErrorsWithoutSection(value)
     }
 
   implicit lazy val arbitraryGuaranteeReferenceTable: Arbitrary[models.departureP5.GuaranteeReferenceTable] =
