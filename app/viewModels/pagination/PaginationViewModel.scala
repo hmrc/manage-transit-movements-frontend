@@ -28,10 +28,11 @@ trait PaginationViewModel[T] {
   val href: Call
   val additionalParams: Seq[(String, String)] = Seq.empty
   val heading: String
+  val searchParam: Option[String] = None
 
   def results: MetaData = MetaData(items.length, numberOfItemsPerPage, currentPage)
 
-  def searchResult(searchParam: Option[String] = None)(implicit messages: Messages): String =
+  def searchResult(implicit messages: Messages): String =
     (searchParam, results.count) match {
       case (Some(value), 1) => messages("numberOfMovements.singular.withSearchParam", "<b>1</b>", value)
       case (Some(value), x) => messages("numberOfMovements.plural.withSearchParam", s"<b>$x</b>", value)
@@ -39,7 +40,7 @@ trait PaginationViewModel[T] {
       case (None, x)        => messages("numberOfMovements.plural", s"<b>$x</b>")
     }
 
-  def paginatedSearchResult(searchParam: Option[String] = None)(implicit messages: Messages): String =
+  def paginatedSearchResult(implicit messages: Messages): String =
     searchParam match {
       case Some(value) => messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", value)
       case None        => messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")

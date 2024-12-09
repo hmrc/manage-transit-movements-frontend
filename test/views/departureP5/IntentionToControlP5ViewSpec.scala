@@ -44,9 +44,11 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
     section => SummaryList(section.rows)
   )
 
-  behave like pageWithMatchingTitleAndHeading()
+  behave like pageWithTitle()
 
   behave like pageWithBackLink()
+
+  behave like pageWithHeading()
 
   behave like pageWithCaption(s"LRN: $lrn")
 

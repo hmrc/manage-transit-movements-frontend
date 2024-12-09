@@ -27,10 +27,16 @@ import javax.inject.Inject
 
 case class IntentionToControlP5ViewModel(sections: Seq[Section], requestedDocuments: Boolean, lrn: Option[String]) {
 
-  def titleAndHeading(implicit messages: Messages): String = if (requestedDocuments) {
-    messages("departure.ie060.message.prelodged.requestedDocuments.titleAndHeading")
+  def title(implicit messages: Messages): String = if (requestedDocuments) {
+    messages("departure.ie060.message.prelodged.requestedDocuments.title")
   } else {
-    messages("departure.ie060.message.prelodged.titleAndHeading")
+    messages("departure.ie060.message.prelodged.title")
+  }
+
+  def heading(implicit messages: Messages): String = if (requestedDocuments) {
+    messages("departure.ie060.message.prelodged.requestedDocuments.heading")
+  } else {
+    messages("departure.ie060.message.prelodged.heading")
   }
 
   def paragraph1(implicit messages: Messages): String = if (requestedDocuments) {

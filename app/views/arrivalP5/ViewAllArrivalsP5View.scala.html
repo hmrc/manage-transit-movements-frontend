@@ -59,7 +59,7 @@
 
     @inset(messages("viewArrivalNotificationsP5.search.inset"))
 
-    @pagination(viewModel, form.value)
+    @pagination(viewModel)
 
     @if(viewModel.items.nonEmpty) {
         @movementsTable(

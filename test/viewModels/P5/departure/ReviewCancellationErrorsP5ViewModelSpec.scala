@@ -46,9 +46,6 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPr
 
       val result = ReviewCancellationErrorsP5ViewModel(errors, lrnString, None, 20, href)
 
-      "must return correct section length" in {
-        result.pagination.items.value.length mustEqual 1
-      }
       "must return correct title" in {
         result.title mustEqual "Review cancellation errors"
       }
@@ -90,9 +87,6 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPr
 
       val result = ReviewCancellationErrorsP5ViewModel(errors, lrnString, None, 20, href)
 
-      "must return correct rows size" in {
-        result.pagination.items.value.length mustEqual 2
-      }
       "must return correct title" in {
         result.title mustEqual "Review cancellation errors"
       }

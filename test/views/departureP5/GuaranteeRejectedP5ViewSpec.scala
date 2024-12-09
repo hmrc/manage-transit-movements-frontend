@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import models.departureP5.GuaranteeReferenceTable
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import scalaxb.XMLCalendar
+import uk.gov.hmrc.govukfrontend.views.Aliases.Table
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
@@ -29,14 +30,17 @@ import views.html.departureP5.GuaranteeRejectedP5View
 
 class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
-  override val headCells: Seq[HeadCell] =
+  private val headCells: Seq[HeadCell] =
     Seq(HeadCell(Text("Error")), HeadCell(Text("Further information")))
 
-  override val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
+  private val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
+
+  override val table: Table = Table(
+    rows = Seq(tableRows),
+    head = Some(headCells)
+  )
 
   override val prefix: String = "guarantee.rejected.message"
-
-  private val table = arbitrary[GuaranteeReferenceTable].sample.value.table.copy(rows = Seq(tableRows), head = Some(headCells))
 
   private val tables = Seq(GuaranteeReferenceTable("title", "grn", table))
 

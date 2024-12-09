@@ -27,8 +27,11 @@ case class ViewAllArrivalMovementsP5ViewModel(
   items: Seq[ViewArrivalP5],
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  override val additionalParams: Seq[(String, String)]
+  override val searchParam: Option[String]
 ) extends PaginationViewModel[ViewArrivalP5] {
+
+  override val additionalParams: Seq[(String, String)] =
+    Seq(searchParam.map("mrn" -> _)).flatten
 
   override val href: Call = routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)
 }
@@ -56,15 +59,13 @@ object ViewAllArrivalMovementsP5ViewModel {
         messages("viewArrivalNotificationsP5.title")
     }
 
-    val additionalParams = Seq(searchParam.map("mrn" -> _)).flatten
-
     new ViewAllArrivalMovementsP5ViewModel(
       heading,
       title,
       movementsAndMessages,
       currentPage,
       numberOfItemsPerPage,
-      additionalParams
+      searchParam
     )
   }
 }

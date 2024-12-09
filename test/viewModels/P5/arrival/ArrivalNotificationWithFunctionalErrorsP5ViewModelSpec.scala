@@ -46,9 +46,6 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
 
       val result = ArrivalNotificationWithFunctionalErrorsP5ViewModel(errors, mrnString, None, 20, href)
 
-      "must return correct section length" in {
-        result.pagination.items.value.length mustEqual 1
-      }
       "must return correct title" in {
         result.title mustEqual "Review notification errors"
       }
@@ -69,7 +66,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
       }
     }
 
-    "when there is multiple errors" - {
+    "when there are multiple errors" - {
       val errors = FunctionalErrorsWithoutSection(
         Seq(
           FunctionalErrorWithoutSection(
@@ -89,9 +86,6 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewModelSpec extends SpecBase wi
 
       val result = ArrivalNotificationWithFunctionalErrorsP5ViewModel(errors, mrnString, None, 20, href)
 
-      "must return correct section length" in {
-        result.pagination.items.value.length mustEqual 2
-      }
       "must return correct title" in {
         result.title mustEqual "Review notification errors"
       }

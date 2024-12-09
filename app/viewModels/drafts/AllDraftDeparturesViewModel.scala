@@ -45,6 +45,8 @@ case class AllDraftDeparturesViewModel(
   override val href: Call =
     routes.DashboardController.onSubmit(None)
 
+  override val searchParam: Option[String] = lrn
+
   private val numberOfItems: Int = items.length
 
   private val tableMessageKeyPrefix                                   = "departure.drafts.dashboard.table"
@@ -53,19 +55,9 @@ case class AllDraftDeparturesViewModel(
   def daysToComplete(implicit messages: Messages): String             = messages(s"$tableMessageKeyPrefix.daysToComplete")
   def daysToCompleteHiddenHeader(implicit messages: Messages): String = messages(s"$tableMessageKeyPrefix.daysToComplete.header.hidden")
 
-  def searchResult(implicit messages: Messages): Option[String] =
-    lrn.map {
-      value =>
-        numberOfItems match {
-          case 1 => messages("search.results.singular", "<b>1</b>", value)
-          case x => messages("search.results.plural", s"<b>$x</b>", value)
-        }
-    }
-
   def dataRows: Seq[DraftDepartureRow] = items.map(DraftDepartureRow.apply)
 
-  def tooManyResults: Boolean       = numberOfItems > numberOfItemsPerPage
-  def isSearch: Boolean             = lrn.isDefined
+  def isSearch: Boolean             = searchParam.isDefined
   def resultsFound: Boolean         = numberOfItems > 0
   def searchResultsFound: Boolean   = resultsFound && isSearch
   def noResultsFound: Boolean       = departures.totalMovements == 0

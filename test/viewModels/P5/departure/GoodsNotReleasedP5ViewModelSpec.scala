@@ -47,8 +47,8 @@ class GoodsNotReleasedP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
 
     "title and heading" - {
       "must return correct message" in {
-        viewModel.titleAndHeading mustBe
-          "Goods not released"
+        viewModel.title mustBe "Goods not released"
+        viewModel.heading mustBe "Goods not released"
       }
     }
 

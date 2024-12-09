@@ -29,38 +29,6 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
   "AllDraftDeparturesViewModel" - {
 
-    "tooManyResult" - {
-
-      val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
-      val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-
-      "must return true when departure size is greater than page size" in {
-
-        val viewModel = AllDraftDeparturesViewModel(
-          departuresSummary,
-          None,
-          1,
-          2,
-          None
-        )
-
-        viewModel.tooManyResults mustEqual true
-      }
-
-      "must return false when departure size is less than or equal to page size" in {
-
-        val viewModel = AllDraftDeparturesViewModel(
-          departuresSummary,
-          None,
-          1,
-          2,
-          None
-        )
-
-        viewModel.tooManyResults mustEqual false
-      }
-    }
-
     "isSearch" - {
 
       val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value

@@ -50,7 +50,7 @@ class DashboardControllerSpec extends SpecBase {
         bind[DraftDepartureService].toInstance(draftDepartureService)
       )
 
-  "DraftDashboard Controller" - {
+  "DashboardController" - {
 
     "GET" - {
       "must return OK and the correct view" - {
@@ -221,7 +221,7 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, Some(lrn), 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -249,7 +249,7 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, Some(lrn), 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -277,7 +277,7 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, Some(lrn), 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -305,7 +305,7 @@ class DashboardControllerSpec extends SpecBase {
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, Some(lrn), 1, 4, Some(sortParam))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual

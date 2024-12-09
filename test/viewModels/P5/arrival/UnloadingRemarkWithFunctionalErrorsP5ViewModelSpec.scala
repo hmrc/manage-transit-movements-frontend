@@ -17,7 +17,6 @@
 package viewModels.P5.arrival
 
 import base.SpecBase
-import generated.{FunctionalErrorType04, Number12, Number14}
 import generators.Generators
 import models.FunctionalError.FunctionalErrorWithoutSection
 import models.FunctionalErrors.FunctionalErrorsWithoutSection
@@ -47,9 +46,6 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with S
 
       val result = UnloadingRemarkWithFunctionalErrorsP5ViewModel(errors, mrnString, None, 20, href)
 
-      "must return correct section length" in {
-        result.pagination.items.value.length mustEqual 1
-      }
       "must return correct title" in {
         result.title mustEqual "Review unloading remarks errors"
       }
@@ -85,16 +81,9 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with S
           )
         )
       )
-      val functionalErrors = Seq(
-        FunctionalErrorType04("1", Number12, "Codelist violation", None),
-        FunctionalErrorType04("2", Number14, "Rule violation", None)
-      )
 
       val result = UnloadingRemarkWithFunctionalErrorsP5ViewModel(errors, mrnString, None, 20, href)
 
-      "must return correct section length" in {
-        result.pagination.items.value.length mustEqual 2
-      }
       "must return correct title" in {
         result.title mustEqual "Review unloading remarks errors"
       }

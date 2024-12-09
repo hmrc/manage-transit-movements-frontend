@@ -34,7 +34,6 @@ noInformationProvided = No information provided
 viewAllMovements.link.title = View all movements
 search.results.singular = Showing {0} result matching {1}.
 search.results.plural = Showing {0} results matching {1}.
-search.tooManyResults = There are too many results. Please refine your search.
 search.noResultsFound = No results found
 
 error.title.prefix = Error:
@@ -293,8 +292,10 @@ departure.ie060.message.paragraph4.prefix = You must wait for the outcome of Cus
 departure.ie060.message.paragraph4.linkText = Check your departure declarations
 departure.ie060.message.paragraph4.suffix = for further updates.
 
-departure.ie060.message.prelodged.requestedDocuments.titleAndHeading = Intention to control - complete pre-lodged declaration
-departure.ie060.message.prelodged.titleAndHeading = Intention to control
+departure.ie060.message.prelodged.requestedDocuments.title = Intention to control - complete pre-lodged declaration
+departure.ie060.message.prelodged.requestedDocuments.heading = Intention to control - complete pre-lodged declaration
+departure.ie060.message.prelodged.title = Intention to control
+departure.ie060.message.prelodged.heading = Intention to control
 
 departure.ie060.message.requestedDocuments.prelodged.paragraph1 = Customs are intending to place this movement under control and have requested you complete your pre-lodged declaration.
 departure.ie060.message.requestedDocuments.prelodged.paragraph2 = While awaiting your response, the goods will remain under supervision at the office of destination.
@@ -491,7 +492,8 @@ guarantee.rejected.message.notAmendable.makeAnotherDeparture = Make another depa
 guarantee.rejected.message.notAmendable.movementReferenceNumber = Movement Reference Number (MRN):
 guarantee.rejected.message.notAmendable.acceptanceDate = Declaration acceptance date:
 
-departure.notReleased.titleAndHeading = Goods not released
+departure.notReleased.title = Goods not released
+departure.notReleased.heading = Goods not released
 departure.notReleased.whatHappensNext = What happens next
 departure.notReleased.paragraph = Customs have reviewed this declaration and decided not to release the goods for transit. This means the movement has now ended.
 departure.notReleased.link = Contact the New Computerised Transit System helpdesk for further help (opens in a new tab)

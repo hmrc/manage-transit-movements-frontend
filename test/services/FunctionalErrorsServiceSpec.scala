@@ -18,7 +18,7 @@ package services
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import generated.{FunctionalErrorType04, Number12}
+import generated.{FunctionalErrorType04, Number12, Number14}
 import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithoutSection}
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.InvalidDataItem
@@ -65,7 +65,7 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           ),
           FunctionalErrorType04(
             errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-            errorCode = Number12,
+            errorCode = Number14,
             errorReason = "BR20005",
             originalAttributeValue = None
           )
@@ -135,26 +135,9 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           ),
           FunctionalErrorType04(
             errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-            errorCode = Number12,
+            errorCode = Number14,
             errorReason = "BR20005",
             originalAttributeValue = None
-          )
-        )
-
-        val output = FunctionalErrorsWithoutSection(
-          Seq(
-            FunctionalErrorWithoutSection(
-              error = "12",
-              businessRuleId = "BR20004",
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
-              invalidAnswer = Some("GB635733627000")
-            ),
-            FunctionalErrorWithoutSection(
-              error = "14",
-              businessRuleId = "BR20005",
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
-              invalidAnswer = None
-            )
           )
         )
 

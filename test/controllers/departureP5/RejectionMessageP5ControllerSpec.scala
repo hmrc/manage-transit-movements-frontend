@@ -51,6 +51,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
+    reset(mockAmendmentService)
     reset(mockFunctionalErrorsService)
   }
 
@@ -59,6 +60,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
       .guiceApplicationBuilder()
       .overrides(
         bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService),
+        bind[AmendmentService].toInstance(mockAmendmentService),
         bind[FunctionalErrorsService].toInstance(mockFunctionalErrorsService)
       )
 

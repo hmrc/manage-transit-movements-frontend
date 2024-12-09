@@ -61,6 +61,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
     "must return OK and the correct view for a GET" in {
       forAll(arbitrary[CC057CType], arbitrary[FunctionalErrorsWithoutSection]) {
         (message, functionalErrors) =>
+          val mrn = message.TransitOperation.MRN
+
           when(mockArrivalP5MessageService.getMessage[CC057CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
 

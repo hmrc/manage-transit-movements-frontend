@@ -32,9 +32,11 @@ class GoodsNotReleasedP5ViewSpec extends CheckYourAnswersViewBehaviours with Gen
       .instanceOf[GoodsNotReleasedP5View]
       .apply(GoodsNotReleasedP5ViewModel(sections, "AB123"))(fakeRequest, messages, frontendAppConfig)
 
-  behave like pageWithMatchingTitleAndHeading()
+  behave like pageWithTitle()
 
   behave like pageWithBackLink()
+
+  behave like pageWithHeading()
 
   behave like pageWithContent(
     "p",

@@ -45,13 +45,10 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
         )
       )
 
-      "when 015 rejection type" in {
+      "when 015 rejection type" - {
 
         val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, href)
 
-        "must return correct section length" in {
-          result.pagination.items.value.length mustEqual 1
-        }
         "must return correct title" in {
           result.title mustEqual "Amend declaration errors"
         }
@@ -70,13 +67,10 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
         }
       }
 
-      "when 013 rejection type" in {
+      "when 013 rejection type" - {
 
         val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, href)
 
-        "must return correct section length" in {
-          result.pagination.items.value.length mustEqual 1
-        }
         "must return correct title" in {
           result.title mustEqual "Amend declaration errors"
         }
@@ -117,13 +111,10 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
         )
       )
 
-      "when 015 rejection type" in {
+      "when 015 rejection type" - {
 
         val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, href)
 
-        "must return correct section length" in {
-          result.pagination.items.value.length mustEqual 2
-        }
         "must return correct title" in {
           result.title mustEqual "Amend declaration errors"
         }
@@ -140,17 +131,14 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
           result.paragraph2 mustEqual "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
         }
         "must return correct hyperlink text" in {
-          result.hyperlink mustEqual None
+          result.hyperlink.value mustEqual "Make another departure declaration"
         }
       }
 
-      "when 013 rejection type" in {
+      "when 013 rejection type" - {
 
         val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, href)
 
-        "must return correct section length" in {
-          result.pagination.items.value.length mustEqual 2
-        }
         "must return correct title" in {
           result.title mustEqual "Amend declaration errors"
         }

@@ -67,7 +67,8 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       }
 
       "must return correct title and heading" in {
-        result.titleAndHeading `mustBe` messages("departure.ie060.message.prelodged.titleAndHeading")
+        result.title `mustBe` messages("departure.ie060.message.prelodged.title")
+        result.heading `mustBe` messages("departure.ie060.message.prelodged.heading")
       }
       "must return correct paragraphs" in {
         result.paragraph1 `mustBe` messages("departure.ie060.message.prelodged.paragraph1")
@@ -103,7 +104,8 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       }
 
       "must return correct title and heading" in {
-        result.titleAndHeading `mustBe` messages("departure.ie060.message.prelodged.requestedDocuments.titleAndHeading")
+        result.title `mustBe` messages("departure.ie060.message.prelodged.requestedDocuments.title")
+        result.heading `mustBe` messages("departure.ie060.message.prelodged.requestedDocuments.heading")
       }
 
       "must return correct paragraphs" in {

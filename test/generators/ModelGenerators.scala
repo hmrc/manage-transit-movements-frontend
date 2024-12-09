@@ -167,7 +167,15 @@ trait ModelGenerators {
     }
 
   implicit lazy val arbitraryDraftDeparture: Arbitrary[DeparturesSummary] = Arbitrary {
-    listWithMaxLength[DepartureUserAnswerSummary](9).map(DeparturesSummary(0, 0, _))
+    for {
+      totalMovements         <- positiveInts
+      totalMatchingMovements <- positiveInts
+      userAnswers            <- listWithMaxLength[DepartureUserAnswerSummary]()
+    } yield DeparturesSummary(
+      totalMovements = totalMovements,
+      totalMatchingMovements = totalMatchingMovements,
+      userAnswers = userAnswers
+    )
   }
 
   implicit lazy val arbitraryInvalidDataItem: Arbitrary[InvalidDataItem] =
@@ -272,6 +280,15 @@ trait ModelGenerators {
     }
   }
 
+  implicit lazy val arbitrarySort: Arbitrary[Sort] =
+    Arbitrary {
+      Gen.oneOf(
+        Sort.SortByLRNAsc,
+        Sort.SortByLRNDesc,
+        Sort.SortByCreatedAtAsc,
+        Sort.SortByCreatedAtDesc
+      )
+    }
 }
 
 // scalastyle:on magic.number

@@ -16,61 +16,58 @@
 
 package views.departureP5
 
-import config.FrontendAppConfig
 import generators.Generators
-import models.departureP5.BusinessRejectionType
+import models.FunctionalError.FunctionalErrorWithoutSection
+import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import viewModels.P5.departure.RejectionMessageP5ViewModel
-import viewModels.pagination.PaginationViewModel
-import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departureP5.RejectionMessageP5View
 
-class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[PaginationViewModel] with TableViewBehaviours with Generators {
+class RejectionMessageP5ViewSpec
+    extends PaginationViewBehaviours[FunctionalErrorWithoutSection, RejectionMessageP5ViewModel]
+    with TableViewBehaviours
+    with Generators {
 
-  override val headCells: Seq[HeadCell] =
-    Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+  override val viewModel: RejectionMessageP5ViewModel =
+    arbitraryRejectionMessageP5ViewModel.arbitrary.sample.value
 
-  override val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
+  override val table: Table = viewModel.table
 
-  override val prefix: String = "departure.ie056.message"
+  override def buildViewModel(
+    totalNumberOfItems: Int,
+    currentPage: Int,
+    numberOfItemsPerPage: Int
+  ): RejectionMessageP5ViewModel =
+    viewModel.copy(
+      functionalErrors = {
+        def error: FunctionalErrorWithoutSection = arbitrary[FunctionalErrorWithoutSection].sample.value
+        FunctionalErrorsWithoutSection(Seq.fill(totalNumberOfItems)(error))
+      },
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfItemsPerPage
+    )
 
-  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
-    PaginationViewModel(_, _, _, _)
+  override val prefix: String        = "departure.ie056.message"
+  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfErrorsPerPage
 
-  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
+  override def view: HtmlFormat.Appendable = applyView(viewModel, None)
 
-  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
-
-  private val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel =
-    new RejectionMessageP5ViewModel(Seq(tableRows), lrn.toString, false, BusinessRejectionType.DeclarationRejection)
-
-  val paginationViewModel: PaginationViewModel = PaginationViewModel(
-    totalNumberOfItems = sections.length,
-    currentPage = 1,
-    numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId).url
-  )
+  override def viewWithSpecificPagination(viewModel: RejectionMessageP5ViewModel): HtmlFormat.Appendable =
+    applyView(viewModel, None)
 
   private def applyView(
     viewModel: RejectionMessageP5ViewModel,
-    paginationViewModel: PaginationViewModel,
     mrn: Option[String]
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[RejectionMessageP5View]
-      .apply(viewModel, departureIdP5, messageId, paginationViewModel, mrn)(fakeRequest, messages, frontendAppConfig)
-
-  override def view: HtmlFormat.Appendable = applyView(rejectionMessageP5ViewModel, paginationViewModel, None)
-
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
-    applyView(rejectionMessageP5ViewModel, paginationViewModel, None)
+      .apply(viewModel, departureIdP5, messageId, mrn)(fakeRequest, messages)
 
   behave like pageWithTitle()
 
@@ -80,93 +77,71 @@ class RejectionMessageP5ViewSpec extends PaginationViewBehaviours[PaginationView
 
   behave like pageWithoutFormAction()
 
-  behave like pageWithSubmitButton("Amend errors")
+  behave like pageWithCaption(viewModel.caption)
 
-  behave like pageWithCaption(s"LRN: $lrn")
-
-  behave like pageWithPagination(
-    controllers.departureP5.routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId).url
-  )
+  behave like pageWithPagination()
 
   behave like pageWithTable()
 
-  behave like pageWithSpecificContent(
-    "paragraph-1",
-    "There is a problem with this declaration. Amend the error and resend the declaration."
-  )
-
-  behave like pageWithSpecificContent(
-    "create-another-declaration",
-    "Make another departure declaration"
-  )
+  behave like pageWithSpecificContent("paragraph-1", viewModel.paragraph1)
 
   behave like pageWithLink(
     "helpdesk-link",
-    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
+    viewModel.paragraph2,
     frontendAppConfig.nctsEnquiriesUrl
   )
 
-  behave like pageWithLink(
-    "departure-link",
-    "Make another departure declaration",
-    frontendAppConfig.p5Departure
-  )
+  behave like pageWithSubmitButton("Amend errors")
 
-  "must not render table headings when no table rows" in {
-
-    val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel =
-      new RejectionMessageP5ViewModel(Nil, lrn.toString, false, BusinessRejectionType.DeclarationRejection)
-
-    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, None))
-    assertElementDoesNotExist(doc, "govuk-table__head")
-
-  }
-
-  "must not render add another declaration link when isAmendmentJourney is true" in {
-    val rejectionMessageP5ViewModel: RejectionMessageP5ViewModel =
-      new RejectionMessageP5ViewModel(Nil, lrn.toString, false, BusinessRejectionType.AmendmentRejection)
-
-    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, None))
-    assertNotRenderedById(doc, "departure-link")
-  }
-
-  "must not render mrn when None" in {
-    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, None))
-    assertNotRenderedById(doc, "mrn")
-  }
-
-  "must render mrn when provided" in {
-    val doc: Document = parseView(applyView(rejectionMessageP5ViewModel, paginationViewModel, Some("mrn")))
-    assertRenderedById(doc, "mrn")
-  }
-
-  "when trader test enabled" - {
-    "must not display helpdesk link" - {
-      val app = new GuiceApplicationBuilder()
-        .configure("trader-test.enabled" -> true)
-        .build()
-
-      running(app) {
-        val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
-        val view = app.injector
-          .instanceOf[RejectionMessageP5View]
-          .apply(
-            rejectionMessageP5ViewModel,
-            departureIdP5,
-            messageId,
-            paginationViewModel,
-            None
-          )(fakeRequest, messages, frontendAppConfig)
-
-        val doc = parseView(view)
-
-        behave like pageWithoutLink(
-          doc,
-          "helpdesk-link"
-        )
-      }
+  "when hyperlink is not defined" - {
+    "must not render link" in {
+      val doc: Document = parseView(applyView(viewModel.copy(hyperlink = None), None))
+      assertNotRenderedById(doc, "departure-link")
     }
   }
 
+  "when hyperlink is defined" - {
+    val hyperlink     = nonEmptyString.sample.value
+    val doc: Document = parseView(applyView(viewModel.copy(hyperlink = Some(hyperlink)), None))
+    behave like pageWithLink(
+      doc,
+      "departure-link",
+      hyperlink,
+      frontendAppConfig.p5Departure
+    )
+  }
+
+  "when MRN is undefined" - {
+    "must not render MRN" in {
+      val doc: Document = parseView(applyView(viewModel, None))
+      assertNotRenderedById(doc, "mrn")
+    }
+  }
+
+  "when MRN is defined" - {
+    "must render MRN" in {
+      val mrn           = nonEmptyString.sample.value
+      val doc: Document = parseView(applyView(viewModel, Some(mrn)))
+      assertRenderedById(doc, "mrn")
+    }
+  }
+
+  "when trader test enabled" - {
+    val app = new GuiceApplicationBuilder()
+      .configure("trader-test.enabled" -> true)
+      .build()
+
+    running(app) {
+      val view = app.injector
+        .instanceOf[RejectionMessageP5View]
+        .apply(viewModel, departureIdP5, messageId, None)(fakeRequest, messages)
+
+      val doc = parseView(view)
+
+      behave like pageWithoutLink(
+        doc,
+        "helpdesk-link"
+      )
+    }
+  }
 }

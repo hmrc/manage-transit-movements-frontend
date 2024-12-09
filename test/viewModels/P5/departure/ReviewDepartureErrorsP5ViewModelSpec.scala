@@ -50,9 +50,6 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPrope
 
         val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, href)
 
-        "must return correct section length" in {
-          result.pagination.items.value.length mustEqual 1
-        }
         "must return correct title" in {
           result.title mustEqual "Review declaration errors"
         }
@@ -89,9 +86,6 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPrope
 
         val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, href)
 
-        "must return correct section length" in {
-          result.pagination.items.value.length mustEqual 2
-        }
         "must return correct title" in {
           result.title mustEqual "Review declaration errors"
         }

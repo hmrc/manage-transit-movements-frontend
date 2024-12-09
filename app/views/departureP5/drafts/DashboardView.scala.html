@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+@import controllers.departureP5.drafts.routes
 @import viewModels.drafts.AllDraftDeparturesViewModel
 @import views.html.components.{DraftDeparturesTable, Heading, Pagination, Search, Status}
 
@@ -52,12 +53,12 @@
     @if(!viewModel.noResultsFound) {
         @search(
             form = form,
-            action = controllers.departureP5.drafts.routes.DashboardController.onSubmit(Some(viewModel.sortParams.convertParams)),
+            action = routes.DashboardController.onSubmit(Some(viewModel.sortParams.convertParams)),
             label = "departure.drafts.dashboard.search"
         )
     }
 
-    @pagination(viewModel, viewModel.lrn)
+    @pagination(viewModel)
 
     @if(viewModel.resultsFound) {
         @draftDeparturesTable(viewModel)
@@ -70,7 +71,6 @@
     @if(viewModel.noResultsFound){
         @status(id = "no-results-found", classes = "govuk-body", html = messages("departure.drafts.dashboard.table.noResults"))
     }
-
 
     <article class="ticket-panel" aria-label="Sub navigation 1">
         <section class="ticket-panel__content ticket-panel__content--blue" aria-label="Section 1">
