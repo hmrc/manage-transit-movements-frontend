@@ -16,10 +16,10 @@
 
 package generators
 
-import models.{DeparturesSummary, Sort}
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.GuaranteeReferenceTable
+import models.{DeparturesSummary, Sort}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
@@ -79,15 +79,6 @@ trait ViewModelGenerators {
   implicit lazy val arbitraryAccordionSections: Arbitrary[List[AccordionSection]] = Arbitrary {
     distinctListWithMaxLength[AccordionSection, Option[String]]()(_.sectionTitle)
   }
-
-  /*implicit def arbitraryViewAllArrivalMovementsP5ViewModel(implicit messages: Messages): Arbitrary[ViewAllArrivalMovementsP5ViewModel] =
-    Arbitrary {
-      for {
-        viewArrivals <- distinctListWithMaxLength[ViewArrivalP5, LocalDate]()(_.updatedDate)
-        searchParam  <- Gen.option(nonEmptyString)
-        currentPage  <- positiveBigDecimals
-      } yield ViewAllArrivalMovementsP5ViewModel(viewArrivals, None)
-    }*/
 
   implicit lazy val arbitraryMetaData: Arbitrary[MetaData] =
     Arbitrary {
@@ -318,16 +309,6 @@ trait ViewModelGenerators {
         businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
       } yield DepartureDeclarationErrorsP5ViewModel(lrn, mrn, businessRejectionType)
     }
-
-  /*implicit val arbitraryRejectionMessageP5ViewModel: Arbitrary[RejectionMessageP5ViewModel] =
-    Arbitrary {
-      for {
-        tableRows             <- listWithMaxLength()(arbitraryTableRows)
-        lrn                   <- nonEmptyString
-        multipleErrors        <- arbitrary[Boolean]
-        businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
-      } yield RejectionMessageP5ViewModel(tableRows, lrn, multipleErrors, businessRejectionType)
-    }*/
 
   implicit val arbitraryGuaranteeRejectedP5ViewModel: Arbitrary[GuaranteeRejectedP5ViewModel] =
     Arbitrary {
