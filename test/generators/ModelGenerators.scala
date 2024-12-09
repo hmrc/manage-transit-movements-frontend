@@ -16,7 +16,9 @@
 
 package generators
 
-import models._
+import models.*
+import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithoutSection}
+import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.{BusinessRejectionType, DepartureMovement, DepartureMovements}
@@ -26,7 +28,7 @@ import org.scalacheck.Gen.{choose, listOfN, numChar, posNum}
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.mvc.Call
 
-import java.time._
+import java.time.*
 
 // scalastyle:off magic.number
 trait ModelGenerators {
@@ -165,27 +167,57 @@ trait ModelGenerators {
     }
 
   implicit lazy val arbitraryDraftDeparture: Arbitrary[DeparturesSummary] = Arbitrary {
-    listWithMaxLength[DepartureUserAnswerSummary](9).map(DeparturesSummary(0, 0, _))
+    for {
+      totalMovements         <- positiveInts
+      totalMatchingMovements <- positiveInts
+      userAnswers            <- listWithMaxLength[DepartureUserAnswerSummary]()
+    } yield DeparturesSummary(
+      totalMovements = totalMovements,
+      totalMatchingMovements = totalMatchingMovements,
+      userAnswers = userAnswers
+    )
   }
 
-  implicit lazy val arbitraryFunctionalError: Arbitrary[models.departureP5.FunctionalError] =
+  implicit lazy val arbitraryInvalidDataItem: Arbitrary[InvalidDataItem] =
     Arbitrary {
       for {
-        errorPointer           <- nonEmptyString
-        errorCode              <- nonEmptyString
-        errorReason            <- nonEmptyString
-        originalAttributeValue <- Gen.option(nonEmptyString)
-      } yield models.departureP5.FunctionalError(errorPointer, errorCode, errorReason, originalAttributeValue)
+        value <- nonEmptyString
+      } yield models.InvalidDataItem(value)
     }
 
-  lazy val arbitraryAmendableFunctionalError: Arbitrary[models.departureP5.FunctionalError] =
+  implicit lazy val arbitraryFunctionalErrorWithSection: Arbitrary[FunctionalErrorWithSection] =
     Arbitrary {
       for {
-        errorPointer           <- nonEmptyString
-        errorCode              <- nonEmptyString
-        errorReason            <- nonEmptyString
-        originalAttributeValue <- Gen.option(nonEmptyString)
-      } yield models.departureP5.FunctionalError(s"/CC015C/$errorPointer", errorCode, errorReason, originalAttributeValue)
+        error           <- nonEmptyString
+        businessRuleId  <- nonEmptyString
+        section         <- Gen.option(nonEmptyString)
+        invalidDataItem <- arbitrary[InvalidDataItem]
+        invalidAnswer   <- Gen.option(nonEmptyString)
+      } yield FunctionalErrorWithSection(error, businessRuleId, section, invalidDataItem, invalidAnswer)
+    }
+
+  implicit lazy val arbitraryFunctionalErrorWithoutSection: Arbitrary[FunctionalErrorWithoutSection] =
+    Arbitrary {
+      for {
+        error           <- nonEmptyString
+        businessRuleId  <- nonEmptyString
+        invalidDataItem <- arbitrary[InvalidDataItem]
+        invalidAnswer   <- Gen.option(nonEmptyString)
+      } yield FunctionalErrorWithoutSection(error, businessRuleId, invalidDataItem, invalidAnswer)
+    }
+
+  implicit lazy val arbitraryFunctionalErrorsWithSection: Arbitrary[FunctionalErrorsWithSection] =
+    Arbitrary {
+      for {
+        value <- listWithMaxLength[FunctionalErrorWithSection]()
+      } yield FunctionalErrorsWithSection(value)
+    }
+
+  implicit lazy val arbitraryFunctionalErrorsWithoutSection: Arbitrary[FunctionalErrorsWithoutSection] =
+    Arbitrary {
+      for {
+        value <- listWithMaxLength[FunctionalErrorWithoutSection]()
+      } yield FunctionalErrorsWithoutSection(value)
     }
 
   implicit lazy val arbitraryGuaranteeReferenceTable: Arbitrary[models.departureP5.GuaranteeReferenceTable] =
@@ -224,7 +256,7 @@ trait ModelGenerators {
     }
 
   implicit lazy val arbitraryBusinessRejectionType: Arbitrary[BusinessRejectionType] = {
-    import models.departureP5.BusinessRejectionType._
+    import models.departureP5.BusinessRejectionType.*
     Arbitrary {
       for {
         value <- nonEmptyString
@@ -239,7 +271,7 @@ trait ModelGenerators {
   }
 
   implicit lazy val arbitraryDepartureBusinessRejectionType: Arbitrary[DepartureBusinessRejectionType] = {
-    import models.departureP5.BusinessRejectionType._
+    import models.departureP5.BusinessRejectionType.*
     Arbitrary {
       Gen.oneOf(
         AmendmentRejection,
@@ -248,6 +280,15 @@ trait ModelGenerators {
     }
   }
 
+  implicit lazy val arbitrarySort: Arbitrary[Sort] =
+    Arbitrary {
+      Gen.oneOf(
+        Sort.SortByLRNAsc,
+        Sort.SortByLRNDesc,
+        Sort.SortByCreatedAtAsc,
+        Sort.SortByCreatedAtDesc
+      )
+    }
 }
 
 // scalastyle:on magic.number

@@ -136,7 +136,7 @@ trait MessagesModelGenerators {
         customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType03]
         holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType08]
         representative              <- Gen.option(arbitrary[RepresentativeType01])
-        functionalErrors            <- arbitrary[Seq[FunctionalErrorType04]]
+        functionalErrors            <- listWithMaxLength[FunctionalErrorType04]()
       } yield CC056CType(
         messageSequence1 = messageSequence1,
         TransitOperation = transitOperation,
@@ -172,7 +172,7 @@ trait MessagesModelGenerators {
         transitOperation                 <- arbitrary[TransitOperationType21]
         customsOfficeOfDestinationActual <- arbitrary[CustomsOfficeOfDestinationActualType03]
         traderAtDestination              <- arbitrary[TraderAtDestinationType03]
-        functionalErrors                 <- arbitrary[Seq[FunctionalErrorType04]]
+        functionalErrors                 <- listWithMaxLength[FunctionalErrorType04]()
       } yield CC057CType(
         messageSequence1 = messageSequence1,
         TransitOperation = transitOperation,

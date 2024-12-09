@@ -17,54 +17,53 @@
 package views.departureP5
 
 import generators.Generators
+import models.FunctionalError.FunctionalErrorWithoutSection
+import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import viewModels.P5.departure.ReviewPrelodgedDeclarationErrorsP5ViewModel
-import viewModels.pagination.PaginationViewModel
-import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departureP5.ReviewPrelodgedDeclarationErrorsP5View
 
-class ReviewPrelodgedDeclarationErrorsP5ViewSpec extends PaginationViewBehaviours[PaginationViewModel] with TableViewBehaviours with Generators {
+class ReviewPrelodgedDeclarationErrorsP5ViewSpec
+    extends PaginationViewBehaviours[FunctionalErrorWithoutSection, ReviewPrelodgedDeclarationErrorsP5ViewModel]
+    with TableViewBehaviours
+    with Generators {
 
-  override val prefix: String = "prelodged.declaration.ie056.review.message"
+  override val viewModel: ReviewPrelodgedDeclarationErrorsP5ViewModel =
+    arbitraryReviewPrelodgedDeclarationErrorsP5ViewModel.arbitrary.sample.value
 
-  override val headCells: Seq[HeadCell] =
-    Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+  override val table: Table = viewModel.table
 
-  val tableRows: Seq[TableRow]       = arbitrary[Seq[TableRow]].sample.value
-  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
+  override def buildViewModel(
+    totalNumberOfItems: Int,
+    currentPage: Int,
+    numberOfItemsPerPage: Int
+  ): ReviewPrelodgedDeclarationErrorsP5ViewModel =
+    viewModel.copy(
+      functionalErrors = {
+        def error: FunctionalErrorWithoutSection = arbitrary[FunctionalErrorWithoutSection].sample.value
+        FunctionalErrorsWithoutSection(Seq.fill(totalNumberOfItems)(error))
+      },
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfItemsPerPage
+    )
 
-  private val reviewPrelodgeRejectionMessageP5ViewModel =
-    new ReviewPrelodgedDeclarationErrorsP5ViewModel(Seq(tableRows), lrn.toString, false)
+  override val prefix: String        = "prelodged.declaration.ie056.review.message"
+  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfErrorsPerPage
 
-  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
+  override def view: HtmlFormat.Appendable = applyView(viewModel)
 
-  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
-    PaginationViewModel(_, _, _, _)
-
-  val paginationViewModel: PaginationViewModel = PaginationViewModel(
-    totalNumberOfItems = sections.length,
-    currentPage = 1,
-    numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.departureP5.routes.ReviewPrelodgedDeclarationErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
-    additionalParams = Seq()
-  )
+  override def viewWithSpecificPagination(viewModel: ReviewPrelodgedDeclarationErrorsP5ViewModel): HtmlFormat.Appendable =
+    applyView(viewModel)
 
   private def applyView(
-    viewModel: ReviewPrelodgedDeclarationErrorsP5ViewModel,
-    paginationViewModel: PaginationViewModel
+    viewModel: ReviewPrelodgedDeclarationErrorsP5ViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewPrelodgedDeclarationErrorsP5View]
-      .apply(viewModel, departureIdP5, paginationViewModel)(fakeRequest, messages, frontendAppConfig)
-
-  override def view: HtmlFormat.Appendable = applyView(reviewPrelodgeRejectionMessageP5ViewModel, paginationViewModel)
-
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
-    applyView(reviewPrelodgeRejectionMessageP5ViewModel, paginationViewModel)
+      .apply(viewModel, departureIdP5)(fakeRequest, messages)
 
   behave like pageWithTitle()
 
@@ -76,28 +75,23 @@ class ReviewPrelodgedDeclarationErrorsP5ViewSpec extends PaginationViewBehaviour
 
   behave like pageWithoutSubmitButton()
 
-  behave like pageWithCaption(s"LRN: $lrn")
+  behave like pageWithCaption(viewModel.caption)
 
-  behave like pageWithPagination(
-    controllers.departureP5.routes.ReviewPrelodgedDeclarationErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
-  )
+  behave like pageWithPagination()
 
   behave like pageWithTable()
 
-  behave like pageWithSpecificContent(
-    "paragraph-1",
-    "There is a problem with this declaration. Review the error and complete your pre-lodged declaration with the right information."
-  )
+  behave like pageWithSpecificContent("paragraph-1", viewModel.paragraph1)
 
   behave like pageWithLink(
     "helpdesk-link",
-    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
+    viewModel.paragraph2,
     frontendAppConfig.nctsEnquiriesUrl
   )
 
   behave like pageWithLink(
     "prelodge-declaration-link",
-    "Complete pre-lodged declaration",
+    viewModel.hyperlink,
     frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)
   )
 }

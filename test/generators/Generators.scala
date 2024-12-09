@@ -43,6 +43,8 @@ trait Generators extends ModelGenerators with ViewModelGenerators with MessagesM
     }
   }
 
+  def positiveInts: Gen[Int] = Gen.choose(0, 1000)
+
   def positiveBigInts: Gen[BigInt] = Gen.choose(0, 1000)
 
   def positiveBigDecimals: Gen[BigDecimal] = Gen.choose(0, 1000)

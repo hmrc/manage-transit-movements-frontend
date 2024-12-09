@@ -17,39 +17,38 @@
 @import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
 @import config.FrontendAppConfig
 @import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
-@import viewModels.pagination.PaginationViewModel
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    table: Table,
+    table: GovukTable,
     button: Button,
     formHelper: FormWithCSRF,
     pagination: Pagination,
     helpdeskLink: HelpdeskLink
 )
 
-@(reviewCancellationErrorsP5ViewModel: ReviewCancellationErrorsP5ViewModel, departureId: String, paginationViewModel: PaginationViewModel)(implicit request: Request[?], messages: Messages)
+@(viewModel: ReviewCancellationErrorsP5ViewModel, departureId: String)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
-    title = reviewCancellationErrorsP5ViewModel.title,
+    title = viewModel.title,
     showBackLink = true
 ) {
 
     @heading(
-        heading = reviewCancellationErrorsP5ViewModel.heading,
-        caption = Some(messages("departure.messages.caption", reviewCancellationErrorsP5ViewModel.lrn))
+        heading = viewModel.heading,
+        caption = Some(viewModel.caption)
     )
 
-    <p id="paragraph-1" class="govuk-body">@reviewCancellationErrorsP5ViewModel.paragraph1</p>
+    <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
-    @pagination(paginationViewModel, None)
+    @pagination(viewModel)
 
-    @table(reviewCancellationErrorsP5ViewModel.tableRows, reviewCancellationErrorsP5ViewModel.tableHeadCells)
+    @table(viewModel.table)
 
-    @helpdeskLink(reviewCancellationErrorsP5ViewModel.paragraph2)
+    @helpdeskLink(viewModel.paragraph2)
 
     <p class="govuk-body">
-        <a id="departure-link" class="govuk-link" href="@reviewCancellationErrorsP5ViewModel.viewDeparturesLink">@reviewCancellationErrorsP5ViewModel.hyperlink</a>
+        <a id="departure-link" class="govuk-link" href="@viewModel.viewDeparturesLink">@viewModel.hyperlink</a>
     </p>
 }

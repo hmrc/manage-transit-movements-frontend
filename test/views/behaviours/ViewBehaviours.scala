@@ -23,7 +23,7 @@ import org.scalatest.Assertion
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import play.twirl.api.TwirlHelperImports._
+import play.twirl.api.TwirlHelperImports.*
 import views.base.ViewSpecAssertions
 
 trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
@@ -100,19 +100,42 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
     getElementHref(link) `mustBe` s"http://localhost:9250/contact/report-technical-problem?service=CTCTraders&referrerUrl=$path"
   }
 
+  def pageWithTitle(text: String): Unit =
+    "must render title" in {
+      checkTitle(text)
+    }
+
   def pageWithTitle(args: Any*): Unit =
-    pageWithTitle(doc, prefix, args*)
+    "must render title" in {
+      val messageKey = s"$prefix.title"
+      checkTitle(messages(messageKey, args*))
+      assert(messages.isDefinedAt(messageKey))
+    }
 
   def pageWithTitle(doc: Document, prefix: String, args: Any*): Unit =
     "must render title" in {
       val title      = doc.title()
       val messageKey = s"$prefix.title"
-      title `mustBe` s"${messages(messageKey, args*)} - Manage your transit movements - GOV.UK"
+      title mustBe s"${messages(messageKey, args*)} - Arrival notifications - Manage your transit movements - GOV.UK"
       assert(messages.isDefinedAt(messageKey))
     }
 
+  private def checkTitle(text: String): Assertion = {
+    val title = doc.title()
+    title mustBe s"$text - Manage your transit movements - GOV.UK"
+  }
+
+  def pageWithHeading(text: String): Unit =
+    "must render heading" in {
+      checkHeading(text)
+    }
+
   def pageWithHeading(args: Any*): Unit =
-    pageWithHeading(doc, prefix, args*)
+    "must render heading" in {
+      val messageKey = s"$prefix.heading"
+      checkHeading(messages(messageKey, args*))
+      assert(messages.isDefinedAt(messageKey))
+    }
 
   def pageWithHeading(doc: Document, prefix: String, args: Any*): Unit =
     "must render heading" in {
@@ -122,21 +145,10 @@ trait ViewBehaviours extends SpecBase with ViewSpecAssertions {
       assert(messages.isDefinedAt(messageKey))
     }
 
-  def pageWithMatchingTitleAndHeading(args: Any*): Unit =
-    pageWithMatchingTitleAndHeading(doc, prefix, args*)
-
-  def pageWithMatchingTitleAndHeading(doc: Document, prefix: String, args: Any*): Unit =
-    "must render title and heading" in {
-      val messageKey = s"$prefix.titleAndHeading"
-
-      val heading = getElementByTag(doc, "h1")
-      assertElementIncludesText(heading, messages(messageKey, args*))
-      assert(messages.isDefinedAt(messageKey))
-
-      val title = doc.title()
-      title `mustBe` s"${messages(messageKey, args*)} - Manage your transit movements - GOV.UK"
-      assert(messages.isDefinedAt(messageKey))
-    }
+  private def checkHeading(text: String): Assertion = {
+    val heading = getElementByTag(doc, "h1")
+    assertElementIncludesText(heading, text)
+  }
 
   def pageWithCaption(expectedText: String): Unit =
     "must render caption" in {

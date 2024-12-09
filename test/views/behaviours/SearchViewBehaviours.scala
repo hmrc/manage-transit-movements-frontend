@@ -16,72 +16,56 @@
 
 package views.behaviours
 
-import forms.DeparturesSearchFormProvider
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
-import play.api.data.Form
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
-import viewModels.ViewMovement
 
-trait SearchViewBehaviours[T <: ViewMovement] extends InputTextViewBehaviours[String] {
-  self: MovementsTableViewBehaviours[T] =>
-
-  override def form: Form[String] = new DeparturesSearchFormProvider()()
-
-  val dataRows: Seq[(String, Seq[T])]
+trait SearchViewBehaviours extends InputTextViewBehaviours[String] with ScalaCheckPropertyChecks {
 
   implicit override val arbitraryT: Arbitrary[String] = Arbitrary(Gen.alphaNumStr)
 
-  def viewWithSpecificSearchResults(dataRows: Seq[(String, Seq[T])], retrieved: Int, tooManyResults: Boolean): HtmlFormat.Appendable =
-    view
+  def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable
 
   "must contain movement-search div" in {
     assert(doc.getElementsByClass("movement-search").size() == 1)
   }
 
-  def pageWithMovementSearch(expectedLabelText: String): Unit =
-    "page with a movements search box" - {
+  def pageWithSearch(expectedLabelText: String, expectedNoResultsFoundText: String): Unit = {
+    "page with a search box" - {
+      behave like pageWithContent("label", expectedLabelText)
+
       behave like pageWithInputText()
 
       behave like pageWithSubmitButton("Search")
     }
 
-  def pageWithSearchResults(referenceNumber: String): Unit =
+    val searchParam = nonEmptyString.sample.value
+
     "page with search results" - {
       "must display correct text" - {
         "when there are no results" in {
-          val doc = parseView(viewWithSpecificSearchResults(Nil, 0, tooManyResults = false))
+          val doc = parseView(viewWithSpecificSearchResults(0, searchParam))
           val p   = doc.getElementById("no-results-found")
-          p.text() `mustBe` "No results found"
+          p.text() `mustBe` expectedNoResultsFoundText
         }
 
         "when there is a single result" in {
-          val doc = parseView(viewWithSpecificSearchResults(dataRows, 1, tooManyResults = false))
-          val p   = doc.getElementById("results-found")
-          p.text() `mustBe` s"Showing 1 result matching $referenceNumber."
+          val doc = parseView(viewWithSpecificSearchResults(1, searchParam))
+          val p   = doc.getElementById("results-count")
+          p.text() `mustBe` s"Showing 1 result matching $searchParam"
           boldWords(p) `mustBe` Seq("1")
         }
 
         "when there are multiple results" in {
-          forAll(arbitrary[Int].retryUntil(_ > 1)) {
+          forAll(Gen.choose(2, 10)) {
             retrieved =>
-              val doc = parseView(viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults = false))
-              val p   = doc.getElementById("results-found")
-              p.text() `mustBe` s"Showing $retrieved results matching $referenceNumber."
-              boldWords(p) `mustBe` Seq(retrieved.toString)
-          }
-        }
-
-        "when there are too many results" in {
-          forAll(arbitrary[Int].retryUntil(_ > 1)) {
-            retrieved =>
-              val doc = parseView(viewWithSpecificSearchResults(dataRows, retrieved, tooManyResults = true))
-              val p   = doc.getElementById("results-found")
-              p.text() `mustBe` s"Showing $retrieved results matching $referenceNumber. There are too many results. Please refine your search."
+              val doc = parseView(viewWithSpecificSearchResults(retrieved, searchParam))
+              val p   = doc.getElementById("results-count")
+              p.text() `mustBe` s"Showing $retrieved results matching $searchParam"
               boldWords(p) `mustBe` Seq(retrieved.toString)
           }
         }
       }
     }
-
+  }
 }

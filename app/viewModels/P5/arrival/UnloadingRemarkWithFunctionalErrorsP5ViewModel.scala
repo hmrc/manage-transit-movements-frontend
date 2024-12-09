@@ -16,60 +16,60 @@
 
 package viewModels.P5.arrival
 
-import generated.FunctionalErrorType04
+import models.FunctionalError.FunctionalErrorWithoutSection
+import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import play.api.i18n.Messages
-import services.ReferenceDataService
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.RejectionMessageP5MessageHelper
+import play.api.mvc.Call
+import viewModels.pagination.ErrorPaginationViewModel
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-
-case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], mrn: String, multipleErrors: Boolean) {
-
-  def title(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.title")
-
-  def heading(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.heading", mrn)
-
-  def paragraph1(implicit messages: Messages): String = if (multipleErrors) {
-    messages("arrival.ie057.review.unloading.message.paragraph1.plural")
-  } else {
-    messages("arrival.ie057.review.unloading.message.paragraph1.singular")
-  }
-
-  def paragraph2(implicit messages: Messages): String = if (multipleErrors) {
-    messages("arrival.ie057.review.unloading.message.paragraph2.plural")
-  } else {
-    messages("arrival.ie057.review.unloading.message.paragraph2.singular")
-  }
-
-  def hyperlink(implicit messages: Messages): String = messages("arrival.ie057.review.unloading.message.hyperlink")
-
-  def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
-    HeadCell(Text(messages("error.table.errorCode"))),
-    HeadCell(Text(messages("error.table.errorReason"))),
-    HeadCell(Text(messages("error.table.pointer"))),
-    HeadCell(Text(messages("error.table.attributeValue")))
-  )
-
-}
+case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(
+  title: String,
+  heading: String,
+  caption: String,
+  paragraph1: String,
+  paragraph2: String,
+  hyperlink: String,
+  functionalErrors: FunctionalErrorsWithoutSection,
+  currentPage: Int,
+  numberOfItemsPerPage: Int,
+  href: Call
+) extends ErrorPaginationViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
 
 object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
 
-  class UnloadingRemarkWithFunctionalErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  def apply(
+    functionalErrors: FunctionalErrorsWithoutSection,
+    mrn: String,
+    currentPage: Option[Int],
+    numberOfErrorsPerPage: Int,
+    href: Call
+  )(implicit messages: Messages): UnloadingRemarkWithFunctionalErrorsP5ViewModel = {
 
-    def apply(
-      functionalErrors: Seq[FunctionalErrorType04],
-      mrn: String
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[UnloadingRemarkWithFunctionalErrorsP5ViewModel] = {
-      val helper = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
+    val multipleErrors: Boolean = functionalErrors.multipleErrors
 
-      val multipleErrors = functionalErrors.length > 1
-      helper.tableRows().map(UnloadingRemarkWithFunctionalErrorsP5ViewModel(_, mrn, multipleErrors))
+    val paragraph1: String = if (multipleErrors) {
+      messages("arrival.ie057.review.unloading.message.paragraph1.plural")
+    } else {
+      messages("arrival.ie057.review.unloading.message.paragraph1.singular")
     }
 
-  }
+    val paragraph2: String = if (multipleErrors) {
+      messages("arrival.ie057.review.unloading.message.paragraph2.plural")
+    } else {
+      messages("arrival.ie057.review.unloading.message.paragraph2.singular")
+    }
 
+    new UnloadingRemarkWithFunctionalErrorsP5ViewModel(
+      title = messages("arrival.ie057.review.unloading.message.title"),
+      heading = messages("arrival.ie057.review.unloading.message.heading", mrn),
+      caption = messages("arrival.messages.caption", mrn),
+      paragraph1 = paragraph1,
+      paragraph2 = paragraph2,
+      hyperlink = messages("arrival.ie057.review.unloading.message.hyperlink"),
+      functionalErrors = functionalErrors,
+      currentPage = currentPage.getOrElse(1),
+      numberOfItemsPerPage = numberOfErrorsPerPage,
+      href = href
+    )
+  }
 }
