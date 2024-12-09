@@ -89,7 +89,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
               val view = injector.instanceOf[IntentionToControlP5View]
 
               contentAsString(result) mustEqual
-                view(intentionToControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+                view(intentionToControlP5ViewModel, departureIdP5, messageId, customsOfficeContactViewModel)(request, messages).toString
           }
       }
     }
@@ -121,9 +121,27 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           val view = injector.instanceOf[IntentionToControlP5View]
 
           contentAsString(result) mustEqual
-            view(intentionToControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+            view(intentionToControlP5ViewModel, departureIdP5, messageId, customsOfficeContactViewModel)(request, messages).toString
+      }
+    }
+
+    "must redirect to Presentation notification frontend" in {
+      forAll(arbitrary[CC060CType]) {
+        message =>
+          val intentionToControlInformationRequestedController: String =
+            controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureIdP5, messageId).url
+
+          when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
+
+          val request = FakeRequest(POST, intentionToControlInformationRequestedController)
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)
       }
     }
   }
-
 }

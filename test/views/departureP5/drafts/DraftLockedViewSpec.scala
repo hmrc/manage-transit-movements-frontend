@@ -40,8 +40,5 @@ class DraftLockedViewSpec extends ViewBehaviours {
     "Another person from your organisation is currently working on this declaration. You cannot delete it until they’re finished."
   )
 
-  behave like pageWithButton("Return to drafts") {
-    assertElementContainsHref(_, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
-  }
-
+  behave like pageWithSubmitButton("Return to drafts")
 }

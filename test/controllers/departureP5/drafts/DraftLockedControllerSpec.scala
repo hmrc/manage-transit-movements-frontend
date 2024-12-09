@@ -44,6 +44,15 @@ class DraftLockedControllerSpec extends SpecBase with AppWithDefaultMockFixtures
       contentAsString(result) mustEqual
         view()(request, messages).toString
     }
-  }
 
+    "must redirect to DashboardController" in {
+
+      val request = FakeRequest(POST, controllers.departureP5.drafts.routes.DraftLockedController.onPageLoad().url)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url
+    }
+  }
 }
