@@ -14,9 +14,10 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
 @import viewModels.drafts.AllDraftDeparturesViewModel
 
-@this()
+@this(config: FrontendAppConfig)
 
 @(
     viewModel: AllDraftDeparturesViewModel
@@ -29,11 +30,11 @@
         <tr>
             <th scope="col" aria-sort="@viewModel.sortLrn">
                 <span class="govuk-visually-hidden">@viewModel.sortHiddenTextLRN</span>
-                <a href="@viewModel.sortLRNHref()" aria-label="@viewModel.referenceNumber">@viewModel.referenceNumber</a>
+                <a href="@viewModel.sortLRNHref" aria-label="@viewModel.referenceNumber">@viewModel.referenceNumber</a>
             </th>
             <th scope="col" aria-sort="@viewModel.sortCreatedAt">
                 <span class="govuk-visually-hidden">@viewModel.sortHiddenTextDaysToComplete</span>
-                <a href="@viewModel.sortCreatedAtHref()" aria-label="@viewModel.daysToCompleteHiddenHeader">@viewModel.daysToComplete</a>
+                <a href="@viewModel.sortCreatedAtHref" aria-label="@viewModel.daysToCompleteHiddenHeader">@viewModel.daysToComplete</a>
             </th>
             <th scope="col"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
         </tr>
@@ -44,7 +45,7 @@
             <tr data-testrole="draft-list_row@rowIndex">
                 <td data-testrole="draft-list_row@rowIndex-lrn">
                     <span class="responsive-table__heading" aria-hidden="true">@viewModel.referenceNumber</span>
-                    <a href="@viewModel.lrnRedirectLocation(row.lrn)" class="govuk-link">
+                    <a href="@config.p5DepartureDraft(row.lrn)" class="govuk-link">
                         <span class="govuk-visually-hidden">@viewModel.referenceNumber</span>
                         @row.lrn
                     </a>

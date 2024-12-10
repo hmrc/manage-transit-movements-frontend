@@ -42,7 +42,10 @@ lazy val root = (project in file("."))
       ".*ControllerConfiguration;.*TestOnly.*",
     ScoverageKeys.coverageExcludedPackages := Seq(
       ".*scalaxb.*",
-      ".*generated.*"
+      ".*generated.*",
+      "views\\.html\\.components.*",
+      "views\\.html\\.resources.*",
+      "views\\.html\\.templates.*"
     ).mkString(";"),
     ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum    := true,

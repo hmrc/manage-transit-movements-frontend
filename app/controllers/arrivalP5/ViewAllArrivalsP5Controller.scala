@@ -18,7 +18,7 @@ package controllers.arrivalP5
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.ArrivalMovementP5Connector
-import controllers.actions._
+import controllers.actions.*
 import forms.ArrivalsSearchFormProvider
 import models.requests.IdentifierRequest
 import play.api.data.Form
@@ -28,7 +28,6 @@ import play.twirl.api.HtmlFormat
 import services.ArrivalP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.PaginationViewModel
 import views.html.arrivalP5.ViewAllArrivalsP5View
 
 import java.time.Clock
@@ -65,7 +64,7 @@ class ViewAllArrivalsP5Controller @Inject() (
           formWithErrors => buildView(formWithErrors, None, None)(BadRequest(_)),
           value => {
             val mrn: Option[String] = Option(value).filter(_.trim.nonEmpty)
-            Future.successful(Redirect(controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, mrn)))
+            Future.successful(Redirect(routes.ViewAllArrivalsP5Controller.onPageLoad(None, mrn)))
           }
         )
   }
@@ -78,31 +77,19 @@ class ViewAllArrivalsP5Controller @Inject() (
       case Some(movements) =>
         arrivalP5MessageService.getLatestMessagesForMovements(movements).map {
           movementsAndMessages =>
-            val viewArrivalP5: Seq[ViewArrivalP5] = movementsAndMessages.map(ViewArrivalP5(_))
+            val arrivals: Seq[ViewArrivalP5] = movementsAndMessages.map(ViewArrivalP5(_))
 
-            val viewModel = ViewAllArrivalMovementsP5ViewModel(viewArrivalP5, searchParam)
-
-            val paginationViewModel = PaginationViewModel(
-              totalNumberOfItems = movements.totalCount,
-              currentPage = currentPage,
-              numberOfItemsPerPage = paginationConfig.arrivalsNumberOfMovements,
-              href = controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url,
-              additionalParams = Seq(
-                searchParam.map("mrn" -> _)
-              ).flatten,
-              navigationHiddenText = Some(viewModel.pageHeading)
+            val viewModel = ViewAllArrivalMovementsP5ViewModel(
+              arrivals,
+              searchParam,
+              currentPage,
+              paginationConfig.arrivalsNumberOfMovements
             )
 
-            block(
-              view(
-                form = form,
-                viewModel = viewModel,
-                paginationViewModel = paginationViewModel
-              )
-            )
+            block(view(form, viewModel))
         }
-      case None => Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+      case None =>
+        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
     }
   }
-
 }

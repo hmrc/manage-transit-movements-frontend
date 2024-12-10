@@ -19,104 +19,45 @@ package viewModels.drafts
 import base.SpecBase
 import controllers.departureP5.drafts.routes
 import generators.Generators
-import models.Sort._
+import models.Sort.*
 import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import viewModels.pagination.PaginationViewModel
 
 class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
   "AllDraftDeparturesViewModel" - {
 
-    "must return correct data rows" in {
-
-      val userAnswerSummary: Gen[List[DepartureUserAnswerSummary]] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary])
-
-      forAll(userAnswerSummary) {
-        userAnswerSummary =>
-          val draftDeparture      = DeparturesSummary(0, 0, userAnswerSummary)
-          val paginationViewModel = PaginationViewModel(2, 1, 2, "test")
-
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, 1, None, frontendAppConfig.p5Departure, paginationViewModel)
-
-          viewModel.dataRows.length `mustBe` draftDeparture.userAnswers.length
-
-          viewModel.dataRows.head.lrn `mustBe` draftDeparture.userAnswers.head.lrn.toString
-          viewModel.dataRows(1).lrn `mustBe` draftDeparture.userAnswers(1).lrn.toString
-
-          viewModel.dataRows.head.daysRemaining `mustBe` draftDeparture.userAnswers.head.expiresInDays
-          viewModel.dataRows(1).daysRemaining `mustBe` draftDeparture.userAnswers(1).expiresInDays
-      }
-    }
-
-    "tooManyResult" - {
-
-      val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
-      val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-      val paginationViewModel                                 = PaginationViewModel(2, 1, 2, "test")
-
-      "must return true when departure size is greater than page size" in {
-
-        val viewModel =
-          AllDraftDeparturesViewModel(
-            departuresSummary,
-            departuresSummary.userAnswers.length - 1,
-            None,
-            frontendAppConfig.p5Departure,
-            paginationViewModel
-          )
-
-        viewModel.tooManyResults `mustBe` true
-      }
-
-      "must return false when departure size is less than or equal to page size" in {
-
-        val viewModel =
-          AllDraftDeparturesViewModel(
-            departuresSummary,
-            departuresSummary.userAnswers.length + 1,
-            None,
-            frontendAppConfig.p5Departure,
-            paginationViewModel
-          )
-
-        viewModel.tooManyResults `mustBe` false
-      }
-    }
-
     "isSearch" - {
 
       val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
       val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-      val paginationViewModel                                 = PaginationViewModel(2, 1, 2, "test")
 
       "must return true when LRN is defined" in {
 
-        val viewModel =
-          AllDraftDeparturesViewModel(
-            departuresSummary,
-            departuresSummary.userAnswers.length,
-            Some("AB123"),
-            frontendAppConfig.p5Departure,
-            paginationViewModel
-          )
+        val viewModel = AllDraftDeparturesViewModel(
+          departuresSummary,
+          Some("AB123"),
+          1,
+          2,
+          None
+        )
 
-        viewModel.isSearch `mustBe` true
+        viewModel.isSearch mustEqual true
       }
 
       "must return false when LRN is not defined" in {
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
-          departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.p5Departure,
-          paginationViewModel
+          1,
+          2,
+          None
         )
 
-        viewModel.isSearch `mustBe` false
+        viewModel.isSearch mustEqual false
       }
 
     }
@@ -127,33 +68,31 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-        val paginationViewModel                                 = PaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
-          departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.p5Departure,
-          paginationViewModel
+          1,
+          2,
+          None
         )
 
-        viewModel.resultsFound `mustBe` true
+        viewModel.resultsFound mustEqual true
       }
 
       "must return false when data rows is empty" in {
 
         val departuresSummary: DeparturesSummary = DeparturesSummary(0, 0, List.empty)
-        val paginationViewModel                  = PaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
-          departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.p5Departure,
-          paginationViewModel
+          1,
+          2,
+          None
         )
 
-        viewModel.resultsFound `mustBe` false
+        viewModel.resultsFound mustEqual false
       }
     }
 
@@ -163,51 +102,47 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-        val paginationViewModel                                 = PaginationViewModel(2, 1, 2, "test")
 
-        val viewModel =
-          AllDraftDeparturesViewModel(
-            departuresSummary,
-            departuresSummary.userAnswers.length,
-            Some("AB123"),
-            frontendAppConfig.p5Departure,
-            paginationViewModel
-          )
+        val viewModel = AllDraftDeparturesViewModel(
+          departuresSummary,
+          Some("AB123"),
+          1,
+          2,
+          None
+        )
 
-        viewModel.searchResultsFound `mustBe` true
+        viewModel.searchResultsFound mustEqual true
       }
 
       "must return false when LRN is not defined" in {
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(0, 0, userAnswerSummary)
-        val paginationViewModel                                 = PaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
-          departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.p5Departure,
-          paginationViewModel
+          1,
+          2,
+          None
         )
 
-        viewModel.searchResultsFound `mustBe` false
+        viewModel.searchResultsFound mustEqual false
       }
 
       "must return false when rows are empty" in {
 
         val departuresSummary: DeparturesSummary = DeparturesSummary(0, 0, List.empty)
-        val paginationViewModel                  = PaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
-          departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.p5Departure,
-          paginationViewModel
+          1,
+          2,
+          None
         )
 
-        viewModel.searchResultsFound `mustBe` false
+        viewModel.searchResultsFound mustEqual false
       }
     }
 
@@ -216,34 +151,32 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "mut return true when no search results found" in {
 
         val departuresSummary: DeparturesSummary = DeparturesSummary(1, 0, List.empty)
-        val paginationViewModel                  = PaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
-          departuresSummary.userAnswers.length,
           Some("AB123"),
-          frontendAppConfig.p5Departure,
-          paginationViewModel
+          1,
+          2,
+          None
         )
 
-        viewModel.noSearchResultsFound `mustBe` true
+        viewModel.noSearchResultsFound mustEqual true
       }
 
       "must return false when search results found" in {
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(1, 1, userAnswerSummary)
-        val paginationViewModel                                 = PaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
-          departuresSummary.userAnswers.length,
           Some("AB123"),
-          frontendAppConfig.p5Departure,
-          paginationViewModel
+          1,
+          2,
+          None
         )
 
-        viewModel.noResultsFound `mustBe` false
+        viewModel.noResultsFound mustEqual false
       }
     }
 
@@ -252,95 +185,91 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       "must return true when no results found" in {
 
         val departuresSummary: DeparturesSummary = DeparturesSummary(0, 0, List.empty)
-        val paginationViewModel                  = PaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
-          departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.p5Departure,
-          paginationViewModel
+          1,
+          2,
+          None
         )
 
-        viewModel.noResultsFound `mustBe` true
+        viewModel.noResultsFound mustEqual true
       }
 
       "must return false when results found" in {
 
         val userAnswerSummary: List[DepartureUserAnswerSummary] = Gen.listOfN(2, arbitrary[DepartureUserAnswerSummary]).sample.value
         val departuresSummary: DeparturesSummary                = DeparturesSummary(1, 1, userAnswerSummary)
-        val paginationViewModel                                 = PaginationViewModel(2, 1, 2, "test")
 
         val viewModel = AllDraftDeparturesViewModel(
           departuresSummary,
-          departuresSummary.userAnswers.length,
           None,
-          frontendAppConfig.p5Departure,
-          paginationViewModel
+          1,
+          2,
+          None
         )
 
-        viewModel.noResultsFound `mustBe` false
+        viewModel.noResultsFound mustEqual false
       }
     }
 
     "sortParams" - {
-      val departuresSummary   = arbitrary[DeparturesSummary].sample.value
-      val paginationViewModel = PaginationViewModel(2, 1, 2, "test")
+      val departuresSummary = arbitrary[DeparturesSummary].sample.value
 
       "when sortParams is SortByLRNAsc" in {
         val sortParams = SortByLRNAsc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
-        viewModel.sortLrn `mustBe` "ascending"
-        viewModel.sortCreatedAt `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in descending order"
-        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in descending order"
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams))
+        viewModel.sortLrn mustEqual "ascending"
+        viewModel.sortCreatedAt mustEqual "none"
+        viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
+        viewModel.sortCreatedAtHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortHiddenTextLRN mustEqual "Sort local reference number (LRN) in descending order"
+        viewModel.sortHiddenTextDaysToComplete mustEqual "Sort days to complete in descending order"
       }
 
       "when sortParams is SortByLRNDesc" in {
         val sortParams = SortByLRNDesc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
-        viewModel.sortLrn `mustBe` "descending"
-        viewModel.sortCreatedAt `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in descending order"
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams))
+        viewModel.sortLrn mustEqual "descending"
+        viewModel.sortCreatedAt mustEqual "none"
+        viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortHiddenTextLRN mustEqual "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete mustEqual "Sort days to complete in descending order"
       }
 
       "when sortParams is SortByCreatedAtAsc" in {
         val sortParams = SortByCreatedAtAsc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
-        viewModel.sortCreatedAt `mustBe` "ascending"
-        viewModel.sortLrn `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
-        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in descending order"
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams))
+        viewModel.sortCreatedAt mustEqual "ascending"
+        viewModel.sortLrn mustEqual "none"
+        viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtDesc.toString))
+        viewModel.sortHiddenTextLRN mustEqual "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete mustEqual "Sort days to complete in descending order"
       }
 
       "when sortParams is SortByCreatedAtDesc" in {
         val sortParams = SortByCreatedAtDesc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel, sortParams)
-        viewModel.sortCreatedAt `mustBe` "descending"
-        viewModel.sortLrn `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
-        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in ascending order"
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams))
+        viewModel.sortCreatedAt mustEqual "descending"
+        viewModel.sortLrn mustEqual "none"
+        viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
+        viewModel.sortHiddenTextLRN mustEqual "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete mustEqual "Sort days to complete in ascending order"
       }
 
       "when sortParams is None" in {
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, 1, None, frontendAppConfig.p5Departure, paginationViewModel)
-        viewModel.sortCreatedAt `mustBe` "descending"
-        viewModel.sortLrn `mustBe` "none"
-        viewModel.sortLRNHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
-        viewModel.sortCreatedAtHref() `mustBe` routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
-        viewModel.sortHiddenTextLRN `mustBe` "Sort local reference number (LRN) in ascending order"
-        viewModel.sortHiddenTextDaysToComplete `mustBe` "Sort days to complete in ascending order"
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, None)
+        viewModel.sortCreatedAt mustEqual "descending"
+        viewModel.sortLrn mustEqual "none"
+        viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
+        viewModel.sortCreatedAtHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
+        viewModel.sortHiddenTextLRN mustEqual "Sort local reference number (LRN) in ascending order"
+        viewModel.sortHiddenTextDaysToComplete mustEqual "Sort days to complete in ascending order"
       }
     }
   }
-
 }

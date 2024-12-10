@@ -17,41 +17,41 @@
 @import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink, Pagination, Table}
 @import config.FrontendAppConfig
 @import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
-@import viewModels.pagination.PaginationViewModel
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
-    table: Table,
+    table: GovukTable,
     button: Button,
     pagination: Pagination,
     formHelper: FormWithCSRF,
-    helpdeskLink: HelpdeskLink
+    helpdeskLink: HelpdeskLink,
+    config: FrontendAppConfig
 )
 
-@(rejectionMessageP5ViewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, paginationViewModel: PaginationViewModel, mrn: Option[String])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+@(viewModel: ReviewDepartureErrorsP5ViewModel, departureId: String, mrn: Option[String])(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
-    title = rejectionMessageP5ViewModel.title,
+    title = viewModel.title,
     showBackLink = true
 ) {
 
     @heading(
-        heading = rejectionMessageP5ViewModel.heading,
-        caption = Some(messages("departure.messages.caption", rejectionMessageP5ViewModel.lrn))
+        heading = viewModel.heading,
+        caption = Some(viewModel.caption)
     )
 
-    <p id="paragraph-1-prefix" class="govuk-body">@rejectionMessageP5ViewModel.paragraph1</p>
+    <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
 
     @mrn.map{mrn => <p id="mrn" class="govuk-body govuk-label--s">MRN: @mrn</p> }
 
-    @pagination(paginationViewModel, None)
+    @pagination(viewModel)
 
-    @table(rejectionMessageP5ViewModel.tableRows, rejectionMessageP5ViewModel.tableHeadCells)
+    @table(viewModel.table)
 
-    @helpdeskLink(rejectionMessageP5ViewModel.paragraph2)
+    @helpdeskLink(viewModel.paragraph2)
 
-    @rejectionMessageP5ViewModel.hyperlink.map { value =>
+    @viewModel.hyperlink.map { value =>
         <p class="govuk-body">
             <a id="departure-link" class="govuk-link" href="@config.p5Departure">@value</a>
         </p>

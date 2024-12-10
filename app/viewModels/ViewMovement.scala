@@ -16,6 +16,9 @@
 
 package viewModels
 
+import utils.Format
+
+import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalTime}
 
@@ -30,4 +33,21 @@ trait ViewMovement {
     .format(DateTimeFormatter.ofPattern("h:mma"))
     .toLowerCase
 
+}
+
+object ViewMovement {
+
+  implicit class RichViewMovements[T <: ViewMovement](value: Seq[T]) {
+
+    def groupByDate: Seq[(String, Seq[T])] = {
+      implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(identity[ChronoLocalDate])
+
+      val groupMovements: Map[LocalDate, Seq[T]] = value.groupBy(_.updatedDate)
+      val sortByDate: Seq[(LocalDate, Seq[T])]   = groupMovements.toSeq.sortBy(_._1).reverse
+      sortByDate.map {
+        result =>
+          (result._1.format(Format.dateDisplayFormat), result._2.sortBy(_.updatedTime).reverse)
+      }
+    }
+  }
 }

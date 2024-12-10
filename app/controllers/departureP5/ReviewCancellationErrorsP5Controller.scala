@@ -17,51 +17,43 @@
 package controllers.departureP5
 
 import config.PaginationAppConfig
-import controllers.actions._
-import generated.CC056CType
-import models.RichCC056CType
+import controllers.actions.*
+import generated.{CC056CType, Generated_CC056CTypeFormat}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel.ReviewCancellationErrorsP5ViewModelProvider
-import viewModels.pagination.PaginationViewModel
+import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
 import views.html.departureP5.ReviewCancellationErrorsP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import generated.Generated_CC056CTypeFormat
 
 class ReviewCancellationErrorsP5Controller @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
-  viewModelProvider: ReviewCancellationErrorsP5ViewModelProvider,
-  view: ReviewCancellationErrorsP5View
-)(implicit val executionContext: ExecutionContext, paginationAppConfig: PaginationAppConfig)
+  view: ReviewCancellationErrorsP5View,
+  functionalErrorsService: FunctionalErrorsService
+)(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val currentPage      = page.getOrElse(1)
-        val functionalErrors = request.messageData.FunctionalError
-
-        val rejectionMessageP5ViewModel =
-          viewModelProvider.apply(request.messageData.pagedFunctionalErrors(currentPage), request.referenceNumbers.localReferenceNumber)
-
-        rejectionMessageP5ViewModel.map {
-          viewModel =>
-            val paginationViewModel = PaginationViewModel(
-              totalNumberOfItems = functionalErrors.length,
-              currentPage = currentPage,
-              numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-              href = controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId).url,
-              navigationHiddenText = Some(viewModel.heading)
+        functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError).map {
+          functionalErrors =>
+            val viewModel = ReviewCancellationErrorsP5ViewModel(
+              functionalErrors = functionalErrors,
+              lrn = request.referenceNumbers.localReferenceNumber,
+              currentPage = page,
+              numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
+              href = routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureId, messageId)
             )
-            Ok(view(viewModel, departureId, paginationViewModel))
+
+            Ok(view(viewModel, departureId))
         }
     }
-
 }
