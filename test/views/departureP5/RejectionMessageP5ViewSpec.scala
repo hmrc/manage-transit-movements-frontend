@@ -17,8 +17,8 @@
 package views.departureP5
 
 import generators.Generators
-import models.FunctionalError.FunctionalErrorWithoutSection
-import models.FunctionalErrors.FunctionalErrorsWithoutSection
+import models.FunctionalError.FunctionalErrorWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -30,7 +30,7 @@ import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departureP5.RejectionMessageP5View
 
 class RejectionMessageP5ViewSpec
-    extends PaginationViewBehaviours[FunctionalErrorWithoutSection, RejectionMessageP5ViewModel]
+    extends PaginationViewBehaviours[FunctionalErrorWithSection, RejectionMessageP5ViewModel]
     with TableViewBehaviours
     with Generators {
 
@@ -46,8 +46,8 @@ class RejectionMessageP5ViewSpec
   ): RejectionMessageP5ViewModel =
     viewModel.copy(
       functionalErrors = {
-        def error: FunctionalErrorWithoutSection = arbitrary[FunctionalErrorWithoutSection].sample.value
-        FunctionalErrorsWithoutSection(Seq.fill(totalNumberOfItems)(error))
+        def error: FunctionalErrorWithSection = arbitrary[FunctionalErrorWithSection].sample.value
+        FunctionalErrorsWithSection(Seq.fill(totalNumberOfItems)(error))
       },
       currentPage = currentPage,
       numberOfItemsPerPage = numberOfItemsPerPage

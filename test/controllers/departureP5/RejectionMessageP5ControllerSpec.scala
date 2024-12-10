@@ -19,7 +19,7 @@ package controllers.departureP5
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.CC056CType
 import generators.Generators
-import models.FunctionalErrors.FunctionalErrorsWithoutSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.*
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import org.mockito.ArgumentMatchers.any
@@ -67,7 +67,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
   "RejectionMessageP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      forAll(arbitrary[CC056CType], arbitrary[FunctionalErrorsWithoutSection]) {
+      forAll(arbitrary[CC056CType], arbitrary[FunctionalErrorsWithSection]) {
         (message, functionalErrors) =>
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
             .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
@@ -78,7 +78,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           when(mockAmendmentService.isRejectionAmendable(any(), any())(any(), any()))
             .thenReturn(Future.successful(true))
 
-          when(mockFunctionalErrorsService.convertErrorsWithoutSection(any())(any(), any()))
+          when(mockFunctionalErrorsService.convertErrorsWithSection(any())(any(), any()))
             .thenReturn(Future.successful(functionalErrors))
 
           val viewModel = RejectionMessageP5ViewModel(

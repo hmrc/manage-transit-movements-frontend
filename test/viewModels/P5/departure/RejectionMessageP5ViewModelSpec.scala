@@ -18,8 +18,8 @@ package viewModels.P5.departure
 
 import base.SpecBase
 import generators.Generators
-import models.FunctionalError.FunctionalErrorWithoutSection
-import models.FunctionalErrors.FunctionalErrorsWithoutSection
+import models.FunctionalError.FunctionalErrorWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.InvalidDataItem
 import models.departureP5.BusinessRejectionType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -34,11 +34,12 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
   "RejectionMessageP5ViewModel" - {
 
     "when there is one error" - {
-      val errors = FunctionalErrorsWithoutSection(
+      val errors = FunctionalErrorsWithSection(
         Seq(
-          FunctionalErrorWithoutSection(
+          FunctionalErrorWithSection(
             error = "error",
             businessRuleId = "business rule ID",
+            section = Some("Trader details"),
             invalidDataItem = new InvalidDataItem("invalid data item"),
             invalidAnswer = Some("invalid answer")
           )
@@ -94,17 +95,19 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
 
     "when there are multiple errors" - {
 
-      val errors = FunctionalErrorsWithoutSection(
+      val errors = FunctionalErrorsWithSection(
         Seq(
-          FunctionalErrorWithoutSection(
+          FunctionalErrorWithSection(
             error = "error 1",
             businessRuleId = "business rule ID 1",
+            section = Some("Trader details"),
             invalidDataItem = new InvalidDataItem("invalid data item 1"),
             invalidAnswer = Some("invalid answer 1")
           ),
-          FunctionalErrorWithoutSection(
+          FunctionalErrorWithSection(
             error = "error 2",
             businessRuleId = "business rule ID 2",
+            section = Some("Trader details"),
             invalidDataItem = new InvalidDataItem("invalid data item 2"),
             invalidAnswer = Some("invalid answer 2")
           )

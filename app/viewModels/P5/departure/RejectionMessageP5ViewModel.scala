@@ -16,8 +16,8 @@
 
 package viewModels.P5.departure
 
-import models.FunctionalError.FunctionalErrorWithoutSection
-import models.FunctionalErrors.FunctionalErrorsWithoutSection
+import models.FunctionalError.FunctionalErrorWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.BusinessRejectionType.*
 import play.api.i18n.Messages
 import play.api.mvc.Call
@@ -31,16 +31,16 @@ case class RejectionMessageP5ViewModel(
   paragraph1: String,
   paragraph2: String,
   hyperlink: Option[String],
-  functionalErrors: FunctionalErrorsWithoutSection,
+  functionalErrors: FunctionalErrorsWithSection,
   currentPage: Int,
   numberOfItemsPerPage: Int,
   href: Call
-) extends ErrorPaginationViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
+) extends ErrorPaginationViewModel[FunctionalErrorWithSection, FunctionalErrorsWithSection]
 
 object RejectionMessageP5ViewModel {
 
   def apply(
-    functionalErrors: FunctionalErrorsWithoutSection,
+    functionalErrors: FunctionalErrorsWithSection,
     lrn: String,
     businessRejectionType: DepartureBusinessRejectionType,
     currentPage: Option[Int],

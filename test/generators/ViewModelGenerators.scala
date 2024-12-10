@@ -175,7 +175,7 @@ trait ViewModelGenerators {
   ): Arbitrary[RejectionMessageP5ViewModel] =
     Arbitrary {
       for {
-        functionalErrors      <- arbitrary[FunctionalErrorsWithoutSection]
+        functionalErrors      <- arbitrary[FunctionalErrorsWithSection]
         lrn                   <- nonEmptyString
         businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
         currentPage           <- Gen.option(positiveInts)

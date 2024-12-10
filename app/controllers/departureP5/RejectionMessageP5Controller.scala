@@ -53,7 +53,7 @@ class RejectionMessageP5Controller @Inject() (
 
         service.isRejectionAmendable(lrn, rejection).flatMap {
           case true =>
-            functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError).map {
+            functionalErrorsService.convertErrorsWithSection(request.messageData.FunctionalError).map {
               functionalErrors =>
                 val viewModel = RejectionMessageP5ViewModel(
                   functionalErrors = functionalErrors,
