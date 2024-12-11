@@ -30,12 +30,12 @@
 @(viewModel: GoodsNotReleasedP5ViewModel)(implicit request: Request[?], messages: Messages, frontendAppConfig: FrontendAppConfig)
 
 @mainTemplate(
-    title = viewModel.titleAndHeading,
+    title = viewModel.title,
     showBackLink = true
 ) {
 
     @heading(
-        heading = viewModel.titleAndHeading,
+        heading = viewModel.heading,
         caption = Some(viewModel.caption)
     )
 

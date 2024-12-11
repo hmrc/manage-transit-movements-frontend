@@ -33,13 +33,13 @@ config: FrontendAppConfig
 @(intentionToControlP5ViewModel: IntentionToControlP5ViewModel, departureId: String, messageId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
-    title = intentionToControlP5ViewModel.titleAndHeading,
+    title = intentionToControlP5ViewModel.title,
     showBackLink = true
 ) {
 
     @formHelper(action = controllers.departureP5.routes.IntentionToControlP5Controller.onSubmit(departureId, messageId), Symbol("autoComplete") -> "off") {
         @heading(
-            heading = intentionToControlP5ViewModel.titleAndHeading,
+            heading = intentionToControlP5ViewModel.heading,
             caption = intentionToControlP5ViewModel.lrn.map(x => messages("departure.messages.caption", x))
         )
 

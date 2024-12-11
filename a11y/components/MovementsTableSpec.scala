@@ -17,9 +17,8 @@
 package components
 
 import a11ySpecBase.A11ySpecBase
-import org.scalacheck.Arbitrary.arbitrary
-import viewModels.P5.arrival.ViewArrivalMovementsP5
-import viewModels.P5.departure.ViewDepartureMovementsP5
+import viewModels.P5.arrival.ViewArrivalP5
+import viewModels.P5.departure.ViewDepartureP5
 import views.html.components.MovementsTable
 import views.html.templates.MainTemplate
 
@@ -39,17 +38,17 @@ class MovementsTableSpec extends A11ySpecBase {
     "pass accessibility checks" when {
 
       "departure movements" in {
-        val dataRows = arbitrary[ViewDepartureMovementsP5].map(_.dataRows).sample.value
+        val departures = listWithMaxLength[ViewDepartureP5]().sample.value
         val content = template.apply(title) {
-          component.apply(dataRows, visuallyHiddenHeader, rowHeadingUpdated, rowHeadingReferenceNumber, rowHeadingStatus, rowHeadingAction).withHeading(title)
+          component.apply(departures, visuallyHiddenHeader, rowHeadingUpdated, rowHeadingReferenceNumber, rowHeadingStatus, rowHeadingAction).withHeading(title)
         }
         content.toString() must passAccessibilityChecks
       }
 
       "arrival movements" in {
-        val dataRows = arbitrary[ViewArrivalMovementsP5].map(_.dataRows).sample.value
+        val arrivals = listWithMaxLength[ViewArrivalP5]().sample.value
         val content = template.apply(title) {
-          component.apply(dataRows, visuallyHiddenHeader, rowHeadingUpdated, rowHeadingReferenceNumber, rowHeadingStatus, rowHeadingAction).withHeading(title)
+          component.apply(arrivals, visuallyHiddenHeader, rowHeadingUpdated, rowHeadingReferenceNumber, rowHeadingStatus, rowHeadingAction).withHeading(title)
         }
         content.toString() must passAccessibilityChecks
       }

@@ -16,67 +16,62 @@
 
 package viewModels.P5.arrival
 
-import generated.FunctionalErrorType04
+import models.FunctionalError.FunctionalErrorWithoutSection
+import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import play.api.i18n.Messages
-import services.ReferenceDataService
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.RejectionMessageP5MessageHelper
+import play.api.mvc.Call
+import viewModels.pagination.ErrorPaginationViewModel
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-
-case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(tableRows: Seq[Seq[TableRow]], mrn: String, multipleErrors: Boolean) {
-
-  def title(implicit messages: Messages): String = messages("arrival.ie057.review.notification.message.title")
-
-  def heading(implicit messages: Messages): String = messages("arrival.ie057.review.notification.message.heading")
-
-  def paragraph1(implicit messages: Messages): String = if (multipleErrors) {
-    messages(
-      "arrival.ie057.review.notification.message.paragraph1.plural"
-    )
-  } else {
-    messages(
-      "arrival.ie057.review.notification.message.paragraph1.singular"
-    )
-  }
-
-  def paragraph2(implicit messages: Messages): String = messages("arrival.ie057.review.notification.message.paragraph2")
-
-  def paragraph3(implicit messages: Messages): String = if (multipleErrors) {
-    messages("arrival.ie057.review.notification.message.paragraph3.plural")
-  } else {
-    messages("arrival.ie057.review.notification.message.paragraph3.singular")
-  }
-
-  def hyperlink(implicit messages: Messages): String = messages("arrival.ie057.review.notification.message.hyperlink")
-
-  def tableHeadCells(implicit messages: Messages): Seq[HeadCell] = Seq(
-    HeadCell(Text(messages("error.table.errorCode"))),
-    HeadCell(Text(messages("error.table.errorReason"))),
-    HeadCell(Text(messages("error.table.pointer"))),
-    HeadCell(Text(messages("error.table.attributeValue")))
-  )
-
-}
+case class ArrivalNotificationWithFunctionalErrorsP5ViewModel(
+  title: String,
+  heading: String,
+  caption: String,
+  paragraph1: String,
+  paragraph2: String,
+  paragraph3: String,
+  hyperlink: String,
+  functionalErrors: FunctionalErrorsWithoutSection,
+  currentPage: Int,
+  numberOfItemsPerPage: Int,
+  href: Call
+) extends ErrorPaginationViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
 
 object ArrivalNotificationWithFunctionalErrorsP5ViewModel {
 
-  class ArrivalNotificationWithFunctionalErrorsP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  def apply(
+    functionalErrors: FunctionalErrorsWithoutSection,
+    mrn: String,
+    currentPage: Option[Int],
+    numberOfErrorsPerPage: Int,
+    href: Call
+  )(implicit messages: Messages): ArrivalNotificationWithFunctionalErrorsP5ViewModel = {
 
-    def apply(
-      functionalErrors: Seq[FunctionalErrorType04],
-      mrn: String
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[ArrivalNotificationWithFunctionalErrorsP5ViewModel] = {
-      val helper = new RejectionMessageP5MessageHelper(functionalErrors, referenceDataService)
+    val multipleErrors: Boolean = functionalErrors.multipleErrors
 
-      val multipleErrors = functionalErrors.length > 1
-      helper.tableRows().map(ArrivalNotificationWithFunctionalErrorsP5ViewModel(_, mrn, multipleErrors))
-
+    val paragraph1: String = if (multipleErrors) {
+      messages("arrival.ie057.review.notification.message.paragraph1.plural")
+    } else {
+      messages("arrival.ie057.review.notification.message.paragraph1.singular")
     }
 
-  }
+    val paragraph3: String = if (multipleErrors) {
+      messages("arrival.ie057.review.notification.message.paragraph3.plural")
+    } else {
+      messages("arrival.ie057.review.notification.message.paragraph3.singular")
+    }
 
+    new ArrivalNotificationWithFunctionalErrorsP5ViewModel(
+      title = messages("arrival.ie057.review.notification.message.title"),
+      heading = messages("arrival.ie057.review.notification.message.heading"),
+      caption = messages("arrival.messages.caption", mrn),
+      paragraph1 = paragraph1,
+      paragraph2 = messages("arrival.ie057.review.notification.message.paragraph2"),
+      paragraph3 = paragraph3,
+      hyperlink = messages("arrival.ie057.review.notification.message.hyperlink"),
+      functionalErrors = functionalErrors,
+      currentPage = currentPage.getOrElse(1),
+      numberOfItemsPerPage = numberOfErrorsPerPage,
+      href = href
+    )
+  }
 }

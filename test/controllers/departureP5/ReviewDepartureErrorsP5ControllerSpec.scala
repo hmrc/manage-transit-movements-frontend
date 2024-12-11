@@ -17,10 +17,11 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import connectors.DepartureCacheConnector
-import generated.{CC056CType, FunctionalErrorType04}
+import generated.CC056CType
 import generators.Generators
-import models.departureP5._
+import models.FunctionalErrors.FunctionalErrorsWithSection
+import models.departureP5.*
+import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -28,87 +29,69 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import services.DepartureP5MessageService
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
+import play.api.test.Helpers.*
+import services.{DepartureP5MessageService, FunctionalErrorsService}
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
-import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel.ReviewDepartureErrorsP5ViewModelProvider
-import viewModels.pagination.PaginationViewModel
-import viewModels.sections.Section
 import views.html.departureP5.ReviewDepartureErrorsP5View
 
 import scala.concurrent.Future
 
 class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
-  private val mockReviewDepartureErrorMessageP5ViewModelProvider = mock[ReviewDepartureErrorsP5ViewModelProvider]
-  private val mockDepartureP5MessageService                      = mock[DepartureP5MessageService]
-  private val mockCacheService: DepartureCacheConnector          = mock[DepartureCacheConnector]
+  private val mockDepartureP5MessageService = mock[DepartureP5MessageService]
+  private val mockFunctionalErrorsService   = mock[FunctionalErrorsService]
 
   lazy val rejectionMessageController: String =
-    controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
-
-  val sections: Seq[Section] = arbitrarySections.arbitrary.sample.value
-  val tableRow: TableRow     = arbitraryTableRow.arbitrary.sample.value
+    routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDepartureP5MessageService)
-    reset(mockReviewDepartureErrorMessageP5ViewModelProvider)
-    reset(mockCacheService)
+    reset(mockFunctionalErrorsService)
   }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[ReviewDepartureErrorsP5ViewModelProvider].toInstance(mockReviewDepartureErrorMessageP5ViewModelProvider))
-      .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
-      .overrides(bind[DepartureCacheConnector].toInstance(mockCacheService))
+      .overrides(
+        bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService),
+        bind[FunctionalErrorsService].toInstance(mockFunctionalErrorsService)
+      )
 
   "ReviewDepartureErrorsP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      forAll(listWithMaxLength[FunctionalErrorType04]()) {
-        functionalErrors =>
-          forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = functionalErrors))) {
-            message =>
-              when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
-                .thenReturn(Future.successful(message))
-              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
+      forAll(arbitrary[CC056CType], arbitrary[FunctionalErrorsWithSection]) {
+        (message, functionalErrors) =>
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
 
-              val rejectionMessageP5ViewModel =
-                ReviewDepartureErrorsP5ViewModel(Seq(Seq(tableRow)), lrn.toString, multipleErrors = true, BusinessRejectionType.DeclarationRejection)
+          when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(message))
 
-              when(mockReviewDepartureErrorMessageP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
-                .thenReturn(Future.successful(rejectionMessageP5ViewModel))
+          when(mockFunctionalErrorsService.convertErrorsWithSection(any())(any(), any()))
+            .thenReturn(Future.successful(functionalErrors))
 
-              val paginationViewModel = PaginationViewModel(
-                totalNumberOfItems = message.FunctionalError.length,
-                currentPage = 1,
-                numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-                href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
-                additionalParams = Seq()
-              )
+          val viewModel = ReviewDepartureErrorsP5ViewModel(
+            functionalErrors = functionalErrors,
+            lrn = lrn.value,
+            businessRejectionType = DepartureBusinessRejectionType(message),
+            currentPage = None,
+            numberOfErrorsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+            href = routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId)
+          )
 
-              val request = FakeRequest(GET, rejectionMessageController)
+          val request = FakeRequest(GET, rejectionMessageController)
 
-              val result = route(app, request).value
+          val result = route(app, request).value
 
-              status(result) mustEqual OK
+          status(result) mustEqual OK
 
-              val view = injector.instanceOf[ReviewDepartureErrorsP5View]
+          val view = injector.instanceOf[ReviewDepartureErrorsP5View]
 
-              contentAsString(result) mustEqual
-                view(
-                  rejectionMessageP5ViewModel,
-                  departureIdP5,
-                  paginationViewModel,
-                  None
-                )(request, messages, frontendAppConfig).toString
-          }
+          contentAsString(result) mustEqual
+            view(viewModel, departureIdP5, None)(request, messages).toString
       }
     }
   }
-
 }

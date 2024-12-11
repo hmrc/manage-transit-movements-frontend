@@ -17,7 +17,6 @@
 @import config.FrontendAppConfig
 @import controllers.departureP5.routes
 @import viewModels.P5.departure.ViewAllDepartureMovementsP5ViewModel
-@import viewModels.pagination.PaginationViewModel
 @import views.html.components.{Heading, InsetText, MovementsTable, Pagination, Search, Status}
 @import controllers.routes.{WhatDoYouWantToDoController => WDYWTDController}
 
@@ -34,17 +33,16 @@
 
 @(
     form: Form[String],
-    viewModel: ViewAllDepartureMovementsP5ViewModel,
-    paginationViewModel: PaginationViewModel,
+    viewModel: ViewAllDepartureMovementsP5ViewModel
 )(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
-    title = viewModel.pageTitle,
+    title = viewModel.title,
     showBackLink = true,
     fullWidth = true
 ) {
 
-    @heading(viewModel.pageHeading)
+    @heading(viewModel.heading)
 
     <p class="govuk-body">
         <a id="make-departure-declaration" class="govuk-link" href=@config.p5Departure>
@@ -60,11 +58,11 @@
 
     @inset(messages("viewDepartureDeclarationsP5.search.inset"))
 
-    @pagination(paginationViewModel, form.value)
+    @pagination(viewModel)
 
-    @if(viewModel.dataRows.nonEmpty) {
+    @if(viewModel.items.nonEmpty) {
         @movementsTable(
-            dataRows = viewModel.dataRows,
+            movements = viewModel.items,
             visuallyHiddenHeader = messages("viewDepartureDeclarationsP5.heading.hidden"),
             rowHeadingUpdated = messages("viewDepartureDeclarationsP5.table.updated"),
             rowHeadingReferenceNumber = messages("viewDepartureDeclarationsP5.table.lrn"),

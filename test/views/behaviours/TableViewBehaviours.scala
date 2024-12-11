@@ -16,46 +16,45 @@
 
 package views.behaviours
 
-import org.jsoup.nodes.Element
-import play.twirl.api.TwirlHelperImports._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
+import play.twirl.api.TwirlHelperImports.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 
 trait TableViewBehaviours extends ViewBehaviours {
-  val headCells: Seq[HeadCell]
-  val tableRows: Seq[TableRow]
+
+  val table: Table
 
   // scalastyle:off method.length
   def pageWithTable(): Unit =
-    "page with Table" - {
-      val renderedHeaderRows: List[Element] = doc.getElementsByAttributeValue("scope", "col").toList
-      val renderedTableRows: List[Element]  = (doc.getElementsByAttributeValue("scope", "row") ++ doc.getElementsByClass("govuk-table__cell")).toList
+    "page with table" - {
+      val rows = doc.getElementsByClass("govuk-table__row")
 
-      "must render Heading Rows " - {
-        renderedHeaderRows.zipWithIndex.foreach {
-          case (headerRow, headerIndex) =>
-            s"HeadCell ${headerIndex + 1}" - {
-              "must contain correct header " in {
-                val value: String        = headerRow.text()
-                val expectedText: String = headCells(headerIndex).content.asHtml.toString()
-                value `mustBe` expectedText
+      "header cells" - {
+        rows.head.getElementsByClass("govuk-table__header").toList.zipWithIndex.foreach {
+          case (cell, index) =>
+            s"when header cell ${index + 1}" - {
+              "must contain correct value" in {
+                val value: String        = cell.text()
+                val expectedText: String = table.head.get(index).content.asHtml.toString()
+                value mustEqual expectedText
               }
             }
         }
-
       }
-      "must render Table Rows " - {
-        renderedTableRows.zipWithIndex.foreach {
-          case (tableRow, tableRowIndex) =>
-            s"Table Row ${tableRowIndex + 1}" - {
-              "must contain correct row " in {
-                val value: String        = tableRow.text()
-                val expectedText: String = tableRows(tableRowIndex).content.asHtml.toString()
-                value `mustBe` expectedText
-              }
+
+      "table rows" - {
+        rows.tail.zipWithIndex.foreach {
+          case (row, rowIndex) =>
+            row.getElementsByClass("govuk-table__cell").toList.zipWithIndex.foreach {
+              case (cell, cellIndex) =>
+                s"when row ${rowIndex + 1} cell ${cellIndex + 1}" - {
+                  "must contain correct value" in {
+                    val value: String        = cell.text()
+                    val expectedText: String = table.rows(rowIndex)(cellIndex).content.asHtml.toString()
+                    value mustEqual expectedText
+                  }
+                }
             }
         }
-
       }
     }
-
 }

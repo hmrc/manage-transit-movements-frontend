@@ -20,10 +20,4 @@ trait Movements {
   val movements: Seq[Movement]
   val retrieved: Int
   val totalMatched: Option[Int]
-
-  def tooManyResults: Boolean = totalMatched match {
-    case Some(matched) if matched > 0 => retrieved < matched
-    case _                            => false
-  }
-
 }

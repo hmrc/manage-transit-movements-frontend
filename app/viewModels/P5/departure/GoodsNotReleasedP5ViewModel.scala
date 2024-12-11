@@ -26,12 +26,13 @@ case class GoodsNotReleasedP5ViewModel(
   lrn: String
 ) {
 
-  def titleAndHeading(implicit messages: Messages): String = messages("departure.notReleased.titleAndHeading")
-  def paragraph(implicit messages: Messages): String       = messages("departure.notReleased.paragraph", lrn)
-  def hyperlink(implicit messages: Messages): String       = messages("departure.notReleased.anotherDeparture.hyperlink")
-  def caption(implicit messages: Messages): String         = messages("departure.messages.caption", lrn)
-  def link(implicit messages: Messages): String            = messages("departure.notReleased.link")
-  def heading2(implicit messages: Messages): String        = messages("departure.notReleased.whatHappensNext")
+  def title(implicit messages: Messages): String     = messages("departure.notReleased.title")
+  def heading(implicit messages: Messages): String   = messages("departure.notReleased.heading")
+  def paragraph(implicit messages: Messages): String = messages("departure.notReleased.paragraph", lrn)
+  def hyperlink(implicit messages: Messages): String = messages("departure.notReleased.anotherDeparture.hyperlink")
+  def caption(implicit messages: Messages): String   = messages("departure.messages.caption", lrn)
+  def link(implicit messages: Messages): String      = messages("departure.notReleased.link")
+  def heading2(implicit messages: Messages): String  = messages("departure.notReleased.whatHappensNext")
 
 }
 

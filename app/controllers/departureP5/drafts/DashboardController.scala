@@ -16,10 +16,9 @@
 
 package controllers.departureP5.drafts
 
-import config.{FrontendAppConfig, PaginationAppConfig}
-import controllers.actions._
+import config.PaginationAppConfig
+import controllers.actions.*
 import forms.DeparturesSearchFormProvider
-import models.Sort.SortByCreatedAtDesc
 import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
 import models.{DeparturesSummary, Sort}
@@ -30,7 +29,6 @@ import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
-import viewModels.pagination.PaginationViewModel
 import views.html.departureP5.drafts.DashboardView
 
 import javax.inject.Inject
@@ -43,8 +41,7 @@ class DashboardController @Inject() (
   draftDepartureService: DraftDepartureService,
   view: DashboardView,
   formProvider: DeparturesSearchFormProvider,
-  paginationAppConfig: PaginationAppConfig,
-  appConfig: FrontendAppConfig
+  paginationAppConfig: PaginationAppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -87,6 +84,7 @@ class DashboardController @Inject() (
 
     val skip = Skip(page - 1)
 
+    // TODO - move to draftDepartureService
     def sortOrGetDrafts: Future[Option[DeparturesSummary]] = (lrn, sortParams) match {
       case (Some(lrn), Some(sortParams)) => draftDepartureService.sortDraftDepartures(sortParams, limit, skip, lrn)
       case (Some(lrn), None)             => draftDepartureService.getLRNs(lrn, skip, limit)
@@ -96,33 +94,20 @@ class DashboardController @Inject() (
 
     sortOrGetDrafts.map {
       case Some(drafts) =>
-        block(view(form, present(drafts, page, lrn, sortParams.getOrElse(SortByCreatedAtDesc))))
+        block(view(form, present(drafts, page, lrn, sortParams)))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())
     }
   }
 
-  private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String], sortParams: Sort)(implicit
+  private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String], sortParams: Option[Sort])(implicit
     request: IdentifierRequest[?]
-  ): AllDraftDeparturesViewModel = {
-
-    val additionalParams = Seq(
-      lrn.map(("lrn", _)),
-      Some(("sortParams", sortParams.toString))
-    ).flatten
-
-    val messages = request2Messages(request)
-
-    val pvm = PaginationViewModel(
-      totalNumberOfItems = drafts.totalMatchingMovements,
-      currentPage = page,
-      numberOfItemsPerPage = paginationAppConfig.draftDeparturesNumberOfDrafts,
-      href = routes.DashboardController.onSubmit(None).url,
-      additionalParams = additionalParams,
-      navigationHiddenText = Some(messages("departure.drafts.dashboard.heading"))
+  ): AllDraftDeparturesViewModel =
+    AllDraftDeparturesViewModel(
+      drafts,
+      lrn,
+      page,
+      pageSize,
+      sortParams
     )
-
-    AllDraftDeparturesViewModel(drafts, pageSize, lrn, appConfig.p5Departure, pvm, sortParams)
-  }
-
 }

@@ -16,55 +16,55 @@
 
 package views.arrivalP5
 
+import controllers.arrivalP5.routes
 import generators.Generators
+import models.FunctionalError.FunctionalErrorWithoutSection
+import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import viewModels.P5.arrival.UnloadingRemarkWithFunctionalErrorsP5ViewModel
-import viewModels.pagination.PaginationViewModel
-import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.arrivalP5.UnloadingRemarkWithFunctionalErrorsP5View
 
-class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehaviours[PaginationViewModel] with TableViewBehaviours with Generators {
+class UnloadingRemarkWithFunctionalErrorsP5ViewSpec
+    extends PaginationViewBehaviours[FunctionalErrorWithoutSection, UnloadingRemarkWithFunctionalErrorsP5ViewModel]
+    with TableViewBehaviours
+    with Generators {
 
-  override val prefix: String = "arrival.ie057.review.unloading.message"
+  override val viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel =
+    arbitraryUnloadingRemarkWithFunctionalErrorsP5ViewModel.arbitrary.sample.value
 
-  override val headCells: Seq[HeadCell] =
-    Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+  override val table: Table = viewModel.table
 
-  val tableRows: Seq[TableRow]       = arbitrary[Seq[TableRow]].sample.value
-  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
+  override def buildViewModel(
+    totalNumberOfItems: Int,
+    currentPage: Int,
+    numberOfItemsPerPage: Int
+  ): UnloadingRemarkWithFunctionalErrorsP5ViewModel =
+    viewModel.copy(
+      functionalErrors = {
+        def error: FunctionalErrorWithoutSection = arbitrary[FunctionalErrorWithoutSection].sample.value
+        FunctionalErrorsWithoutSection(Seq.fill(totalNumberOfItems)(error))
+      },
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfItemsPerPage
+    )
 
-  private val viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel =
-    new UnloadingRemarkWithFunctionalErrorsP5ViewModel(Seq(tableRows), mrn, false)
-
+  override val prefix: String        = "arrival.ie057.review.unloading.message"
   override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
 
-  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
-    PaginationViewModel(_, _, _, _)
+  override def view: HtmlFormat.Appendable = applyView(viewModel)
 
-  val paginationViewModel: PaginationViewModel = PaginationViewModel(
-    totalNumberOfItems = sections.length,
-    currentPage = 1,
-    numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url,
-    additionalParams = Seq()
-  )
+  override def viewWithSpecificPagination(viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel): HtmlFormat.Appendable =
+    applyView(viewModel)
 
   private def applyView(
-    viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel,
-    paginationViewModel: PaginationViewModel
+    viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[UnloadingRemarkWithFunctionalErrorsP5View]
-      .apply(viewModel, arrivalIdP5, messageId, paginationViewModel)(fakeRequest, messages)
-
-  override def view: HtmlFormat.Appendable = applyView(viewModel, paginationViewModel)
-
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
-    applyView(viewModel, paginationViewModel)
+      .apply(viewModel, arrivalIdP5, messageId)(fakeRequest, messages)
 
   behave like pageWithTitle()
 
@@ -72,7 +72,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   behave like pageWithHeading()
 
-  behave like pageWithPagination(controllers.arrivalP5.routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId).url)
+  behave like pageWithPagination()
 
   behave like pageWithTable()
 
@@ -80,16 +80,13 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   behave like pageWithoutSubmitButton()
 
-  behave like pageWithCaption(s"MRN: $mrn")
+  behave like pageWithCaption(viewModel.caption)
 
-  behave like pageWithSpecificContent(
-    "paragraph-1",
-    "There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
-  )
+  behave like pageWithSpecificContent("paragraph-1", viewModel.paragraph1)
 
   behave like pageWithLink(
     "helpdesk-link",
-    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
+    viewModel.paragraph2,
     frontendAppConfig.nctsEnquiriesUrl
   )
 
@@ -97,8 +94,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec extends PaginationViewBehavi
 
   behave like pageWithLink(
     "arrival-link",
-    "View arrival notifications",
-    controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
+    viewModel.hyperlink,
+    routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
   )
 
 }

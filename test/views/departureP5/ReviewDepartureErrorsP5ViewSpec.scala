@@ -17,57 +17,55 @@
 package views.departureP5
 
 import generators.Generators
-import models.departureP5.BusinessRejectionType
+import models.FunctionalError.FunctionalErrorWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
-import viewModels.pagination.PaginationViewModel
-import viewModels.sections.Section
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departureP5.ReviewDepartureErrorsP5View
 
-class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[PaginationViewModel] with TableViewBehaviours with Generators {
+class ReviewDepartureErrorsP5ViewSpec
+    extends PaginationViewBehaviours[FunctionalErrorWithSection, ReviewDepartureErrorsP5ViewModel]
+    with TableViewBehaviours
+    with Generators {
 
-  override val prefix: String = "departure.ie056.review.message"
+  override val viewModel: ReviewDepartureErrorsP5ViewModel =
+    arbitraryReviewDepartureErrorsP5ViewModel.arbitrary.sample.value
 
-  override val headCells: Seq[HeadCell] =
-    Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+  override val table: Table = viewModel.table
 
-  val tableRows: Seq[TableRow]       = arbitrary[Seq[TableRow]].sample.value
-  private val sections: Seq[Section] = arbitrary[List[Section]].sample.value
+  override def buildViewModel(
+    totalNumberOfItems: Int,
+    currentPage: Int,
+    numberOfItemsPerPage: Int
+  ): ReviewDepartureErrorsP5ViewModel =
+    viewModel.copy(
+      functionalErrors = {
+        def error: FunctionalErrorWithSection = arbitrary[FunctionalErrorWithSection].sample.value
+        FunctionalErrorsWithSection(Seq.fill(totalNumberOfItems)(error))
+      },
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfItemsPerPage
+    )
 
-  private val reviewRejectionMessageP5ViewModel =
-    new ReviewDepartureErrorsP5ViewModel(Seq(tableRows), lrn.toString, false, BusinessRejectionType.DeclarationRejection)
-
+  override val prefix: String        = "departure.ie056.review.message"
   override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
 
-  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
-    PaginationViewModel(_, _, _, _)
+  override def view: HtmlFormat.Appendable = applyView(viewModel, None)
 
-  val paginationViewModel: PaginationViewModel = PaginationViewModel(
-    totalNumberOfItems = sections.length,
-    currentPage = 1,
-    numberOfItemsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-    href = controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
-    additionalParams = Seq()
-  )
+  override def viewWithSpecificPagination(viewModel: ReviewDepartureErrorsP5ViewModel): HtmlFormat.Appendable =
+    applyView(viewModel, None)
 
   private def applyView(
     viewModel: ReviewDepartureErrorsP5ViewModel,
-    paginationViewModel: PaginationViewModel,
-    mrn: Option[String] = None
+    mrn: Option[String]
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewDepartureErrorsP5View]
-      .apply(viewModel, departureId.toString, paginationViewModel, mrn)(fakeRequest, messages, frontendAppConfig)
-
-  override def view: HtmlFormat.Appendable = applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
-
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
-    applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
+      .apply(viewModel, departureId.toString, mrn)(fakeRequest, messages)
 
   behave like pageWithTitle()
 
@@ -79,47 +77,50 @@ class ReviewDepartureErrorsP5ViewSpec extends PaginationViewBehaviours[Paginatio
 
   behave like pageWithoutSubmitButton()
 
-  behave like pageWithCaption(s"LRN: $lrn")
+  behave like pageWithCaption(viewModel.caption)
 
-  behave like pageWithPagination(
-    controllers.departureP5.routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
-  )
+  behave like pageWithPagination()
 
   behave like pageWithTable()
 
-  behave like pageWithSpecificContent(
-    "paragraph-1-prefix",
-    "There is a problem with this declaration. Review the error and make a new declaration with the right information."
-  )
+  behave like pageWithSpecificContent("paragraph-1", viewModel.paragraph1)
 
   behave like pageWithLink(
     "helpdesk-link",
-    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
+    viewModel.paragraph2,
     frontendAppConfig.nctsEnquiriesUrl
   )
 
-  behave like pageWithLink(
-    "departure-link",
-    "Make another departure declaration",
-    frontendAppConfig.p5Departure
-  )
-
-  "must not render add another declaration link when isAmendmentJourney is true" in {
-    val reviewRejectionMessageP5ViewModel =
-      new ReviewDepartureErrorsP5ViewModel(Seq(tableRows), lrn.toString, false, BusinessRejectionType.AmendmentRejection)
-
-    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel))
-    assertNotRenderedById(doc, "departure-link")
+  "when hyperlink is not defined" - {
+    "must not render link" in {
+      val doc: Document = parseView(applyView(viewModel.copy(hyperlink = None), None))
+      assertNotRenderedById(doc, "departure-link")
+    }
   }
 
-  "must not render mrn when None" in {
-    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, None))
-    assertNotRenderedById(doc, "mrn")
+  "when hyperlink is defined" - {
+    val hyperlink     = nonEmptyString.sample.value
+    val doc: Document = parseView(applyView(viewModel.copy(hyperlink = Some(hyperlink)), None))
+    behave like pageWithLink(
+      doc,
+      "departure-link",
+      hyperlink,
+      frontendAppConfig.p5Departure
+    )
   }
 
-  "must render mrn when provided" in {
-    val doc: Document = parseView(applyView(reviewRejectionMessageP5ViewModel, paginationViewModel, Some("mrn")))
-    assertRenderedById(doc, "mrn")
+  "when MRN is undefined" - {
+    "must not render MRN" in {
+      val doc: Document = parseView(applyView(viewModel, None))
+      assertNotRenderedById(doc, "mrn")
+    }
   }
 
+  "when MRN is defined" - {
+    "must render MRN" in {
+      val mrn           = nonEmptyString.sample.value
+      val doc: Document = parseView(applyView(viewModel, Some(mrn)))
+      assertRenderedById(doc, "mrn")
+    }
+  }
 }

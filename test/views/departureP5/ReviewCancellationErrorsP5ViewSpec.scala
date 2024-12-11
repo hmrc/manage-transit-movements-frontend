@@ -16,47 +16,55 @@
 
 package views.departureP5
 
+import controllers.departureP5.routes
 import generators.Generators
+import models.FunctionalError.FunctionalErrorWithoutSection
+import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
-import viewModels.pagination.PaginationViewModel
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departureP5.ReviewCancellationErrorsP5View
 
-class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[PaginationViewModel] with TableViewBehaviours with Generators {
+class ReviewCancellationErrorsP5ViewSpec
+    extends PaginationViewBehaviours[FunctionalErrorWithoutSection, ReviewCancellationErrorsP5ViewModel]
+    with TableViewBehaviours
+    with Generators {
 
-  override val prefix: String = "departure.ie056.review.cancellation.message"
+  override val viewModel: ReviewCancellationErrorsP5ViewModel =
+    arbitraryReviewCancellationErrorsP5ViewModel.arbitrary.sample.value
 
-  override val headCells: Seq[HeadCell] =
-    Seq(HeadCell(Text("Error")), HeadCell(Text("Business rule ID")), HeadCell(Text("Invalid data item")), HeadCell(Text("Invalid answer")))
+  override val table: Table = viewModel.table
 
-  val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
+  override def buildViewModel(
+    totalNumberOfItems: Int,
+    currentPage: Int,
+    numberOfItemsPerPage: Int
+  ): ReviewCancellationErrorsP5ViewModel =
+    viewModel.copy(
+      functionalErrors = {
+        def error: FunctionalErrorWithoutSection = arbitrary[FunctionalErrorWithoutSection].sample.value
+        FunctionalErrorsWithoutSection(Seq.fill(totalNumberOfItems)(error))
+      },
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfItemsPerPage
+    )
 
-  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel =
-    PaginationViewModel(_, _, _, _)
+  override val prefix: String        = "departure.ie056.review.cancellation.message"
+  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfErrorsPerPage
 
-  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
+  override def view: HtmlFormat.Appendable = applyView(viewModel)
 
-  private val paginationViewModel: PaginationViewModel = PaginationViewModel(2, 1, 2, "test")
-
-  private val reviewRejectionMessageP5ViewModel: ReviewCancellationErrorsP5ViewModel =
-    new ReviewCancellationErrorsP5ViewModel(Seq(tableRows), lrn.toString, false)
+  override def viewWithSpecificPagination(viewModel: ReviewCancellationErrorsP5ViewModel): HtmlFormat.Appendable =
+    applyView(viewModel)
 
   private def applyView(
-    reviewRejectionViewModel: ReviewCancellationErrorsP5ViewModel,
-    paginationViewModel: PaginationViewModel
+    viewModel: ReviewCancellationErrorsP5ViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ReviewCancellationErrorsP5View]
-      .apply(reviewRejectionViewModel, departureId.toString, paginationViewModel)(fakeRequest, messages)
-
-  override def view: HtmlFormat.Appendable = applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
-
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
-    applyView(reviewRejectionMessageP5ViewModel, paginationViewModel)
+      .apply(viewModel, departureId.toString)(fakeRequest, messages)
 
   behave like pageWithTitle()
 
@@ -68,27 +76,23 @@ class ReviewCancellationErrorsP5ViewSpec extends PaginationViewBehaviours[Pagina
 
   behave like pageWithoutSubmitButton()
 
-  behave like pageWithCaption(s"LRN: $lrn")
+  behave like pageWithCaption(viewModel.caption)
 
-  behave like pageWithPagination(controllers.departureP5.routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url)
+  behave like pageWithPagination()
 
   behave like pageWithTable()
 
-  behave like pageWithSpecificContent(
-    "paragraph-1",
-    "The office of departure was not able to cancel this declaration. Review the error - then if you still want to cancel the declaration, try cancelling it again."
-  )
+  behave like pageWithSpecificContent("paragraph-1", viewModel.paragraph1)
 
   behave like pageWithLink(
     "helpdesk-link",
-    "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)",
+    viewModel.paragraph2,
     frontendAppConfig.nctsEnquiriesUrl
   )
 
   behave like pageWithLink(
     "departure-link",
-    "View departure declarations",
-    controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+    viewModel.hyperlink,
+    routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
   )
-
 }

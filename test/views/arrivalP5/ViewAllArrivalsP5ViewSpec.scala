@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,69 +16,84 @@
 
 package views.arrivalP5
 
-import generators.Generators
-import org.jsoup.nodes.Document
+import forms.DeparturesSearchFormProvider
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
-import viewModels.pagination.PaginationViewModel
 import views.behaviours.{MovementsTableViewBehaviours, PaginationViewBehaviours, SearchViewBehaviours}
 import views.html.arrivalP5.ViewAllArrivalsP5View
 
 class ViewAllArrivalsP5ViewSpec
     extends MovementsTableViewBehaviours[ViewArrivalP5]
-    with SearchViewBehaviours[ViewArrivalP5]
-    with PaginationViewBehaviours[PaginationViewModel]
-    with Generators
-    with ScalaCheckPropertyChecks {
+    with SearchViewBehaviours
+    with PaginationViewBehaviours[ViewArrivalP5, ViewAllArrivalMovementsP5ViewModel] {
+
+  override def form: Form[String] = new DeparturesSearchFormProvider()()
+
+  override val viewModel: ViewAllArrivalMovementsP5ViewModel =
+    arbitraryViewAllArrivalMovementsP5ViewModel.arbitrary.sample.value
+
+  override def buildViewModel(
+    totalNumberOfItems: Int,
+    currentPage: Int,
+    numberOfItemsPerPage: Int
+  ): ViewAllArrivalMovementsP5ViewModel =
+    viewModel.copy(
+      items = {
+        def departure: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
+
+        Seq.fill(totalNumberOfItems)(departure)
+      },
+      currentPage = currentPage,
+      numberOfItemsPerPage = numberOfItemsPerPage
+    )
 
   override val prefix: String = "viewArrivalNotificationsP5"
 
-  override val referenceNumberType: String = "mrn"
-
   override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfMovements
 
-  private val viewAllArrivalMovementsP5ViewModel = arbitrary[ViewAllArrivalMovementsP5ViewModel].sample.value
+  override val viewMovements: Seq[ViewArrivalP5] = viewModel.items
 
-  private val paginationViewModel = arbitrary[PaginationViewModel].sample.value
+  override def viewWithSpecificPagination(viewModel: ViewAllArrivalMovementsP5ViewModel): HtmlFormat.Appendable =
+    viewWithSpecificPagination(form, viewModel.copy(searchParam = None))
 
-  override val dataRows: Seq[(String, Seq[ViewArrivalP5])] = viewAllArrivalMovementsP5ViewModel.dataRows
-
-  override val viewMovements: Seq[ViewArrivalP5] = dataRows.flatMap(_._2)
-
-  override def viewWithSpecificPagination(paginationViewModel: PaginationViewModel): HtmlFormat.Appendable =
-    viewWithSpecificPagination(form, Nil, paginationViewModel, None)
+  override def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable =
+    viewWithSpecificPagination(
+      form.fill(searchParam),
+      viewModel.copy(
+        items = {
+          def arrival: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
+          Seq.fill(numberOfSearchResults)(arrival)
+        },
+        searchParam = Some(searchParam)
+      )
+    )
 
   private def viewWithSpecificPagination(
     form: Form[String],
-    arrivals: Seq[ViewArrivalP5],
-    paginationViewModel: PaginationViewModel,
-    searchParam: Option[String]
+    viewModel: ViewAllArrivalMovementsP5ViewModel
   ): HtmlFormat.Appendable =
-    applyView(form, ViewAllArrivalMovementsP5ViewModel(arrivals, searchParam), paginationViewModel)
+    applyView(form, viewModel)
 
-  override def applyView(form: Form[String]): HtmlFormat.Appendable = applyView(form, viewAllArrivalMovementsP5ViewModel, paginationViewModel)
-
-  override val buildViewModel: (Int, Int, Int, String) => PaginationViewModel = PaginationViewModel(_, _, _, _)
+  override def applyView(form: Form[String]): HtmlFormat.Appendable =
+    applyView(form, viewModel)
 
   private def applyView(
     form: Form[String],
-    viewAllArrivalMovementsViewModel: ViewAllArrivalMovementsP5ViewModel,
-    paginationViewModel: PaginationViewModel
+    viewModel: ViewAllArrivalMovementsP5ViewModel
   ): HtmlFormat.Appendable =
     injector
       .instanceOf[ViewAllArrivalsP5View]
-      .apply(form, viewAllArrivalMovementsViewModel, paginationViewModel)(fakeRequest, messages)
+      .apply(form, viewModel)(fakeRequest, messages)
 
   behave like pageWithFullWidth()
 
-  behave like pageWithTitle()
+  behave like pageWithTitle(viewModel.title)
 
   behave like pageWithBackLink()
 
-  behave like pageWithHeading()
+  behave like pageWithHeading(viewModel.heading)
 
   behave like pageWithInsetText("Reload this page for the latest status updates.")
 
@@ -88,47 +103,18 @@ class ViewAllArrivalsP5ViewSpec
     expectedHref = frontendAppConfig.p5Arrival
   )
 
-  behave like pageWithMovementSearch("Search by Movement Reference Number (MRN)")
+  behave like pageWithSearch(
+    "Search by Movement Reference Number (MRN)",
+    "No results found"
+  )
 
-  behave like pageWithPagination(controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
+  behave like pageWithPagination()
 
-  behave like pageWithMovementsData()
+  behave like pageWithMovementsData("Movement Reference Number (MRN)")
 
   behave like pageWithLink(
     id = "go-to-manage-transit-movements",
     expectedText = "Manage your transit movements",
     expectedHref = controllers.routes.WhatDoYouWantToDoController.onPageLoad().url
   )
-
-  "must render search result text" - {
-    "when 1 page" - {
-      "and search param provided" in {
-        val arrivals            = listWithMaxLength[ViewArrivalP5]().sample.value
-        val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
-        val searchParam         = "LRN123"
-        val filledForm          = form.fill(searchParam)
-        val doc: Document       = parseView(viewWithSpecificPagination(filledForm, arrivals, paginationViewModel, Some(searchParam)))
-        val p                   = doc.getElementById("results-count")
-        p.text() `mustBe` "Showing 1 result matching LRN123"
-        boldWords(p) `mustBe` Seq("1")
-      }
-
-      "when search param not provided" in {
-        val arrivals            = listWithMaxLength[ViewArrivalP5]().sample.value
-        val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
-        val doc: Document       = parseView(viewWithSpecificPagination(form, arrivals, paginationViewModel, None))
-        val p                   = doc.getElementById("results-count")
-        p.text() `mustBe` "Showing 1 result"
-        boldWords(p) `mustBe` Seq("1")
-      }
-    }
-
-    "when there are no results" in {
-      val paginationViewModel = buildViewModel(1, 1, movementsPerPage, "")
-      val doc: Document       = parseView(viewWithSpecificPagination(form, Nil, paginationViewModel, None))
-      val p                   = doc.getElementById("no-results-found")
-      p.text() `mustBe` "No results found"
-    }
-  }
-
 }

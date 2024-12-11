@@ -17,17 +17,22 @@
 package viewModels.pagination
 
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 
-case class PaginationViewModel(
-  results: MetaData,
-  previous: Option[PaginationLink],
-  next: Option[PaginationLink],
-  items: Seq[PaginationItem],
-  pageNumber: Int
-) {
+trait PaginationViewModel[T] {
 
-  def searchResult(searchParam: Option[String] = None)(implicit messages: Messages): String =
+  val items: Seq[T]
+  val currentPage: Int
+  val numberOfItemsPerPage: Int
+  val href: Call
+  val additionalParams: Seq[(String, String)] = Seq.empty
+  val heading: String
+  val searchParam: Option[String] = None
+
+  def results: MetaData = MetaData(items.length, numberOfItemsPerPage, currentPage)
+
+  def searchResult(implicit messages: Messages): String =
     (searchParam, results.count) match {
       case (Some(value), 1) => messages("numberOfMovements.singular.withSearchParam", "<b>1</b>", value)
       case (Some(value), x) => messages("numberOfMovements.plural.withSearchParam", s"<b>$x</b>", value)
@@ -35,52 +40,33 @@ case class PaginationViewModel(
       case (None, x)        => messages("numberOfMovements.plural", s"<b>$x</b>")
     }
 
-  def paginatedSearchResult(searchParam: Option[String] = None)(implicit messages: Messages): String =
+  def paginatedSearchResult(implicit messages: Messages): String =
     searchParam match {
       case Some(value) => messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", value)
       case None        => messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
     }
 
-  val pagination: Pagination = Pagination(Some(items), previous, next)
-}
-
-object PaginationViewModel {
-
-  def apply(
-    totalNumberOfItems: Int,
-    currentPage: Int,
-    numberOfItemsPerPage: Int,
-    href: String,
-    additionalParams: Seq[(String, String)] = Seq.empty,
-    navigationHiddenText: Option[String] = None
-  )(implicit messages: Messages): PaginationViewModel = {
-
-    val results: MetaData = MetaData(totalNumberOfItems, numberOfItemsPerPage, currentPage)
-
-    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"$href?page=$page") {
+  def pagination(implicit messages: Messages): Pagination = {
+    // TODO - could we change href type to Int => Call and pass in the page?
+    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"${href.url}?page=$page") {
       case (href, (key, value)) =>
         href + s"&$key=$value"
     }
 
+    def attributes(key: String): Map[String, String] =
+      Map("aria-label" -> messages(key, heading.toLowerCase))
+
     val previous: Option[PaginationLink] = Option.when(currentPage > 1) {
       PaginationLink(
-        hrefWithParams(currentPage - 1),
-        attributes = navigationHiddenText
-          .map(
-            text => Map("aria-label" -> messages("pagination.previous.hidden", text.toLowerCase))
-          )
-          .getOrElse(Map.empty)
+        href = hrefWithParams(currentPage - 1),
+        attributes = attributes("pagination.previous.hidden")
       )
     }
 
     val next: Option[PaginationLink] = Option.when(currentPage < results.totalPages) {
       PaginationLink(
         href = hrefWithParams(currentPage + 1),
-        attributes = navigationHiddenText
-          .map(
-            text => Map("aria-label" -> messages("pagination.next.hidden", text.toLowerCase))
-          )
-          .getOrElse(Map.empty)
+        attributes = attributes("pagination.next.hidden")
       )
     }
 
@@ -99,7 +85,6 @@ object PaginationViewModel {
         }
     }
 
-    new PaginationViewModel(results, previous, next, items, currentPage)
+    Pagination(Some(items), previous, next)
   }
-
 }
