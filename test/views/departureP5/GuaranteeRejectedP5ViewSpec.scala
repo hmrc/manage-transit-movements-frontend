@@ -17,38 +17,24 @@
 package views.departureP5
 
 import generators.Generators
-import models.departureP5.GuaranteeReferenceTable
-import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
-import scalaxb.XMLCalendar
 import uk.gov.hmrc.govukfrontend.views.Aliases.Table
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel
 import views.behaviours.TableViewBehaviours
 import views.html.departureP5.GuaranteeRejectedP5View
 
 class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
-  private val headCells: Seq[HeadCell] =
-    Seq(HeadCell(Text("Error")), HeadCell(Text("Further information")))
+  private val viewModel: GuaranteeRejectedP5ViewModel =
+    arbitraryGuaranteeRejectedP5ViewModel.arbitrary.sample.value
 
-  private val tableRows: Seq[TableRow] = arbitrary[Seq[TableRow]].sample.value
-
-  override val table: Table = Table(
-    rows = Seq(tableRows),
-    head = Some(headCells)
-  )
+  override val tables: Seq[Table] = viewModel.tables.map(_.table)
 
   override val prefix: String = "guarantee.rejected.message"
 
-  private val tables = Seq(GuaranteeReferenceTable("title", "grn", table))
-
-  private val defaultViewModel: GuaranteeRejectedP5ViewModel = new GuaranteeRejectedP5ViewModel(tables, lrn.toString, mrn, XMLCalendar("2022-07-15"))
-
   override def view: HtmlFormat.Appendable = injector
     .instanceOf[GuaranteeRejectedP5View]
-    .apply(defaultViewModel, departureIdP5, messageId)(fakeRequest, messages)
+    .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
 
   behave like pageWithTitle()
 
@@ -56,123 +42,25 @@ class GuaranteeRejectedP5ViewSpec extends TableViewBehaviours with Generators {
 
   behave like pageWithHeading()
 
-  behave like pageWithTable()
+  behave like pageWithContent("p", viewModel.paragraph1)
+
+  behave like pageWithContent("p", s"Movement Reference Number (MRN): ${viewModel.mrn}")
+
+  behave like pageWithContent("p", s"Declaration acceptance date: ${viewModel.declarationAcceptanceDate}")
+
+  behave like pageWithTables()
+
+  behave like pageWithLink(
+    "helpdesk-link",
+    viewModel.paragraph2,
+    frontendAppConfig.nctsEnquiriesUrl
+  )
 
   behave like pageWithSubmitButton("Amend errors")
 
   behave like pageWithLink(
     "makeNewDeparture",
-    "Make another departure declaration",
+    viewModel.link,
     frontendAppConfig.p5Departure
   )
-
-  "must change paragraph 1 text" - {
-
-    "when there is only one guarantee reference with one error" - {
-
-      val viewModel = defaultViewModel
-        .copy(tables =
-          Seq(
-            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows)))
-          )
-        )
-
-      val document = parseView(
-        injector
-          .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
-      )
-
-      behave like pageWithContent(document, "p", "There is a problem with the guarantee in this declaration. Amend the error and resend the declaration.")
-    }
-
-    "when there is only one guarantee reference with multiple errors" - {
-
-      val viewModel = defaultViewModel
-        .copy(tables =
-          Seq(
-            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows, tableRows)))
-          )
-        )
-
-      val document = parseView(
-        injector
-          .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
-      )
-
-      behave like pageWithContent(document, "p", "There is a problem with the guarantee in this declaration. Amend the errors and resend the declaration.")
-    }
-
-    "when there is multiple guarantee references with multiple errors each" - {
-
-      val viewModel = defaultViewModel
-        .copy(tables =
-          Seq(
-            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows, tableRows))),
-            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows, tableRows)))
-          )
-        )
-
-      val document = parseView(
-        injector
-          .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
-      )
-
-      behave like pageWithContent(document, "p", "There is a problem with the guarantees in this declaration. Amend the errors and resend the declaration.")
-    }
-
-  }
-
-  "must change helpdesk link text" - {
-
-    "when there is only one reference with one error" - {
-
-      val viewModel = defaultViewModel
-        .copy(tables =
-          Seq(
-            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows)))
-          )
-        )
-
-      val document = parseView(
-        injector
-          .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
-      )
-
-      behave like pageWithLink(
-        document,
-        "helpdesk-link",
-        "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab).",
-        frontendAppConfig.nctsEnquiriesUrl
-      )
-    }
-
-    "when there is multiple references or errors" - {
-
-      val viewModel = defaultViewModel
-        .copy(tables =
-          Seq(
-            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows))),
-            GuaranteeReferenceTable("title", "GRN", table.copy(rows = Seq(tableRows)))
-          )
-        )
-
-      val document = parseView(
-        injector
-          .instanceOf[GuaranteeRejectedP5View]
-          .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
-      )
-
-      behave like pageWithLink(
-        document,
-        "helpdesk-link",
-        "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab).",
-        frontendAppConfig.nctsEnquiriesUrl
-      )
-    }
-  }
-
 }

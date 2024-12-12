@@ -46,7 +46,7 @@ object ViewMovement {
       val sortByDate: Seq[(LocalDate, Seq[T])]   = groupMovements.toSeq.sortBy(_._1).reverse
       sortByDate.map {
         result =>
-          (result._1.format(Format.dateDisplayFormat), result._2.sortBy(_.updatedTime).reverse)
+          (Format.formatMovementUpdatedDate(result._1), result._2.sortBy(_.updatedTime).reverse)
       }
     }
   }

@@ -34,7 +34,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
   override val viewModel: ArrivalNotificationWithFunctionalErrorsP5ViewModel =
     arbitraryArrivalNotificationWithFunctionalErrorsP5ViewModel.arbitrary.sample.value
 
-  override val table: Table = viewModel.table
+  override val tables: Seq[Table] = Seq(viewModel.table)
 
   override def buildViewModel(
     totalNumberOfItems: Int,
@@ -75,7 +75,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ViewSpec
 
   behave like pageWithPagination()
 
-  behave like pageWithTable()
+  behave like pageWithTables()
 
   behave like pageWithoutFormAction()
 

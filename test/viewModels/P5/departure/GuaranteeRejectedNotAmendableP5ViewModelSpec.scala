@@ -16,31 +16,16 @@
 
 package viewModels.P5.departure
 
-import base.{AppWithDefaultMockFixtures, SpecBase}
-import generated.*
+import base.SpecBase
 import generators.Generators
-import models.referenceData.InvalidGuaranteeReason
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.{reset, when}
+import models.GuaranteeReference
+import models.departureP5.GuaranteeReferenceTable
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api
-import play.api.inject.guice.GuiceApplicationBuilder
-import services.ReferenceDataService
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Table, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.departure.GuaranteeRejectedNotAmendableP5ViewModel.GuaranteeRejectedNotAmendableP5ViewModelProvider
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
-class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
-  val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
-
-  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
-    super
-      .guiceApplicationBuilder()
-      .overrides(api.inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
-
-  override def beforeEach(): Unit =
-    reset(mockReferenceDataService)
+class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "GuaranteeRejectedP5ViewModel" - {
 
@@ -48,22 +33,42 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
 
     "when there is one guarantee with one error" - {
 
-      val invalidGuaranteeReasons = Seq(InvalidGuaranteeReasonType01(1, "G02", Some("text")))
+      val guaranteeReferences = Seq(
+        GuaranteeReference(
+          grn = "GRN 1",
+          invalidGuarantees = Seq(
+            models.InvalidGuaranteeReason(
+              error = "Code 1_1 - Description 1_1",
+              furtherInformation = Some("Text 1_1")
+            )
+          )
+        )
+      )
 
-      val guaranteeErrors: Seq[GuaranteeReferenceType08] = Seq(GuaranteeReferenceType08(1, "GRN", invalidGuaranteeReasons))
-
-      when(mockReferenceDataService.getInvalidGuaranteeReason(any())(any(), any()))
-        .thenReturn(Future.successful(InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")))
-
-      val viewModelProvider = new GuaranteeRejectedNotAmendableP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(guaranteeErrors, lrn.toString, mrn, acceptanceDate).futureValue
+      val viewModelProvider = new GuaranteeRejectedNotAmendableP5ViewModelProvider()
+      val result            = viewModelProvider.apply(guaranteeReferences, lrn.toString, mrn, acceptanceDate)
 
       "must return correct number of guarantees" in {
-        result.tables.length `mustBe` 1
-      }
-
-      "must return correct number of errors in guarantee" in {
-        result.tables.head.table.rows.length `mustBe` 1
+        result.tables mustEqual Seq(
+          GuaranteeReferenceTable(
+            title = "Guarantee reference 1",
+            grn = "GRN 1",
+            table = new Table(
+              rows = Seq(
+                Seq(
+                  TableRow(content = Text("Code 1_1 - Description 1_1")),
+                  TableRow(content = Text("Text 1_1"))
+                )
+              ),
+              head = Some(
+                Seq(
+                  HeadCell(content = Text("Error")),
+                  HeadCell(content = Text("Further information"))
+                )
+              )
+            )
+          )
+        )
       }
 
       "must return correct paragraph 1" in {
@@ -82,25 +87,50 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
 
     "when there is one guarantee with multiple errors" - {
 
-      val invalidGuaranteeReasons = Seq(InvalidGuaranteeReasonType01(1, "G02", Some("text")), InvalidGuaranteeReasonType01(1, "G03", Some("text")))
+      val guaranteeReferences = Seq(
+        GuaranteeReference(
+          grn = "GRN 1",
+          invalidGuarantees = Seq(
+            models.InvalidGuaranteeReason(
+              error = "Code 1_1 - Description 1_1",
+              furtherInformation = Some("Text 1_1")
+            ),
+            models.InvalidGuaranteeReason(
+              error = "Code 1_2 - Description 1_2",
+              furtherInformation = Some("Text 1_2")
+            )
+          )
+        )
+      )
 
-      val guaranteeErrors: Seq[GuaranteeReferenceType08] = Seq(GuaranteeReferenceType08(1, "GRN", invalidGuaranteeReasons))
-
-      when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("G02"))(any(), any()))
-        .thenReturn(Future.successful(InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")))
-
-      when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("G03"))(any(), any()))
-        .thenReturn(Future.successful(InvalidGuaranteeReason("G03", "Access code not valid")))
-
-      val viewModelProvider = new GuaranteeRejectedNotAmendableP5ViewModelProvider(mockReferenceDataService)
-      val result            = viewModelProvider.apply(guaranteeErrors, lrn.toString, mrn, acceptanceDate).futureValue
+      val viewModelProvider = new GuaranteeRejectedNotAmendableP5ViewModelProvider()
+      val result            = viewModelProvider.apply(guaranteeReferences, lrn.toString, mrn, acceptanceDate)
 
       "must return correct number of guarantees" in {
-        result.tables.length `mustBe` 1
-      }
-
-      "must return correct number of errors in guarantee" in {
-        result.tables.head.table.rows.length `mustBe` 2
+        result.tables mustEqual Seq(
+          GuaranteeReferenceTable(
+            title = "Guarantee reference 1",
+            grn = "GRN 1",
+            table = new Table(
+              rows = Seq(
+                Seq(
+                  TableRow(content = Text("Code 1_1 - Description 1_1")),
+                  TableRow(content = Text("Text 1_1"))
+                ),
+                Seq(
+                  TableRow(content = Text("Code 1_2 - Description 1_2")),
+                  TableRow(content = Text("Text 1_2"))
+                )
+              ),
+              head = Some(
+                Seq(
+                  HeadCell(content = Text("Error")),
+                  HeadCell(content = Text("Further information"))
+                )
+              )
+            )
+          )
+        )
       }
 
       "must return correct paragraph 1" in {
@@ -117,40 +147,101 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with AppWith
       }
     }
 
-    val invalidGuaranteeReasons = Seq(InvalidGuaranteeReasonType01(1, "G02", Some("text")), InvalidGuaranteeReasonType01(1, "G03", Some("text")))
+    "when there are multiple guarantees with multiple errors" - {
 
-    val guaranteeErrors: Seq[GuaranteeReferenceType08] =
-      Seq(GuaranteeReferenceType08(1, "GRN", invalidGuaranteeReasons), GuaranteeReferenceType08(2, "GRN2", invalidGuaranteeReasons))
+      val guaranteeReferences = Seq(
+        GuaranteeReference(
+          grn = "GRN 1",
+          invalidGuarantees = Seq(
+            models.InvalidGuaranteeReason(
+              error = "Code 1_1 - Description 1_1",
+              furtherInformation = Some("Text 1_1")
+            ),
+            models.InvalidGuaranteeReason(
+              error = "Code 1_2 - Description 1_2",
+              furtherInformation = Some("Text 1_2")
+            )
+          )
+        ),
+        GuaranteeReference(
+          grn = "GRN 2",
+          invalidGuarantees = Seq(
+            models.InvalidGuaranteeReason(
+              error = "Code 2_1 - Description 2_1",
+              furtherInformation = Some("Text 2_1")
+            ),
+            models.InvalidGuaranteeReason(
+              error = "Code 2_2 - Description 2_2",
+              furtherInformation = Some("Text 2_2")
+            )
+          )
+        )
+      )
 
-    when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("G02"))(any(), any()))
-      .thenReturn(Future.successful(InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")))
+      val viewModelProvider = new GuaranteeRejectedNotAmendableP5ViewModelProvider()
+      val result            = viewModelProvider.apply(guaranteeReferences, lrn.toString, mrn, acceptanceDate)
 
-    when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("G03"))(any(), any()))
-      .thenReturn(Future.successful(InvalidGuaranteeReason("G03", "Access code not valid")))
+      "must return correct number of guarantees" in {
+        result.tables mustEqual Seq(
+          GuaranteeReferenceTable(
+            title = "Guarantee reference 1",
+            grn = "GRN 1",
+            table = new Table(
+              rows = Seq(
+                Seq(
+                  TableRow(content = Text("Code 1_1 - Description 1_1")),
+                  TableRow(content = Text("Text 1_1"))
+                ),
+                Seq(
+                  TableRow(content = Text("Code 1_2 - Description 1_2")),
+                  TableRow(content = Text("Text 1_2"))
+                )
+              ),
+              head = Some(
+                Seq(
+                  HeadCell(content = Text("Error")),
+                  HeadCell(content = Text("Further information"))
+                )
+              )
+            )
+          ),
+          GuaranteeReferenceTable(
+            title = "Guarantee reference 2",
+            grn = "GRN 2",
+            table = new Table(
+              rows = Seq(
+                Seq(
+                  TableRow(content = Text("Code 2_1 - Description 2_1")),
+                  TableRow(content = Text("Text 2_1"))
+                ),
+                Seq(
+                  TableRow(content = Text("Code 2_2 - Description 2_2")),
+                  TableRow(content = Text("Text 2_2"))
+                )
+              ),
+              head = Some(
+                Seq(
+                  HeadCell(content = Text("Error")),
+                  HeadCell(content = Text("Further information"))
+                )
+              )
+            )
+          )
+        )
+      }
 
-    val viewModelProvider = new GuaranteeRejectedNotAmendableP5ViewModelProvider(mockReferenceDataService)
-    val result            = viewModelProvider.apply(guaranteeErrors, lrn.toString, mrn, acceptanceDate).futureValue
+      "must return correct paragraph 1" in {
+        result.paragraph1 mustBe
+          "There is a problem with the guarantees in this declaration. Review the errors and make a new declaration with the right information."
+      }
 
-    "must return correct number of guarantees" in {
-      result.tables.length `mustBe` 2
-    }
+      "must return correct paragraph 2" in {
+        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
+      }
 
-    "must return correct number of errors in guarantee" in {
-      result.tables.head.table.rows.length `mustBe` 2
-    }
-
-    "must return correct paragraph 1" in {
-      result.paragraph1 mustBe
-        "There is a problem with the guarantees in this declaration. Review the errors and make a new declaration with the right information."
-    }
-
-    "must return correct paragraph 2" in {
-      result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
-    }
-
-    "must return link content" in {
-      result.link `mustBe` "Make another departure declaration"
+      "must return link content" in {
+        result.link `mustBe` "Make another departure declaration"
+      }
     }
   }
-
 }

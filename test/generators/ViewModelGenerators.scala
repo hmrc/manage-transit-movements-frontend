@@ -18,8 +18,7 @@ package generators
 
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
-import models.departureP5.GuaranteeReferenceTable
-import models.{DeparturesSummary, Sort}
+import models.{DeparturesSummary, GuaranteeReference, Sort}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
@@ -30,7 +29,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Content
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.*
 import viewModels.P5.arrival.*
 import viewModels.P5.departure.*
@@ -40,7 +39,6 @@ import viewModels.sections.Section
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
 import java.time.{LocalDate, LocalTime}
-import javax.xml.datatype.XMLGregorianCalendar
 
 trait ViewModelGenerators {
   self: Generators =>
@@ -313,21 +311,43 @@ trait ViewModelGenerators {
   implicit val arbitraryGuaranteeRejectedP5ViewModel: Arbitrary[GuaranteeRejectedP5ViewModel] =
     Arbitrary {
       for {
-        tables         <- arbitrary[Seq[GuaranteeReferenceTable]]
-        lrn            <- nonEmptyString
-        mrn            <- nonEmptyString
-        acceptanceDate <- arbitrary[XMLGregorianCalendar]
-      } yield GuaranteeRejectedP5ViewModel(tables, lrn, mrn, acceptanceDate)
+        guaranteeReferences       <- listWithMaxLength[GuaranteeReference]()
+        lrn                       <- nonEmptyString
+        mrn                       <- nonEmptyString
+        declarationAcceptanceDate <- nonEmptyString
+        paragraph1                <- nonEmptyString
+        paragraph2                <- nonEmptyString
+        link                      <- nonEmptyString
+      } yield GuaranteeRejectedP5ViewModel(
+        guaranteeReferences,
+        lrn,
+        mrn,
+        declarationAcceptanceDate,
+        paragraph1,
+        paragraph2,
+        link
+      )
     }
 
   implicit val arbitraryGuaranteeRejectedNotAmendableP5ViewModel: Arbitrary[GuaranteeRejectedNotAmendableP5ViewModel] =
     Arbitrary {
       for {
-        tables         <- arbitrary[Seq[GuaranteeReferenceTable]]
-        lrn            <- nonEmptyString
-        mrn            <- nonEmptyString
-        acceptanceDate <- arbitrary[XMLGregorianCalendar]
-      } yield GuaranteeRejectedNotAmendableP5ViewModel(tables, lrn, mrn, acceptanceDate)
+        guaranteeReferences       <- listWithMaxLength[GuaranteeReference]()
+        lrn                       <- nonEmptyString
+        mrn                       <- nonEmptyString
+        declarationAcceptanceDate <- nonEmptyString
+        paragraph1                <- nonEmptyString
+        paragraph2                <- nonEmptyString
+        link                      <- nonEmptyString
+      } yield GuaranteeRejectedNotAmendableP5ViewModel(
+        guaranteeReferences,
+        lrn,
+        mrn,
+        declarationAcceptanceDate,
+        paragraph1,
+        paragraph2,
+        link
+      )
     }
 
   implicit lazy val arbitraryText: Arbitrary[Text] = Arbitrary {
@@ -376,17 +396,6 @@ trait ViewModelGenerators {
         val sectionTitles = sections.map(_.sectionTitle)
         sectionTitles.distinct.size == sectionTitles.size
     }
-  }
-
-  implicit lazy val arbitraryTable: Arbitrary[Table] = Arbitrary {
-    for {
-      rows              <- arbitrary[Seq[Seq[TableRow]]]
-      head              <- Gen.option(arbitrary[Seq[HeadCell]])
-      caption           <- Gen.option(arbitrary[String])
-      captionClasses    <- nonEmptyString
-      firstCellIsHeader <- arbitrary[Boolean]
-      classes           <- nonEmptyString
-    } yield Table(rows, head, caption, captionClasses, firstCellIsHeader, classes, Map.empty)
   }
 
   implicit lazy val arbitraryTableRow: Arbitrary[TableRow] = Arbitrary {

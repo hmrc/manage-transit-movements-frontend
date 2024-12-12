@@ -16,20 +16,21 @@
 
 package utils
 
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime}
+import javax.xml.datatype.XMLGregorianCalendar
 
 object Format {
 
-  val dateFormatter: DateTimeFormatter               = DateTimeFormatter.ofPattern("yyyyMMdd")
-  def dateFormatted(date: LocalDate): String         = date.format(dateFormatter)
-  def dateFormatted(dateTime: LocalDateTime): String = dateTime.format(dateFormatter)
+  def formatMovementUpdatedDate(movementUpdatedDate: LocalDate): String = {
+    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+    movementUpdatedDate.format(formatter)
+  }
 
-  val controlDecisionDateFormatter: DateTimeFormatter               = DateTimeFormatter.ofPattern("dd MMMM yyyy")
-  def controlDecisionDateFormatted(date: LocalDate): String         = date.format(controlDecisionDateFormatter)
-  def controlDecisionDateFormatted(dateTime: LocalDateTime): String = dateTime.format(controlDecisionDateFormatter)
-
-  val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HHmm")
-
-  val dateDisplayFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  def formatDeclarationAcceptanceDate(declarationAcceptanceDate: XMLGregorianCalendar): String = {
+    val date      = declarationAcceptanceDate.toGregorianCalendar.getTime
+    val formatter = new SimpleDateFormat("dd/MM/yyyy")
+    formatter.format(date)
+  }
 }

@@ -19,11 +19,10 @@ package controllers.departureP5
 import config.FrontendAppConfig
 import controllers.actions.*
 import generated.{CC055CType, Generated_CC055CTypeFormat}
-import models.departureP5.Rejection
 import models.departureP5.Rejection.IE055Rejection
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.AmendmentService
+import services.{AmendmentService, FunctionalErrorsService}
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel.GuaranteeRejectedP5ViewModelProvider
@@ -40,7 +39,8 @@ class GuaranteeRejectedP5Controller @Inject() (
   view: GuaranteeRejectedP5View,
   viewModelProvider: GuaranteeRejectedP5ViewModelProvider,
   service: AmendmentService,
-  frontendAppConfig: FrontendAppConfig
+  frontendAppConfig: FrontendAppConfig,
+  functionalErrorsService: FunctionalErrorsService
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -48,21 +48,22 @@ class GuaranteeRejectedP5Controller @Inject() (
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
-        val lrn = request.referenceNumbers.localReferenceNumber
-        for {
-          isAmendable <- service.isRejectionAmendable(lrn, IE055Rejection(departureId))
-          viewModel <- viewModelProvider.apply(
-            request.messageData.GuaranteeReference,
-            lrn,
-            request.messageData.TransitOperation.MRN,
-            request.messageData.TransitOperation.declarationAcceptanceDate
-          )
-        } yield
-          if (isAmendable) {
-            Ok(view(viewModel, departureId, messageId))
-          } else {
-            Redirect(controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller.onPageLoad(departureId, messageId).url)
-          }
+        functionalErrorsService.convertGuaranteeReferences(request.messageData.GuaranteeReference).flatMap {
+          guaranteeReferences =>
+            val lrn = request.referenceNumbers.localReferenceNumber
+            val viewModel = viewModelProvider(
+              guaranteeReferences = guaranteeReferences,
+              lrn = lrn,
+              mrn = request.messageData.TransitOperation.MRN,
+              declarationAcceptanceDate = request.messageData.TransitOperation.declarationAcceptanceDate
+            )
+            service.isRejectionAmendable(lrn, IE055Rejection(departureId)).map {
+              case true =>
+                Ok(view(viewModel, departureId, messageId))
+              case false =>
+                Redirect(controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller.onPageLoad(departureId, messageId).url)
+            }
+        }
     }
 
   def onSubmit(departureId: String, messageId: String): Action[AnyContent] =

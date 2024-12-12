@@ -35,7 +35,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec
   override val viewModel: UnloadingRemarkWithFunctionalErrorsP5ViewModel =
     arbitraryUnloadingRemarkWithFunctionalErrorsP5ViewModel.arbitrary.sample.value
 
-  override val table: Table = viewModel.table
+  override val tables: Seq[Table] = Seq(viewModel.table)
 
   override def buildViewModel(
     totalNumberOfItems: Int,
@@ -74,7 +74,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec
 
   behave like pageWithPagination()
 
-  behave like pageWithTable()
+  behave like pageWithTables()
 
   behave like pageWithoutFormAction()
 

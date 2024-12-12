@@ -16,71 +16,70 @@
 
 package viewModels.P5.departure
 
-import generated.GuaranteeReferenceType08
+import models.GuaranteeReference
 import models.departureP5.GuaranteeReferenceTable
 import play.api.i18n.Messages
-import services.ReferenceDataService
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.GuaranteeRejectedP5Helper
+import utils.Format
 
-import java.text.SimpleDateFormat
 import javax.inject.Inject
 import javax.xml.datatype.XMLGregorianCalendar
-import scala.concurrent.{ExecutionContext, Future}
 
 case class GuaranteeRejectedP5ViewModel(
-  tables: Seq[GuaranteeReferenceTable],
+  guaranteeReferences: Seq[GuaranteeReference],
   lrn: String,
   mrn: String,
-  acceptanceDate: XMLGregorianCalendar
+  declarationAcceptanceDate: String,
+  paragraph1: String,
+  paragraph2: String,
+  link: String
 ) {
 
-  // TODO - refactor
-  def formatDateTime: String = {
-    val date      = acceptanceDate.toGregorianCalendar.getTime
-    val formatter = new SimpleDateFormat("dd/MM/yyyy")
-    formatter.format(date)
-  }
-
-  def paragraph1(implicit messages: Messages): String =
-    if (tables.length == 1 && tables.head.table.rows.length == 1) {
-      messages("guarantee.rejected.message.paragraph1.singular")
-    } else if (tables.length == 1 && tables.head.table.rows.length > 1) {
-      messages("guarantee.rejected.message.paragraph1.singularGuaranteePluralReference")
-    } else {
-      messages("guarantee.rejected.message.paragraph1.pluralGuaranteePluralReference")
+  def tables(implicit messages: Messages): Seq[GuaranteeReferenceTable] =
+    guaranteeReferences.zipWithIndex.map {
+      case (guaranteeReference, index) =>
+        GuaranteeReferenceTable(
+          title = messages("guarantee.rejected.message.guaranteeReference", index + 1),
+          grn = guaranteeReference.grn,
+          table = guaranteeReference.toTable
+        )
     }
-
-  def paragraph2(implicit messages: Messages): String = if (tables.length == 1 && tables.head.table.rows.length == 1) {
-    messages("guarantee.rejected.message.contact.singular")
-  } else {
-    messages("guarantee.rejected.message.contact.plural")
-  }
-
-  def buttonContent(implicit messages: Messages): String =
-    messages("guarantee.rejected.message.amendErrors")
-
-  def link(implicit messages: Messages): String =
-    messages("guarantee.rejected.message.makeAnotherDeparture")
-
 }
 
 object GuaranteeRejectedP5ViewModel {
 
-  class GuaranteeRejectedP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
+  class GuaranteeRejectedP5ViewModelProvider @Inject() {
 
     def apply(
-      guaranteeReferences: Seq[GuaranteeReferenceType08],
+      guaranteeReferences: Seq[GuaranteeReference],
       lrn: String,
       mrn: String,
-      acceptanceDate: XMLGregorianCalendar
-    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[GuaranteeRejectedP5ViewModel] = {
+      declarationAcceptanceDate: XMLGregorianCalendar
+    )(implicit messages: Messages): GuaranteeRejectedP5ViewModel = {
+      val paragraph1: String =
+        if (guaranteeReferences.length == 1 && guaranteeReferences.head.invalidGuarantees.length == 1) {
+          messages("guarantee.rejected.message.paragraph1.singular")
+        } else if (guaranteeReferences.length == 1 && guaranteeReferences.head.invalidGuarantees.length > 1) {
+          messages("guarantee.rejected.message.paragraph1.singularGuaranteePluralReference")
+        } else {
+          messages("guarantee.rejected.message.paragraph1.pluralGuaranteePluralReference")
+        }
 
-      val helper = new GuaranteeRejectedP5Helper(guaranteeReferences, referenceDataService)
+      val paragraph2: String =
+        if (guaranteeReferences.length == 1 && guaranteeReferences.head.invalidGuarantees.length == 1) {
+          messages("guarantee.rejected.message.contact.singular")
+        } else {
+          messages("guarantee.rejected.message.contact.plural")
+        }
 
-      helper.tables.map(GuaranteeRejectedP5ViewModel(_, lrn, mrn, acceptanceDate))
+      new GuaranteeRejectedP5ViewModel(
+        guaranteeReferences = guaranteeReferences,
+        lrn = lrn,
+        mrn = mrn,
+        declarationAcceptanceDate = Format.formatDeclarationAcceptanceDate(declarationAcceptanceDate),
+        paragraph1 = paragraph1,
+        paragraph2 = paragraph2,
+        link = messages("guarantee.rejected.message.makeAnotherDeparture")
+      )
     }
-
   }
-
 }

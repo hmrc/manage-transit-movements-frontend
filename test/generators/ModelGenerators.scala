@@ -220,15 +220,6 @@ trait ModelGenerators {
       } yield FunctionalErrorsWithoutSection(value)
     }
 
-  implicit lazy val arbitraryGuaranteeReferenceTable: Arbitrary[models.departureP5.GuaranteeReferenceTable] =
-    Arbitrary {
-      for {
-        title <- nonEmptyString
-        grn   <- nonEmptyString
-        table <- arbitraryTable.arbitrary
-      } yield models.departureP5.GuaranteeReferenceTable(title, grn, table)
-    }
-
   implicit lazy val arbitraryDepartureMessageType: Arbitrary[models.departureP5.DepartureMessageType] =
     Arbitrary {
       Gen.oneOf(models.departureP5.DepartureMessageType.values)
@@ -288,6 +279,22 @@ trait ModelGenerators {
         Sort.SortByCreatedAtAsc,
         Sort.SortByCreatedAtDesc
       )
+    }
+
+  implicit lazy val arbitraryGuaranteeReference: Arbitrary[models.GuaranteeReference] =
+    Arbitrary {
+      for {
+        grn               <- nonEmptyString
+        invalidGuarantees <- listWithMaxLength[InvalidGuaranteeReason]()
+      } yield models.GuaranteeReference(grn, invalidGuarantees)
+    }
+
+  implicit lazy val arbitraryInvalidGuaranteeReason: Arbitrary[models.InvalidGuaranteeReason] =
+    Arbitrary {
+      for {
+        error              <- nonEmptyString
+        furtherInformation <- Gen.option(nonEmptyString)
+      } yield models.InvalidGuaranteeReason(error, furtherInformation)
     }
 }
 

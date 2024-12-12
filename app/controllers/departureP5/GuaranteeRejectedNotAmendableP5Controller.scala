@@ -16,17 +16,17 @@
 
 package controllers.departureP5
 
-import controllers.actions._
-import generated.CC055CType
+import controllers.actions.*
+import generated.{CC055CType, Generated_CC055CTypeFormat}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.GuaranteeRejectedNotAmendableP5ViewModel.GuaranteeRejectedNotAmendableP5ViewModelProvider
 import views.html.departureP5.GuaranteeRejectedNotAmendableP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import generated.Generated_CC055CTypeFormat
 
 class GuaranteeRejectedNotAmendableP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -34,7 +34,8 @@ class GuaranteeRejectedNotAmendableP5Controller @Inject() (
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   view: GuaranteeRejectedNotAmendableP5View,
-  viewModelProvider: GuaranteeRejectedNotAmendableP5ViewModelProvider
+  viewModelProvider: GuaranteeRejectedNotAmendableP5ViewModelProvider,
+  functionalErrorsService: FunctionalErrorsService
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -42,16 +43,15 @@ class GuaranteeRejectedNotAmendableP5Controller @Inject() (
   def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC055CType](departureId, messageId)).async {
       implicit request =>
-        val lrn = request.referenceNumbers.localReferenceNumber
-
-        for {
-          viewModel <- viewModelProvider.apply(
-            request.messageData.GuaranteeReference,
-            lrn,
-            request.messageData.TransitOperation.MRN,
-            request.messageData.TransitOperation.declarationAcceptanceDate
-          )
-        } yield Ok(view(viewModel, departureId, messageId))
+        functionalErrorsService.convertGuaranteeReferences(request.messageData.GuaranteeReference).map {
+          guaranteeReferences =>
+            val viewModel = viewModelProvider(
+              guaranteeReferences = guaranteeReferences,
+              lrn = request.referenceNumbers.localReferenceNumber,
+              mrn = request.messageData.TransitOperation.MRN,
+              declarationAcceptanceDate = request.messageData.TransitOperation.declarationAcceptanceDate
+            )
+            Ok(view(viewModel, departureId, messageId))
+        }
     }
-
 }

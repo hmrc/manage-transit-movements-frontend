@@ -16,45 +16,55 @@
 
 package views.behaviours
 
+import org.jsoup.nodes.Element
 import play.twirl.api.TwirlHelperImports.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 
 trait TableViewBehaviours extends ViewBehaviours {
 
-  val table: Table
+  val tables: Seq[Table]
 
-  // scalastyle:off method.length
-  def pageWithTable(): Unit =
-    "page with table" - {
-      val rows = doc.getElementsByClass("govuk-table__row")
-
-      "header cells" - {
-        rows.head.getElementsByClass("govuk-table__header").toList.zipWithIndex.foreach {
-          case (cell, index) =>
-            s"when header cell ${index + 1}" - {
-              "must contain correct value" in {
-                val value: String        = cell.text()
-                val expectedText: String = table.head.get(index).content.asHtml.toString()
-                value mustEqual expectedText
-              }
-            }
-        }
-      }
-
-      "table rows" - {
-        rows.tail.zipWithIndex.foreach {
-          case (row, rowIndex) =>
-            row.getElementsByClass("govuk-table__cell").toList.zipWithIndex.foreach {
-              case (cell, cellIndex) =>
-                s"when row ${rowIndex + 1} cell ${cellIndex + 1}" - {
-                  "must contain correct value" in {
-                    val value: String        = cell.text()
-                    val expectedText: String = table.rows(rowIndex)(cellIndex).content.asHtml.toString()
-                    value mustEqual expectedText
-                  }
-                }
-            }
-        }
+  def pageWithTables(): Unit =
+    "page with tables" - {
+      doc.getElementsByClass("govuk-table").toList.zipWithIndex.foreach {
+        case (table, index) =>
+          s"when table $index" - {
+            pageWithTable(table, tables(index))
+          }
       }
     }
+
+  // scalastyle:off method.length
+  private def pageWithTable(table: Element, expectedTable: Table): Unit = {
+    val rows = table.getElementsByClass("govuk-table__row")
+
+    "header cells" - {
+      rows.head.getElementsByClass("govuk-table__header").toList.zipWithIndex.foreach {
+        case (cell, index) =>
+          s"when header cell ${index + 1}" - {
+            "must contain correct value" in {
+              val value: String        = cell.text()
+              val expectedText: String = expectedTable.head.get(index).content.asHtml.toString()
+              value mustEqual expectedText
+            }
+          }
+      }
+    }
+
+    "table rows" - {
+      rows.tail.zipWithIndex.foreach {
+        case (row, rowIndex) =>
+          row.getElementsByClass("govuk-table__cell").toList.zipWithIndex.foreach {
+            case (cell, cellIndex) =>
+              s"when row ${rowIndex + 1} cell ${cellIndex + 1}" - {
+                "must contain correct value" in {
+                  val value: String        = cell.text()
+                  val expectedText: String = expectedTable.rows(rowIndex)(cellIndex).content.asHtml.toString()
+                  value mustEqual expectedText
+                }
+              }
+          }
+      }
+    }
+  }
 }
