@@ -16,20 +16,38 @@
 
 package services
 
+import connectors.DeparturesDraftsP5Connector
 import models.departure.drafts.{Limit, Skip}
 import models.{DeparturesSummary, LockCheck, Sort}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
-trait DraftDepartureService {
+class DraftDepartureService @Inject() (connector: DeparturesDraftsP5Connector) {
 
-  def getLRNs(partialLRN: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def sortDraftDepartures(sortParams: Sort, limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def sortDraftDepartures(sortParams: Sort, limit: Limit, skip: Skip, lrn: String)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse]
-  def getLRNs(partialLRN: String, skip: Skip, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
-  def getPagedDepartureSummary(limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]]
+  def getLRNs(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
+    connector.lrnFuzzySearch(lrn, limit)
 
-  def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[LockCheck]
+  def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    connector.deleteDraftDeparture(lrn)
+
+  def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[LockCheck] =
+    connector.checkLock(lrn)
+
+  def sortOrGetDrafts(
+    lrn: Option[String],
+    sortParams: Option[Sort],
+    limit: Limit,
+    skip: Skip
+  )(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = (lrn, sortParams) match {
+    case (Some(lrn), Some(sortParams)) =>
+      connector.sortDraftDepartures(sortParams, limit, skip, lrn)
+    case (Some(lrn), None) =>
+      connector.getLRNs(lrn, skip, limit)
+    case (None, Some(sortParams)) =>
+      connector.sortDraftDepartures(sortParams, limit, skip)
+    case _ =>
+      connector.getAllDeparturesSummary(limit, skip)
+  }
 }
